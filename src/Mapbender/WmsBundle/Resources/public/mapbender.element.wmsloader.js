@@ -157,7 +157,7 @@
             var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
             if (mergeCandidate) {
                 if (layerNamesToActivate !== false) {
-                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
+                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers);
                 }
                 // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
                 //       attributes and config params matter. We leave the source alone completely.
@@ -216,10 +216,12 @@
                 var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);
                 var updateTarget = mergeCandidate || sourceDef;
                 var defaultLayerActive = sourceOpts.global.options.treeOptions.selected;
-                self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive, true);
+                self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive);
 
                 if (!mergeCandidate) {
                     self.mbMap.addSource(sourceDef, false);
+                } else {
+                    self.mbMap.model.updateSource(mergeCandidate);
                 }
             });
         },
@@ -244,26 +246,38 @@
             });
             return matches[0] || null;
         },
-        activateLayersByName: function(source, names, keepCurrentActive, activateRoot) {
-            if (names.indexOf('_all') !== -1) {
-                this.mbMap.model.changeLayerState(source, {layers: {}}, true);
-            } else {
-                // translate layer-name-based mapping to id mapping understood by Model
-                var matchedNames = [];
-                var layerOptionMap = {};
-                var layerOn = this._layerOptionsOn;
+        activateLayersByName: function(source, names, keepCurrentActive) {
+            var activateAll = names.indexOf('_all') !== -1;
+            var matchedNames = [];
+            if (!keepCurrentActive && !activateAll) {
+                // Deactivate all non-root layers before activating only the required ones
                 Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
-                    if (names.indexOf(layer.options.name) !== -1) {
-                        matchedNames.push(layer.options.name);
-                        layerOptionMap[layer.options.id] = layerOn;
-                    } else if (activateRoot && !parents.length) {
-                        layerOptionMap[layer.options.id] = layerOn;
+                    var isRootLayer = !parents.length;
+                    if (!isRootLayer) {
+                        layer.options.treeOptions.selected = false;
                     }
                 });
-                if (matchedNames.length !== names.length) {
-                    console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
+            }
+            // always activate root layer
+            var rootLayer = source.configuration.children[0];
+            rootLayer.options.treeOptions.selected = rootLayer.options.treeOptions.allow.selected;
+            Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
+                var doActivate = activateAll;
+                if (names.indexOf(layer.options.name) !== -1) {
+                    matchedNames.push(layer.options.name);
+                    doActivate = true;
                 }
-                this.mbMap.model.changeLayerState(source, {layers: layerOptionMap}, false, keepCurrentActive);
+                if (doActivate) {
+                    layer.options.treeOptions.selected = layer.options.treeOptions.allow.selected;
+                    layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
+                    // also activate parent layers
+                    for (var p = 0; p < parents.length; ++p) {
+                        parents[p].options.treeOptions.selected = layer.options.treeOptions.allow.selected;
+                    }
+                }
+            });
+            if (!activateAll && matchedNames.length !== names.length) {
+                console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
             }
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){

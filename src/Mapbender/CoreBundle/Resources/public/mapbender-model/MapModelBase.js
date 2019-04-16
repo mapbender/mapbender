@@ -224,6 +224,19 @@ window.Mapbender.MapModelBase = (function() {
             this._updateSourceLayerTreeOptions(source, newProps);
         },
         /**
+         * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
+         * This should be used if a sources internal configuration structure has been updated "manually".
+         *
+         * @param {Object} source
+         */
+        updateSource: function(source) {
+            this._checkSource(source, true, false);
+            $(this.mbMap.element).trigger('mbmapsourcechanged', {
+                mbMap: this.mbMap,
+                source: source
+            });
+        },
+        /**
          * @return {Array<Source>}
          * engine-agnostic
          */
@@ -320,7 +333,7 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * Calculates and applies layer state changes from accumulated treeOption changes in the source and (optionally)
          * 1) updates the engine layer parameters and redraws
-         * 2) fires a mbmapsourcechanged event with the updated individual layer states
+         * 2) fires a mbmapsourcechanged event
          * @param {Object} source
          * @param {boolean} redraw
          * @param {boolean} fireSourceChangedEvent
