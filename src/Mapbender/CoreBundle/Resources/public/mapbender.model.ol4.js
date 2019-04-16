@@ -48,6 +48,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this._initEvents(this.olMap, this.mbMap);
         this.setExtent(options.startExtent || options.maxExtent);
         this.initializeSourceLayers();
+        this.processUrlParams();
     },
     _initEvents: function(olMap, mbMap) {
         var self = this;
