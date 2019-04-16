@@ -370,8 +370,7 @@
                 var source = sources[i];
                 var rootLayer = source.configuration.children[0];
                 var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
-                var gsHandler = this.map.model.getGeoSourceHandler(source);
-                var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
+                var leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 var sourceLegendList = [];
                 _.forEach(leafInfo, function(activeLeaf) {
                     if (activeLeaf.state.visibility) {

@@ -283,8 +283,3 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
 
 
 
-(function() {
-    Mapbender.source['wmts'] = Mapbender.Geo.SourceHandler;
-    Mapbender.source['tms'] = Mapbender.Geo.SourceHandler;
-}());
-

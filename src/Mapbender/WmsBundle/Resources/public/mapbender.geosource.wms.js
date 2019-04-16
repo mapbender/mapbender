@@ -125,7 +125,7 @@ window.Mapbender.WmsSource = (function() {
             var baseUrl = Mapbender.Util.removeProxy(olLayer.getURL(bounds));
             var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
-            var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
+            var leafInfoMap = this.getExtendedLeafInfo(this, scale, bounds);
             var units = projection.proj.units || 'degrees';
             var resFromScale = function(scale) {
                 return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
@@ -170,4 +170,3 @@ if(window.OpenLayers) {
     }
 }
 
-Mapbender.source['wms'] = Mapbender.Geo.SourceHandler;

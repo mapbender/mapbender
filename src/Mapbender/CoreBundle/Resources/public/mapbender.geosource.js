@@ -199,6 +199,3 @@ Mapbender.Geo.SourceHandler = {
         }
     }
 };
-
-// old declaration
-Mapbender['source'] = {};

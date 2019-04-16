@@ -133,18 +133,14 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-            var sourceObj = this.getSourceById(sourceId);
-            var geoSource = Mapbender.source[sourceObj.type];
-
-            geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
-
-            this.mbMap.fireModelEvent({
-                name: 'sourceMoved',
-                // no receiver uses the bizarre "changeOptions" return value
-                // on this event
-                value: null
+            var source = this.getSourceById(sourceId);
+            Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
+            this._checkSource(source, true, false);
+            // @todo: rename this event; it's about layers within a source
+            $(this.mbMap.element).trigger('mbmapsourcemoved', {
+                mbMap: this.mbMap,
+                source: source
             });
-            this._checkSource(sourceObj, true, false);
         },
         /**
          * Zooms to layer
@@ -315,9 +311,8 @@ window.Mapbender.MapModelBase = (function() {
          * @param {boolean} fireSourceChangedEvent
          */
         _checkSource: function(source, redraw, fireSourceChangedEvent) {
-            var gsHandler = this.getGeoSourceHandler(source, true);
-            var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
-            var changedStates = gsHandler.applyLayerStates(source, newStates);
+            var newStates = Mapbender.Geo.SourceHandler.calculateLeafLayerStates(source, this.getScale());
+            var changedStates = Mapbender.Geo.SourceHandler.applyLayerStates(source, newStates);
             if (redraw) {
                 var layerParams = source.getLayerParameters(newStates);
                 this._resetSourceVisibility(source, layerParams);
@@ -428,22 +423,6 @@ window.Mapbender.MapModelBase = (function() {
                     source: source
                 });
             }
-        },
-        /**
-         * Get the "geosource" object for given source from Mapbender.source
-         * @param {OpenLayers.Layer|MapQuery.Layer|Object} source
-         * @param {boolean} [strict] to throw on missing geosource object (default true)
-         * @returns {*|null}
-         * @deprecated
-         * engine-agnostic
-         */
-        getGeoSourceHandler: function(source, strict) {
-            var type = this.getMbConfig(source).type;
-            var gs = Mapbender.source[type];
-            if (!gs && (strict || typeof strict === 'undefined')) {
-                throw new Error("No geosource for type " + type);
-            }
-            return gs || null;
         },
         /**
          * @param {OpenLayers.Layer.HTTPRequest|Object} source
