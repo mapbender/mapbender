@@ -39,7 +39,6 @@
         _mobilePane: null,
         _create: function() {
             this.loadStarted = {};
-            this.sourceAtTree = {};
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
@@ -67,7 +66,6 @@
             this._trigger('ready');
         },
         _createTree: function() {
-            var self = this;
             var sources = this.model.getSources();
             if (this.created)
                 this._unSortable();
@@ -75,9 +73,6 @@
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var li_s = this._createSourceTree(sources[i]);
                     this._addNode(li_s, sources[i]);
-                    this.sourceAtTree[sources[i].id ] = {
-                        id: sources[i].id
-                    };
                     this._resetSourceAtTree(sources[i]);
                 }
             }
@@ -346,9 +341,6 @@
             } else {
                 return;
             }
-            this.sourceAtTree[added.source.id ] = {
-                id: added.source.id
-            };
             this._reset();
         },
         _onSourceChanged: function(event, data) {
@@ -433,31 +425,33 @@
                 this._setSourcesCount();
             }
         },
+        _getSourceNode: function(sourceId) {
+            return $('li[data-sourceid="' + sourceId + '"][data-type="root"]', this.element);
+        },
         _onSourceLoadStart: function(event, options) {
-            if (options.source && this.sourceAtTree[options.source.id ]) {
-                this.loadStarted[options.source.id ] = true;
-                var source_li = $('li[data-sourceid="' + options.source.id + '"][data-type="root"]', this.element);
-                if (options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass(
-                    'invisible')) {
-                    source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",
-                        source_li.attr('data-title'));
-                }
+            var sourceId = options.source && options.source.id;
+            var $sourceEl = sourceId && this._getSourceNode(sourceId);
+            if ($sourceEl && $sourceEl.length) {
+                this.loadStarted[sourceId] = true;
+                $sourceEl.attr('data-state', 'loading');
             }
         },
-        _onSourceLoadEnd: function(event, option) {
-            if (option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
-                this.loadStarted[option.source.id] = false;
-                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
-                source_li.attr('data-state', '');
-                this._resetSourceAtTree(option.source);
+        _onSourceLoadEnd: function(event, options) {
+            var sourceId = options.source && options.source.id;
+            var $sourceEl = sourceId && this._getSourceNode(sourceId);
+            if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
+                this.loadStarted[sourceId] = false;
+                $sourceEl.attr('data-state', '');
+                this._resetSourceAtTree(options.source);
             }
         },
-        _onSourceLoadError: function(event, option) {
-            if (option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
-                this.loadStarted[option.source.id] = false;
-                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
-                source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                    option.error.details);
+        _onSourceLoadError: function(event, options) {
+            var sourceId = options.source && options.source.id;
+            var $sourceEl = sourceId && this._getSourceNode(sourceId);
+            if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
+                this.loadStarted[sourceId] = false;
+                $sourceEl.attr('data-state', 'error').find('span.layer-title:first').attr("title",
+                    options.error.details);
             }
         },
         _getNodeType: function(node, isroot) {
