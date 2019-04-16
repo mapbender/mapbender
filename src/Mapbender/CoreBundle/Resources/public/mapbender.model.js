@@ -128,7 +128,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
 
         this.setView(true);
-        this.parseURL();
+        this.processUrlParams();
         if (this.mbMap.options.targetscale) {
             var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
             this.setZoomLevel(zoom, false);
@@ -1277,43 +1277,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
     _transformExtent: function(extent, fromProj, toProj) {
         return Mapbender.mapEngine.transformBounds(extent, fromProj, toProj);
-    },
-    parseURL: function() {
-        var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
-        if (visibleLayersParam) {
-            this.processVisibleLayersParam(visibleLayersParam);
-        }
-    },
-    /**
-     * Activate specific layers on specific sources by interpreting a (comma-separated list of)
-     * "<sourceId>/<layerId>" parameter pair.
-     * The indicated source and layer must already be part of the running configuration for this
-     * to work.
-     *
-     * @param {string} paramValue
-     */
-    processVisibleLayersParam: function(paramValue) {
-        var self = this;
-        var specs = (paramValue || '').split(',');
-        $.each(specs, function(idx, layerSpec) {
-            var idParts = layerSpec.split('/');
-            var clsOptions = {layers: {}};
-            if (idParts.length >= 2) {
-                var sourceId = idParts[0];
-                var layerId = idParts[1];
-                var source = self.getSource({origId: sourceId});
-                if (source) {
-                    clsOptions.layers[layerId] = {
-                        options: {
-                            treeOptions: {
-                                selected: true
-                            }
-                        }
-                    };
-                    self.changeLayerState(source, clsOptions, false, true);
-                }
-            }
-        });
     }
 });
 })(jQuery));

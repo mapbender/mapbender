@@ -352,6 +352,44 @@ window.Mapbender.MapModelBase = (function() {
                     source: source
                 });
             }
+        },
+        processUrlParams: function() {
+            var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
+            if (visibleLayersParam) {
+                this.processVisibleLayersParam(visibleLayersParam);
+            }
+        },
+        /**
+         * Activate specific layers on specific sources by interpreting a (comma-separated list of)
+         * "<sourceId>/<layerId>" parameter pair.
+         * The indicated source and layer must already be part of the running configuration for this
+         * to work.
+         *
+         * @param {string} paramValue
+         */
+        processVisibleLayersParam: function(paramValue) {
+            var self = this;
+            var specs = (paramValue || '').split(',');
+            $.each(specs, function(idx, layerSpec) {
+                var idParts = layerSpec.split('/');
+                if (idParts.length >= 2) {
+                    var sourceId = idParts[0];
+                    var layerId = idParts[1];
+                    console.log("Activating", sourceId, layerId);
+                    var source = self.getSourceById(sourceId);
+                    var layer = source && source.getLayerById(layerId);
+                    if (layer) {
+                        layer.options.treeOptions.selected = true;
+                        layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
+                        var parent = layer.parent;
+                        while (parent) {
+                            parent.options.treeOptions.selected = true;
+                            parent = parent.parent;
+                        }
+                        self.updateSource(source);
+                    }
+                }
+            });
         }
     };
 
