@@ -20,9 +20,9 @@ window.Mapbender.MapModelOl4 = (function() {
 
     _initMap: function() {
         var options = {
-            srs: this.mbMap.options.srs,
-            maxExtent: this.mapMaxExtent,
-            startExtent: this.mapStartExtent,
+            srs: this._startProj,
+            maxExtent: Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj),
+            startExtent: Mapbender.mapEngine.transformBounds(this.mapStartExtent, this._configProj, this._startProj),
             scales : this.mbMap.options.scales,
             dpi: this.mbMap.options.dpi,
             tileSize: this.mbMap.options.tileSize
@@ -1275,15 +1275,15 @@ mousePositionControlUpdateProjection: function(projection) {
  * @returns {object}
  */
 initializeViewOptions: function(options) {
-    var proj = ol.proj.get(options.srs);
     var viewOptions = {
-        projection: proj
+        projection: options.srs
     };
     if (options.maxExtent) {
         viewOptions.extent = options.maxExtent;
     }
 
     if (options.scales && options.scales.length) {
+        var proj = ol.proj.get(options.srs);
         // Sometimes, the units are empty -.-
         // this seems to happen predominantely with "degrees" SRSs, so...
         var units = proj.getUnits() || 'degrees';
