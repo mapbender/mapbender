@@ -104,24 +104,23 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         controlLayer: function controlLayer(sourceId, layerId, selected, info) {
-            var layerMap = {};
-            var treeOptions = {};
-            if (selected !== null && typeof selected !== 'undefined') {
-                treeOptions.selected = !!selected;
+            var source = this.getSourceById(sourceId);
+            var layer = source && source.getLayerById(layerId);
+            var updated = false;
+            if (layer && selected !== null && typeof selected !== 'undefined') {
+                var selected0 = layer.options.treeOptions.selected;
+                var selectedAfter = !!selected && layer.options.treeOptions.allow.selected;
+                updated = updated || (selected0 !== selectedAfter);
+                layer.options.treeOptions.selected = selectedAfter;
             }
-            if (info !== null && typeof info !== 'undefined') {
-                treeOptions.info = !!info;
+            if (layer && info !== null && typeof info !== 'undefined') {
+                var info0 = layer.options.treeOptions.info;
+                var infoAfter = !!info && layer.options.treeOptions.allow.info;
+                updated = updated || (info0 !== infoAfter);
+                layer.options.treeOptions.info = infoAfter;
             }
-            if (Object.keys(treeOptions).length) {
-                layerMap['' + layerId] = {
-                    options: {
-                        treeOptions: treeOptions
-                    }
-                };
-            }
-            if (Object.keys(layerMap).length) {
-                var source = this.getSourceById(sourceId);
-                this._updateSourceLayerTreeOptions(source, layerMap);
+            if (updated) {
+                this.updateSource(source);
             }
         },
         /**
@@ -207,21 +206,13 @@ window.Mapbender.MapModelBase = (function() {
             } else {
                 source = this.getSourceById(sourceOrId);
             }
-            var newProps = {};
             var rootLayer = source.configuration.children[0];
-            var state_ = state;
-            if (state && !rootLayer.options.treeOptions.allow.selected) {
-                state_ = false;
+            var selected0 = rootLayer.options.treeOptions.selected;
+            var selected = state && rootLayer.options.treeOptions.allow.selected && !source.autoDisabled;
+            rootLayer.options.treeOptions.selected = selected;
+            if (selected0 !== selected) {
+                this.updateSource(source);
             }
-            var rootLayerId = rootLayer.options.id;
-            newProps[rootLayerId] = {
-                options: {
-                    treeOptions: {
-                        selected: state_
-                    }
-                }
-            };
-            this._updateSourceLayerTreeOptions(source, newProps);
         },
         /**
          * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
@@ -314,21 +305,6 @@ window.Mapbender.MapModelBase = (function() {
          */
         _clampZoomLevel: function(zoomIn) {
             return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
-        },
-        /**
-         * Updates the options.treeOptions within the source with new values from layerOptionsMap.
-         * Always reapplies states to engine (i.e. affected layers are re-rendered).
-         * Alawys fires an 'mbmapsourcechanged' event.
-         *
-         * @param {Object} source
-         * @param {Object<string, Model~LayerTreeOptionWrapper>} layerOptionsMap
-         * @private
-         * engine-agnostic
-         */
-        _updateSourceLayerTreeOptions: function(source, layerOptionsMap) {
-            var gsHandler = this.getGeoSourceHandler(source);
-            gsHandler.applyTreeOptions(source, layerOptionsMap);
-            this._checkSource(source, true, true);
         },
         /**
          * Calculates and applies layer state changes from accumulated treeOption changes in the source and (optionally)

@@ -170,5 +170,4 @@ if(window.OpenLayers) {
     }
 }
 
-Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
-});
+Mapbender.source['wms'] = Mapbender.Geo.SourceHandler;

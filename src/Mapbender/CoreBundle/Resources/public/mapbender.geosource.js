@@ -12,25 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = {
-    applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
-        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
-            var layerId = layer.options.id;
-            var newTreeOptions = ((layerOptionsMap[layerId] || {}).options || {}).treeOptions;
-            if (newTreeOptions) {
-                var currentTreeOptions = layer.options.treeOptions;
-                var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
-                for (var oti = 0; oti < optionsTasks.length; ++oti) {
-                    var optionName = optionsTasks[oti][0];
-                    var checkAllow = optionsTasks[oti][1];
-                    if (typeof newTreeOptions[optionName] !== 'undefined' && (!checkAllow || currentTreeOptions.allow[optionName])) {
-                        if (currentTreeOptions[optionName] !== newTreeOptions[optionName]) {
-                            currentTreeOptions[optionName] = newTreeOptions[optionName];
-                        }
-                    }
-                }
-            }
-        });
-    },
     /**
      * Gets a layer extent, or the source extent as a fallback
      *
