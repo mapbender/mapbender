@@ -548,26 +548,14 @@
             var $li = $sourceVsbl.parents('li:first');
             $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
                 var $srcLi = $(srcLi);
-                var source = {
-                    id: $srcLi.data('sourceid')
-                };
-                var options = {
-                    layers: {}
-                };
-                var value = {
-                    options: {
-                        treeOptions: {
-                            selected: true
-                        }
-                    }
-                };
-                $('li', $srcLi).each(function(idx, layerLi) {
-                    var $layerLi = $(layerLi);
-                    if (!$('input[name="selected"]:first', $layerLi).prop('checked')) {
-                        options.layers[$layerLi.attr('data-id')] = value;
-                    }
-                });
-                self.model.changeLayerState(source, options, null);
+                var sourceId = $srcLi.attr('data-sourceid');
+                var source = sourceId && self.model.getSourceById(sourceId);
+                if (source) {
+                    Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
+                        layer.options.treeOptions.selected = layer.options.treeOptions.allow.selected;
+                    });
+                    self.model.updateSource(source);
+                }
             });
             return false;
         },
