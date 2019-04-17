@@ -29,7 +29,7 @@ window.Mapbender.WmsSource = (function() {
         },
         addParams: function(params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {
-                this.nativeLayers[i].mergeNewParams(params);
+                Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
             }
             var rtp = this._runtimeParams;
             $.extend(this.customParams, _.omit(params, function(value, key) {
@@ -40,6 +40,7 @@ window.Mapbender.WmsSource = (function() {
             // setting a param to null effectively removes it from the generated URL
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
+            // see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/uri.js#L16
             var nullParams = _.object(names, names.map(function() {
                 return null;
             }));
