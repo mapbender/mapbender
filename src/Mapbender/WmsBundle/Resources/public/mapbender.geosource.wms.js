@@ -53,8 +53,7 @@ window.Mapbender.WmsSource = (function() {
         getLayerParameters: function() {
             var result = {
                 layers: [],
-                styles: [],
-                infolayers: []
+                styles: []
             };
             Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
                 // Layer names can be emptyish, most commonly on root layers
@@ -65,12 +64,23 @@ window.Mapbender.WmsSource = (function() {
                         result.layers.push(layer.options.name);
                         result.styles.push(layer.options.style || '');
                     }
-                    if (layerState.info) {
-                        result.infolayers.push(layer.options.name);
-                    }
                 }
             });
             return result;
+        },
+        /**
+         * @return {Array<WmsSourceLayer>}
+         */
+        getFeatureInfoLayers: function() {
+            var layers = [];
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
+                // Layer names can be emptyish, most commonly on root layers
+                // Suppress layers with empty names entirely
+                if (layer.options.name && layer.state.info) {
+                    layers.push(layer);
+                }
+            });
+            return layers;
         },
         /**
          * Overview support hack: get names of all 'selected' leaf layers (c.f. instance backend),

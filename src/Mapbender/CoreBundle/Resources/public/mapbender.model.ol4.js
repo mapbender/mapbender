@@ -353,7 +353,9 @@ window.Mapbender.MapModelOl4 = (function() {
         }
     },
     getPointFeatureInfoUrl: function(source, x, y, maxCount) {
-        var layerNames = source.getLayerParameters().infolayers;
+        var layerNames = source.getFeatureInfoLayers().map(function(layer) {
+            return layer.options.name;
+        });
         var engine = Mapbender.mapEngine;
         var olLayer = source.getNativeLayer(0);
         if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {

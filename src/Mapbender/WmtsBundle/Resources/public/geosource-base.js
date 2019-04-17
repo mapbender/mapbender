@@ -151,16 +151,18 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             if (this.currentActiveLayer) {
                 return {
                     layers: [this.currentActiveLayer.options.identifier],
-                    infolayers: [],
                     styles: []
                 };
             } else {
                 return {
                     layers: [],
-                    infolayers: [],
                     styles: []
                 };
             }
+        },
+        getFeatureInfoLayers: function() {
+            console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
+            return [];
         },
         checkLayerParameterChanges: function(layerParams) {
             if (this.currentActiveLayer) {
