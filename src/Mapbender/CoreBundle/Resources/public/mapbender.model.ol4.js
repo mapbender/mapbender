@@ -281,6 +281,12 @@ window.Mapbender.MapModelOl4 = (function() {
     getCurrentZoomLevel: function() {
         return this.olMap.getView().getZoom();
     },
+    zoomIn: function() {
+        this.setZoomLevel(this.getCurrentZoomLevel() + 1, true);
+    },
+    zoomOut: function() {
+        this.setZoomLevel(this.getCurrentZoomLevel() - 1, true);
+    },
     getCurrentProjectionUnits: function() {
         var proj;
         if (this.olMap) {
