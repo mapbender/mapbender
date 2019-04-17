@@ -50,23 +50,47 @@ window.Mapbender.WmsSource = (function() {
             s.customParams = this.customParams;
             return s;
         },
-        getLayerParameters: function() {
-            var result = {
-                layers: [],
-                styles: []
-            };
+        updateEngine: function() {
+            var layers = [], styles = [];
             Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
                 // Layer names can be emptyish, most commonly on root layers
                 // Suppress layers with empty names entirely
-                if (layer.options.name) {
-                    var layerState = layer.state;
-                    if (layerState.visibility) {
-                        result.layers.push(layer.options.name);
-                        result.styles.push(layer.options.style || '');
-                    }
+                if (layer.options.name && layer.state.visibility) {
+                    layers.push(layer.options.name);
+                    styles.push(layer.options.style || '');
                 }
             });
-            return result;
+            var engine = Mapbender.mapEngine;
+            var targetVisibility = !!layers.length;
+            var olLayer = this.getNativeLayer(0);
+            var visibilityChanged = targetVisibility !== engine.getLayerVisibility(olLayer);
+            var paramsChanged = engine.compareWmsParams(olLayer, layers, styles);
+            if (!visibilityChanged && !paramsChanged) {
+                return;
+            }
+
+            if (paramsChanged && olLayer.map && olLayer.map.tileManager) {
+                olLayer.map.tileManager.clearTileQueue({
+                    object: olLayer
+                });
+            }
+            if (!targetVisibility) {
+                engine.setLayerVisibility(olLayer, false);
+            } else {
+                var newParams = {
+                    LAYERS: layers,
+                    STYLES: styles
+                };
+                if (visibilityChanged) {
+                    // Prevent the browser from reusing the loaded image. This is almost equivalent
+                    // to a forced redraw (c.f. olLayer.redraw(true)), but without the undesirable
+                    // side effect of loading the layer twice on first activation.
+                    // @see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Layer/HTTPRequest.js#L157
+                    newParams['_OLSALT'] = Math.random();
+                }
+                engine.applyWmsParams(olLayer, newParams);
+                engine.setLayerVisibility(olLayer, true);
+            }
         },
         /**
          * @return {Array<WmsSourceLayer>}
@@ -125,10 +149,6 @@ window.Mapbender.WmsSource = (function() {
                 bboxArray_ = bboxArray;
             }
             return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
-        },
-        checkLayerParameterChanges: function(layerParams) {
-            var olLayer = this.getNativeLayer(0);
-            return Mapbender.mapEngine.compareWmsParams(olLayer, layerParams.layers, layerParams.styles);
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var olLayer = this.getNativeLayer(0);

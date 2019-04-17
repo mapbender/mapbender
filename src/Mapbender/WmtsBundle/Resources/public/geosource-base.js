@@ -96,6 +96,21 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, srsName);
             return [olLayer];
         },
+        updateEngine: function() {
+            var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
+            var engine = Mapbender.mapEngine;
+            var targetVisibility = !!layerIdent;
+            var olLayer = this.getNativeLayer(0);
+            if (!olLayer) {
+                return;
+            }
+            var currentVisibility = !!(olLayer && engine.getLayerVisibility(olLayer));
+            var visibilityChanged = targetVisibility !== currentVisibility;
+            if (!visibilityChanged) {
+                return;
+            }
+            engine.setLayerVisibility(olLayer, targetVisibility);
+        },
         _getNativeLayerOptions: function(matrixSet, layer, srsName) {
             var self = this;
             var baseOptions = {
@@ -147,30 +162,9 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return null;
         },
-        getLayerParameters: function() {
-            if (this.currentActiveLayer) {
-                return {
-                    layers: [this.currentActiveLayer.options.identifier],
-                    styles: []
-                };
-            } else {
-                return {
-                    layers: [],
-                    styles: []
-                };
-            }
-        },
         getFeatureInfoLayers: function() {
             console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
             return [];
-        },
-        checkLayerParameterChanges: function(layerParams) {
-            if (this.currentActiveLayer) {
-                var activeIdentifier = this.currentActiveLayer.options.identifier;
-                return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
-            } else {
-                return !!(layerParams.layers && layerParams.layers.length);
-            }
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var layerDef = this._selectCompatibleLayer(projection.projCode);

@@ -25,6 +25,9 @@ window.Mapbender.MapEngineOl2 = (function() {
         getLayerVisibility: function(olLayer) {
             return olLayer.getVisibility();
         },
+        setLayerVisibility: function(olLayer, state) {
+            olLayer.setVisibility(state);
+        },
         createWmsLayer: function(source) {
             var options = getNativeLayerOptions(source);
             var params = getNativeLayerParams(source);
@@ -76,6 +79,17 @@ window.Mapbender.MapEngineOl2 = (function() {
                 params.STYLES = styles;
                 return params;
             }
+        },
+        /**
+         * @param {OpenLayers.Layer.WMS} olLayer
+         * @param {Object} params
+         */
+        applyWmsParams: function(olLayer, params) {
+            // Nuking the back buffer prevents the layer from going visible with old layer combination
+            // before loading the new images.
+            olLayer.removeBackBuffer();
+            olLayer.createBackBuffer();
+            olLayer.mergeNewParams(params);
         },
         compareWmsParams: function (olLayer, layers, styles) {
             var newLayers = (olLayer.params.LAYERS || '').toString() !== layers.toString();

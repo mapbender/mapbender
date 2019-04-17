@@ -27,6 +27,9 @@ window.Mapbender.MapEngineOl4 = (function() {
         getLayerVisibility: function(olLayer) {
             return olLayer.getVisible();
         },
+        setLayerVisibility: function(olLayer, state) {
+            olLayer.setVisible(state);
+        },
         createWmsLayer: function(source) {
             var sourceOpts = {
                 url: source.configuration.options.url,
@@ -67,6 +70,14 @@ window.Mapbender.MapEngineOl4 = (function() {
             // todo: format
             // todo: exception format
             return new (olLayerClass)(layerOptions);
+        },
+        /**
+         * @param {ol.Layer} olLayer
+         * @param {Object} params
+         */
+        applyWmsParams: function(olLayer, params) {
+            // @todo: backbuffer interaction?
+            olLayer.getSource().updateParams(params);
         },
         /**
          * @param olLayer

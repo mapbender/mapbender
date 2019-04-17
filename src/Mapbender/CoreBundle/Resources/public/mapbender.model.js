@@ -471,62 +471,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             self._checkSource(source, !isPreEvent, isPreEvent);
         });
     },
-
-    /**
-     * Check if OpenLayer layer need to be redraw
-     *
-     * @param {Object} source
-     *
-     * @returns {boolean}
-     * @private
-     */
-    _resetSourceVisibility: function(source) {
-        var olLayer = source.getNativeLayer(0);
-        if (!olLayer) {
-            return false;
-        }
-        // @todo: this is almost entirely WMS specific
-        // Clean up this mess. Move application of layer params into type-specific source classes
-        var layerParams = source.getLayerParameters();
-        var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
-        var visibilityChanged = targetVisibility !== olLayer.getVisibility();
-        var layersChanged = source.checkLayerParameterChanges(layerParams);
-
-        if (!visibilityChanged && !layersChanged) {
-            return false;
-        }
-
-        if (layersChanged && olLayer.map && olLayer.map.tileManager) {
-            olLayer.map.tileManager.clearTileQueue({
-                object: olLayer
-            });
-        }
-        if (!targetVisibility) {
-            olLayer.setVisibility(false);
-            olLayer.params.LAYERS = [];
-            olLayer.params.STYLES = [];
-            return false;
-        } else {
-            var newParams = {
-                LAYERS: layerParams.layers,
-                STYLES: layerParams.styles
-            };
-            if (visibilityChanged) {
-                // Prevent the browser from reusing the loaded image. This is almost equivalent
-                // to a forced redraw (c.f. olLayer.redraw(true)), but without the undesirable
-                // side effect of loading the layer twice on first activation.
-                // @see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Layer/HTTPRequest.js#L157
-                newParams['_OLSALT'] = Math.random();
-            }
-            // Nuking the back buffer prevents the layer from going visible with old layer combination
-            // before loading the new images.
-            olLayer.removeBackBuffer();
-            olLayer.createBackBuffer();
-            olLayer.mergeNewParams(newParams);
-            olLayer.setVisibility(true);
-            return true;
-        }
-    },
     /**
      * @param {Array|OpenLayers.Bounds|Object} boundsOrCoords
      */
