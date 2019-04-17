@@ -415,13 +415,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return null;
     },
-    resetSourceUrl: function(source, options) {
-        if (options.add) {
-            source.addParams(options.add);
-        } else if (options.remove) {
-            source.removeParams(Object.keys(options.remove));
-        }
-    },
     /**
      * Returns the current map's scale
      */

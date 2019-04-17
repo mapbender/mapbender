@@ -36,11 +36,11 @@
                 },
                 stop: function (event, ui) {
                     $.each(dimensionset.group, function (idx, item) {
-                        var sources = self.model.findSource({origId: item.split('-')[0]});
-                        if (sources.length > 0) {
+                        var source = self.model.getSourceById(item.split('-')[0]);
+                        if (source) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromPart(ui.value / 100);
-                            self.model.resetSourceUrl(sources[0], {'add': params});
+                            source.addParams(params);
                         }
                     });
                 }

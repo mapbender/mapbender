@@ -759,16 +759,13 @@
         },
         _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
-            var params = {};
-            params[dimension['__name']] = chkbox.attr('data-value');
-            if (chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {
-                    'add': params
-                });
-            } else if (params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {
-                    'remove': params
-                });
+            var paramName = dimension['__name'];
+            if (chkbox.is(':checked') && paramName) {
+                var params = {};
+                params[paramName] = chkbox.attr('data-value');
+                source.addParams(params);
+            } else if (paramName) {
+                source.removeParams([paramName]);
             }
             return true;
         },
