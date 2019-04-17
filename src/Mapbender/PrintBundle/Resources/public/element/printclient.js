@@ -172,7 +172,7 @@
             var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
             var scales = this.options.scales;
-            var currentScale = Math.round(this.map.map.olMap.getScale());
+            var currentScale = this.map.model.getCurrentScale();
             var selectValue;
 
             $.each(scales, function(idx, scale) {
@@ -289,7 +289,7 @@
                         }, {
                             context: {
                                 getPointRadius: function(feature) {
-                                    var mapScale = self.map.getModel().getScale();
+                                    var mapScale = self.map.getModel().getCurrentScale();
                                     var printScale = self._getPrintScale();
                                     // Make the point smaller for high ratios of mapScale / printScale
                                     // so it doesn't start to obscure the print rectangle.

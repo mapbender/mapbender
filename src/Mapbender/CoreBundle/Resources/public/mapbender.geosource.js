@@ -107,12 +107,11 @@ Mapbender.Geo.SourceHandler = {
     },
     /**
      * @param {Object} layer
-     * @param {number} [scale] current value fetched from Mapbender.Model if omitted
+     * @param {number} scale current value fetched from Mapbender.Model if omitted
      * @return {boolean}
      */
     isLayerInScale: function(layer, scale) {
-        var scale_ = scale || Mapbender.Model.getScale();
-        return Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
+        return Mapbender.Util.isInScale(scale, layer.options.minScale, layer.options.maxScale);
     },
     /**
      * @param {Object} layer

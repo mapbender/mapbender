@@ -360,39 +360,6 @@ getMapExtent: function () {
 },
 
 
-/** @todo (following methods): put the "default" dpi in a common place? */
-/**
- *
- * @param {number} dpi default this.map.options.dpi
- * @param {boolean} optRound Whether to round the scale or not.
- * @param {boolean} optScaleRating Whether to round the scale rating or not. K:X000 and M:X000000
- * @returns {number}
- */
-getScale: function (dpi, optRound, optScaleRating) {
-    var dpiNumber = dpi ? dpi : this.options.dpi;
-    var resolution = this.olMap.getView().getResolution();
-    var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
-    var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
-
-    if (optScaleRating){
-        if (scale >= 10 && scale <= 1000) {
-            scale = Math.round(scale/ 10) + "0";
-        } else if (scale >= 1000 && scale <= 9500) {
-            scale = Math.round(scale/ 100) + "00";
-        } else if(scale >= 9500 && scale <= 950000) {
-            scale = Math.round(scale/ 1000) + "000";
-        } else if (scale >= 950000) {
-            scale = Math.round(scale / 1000000) + "000000";
-        } else {
-            scale = Math.round(scale);
-        }
-    }
-
-    scale = typeof scale ? parseFloat(scale) : scale;
-
-    return scale;
-},
-
 /**
  *
  * @param {float} resolution

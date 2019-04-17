@@ -332,7 +332,8 @@ window.Mapbender.MapModelBase = (function() {
          * @param {boolean} fireSourceChangedEvent
          */
         _checkSource: function(source, redraw, fireSourceChangedEvent) {
-            var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, this.getScale());
+            var scale = this.getCurrentScale();
+            var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale);
             if (redraw) {
                 source.updateEngine();
             }

@@ -107,26 +107,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
 
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
-        // monkey-patch zoom interactions
-        (function(olMap) {
-            // need to monkey patch here in order to get next zoom in movestart event
-            // prevents duplicate loads of WMS where a layer is going out of scale
-            var setCenterOriginal = olMap.setCenter;
-            var zoomToOriginal = olMap.zoomTo;
-            olMap.setCenter = function(center, zoom) {
-                if (zoom !== null && typeof zoom !== 'undefined') {
-                    self.nextZoom = zoom;
-                }
-                setCenterOriginal.apply(this, arguments);
-            };
-            olMap.zoomTo = function(zoom, xy) {
-                if (zoom !== null && typeof zoom !== 'undefined') {
-                    self.nextZoom = zoom;
-                }
-                zoomToOriginal.apply(this, arguments);
-            };
-        })(this.olMap);
-
         this.setView(true);
         this.processUrlParams();
         if (this.mbMap.options.targetscale) {
@@ -148,14 +128,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         };
         var clickHandler = new OpenLayers.Handler.Click({}, {click: handlerFn}, clickHandlerOptions);
         clickHandler.activate();
-        olMap.events.register('movestart', null, function() {
-            self.sourceTree.map(function(source) {
-                self._checkSource(source, false, true);
-            });
-        });
         olMap.events.register('moveend', null, function() {
             self.sourceTree.map(function(source) {
-                self._checkSource(source, true, false);
+                self._checkSource(source, true, true);
             });
         });
     },
@@ -422,15 +397,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             }
         }
         return null;
-    },
-    /**
-     * Returns the current map's scale
-     */
-    getScale: function() {
-        if (this.nextZoom) {
-            return this.map.olMap.scales[this.nextZoom];
-        }
-        return Math.round(this.map.olMap.getScale());
     },
     /**
      * Enables the zoom selection box immediately without requiring a key combination (default: SHIFT)

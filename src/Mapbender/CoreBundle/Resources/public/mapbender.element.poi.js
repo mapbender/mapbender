@@ -117,7 +117,7 @@
 
             this.poi = {
                 point: coordinates.world.lon.toFixed(deci) + ',' + coordinates.world.lat.toFixed(deci),
-                scale: this.mbMap.model.getScale(),
+                scale: this.mbMap.model.getCurrentScale(),
                 srs: proj.projCode
             };
             this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
