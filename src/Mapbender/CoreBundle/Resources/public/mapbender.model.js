@@ -148,8 +148,16 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         };
         var clickHandler = new OpenLayers.Handler.Click({}, {click: handlerFn}, clickHandlerOptions);
         clickHandler.activate();
-        olMap.events.register('movestart', this, $.proxy(this._checkChanges, this));
-        olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
+        olMap.events.register('movestart', null, function() {
+            self.sourceTree.map(function(source) {
+                self._checkSource(source, false, true);
+            });
+        });
+        olMap.events.register('moveend', null, function() {
+            self.sourceTree.map(function(source) {
+                self._checkSource(source, true, false);
+            });
+        });
     },
     _onMapClick: function(event) {
         var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
@@ -455,13 +463,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             zoom: zoom,
             // scale: this.getCurrentScale()
             scale: scales[zoom]
-        });
-    },
-    _checkChanges: function(e) {
-        var isPreEvent = e.type === 'movestart';
-        var self = this;
-        $.each(self.sourceTree, function(idx, source) {
-            self._checkSource(source, !isPreEvent, isPreEvent);
         });
     },
     /**
@@ -954,7 +955,10 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 this._spliceLayers(source, olLayers);
             }
         }
-        this._checkChanges({type: 'not-really-an-event'});
+        var self = this;
+        self.sourceTree.map(function(source) {
+            self._checkSource(source, true, false);
+        });
     },
     getProjectionUnitsPerMeter: function(srsName) {
         var units = this.getProj(srsName).proj.units || 'dd';
