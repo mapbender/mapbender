@@ -55,6 +55,9 @@ window.Mapbender.MapModelOl4 = (function() {
         olMap.on('moveend', function() {
             var scales = self._getScales();
             var zoom = self.getCurrentZoomLevel();
+            self.sourceTree.map(function(source) {
+                self._checkSource(source, true);
+            });
             mbMap.element.trigger('mbmapzoomchanged', {
                 mbMap: mbMap,
                 zoom: zoom,
