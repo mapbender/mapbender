@@ -280,36 +280,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             return this.getProj(this._startProj);
         }
     },
-    getPointFeatureInfoUrl: function(source, x, y, maxCount) {
-        var layerNames = source.getFeatureInfoLayers().map(function(layer) {
-            return layer.options.name;
-        });
-        var engine = Mapbender.mapEngine;
-        var olLayer = source.getNativeLayer(0);
-        if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {
-            return false;
-        }
-        var control = new OpenLayers.Control.WMSGetFeatureInfo({
-            url: Mapbender.Util.removeProxy(olLayer.url),
-            layers: [olLayer],
-            queryVisible: true,
-            maxFeatures: maxCount || 100
-        });
-        control.map = olLayer.map;
-        var reqObj = control.buildWMSOptions(
-            Mapbender.Util.removeProxy(olLayer.url),
-            [olLayer],
-            {x: x, y: y},
-            olLayer.params.FORMAT
-        );
-        reqObj.params['LAYERS'] = layerNames;
-        reqObj.params['QUERY_LAYERS'] = layerNames;
-        reqObj.params['STYLES'] = [];
-        reqObj.params['EXCEPTIONS'] = source.configuration.options.exception_format;
-        reqObj.params['INFO_FORMAT'] = source.configuration.options.info_format || 'text/html';
-        var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
-        return reqUrl;
-    },
     /**
      * @param {string} srscode
      * @param {boolean} [strict] to throw errors (legacy default false)

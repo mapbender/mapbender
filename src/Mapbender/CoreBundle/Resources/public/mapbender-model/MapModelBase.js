@@ -263,6 +263,27 @@ window.Mapbender.MapModelBase = (function() {
             var srsName_ = srsName || this.getCurrentProjectionCode();
             return Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsName_);
         },
+        getPointFeatureInfoUrl: function(source, x, y, maxCount) {
+            var styles = [];
+            var layerNames = source.getFeatureInfoLayers().map(function(layer) {
+                styles.push('');
+                return layer.options.name;
+            });
+            var engine = Mapbender.mapEngine;
+            var olLayer = source.getNativeLayer(0);
+            if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {
+                return false;
+            }
+            var params = {
+                LAYERS: layerNames,
+                QUERY_LAYERS: layerNames,
+                STYLES: styles,
+                INFO_FORMAT: source.configuration.options.info_format || 'text/html',
+                EXCEPTIONS: source.configuration.options.exception_format,
+                FEATURE_COUNT: maxCount || 100
+            };
+            return engine.getPointFeatureInfoUrl(this.olMap, source, x, y, params);
+        },
         /**
          *
          * @param scales

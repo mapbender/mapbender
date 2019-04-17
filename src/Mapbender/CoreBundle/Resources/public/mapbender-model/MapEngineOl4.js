@@ -117,6 +117,18 @@ window.Mapbender.MapEngineOl4 = (function() {
                 layerCollection.remove(olLayer);
             }
         },
+        getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
+            var firstOlLayer = source.getNativeLayer(0);
+            /** @var {ol.source.ImageWMS|ol.source.TileWMS} nativeSource */
+            var nativeSource = firstOlLayer.getSource();
+            if (!nativeSource.getGetFeatureInfoUrl) {
+                return null;
+            }
+            var res = olMap.getView().getResolution();
+            var proj = olMap.getView().getProjection().getCode();
+            var coord = olMap.getCoordinateFromPixel([x, y]);
+            return nativeSource.getGetFeatureInfoUrl(coord, res, proj, params);
+        },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);

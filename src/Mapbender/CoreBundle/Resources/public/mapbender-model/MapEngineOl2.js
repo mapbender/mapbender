@@ -119,6 +119,25 @@ window.Mapbender.MapEngineOl2 = (function() {
                 }
             }
         },
+        getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
+            var firstOlLayer = source.getNativeLayer(0);
+            var control = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: null,
+                layers: [],
+                queryVisible: true,
+                maxFeatures: params.FEATURE_COUNT
+            });
+            control.map = olMap;
+            var reqObj = control.buildWMSOptions(
+                Mapbender.Util.removeProxy(source.configuration.options.url),
+                [firstOlLayer],
+                {x: x, y: y},
+                source.configuration.options.format
+            );
+            var params_ = $.extend({}, reqObj.params, params);
+            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(params_));
+            return reqUrl;
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {
