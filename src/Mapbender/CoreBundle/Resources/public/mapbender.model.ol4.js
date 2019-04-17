@@ -118,7 +118,7 @@ window.Mapbender.MapModelOl4 = (function() {
                 }
             }
         });
-        this._checkSource(sourceDef, true, false);
+        this._checkSource(sourceDef, false);
         return sourceDef;
     },
     /**

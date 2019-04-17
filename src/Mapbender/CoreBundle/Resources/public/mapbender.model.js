@@ -130,7 +130,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         clickHandler.activate();
         olMap.events.register('moveend', null, function() {
             self.sourceTree.map(function(source) {
-                self._checkSource(source, true, true);
+                self._checkSource(source, true);
             });
         });
     },
@@ -778,7 +778,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 }
             }
         });
-        this._checkSource(sourceDef, true, false);
+        this._checkSource(sourceDef, false);
         return sourceDef;
     },
     /**
@@ -923,7 +923,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         var self = this;
         self.sourceTree.map(function(source) {
-            self._checkSource(source, true, false);
+            self._checkSource(source, false);
         });
     },
     getProjectionUnitsPerMeter: function(srsName) {

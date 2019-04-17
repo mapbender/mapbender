@@ -135,7 +135,7 @@ window.Mapbender.MapModelBase = (function() {
         setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
             var source = this.getSourceById(sourceId);
             Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
-            this._checkSource(source, true, false);
+            this._checkSource(source, false);
             // @todo: rename this event; it's about layers within a source
             $(this.mbMap.element).trigger('mbmapsourcemoved', {
                 mbMap: this.mbMap,
@@ -217,7 +217,7 @@ window.Mapbender.MapModelBase = (function() {
          * @param {Object} source
          */
         updateSource: function(source) {
-            this._checkSource(source, true, false);
+            this._checkSource(source, false);
             $(this.mbMap.element).trigger('mbmapsourcechanged', {
                 mbMap: this.mbMap,
                 source: source
@@ -328,15 +328,12 @@ window.Mapbender.MapModelBase = (function() {
          * 1) updates the engine layer parameters and redraws
          * 2) fires a mbmapsourcechanged event
          * @param {Object} source
-         * @param {boolean} redraw
          * @param {boolean} fireSourceChangedEvent
          */
-        _checkSource: function(source, redraw, fireSourceChangedEvent) {
+        _checkSource: function(source, fireSourceChangedEvent) {
             var scale = this.getCurrentScale();
             var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale);
-            if (redraw) {
-                source.updateEngine();
-            }
+            source.updateEngine();
             if (fireSourceChangedEvent && changedStates) {
                 $(this.mbMap.element).trigger('mbmapsourcechanged', {
                     mbMap: this.mbMap,
@@ -421,7 +418,7 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
             if (removedLayerId) {
-                this._checkSource(source, true, false);
+                this._checkSource(source, false);
                 $(this.mbMap.element).trigger('mbmapsourcelayerremoved', {
                     layerId: removedLayerId,
                     source: source,
