@@ -160,6 +160,11 @@ window.Mapbender.MapModelOl4 = (function() {
             //olLayer.events.register("loadend", this, this._sourceLoadeEnd);
         }
     },
+    zoomToFullExtent: function() {
+        var currentSrsName = this.getCurrentProjectionCode();
+        var extent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, currentSrsName);
+        this.setExtent(extent);
+    },
     /**
      * @param {Array<number>} boundsOrCoords
      */
