@@ -334,8 +334,7 @@ window.Mapbender.MapModelBase = (function() {
         _checkSource: function(source, redraw, fireSourceChangedEvent) {
             var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, this.getScale());
             if (redraw) {
-                var layerParams = source.getLayerParameters();
-                this._resetSourceVisibility(source, layerParams);
+                this._resetSourceVisibility(source);
             }
             if (fireSourceChangedEvent && changedStates) {
                 $(this.mbMap.element).trigger('mbmapsourcechanged', {

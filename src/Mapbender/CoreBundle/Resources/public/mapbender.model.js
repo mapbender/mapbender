@@ -475,23 +475,19 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     /**
      * Check if OpenLayer layer need to be redraw
      *
-     * @TODO: infoLayers should be set outside of the function
-     *
      * @param {Object} source
-     * @param {Object} layerParams
-     * @param {Array<string>} layerParams.layers
-     * @param {Array<string>} layerParams.styles
      *
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(source, layerParams) {
-        var olLayer = this.getNativeLayer(source);
-        if (!olLayer || !olLayer.map) {
+    _resetSourceVisibility: function(source) {
+        var olLayer = source.getNativeLayer(0);
+        if (!olLayer) {
             return false;
         }
         // @todo: this is almost entirely WMS specific
         // Clean up this mess. Move application of layer params into type-specific source classes
+        var layerParams = source.getLayerParameters();
         var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
         var layersChanged = source.checkLayerParameterChanges(layerParams);
