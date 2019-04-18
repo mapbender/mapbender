@@ -103,11 +103,48 @@ window.Mapbender.MapModelOl4 = (function() {
             var olLayer = olLayers[i];
             layerCollection.insertAt(baseIndex + i, olLayer);
             olLayer.mbConfig = source;
-            // @todo; layer events
-            //olLayer.events.register("loadstart", this, this._sourceLoadStart);
-            //olLayer.events.register("tileerror", this, this._sourceLoadError);
-            //olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+            this._initLayerEvents(olLayer, source, i);
         }
+    },
+    _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
+        var mbMap = this.mbMap;
+        var nativeSource = olLayer.getSource();
+        var engine = Mapbender.mapEngine;
+        var tmp = {
+            pendingLoads: 0
+        };
+        nativeSource.on(["tileloadstart", "imageloadstart"], function() {
+            if (!tmp.pendingLoads) {
+                mbMap.element.trigger('mbmapsourceloadstart', {
+                    mbMap: mbMap,
+                    source: source
+                });
+            }
+            ++tmp.pendingLoads;
+        });
+        nativeSource.on(["tileloaderror", "imageloaderror"], function(data) {
+            tmp.pendingLoads = Math.max(0, tmp.pendingLoads - 1);
+            if (engine.getLayerVisibility(olLayer)) {
+                mbMap.element.trigger('mbmapsourceloaderror', {
+                    mbMap: mbMap,
+                    source: source,
+                    error: {
+                        // legacy event data; @todo: remove
+                        sourceId: source.origId,
+                        details: Mapbender.trans('mb.geosource.image_error.datails') // sic!
+                    }
+                });
+            }
+        });
+        nativeSource.on(["tileloadend", "imageloadend"], function() {
+            tmp.pendingLoads = Math.max(0, tmp.pendingLoads - 1);
+            if (!tmp.pendingLoads) {
+                mbMap.element.trigger('mbmapsourceloadend', {
+                    mbMap: mbMap,
+                    source: source
+                });
+            }
+        });
     },
     zoomToFullExtent: function() {
         var currentSrsName = this.getCurrentProjectionCode();
