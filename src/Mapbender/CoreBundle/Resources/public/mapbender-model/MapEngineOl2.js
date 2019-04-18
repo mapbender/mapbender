@@ -145,6 +145,11 @@ window.Mapbender.MapEngineOl2 = (function() {
                 }
             }
         },
+        destroyLayer: function(olLayer) {
+            olLayer.clearGrid();
+            olLayer.removeBackBuffer();
+            olLayer.destroy(false);
+        },
         getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
             var firstOlLayer = source.getNativeLayer(0);
             var control = new OpenLayers.Control.WMSGetFeatureInfo({

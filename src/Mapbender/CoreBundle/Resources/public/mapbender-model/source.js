@@ -61,9 +61,7 @@ window.Mapbender.Source = (function() {
         destroyLayers: function() {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
-                    olLayer.clearGrid();
-                    olLayer.removeBackBuffer();
-                    olLayer.destroy(false);
+                    Mapbender.mapEngine.destroyLayer(olLayer);
                 });
             }
             this.nativeLayers = [];

@@ -131,10 +131,13 @@ window.Mapbender.MapEngineOl4 = (function() {
         },
         removeLayers: function(olMap, olLayers) {
             var layerCollection = olMap.getLayers();
-            for (var i = 0; i <olLayers.length; ++i) {
+            for (var i = 0; i < olLayers.length; ++i) {
                 var olLayer = olLayers[i];
                 layerCollection.remove(olLayer);
             }
+        },
+        destroyLayer: function(olLayer) {
+            console.warn("Not implemented: MapEngineOl4.destroyLayer", olLayer);
         },
         getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
             var firstOlLayer = source.getNativeLayer(0);

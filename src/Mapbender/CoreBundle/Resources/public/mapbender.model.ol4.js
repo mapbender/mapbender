@@ -717,28 +717,37 @@ createTextStyle: function(options) {
     return new ol.style.Text(options);
 },
 
+    _changeLayerProjection: function(olLayer, newProj) {
+        var nativeSource = olLayer.getSource();
+        if (nativeSource) {
+            nativeSource.projection_ = newProj;
+        }
+    },
     /**
      * Update map view according to selected projection
      *
-     * @param {string} srsCode
+     * @param {string} srsNameFrom
+     * @param {string} srsNameTo
      */
     _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
-        var currentSrsCode = this.getCurrentProjectionCode();
+        var engine = Mapbender.mapEngine;
         var currentView = this.olMap.getView();
         var fromProj = ol.proj.get(srsNameFrom);
         var toProj = ol.proj.get(srsNameTo);
-        var i;
+        var i, j, source, olLayers;
         if (!fromProj || !fromProj.getUnits() || !toProj || !toProj.getUnits()) {
-            console.error("Missing / incomplete transformations (log order from / to)", [currentSrsCode, srsCode], [fromProj, toProj]);
+            console.error("Missing / incomplete transformations (log order from / to)", [srsNameFrom, srsNameTo], [fromProj, toProj]);
             throw new Error("Missing / incomplete transformations");
         }
         for (i = 0; i < this.sourceTree.length; ++i) {
-            var source = this.sourceTree[i];
-            for (var j = 0; j < source.nativeLayers.length; ++j) {
-                var olLayer = source.nativeLayers[j];
-                var nativeSource = olLayer.getSource();
-                if (nativeSource) {
-                    nativeSource.projection_ = toProj;
+            source = this.sourceTree[i];
+            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
+                Mapbender.mapEngine.removeLayers(this.olMap, source.getNativeLayers());
+                source.destroyLayers();
+            } else {
+                olLayers = source.getNativeLayers();
+                for (j = 0; j < olLayers.length; ++ j) {
+                    this._changeLayerProjection(olLayers[j], toProj);
                 }
             }
         }
@@ -772,6 +781,21 @@ createTextStyle: function(options) {
 
         var newView = new ol.View(newViewOptions);
         this.olMap.setView(newView);
+        for (i = 0; i < this.sourceTree.length; ++i) {
+            source = this.sourceTree[i];
+            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
+                olLayers = source.initializeLayers(srsNameTo);
+                for (j = 0; j < olLayers.length; ++j) {
+                    var olLayer = olLayers[j];
+                    engine.setLayerVisibility(olLayer, false);
+                }
+                this._spliceLayers(source, olLayers);
+            }
+        }
+        var self = this;
+        self.sourceTree.map(function(source) {
+            self._checkSource(source, false);
+        });
     },
 
 /**

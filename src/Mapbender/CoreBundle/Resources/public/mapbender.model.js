@@ -722,14 +722,14 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         Mapbender.MapModelBase.prototype.changeProjection.call(this, srsCode);
     },
     _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
+        var engine = Mapbender.mapEngine;
         var oldProj = this.getProj(srsNameFrom);
         var newProj = this.getProj(srsNameTo);
         var newMaxExtent = this._transformExtent(this.mapMaxExtent, this._configProj, newProj);
-        var i, j, olLayers, dynamicSources = [], source;
+        var i, j, olLayers, source;
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
-            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
-                dynamicSources.push(source);
+            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
                 source.destroyLayers();
             } else {
                 olLayers = source.getNativeLayers();
@@ -748,13 +748,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        for (i = 0; i < dynamicSources.length; ++i) {
-            source = dynamicSources[i];
-            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
-                olLayers = source.initializeLayers(newProj.projCode);
+        for (i = 0; i < this.sourceTree.length; ++i) {
+            source = this.sourceTree[i];
+            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
+                olLayers = source.initializeLayers(srsNameTo);
                 for (j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
-                    olLayer.setVisibility(false);
+                    engine.setLayerVisibility(olLayer, false);
                 }
                 this._spliceLayers(source, olLayers);
             }
