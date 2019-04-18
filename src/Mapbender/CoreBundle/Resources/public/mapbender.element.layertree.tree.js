@@ -450,8 +450,7 @@
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
             if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
                 this.loadStarted[sourceId] = false;
-                $sourceEl.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                    options.error.details);
+                $sourceEl.attr('data-state', 'error');
             }
         },
         _getNodeType: function(node, isroot) {

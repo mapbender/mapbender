@@ -127,12 +127,7 @@ window.Mapbender.MapModelOl4 = (function() {
             if (engine.getLayerVisibility(olLayer)) {
                 mbMap.element.trigger('mbmapsourceloaderror', {
                     mbMap: mbMap,
-                    source: source,
-                    error: {
-                        // legacy event data; @todo: remove
-                        sourceId: source.origId,
-                        details: Mapbender.trans('mb.geosource.image_error.datails') // sic!
-                    }
+                    source: source
                 });
             }
         });
