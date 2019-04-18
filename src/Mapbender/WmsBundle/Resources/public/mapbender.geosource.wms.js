@@ -157,17 +157,18 @@ window.Mapbender.WmsSource = (function() {
             }
             return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
         },
-        getMultiLayerPrintConfig: function(bounds, scale, projection) {
+        getMultiLayerPrintConfig: function(bounds, scale, srsName) {
             var olLayer = this.getNativeLayer(0);
             var baseUrl = Mapbender.Util.removeProxy(olLayer.getURL(bounds));
             var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = this.getExtendedLeafInfo(this, scale, bounds);
-            var units = projection.proj.units || 'degrees';
+            var engine = Mapbender.mapEngine;
+            var units = engine.getProjectionUnits(srsName);
             var resFromScale = function(scale) {
                 return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
             };
-            var changeAxis = this._isBboxFlipped(projection.projCode);
+            var changeAxis = this._isBboxFlipped(srsName);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     var layerParams = $.extend(OpenLayers.Util.upperCaseObject(baseParams), {

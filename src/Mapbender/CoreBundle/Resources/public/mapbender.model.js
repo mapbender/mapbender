@@ -869,7 +869,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             opacity: source.configuration.options.opacity
         };
         if (typeof source.getMultiLayerPrintConfig === 'function') {
-            var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, this.getCurrentProj());
+            var srsName = this.getCurrentProjectionCode();
+            var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, srsName);
             mlPrintConfigs.map(function(pc) {
                 dataOut.push($.extend({}, commonLayerData, pc));
             });

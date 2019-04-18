@@ -161,18 +161,18 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
             return [];
         },
-        getMultiLayerPrintConfig: function(bounds, scale, projection) {
-            var layerDef = this._selectCompatibleLayer(projection.projCode);
+        getMultiLayerPrintConfig: function(bounds, scale, srsName) {
+            var layerDef = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!fakeRootLayer.state.visibility || !layerDef) {
                 return [];
             }
-            var matrix = this._getMatrix(layerDef, scale, projection);
+            var matrix = this._getMatrix(layerDef, scale, srsName);
             return [
                 {
                     url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
                     matrix: $.extend({}, matrix),
-                    resolution: this._getMatrixResolution(matrix, projection.projCode)
+                    resolution: this._getMatrixResolution(matrix, srsName)
                 }
             ];
         },
@@ -233,17 +233,18 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         /**
          * @param {WmtsTmsBaseSourceLayer} layer
          * @param {number} scale
-         * @param {OpenLayers.Projection} projection
+         * @param {string} srsName
          * @return {WmtsTileMatrix}
          */
-        _getMatrix: function(layer, scale, projection) {
-            var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
+        _getMatrix: function(layer, scale, srsName) {
+            var units = Mapbender.mapEngine.getProjectionUnits(srsName);
+            var resolution = OpenLayers.Util.getResolutionFromScale(scale, units);
             var matrixSet = layer.getMatrixSet();
             var scaleDelta = Number.POSITIVE_INFINITY;
             var closestMatrix = null;
             for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
                 var matrix = matrixSet.tilematrices[i];
-                var matrixRes = this._getMatrixResolution(matrix, projection.projCode);
+                var matrixRes = this._getMatrixResolution(matrix, srsName);
                 var resRatio = matrixRes / resolution;
                 var matrixScaleDelta = Math.abs(resRatio - 1);
                 if (matrixScaleDelta < scaleDelta) {

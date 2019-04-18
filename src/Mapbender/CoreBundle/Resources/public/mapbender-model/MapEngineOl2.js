@@ -99,9 +99,12 @@ window.Mapbender.MapEngineOl2 = (function() {
             var projDefaults = OpenLayers.Projection.defaults[srsName];
             return !!(projDefaults && projDefaults.yx);
         },
-        getProjectionUnitsPerMeter: function(srsName) {
+        getProjectionUnits: function(srsName) {
             var proj = new OpenLayers.Projection(srsName);
-            var units = proj.proj.units || 'dd';
+            return proj.proj.units || 'dd';
+        },
+        getProjectionUnitsPerMeter: function(srsName) {
+            var units = this.getProjectionUnits(srsName);
             if (units === 'm' || units === 'Meter') {
                 return 1.0;
             } else {
