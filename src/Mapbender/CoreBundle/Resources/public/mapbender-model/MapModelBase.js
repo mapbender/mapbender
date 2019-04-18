@@ -493,6 +493,71 @@ window.Mapbender.MapModelBase = (function() {
                 });
             });
         },
+        /**
+         * Bring the sources identified by the given ids into the given order.
+         * All other sources will be left alone!
+         *
+         * @param {string[]} newIdOrder
+         */
+        reorderSources: function(newIdOrder) {
+            var self = this, olMap = this.olMap, engine = Mapbender.mapEngine;
+            var i;
+
+            // Collect current positions used by the layers to be reordered
+            // position := array index in olMap.layers
+            // The collected positions will be reused / redistributed to the affected
+            // layers, while all other layers stay in their current slots.
+            var layersToMove = [];
+            var currentLayerArray = engine.getLayerArray(olMap);
+            var oldIndexes = [];
+            var olLayerIdsToMove = {};
+            for (i = 0; i < newIdOrder.length; ++i) {
+                var source = this.getSourceById(newIdOrder[i]);
+                source && source.getNativeLayers().map(function(olLayer) {
+                    layersToMove.push(olLayer);
+                    oldIndexes.push(currentLayerArray.indexOf(olLayer));
+                    var layerUid = engine.getUniqueLayerId(olLayer);
+                    olLayerIdsToMove[layerUid] = true;
+                });
+            }
+            oldIndexes.sort(function(a, b) {
+                // sort numerically (default sort performs string comparison)
+                return a - b;
+            });
+
+            var unmovedLayers = currentLayerArray.filter(function(olLayer) {
+                var layerUid = engine.getUniqueLayerId(olLayer);
+                return !olLayerIdsToMove[layerUid];
+            });
+
+            // rebuild the layer list, mixing in unmoving layers with reordered layers
+            var newLayers = [];
+            var unmovedIndex = 0;
+            for (i = 0; i < oldIndexes.length; ++i) {
+                var nextIndex = oldIndexes[i];
+                while (nextIndex > newLayers.length) {
+                    newLayers.push(unmovedLayers[unmovedIndex]);
+                    ++unmovedIndex;
+                }
+                newLayers.push(layersToMove[i]);
+            }
+            while (unmovedIndex < unmovedLayers.length) {
+                newLayers.push(unmovedLayers[unmovedIndex]);
+                ++unmovedIndex;
+            }
+            // set new layer list, let OpenLayers reassign z indexes in list order
+            engine.replaceLayers(olMap, newLayers);
+            // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
+            // layer order.
+            this.sourceTree.sort(function(a, b) {
+                var indexA = newLayers.indexOf(self.getNativeLayer(a));
+                var indexB = newLayers.indexOf(self.getNativeLayer(b));
+                return indexA - indexB;
+            });
+            this.mbMap.element.trigger('mbmapsourcesreordered', {
+                mbMap: this.mbMap
+            });
+        },
         changeProjection: function(srsName) {
             var srsNameBefore = this.getCurrentProjectionCode();
             if (srsNameBefore === srsName) {

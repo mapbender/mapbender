@@ -140,6 +140,15 @@ window.Mapbender.MapEngineOl4 = (function() {
             var coord = olMap.getCoordinateFromPixel([x, y]);
             return nativeSource.getGetFeatureInfoUrl(coord, res, proj, params);
         },
+        getLayerArray: function(olMap) {
+            return olMap.getLayers().getArray();
+        },
+        getUniqueLayerId: function(olLayer) {
+            return olLayer.ol_uid;
+        },
+        replaceLayers: function(olMap, nativeLayerArray) {
+            olMap.getLayerGroup().setLayers(new ol.Collection(nativeLayerArray, {unique: true}));
+        },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);

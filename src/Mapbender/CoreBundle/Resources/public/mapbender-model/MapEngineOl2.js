@@ -152,6 +152,16 @@ window.Mapbender.MapEngineOl2 = (function() {
             var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(params_));
             return reqUrl;
         },
+        getLayerArray: function(olMap) {
+            return olMap.layers;
+        },
+        getUniqueLayerId: function(olLayer) {
+            return olLayer.id;
+        },
+        replaceLayers: function(olMap, nativeLayerArray) {
+            olMap.layers = nativeLayerArray;
+            olMap.resetLayersZIndex();
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {
