@@ -12,7 +12,6 @@ window.Mapbender.WmtsSource = (function() {
             Object.assign(options, {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
-                name: compatibleLayer.options.title,
                 matrixSet: matrixSet.identifier,
                 matrixIds: matrixSet.tilematrices.map(function(matrix) {
                     if (matrix.topLeftCorner) {

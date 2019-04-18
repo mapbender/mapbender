@@ -112,7 +112,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
-                label: layer.options.title,
+                name: layer.options.title,
                 url: layer.options.tileUrls,
                 format: layer.options.format,
                 style: layer.options.style,
