@@ -732,56 +732,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * @param {Mapbender.Source|Object} sourceOrSourceDef
-     * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
-     * @returns {object} sourceDef same ref, potentially modified
-     */
-    addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
-        var sourceDef;
-        if (sourceOrSourceDef instanceof Mapbender.Source) {
-            sourceDef = sourceOrSourceDef;
-        } else {
-            sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
-        }
-        if (mangleIds) {
-            sourceDef.id = this.generateSourceId();
-            if (typeof sourceDef.origId === 'undefined' || sourceDef.origId === null) {
-                sourceDef.origId = sourceDef.id;
-            }
-            sourceDef.rewriteLayerIds();
-        }
-
-        if (!this.getSourcePos(sourceDef)) {
-            this.sourceTree.push(sourceDef);
-        }
-        var projCode = this.getCurrentProjectionCode();
-
-        sourceDef.mqlid = this.map.trackSource(sourceDef).id;
-        var olLayers = sourceDef.initializeLayers(projCode);
-        for (var i = 0; i < olLayers.length; ++i) {
-            var olLayer = olLayers[i];
-            olLayer.setVisibility(false);
-        }
-        this._spliceLayers(sourceDef, olLayers);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceAdded',
-            value: {
-                added: {
-                    source: sourceDef,
-                    // legacy: no known consumer evaluates these props,
-                    // but even if, they've historically been wrong anyway
-                    // was: "before": always last source previously in list, even though
-                    // the new source was actually added *after* that
-                    before: null,
-                    after: null
-                }
-            }
-        });
-        this._checkSource(sourceDef, false);
-        return sourceDef;
-    },
-    /**
      *
      */
     removeSources: function(keepSources) {
