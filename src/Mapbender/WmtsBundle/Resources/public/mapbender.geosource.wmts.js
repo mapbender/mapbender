@@ -7,6 +7,9 @@ window.Mapbender.WmtsSource = (function() {
     $.extend(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
+            if (Mapbender.mapEngine.code === 'ol4') {
+                return this._ol4LayerFactory(compatibleLayer, srsName);
+            }
             var matrixSet = compatibleLayer.getMatrixSet();
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
@@ -25,6 +28,33 @@ window.Mapbender.WmtsSource = (function() {
             });
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
+        },
+        _ol4LayerFactory: function(layer, srsName) {
+            var matrixSet = layer.getMatrixSet();
+            var self = this;
+            var gridOpts = {
+                origin: matrixSet.origin,
+                resolutions: matrixSet.tilematrices.map(function(tileMatrix) {
+                    return self._getMatrixResolution(tileMatrix, srsName);
+                }),
+                matrixIds: matrixSet.tilematrices.map(function(matrix) {
+                    return matrix.identifier;
+                })
+            };
+            var sourceOpts = {
+                version: this.configuration.version,
+                requestEncoding: 'REST',
+                urls: layer.options.tileUrls,
+                format: layer.options.format,
+                style: layer.options.style,
+                projection: srsName,
+                tileGrid: new ol.tilegrid.WMTS(gridOpts)
+            };
+            var layerOpts = {
+                opacity: this.configuration.options.opacity,
+                source: new ol.source.WMTS(sourceOpts)
+            };
+            return new ol.layer.Tile(layerOpts);
         },
         /**
          * @param {WmtsTileMatrix} tileMatrix
