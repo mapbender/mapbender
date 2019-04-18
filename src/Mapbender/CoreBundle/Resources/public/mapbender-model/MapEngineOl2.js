@@ -100,6 +100,16 @@ window.Mapbender.MapEngineOl2 = (function() {
             var projDefaults = OpenLayers.Projection.defaults[srsName];
             return !!(projDefaults && projDefaults.yx);
         },
+        getProjectionUnitsPerMeter: function(srsName) {
+            var proj = new OpenLayers.Projection(srsName);
+            var units = proj.proj.units || 'dd';
+            if (units === 'm' || units === 'Meter') {
+                return 1.0;
+            } else {
+                var metersPerUnit = OpenLayers.INCHES_PER_UNIT[units] * OpenLayers.METERS_PER_INCH;
+                return 1.0 / metersPerUnit;
+            }
+        },
         boundsFromArray: function(values) {
             return OpenLayers.Bounds.fromArray(values);
         },

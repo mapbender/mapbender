@@ -541,7 +541,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         var bounds = feature.geometry.getBounds().clone();
         if (options && options.buffer) {
-            var unitsPerMeter = this.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var engine = Mapbender.mapEngine;
+            var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
             var bufferNative = options.buffer * unitsPerMeter;
             bounds.left -= bufferNative;
             bounds.right += bufferNative;
@@ -762,15 +763,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         self.sourceTree.map(function(source) {
             self._checkSource(source, false);
         });
-    },
-    getProjectionUnitsPerMeter: function(srsName) {
-        var units = this.getProj(srsName).proj.units || 'dd';
-        if (units === 'm' || units === 'Meter') {
-            return 1.0;
-        } else {
-            var metersPerUnit = OpenLayers.INCHES_PER_UNIT[units] * OpenLayers.METERS_PER_INCH;
-            return 1.0 / metersPerUnit;
-        }
     },
     /**
      * Injects native layers into the map at the "natural" position for the source.

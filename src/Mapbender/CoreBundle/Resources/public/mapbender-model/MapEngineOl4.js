@@ -98,6 +98,10 @@ window.Mapbender.MapEngineOl4 = (function() {
             var axisOrientation = projection && projection.getAxisOrientation();
             return !!(axisOrientation && axisOrientation.substr(0, 2) === 'ne');
         },
+        getProjectionUnitsPerMeter: function(srsName) {
+            var proj = ol.proj.get(srsName);
+            return 1.0 / proj.getMetersPerUnit();
+        },
         boundsFromArray: function(values) {
             var bounds = values.slice();
             Object.defineProperty(bounds, 'left', {
