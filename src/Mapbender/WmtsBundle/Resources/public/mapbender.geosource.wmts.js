@@ -44,7 +44,9 @@ window.Mapbender.WmtsSource = (function() {
             var sourceOpts = {
                 version: this.configuration.version,
                 requestEncoding: 'REST',
-                urls: layer.options.tileUrls,
+                urls: layer.options.tileUrls.map(function(tileUrlTemplate) {
+                    return tileUrlTemplate.replace('{TileMatrixSet}', matrixSet.identifier);
+                }),
                 format: layer.options.format,
                 style: layer.options.style,
                 projection: srsName,
