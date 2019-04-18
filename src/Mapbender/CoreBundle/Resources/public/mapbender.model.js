@@ -626,55 +626,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return zoom;
     },
     /**
-     * @param {Object} e
-     * @param {OpenLayers.Layer} e.object
-     */
-    _sourceLoadStart: function(e) {
-        var source = this.getMbConfig(e.object);
-        this.mbMap.fireModelEvent({
-            name: 'sourceloadstart',
-            value: {
-                source: source
-            }
-        });
-    },
-    /**
-     * @param {Object} e
-     * @param {OpenLayers.Layer} e.object
-     */
-    _sourceLoadeEnd: function(e) {
-        var source = this.getMbConfig(e.object);
-        this.mbMap.fireModelEvent({
-            name: 'sourceloadend',
-            value: {
-                source: source
-            }
-        });
-    },
-    /**
-     * @param {Object} e
-     * @param {OpenLayers.Tile} e.tile
-     */
-    _sourceLoadError: function(e) {
-        if (e.tile.layer && e.tile.layer.getVisibility()) {
-            var source = this.getMbConfig(e.tile.layer);
-            if (!source) {
-                console.error("Source load error, but source unknown", e);
-                return;
-            }
-            this.mbMap.fireModelEvent({
-                name: 'sourceloaderror',
-                value: {
-                    source: source,
-                    error: {
-                        sourceId: source.origId,
-                        details: Mapbender.trans('mb.geosource.image_error.datails') // sic!
-                    }
-                }
-            });
-        }
-    },
-    /**
      * @param {Array<OpenLayers.Feature>} features
      * @param {Object} options
      * @property {boolean} [options.clearFirst]
@@ -851,10 +802,37 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             olMap.addLayer(olLayer);
             olMap.setLayerIndex(olLayer, baseIndex + i);
             olLayer.mbConfig = source;
-            olLayer.events.register("loadstart", this, this._sourceLoadStart);
-            olLayer.events.register("tileerror", this, this._sourceLoadError);
-            olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+            this._initLayerEvents(olLayer, source, i);
         }
+    },
+    _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
+        var mbMap = this.mbMap;
+        var engine = Mapbender.mapEngine;
+        olLayer.events.register("loadstart", null, function() {
+            mbMap.element.trigger('mbmapsourceloadstart', {
+                mbMap: mbMap,
+                source: source
+            });
+        });
+        olLayer.events.register("tileerror", null, function() {
+            if (engine.getLayerVisibility(olLayer)) {
+                mbMap.element.trigger('mbmapsourceloaderror', {
+                    mbMap: mbMap,
+                    source: source,
+                    error: {
+                        // legacy event data; @todo: remove
+                        sourceId: source.origId,
+                        details: Mapbender.trans('mb.geosource.image_error.datails') // sic!
+                    }
+                });
+            }
+        });
+        olLayer.events.register("loadend", null, function() {
+            mbMap.element.trigger('mbmapsourceloadend', {
+                mbMap: mbMap,
+                source: source
+            });
+        });
     },
     /**
      * @param {*} anything
