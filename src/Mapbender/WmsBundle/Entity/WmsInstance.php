@@ -382,14 +382,12 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Set visible
-     *
      * @param boolean $visible
      * @return WmsInstance
+     * @deprecated no function, use root layer setSelected
      */
     public function setVisible($visible)
     {
-        $this->visible = $visible;
         return $this;
     }
 
@@ -397,10 +395,11 @@ class WmsInstance extends SourceInstance
      * Get visible
      *
      * @return boolean
+     * @deprecated
      */
     public function getVisible()
     {
-        return $this->visible;
+        return true;
     }
 
     /**

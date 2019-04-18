@@ -42,7 +42,6 @@ window.Mapbender.MapEngineOl2 = (function() {
                 var opts = {
                     isBaseLayer: false,
                     opacity: source.configuration.options.opacity,
-                    visibility: source.configuration.options.visible,
                     singleTile: !source.configuration.options.tiled,
                     noMagic: true,
                     minScale: rootLayer.minScale,

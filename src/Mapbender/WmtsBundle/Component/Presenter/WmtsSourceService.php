@@ -49,7 +49,6 @@ class WmtsSourceService extends SourceService
     {
         return array(
             "proxy" => $sourceInstance->getProxy(),
-            "visible" => $sourceInstance->getVisible(),
             "opacity" => $sourceInstance->getOpacity() / 100,
         );
     }

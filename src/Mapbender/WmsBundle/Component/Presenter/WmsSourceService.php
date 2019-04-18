@@ -40,7 +40,6 @@ class WmsSourceService extends SourceService
             'url' => $this->getUrlOption($sourceInstance),
             'opacity' => ($sourceInstance->getOpacity() / 100),
             'proxy' => $sourceInstance->getProxy(),
-            'visible' => $sourceInstance->getVisible(),
             'version' => $sourceInstance->getSource()->getVersion(),
             'format' => $sourceInstance->getFormat(),
             'info_format' => $sourceInstance->getInfoformat(),

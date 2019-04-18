@@ -374,14 +374,12 @@ class WmtsInstance extends SourceInstance
 //    }
 
     /**
-     * Set visible
-     *
      * @param boolean $visible
      * @return WmtsInstance
+     * @deprecated no function
      */
     public function setVisible($visible)
     {
-        $this->visible = $visible;
         return $this;
     }
 
@@ -392,7 +390,7 @@ class WmtsInstance extends SourceInstance
      */
     public function getVisible()
     {
-        return $this->visible;
+        return true;
     }
 
     /**

@@ -51,7 +51,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setWeight(!isset($configuration['weight']) ? -1 : $configuration['weight'])
             ->setLayerset(!isset($configuration['layerset']) ? null : $configuration['layerset'])
             ->setProxy(!isset($configuration['proxy']) ? false : $configuration['proxy'])
-            ->setVisible(!isset($configuration['visible']) ? true : $configuration['visible'])
             ->setFormat(!isset($configuration['format']) ? 'image/png' : $configuration['format'])
             ->setInfoformat(!isset($configuration['info_format']) ? 'text/html' : $configuration['info_format'])
             ->setTransparency(!isset($configuration['transparent']) ? true : $configuration['transparent'])

@@ -78,8 +78,6 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'required' => true))
             ->add('basesource', 'checkbox', array(
                 'required' => false))
-            ->add('visible', 'checkbox', array(
-                'required' => false))
             ->add('proxy', 'checkbox', array(
                 'required' => false))
             ->add('opacity', 'choice', array(
