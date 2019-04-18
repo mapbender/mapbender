@@ -39,8 +39,10 @@ window.Mapbender.WmtsSource = (function() {
                 }),
                 matrixIds: matrixSet.tilematrices.map(function(matrix) {
                     return matrix.identifier;
-                })
+                }),
+                extent: layer.getBounds(srsName, true)
             };
+
             var sourceOpts = {
                 version: this.configuration.version,
                 requestEncoding: 'REST',
