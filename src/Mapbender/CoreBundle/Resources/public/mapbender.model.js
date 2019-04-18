@@ -800,37 +800,38 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
     reorderSources: function(newIdOrder) {
         var self = this;
+        var i;
         var olMap = this.olMap;
 
-        var sourceObjs = (newIdOrder || []).map(function(id) {
-            return self.getSourceById(id);
-        });
         // Collect current positions used by the layers to be reordered
         // position := array index in olMap.layers
         // The collected positions will be reused / redistributed to the affected
         // layers, while all other layers stay in their current slots.
         var layersToMove = [];
+        var currentLayerArray = this.olMap.layers;
         var oldIndexes = [];
         var olLayerIdsToMove = {};
-        _.forEach(sourceObjs, function(sourceObj) {
-            var olLayer = self.getNativeLayer(sourceObj);
-            layersToMove.push(olLayer);
-            oldIndexes.push(olMap.getLayerIndex(olLayer));
-            olLayerIdsToMove[olLayer.id] = true;
-        });
+        for (i = 0; i < newIdOrder.length; ++i) {
+            var source = this.getSourceById(newIdOrder[i]);
+            source && source.getNativeLayers().map(function(olLayer) {
+                layersToMove.push(olLayer);
+                oldIndexes.push(currentLayerArray.indexOf(olLayer));
+                olLayerIdsToMove[olLayer.id] = true;
+            });
+        }
         oldIndexes.sort(function(a, b) {
             // sort numerically (default sort performs string comparison)
             return a - b;
         });
 
-        var unmovedLayers = olMap.layers.filter(function(olLayer) {
+        var unmovedLayers = currentLayerArray.filter(function(olLayer) {
             return !olLayerIdsToMove[olLayer.id];
         });
 
         // rebuild the layer list, mixing in unmoving layers with reordered layers
         var newLayers = [];
         var unmovedIndex = 0;
-        for (var i = 0; i < oldIndexes.length; ++i) {
+        for (i = 0; i < oldIndexes.length; ++i) {
             var nextIndex = oldIndexes[i];
             while (nextIndex > newLayers.length) {
                 newLayers.push(unmovedLayers[unmovedIndex]);
@@ -848,8 +849,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
         // layer order.
         this.sourceTree.sort(function(a, b) {
-            var indexA = olMap.getLayerIndex(self.getNativeLayer(a));
-            var indexB = olMap.getLayerIndex(self.getNativeLayer(b));
+            var indexA = newLayers.indexOf(self.getNativeLayer(a));
+            var indexB = newLayers.indexOf(self.getNativeLayer(b));
             return indexA - indexB;
         });
         this.mbMap.fireModelEvent({
