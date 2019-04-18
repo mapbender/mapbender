@@ -96,16 +96,12 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             return [olLayer];
         },
         updateEngine: function() {
+            var fakeRootLayer = this.configuration.children[0];
             var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
             var engine = Mapbender.mapEngine;
-            var targetVisibility = !!layerIdent;
+            var targetVisibility = !!layerIdent && fakeRootLayer.state.visibility;
             var olLayer = this.getNativeLayer(0);
             if (!olLayer) {
-                return;
-            }
-            var currentVisibility = !!(olLayer && engine.getLayerVisibility(olLayer));
-            var visibilityChanged = targetVisibility !== currentVisibility;
-            if (!visibilityChanged) {
                 return;
             }
             engine.setLayerVisibility(olLayer, targetVisibility);
