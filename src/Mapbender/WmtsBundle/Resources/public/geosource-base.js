@@ -106,7 +106,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             engine.setLayerVisibility(olLayer, targetVisibility);
         },
-        _getNativeLayerOptions: function(matrixSet, layer, srsName) {
+        _getNativeLayerBaseOptions: function(layer, srsName) {
+            var matrixSet = layer.getMatrixSet();
             var self = this;
             var baseOptions = {
                 isBaseLayer: false,

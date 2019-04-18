@@ -8,29 +8,24 @@ window.Mapbender.WmtsSource = (function() {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
             var matrixSet = compatibleLayer.getMatrixSet();
-            var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, srsName), {
+            var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
+            Object.assign(options, {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
-                name: compatibleLayer.options.title
+                name: compatibleLayer.options.title,
+                matrixSet: matrixSet.identifier,
+                matrixIds: matrixSet.tilematrices.map(function(matrix) {
+                    if (matrix.topLeftCorner) {
+                        return $.extend({}, matrix, {
+                            topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
+                        });
+                    } else {
+                        return $.extend({}, matrix);
+                    }
+                })
             });
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
-        },
-        _getNativeLayerOptions: function(matrixSet, compatibleLayer, srsName) {
-            var parentValues = Mapbender.WmtsTmsBaseSource.prototype._getNativeLayerOptions.apply(this, arguments);
-            var options = $.extend(parentValues, {
-                matrixSet: matrixSet.identifier
-            });
-            options.matrixIds = matrixSet.tilematrices.map(function(matrix) {
-                if (matrix.topLeftCorner) {
-                    return $.extend({}, matrix, {
-                        topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
-                    });
-                } else {
-                    return $.extend({}, matrix);
-                }
-            });
-            return options;
         },
         /**
          * @param {WmtsTileMatrix} tileMatrix
