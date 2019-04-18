@@ -11,10 +11,16 @@ window.Mapbender.WmsSourceLayer = (function() {
 window.Mapbender.WmsSource = (function() {
     function WmsSource(definition) {
         Mapbender.Source.apply(this, arguments);
-        this.customParams = {};
+        var customParams = {};
         if (definition.customParams) {
             $.extend(this.customParams, definition.customParams);
         }
+        (definition.configuration.options.dimensions || []).map(function(dimensionConfig) {
+            if (dimensionConfig.default) {
+                customParams[dimensionConfig.__name] = dimensionConfig.default;
+            }
+        });
+        this.customParams = customParams;
     }
     WmsSource.prototype = Object.create(Mapbender.Source.prototype);
     WmsSource.prototype.constructor = WmsSource;

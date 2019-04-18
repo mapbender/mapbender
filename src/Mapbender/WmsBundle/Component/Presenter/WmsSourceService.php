@@ -118,15 +118,9 @@ class WmsSourceService extends SourceService
     public function getUrlOption(WmsInstance $sourceInstance)
     {
         $url = $sourceInstance->getSource()->getGetMap()->getHttpGet();
-        $params = array();
-        foreach ($sourceInstance->getDimensions() as $dimension) {
-            if ($dimension->getActive() && $dimension->getDefault()) {
-                $params[$dimension->getParameterName()] = $dimension->getDefault();
-            }
-        }
         $userToken = $this->container->get('security.token_storage')->getToken();
         $vsHandler = new VendorSpecificHandler();
-        $params = array_replace($params, $vsHandler->getPublicParams($sourceInstance, $userToken));
+        $params = $vsHandler->getPublicParams($sourceInstance, $userToken);
         return UrlUtil::validateUrl($url, $params);
     }
 
