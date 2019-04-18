@@ -36,7 +36,7 @@
             }
         },
         _onSrsChanged: function(event, data) {
-            this.$select.val(data.to.projCode);
+            this.$select.val(data.to);
             if (initDropdown) {
                 initDropdown.call(this.$select.parent());
             }
