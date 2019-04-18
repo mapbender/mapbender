@@ -11,26 +11,17 @@ window.Mapbender.WmtsSource = (function() {
             var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, srsName), {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
-                style: compatibleLayer.options.style,
-                name: compatibleLayer.options.title,
-                url: compatibleLayer.options.tileUrls,
-                format: compatibleLayer.options.format
+                name: compatibleLayer.options.title
             });
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
         },
         _getNativeLayerOptions: function(matrixSet, compatibleLayer, srsName) {
             var parentValues = Mapbender.WmtsTmsBaseSource.prototype._getNativeLayerOptions.apply(this, arguments);
-            var matrixOptions = this._getMatrixOptions(matrixSet);
-            return $.extend(parentValues, matrixOptions);
-        },
-        /**
-         * @param {WmtsTileMatrixSet} matrixSet
-         * @return {{matrixSet: string, matrixIds: any[]}}
-         * @private
-         */
-        _getMatrixOptions: function(matrixSet) {
-            var matrixIds = matrixSet.tilematrices.map(function(matrix) {
+            var options = $.extend(parentValues, {
+                matrixSet: matrixSet.identifier
+            });
+            options.matrixIds = matrixSet.tilematrices.map(function(matrix) {
                 if (matrix.topLeftCorner) {
                     return $.extend({}, matrix, {
                         topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
@@ -39,10 +30,7 @@ window.Mapbender.WmtsSource = (function() {
                     return $.extend({}, matrix);
                 }
             });
-            return {
-                matrixSet: matrixSet.identifier,
-                matrixIds: matrixIds
-            };
+            return options;
         },
         /**
          * @param {WmtsTileMatrix} tileMatrix

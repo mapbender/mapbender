@@ -13,22 +13,12 @@ window.Mapbender.TmsSource = (function() {
         },
         _getNativeLayerOptions: function(matrixSet, compatibleLayer, srsName) {
             var parentValues = Mapbender.WmtsTmsBaseSource.prototype._getNativeLayerOptions.apply(this, arguments);
-            var matrixOptions = this._getMatrixOptions(matrixSet);
-            return $.extend(parentValues, matrixOptions, {
-                style: compatibleLayer.options.style,
+            var options = $.extend(parentValues, {
                 type: compatibleLayer.options.format.split('/').pop(),
                 layername: compatibleLayer.options.identifier,
                 serviceVersion: this.configuration.version,
                 tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1])
             });
-        },
-        /**
-         * @param {WmtsTileMatrixSet} matrixSet
-         */
-        _getMatrixOptions: function(matrixSet) {
-            var options = {
-                tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1])
-            };
             if (matrixSet.origin && matrixSet.origin.length) {
                 options.tileOrigin = new OpenLayers.LonLat(matrixSet.origin[0], matrixSet.origin[1]);
             }

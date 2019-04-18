@@ -114,6 +114,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 label: layer.options.title,
                 url: layer.options.tileUrls,
                 format: layer.options.format,
+                style: layer.options.style,
                 serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                     return self._getMatrixResolution(tileMatrix, srsName);
                 })
