@@ -13,104 +13,50 @@
         autocompleteModel: null,
         popup: null,
         mbMap: null,
-        highlightLayerOwner: 'Search Highlight',
-        highlightLayerId: null,
         defaultStyle: {
-            fill : {
-                color : 'rgba(255,0,0,0.3)'
-            },
+            radius: 5,
+            color: 'rgba(255,0,0,0.8)',
             stroke: {
                 color: 'rgba(255,0,0,1)',
                 width: 2
-            },
-            circle: {
-                radius: 5,
-                color: 'rgba(255,0,0,0.3)',
-                stroke: {
-                    color: 'rgba(255,0,0,1)',
-                    width: 2
-                }
-            },
-            text: {
-                font: '13px Calibri,sans-serif',
-                fill: {
-                    color: 'rgba(255,0,0,1)'
-                },
-                stroke: {
-                    color: 'rgba(255,255,255,1)',
-                    width: 1
-                },
-                offsetY: -15
-
             }
         },
         selectStyle: {
-            fill : {
-                color : 'rgba(255,170,0,0.3)'
-            },
+            radius: 5,
+            color: 'rgba(255,170,0,0.8)',
             stroke: {
                 color: 'rgba(255,170,0,1)',
                 width: 2
-            },
-            circle: {
-                radius: 5,
-                color: 'rgba(255,170,0,0.3)',
-                stroke: {
-                    color: 'rgba(255,170,0,1)',
-                    width: 2
-                }
-            },
-            text: {
-                font: '12px Calibri,sans-serif',
-                fill: {
-                    color: 'rgba(255,170,0,1)'
-                },
-                stroke: {
-                    color: 'rgba(255,255,255,1)',
-                    width: 2
-                },
-                offsetY: -15
             }
         },
         temporaryStyle: {
-            fill : {
-                color : 'rgba(255,170,0,0.3)'
-            },
+            radius: 5,
+            color: 'rgba(128,255,0,0.8)',
             stroke: {
                 color: 'rgba(255,170,0,1)',
                 width: 2
-            },
-            circle: {
-                radius: 5,
-                color: 'rgba(255,170,0,0.3)',
-                stroke: {
-                    color: 'rgba(255,170,0,1)',
-                    width: 2
-                }
             }
         },
 
-        /**
-         * Widget creator
-         */
         _create: function(){
-            var widget = this;
-            var options = widget.options;
-
-            if(!Mapbender.checkTarget("mbSearchRouter", options.target)){
-                return;
-            }
-            Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
-            widget.callbackUrl = Mapbender.configuration.application.urls.element + '/' + widget.element.attr('id') + '/';
+            var self = this;
+            this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbSearchRouter", self.options.target);
+            });
         },
 
         /**
          * Remove last search results
          */
         removeLastResults: function(){
-            var widget = this;
-            widget.searchModel.reset();
-            this.mbMap.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
+            this.searchModel.reset();
+            if (this.highlightLayer) {
+                this.mbMap.getModel().clearVectorLayer(this.highlightLayer);
+            }
             this.currentFeature = null;
         },
 
@@ -118,10 +64,9 @@
             var widget = this;
             var element = widget.element;
             var options = widget.options;
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
 
             var searchModelAttributes = {
-                srs: this.mbMap.getModel().getCurrentProj().projCode
+                srs: this.mbMap.getModel().getCurrentProjectionCode()
             };
             this.searchModel = new Mapbender.SearchModel(searchModelAttributes, null, this);
             var routeSelect = $('select#search_routes_route', element);
@@ -195,7 +140,6 @@
                 });
             }
 
-            map.model.setOnMoveendHandler(widget.redraw());
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
             widget._trigger('ready');
@@ -208,18 +152,6 @@
         defaultAction: function(callback){
             this.open(callback);
         },
-        /** TODO Change drawFeature Function
-         * Redraw current result layer selected feature
-         */
-        redraw: function() {
-            var widget = this;
-            var feature = widget.currentFeature ? widget.currentFeature : null;
-            if( widget.currentFeature) {
-                //feature.layer.drawFeature(feature, 'select');
-                feature.setStyle(this.styleMap['select'])
-            }
-        },
-
         /**
          * Open method stub. Calls dialog's open method if widget is configured as
          * an dialog (asDialog: true), otherwise just goes on and does nothing.
@@ -482,11 +414,7 @@
                 self = this;
 
             $('tbody', table).remove();
-
-            // Check Features of layer
-            if (layer.getSource().getFeatures()){
-                layer.getSource().clear();
-            }
+            this.mbMap.model.clearVectorLayer(layer);
             var features = [];
 
             if(results.length > 0) $('.no-results', this.element).hide();
@@ -502,12 +430,11 @@
                 }
 
                 tbody.append(row);
-                var feature = feature.getFeature();
-                features.push(feature);
+                features.push(feature.getFeature());
             });
 
             table.append(tbody);
-            layer.getSource().addFeatures(features);
+            this.mbMap.model.addVectorFeatures(layer, features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
@@ -517,35 +444,30 @@
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
-
-                    if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'temporary');
-                    }
+                    self._highlightFeature(feature, 'temporary');
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature').getFeature();
-
-                    if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'default');
-                    }
+                    var styleName = feature === this.currentFeature ? 'select' : 'default';
+                    self._highlightFeature(feature, styleName);
                 })
             ;
         },
         _highlightFeature: function (feature, style) {
             if (style === 'select') {
-                if (this.currentFeature) {
+                if (this.currentFeature && feature !== this.currentFeature) {
                     this._highlightFeature(this.currentFeature, 'default');
                 }
                 this.currentFeature = feature;
             }
-            if (feature.layer) {
-                feature.layer.drawFeature(feature, style);
+            if (Mapbender.mapEngine.code === 'ol2') {
+                if (feature.layer) {
+                    feature.layer.drawFeature(feature, style);
+                }
+            } else {
+                feature.setStyle(this.styleMap[style]);
             }
         },
-        _highlightFeature4: function(feature, style) {
-            feature.setStyle(this.styleMap[style]);
-        },
-
         _showResultState: function() {
             var widget = this;
             var element = widget.element;
@@ -587,34 +509,26 @@
         },
 
         _createStyleMap4: function(styles) {
-            var model = this.mbMap.getModel();
-            var styleDefault = null;
-            var styleSelect = null;
-            var keys = styles ? Object.keys(styles): null;
-
-            if (keys){
-                for (var i = 0; i < keys.length; i++) {
-                    var styleMapName = keys[i];
-
-                    switch(styleMapName) {
-                        case 'default':
-                            styleDefault = styleMapName ? model.createVectorLayerStyle(styleMapName) : model.createVectorLayerStyle();
-                            break;
-                        case 'select':
-                            styleSelect = styleMapName ? model.createVectorLayerStyle(styleMapName) : model.createVectorLayerStyle();
-                            break;
-                    }
-
-                }
-            }else{
-                styleDefault = model.createVectorLayerStyle(this.defaultStyle);
-                styleSelect = model.createVectorLayerStyle(this.selectStyle);
+            var defaultStyleOptions = styles.default || this.defaultStyle;
+            var selectStyleOptions = styles.select || this.selectStyle;
+            var temporaryStyleOptions = styles.temporary || this.temporaryStyle;
+            function _createSingleStyle(options) {
+                var fill = new ol.style.Fill({color: options.color});
+                var stroke = new ol.style.Stroke(options.stroke);
+                return new ol.style.Style({
+                    image: new ol.style.Circle({
+                        fill: fill,
+                        stroke: stroke,
+                        radius: options.radius || 5
+                    }),
+                    fill: fill,
+                    stroke: stroke
+                });
             }
-
             return {
-                default: styleDefault,
-                select: styleSelect,
-                temporary: model.createVectorLayerStyle(this.temporaryStyle)
+                default: _createSingleStyle(defaultStyleOptions),
+                select: _createSingleStyle(selectStyleOptions),
+                temporary: _createSingleStyle(temporaryStyleOptions)
             };
         },
 
@@ -635,43 +549,16 @@
         _getLayer: function(forceRebuild) {
             var widget = this;
             var model = this.mbMap.getModel();
-            var layer = widget.highlightLayer;
-            var layerOwner = widget.highlightLayerOwner;
-            var layerId = widget.highlightLayerId;
-
-            if(!forceRebuild && ( layer && layerId ) ) {
-                layer = model.getVectorLayerByNameId(layerOwner,layerId);
-                return layer;
+            if (forceRebuild && this.highlightLayer) {
+                model.destroyVectorLayer(this.highlightLayer);
+                this.highlightLayer = null;
             }
-
-            if(forceRebuild && ( layer && layerId ) ) {
-                model.removeVectorLayer(layer,layerId);
-                widget.highlightLayer = null;
-                widget.highlightLayerId = null;
+            if (!this.highlightLayer) {
+                var route = widget.getCurrentRoute();
+                this.styleMap = this._createStyleMap4(route.results.styleMap || {});
+                this.highlightLayer = model.createVectorLayer();
             }
-
-            var route = widget.getCurrentRoute();
-
-            var center = model.getMapCenter();
-            var iconFeature = new ol.Feature(
-                new ol.geom.Point(center)
-            );
-            var markersSource = new ol.source.Vector({
-                features: [iconFeature]
-            });
-
-            var styleMap = widget._createStyleMap(route.results.styleMap);
-            this.styleMap = styleMap;
-
-            layerId = widget.highlightLayer || model.createVectorLayer({
-                style: styleMap.default
-            }, layerOwner);
-
-            widget.highlightLayerId = layerId;
-            layer = model.getVectorLayerByNameId(layerOwner,layerId);
-            layer.setSource(markersSource);
-
-            return layer;
+            return this.highlightLayer;
         },
 
         /**

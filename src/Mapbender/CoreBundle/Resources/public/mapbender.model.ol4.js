@@ -356,20 +356,30 @@ resolutionToScale: function(resolution, dpi) {
     return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
 },
 
-/**
- * @param {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
- * @param {ol.style|function} options.style (See https://openlayers.org/en/latest/apidoc/ol.style.Style.html)
- * @param {string} owner
- * @returns {string}
- */
-createVectorLayer: function(options, owner) {
-    var uuid = Mapbender.UUID();
-    this.vectorLayer[owner] = this.vectorLayer[owner] || {};
-    options.map = this.olMap;
-    options.style = options.style ? this.createVectorLayerStyle(options.style) : this.createVectorLayerStyle();
-    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
+createVectorLayer: function() {
+    if (arguments.length) {
+        console.error("Arguments passed to createVectorLayer", arguments);
+        throw new Error("Arguments passed to createVectorLayer");
+    }
+    return new ol.layer.Vector({
+        map: this.olMap,
+        source: new ol.source.Vector({wrapX: false})
+    });
+},
+destroyVectorLayer: function(olLayer) {
+    var olMap = this.olMap;
+    _.each(olLayer.interactions, function(interaction) {
+        olMap.removeInteraction(interaction);
+    });
+    this.olMap.removeLayer(olLayer);
+},
 
-    return uuid;
+clearVectorLayer: function(olLayer) {
+    olLayer.getSource().clear();
+},
+
+addVectorFeatures: function(olLayer, features) {
+    olLayer.getSource().addFeatures(features);
 },
 
 /**
@@ -577,33 +587,6 @@ onFeatureChange: function(feature, callback,obvservable, args){
 
 },
 
-
-/**
- * Create olDefaultStyle or olCustomStyle
- * @param {array} optOptions params from ol.style.Style.
- * @returns {ol.style.Style}
- */
-createVectorLayerStyle: function(optOptions){
-    var olStyle = null;
-    if (optOptions){
-        olStyle = this.getCustomStyle(optOptions);
-    }else{
-        var fill = new ol.style.Fill({
-            color: 'rgba(255,255,255,0.4)'
-        });
-        var stroke = new ol.style.Stroke({
-            color: '#3399CC',
-            width: 1.25
-        });
-
-        olStyle= new ol.style.Style({
-            fill: fill,
-            stroke: stroke
-        });
-    }
-
-    return olStyle;
-},
 
 /**
  *
@@ -846,7 +829,12 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
         throw new Error("Coordinates are not defined!");
     }
 
-    var point = new ol.geom.Point(coordinates);
+    var feature = new ol.Feature({
+        geometry: new ol.geom.Point(coordinates)
+    });
+    if (style) {
+        feature.setStyle(style);
+    }
 
     if (typeof vectorLayerId === 'undefined' || null === vectorLayerId) {
 
@@ -856,33 +844,11 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
 
         this.olMap.addLayer(this.vectorLayer[owner][vectorLayerId]);
     }
-
-    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId], style);
-
+    var layer = this.vectorLayer[owner][vectorLayerId];
+    layer.getSource().addFeature(feature);
     return vectorLayerId;
 },
 
-/**
- * Draw feature on a vector layer
- *
- * @param {ol.geom} geometry
- * @param {ol.layer.Vector} vectorLayer
- * @param {ol.style} style
- * @returns {Mapbender.Model}
- */
-drawFeatureOnVectorLayer: function(geometry, vectorLayer, style) {
-    var feature = new ol.Feature({
-        geometry: geometry,
-    });
-
-    feature.setStyle(style);
-
-    var source = vectorLayer.getSource();
-
-    source.addFeature(feature);
-
-    return this;
-},
         /**
          * @return {Array<Number>}
          */
@@ -953,30 +919,6 @@ getVectorLayerFeatures: function() {
     }
 
     return features;
-},
-
-/**
- * Returns the styles of the vectorLayers hashed by owner and uuid.
- * @returns {object.<string>.<string>.<ol.style.Style>}
- */
-getVectorLayerStyles: function() {
-    var styles = {};
-    for (var owner in this.vectorLayer) {
-        for (var uuid in this.vectorLayer[owner]) {
-            var vectorLayer = this.vectorLayer[owner][uuid];
-            if (!vectorLayer instanceof ol.layer.Vector) {
-                continue;
-            }
-
-            if (!styles[owner]) {
-                styles[owner] = {};
-            }
-
-            styles[owner][uuid] = vectorLayer.getStyle();
-        }
-    }
-
-    return styles;
 },
 
 /**
@@ -1183,70 +1125,6 @@ createIconStyle: function(options) {
     });
 
     return iconStyle;
-},
-
-/**
- * create ol.style.Style
- * @param {array} customStyle only fill, stroke, zIndex
- * @returns {ol.style.Style}
- */
-getCustomStyle: function(customStyle) {
-    var geometry = undefined;
-    var fill = undefined;
-    var image = undefined;
-    var renderer = undefined;
-    var stroke = undefined;
-    var text = undefined;
-    var zIndex = undefined;
-    var keys = Object.keys(customStyle);
-    var options = null;
-
-    if (keys.length){
-        for (var i = 0; i < keys.length; i++) {
-            var varName = keys[i];
-
-            switch(varName) {
-                case 'geometry':
-                    options = customStyle[varName] || '';
-                    fill = new ol.geom.Geometry(options);
-                    break;
-                case 'fill':
-                    options = customStyle[varName] || {};
-                    fill = new ol.style.Fill(options);
-                    break;
-                case 'image':
-                    options = customStyle[varName] || {};
-                    image = new ol.style.Image(options);
-                    break;
-                case 'renderer':
-                    options = customStyle[varName] || {};
-                    stroke = ol.StyleRenderFunction(options);
-                    break;
-                case 'stroke':
-                    options = customStyle[varName] || {};
-                    stroke = new ol.style.Stroke(options);
-                    break;
-                case 'text':
-                    options = customStyle[varName] || {};
-                    stroke = new ol.style.Text(options);
-                    break;
-                case 'zIndex':
-                    zIndex = customStyle[varName] ? customStyle[varName] : undefined;
-                    break;
-            }
-
-        }
-    }
-
-    return new ol.style.Style({
-        geometry: geometry,
-        fill: fill,
-        image: image,
-        renderer:renderer,
-        stroke: stroke,
-        text: text,
-        zIndex: zIndex
-    });
 }
 
     });
