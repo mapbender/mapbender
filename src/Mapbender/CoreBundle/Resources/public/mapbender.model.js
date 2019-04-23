@@ -539,9 +539,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         } else {
             center_ = true;
         }
-        var bounds = feature.geometry.getBounds().clone();
+        var engine = Mapbender.mapEngine;
+        var bounds = engine.getFeatureBounds(feature);
         if (options && options.buffer) {
-            var engine = Mapbender.mapEngine;
             var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
             var bufferNative = options.buffer * unitsPerMeter;
             bounds.left -= bufferNative;
@@ -597,35 +597,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         });
     },
 
-    /**
-     * @param {number|null} targetZoom
-     * @param {Object} scaleOptions
-     * @param {number=} scaleOptions.minScale
-     * @param {number=} scaleOptions.maxScale
-     * @return {number|null}
-     * @private
-     */
-    _adjustZoom: function(targetZoom, scaleOptions) {
-        var zoom = targetZoom;
-        var zoomNow = this.map.olMap.getZoom();
-        if (scaleOptions && scaleOptions.minScale) {
-            var maxZoom = this.pickZoomForScale(scaleOptions.minScale, true);
-            if (zoom !== null) {
-                zoom = Math.min(zoom, maxZoom);
-            } else {
-                zoom = Math.min(zoomNow, maxZoom);
-            }
-        }
-        if (scaleOptions && scaleOptions.maxScale) {
-            var minZoom = this.pickZoomForScale(scaleOptions.maxScale, false);
-            if (zoom !== null) {
-                zoom = Math.max(zoom, minZoom);
-            } else {
-                zoom = Math.max(zoomNow, minZoom);
-            }
-        }
-        return zoom;
-    },
     /**
      * @param {Array<OpenLayers.Feature>} features
      * @param {Object} options
@@ -778,7 +749,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             console.error("Can't splice layers for source with unknown position", source, olLayers);
             throw new Error("Can't splice layers for source with unknown position");
         }
-        var olMap = this.map.olMap;
+        var olMap = this.olMap;
         var afterLayer = olMap.baseLayer || olMap.layers[0];
         for (var s = sourceIndex - 1; s >= 0; --s) {
             var previousSource = this.sourceTree[s];

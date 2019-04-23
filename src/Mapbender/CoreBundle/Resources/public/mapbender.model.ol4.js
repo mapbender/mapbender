@@ -58,6 +58,7 @@ window.Mapbender.MapModelOl4 = (function() {
             self.sourceTree.map(function(source) {
                 self._checkSource(source, true);
             });
+            // @todo: figure out how to distinguish zoom change from panning
             mbMap.element.trigger('mbmapzoomchanged', {
                 mbMap: mbMap,
                 zoom: zoom,
@@ -188,6 +189,39 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         console.error("Could not find native layer for given obect", anything);
         return null;
+    },
+    zoomToFeature: function(feature, options) {
+        var geometry = feature && feature.getGeometry();
+        if (!geometry) {
+            console.error("Empty feature or empty feature geometry", feature);
+            return;
+        }
+        var center_;
+        if (options) {
+            center_ = options.center || typeof options.center === 'undefined';
+        } else {
+            center_ = true;
+        }
+        var engine = Mapbender.mapEngine;
+        var bounds = engine.getFeatureBounds(feature);
+        if (options && options.buffer) {
+            var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var bufferNative = options.buffer * unitsPerMeter;
+            bounds.left -= bufferNative;
+            bounds.right += bufferNative;
+            bounds.top += bufferNative;
+            bounds.bottom -= bufferNative;
+        }
+        var view = this.olMap.getView();
+        var zoom0 = Math.floor(view.getZoomForResolution(view.getResolutionForExtent(bounds)));
+        var zoom = this._adjustZoom(zoom0, options);
+        var zoomNow = this.getCurrentZoomLevel();
+        var viewExtent = view.calculateExtent();
+        var featureInView = ol.extent.intersects(viewExtent, bounds);
+        if (center_ || zoom !== zoomNow || !featureInView) {
+            view.setCenter(ol.extent.getCenter(bounds));
+            this.setZoomLevel(zoom, false);
+        }
     },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);

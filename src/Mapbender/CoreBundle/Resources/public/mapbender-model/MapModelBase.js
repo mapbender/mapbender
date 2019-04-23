@@ -641,6 +641,35 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
         },
+        /**
+         * @param {number|null} targetZoom
+         * @param {Object} scaleOptions
+         * @param {number=} scaleOptions.minScale
+         * @param {number=} scaleOptions.maxScale
+         * @return {number|null}
+         * @private
+         */
+        _adjustZoom: function(targetZoom, scaleOptions) {
+            var zoom = targetZoom;
+            var zoomNow = this.getCurrentZoomLevel();
+            if (scaleOptions && scaleOptions.minScale) {
+                var maxZoom = this.pickZoomForScale(scaleOptions.minScale, true);
+                if (zoom !== null) {
+                    zoom = Math.min(zoom, maxZoom);
+                } else {
+                    zoom = Math.min(zoomNow, maxZoom);
+                }
+            }
+            if (scaleOptions && scaleOptions.maxScale) {
+                var minZoom = this.pickZoomForScale(scaleOptions.maxScale, false);
+                if (zoom !== null) {
+                    zoom = Math.max(zoom, minZoom);
+                } else {
+                    zoom = Math.max(zoomNow, minZoom);
+                }
+            }
+            return zoom;
+        },
         _comma_dangle_dummy: null
     });
 

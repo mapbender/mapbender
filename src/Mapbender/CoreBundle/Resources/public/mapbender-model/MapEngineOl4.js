@@ -109,16 +109,20 @@ window.Mapbender.MapEngineOl4 = (function() {
         boundsFromArray: function(values) {
             var bounds = values.slice();
             Object.defineProperty(bounds, 'left', {
-                get: function() { return this[0]; }
+                get: function() { return this[0]; },
+                set: function(v) { this[0] = v; }
             });
             Object.defineProperty(bounds, 'bottom', {
-                get: function() { return this[1]; }
+                get: function() { return this[1]; },
+                set: function(v) { this[1] = v; }
             });
             Object.defineProperty(bounds, 'right', {
-                get: function() { return this[2]; }
+                get: function() { return this[2]; },
+                set: function(v) { this[2] = v; }
             });
             Object.defineProperty(bounds, 'top', {
-                get: function() { return this[3]; }
+                get: function() { return this[3]; },
+                set: function(v) { this[3] = v; }
             });
             return bounds;
         },
@@ -159,6 +163,9 @@ window.Mapbender.MapEngineOl4 = (function() {
         },
         replaceLayers: function(olMap, nativeLayerArray) {
             olMap.getLayerGroup().setLayers(new ol.Collection(nativeLayerArray, {unique: true}));
+        },
+        getFeatureBounds: function(olFeature) {
+            return this.boundsFromArray(olFeature.getGeometry().getExtent());
         },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
