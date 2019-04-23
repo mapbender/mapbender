@@ -420,19 +420,6 @@ getVectorLayerByNameId: function getVectorLayerByNameId(owner, id) {
 
 /**
  *
- * @param owner
- * @param featuresArray
- */
-addFeaturesVectorSource: function(owner,featuresArray) {
-    var vectorLayer = this.vectorLayer[owner];
-    var vectorSource = new ol.source.Vector({
-        features: featuresArray
-    });
-    vectorLayer.setSource(vectorSource);
-},
-
-/**
- *
  * @param center
  * @returns {*|void}
  */
@@ -833,29 +820,6 @@ createTextStyle: function(options) {
     },
 
 /**
- * Set callback for map moveend event
- * @param callback
- * @returns {ol.EventsKey|Array<ol.EventsKey>}
- */
-setOnMoveendHandler: function(callback) {
-    if (typeof callback === 'function') {
-        return this.olMap.on("moveend", callback);
-    }
-},
-
-/**
- * Remove event listener by event key
- *
- * @param key
- * @returns {Mapbender.Model}
- */
-removeEventListenerByKey: function(key) {
-    ol.Observable.unByKey(key);
-
-    return this;
-},
-
-/**
  * Set style of map cursor
  *
  * @param style
@@ -1039,10 +1003,6 @@ getVectorLayerPrintStyleOptions: function() {
             styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
             styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
 
-            // fill hover things.
-            styleOptions['hoverFillColor'] = 'white';
-            styleOptions['hoverFillOpacity'] = 0.8;
-
             // stroke things.
             var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(olStyle.getStroke().getColor());
             styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
@@ -1056,16 +1016,8 @@ getVectorLayerPrintStyleOptions: function() {
             styleOptions['strokeDashstyle'] = strokeDashstyle ? strokeDashstyle : 'solid';
 
 
-            // hover things.
-            styleOptions['hoverStrokeColor'] = 'red';
-            styleOptions['hoverStrokeOpacity'] = 1;
-            styleOptions['hoverStrokeWidth'] = 0.2;
             styleOptions['pointRadius'] = 6;
-            styleOptions['hoverPointRadius'] = 1;
-            styleOptions['hoverPointUnit'] = '%';
-            styleOptions['pointerEvents'] = 'visiblePainted';
             styleOptions['cursor'] = 'inherit';
-
 
             // font/label things.
             var fontColor = olStyle.getText().getFill().getColor();
@@ -1082,11 +1034,6 @@ getVectorLayerPrintStyleOptions: function() {
 
             styleOptions['labelOutlineColor'] = 'white';
             styleOptions['labelOutlineWidth'] = 3;
-
-
-            if (!allStyleOptions[owner]) {
-                allStyleOptions[owner] = {};
-            }
 
             allStyleOptions[owner][uuid] = styleOptions;
         }
@@ -1214,17 +1161,6 @@ convertResolution_: function(fromUnits, toUnits, resolution) {
         ol.proj.METERS_PER_UNIT[fromUnits] /
         ol.proj.METERS_PER_UNIT[toUnits];
     return resolution * resolutionFactor;
-},
-
-/**
- * Get resolution for extent
- *
- * @param {Array} extent [minx, miny, maxx, maxy]
- * @param {Array} size [width, height]
- * @returns {number}
- */
-getResolutionForExtent: function(extent, size) {
-    return this.olMap.getView().getResolutionForExtent(extent, size);
 },
 
 /**
