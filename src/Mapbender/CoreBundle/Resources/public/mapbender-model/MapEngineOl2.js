@@ -179,6 +179,9 @@ window.Mapbender.MapEngineOl2 = (function() {
             olMap.layers = nativeLayerArray;
             olMap.resetLayersZIndex();
         },
+        getFeatureBounds: function(olFeature) {
+            return this.boundsFromArray(feature.geometry.getBounds().toArray());
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {
