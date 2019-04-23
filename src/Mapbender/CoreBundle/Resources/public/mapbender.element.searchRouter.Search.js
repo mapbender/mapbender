@@ -37,7 +37,7 @@ Mapbender.AutocompleteModel = Backbone.Model.extend({
             value: request.term,
             properties: properties,
             srs: map.model.getCurrentProjectionCode(),
-            extent: map.model.getCurrentExtent()
+            extent: map.model.getCurrentExtentArray()
         });
 
         this.save();
@@ -112,7 +112,7 @@ Mapbender.SearchModel = Backbone.Model.extend({
             properties: properties,
             autocomplete_keys: autocomplete_keys,
             srs: map.model.getCurrentProjectionCode(),
-            extent: map.model.getCurrentExtent().toArray()
+            extent: map.model.getCurrentExtentArray()
         });
 
         this.save();
