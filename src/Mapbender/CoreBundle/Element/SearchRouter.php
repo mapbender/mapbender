@@ -136,7 +136,6 @@ class SearchRouter extends Element
                 '@MapbenderCoreBundle/Resources/public/vendor/json2.js',
                 '@MapbenderCoreBundle/Resources/public/vendor/backbone.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.Feature.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.Search.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
             ),
             'css'   => array(
