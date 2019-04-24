@@ -16,15 +16,15 @@
         /**
          * Widget creator
          */
-        _create: function(){
-            var widget = this;
-            var options = widget.options;
-
-            if(!Mapbender.checkTarget("mbSearchRouter", options.target)){
-                return;
-            }
-            Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
-            widget.callbackUrl = Mapbender.configuration.application.urls.element + '/' + widget.element.attr('id') + '/';
+        _create: function() {
+            var self = this;
+            this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbSearchRouter", self.options.target);
+            });
         },
 
         /**
@@ -41,21 +41,20 @@
             var widget = this;
             var element = widget.element;
             var options = widget.options;
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
 
             var searchModelAttributes = {
                 srs: this.mbMap.getModel().getCurrentProj().projCode
             };
             this.searchModel = new Mapbender.SearchModel(searchModelAttributes, null, this);
             var routeSelect = $('select#search_routes_route', element);
-            var routeCount = 0;
+            var routeCount;
 
             // bind form reset to reset search model
-            element.delegate('.search-forms form', 'reset', function(){
+            element.on('reset', '.search-forms form', function() {
                 widget.removeLastResults();
             });
             // bind form submit to send search model
-            element.delegate('.search-forms form', 'submit', function(evt){
+            element.on('submit', '.search-forms form', function(evt) {
                 widget.removeLastResults();
                 widget.searchModel.submit(evt);
             });
@@ -70,31 +69,10 @@
             $('form input[data-autocomplete^="custom:"]', element).each(
                 $.proxy(widget._setupCustomAutocomplete, widget));
 
-            // Prepare search button (trigger form submit)
-            $('a[role="search_router_search"]', element)
-                .button()
-                .click(function(){
-                    widget.getCurrentForm().submit();
-                });
-
-            // Prevent map getting cursors keys
-            element.bind('keydown', function(event){
-                event.stopPropagation();
-            });
-
             // Listen to changes of search select (switching and forms resetting)
-
-            routeSelect.change($.proxy(widget._selectSearch, widget));
-            Mapbender.elementRegistry.onElementReady(options.target, function(){
-                routeSelect.change();
-                widget._trigger('ready');
-            });
+            routeSelect.on('change', $.proxy(this._selectSearch, this));
+            routeCount = Object.keys(this.options.routes).length;
             // But if there's only one search, we actually don't need the select
-            for(var route in options.routes){
-                if(options.routes.hasOwnProperty(route)){
-                    routeCount++;
-                }
-            }
             if(routeCount === 1){
                 $('#search_routes_route_control_group').hide()
                     .next('hr').hide();
@@ -118,11 +96,11 @@
 
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
-            widget._trigger('ready');
-
-            if(widget.options.autoOpen) {
-                widget.open();
+            routeSelect.trigger('change');
+            if (this.options.autoOpen) {
+                this.open();
             }
+            this._trigger('ready');
         },
 
         defaultAction: function(callback){
