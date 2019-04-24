@@ -81,7 +81,7 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         // Build WHERE condition
-        $cond = $qb->expr()->andx();
+        $cond = $qb->expr()->andX();
         $params = array();
         for($i = 0; $i < count($keys); $i++) {
             // @todo: Platform independency (::varchar, lower)
@@ -96,7 +96,7 @@ class SQLSearchEngine
             $using = explode(',', $config['form'][$key]['options']['attr']['data-autocomplete-using']);
             array_walk($using, function($key) use ($properties, $logger, $cond, $qb, &$params) {
                 if(property_exists($properties, $key)) {
-                    $value = $properties->$key;
+                    $value = $properties->{$key};
                     if(!$value) {
                         return;
                     }
@@ -112,7 +112,7 @@ class SQLSearchEngine
         $qb->orderBy('t.' . $key, 'ASC');
 
         // Create prepared statement and execute
-        $stmt = $connection->executeQuery($qb->getSql(), $params);
+        $stmt = $connection->executeQuery($qb->getSQL(), $params);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         array_walk($rows, function (&$row) use ($key, $keys, $config) {
@@ -171,7 +171,7 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         // Build WHERE condition
-        $cond = $qb->expr()->andx();
+        $cond = $qb->expr()->andX();
         $params = array();
 
         // This function switches by compare configuration (exact, like, ilike, ...)
@@ -273,7 +273,7 @@ class SQLSearchEngine
         $qb->where($cond);
 
         // Create prepared statement and execute
-        $stmt = $connection->executeQuery($qb->getSql(), $params);
+        $stmt = $connection->executeQuery($qb->getSQL(), $params);
         $rows = $stmt->fetchAll();
 
         // Rewrite rows as GeoJSON features
