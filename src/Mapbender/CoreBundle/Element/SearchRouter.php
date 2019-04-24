@@ -201,7 +201,7 @@ class SearchRouter extends Element
             $engine   = new $conf['class']($this->container);
             $query    = array(
                 'form'              => $form->getData(),
-                'autocomplete_keys' => get_object_vars($data->autocomplete_keys));
+            );
             $features = $engine->search($conf, $query, $request->get('srs'), $request->get('extent'));
             $result   = $this->getFeatureCollection($features);
             $response->setData(array_merge($result, array(

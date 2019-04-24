@@ -9,7 +9,6 @@ var Mapbender = Mapbender || {};
 Mapbender.SearchModel = Backbone.Model.extend({
     defaults: {
         properties: {},
-        autocomplete_keys: {},
         results: new Mapbender.FeatureCollection(),
         srs: null,
         extent: null
@@ -34,7 +33,6 @@ Mapbender.SearchModel = Backbone.Model.extend({
         event.preventDefault();
 
         var properties = {},
-            autocomplete_keys = {},
             form = $(event.target),
             basename = form.attr('name');
 
@@ -42,20 +40,16 @@ Mapbender.SearchModel = Backbone.Model.extend({
             input = $(input);
             var name = input.attr('name'),
                 key = name.substr(basename.length+1, name.length-basename.length-2),
-                val = input.val(),
-                autocomplete_key = input.attr('data-autocomplete-key');
+                val = input.val()
+            ;
 
             properties[key] = val;
-            if(typeof autocomplete_key !== 'undefined') {
-                autocomplete_keys[key] = autocomplete_key;
-            }
         });
 
         var map = this.router.mbMap.map.olMap;
 
         this.set({
             properties: properties,
-            autocomplete_keys: autocomplete_keys,
             extent: map.getExtent().toArray()
         });
 

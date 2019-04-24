@@ -215,10 +215,11 @@
                 source: function(request, response){
                     widget._autocompleteSource(input).then(function(data) {
                         response(data.results);
+                    }, function() {
+                        response([]);
                     });
-                },
-                select: widget._autocompleteSelect
-            }).keydown(widget._autocompleteKeydown);
+                }
+            });
         },
 
         /**
@@ -252,27 +253,6 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             });
-        },
-
-        /**
-         * Store autocomplete key if suggestion was selected.
-         *
-         * @param  jQuery.Event event Selection event
-         * @param  Object       ul    Selected item
-         */
-        _autocompleteSelect: function(event, ui){
-            if(typeof ui.item.key !== 'undefined'){
-                $(event.target).attr('data-autocomplete-key', ui.item.key);
-            }
-        },
-
-        /**
-         * Remove stored autocomplete key when key was pressed.
-         *
-         * @param  jQuery.Event event Keydown event
-         */
-        _autocompleteKeydown: function(event){
-            $(event.target).removeAttr('data-autocomplete-key');
         },
 
         /**

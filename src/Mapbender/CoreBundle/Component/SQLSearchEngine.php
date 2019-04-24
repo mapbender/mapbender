@@ -71,10 +71,6 @@ class SQLSearchEngine
             return 't.' . $attribute;
         }, $keys));
 
-        if(array_key_exists('autocomplete-key', $config['form'][$key])) {
-            $select .= ', t.' . $config['form'][$key]['autocomplete-key'];
-        }
-
         $qb->select($distinct ? 'DISTINCT ' . $select : $select);
 
         // Add FROM
@@ -123,16 +119,9 @@ class SQLSearchEngine
                 }
                 $value[] = $row[$k];
             }
-
-            if(array_key_exists('autocomplete-key', $config['form'][$key])) {
-                $row = array(
-                    'key' => $row[$config['form'][$key]['autocomplete-key']],
-                    'value' => implode(' ', $value));
-            } else {
-                $row = array(
-                    'value' => implode(' ', $value)
-                );
-            }
+            $row = array(
+                'value' => implode(',', $value),
+            );
         });
         return $rows;
     }
@@ -253,12 +242,7 @@ class SQLSearchEngine
             } else {
                 $cfg = $config['form'][$key];
             }
-            if(array_key_exists($key, $data['autocomplete_keys']))
-            {
-                // Autocomplete value given, match to configured attribute
-                $cond->add($qb->expr()->eq(
-                    't.' . $cfg['autocomplete-key'], $data['autocomplete_keys'][$key]));
-            } elseif (array_key_exists('split', $cfg)) {
+            if (array_key_exists('split', $cfg)) {
                 // Split
                 $keys = $cfg['split'];
                 $values = explode(' ', $value);

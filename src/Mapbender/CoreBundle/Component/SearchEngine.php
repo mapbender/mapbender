@@ -37,8 +37,7 @@ interface SearchEngine
     /**
      * Search handler
      * @param  array  $conf   Form configuration
-     * @param  array  $data   Data: Array with form data array and
-     *                        autocomplete_keys array (may be empty)
+     * @param  array  $data   Data: Array with form data array
      * @param  string $srs    current map srs
      * @param  array  $extent current map extent
      * @return array          Result set array 
