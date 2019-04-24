@@ -1,60 +1,6 @@
 var Mapbender = Mapbender || {};
 
 /**
- * Mapbender Autocomplete Model.
- */
-Mapbender.AutocompleteModel = Backbone.Model.extend({
-    defaults: {
-        key: null,
-        value: null,
-        properties: {},
-        srs: null,
-        extent: null,
-        results: []
-    },
-
-    url: function() {
-        return this.router.callbackUrl + this.router.selected + '/autocomplete';
-    },
-
-    submit: function(input, request) {
-        var properties = {},
-            form = input.closest('form'),
-            basename = form.attr('name'),
-            map = $('#' + this.router.options.target).data('mapbenderMbMap').map.olMap,
-            name = input.attr('name');
-
-        _.each($(':input', form), function(input, idx, all) {
-            input = $(input);
-            var name = input.attr('name'),
-                key = name.substr(basename.length+1, name.length-basename.length-2),
-                val = input.val();
-            properties[key] = val;
-        });
-
-        this.set({
-            key: name.substr(basename.length+1, name.length-basename.length-2),
-            value: request.term,
-            properties: properties,
-            srs: map.getProjection(),
-            extent: map.getExtent().toArray()
-        });
-
-        this.save();
-    },
-
-    initialize: function(attributes, options) {
-        this.router = options.router;
-    },
-
-    toJSON: function() {
-        var json = _.clone(this.attributes);
-        delete json.results;
-        return json;
-    }
-});
-
-/**
  * Mapbender Search Model.
  *
  * Incorporates the search properties (key/value pairs) and the results

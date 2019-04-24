@@ -10,7 +10,6 @@
         highlightLayer: null,
         lastSearch: new Date(),
         searchModel: null,
-        autocompleteModel: null,
         popup: null,
         mbMap: null,
 
@@ -238,7 +237,9 @@
                     $(event.target).data("uiAutocomplete").menu.element.outerWidth(input.outerWidth());
                 },
                 source: function(request, response){
-                    widget._autocompleteSource(input, request, response);
+                    widget._autocompleteSource(input).then(function(data) {
+                        response(data.results);
+                    });
                 },
                 select: widget._autocompleteSelect
             }).keydown(widget._autocompleteKeydown);
@@ -256,28 +257,25 @@
         },
 
         /**
-         * Autocomplete source handler, does all Ajax magic.
+         * Generate autocomplete request
          *
-         * @param  HTMLDomNode target   Input element
-         * @param  Object      request  Request object with term attribute
-         * @param  function    response Autocomplete callback
+         * @param {jQuery} $input
          */
-        _autocompleteSource: function(target, request, response){
-            if(!target.data('autocompleteModel')){
-                var model = new Mapbender.AutocompleteModel(null, {
-                    router: this
-                });
-                target.data('autocompleteModel', model);
-
-                model.on('request', this._setActive, this);
-                model.on('sync', function(){
-                    model.response(model.get('results'));
-                });
-                model.on('error', response([]));
-            }
-
-            target.data('autocompleteModel').response = response;
-            target.data('autocompleteModel').submit(target, request);
+        _autocompleteSource: function($input) {
+            var url = this.callbackUrl + this.selected + '/autocomplete';
+            var formValues = this._getFormValues($input.closest('form'));
+            var data = {
+                key: $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, ''),
+                value: $input.val(),
+                srs: this.mbMap.model.getCurrentProjectionCode(),
+                extent: null,
+                properties: formValues
+            };
+            return $.getJSON({
+                url: url,
+                data: JSON.stringify(data),
+                method: 'POST'
+            });
         },
 
         /**
@@ -602,6 +600,15 @@
                     srs: data.to.projCode
                 });
             }
+        },
+        _getFormValues: function(form) {
+            var values = {};
+            _.each($(':input', form), function(input) {
+                var $input = $(input);
+                var name = $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, '');
+                values[name] = $input.val();
+            });
+            return values;
         },
 
         _hideMobile: function() {
