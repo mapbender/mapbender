@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -159,12 +158,8 @@ class SQLSearchEngine
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
-        // Build WHERE condition
-        $cond = $qb->expr()->andX();
-        $params = array();
-
         // This function switches by compare configuration (exact, like, ilike, ...)
-        $createExpr = function($key, $value) use ($cond, $config, $connection, &$params, $qb) {
+        $createExpr = function($key, $value) use ($config, $qb) {
             if (array_key_exists($key, $config['form'])) {
                 $cfg = $config['form'][$key];
             } else {
@@ -172,65 +167,65 @@ class SQLSearchEngine
             }
 
             $compare = array_key_exists('compare', $cfg) ? $cfg['compare'] : null;
-            switch($compare) {
+
+            switch ($compare) {
                 case 'exact':
-                    $cond->add($qb->expr()->eq('t.' . $key, ':' . $key));
-                    $params[$key] = $value;
-                    break;
-                case 'iexact':
-                $cond->add($qb->expr()->eq('LOWER(t.' . $key . ')', 'LOWER(:' .$key . ')'));
-                    $params[$key] = $value;
-                    break;
-
-
                 case 'like':
                 case 'like-left':
                 case 'like-right':
-                    $cond->add($qb->expr()->like('t.' . $key, ':' . $key));
-
-                    // First, asume two-sided search
-                    $prefix = '%';
-                    $suffix = '%';
-                    $op = explode('-', $compare);
-                    if(2 === count($op) && 'left' === $op[1]) {
-                        // For left-sided search remove suffix
-                        $suffix = '';
-                    }
-                    if(2 === count($op) && 'right' === $op[1]) {
-                        // For right-sided search remove prefix
-                        $prefix = '';
-                    }
-                    $params[$key] = $prefix . $value . $suffix;
+                    $caseInsensitive = false;
                     break;
+                default:
+                case 'iexact':
                 case 'ilike':
                 case 'ilike-left':
                 case 'ilike-right':
+                    $caseInsensitive = true;
+                    break;
+            }
+            switch ($compare) {
                 default:
-                    // First, asume two-sided search
-                    $prefix = '%';
-                    $suffix = '%';
-                    if(is_string($compare)) {
-                        $op = explode('-', $compare);
-                        if(2 === count($op) && 'left' === $op[1]) {
-                            // For left-sided search remove suffix
-                            $suffix = '';
-                        }
-                        if(2 === count($op) && 'right' === $op[1]) {
-                            // For right-sided search remove prefix
-                            $prefix = '';
-                        }
-                    }
-
-                    if($connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
-                        $cond->add($qb->expr()->comparison('t.' . $key, 'ILIKE', ':' . $key));
-                    } else {
-                        $cond->add($qb->expr()->like('LOWER(t.' . $key . ')', 'LOWER(:' . $key . ')'));
-                    }
-
-                    $params[$key] = $prefix . $value . $suffix;
+                case 'ilike':
+                case 'like':
+                    $patternPrefix = '%';
+                    $patternSuffix = '%';
+                    break;
+                case 'ilike-left':
+                case 'like-left':
+                    $patternPrefix = '%';
+                    $patternSuffix = '';
+                    break;
+                case 'ilike-right':
+                case 'like-right':
+                    $patternPrefix = '';
+                    $patternSuffix = '%';
+                    break;
+                case 'exact':
+                case 'iexact':
+                    $patternPrefix = '';
+                    $patternSuffix = '';
+                    break;
+            }
+            $matchValue = strtr($value, array(
+                '%' => '\%',
+                '_' => '\_',
+            ));
+            $matchValue = "{$patternPrefix}{$matchValue}{$patternSuffix}";
+            $placeHolder = $qb->createNamedParameter($matchValue);
+            $referenceExpression = "t.{$key}";
+            $matchExpression = $placeHolder;
+            if ($caseInsensitive) {
+                $referenceExpression = "LOWER({$referenceExpression})";
+                $matchExpression = "LOWER({$matchExpression})";
+            }
+            if (!$patternPrefix && !$patternSuffix) {
+                return $qb->expr()->eq($referenceExpression, $matchExpression);
+            } else {
+                return $qb->expr()->like($referenceExpression, $matchExpression);
             }
         };
 
+        $cond = $qb->expr()->andX();
         foreach($data['form'] as $key => $value)
         {
             if(null === $value) {
@@ -248,16 +243,16 @@ class SQLSearchEngine
                 $values = explode(' ', $value);
                 for($i = 0; $i < count($keys); $i++)
                 {
-                    $createExpr($keys[$i], $value);
+                    $cond->add($createExpr($keys[$i], $value));
                 }
             } else {
-                $createExpr($key, $value);
+                $cond->add($createExpr($key, $value));
             }
         }
         $qb->where($cond);
 
         // Create prepared statement and execute
-        $stmt = $connection->executeQuery($qb->getSQL(), $params);
+        $stmt = $connection->executeQuery($qb->getSQL(), $qb->getParameters());
         $rows = $stmt->fetchAll();
 
         // Rewrite rows as GeoJSON features
