@@ -134,7 +134,6 @@ class SearchRouter extends Element
             'js'    => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 '@MapbenderCoreBundle/Resources/public/vendor/json2.js',
-                '@MapbenderCoreBundle/Resources/public/vendor/backbone.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
             ),
             'css'   => array(
