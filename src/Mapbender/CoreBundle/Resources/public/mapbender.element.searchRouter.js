@@ -62,8 +62,6 @@
 
             // bind result to result list and map view
             this.searchModel.on('change:results', widget._searchResults, widget);
-            this.searchModel.on('request', widget._setActive, widget);
-            this.searchModel.on('error sync', widget._setInactive, widget);
             this.searchModel.on('error sync', widget._showResultState, widget);
 
             // Prepare autocompletes
@@ -472,22 +470,6 @@
                 table.hide();
                 counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
-        },
-
-        /**
-         * Add active class to widget for styling when Ajax is running
-         */
-        _setActive: function(){
-            var outer = this.options.asDialog ? this.element.parent() : this.element;
-            outer.addClass('search-active');
-        },
-
-        /**
-         * Remove active class from widget
-         */
-        _setInactive: function(){
-            var outer = this.options.asDialog ? this.element.parent() : this.element;
-            outer.removeClass('search-active');
         },
 
         _createStyleMap: function(styles, options) {
