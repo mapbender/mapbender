@@ -286,8 +286,15 @@
                     data: JSON.stringify(data),
                     method: 'POST'
                 }).then(function(response) {
-                    var results = new Mapbender.FeatureCollection(response.features);
-                    self._searchResults(results);
+                    var features = response.features.map(function(data) {
+                        var gjInput = {
+                            type: 'Feature',
+                            geometry: data.geometry,
+                            properties: data.properties || {}
+                        };
+                        return self.mbMap.model.parseGeoJson(gjInput)[0];
+                    });
+                    self._searchResults(features);
                 });
             }
         },
@@ -334,7 +341,7 @@
         /**
          * Rebuilds result table with search result data.
          *
-         * @param {FeatureCollection} results
+         * @param {Array} results
          */
         _searchResultsTable: function(results){
             var currentRoute = this.getCurrentRoute();
@@ -350,39 +357,40 @@
 
             if(results.length > 0) $('.no-results', this.element).hide();
 
-            results.each(function(feature, idx) {
+            for (var i = 0; i < results.length; ++i) {
+                var feature = results[i];
                 var row = $('<tr/>');
-                row.addClass(idx % 2 ? "even" : "odd");
+                row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
 
                 for (var header in headers) {
-                    var d = feature.get('properties')[header];
+                    var d = feature.data[header];
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
 
                 tbody.append(row);
 
-                features.push(feature.getFeature());
-            });
+                features.push(feature);
+            }
 
             table.append(tbody);
             layer.addFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
                 })
                 .on('mouseenter', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
 
                     if(feature.renderIntent !== 'select') {
                         self._highlightFeature(feature, 'temporary');
                     }
                 })
                 .on('mouseleave', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
 
                     if(feature.renderIntent !== 'select') {
                         self._highlightFeature(feature, 'default');
@@ -509,7 +517,7 @@
                 return;
             }
             var row = $(event.currentTarget),
-                feature = row.data('feature').getFeature()
+                feature = row.data('feature')
             ;
             var zoomToFeatureOptions;
             if (callbackConf.options) {
