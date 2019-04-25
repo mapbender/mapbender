@@ -150,7 +150,6 @@ class SearchRouter extends Element
     public function httpAction($action)
     {
         /** @var SQLSearchEngine $engine */
-        $response = new JsonResponse();
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
         list($target, $action) = explode('/', $action);
@@ -161,7 +160,7 @@ class SearchRouter extends Element
         }
 
         if ('autocomplete' === $action) {
-            $data = json_decode($request->getContent());
+            $data = json_decode($request->getContent(), true);
 
             // Get search config
             $conf = $this->getConfiguration();
@@ -172,39 +171,32 @@ class SearchRouter extends Element
             $engine  = new $conf['class']($this->container);
             $results = $engine->autocomplete(
                 $conf,
-                $data->key,
-                $data->value,
-                $data->properties,
-                $data->srs,
-                $data->extent
+                $data['key'],
+                $data['value'],
+                $data['properties'],
+                null,
+                null
             );
-
-            $response->setData(array(
-                'key'        => $data->key,
-                'value'      => $data->value,
-                'properties' => $data->properties,
-                'results'    => $results
-            ));
-            return $response;
+            return new JsonResponse(array_replace($data, array(
+                'results' => $results,
+            )));
         }
 
         if ('search' === $action) {
             $this->getForms();
-            $data = json_decode($request->getContent());
+            $data = json_decode($request->getContent(), true);
             $form = $this->forms[ $target ];
-            $form->submit(get_object_vars($data->properties));
+            $form->submit($data['properties']);
             $conf     = $conf['routes'][ $target ];
             $engine   = new $conf['class']($this->container);
             $query    = array(
-                'form'              => $form->getData(),
+                'form' => $form->getData(),
             );
-            $features = $engine->search($conf, $query, $request->get('srs'), $request->get('extent'));
-            $result   = $this->getFeatureCollection($features);
-            $response->setData(array_merge($result, array(
-                'query' => $query['form']
-            )));
-
-            return $response;
+            $features = $engine->search($conf, $query, $data['srs'], $data['extent']);
+            return new JsonResponse(array(
+                'type'     => 'FeatureCollection',
+                'features' => $features,
+            ));
         }
 
         throw new NotFoundHttpException();

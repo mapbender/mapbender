@@ -37,13 +37,16 @@ class SQLSearchEngine
      * @param  array  $config     Search configuration
      * @param  String $key        Autocomplete field nme
      * @param  String $value      Autocomplete value
-     * @param  Object $properties All form values
+     * @param  string[] $properties All form values
      * @param  String $srs        Current map SRS
      * @param  array  $extent     Current map extent
      * @return array              Autocomplete suggestions
      */
     public function autocomplete($config, $key, $value, $properties, $srs, $extent)
     {
+        if (is_object($properties)) {
+            $properties = get_object_vars($properties);
+        }
         // First, get DBAL connection service, either given one or default one
         /** @var Connection $connection */
         $connection     = $this->getConnection($config);
@@ -63,8 +66,8 @@ class SQLSearchEngine
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
-                if (!empty($properties->{$otherProp})) {
-                    $cond->add($this->getTextMatchExpression($otherProp, $properties->{$otherProp}, 'ilike-right', $qb));
+                if (!empty($properties[$otherProp])) {
+                    $cond->add($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
                     $logger->warn('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
                 }
@@ -148,7 +151,7 @@ class SQLSearchEngine
     {
         $features = array();
         foreach ($rows as $row) {
-            $geometry = json_decode($row['geom']);
+            $geometry = json_decode($row['geom'], true);
             unset($row['geom']);
             $features[] = array(
                 'type' => 'Feature',
