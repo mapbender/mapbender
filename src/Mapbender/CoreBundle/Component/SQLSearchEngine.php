@@ -106,19 +106,21 @@ class SQLSearchEngine
     {
         // First, get DBAL connection service, either given one or default one
 
+        $options = $config['class_options'];
         $connection     = $this->getConnection($config);
         $qb             = $connection->createQueryBuilder();
+        $selectExpressions = array();
+        foreach ($options['attributes'] as $columName) {
+            $selectExpressions[] = 't.' . $connection->quoteIdentifier(trim($columName, '"'));
+        }
+        // add geometry
+        $geomColumn = 't.' . $connection->quoteIdentifier(trim($options['geometry_attribute'], '"'));
+        $srsId = $this->srsIdFromName($srs);
+        $srsParamPlaceholder = $qb->createNamedParameter($srsId);
+        $geomTransformed = "ST_Transform({$geomColumn}, {$srsParamPlaceholder}::int)";
+        $selectExpressions[] = "ST_AsGeoJSON({$geomTransformed}) as geom";
 
-        // Build SELECT
-        $select = implode(', ', array_map(function($attribute)
-                        {
-                            return 't.' . $attribute;
-                        }, $config['class_options']['attributes']));
-        // Add geometry to SELECT
-        // // @todo: Platform independency (ST_AsGeoJSON)
-        $select .= ', ST_AsGeoJSON(' . $config['class_options']['geometry_attribute'] . ') as geom';
-
-        $qb->select($select);
+        $qb->select(implode(', ', $selectExpressions));
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
@@ -231,6 +233,26 @@ class SQLSearchEngine
         } else {
             return $qb->expr()->like($referenceExpression, $matchExpression);
         }
+    }
+
+    /**
+     * Strips namespace prefix from given $srsName and returns the numeric srs id.
+     * Only supports 'EPSG:' namespace prefix. If $srsName already is a plain number,
+     * return it cast to integer but otherwise unchanged.
+     *
+     * @param $srsName
+     * @return int
+     */
+    protected function srsIdFromName($srsName)
+    {
+        $parts = explode(':', $srsName);
+        if (count($parts) === 1 && (strval(intval($parts[0])) === strval($parts[0])) && $parts[0]) {
+            return intval($parts[0]);
+        }
+        if (count($parts) !== 2 || $parts[0] !== 'EPSG') {
+            throw new \InvalidArgumentException("Unsupported srs name " . print_r($srsName, true));
+        }
+        return intval($parts[1]);
     }
 
     /**
