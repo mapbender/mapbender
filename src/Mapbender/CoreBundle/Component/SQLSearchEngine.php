@@ -49,31 +49,16 @@ class SQLSearchEngine
         $qb             = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
 
-        $keys = array($key);
-        $values = array($value);
-        if(array_key_exists('split', $fieldConfig)) {
-            $keys = $fieldConfig['split'];
-            $values = explode(' ', $value);
-        }
-
-        // Build SELECT
-        $select = implode(', ', array_map(function($attribute) {
-            return 't.' . $attribute;
-        }, $keys));
-
-        $qb->select("DISTINCT {$select}");
+        $qb->select("DISTINCT t.{$key}");
 
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
         // Build WHERE condition
         $cond = $qb->expr()->andX();
-        $params = array();
-        for($i = 0; $i < count($keys); $i++) {
-            // @todo: Platform independency (::varchar, lower)
-            $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
-            $params[] = '%' . (count($values) > $i ? mb_strtolower($values[$i], 'UTF-8') : '') . '%';
-        }
+        $params = array('%' . $value . '%');
+        // @todo: Platform independency (::varchar, lower)
+        $cond->add($qb->expr()->like('LOWER(t.' . $key . '::varchar)', 'LOWER(?)'));
 
         $logger = $this->container->get('logger');
 
@@ -97,19 +82,16 @@ class SQLSearchEngine
         $qb->where($cond);
         $qb->orderBy('t.' . $key, 'ASC');
 
-        // Create prepared statement and execute
         $stmt = $connection->executeQuery($qb->getSQL(), $params);
         $dataOut = array();
         foreach ($stmt as $row) {
-            $value = array();
-            foreach ($keys as $k) {
-                if (!array_key_exists($k, $row)) {
-                    $k = trim($k, '"');
-                }
-                $value[] = $row[$k];
+            if (!array_key_exists($key, $row)) {
+                $value = $row[trim($key, '"')];
+            } else {
+                $value = $row[$key];
             }
             $dataOut[] = array(
-                'value' => implode(',', $value),
+                'value' => $value,
             );
         }
         return $dataOut;
@@ -149,22 +131,11 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         $cond = $qb->expr()->andX();
-        foreach($data['form'] as $key => $value)
-        {
-            if(null === $value) {
+        foreach($data['form'] as $key => $value) {
+            if (!$value) {
                 continue;
             }
-            $cfg = $this->getFormFieldConfig($config, $key);
-
-            if (array_key_exists('split', $cfg)) {
-                // Split
-                $values = explode(' ', $value);
-                foreach ($cfg['split'] as $splitKey) {
-                    $cond->add($this->getTextMatchExpression($splitKey, $value, $config, $qb));
-                }
-            } else {
-                $cond->add($this->getTextMatchExpression($key, $value, $config, $qb));
-            }
+            $cond->add($this->getTextMatchExpression($key, $value, $config, $qb));
         }
         $qb->where($cond);
 
