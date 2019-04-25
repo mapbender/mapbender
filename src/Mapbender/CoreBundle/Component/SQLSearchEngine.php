@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,33 +57,24 @@ class SQLSearchEngine
 
         // Build WHERE condition
         $cond = $qb->expr()->andX();
-        $params = array('%' . $value . '%');
-        // @todo: Platform independency (::varchar, lower)
-        $cond->add($qb->expr()->like('LOWER(t.' . $key . '::varchar)', 'LOWER(?)'));
+        $cond->add($this->getTextMatchExpression($key, $value, 'ilike', $qb));
 
         $logger = $this->container->get('logger');
-
-        if(array_key_exists('attr', $fieldConfig['options'])
-            && array_key_exists('data-autocomplete-using', $fieldConfig['options']['attr'])) {
-            $using = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
-            array_walk($using, function($key) use ($properties, $logger, $cond, $qb, &$params) {
-                if(property_exists($properties, $key)) {
-                    $value = $properties->{$key};
-                    if(!$value) {
-                        return;
-                    }
-                    $cond->add($qb->expr()->eq('t.' . $key, '?'));
-                    $params[] = $value;
+        if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
+            $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
+            foreach ($otherProps as $otherProp) {
+                if (!empty($properties->{$otherProp})) {
+                    $cond->add($this->getTextMatchExpression($otherProp, $properties->{$otherProp}, 'ilike-right', $qb));
                 } else {
-                    $logger->warn('Key "' . $key . '" for autocomplete-using does not exist in data.');
+                    $logger->warn('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
                 }
-            });
+            }
         }
 
         $qb->where($cond);
         $qb->orderBy('t.' . $key, 'ASC');
 
-        $stmt = $connection->executeQuery($qb->getSQL(), $params);
+        $stmt = $connection->executeQuery($qb->getSQL(), $qb->getParameters());
         $dataOut = array();
         foreach ($stmt as $row) {
             if (!array_key_exists($key, $row)) {
@@ -135,7 +127,9 @@ class SQLSearchEngine
             if (!$value) {
                 continue;
             }
-            $cond->add($this->getTextMatchExpression($key, $value, $config, $qb));
+            $fieldConfig = $this->getFormFieldConfig($config, $key);
+            $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
+            $cond->add($this->getTextMatchExpression($key, $value, $matchMode, $qb));
         }
         $qb->where($cond);
 
@@ -176,16 +170,13 @@ class SQLSearchEngine
     /**
      * @param string $key
      * @param mixed $value
-     * @param array $config
+     * @param string $mode
      * @param QueryBuilder $qb
      * @return mixed
      */
-    protected function getTextMatchExpression($key, $value, $config, $qb) {
-        $cfg = $this->getFormFieldConfig($config, $key);
+    protected function getTextMatchExpression($key, $value, $mode, $qb) {
 
-        $compare = array_key_exists('compare', $cfg) ? $cfg['compare'] : null;
-
-        switch ($compare) {
+        switch ($mode) {
             case 'exact':
             case 'like':
             case 'like-left':
@@ -200,7 +191,7 @@ class SQLSearchEngine
                 $caseInsensitive = true;
                 break;
         }
-        switch ($compare) {
+        switch ($mode) {
             default:
             case 'ilike':
             case 'like':
