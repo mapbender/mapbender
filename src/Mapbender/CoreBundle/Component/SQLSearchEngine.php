@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -46,22 +47,19 @@ class SQLSearchEngine
         /** @var Connection $connection */
         $connection     = $this->getConnection($config);
         $qb             = $connection->createQueryBuilder();
-
-        if (!array_key_exists($key, $config['form'])) {
-            $key = '"' . $key . '"';
-        }
+        $fieldConfig = $this->getFormFieldConfig($config, $key);
 
         $distinct = false;
-        if(array_key_exists('attr', $config['form'][$key]['options'])
-            && array_key_exists('data-autocomplete-distinct', $config['form'][$key]['options']['attr'])
-            && strtolower($config['form'][$key]['options']['attr']['data-autocomplete-distinct']) == 'on') {
+        if(array_key_exists('attr', $fieldConfig['options'])
+            && array_key_exists('data-autocomplete-distinct', $fieldConfig['options']['attr'])
+            && strtolower($fieldConfig['options']['attr']['data-autocomplete-distinct']) == 'on') {
             $distinct = true;
         }
 
         $keys = array($key);
         $values = array($value);
-        if(array_key_exists('split', $config['form'][$key])) {
-            $keys = $config['form'][$key]['split'];
+        if(array_key_exists('split', $fieldConfig)) {
+            $keys = $fieldConfig['split'];
             $values = explode(' ', $value);
         }
 
@@ -86,9 +84,9 @@ class SQLSearchEngine
 
         $logger = $this->container->get('logger');
 
-        if(array_key_exists('attr', $config['form'][$key]['options'])
-            && array_key_exists('data-autocomplete-using', $config['form'][$key]['options']['attr'])) {
-            $using = explode(',', $config['form'][$key]['options']['attr']['data-autocomplete-using']);
+        if(array_key_exists('attr', $fieldConfig['options'])
+            && array_key_exists('data-autocomplete-using', $fieldConfig['options']['attr'])) {
+            $using = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             array_walk($using, function($key) use ($properties, $logger, $cond, $qb, &$params) {
                 if(property_exists($properties, $key)) {
                     $value = $properties->{$key};
@@ -108,9 +106,8 @@ class SQLSearchEngine
 
         // Create prepared statement and execute
         $stmt = $connection->executeQuery($qb->getSQL(), $params);
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        array_walk($rows, function (&$row) use ($key, $keys, $config) {
+        $dataOut = array();
+        foreach ($stmt as $row) {
             $value = array();
             foreach ($keys as $k) {
                 if (!array_key_exists($k, $row)) {
@@ -118,11 +115,11 @@ class SQLSearchEngine
                 }
                 $value[] = $row[$k];
             }
-            $row = array(
+            $dataOut[] = array(
                 'value' => implode(',', $value),
             );
-        });
-        return $rows;
+        }
+        return $dataOut;
     }
 
     /**
@@ -158,116 +155,48 @@ class SQLSearchEngine
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
-        // This function switches by compare configuration (exact, like, ilike, ...)
-        $createExpr = function($key, $value) use ($config, $qb) {
-            if (array_key_exists($key, $config['form'])) {
-                $cfg = $config['form'][$key];
-            } else {
-                $cfg = $config['form']['"' . $key . '"'];
-            }
-
-            $compare = array_key_exists('compare', $cfg) ? $cfg['compare'] : null;
-
-            switch ($compare) {
-                case 'exact':
-                case 'like':
-                case 'like-left':
-                case 'like-right':
-                    $caseInsensitive = false;
-                    break;
-                default:
-                case 'iexact':
-                case 'ilike':
-                case 'ilike-left':
-                case 'ilike-right':
-                    $caseInsensitive = true;
-                    break;
-            }
-            switch ($compare) {
-                default:
-                case 'ilike':
-                case 'like':
-                    $patternPrefix = '%';
-                    $patternSuffix = '%';
-                    break;
-                case 'ilike-left':
-                case 'like-left':
-                    $patternPrefix = '%';
-                    $patternSuffix = '';
-                    break;
-                case 'ilike-right':
-                case 'like-right':
-                    $patternPrefix = '';
-                    $patternSuffix = '%';
-                    break;
-                case 'exact':
-                case 'iexact':
-                    $patternPrefix = '';
-                    $patternSuffix = '';
-                    break;
-            }
-            $matchValue = strtr($value, array(
-                '%' => '\%',
-                '_' => '\_',
-            ));
-            $matchValue = "{$patternPrefix}{$matchValue}{$patternSuffix}";
-            $placeHolder = $qb->createNamedParameter($matchValue);
-            $referenceExpression = "t.{$key}";
-            $matchExpression = $placeHolder;
-            if ($caseInsensitive) {
-                $referenceExpression = "LOWER({$referenceExpression})";
-                $matchExpression = "LOWER({$matchExpression})";
-            }
-            if (!$patternPrefix && !$patternSuffix) {
-                return $qb->expr()->eq($referenceExpression, $matchExpression);
-            } else {
-                return $qb->expr()->like($referenceExpression, $matchExpression);
-            }
-        };
-
         $cond = $qb->expr()->andX();
         foreach($data['form'] as $key => $value)
         {
             if(null === $value) {
                 continue;
             }
+            $cfg = $this->getFormFieldConfig($config, $key);
 
-            if (!array_key_exists($key, $config['form'])) {
-                $cfg = $config['form']['"' . $key . '"'];
-            } else {
-                $cfg = $config['form'][$key];
-            }
             if (array_key_exists('split', $cfg)) {
                 // Split
-                $keys = $cfg['split'];
                 $values = explode(' ', $value);
-                for($i = 0; $i < count($keys); $i++)
-                {
-                    $cond->add($createExpr($keys[$i], $value));
+                foreach ($cfg['split'] as $splitKey) {
+                    $cond->add($this->getTextMatchExpression($splitKey, $value, $config, $qb));
                 }
             } else {
-                $cond->add($createExpr($key, $value));
+                $cond->add($this->getTextMatchExpression($key, $value, $config, $qb));
             }
         }
         $qb->where($cond);
 
         // Create prepared statement and execute
         $stmt = $connection->executeQuery($qb->getSQL(), $qb->getParameters());
-        $rows = $stmt->fetchAll();
+        return $this->rowsToGeoJson($stmt);
+    }
 
-        // Rewrite rows as GeoJSON features
-        array_walk($rows, function(&$row)
-                {
-                    $feature = array(
-                        'type' => 'Feature',
-                        'properties' => $row,
-                        'geometry' => json_decode($row['geom'])
-                    );
-                    unset($feature['properties']['geom']);
-                    $row = $feature;
-                });
-
-        return $rows;
+    /**
+     * @param array|\Traversable $rows
+     * @return array
+     */
+    protected static function rowsToGeoJson($rows)
+    {
+        $features = array();
+        foreach ($rows as $row) {
+            $geometry = json_decode($row['geom']);
+            unset($row['geom']);
+            $features[] = array(
+                'type' => 'Feature',
+                'properties' => $row,
+                'geometry' => $geometry,
+            );
+        }
+        return $features;
     }
 
     /**
@@ -280,4 +209,86 @@ class SQLSearchEngine
         return $this->container->get('doctrine.dbal.' . $connectionName . '_connection');
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @param array $config
+     * @param QueryBuilder $qb
+     * @return mixed
+     */
+    protected function getTextMatchExpression($key, $value, $config, $qb) {
+        $cfg = $this->getFormFieldConfig($config, $key);
+
+        $compare = array_key_exists('compare', $cfg) ? $cfg['compare'] : null;
+
+        switch ($compare) {
+            case 'exact':
+            case 'like':
+            case 'like-left':
+            case 'like-right':
+                $caseInsensitive = false;
+                break;
+            default:
+            case 'iexact':
+            case 'ilike':
+            case 'ilike-left':
+            case 'ilike-right':
+                $caseInsensitive = true;
+                break;
+        }
+        switch ($compare) {
+            default:
+            case 'ilike':
+            case 'like':
+                $patternPrefix = '%';
+                $patternSuffix = '%';
+                break;
+            case 'ilike-left':
+            case 'like-left':
+                $patternPrefix = '%';
+                $patternSuffix = '';
+                break;
+            case 'ilike-right':
+            case 'like-right':
+                $patternPrefix = '';
+                $patternSuffix = '%';
+                break;
+            case 'exact':
+            case 'iexact':
+                $patternPrefix = '';
+                $patternSuffix = '';
+                break;
+        }
+        $matchValue = strtr($value, array(
+            '%' => '\%',
+            '_' => '\_',
+        ));
+        $matchValue = "{$patternPrefix}{$matchValue}{$patternSuffix}";
+        $placeHolder = $qb->createNamedParameter($matchValue);
+        $referenceExpression = "t.{$key}";
+        $matchExpression = $placeHolder;
+        if ($caseInsensitive) {
+            $referenceExpression = "LOWER({$referenceExpression})";
+            $matchExpression = "LOWER({$matchExpression})";
+        }
+        if (!$patternPrefix && !$patternSuffix) {
+            return $qb->expr()->eq($referenceExpression, $matchExpression);
+        } else {
+            return $qb->expr()->like($referenceExpression, $matchExpression);
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param string $key
+     * @return array
+     */
+    protected static function getFormFieldConfig($config, $key)
+    {
+        if (!array_key_exists($key, $config['form'])) {
+            return $config['form']['"' . $key . '"'];
+        } else {
+            return $config['form'][$key];
+        }
+    }
 }
