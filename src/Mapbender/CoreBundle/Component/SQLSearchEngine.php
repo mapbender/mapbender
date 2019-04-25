@@ -49,13 +49,6 @@ class SQLSearchEngine
         $qb             = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
 
-        $distinct = false;
-        if(array_key_exists('attr', $fieldConfig['options'])
-            && array_key_exists('data-autocomplete-distinct', $fieldConfig['options']['attr'])
-            && strtolower($fieldConfig['options']['attr']['data-autocomplete-distinct']) == 'on') {
-            $distinct = true;
-        }
-
         $keys = array($key);
         $values = array($value);
         if(array_key_exists('split', $fieldConfig)) {
@@ -68,7 +61,7 @@ class SQLSearchEngine
             return 't.' . $attribute;
         }, $keys));
 
-        $qb->select($distinct ? 'DISTINCT ' . $select : $select);
+        $qb->select("DISTINCT {$select}");
 
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
