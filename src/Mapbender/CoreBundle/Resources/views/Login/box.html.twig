@@ -48,6 +48,14 @@
                                                                  src="{{ asset(fom.server_logo) }}"/></a>
       </div>
       {% block box_content %}{% endblock %}
+      {% set sitelinks = get_sitelinks() %}
+      {% if sitelinks %}
+      <ul class="sitelinks">
+        {% for sitelink in sitelinks %}
+          <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

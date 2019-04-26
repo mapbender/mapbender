@@ -145,6 +145,14 @@
     margin-right: $space/2;
   }
 
-
+  .sitelinks {
+    text-align: right;
+    li {
+      display: inline-block;
+      a, a:visited {
+        color: inherit;
+      }
+    }
+  }
 }
 
