@@ -41,6 +41,11 @@
             <argument type="service" id="mapbender.element_inventory.service" />
         </service>
 
+        <service id="mapbender.twig.sitelinks" class="Mapbender\CoreBundle\Extension\SitelinksExtension">
+            <tag name="twig.extension"/>
+            <argument>%mapbender.sitelinks%</argument>
+        </service>
+
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="target_element"/>
