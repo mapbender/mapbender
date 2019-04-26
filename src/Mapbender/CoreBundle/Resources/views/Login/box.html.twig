@@ -42,11 +42,13 @@
     <div class="head">
       <hr class="dekoSeperator">
     </div>
-    <div class="logoContainer">
-      <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
-                                                               src="{{ asset(fom.server_logo) }}"/></a>
+    <div class="login-wrapper">
+      <div class="logoContainer">
+        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+                                                                 src="{{ asset(fom.server_logo) }}"/></a>
+      </div>
+      {% block box_content %}{% endblock %}
     </div>
-    {% block box_content %}{% endblock %}
   </div>
 {% endblock %}
 </body>
