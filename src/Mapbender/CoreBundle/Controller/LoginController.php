@@ -1,12 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * User controller.
@@ -21,44 +19,22 @@ class LoginController extends Controller
     /**
      * User login
      *
-     * @Route("/user/login")
-     * @Template()
-     * @Method("GET")
+     * @Route("/user/login", methods={"GET"})
+     * @return Response
      */
     public function loginAction()
     {
-        $request = $this->get('request_stack')->getCurrentRequest();
-        /*
-        if($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
-            $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
-        }
-        */
+        /** @var AuthenticationUtils $authenticationUtils */
+        $authenticationUtils = $this->get('security.authentication_utils');
+        $error = $authenticationUtils->getLastAuthenticationError(true);
+        $lastUsername = $authenticationUtils->getLastUsername();
 
-        $session = $request->getSession();
-
-        // get the login error if there is one
-        if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(
-                Security::AUTHENTICATION_ERROR
-            );
-        } elseif (null !== $session && $session->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $session->get(Security::AUTHENTICATION_ERROR);
-            $session->remove(Security::AUTHENTICATION_ERROR);
-        } else {
-            $error = '';
-        }
-
-        // last username entered by the user
-        $lastUsername = (null === $session) ? '' : $session->get(Security::LAST_USERNAME);
-
-        return array(
+        return $this->render('@MapbenderCore/Login/login.html.twig', array(
             'last_username' => $lastUsername,
             'error' => $error,
-            'selfregister' => $this->container->getParameter("fom_user.selfregister"),
-            'reset_password' => $this->container->getParameter("fom_user.reset_password")
-        );
+            'selfregister' => $this->getParameter("fom_user.selfregister"),
+            'reset_password' => $this->getParameter("fom_user.reset_password"),
+        ));
     }
 
     /**
