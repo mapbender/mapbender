@@ -1,7 +1,6 @@
 .mb-element-coordsdisplay {
   .iconCoordinates {
     cursor:default;
-    margin-right:5px;
   }
 }
 
@@ -13,11 +12,7 @@
 }
 .toolBar {
   .mb-element-coordsdisplay {
-    display: inline-block;
-    vertical-align: baseline;
+    text-align: left;
     min-width: 160px;
-    > span {
-      float: left;
-    }
   }
 }
