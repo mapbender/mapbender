@@ -31,20 +31,20 @@
             {% endif %}
         </div>
         <div class="col2 box">
+            <div class="buttonGroup">
+              <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+              {% if is_granted('EDIT', oid) or is_granted('EDIT', source) %}
+              <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+              {% endif %}
+              {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
+                 <span class="iconRemove hover-highlight-effect"
+                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
+                  data-url="{{ path("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
+                  data-id="{{ source.id }}"></span>
+              {% endif %}
+            </div>
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
           <div class="description">{{ source.description }}</div>
-          <div class="buttonGroup">
-            <a class="iconView iconBig" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-            {% if is_granted('EDIT', oid) or is_granted('EDIT', source) %}
-            <a class="iconReset iconBig" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
-            {% endif %}
-            {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
-               <span class="iconRemove iconBig"
-                title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                data-url="{{ path("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
-                data-id="{{ source.id }}"></span>
-            {% endif %}
-          </div>
         </div>
       </li>
     {% endfor %}
