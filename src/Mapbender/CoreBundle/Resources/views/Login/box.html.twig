@@ -1,0 +1,63 @@
+{% set application = {'slug': 'manager'} %}
+<!DOCTYPE html>
+<html class="no-js" lang="{{ app.request.locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{% block title %}{% endblock %}</title>
+  <meta name="description" content="Mapbender 3">
+  <script language="JavaScript">
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      document.write('<meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;target-densityDpi=240dpi"/>');
+    }
+  </script>
+  {##}
+  <link rel="shortcut icon" href="{% block favicon %}{% endblock %}"/>
+
+  {% block css %}
+    <link rel="stylesheet"
+          href="{{ path('mapbender_core_application_assets', {'slug': 'mb3-login', 'type': 'css'}) }}"/>
+
+  {% endblock %}
+
+  {% block trans %}
+    <script type="text/javascript"
+            src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
+    <script type="text/javascript">
+      var Mapbender = Mapbender || {};
+      Mapbender.configuration = {elements: {}};
+    </script>
+  {% endblock %}
+
+  {% block js %}
+    <script src="{{ asset('components/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('components/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
+  {% endblock %}
+</head>
+<body class="{% if app.debug %}debug{% endif %}">
+{% block content %}
+  <div class="authWrapper">
+    <div class="head">
+      <hr class="dekoSeperator">
+    </div>
+    <div class="login-wrapper">
+      <div class="logoContainer">
+        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+                                                                 src="{{ asset(fom.server_logo) }}"/></a>
+      </div>
+      {% block box_content %}{% endblock %}
+      {% set sitelinks = get_sitelinks() %}
+      {% if sitelinks %}
+      <ul class="sitelinks">
+        {% for sitelink in sitelinks %}
+          <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+</body>
+</html>
