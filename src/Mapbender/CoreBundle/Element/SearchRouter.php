@@ -174,8 +174,8 @@ class SearchRouter extends Element
                 $data['key'],
                 $data['value'],
                 $data['properties'],
-                null,
-                null
+                $data['srs'],
+                $data['extent']
             );
             return new JsonResponse(array_replace($data, array(
                 'results' => $results,

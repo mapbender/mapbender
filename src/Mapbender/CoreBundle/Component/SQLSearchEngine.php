@@ -61,6 +61,10 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andX();
         $cond->add($this->getTextMatchExpression($key, $value, 'ilike', $qb));
+        if ($srs && $extent && !empty($config['class_options']['geometry_attribute'])) {
+            $geomColumn = 't.' . $connection->quoteIdentifier(trim($config['class_options']['geometry_attribute'], '"'));
+            $cond->add($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+        }
 
         $logger = $this->container->get('logger');
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
@@ -136,6 +140,10 @@ class SQLSearchEngine
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
             $cond->add($this->getTextMatchExpression($key, $value, $matchMode, $qb));
         }
+        if ($srs && $extent) {
+            $cond->add($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+        }
+
         $qb->where($cond);
 
         // Create prepared statement and execute
@@ -242,6 +250,25 @@ class SQLSearchEngine
         } else {
             return $qb->expr()->like($referenceExpression, $matchExpression);
         }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param string $geomReference
+     * @param float[] $extent 4 values left / bottom / right / top
+     * @param string $srsName
+     * @return string
+     */
+    protected function getBoundsExpression(QueryBuilder $qb, $geomReference, $extent, $srsName)
+    {
+        $boxPoints = array(
+            'ST_Point(' . $qb->createNamedParameter($extent[0]) . ', ' . $qb->createNamedParameter($extent[1]) . ')',
+            'ST_Point(' . $qb->createNamedParameter($extent[2]) . ', ' . $qb->createNamedParameter($extent[3]) . ')',
+        );
+        $srsId = $this->srsIdFromName($srsName);
+        $box = 'ST_SetSRID(ST_MakeBox2D(' . implode(', ', $boxPoints) . '), ' . $qb->createNamedParameter($srsId) . ')';
+        $transformedBox = "ST_Transform({$box}, ST_Srid({$geomReference}))";
+        return "{$transformedBox} && {$geomReference}";
     }
 
     /**
