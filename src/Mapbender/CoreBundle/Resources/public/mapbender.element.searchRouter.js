@@ -234,7 +234,7 @@
                 key: $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, ''),
                 value: $input.val(),
                 srs: this.mbMap.model.getCurrentProjectionCode(),
-                extent: null,
+                extent: this.mbMap.model.getMaxExtentArray(),
                 properties: formValues
             };
             return $.getJSON({
@@ -276,7 +276,7 @@
                 var formValues = this._getFormValues(form);
                 var data = {
                     properties: formValues,
-                    extent: null,
+                    extent: this.mbMap.model.getMaxExtentArray(),
                     srs: this.mbMap.model.getCurrentProjectionCode()
                 };
                 var url = this.callbackUrl + this.selected + '/search';
