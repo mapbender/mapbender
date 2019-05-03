@@ -81,7 +81,7 @@ class SQLSearchEngine
         $qb->where($cond);
         $qb->orderBy('t.' . $key, 'ASC');
 
-        $stmt = $connection->executeQuery($qb->getSQL(), $qb->getParameters());
+        $stmt = $qb->execute();
         $dataOut = array();
         foreach ($stmt as $row) {
             if (!array_key_exists($key, $row)) {
@@ -146,8 +146,7 @@ class SQLSearchEngine
 
         $qb->where($cond);
 
-        // Create prepared statement and execute
-        $stmt = $connection->executeQuery($qb->getSQL(), $qb->getParameters());
+        $stmt = $qb->execute();
         return $this->rowsToGeoJson($stmt);
     }
 
