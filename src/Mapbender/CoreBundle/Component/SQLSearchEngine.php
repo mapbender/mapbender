@@ -151,7 +151,13 @@ class SQLSearchEngine
     {
         $features = array();
         foreach ($rows as $row) {
-            $geometry = json_decode($row['geom'], true);
+            if (!$row['geom']) {
+                continue;
+            }
+            $geometry = @json_decode($row['geom'], true);
+            if (!$geometry) {
+                continue;
+            }
             unset($row['geom']);
             $features[] = array(
                 'type' => 'Feature',
