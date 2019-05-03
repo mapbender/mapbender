@@ -7,6 +7,8 @@ use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
 use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -152,25 +154,22 @@ class SearchRouter extends Element
         /** @var SQLSearchEngine $engine */
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
-        list($target, $action) = explode('/', $action);
-        $conf = $this->getConfiguration();
-
-        if (!array_key_exists($target, $conf['routes'])) {
+        $actionParts = explode('/', $action);
+        if (count($actionParts) !== 2) {
             throw new NotFoundHttpException();
         }
+        $categoryId = $actionParts[0];
+        $action = $actionParts[1];
 
+        $categoryConf = $this->getCategoryConfig($categoryId);
+        if (!$categoryConf) {
+            throw new NotFoundHttpException();
+        }
         if ('autocomplete' === $action) {
             $data = json_decode($request->getContent(), true);
-
-            // Get search config
-            $conf = $this->getConfiguration();
-            if (!array_key_exists($target, $conf['routes'])) {
-                throw new NotFoundHttpException();
-            }
-            $conf    = $conf['routes'][ $target ];
-            $engine  = new $conf['class']($this->container);
+            $engine  = new $categoryConf['class']($this->container);
             $results = $engine->autocomplete(
-                $conf,
+                $categoryConf,
                 $data['key'],
                 $data['value'],
                 $data['properties'],
@@ -185,14 +184,13 @@ class SearchRouter extends Element
         if ('search' === $action) {
             $this->getForms();
             $data = json_decode($request->getContent(), true);
-            $form = $this->forms[ $target ];
+            $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
-            $conf     = $conf['routes'][ $target ];
-            $engine   = new $conf['class']($this->container);
+            $engine   = new $categoryConf['class']($this->container);
             $query    = array(
                 'form' => $form->getData(),
             );
-            $features = $engine->search($conf, $query, $data['srs'], $data['extent']);
+            $features = $engine->search($categoryConf, $query, $data['srs'], $data['extent']);
             return new JsonResponse(array(
                 'type'     => 'FeatureCollection',
                 'features' => $features,
@@ -205,11 +203,12 @@ class SearchRouter extends Element
     /**
      * Create form for selecting search route (= search form) to display.
      *
-     * @return Form Search route select form
+     * @return FormView Search route select form
      */
     public function getRouteSelectForm()
     {
         $configuration = $this->getConfiguration();
+        /** @var FormFactoryInterface $formFactory */
         $formFactory   = $this->container->get('form.factory');
         $form          = $formFactory->createNamed(
             'search_routes',
@@ -221,25 +220,34 @@ class SearchRouter extends Element
     }
 
     /**
+     * @param $categoryConfig
+     * @param $categoryId
+     * @return FormInterface
+     */
+    protected function getForm($categoryConfig, $categoryId)
+    {
+        /** @var FormFactoryInterface $factory */
+        $factory = $this->container->get('form.factory');
+        return $factory->createNamed($categoryId, new SearchRouterFormType(), null, array(
+            'fields' => $categoryConfig,
+        ));
+    }
+
+    /**
      * Get all forms.
      *
      * @return Form[] Search forms
      */
     public function getForms()
     {
-        if (!$this->forms) {
-            $configuration = $this->getConfiguration();
-            $formFactory   = $this->container->get('form.factory');
-            foreach ($configuration['routes'] as $name => $conf) {
-                $this->forms[ $name ] = $formFactory->createNamed(
-                    $name,
-                    new SearchRouterFormType(),
-                    null, // data
-                    array('fields' => $conf)
-                );
-            }
+        $forms = array();
+        $configuration = $this->getConfiguration();
+        foreach ($configuration['routes'] as $name => $conf) {
+            $forms[$name] = $this->getForm($conf, $name);
         }
-        return $this->forms;
+        // Legacy / inheritance compatibility HACK: store forms in instance attribute
+        $this->forms = $forms;
+        return $forms;
     }
 
     /**
@@ -250,11 +258,9 @@ class SearchRouter extends Element
     public function getFormViews()
     {
         $formViews = array();
-        $forms     = $this->getForms();
-        if ($forms) {
-            foreach ($forms as $form) {
-                $formViews[] = $form->createView();
-            }
+        $configuration = $this->getConfiguration();
+        foreach ($configuration['routes'] as $name => $conf) {
+            $formViews[] = $this->getForm($conf, $name)->createView();
         }
         return $formViews;
     }
@@ -267,10 +273,6 @@ class SearchRouter extends Element
         if (key_exists('dialog', $configuration)) {
             $configuration['asDialog'] = $configuration['dialog'];
             unset($configuration['dialog']);
-        }
-        if (key_exists('timeout', $configuration)) {
-            $configuration['timeoutFactor'] = $configuration['timeout'];
-            unset($configuration['timeout']);
         }
         foreach ($configuration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
@@ -309,10 +311,25 @@ class SearchRouter extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        $routes        = &$configuration["routes"];
-        foreach ($routes as $k => $route) {
-            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route);
+        foreach (array_keys($configuration['routes']) as $categoryId) {
+            $withDefaults = $this->getCategoryConfig($categoryId);
+            $configuration['routes'][$categoryId] = $withDefaults;
         }
         return $configuration;
+    }
+
+    /**
+     * @param string $categoryId
+     * @return array|null
+     */
+    protected function getCategoryConfig($categoryId)
+    {
+        $config = $this->entity->getConfiguration();
+        if (empty($config['routes'][$categoryId])) {
+            return null;
+        } else {
+            $defaults = static::$defaultRouteConfiguration;
+            return array_replace_recursive($defaults, $config['routes'][$categoryId]);
+        }
     }
 }
