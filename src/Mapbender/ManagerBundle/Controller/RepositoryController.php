@@ -8,8 +8,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,10 +27,8 @@ class RepositoryController extends Controller
     /**
      * Renders the layer service repository.
      *
-     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
-     * @Method({ "GET" })
-     * @Template
-     * @return Response|array
+     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" }, methods={"GET"})
+     * @return Response
      */
     public function indexAction($page)
     {
@@ -48,19 +44,17 @@ class RepositoryController extends Controller
             $allowed_sources[] = $source;
         }
 
-        return array(
+        return $this->render('@MapbenderManager/Repository/index.html.twig', array(
             'title' => 'Repository',
             'sources' => $allowed_sources,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
-        );
+        ));
     }
 
     /**
-     * @ManagerRoute("/new")
-     * @Method({ "GET" })
-     * @Template
-     * @return Response|array
+     * @ManagerRoute("/new", methods={"GET"})
+     * @return Response
      */
     public function newAction()
     {
@@ -68,15 +62,13 @@ class RepositoryController extends Controller
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $managers = $this->getRepositoryManagers();
-        return array(
+        return $this->render('@MapbenderManager/Repository/new.html.twig', array(
             'managers' => $managers
-        );
+        ));
     }
 
     /**
-     * @ManagerRoute("/create/{managertype}")
-     * @Method({ "POST" })
-     * @Template()
+     * @ManagerRoute("/create/{managertype}", methods={"POST"})
      * @param string $managertype
      * @return Response
      */
@@ -92,9 +84,7 @@ class RepositoryController extends Controller
     }
 
     /**
-     * @ManagerRoute("/source/{sourceId}")
-     * @Method({"GET"})
-     * @Template
+     * @ManagerRoute("/source/{sourceId}", methods={"GET"})
      * @param string $sourceId
      * @return Response
      */
@@ -111,11 +101,9 @@ class RepositoryController extends Controller
 
     /**
      * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/confirmdelete")
-     * @Method({"GET"})
-     * @Template("MapbenderManagerBundle:Repository:confirmdelete.html.twig")
+     * @ManagerRoute("/source/{sourceId}/confirmdelete", methods={"GET"})
      * @param string $sourceId
-     * @return Response|array
+     * @return Response
      */
     public function confirmdeleteAction($sourceId)
     {
@@ -137,15 +125,14 @@ class RepositoryController extends Controller
         if (!($this->isGranted('DELETE', $oid))) {
             $this->denyAccessUnlessGranted('DELETE', $source);
         }
-        return array(
+        return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
             'source' => $source,
-        );
+        ));
     }
 
     /**
      * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/delete")
-     * @Method({"POST"})
+     * @ManagerRoute("/source/{sourceId}/delete", methods={"POST"})
      * @param string $sourceId
      * @return Response
      */
@@ -182,11 +169,9 @@ class RepositoryController extends Controller
     /**
      * Returns a Source update form.
      *
-     * @ManagerRoute("/source/{sourceId}/updateform")
-     * @Method({"GET"})
-     * @Template
+     * @ManagerRoute("/source/{sourceId}/updateform", methods={"GET"})
      * @param string $sourceId
-     * @return Response|array
+     * @return Response
      */
     public function updateformAction($sourceId)
     {
@@ -210,18 +195,16 @@ class RepositoryController extends Controller
 
         $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-        return array(
+        return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
             'manager' => $manager,
             'source' => $source
-        );
+        ));
     }
 
     /**
      * Updates a Source
      *
-     * @ManagerRoute("/source/{sourceId}/update")
-     * @Method({"POST"})
-     * @Template
+     * @ManagerRoute("/source/{sourceId}/update", methods={"POST"})
      * @param string $sourceId
      * @return Response
      */
@@ -335,8 +318,7 @@ class RepositoryController extends Controller
 
     /**
      *
-     * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}")
-     * @Method({ "POST" })
+     * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}", methods={"POST"})
      * @param string $slug
      * @param string $layersetId
      * @param string $instanceId
