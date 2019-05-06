@@ -1,3 +1,13 @@
+## dev-release/3.0.7 @ 5a19a6b9c
+- Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
+- SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
+- Enable DimensionsHandler element by default
+- Fix Dimension parameter handling for non-tunneled sources
+- Fix vertical misalignment of CoordinatesDisplay Element in bottom toolbar
+- [Backend] Fix text overflow over icons in Application list with very long Application titles
+- [Backend] Remove validation status icons from source selection popup
+- [Debug] log console error when print template fetching fails ([PR#1153](https://github.com/mapbender/mapbender/pull/1153))
+
 ## v3.0.8
   - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
   - [Beta 4 regression] Fix Redlining toolset loss after sidepane deactivate / activate cycle
