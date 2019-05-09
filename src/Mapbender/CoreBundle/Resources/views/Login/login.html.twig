@@ -10,7 +10,7 @@
   <div class="loginBox login">
     <h2 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h2>
 
-    <form action="{{ path("fom_user_login_logincheck") }}" method="post" id="login" novalidate="novalidate">
+    <form action="{{ path("mapbender_core_login_logincheck") }}" method="post" id="login" novalidate="novalidate">
       {% if error %}
         <div class="messageBox error">
           {% if error.message == "Bad credentials" %}
