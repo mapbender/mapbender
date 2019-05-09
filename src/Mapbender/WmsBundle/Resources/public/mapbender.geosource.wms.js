@@ -173,6 +173,7 @@ window.Mapbender.WmsSource = (function() {
                 {x: x, y: y},
                 olLayer.params.FORMAT
             );
+            reqObj.params = $.extend({}, this.customParams, reqObj.params);
             reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
             reqObj.params['STYLES'] = [];
             reqObj.params['EXCEPTIONS'] = this.configuration.options.exception_format;
