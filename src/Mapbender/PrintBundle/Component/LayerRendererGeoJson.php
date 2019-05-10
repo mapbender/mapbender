@@ -19,13 +19,17 @@ class LayerRendererGeoJson extends LayerRenderer
 {
     /** @var string */
     protected $fontPath;
+    /** @var LayerRendererMarkers */
+    protected $markerRenderer;
 
     /**
      * @param string $fontPath
+     * @param LayerRendererMarkers $markerRenderer
      */
-    public function __construct($fontPath)
+    public function __construct($fontPath, LayerRendererMarkers $markerRenderer)
     {
         $this->fontPath = rtrim($fontPath, '/');
+        $this->markerRenderer = $markerRenderer;
     }
 
     /**
