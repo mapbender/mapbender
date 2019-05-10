@@ -26,31 +26,12 @@ class MapbenderBundle extends ManagerBundle
     }
 
     /**
-     * Return list of layer classes provided by this bundle.
-     * Each entry in the array is a fully qualified class name.
-     *
-     * @return string[]
-     */
-    public function getLayers()
-    {
-        return array();
-    }
-
-    /**
      * Return list of template classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.
      *
      * @return string[]
      */
     public function getTemplates()
-    {
-        return array();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getManagerControllers()
     {
         return array();
     }
