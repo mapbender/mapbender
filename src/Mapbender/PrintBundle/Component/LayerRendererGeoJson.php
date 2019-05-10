@@ -321,6 +321,13 @@ class LayerRendererGeoJson extends LayerRenderer
         if (!empty($style['label'])) {
             $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
         }
+        if (!empty($style['externalGraphic'])) {
+            $anchorXy = array(
+                'x' => $p[0],
+                'y' => $p[1],
+            );
+            $this->markerRenderer->addFeatureGraphic($canvas, $anchorXy, $style);
+        }
     }
 
     /**

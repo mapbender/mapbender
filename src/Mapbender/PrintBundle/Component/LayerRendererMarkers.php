@@ -4,6 +4,7 @@
 namespace Mapbender\PrintBundle\Component;
 
 
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Util\GdUtil;
@@ -43,6 +44,27 @@ class LayerRendererMarkers extends LayerRenderer
             $transformedCoords = $transform->transformXy($markerDef['coordinates']);
             $this->addIcon($canvas, $image, $transformedCoords,
                 $markerDef['offset'], $markerDef['width'], $markerDef['height']);
+            imagedestroy($image);
+        }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param float[] $anchorXy in canvas pixel space
+     * @param array $featureStyle
+     */
+    public function addFeatureGraphic(ExportCanvas $canvas, $anchorXy, $featureStyle)
+    {
+        $iconPath = rtrim($this->imageRoot, '/') . '/' . ltrim($featureStyle['externalGraphic'], '/');
+        $image = $this->getImage($iconPath, ArrayUtil::getDefault($featureStyle, 'graphicOpacity', 1));
+        if ($image) {
+            $offsetXy = array(
+                'x' => ArrayUtil::getDefault($featureStyle, 'graphicXOffset', 0),
+                'y' => ArrayUtil::getDefault($featureStyle, 'graphicYOffset', 0),
+            );
+            $iconWidth = ArrayUtil::getDefault($featureStyle, 'graphicWidth', imagesx($image));
+            $iconHeight = ArrayUtil::getDefault($featureStyle, 'graphicHeight', imagesy($image));
+            $this->addIcon($canvas, $image, $anchorXy, $offsetXy, $iconWidth, $iconHeight);
             imagedestroy($image);
         }
     }
