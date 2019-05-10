@@ -2,7 +2,13 @@
 
     $.widget("mapbender.mbOverview", {
         options: {
-            layerset: []
+            layerset: 0,
+            target: null,
+            width: 200,
+            height: 100,
+            anchor: 'right-top',
+            maximized: true,
+            fixed: false
         },
         overview: null,
         mbMap: null,

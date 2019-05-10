@@ -51,9 +51,9 @@ class Overview extends Element
             'width' => 200,
             'height' => 100,
             'anchor' => 'right-top',
-            'position' => array('0px', '0px'),
             'maximized' => true,
-            'fixed' => true);
+            'fixed' => false,
+        );
     }
 
     /**
