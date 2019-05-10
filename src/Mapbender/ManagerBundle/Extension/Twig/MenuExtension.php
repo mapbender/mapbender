@@ -56,6 +56,28 @@ class MenuExtension extends \Twig_Extension
     }
 
     /**
+     * @param array $routeDefinition
+     * @return array|false
+     */
+    protected function filterAccess($routeDefinition)
+    {
+        if (!empty($routeDefinition['enabled'])) {
+            if ($routeDefinition['enabled'] instanceof \Closure) {
+                $fn = $routeDefinition['enabled'];
+                $enabled = $fn($this->authorizationChecker);
+                if (!$enabled) {
+                    return false;
+                }
+            } else {
+                $type = is_object($routeDefinition['enabled']) ? get_class($routeDefinition['enabled']) : gettype($routeDefinition['enabled']);
+                throw new \RuntimeException("Unexpected type for 'enabled': {$type}");
+            }
+        }
+        unset($routeDefinition['enabled']);
+        return $routeDefinition;
+    }
+
+    /**
      * @param array[] $defs
      * @param string|null $currentRoute
      * @return array[]
@@ -64,36 +86,27 @@ class MenuExtension extends \Twig_Extension
     {
         $defsOut = array();
         foreach ($defs ?: array() as $k => $def) {
-            if (!empty($def['enabled'])) {
-                if ($def['enabled'] instanceof \Closure) {
-                    $fn = $def['enabled'];
-                    $enabled = $fn($this->authorizationChecker);
-                } else {
-                    throw new \RuntimeException("Unexpected type for 'enabled': " . (is_object($def['enabled']) ? get_class($def['enabled']) : gettype($def['enabled'])));
-                }
-                unset($def['enabled']);
-            } else {
-                $enabled = true;
+            $def = $this->filterAccess($def);
+            if (!$def) {
+                continue;
             }
-            if ($enabled) {
-                $def['active'] = ($def['route'] === $currentRoute);
-                if (!empty($def['subroutes'])) {
-                    $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes'], $currentRoute);
-                    if (!$def['active']) {
-                        foreach ($def['subroutes'] as $sub) {
-                            if (!empty($sub['active'])) {
-                                $def['active'] = true;
-                                break;
-                            }
+            $def['active'] = ($def['route'] === $currentRoute);
+            if (!empty($def['subroutes'])) {
+                $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes'], $currentRoute);
+                if (!$def['active']) {
+                    foreach ($def['subroutes'] as $sub) {
+                        if (!empty($sub['active'])) {
+                            $def['active'] = true;
+                            break;
                         }
                     }
                 }
-                // legacy menu.html.twig quirk: the template checks if 'active' is defined, not its boolean value
-                if (!$def['active']) {
-                    unset($def['active']);
-                }
-                $defsOut[] = $def;
             }
+            // legacy menu.html.twig quirk: the template checks if 'active' is defined, not its boolean value
+            if (!$def['active']) {
+                unset($def['active']);
+            }
+            $defsOut[] = $def;
         }
         return $defsOut;
     }
