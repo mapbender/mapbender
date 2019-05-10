@@ -1,9 +1,13 @@
-## dev-release/3.0.7 @ 5a19a6b9c
+## dev-release/3.0.7 @ ff6bedf08
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
 - SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
 - Enable DimensionsHandler element by default
 - Fix Dimension parameter handling for non-tunneled sources
+- Apply Dimension parameters in GetFeatureInfo requests
 - Fix vertical misalignment of CoordinatesDisplay Element in bottom toolbar
+- Fix Overview initialization with `maximized` set to false
+- Extend marker support in export / print to vector features with svg `externalGraphic` style rule ([PR#1163](https://github.com/mapbender/mapbender/pull/1163))
+- Add `mapbender:user:create` console command for scripted creation of local users
 - [Backend] Fix text overflow over icons in Application list with very long Application titles
 - [Backend] Remove validation status icons from source selection popup
 - [Debug] log console error when print template fetching fails ([PR#1153](https://github.com/mapbender/mapbender/pull/1153))
