@@ -236,6 +236,9 @@
             if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
                 return true;
             }
+            if (geometry.style.externalGraphic) {
+                return true;
+            }
             if (geometry.style.label !== undefined) {
                 return true;
             }

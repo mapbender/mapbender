@@ -66,6 +66,7 @@
         </service>
         <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
             <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
+            <argument type="service" id="mapbender.imageexport.renderer.markers" />
         </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
             <argument type="collection" key="layerRenderers">
