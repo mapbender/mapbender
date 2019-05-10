@@ -41,13 +41,29 @@ class LayerRendererMarkers extends LayerRenderer
         if ($image) {
             $transform = $canvas->featureTransform;
             $transformedCoords = $transform->transformXy($markerDef['coordinates']);
-            $offsetX = $transformedCoords['x'] + $markerDef['offset']['x'] * $transform->lineScale;
-            $offsetY = $transformedCoords['y'] + $markerDef['offset']['y'] * $transform->lineScale;
-            imagecopyresampled($canvas->resource, $image, $offsetX, $offsetY, 0, 0,
-                $markerDef['width'] * $transform->lineScale, $markerDef['height'] * $transform->lineScale,
-                imagesx($image), imagesy($image));
+            $this->addIcon($canvas, $image, $transformedCoords,
+                $markerDef['offset'], $markerDef['width'], $markerDef['height']);
             imagedestroy($image);
         }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param resource $image GDish
+     * @param float[] $anchorXy in canvas pixel space
+     * @param float[] $offsetXy in icon pixel space
+     * @param int $width
+     * @param int $height
+     */
+    protected function addIcon(ExportCanvas $canvas, $image, $anchorXy, $offsetXy, $width, $height)
+    {
+        $transform = $canvas->featureTransform;
+        $x = $anchorXy['x'] + $offsetXy['x'] * $transform->lineScale;
+        $y = $anchorXy['y'] + $offsetXy['y'] * $transform->lineScale;
+        $w = $width * $transform->lineScale;
+        $h = $height * $transform->lineScale;
+        imagecopyresampled($canvas->resource, $image, $x, $y, 0, 0, $w, $h,
+            imagesx($image), imagesy($image));
     }
 
     /**
@@ -58,7 +74,17 @@ class LayerRendererMarkers extends LayerRenderer
     protected function getMarkerImage($markerDef, $opacity)
     {
         $markerPath = rtrim($this->imageRoot, '/') . '/' . ltrim($markerDef['path'], '/');
-        $data = file_get_contents($markerPath);
+        return $this->getImage($markerPath, $opacity);
+    }
+
+    /**
+     * @param string $path absolute file system path
+     * @param float $opacity
+     * @return resource|null
+     */
+    protected function getImage($path, $opacity)
+    {
+        $data = file_get_contents($path);
         if ($data) {
             $image = imagecreatefromstring($data);
             if ($image) {
