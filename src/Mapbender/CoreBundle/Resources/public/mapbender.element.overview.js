@@ -26,21 +26,24 @@
             this.element.addClass(this.options.anchor);
             if (!this.options.maximized) {
                 this.element.addClass("closed");
+            } else {
+                this._initOverview();
             }
+            $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
+            this._trigger('ready');
+        },
+        _initOverview: function() {
             this.overview = this._createOverviewControl();
             if (this.overview) {
                 this.mbMap.map.olMap.addControl(this.overview);
                 $(document).on('mbmapsrschanged', $.proxy(this._onMbMapSrsChanged, this));
             }
-            $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
-
-            this._trigger('ready');
         },
         _createOverviewControl: function() {
             var layers = this._createLayers();
             if (!layers.length){
                 Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
-                return null;
+                return false;
             }
             var projection = this.mbMap.getModel().getCurrentProjectionCode();
             var maxExtent = this.mbMap.map.olMap.maxExtent;
@@ -112,14 +115,15 @@
             var self = this;
             $(this.element).toggleClass('closed');
             window.setTimeout(function(){
-                if(!$(self.element).hasClass('closed')){
-                    if (self.overview && self.overview.ovmap) {
+                if (!$(self.element).hasClass('closed')) {
+                    if (self.overview === null) {
+                        self._initOverview();
+                    } else if (self.overview && self.overview.ovmap) {
                         self.overview.ovmap.updateSize();
                     }
                 }
             }, 300);
         },
-
         /**
          * Cahnges the overview srs
          */
