@@ -75,7 +75,7 @@
         },
         _getSourceInstanceDefinitions: function() {
             var instanceDefs = [];
-            var layerSet = Mapbender.configuration.layersets[this.options.layerset] || [];
+            var layerSet = (Mapbender.configuration.layersets[this.options.layerset] || []).slice().reverse();
             for (var lsix = 0; lsix < layerSet.length; ++lsix) {
                 var instanceMap = layerSet[lsix];
                 var instanceIds = Object.keys(instanceMap);
