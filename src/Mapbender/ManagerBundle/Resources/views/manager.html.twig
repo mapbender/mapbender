@@ -51,7 +51,7 @@
               </ul>
               {% endif %}
 
-            {% for key, flash in app.session.bag('flashes') %}
+            {% for key, flash in app.session.bag('flashes').all() %}
               <div class="flashBox {{ key }}">
                 {{ flash | first }}
               </div>
