@@ -3,7 +3,6 @@
 
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
@@ -114,6 +113,7 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function getDefaultFeatureStyle($type)
     {
+        // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
         return array(
             'strokeWidth' => 1,
             'strokeOpacity' => 1,
@@ -124,6 +124,8 @@ class LayerRendererGeoJson extends LayerRenderer
             'labelXOffset' => 0,
             'labelYOffset' => 0,
             'fontOpacity' => 1,
+            'pointRadius' => 6,
+            'fillOpacity' => 0.4,
         );
     }
 
@@ -297,14 +299,14 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[1] = round($p[1]);
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
-        if ($style['fillOpacity'] > 0) {
+        if (isset($style['fillColor']) && $style['fillOpacity'] > 0) {
             $color = $this->getColor(
                 $style['fillColor'],
                 $style['fillOpacity'],
                 $canvas->resource);
             $canvas->drawFilledCircle($p[0], $p[1], $color, $diameter);
         }
-        if ($style['strokeOpacity'] > 0 && $style['strokeWidth']) {
+        if (isset($style['strokeColor']) && $style['strokeOpacity'] > 0 && $style['strokeWidth']) {
             $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
             if ($strokeWidth > 0) {
                 $strokeColor = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
