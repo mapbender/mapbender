@@ -12,11 +12,15 @@
         <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
              If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
         <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">4096</parameter>
+        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.x">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
+        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.y">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
         <!-- Buffer around individual WMS tiles requested in image export + print (pixel units). Up to this number of
              pixels will be thrown away on up to four edges. This avoids using portions of the image where label or
              other symbol placement may be influenced by what the WMS thinks is the total image dimensions
              (c.f. Mapserver's "partial" label rendering settings) -->
         <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer">512</parameter>
+        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer.x">%mapbender.imaageexport.renderer.wms.tile_buffer%</parameter>
+        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer.y">%mapbender.imaageexport.renderer.wms.tile_buffer%</parameter>
         <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
         <parameter key="mapbender.imageexport.renderer.markers.class">Mapbender\PrintBundle\Component\LayerRendererMarkers</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
@@ -58,8 +62,14 @@
         <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="logger" />
-            <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size%</argument>
-            <argument>%mapbender.imaageexport.renderer.wms.tile_buffer%</argument>
+            <argument type="collection">
+                <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size.x%</argument>
+                <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size.y%</argument>
+            </argument>
+            <argument type="collection">
+                <argument>%mapbender.imaageexport.renderer.wms.tile_buffer.x%</argument>
+                <argument>%mapbender.imaageexport.renderer.wms.tile_buffer.y%</argument>
+            </argument>
         </service>
         <service id="mapbender.imageexport.renderer.markers" class="%mapbender.imageexport.renderer.markers.class%">
             <argument>%kernel.root_dir%/../web</argument>

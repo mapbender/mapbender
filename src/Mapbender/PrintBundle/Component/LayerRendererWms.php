@@ -25,27 +25,37 @@ class LayerRendererWms extends LayerRenderer
     /** @var ImageTransport */
     protected $imageTransport;
     /** @var int */
-    protected $maxGetMapSize;
+    protected $maxGetMapDimensions;
     /** @var int */
     protected $tileBuffer;
 
     /**
      * @param ImageTransport $imageTransport
      * @param LoggerInterface $logger
-     * @param int $maxGetMapSize
-     * @param int $tileBuffer
+     * @param int[] $maxGetMapDimensions
+     * @param int[] $tileBuffer
      */
-    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger, $maxGetMapSize, $tileBuffer)
+    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger, $maxGetMapDimensions, $tileBuffer)
     {
         $this->imageTransport = $imageTransport;
         $this->logger = $logger;
-        $this->maxGetMapSize = $maxGetMapSize;
-        $this->tileBuffer = $tileBuffer;
-        if ($this->maxGetMapSize < 16) {
-            throw new \InvalidArgumentException("maxGetMapSize {$this->maxGetMapSize} is too small for stable grid splitting maths");
+        if (!is_array($maxGetMapDimensions) || count($maxGetMapDimensions) !== 2) {
+            throw new \InvalidArgumentException("Invalid maxGetMapDimensions type; must be two-item array, got " . print_r($maxGetMapDimensions, true));
         }
-        if ((3 * $this->tileBuffer) >= $this->maxGetMapSize) {
-            throw new \InvalidArgumentException("Tile buffer {$this->tileBuffer} is too large for maxGetMapSize {$this->maxGetMapSize}");
+        if (!is_array($tileBuffer) || count($tileBuffer) !== 2) {
+            throw new \InvalidArgumentException("Invalid tileBuffer type; must be two-item array, got " . print_r($tileBuffer, true));
+        }
+        // force numeric indexing
+        $this->maxGetMapDimensions = array_values($maxGetMapDimensions);
+        $this->tileBuffer = array_values($tileBuffer);
+        foreach ($this->maxGetMapDimensions as $i => $maxGetMapAxis) {
+            if ($maxGetMapAxis < 16) {
+                throw new \InvalidArgumentException("maxGetMapDimensions axis #{$i}: value {$maxGetMapAxis} is too small for stable grid splitting maths");
+            }
+            $tileBufferAxis = $this->tileBuffer[$i];
+            if ((3 * $tileBufferAxis) >= $maxGetMapAxis) {
+                throw new \InvalidArgumentException("Tile buffer axis #{$i}: value {$tileBufferAxis} is too large for GetMap limit {$maxGetMapAxis}");
+            }
         }
     }
 
@@ -297,7 +307,7 @@ class LayerRendererWms extends LayerRenderer
      */
     protected function getGridOptions($layerDef)
     {
-        return new WmsGridOptions($this->maxGetMapSize, $this->tileBuffer, $this->tileBuffer);
+        return new WmsGridOptions($this->maxGetMapDimensions, $this->tileBuffer);
     }
 
     /**
