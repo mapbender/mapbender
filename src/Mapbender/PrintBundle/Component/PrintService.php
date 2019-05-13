@@ -173,8 +173,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
         $pdf =  new PDF_Extensions();
-        $pdfFile = $this->resourceDir . '/templates/' . $templateName . '.pdf';
-        $pdf->setSourceFile($pdfFile);
+        $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
+        $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
         if ($templateData['orientation'] == 'portrait') {
             $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);

@@ -37,6 +37,16 @@ class OdgParser
         $this->sourcePath = rtrim($sourcePath, '/');
     }
 
+    /**
+     * @param string $templateName
+     * @param string $extension
+     * @return string
+     */
+    public function getTemplateFilePath($templateName, $extension)
+    {
+        $extension = ltrim($extension, '.');
+        return "{$this->sourcePath}/{$templateName}.{$extension}";
+    }
 
     /**
      * Reads zipped ODG file and return content as string
@@ -47,14 +57,14 @@ class OdgParser
      */
     private function readOdgFile($template, $file)
     {
-        $odgFile = "{$this->sourcePath}/{$template}.odg";
-        $xml          = null;
+        $odgPath = $this->getTemplateFilePath($template, 'odg');
+        $xml = null;
 
-        if(!is_file($odgFile)){
+        if(!is_file($odgPath)){
             throw new Exception("Print template '$template' doesn't exists.");
         }
 
-        $open = zip_open($odgFile);
+        $open = zip_open($odgPath);
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
                 zip_entry_open($open, $zip_entry);
