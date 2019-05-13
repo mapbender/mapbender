@@ -11,7 +11,7 @@
         <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\PrintBundle\Component\LayerRendererWms</parameter>
         <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
              If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
-        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">4096</parameter>
+        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">8192</parameter>
         <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.x">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
         <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.y">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
         <!-- Buffer around individual WMS tiles requested in image export + print (pixel units). Up to this number of
