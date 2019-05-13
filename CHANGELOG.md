@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 5fea98921
+## v3.0.8.1
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
 - SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
 - Enable DimensionsHandler element by default
