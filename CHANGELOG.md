@@ -11,6 +11,7 @@
 - Add `mapbender:user:create` console command for scripted creation of local users
 - Support importing YAML application with missing local uploads directory into DB ([#1157](https://github.com/mapbender/mapbender/issues/1157))
 - Print WMS tiling: support axis-separate configuration of max GetMap and tile buffer dimensions; bump default GetMap limit from 4096 to 8192
+- Print: respect configured `mapbender.print.template_dir` also when opening PDF (previously only for ODG)
 - [Backend] Fix text overflow over icons in Application list with very long Application titles
 - [Backend] Remove validation status icons from source selection popup
 - [Debug] log console error when print template fetching fails ([PR#1153](https://github.com/mapbender/mapbender/pull/1153))
