@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ a34f1b639
+## dev-release/3.0.7 @ 5fea98921
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
 - SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
 - Enable DimensionsHandler element by default
@@ -10,9 +10,11 @@
 - Extend marker support in export / print to vector features with svg `externalGraphic` style rule ([PR#1163](https://github.com/mapbender/mapbender/pull/1163))
 - Add `mapbender:user:create` console command for scripted creation of local users
 - Support importing YAML application with missing local uploads directory into DB ([#1157](https://github.com/mapbender/mapbender/issues/1157))
+- Print WMS tiling: support axis-separate configuration of max GetMap and tile buffer dimensions; bump default GetMap limit from 4096 to 8192
 - [Backend] Fix text overflow over icons in Application list with very long Application titles
 - [Backend] Remove validation status icons from source selection popup
 - [Debug] log console error when print template fetching fails ([PR#1153](https://github.com/mapbender/mapbender/pull/1153))
+- [Documentation] Add PrintBundle/CONFIGURATION.md
 
 ## v3.0.8
   - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
