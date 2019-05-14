@@ -609,8 +609,8 @@ window.Mapbender.MapModelBase = (function() {
             // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
             // layer order.
             this.sourceTree.sort(function(a, b) {
-                var indexA = newLayers.indexOf(self.getNativeLayer(a));
-                var indexB = newLayers.indexOf(self.getNativeLayer(b));
+                var indexA = newLayers.indexOf(a.getNativeLayer(0));
+                var indexB = newLayers.indexOf(b.getNativeLayer(0));
                 return indexA - indexB;
             });
             this.mbMap.element.trigger('mbmapsourcesreordered', {

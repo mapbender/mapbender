@@ -166,32 +166,6 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         this.olMap.getView().fit(bounds);
     },
-    /**
-     * @param {*} anything
-     * @return {OpenLayers.Layer|null}
-     */
-    getNativeLayer: function(anything) {
-        if (anything.getNativeLayer) {
-            return anything.getNativeLayer(0);
-        }
-        if (anything.olLayer) {
-            // MapQuery layer
-            return anything.olLayer;
-        }
-        if (anything.CLASS_NAME && anything.CLASS_NAME.search('OpenLayers.Layer') === 0) {
-            // OpenLayers.Layer (child class) instance
-            return anything;
-        }
-        if (anything.mqlid) {
-            // sourceTreeish
-            return (this.map.layersList[anything.mqlid] || {}).olLayer || null;
-        }
-        if (anything.ollid) {
-            return _.find(this.map.olMap.layers, _.matches({id: anything.ollid})) || null;
-        }
-        console.error("Could not find native layer for given obect", anything);
-        return null;
-    },
     zoomToFeature: function(feature, options) {
         var geometry = feature && feature.getGeometry();
         if (!geometry) {
