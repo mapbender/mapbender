@@ -355,10 +355,9 @@ getMapExtent: function () {
  * @returns {number}
  */
 resolutionToScale: function(resolution, dpi) {
-    var currentUnit = this.getCurrentProjectionUnits();
-    var mpu = this.getMetersPerUnit(currentUnit);
+    var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
     var inchesPerMetre = 39.37;
-    return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
+    return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
 },
 
 createVectorLayer: function() {
@@ -700,12 +699,6 @@ getPolygonArea: function (polygon){
     return  ol.Sphere.getArea(polygon);
 },
 
-getGeometryFromFeatureWrapper: function(feature, callback, args){
-    args = [feature.getGeometry()].concat(args)
-    return callback.apply(this,args);
-
-},
-
 createTextStyle: function(options) {
     var textStyle = new ol.style.Text();
 
@@ -761,9 +754,6 @@ createTextStyle: function(options) {
             }
         }
 
-        // viewProjection.getUnits() may return undefined, safer this way!
-        var currentUnits = fromProj.getUnits() || "degrees";
-        var newUnits = toProj.getUnits() || "degrees";
         // transform projection extent (=max extent)
         // DO NOT use currentView.getProjection().getExtent() here!
         // Going back and forth between SRSs, there is extreme drift in the
@@ -775,9 +765,16 @@ createTextStyle: function(options) {
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
 
         // Recalculate resolution and allowed resolution steps
-        var _convertResolution = this.convertResolution_.bind(undefined, currentUnits, newUnits);
-        var newResolution = _convertResolution(currentView.getResolution());
-        var newResolutions = this.viewOptions_.resolutions.map(_convertResolution);
+        var resolutionFactor =
+            Mapbender.mapEngine.getProjectionUnitsPerMeter(srsNameTo)
+            /
+            Mapbender.mapEngine.getProjectionUnitsPerMeter(srsNameFrom)
+        ;
+        var newResolution = resolutionFactor * currentView.getResolution();
+        var newResolutions = this.viewOptions_.resolutions.map(function(r) {
+            return r*resolutionFactor;
+        });
+        console.log("Okok", newResolutions, nr2);
         // Amend this.viewOptions_, we need the applied values for the next SRS switch
         var newViewOptions = $.extend(this.viewOptions_, {
             projection: srsNameTo,
@@ -861,38 +858,9 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
             return this.olMap.getView().calculateExtent();
         },
 
-/**
- *
- * @param currentUnit
- * @static
- * @returns {number}
- */
-getMetersPerUnit: function(currentUnit) {
-    return ol.proj.METERS_PER_UNIT[currentUnit];
-},
-
-
 getGeomFromFeature: function(feature) {
     'use strict';
     return feature.getGeometry();
-},
-
-/**
- * Returns the size of the map in the DOM (in pixels):
- * An array of numbers representing a size: [width, height].
- * @returns {Array.<number>}
- */
-getMapSize: function() {
-    return this.olMap.getSize();
-},
-
-/**
- * Returns the view center of a map:
- * An array of numbers representing an xy coordinate. Example: [16, 48].
- * @returns {Array.<number>}
- */
-getMapCenter: function() {
-    return this.olMap.getView().getCenter();
 },
 
 /**
@@ -1017,39 +985,6 @@ rgb2hex: function(orig) {
 },
 
 /**
- * Get resolution for zoom level
- *
- * @param {number} zoom
- * @returns {number}
- */
-getResolutionForZoom: function(zoom) {
-    return this.olMap.getView().getResolutionForZoom(zoom);
-},
-
-/**
- * Get zoom for resolution
- *
- * @param {number} resolution
- * @returns {number|undefined}
- */
-getZoomForResolution: function(resolution) {
-    return this.olMap.getView().getZoomForResolution(resolution);
-},
-
-
-/**
- *
- * @param projection
- */
-mousePositionControlUpdateProjection: function(projection) {
-    this.olMap.getControls().forEach(function (control) {
-        if (control instanceof ol.control.MousePosition) {
-            control.setProjection(projection);
-        }
-    });
-},
-
-/**
  * @param {object} options
  * @returns {object}
  */
@@ -1062,45 +997,18 @@ initializeViewOptions: function(options) {
     }
 
     if (options.scales && options.scales.length) {
-        var proj = ol.proj.get(options.srs);
         // Sometimes, the units are empty -.-
         // this seems to happen predominantely with "degrees" SRSs, so...
-        var units = proj.getUnits() || 'degrees';
-        var mpu = this.getMetersPerUnit(units);
+        var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(options.srs);
         var dpi = options.dpi || 72;
         var inchesPerMetre = 39.37;
         viewOptions['resolutions'] = options.scales.map(function(scale) {
-            return scale / (mpu * inchesPerMetre * dpi);
+            return scale * upm / (inchesPerMetre * dpi);
         }.bind(this));
     } else {
         viewOptions.zoom = 7; // hope for the best
     }
     return viewOptions;
-},
-
-/**
- * Recalculate a resolution number valid for fromUnit to an equivalent valid
- * for toUnit.
- * This is technically sth like:
- *   newRes = scaleToRes(resToScale(oldScale, dpi, oldUnit), dpi, newUnit).
- * If you look at the resolutionToScale and scaleToResolution math,
- * you'll see that the result of the back-and-forth transformation ONLY
- * depends on the meters per unit, and on nothing else.
- *
- * This allows us to perform the calculation independent of dpi settings.
- *
- * @param {string} fromUnits "m", "degrees" etc
- * @param {string} toUnits "m", "degrees" etc
- * @param {number} resolution
- * @returns {number}
- * @private
- * @static
- */
-convertResolution_: function(fromUnits, toUnits, resolution) {
-    var resolutionFactor =
-        ol.proj.METERS_PER_UNIT[fromUnits] /
-        ol.proj.METERS_PER_UNIT[toUnits];
-    return resolution * resolutionFactor;
 },
 
 /**
