@@ -8,9 +8,6 @@
         callbackUrl: null,
         selected: null,
         highlightLayer: null,
-        lastSearch: new Date(),
-        searchModel: null,
-        autocompleteModel: null,
         popup: null,
         mbMap: null,
         defaultStyle: {
@@ -53,72 +50,37 @@
          * Remove last search results
          */
         removeLastResults: function(){
-            this.searchModel.reset();
             if (this.highlightLayer) {
                 this.mbMap.getModel().clearVectorLayer(this.highlightLayer);
             }
             this.currentFeature = null;
         },
 
-        _setup:         function(){
+        _setup: function() {
             var widget = this;
             var element = widget.element;
             var options = widget.options;
 
-            var searchModelAttributes = {
-                srs: this.mbMap.getModel().getCurrentProjectionCode()
-            };
-            this.searchModel = new Mapbender.SearchModel(searchModelAttributes, null, this);
             var routeSelect = $('select#search_routes_route', element);
-            var routeCount = 0;
+            var routeCount;
 
-            // bind form reset to reset search model
-            element.delegate('.search-forms form', 'reset', function(){
+            element.on('submit', '.search-forms form', function(evt) {
+                evt.preventDefault();
+                widget._search();
+            });
+            element.on('reset', '.search-forms form', function() {
                 widget.removeLastResults();
             });
-            // bind form submit to send search model
-            element.delegate('.search-forms form', 'submit', function(evt){
-                widget.removeLastResults();
-                widget.searchModel.submit(evt);
-            });
-
-            // bind result to result list and map view
-            this.searchModel.on('change:results', widget._searchResults, widget);
-            this.searchModel.on('request', widget._setActive, widget);
-            this.searchModel.on('error sync', widget._setInactive, widget);
-            this.searchModel.on('error sync', widget._showResultState, widget);
-
             // Prepare autocompletes
             $('form input[data-autocomplete="on"]', element).each(
                 $.proxy(widget._setupAutocomplete, widget));
             $('form input[data-autocomplete^="custom:"]', element).each(
                 $.proxy(widget._setupCustomAutocomplete, widget));
 
-            // Prepare search button (trigger form submit)
-            $('a[role="search_router_search"]', element)
-                .button()
-                .click(function(){
-                    widget.getCurrentForm().submit();
-                });
-
-            // Prevent map getting cursors keys
-            element.bind('keydown', function(event){
-                event.stopPropagation();
-            });
-
             // Listen to changes of search select (switching and forms resetting)
-
-            routeSelect.change($.proxy(widget._selectSearch, widget));
-            Mapbender.elementRegistry.onElementReady(options.target, function(){
-                routeSelect.change();
-                widget._trigger('ready');
-            });
+            routeSelect.on('change', $.proxy(this._selectSearch, this));
+            routeCount = Object.keys(this.options.routes).length;
             // But if there's only one search, we actually don't need the select
-            for(var route in options.routes){
-                if(options.routes.hasOwnProperty(route)){
-                    routeCount++;
-                }
-            }
             if(routeCount === 1){
                 $('#search_routes_route_control_group').hide()
                     .next('hr').hide();
@@ -142,11 +104,11 @@
 
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
-            widget._trigger('ready');
-
-            if(widget.options.autoOpen) {
-                widget.open();
+            routeSelect.trigger('change');
+            if (this.options.autoOpen) {
+                this.open();
             }
+            this._trigger('ready');
         },
 
         defaultAction: function(callback){
@@ -188,8 +150,6 @@
                         }
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                }else{
-
                 }
                 this.element.show();
             }
@@ -244,24 +204,32 @@
         /**
          * Set up autocomplete widgets for all inputs with data-autcomplete="on"
          *
-         * @param  integer      idx   Running index
-         * @param  HTMLDomNode  input Input element
+         * @param {*} idx
+         * @param {Node} input
          */
         _setupAutocomplete: function(idx, input){
-            var widget = this;
-            input = $(input);
-            var ac = input.autocomplete({
-                delay: input.data('autocomplete-delay') || 500,
-                minLength: input.data('autocomplete-minlength') || 3,
-                search: $.proxy(widget._autocompleteSearch, widget),
-                open: function( event, ui, t) {
-                    $(event.target).data("uiAutocomplete").menu.element.outerWidth(input.outerWidth());
+            var self = this;
+            var $input = $(input);
+
+            $input.autocomplete({
+                delay: $input.data('autocomplete-delay') || 500,
+                minLength: $input.data('autocomplete-minlength') || 3,
+                search: function(event) {
+                    self._autocompleteSearch(event);
+                    $input.autocomplete("close");
+                },
+                open: function(event, ui, t) {
+                    console.log("Autocomplete open", arguments);
+                    $(event.target).data("uiAutocomplete").menu.element.outerWidth($input.outerWidth());
                 },
                 source: function(request, response){
-                    widget._autocompleteSource(input, request, response);
-                },
-                select: widget._autocompleteSelect
-            }).keydown(widget._autocompleteKeydown);
+                    self._autocompleteSource($input).then(function(data) {
+                        response(data.results);
+                    }, function() {
+                        response([]);
+                    });
+                }
+            });
         },
 
         /**
@@ -276,49 +244,25 @@
         },
 
         /**
-         * Autocomplete source handler, does all Ajax magic.
+         * Generate autocomplete request
          *
-         * @param  HTMLDomNode target   Input element
-         * @param  Object      request  Request object with term attribute
-         * @param  function    response Autocomplete callback
+         * @param {jQuery} $input
          */
-        _autocompleteSource: function(target, request, response){
-            if(!target.data('autocompleteModel')){
-                var model = new Mapbender.AutocompleteModel(null, {
-                    router: this
-                });
-                target.data('autocompleteModel', model);
-
-                model.on('request', this._setActive, this);
-                model.on('sync', function(){
-                    model.response(model.get('results'));
-                });
-                model.on('error', response([]));
-            }
-
-            target.data('autocompleteModel').response = response;
-            target.data('autocompleteModel').submit(target, request);
-        },
-
-        /**
-         * Store autocomplete key if suggestion was selected.
-         *
-         * @param  jQuery.Event event Selection event
-         * @param  Object       ul    Selected item
-         */
-        _autocompleteSelect: function(event, ui){
-            if(typeof ui.item.key !== 'undefined'){
-                $(event.target).attr('data-autocomplete-key', ui.item.key);
-            }
-        },
-
-        /**
-         * Remove stored autocomplete key when key was pressed.
-         *
-         * @param  jQuery.Event event Keydown event
-         */
-        _autocompleteKeydown: function(event){
-            $(event.target).removeAttr('data-autocomplete-key');
+        _autocompleteSource: function($input) {
+            var url = this.callbackUrl + this.selected + '/autocomplete';
+            var formValues = this._getFormValues($input.closest('form'));
+            var data = {
+                key: $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, ''),
+                value: $input.val(),
+                srs: this.mbMap.model.getCurrentProjectionCode(),
+                extent: this.mbMap.model.getMaxExtentArray(),
+                properties: formValues
+            };
+            return $.getJSON({
+                url: url,
+                data: JSON.stringify(data),
+                method: 'POST'
+            });
         },
 
         /**
@@ -334,14 +278,7 @@
         _autocompleteSearch: function(event, ui,t){
             var input = $(event.target);
             var autoCompleteMenu = $(input.data("uiAutocomplete").menu.element);
-            var delay = input.autocomplete('option', 'delay'),
-                diff = (new Date()) - this.lastSearch;
-
             autoCompleteMenu.addClass("search-router");
-
-            if(diff <= delay * this.options.timeoutFactor){
-                event.preventDefault();
-            }
         },
 
         /**
@@ -356,8 +293,30 @@
                 }
             });
 
-            if(valid) {
-                form.submit();
+            if (valid) {
+                var formValues = this._getFormValues(form);
+                var data = {
+                    properties: formValues,
+                    extent: this.mbMap.model.getMaxExtentArray(),
+                    srs: this.mbMap.model.getCurrentProjectionCode()
+                };
+                var url = this.callbackUrl + this.selected + '/search';
+                var self = this;
+                $.getJSON({
+                    url: url,
+                    data: JSON.stringify(data),
+                    method: 'POST'
+                }).then(function(response) {
+                    var features = response.features.map(function(data) {
+                        var gjInput = {
+                            type: 'Feature',
+                            geometry: data.geometry,
+                            properties: data.properties || {}
+                        };
+                        return self.mbMap.model.parseGeoJson(gjInput)[0];
+                    });
+                    self._searchResults(features);
+                });
             }
         },
 
@@ -387,25 +346,25 @@
         /**
          * Update result list when search model's results property was changed
          */
-        _searchResults: function(model, results, options){
+        _searchResults: function(results) {
             var currentRoute = this.getCurrentRoute();
+            this.removeLastResults();
             if (currentRoute && 'table' === currentRoute.results.view) {
                 var container = $('.search-results', this.element);
                 if($('table', container).length === 0) {
                     this._prepareResultTable(container);
                 }
-                this._searchResultsTable(model, results, options);
+                this._searchResultsTable(results);
             }
+            this._showResultState(results);
         },
 
         /**
          * Rebuilds result table with search result data.
          *
-         * @param {SearchModel} model
-         * @param {FeatureCollection} results
-         * @param {Object} options Backbone options (not used?)
+         * @param {Array} results
          */
-        _searchResultsTable: function(model, results, options){
+        _searchResultsTable: function(results){
             var currentRoute = this.getCurrentRoute();
             var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
@@ -419,35 +378,37 @@
 
             if(results.length > 0) $('.no-results', this.element).hide();
 
-            results.each(function(feature, idx) {
+            for (var i = 0; i < results.length; ++i) {
+                var feature = results[i];
                 var row = $('<tr/>');
-                row.addClass(idx % 2 ? "even" : "odd");
+                row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
 
                 for (var header in headers) {
-                    var d = feature.get('properties')[header];
+                    var d = feature.data[header];
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
 
                 tbody.append(row);
-                features.push(feature.getFeature());
-            });
+
+                features.push(feature);
+            }
 
             table.append(tbody);
             this.mbMap.model.addVectorFeatures(layer, features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
                 })
                 .on('mouseenter', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'temporary');
                 })
                 .on('mouseleave', function () {
-                    var feature = $(this).data('feature').getFeature();
+                    var feature = $(this).data('feature');
                     var styleName = feature === this.currentFeature ? 'select' : 'default';
                     self._highlightFeature(feature, styleName);
                 })
@@ -468,7 +429,7 @@
                 feature.setStyle(this.styleMap[style]);
             }
         },
-        _showResultState: function() {
+        _showResultState: function(results) {
             var widget = this;
             var element = widget.element;
             var table = $('.search-results table', element);
@@ -478,8 +439,6 @@
                 counter = $('<div/>', {'class': 'result-counter'})
                   .prependTo($('.search-results', element));
             }
-
-            var results = widget.searchModel.get('results');
 
             if(results.length > 0) {
                 counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
@@ -491,23 +450,6 @@
                 counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
         },
-
-        /**
-         * Add active class to widget for styling when Ajax is running
-         */
-        _setActive: function(){
-            var outer = this.options.asDialog ? this.element.parent() : this.element;
-            outer.addClass('search-active');
-        },
-
-        /**
-         * Remove active class from widget
-         */
-        _setInactive: function(){
-            var outer = this.options.asDialog ? this.element.parent() : this.element;
-            outer.removeClass('search-active');
-        },
-
         _createStyleMap4: function(styles) {
             var defaultStyleOptions = styles.default || this.defaultStyle;
             var selectStyleOptions = styles.select || this.selectStyle;
@@ -529,7 +471,20 @@
                 default: _createSingleStyle(defaultStyleOptions),
                 select: _createSingleStyle(selectStyleOptions),
                 temporary: _createSingleStyle(temporaryStyleOptions)
-            };
+            }
+        },
+        _createStyleMap: function(styles, options) {
+            var o = _.defaults({}, options, {
+                extendDefault: true,
+                defaultBase: OpenLayers.Feature.Vector.style['default']
+            });
+            var s = styles || OpenLayers.Feature.Vector.style;
+
+            _.defaults(s['default'], o.defaultBase);
+
+            return new OpenLayers.StyleMap(s, {
+                extendDefault: o.extendDefault
+            });
         },
 
         /**
@@ -593,7 +548,7 @@
                 return;
             }
             var row = $(event.currentTarget),
-                feature = row.data('feature').getFeature()
+                feature = row.data('feature')
             ;
             var zoomToFeatureOptions;
             if (callbackConf.options) {
@@ -614,11 +569,15 @@
                 });
                 this.highlightLayer.redraw();
             }
-            if (this.searchModel && this.mbMap) {
-                this.searchModel.set({
-                    srs: data.to.projCode
-                });
-            }
+        },
+        _getFormValues: function(form) {
+            var values = {};
+            _.each($(':input', form), function(input) {
+                var $input = $(input);
+                var name = $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, '');
+                values[name] = $input.val();
+            });
+            return values;
         },
 
         _hideMobile: function() {

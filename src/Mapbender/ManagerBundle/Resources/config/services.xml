@@ -28,5 +28,10 @@
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="form.factory" />
         </service>
+        <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="kernel" />
+            <argument type="service" id="security.authorization_checker" />
+        </service>
     </services>
 </container>

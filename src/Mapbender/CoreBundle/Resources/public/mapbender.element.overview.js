@@ -2,7 +2,13 @@
 
     $.widget("mapbender.mbOverview", {
         options: {
-            layerset: []
+            layerset: 0,
+            target: null,
+            width: 200,
+            height: 100,
+            anchor: 'right-top',
+            maximized: true,
+            fixed: false
         },
         overview: null,
         mbMap: null,
@@ -28,17 +34,16 @@
                 this.element.addClass("closed");
             } else if (!this.element.hasClass('closed')) {
                 // if we start closed, wait with initialization until opened
-                this._initDisplay();
+                this._initOverview();
             }
             $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
-
             this._trigger('ready');
         },
-        _initDisplay: function() {
+        _initOverview: function() {
             var layers = this._createLayers();
             if (!layers.length){
                 Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
-                return null;
+                return false;
             }
 
             switch (Mapbender.mapEngine.code) {
@@ -128,7 +133,7 @@
         },
         _getSourceInstanceDefinitions: function() {
             var instanceDefs = [];
-            var layerSet = Mapbender.configuration.layersets[this.options.layerset] || [];
+            var layerSet = (Mapbender.configuration.layersets[this.options.layerset] || []).slice().reverse();
             for (var lsix = 0; lsix < layerSet.length; ++lsix) {
                 var instanceMap = layerSet[lsix];
                 var instanceIds = Object.keys(instanceMap);
@@ -162,7 +167,7 @@
             window.setTimeout(function(){
                 if (!$(self.element).hasClass('closed')) {
                     if (!self.overview) {
-                        self._initDisplay();
+                        self._initOverview();
                     } else {
                         if (self.overview && self.overview.ovmap) {
                             self.overview.ovmap.updateSize();
@@ -171,7 +176,6 @@
                 }
             }, 300);
         },
-
         _onMbMapSrsChanged: function(event, data) {
             try {
                 switch (Mapbender.mapEngine.code) {

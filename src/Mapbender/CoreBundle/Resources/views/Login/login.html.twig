@@ -1,0 +1,54 @@
+{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+{% block css %}
+  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'mb3-login', 'type': 'css'}) }}"/>
+  <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
+{% endblock %}
+
+{% block title %}{{ 'fom.user.login.login.title' | trans}}{% endblock %}
+
+{% block box_content %}
+  <div class="loginBox login">
+    <h2 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h2>
+
+    <form action="{{ path("mapbender_core_login_logincheck") }}" method="post" id="login" novalidate="novalidate">
+      {% if error %}
+        <div class="messageBox error">
+          {% if error.message == "Bad credentials" %}
+            {{ 'fom.user.login.errors.bad-credentials' | trans }}
+          {% else %}
+            {{ error.message | trans }}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <label class="left labelInput" for="username">{{ 'fom.user.login.login.username' | trans}}:</label>
+      <input class="input" id="username" type="text" name="_username" value="{{ last_username }}" autofocus />
+
+      <div class="clearContainer"></div>
+
+      <label class="left labelInput" for="password">{{ 'fom.user.login.login.password' | trans}}:</label>
+      <input class="input" type="password" id="password" name="_password" />
+
+      <div class="clearContainer"></div>
+
+      {% if selfregister == true %}
+      <a class="linkButton iconLinkButton left" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
+      {% endif %}
+      {% if reset_password == true %}
+      <a class="linkButton iconLinkButton left" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
+      {% endif %}
+
+      <input type="submit" class="right button" value="{{ 'fom.user.login.login.login' | trans}}" />
+      <div class="clearContainer"></div>
+    </form>
+  </div>
+  <script type="text/javascript">
+    if(top != window) {
+      top.location.href = location.href;
+      top.location.reload();
+    }
+    var Mapbender = Mapbender || {};
+    Mapbender.configuration = {elements:{}};
+  </script>
+    {% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}
+{% endblock %}

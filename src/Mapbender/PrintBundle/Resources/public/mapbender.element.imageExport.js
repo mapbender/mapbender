@@ -202,6 +202,9 @@
             } else {
                 geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
             }
+            if (geometry.style && geometry.style.externalGraphic) {
+                geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
+            }
             return geometry;
         },
         /**
@@ -213,6 +216,9 @@
          */
         _filterFeatureGeometry: function(geometry) {
             if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
+                return true;
+            }
+            if (geometry.style.externalGraphic) {
                 return true;
             }
             if (geometry.style.label !== undefined) {
@@ -293,9 +299,9 @@
             var markerData = [];
             for (var i = 0; i < layer.markers.length; ++i) {
                 var marker = layer.markers[i];
-                var url = marker.icon && marker.icon.url;
-                if (!url || url.indexOf('/bundles/') !== 0) {
-                    console.warn("Unhandled marker: icon.url missing or not in /bundles/", marker);
+                var originalUrl = marker.icon && marker.icon.url;
+                var internalUrl = this._fixAssetPath(originalUrl);
+                if (!internalUrl) {
                     continue;
                 }
                 markerData.push({
@@ -309,7 +315,7 @@
                         x: marker.icon.offset.x,
                         y: marker.icon.offset.y
                     },
-                    path: marker.icon.url
+                    path: internalUrl
                 });
             }
             return {
@@ -331,6 +337,21 @@
                 }
             }
             return layerDataOut;
+        },
+        /**
+         * Convert potentially absolute URL to web-local url pointing somewhere into bundles/
+         * @param {String} url
+         * @returns {String|boolean}
+         * @private
+         */
+        _fixAssetPath: function(url) {
+            var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
+            if (urlOut === url) {
+                console.warn("Asset path could not be resolved to local bundles reference", url);
+                return false;
+            } else {
+                return urlOut;
+            }
         },
         /**
          * Check BBOX format inversion

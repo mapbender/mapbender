@@ -279,7 +279,6 @@
 
 // ------------------------------------------------------------- LAYOUT
 .checkContainer{
-  position:relative;
   color:$middleFontColor;
   display: block;
   margin-bottom: $space/2;
@@ -288,15 +287,9 @@
   border:solid 1px white;
   @include border-radius($radius);
 
-  .iconOk{
-    @include opacity(0);
-    @include pos(5px,5px,'','');
-  }
-
   &:hover{
     background-color: white;
     border:solid 1px darken(white, 15%);
-    .iconOk{@include opacity(1);}
   }
 }
 .regionProperties{

@@ -1,3 +1,22 @@
+## v3.0.8.1
+- Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
+- SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
+- Enable DimensionsHandler element by default
+- Fix Dimension parameter handling for non-tunneled sources
+- Apply Dimension parameters in GetFeatureInfo requests
+- Fix vertical misalignment of CoordinatesDisplay Element in bottom toolbar
+- Fix Overview initialization with `maximized` set to false
+- Fix relative ordering of multiple sources assigned to Overview layerset (same behaviour as main map; [#1161](https://github.com/mapbender/mapbender/issues/1161))
+- Extend marker support in export / print to vector features with svg `externalGraphic` style rule ([PR#1163](https://github.com/mapbender/mapbender/pull/1163))
+- Add `mapbender:user:create` console command for scripted creation of local users
+- Support importing YAML application with missing local uploads directory into DB ([#1157](https://github.com/mapbender/mapbender/issues/1157))
+- Print WMS tiling: support axis-separate configuration of max GetMap and tile buffer dimensions; bump default GetMap limit from 4096 to 8192
+- Print: respect configured `mapbender.print.template_dir` also when opening PDF (previously only for ODG)
+- [Backend] Fix text overflow over icons in Application list with very long Application titles
+- [Backend] Remove validation status icons from source selection popup
+- [Debug] log console error when print template fetching fails ([PR#1153](https://github.com/mapbender/mapbender/pull/1153))
+- [Documentation] Add PrintBundle/CONFIGURATION.md
+
 ## v3.0.8
   - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
   - [Beta 4 regression] Fix Redlining toolset loss after sidepane deactivate / activate cycle

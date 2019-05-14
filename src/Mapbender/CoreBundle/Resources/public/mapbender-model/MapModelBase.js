@@ -263,6 +263,14 @@ window.Mapbender.MapModelBase = (function() {
             var srsName_ = srsName || this.getCurrentProjectionCode();
             return Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsName_);
         },
+        /**
+         * @param {string} [srsName] default: current
+         * @return {Array<Number>}
+         */
+        getMaxExtentArray: function(srsName) {
+            var x = this.getMaxExtent(srsName);
+            return [x.left, x.bottom, x.right, x.top];
+        },
         getPointFeatureInfoUrl: function(source, x, y, maxCount) {
             var styles = [];
             var layerNames = source.getFeatureInfoLayers().map(function(layer) {
@@ -274,14 +282,14 @@ window.Mapbender.MapModelBase = (function() {
             if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {
                 return false;
             }
-            var params = {
+            var params = $.extend({}, source.customParams || {}, {
                 LAYERS: layerNames,
                 QUERY_LAYERS: layerNames,
                 STYLES: styles,
                 INFO_FORMAT: source.configuration.options.info_format || 'text/html',
                 EXCEPTIONS: source.configuration.options.exception_format,
                 FEATURE_COUNT: maxCount || 100
-            };
+            });
             return engine.getPointFeatureInfoUrl(this.olMap, source, x, y, params);
         },
         /**

@@ -5,28 +5,17 @@ namespace Mapbender\PrintBundle\Component\Export;
 
 class WmsGridOptions
 {
-    protected $maxGetMapSize;
-    protected $tileBufferHorizontal;
-    protected $tileBufferVertical;
+    protected $maxGetMapDimensions;
+    protected $tileBuffer;
 
     /**
-     * @param int $maxGetMapSize
-     * @param int $tileBufferHorizontal
-     * @param int $tileBufferVertical
+     * @param int[] $maxGetMapDimensions
+     * @param int[] $tileBuffer
      */
-    public function __construct($maxGetMapSize, $tileBufferHorizontal, $tileBufferVertical)
+    public function __construct($maxGetMapDimensions, $tileBuffer)
     {
-        $this->maxGetMapSize = $maxGetMapSize;
-        $this->tileBufferHorizontal = $tileBufferHorizontal;
-        $this->tileBufferVertical = $tileBufferVertical;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUnbufferedHeight()
-    {
-        return $this->maxGetMapSize - 2 * $this->getBufferVertical();
+        $this->maxGetMapDimensions = array_values($maxGetMapDimensions);
+        $this->tileBuffer = $tileBuffer;
     }
 
     /**
@@ -34,15 +23,15 @@ class WmsGridOptions
      */
     public function getUnbufferedWidth()
     {
-        return $this->maxGetMapSize - 2 * $this->getBufferHorizontal();
+        return $this->maxGetMapDimensions[0] - 2 * $this->getBufferHorizontal();
     }
 
     /**
      * @return int
      */
-    public function getBufferVertical()
+    public function getUnbufferedHeight()
     {
-        return $this->tileBufferVertical;
+        return $this->maxGetMapDimensions[1] - 2 * $this->getBufferVertical();
     }
 
     /**
@@ -50,6 +39,15 @@ class WmsGridOptions
      */
     public function getBufferHorizontal()
     {
-        return $this->tileBufferHorizontal;
+        return $this->tileBuffer[0];
     }
+
+    /**
+     * @return int
+     */
+    public function getBufferVertical()
+    {
+        return $this->tileBuffer[1];
+    }
+
 }

@@ -16,28 +16,27 @@
     }
 
 
-    > .loginBox {
+    .loginBox {
 
-      > .contentTitle {
+      .contentTitle {
         margin-bottom: 10px;
         font-size: $fontSize * 2;
       }
 
-      > form {
-        > .labelInput {
+      form {
+        .labelInput {
           margin-top: 0.7em;
           font-size: $fontSize * 1.1;
           margin-bottom: 0.4em;
         }
 
-        > .labelText {
+        .labelText {
           font-size: $fontSize;
           line-height: $fontSize;
           margin-bottom: 0.2em;
         }
 
-        > .inputWrapper > input,
-        > input {
+        input {
           font-size: $fontSize * 1.4;
           line-height: 2em;
           height: auto;
@@ -45,30 +44,25 @@
           padding-bottom: 0;
           vertical-align: middle;
         }
-
-        > .linkButton, > .button {
-          font-size: $fontSize;
-          height: auto;
-          line-height: 270%;
-          vertical-align: middle;
-          display: inline-block;
-          padding-top: 0;
-          padding-bottom: 0;
-        }
+      }
+      .linkButton, .button {
+        font-size: $fontSize;
+        height: auto;
+        line-height: 270%;
+        vertical-align: middle;
+        display: inline-block;
+        padding-top: 0;
+        padding-bottom: 0;
       }
     }
   }
 }
 
 .authWrapper {
-  @include transition(all 0.6s ease-in-out);
-
   position: absolute;
   top: 15%;
   right: 0;
   left: 0;
-
-  @include transition(all 0.6s ease-in-out);
 
   > .head {
     position: absolute;
@@ -85,14 +79,16 @@
       @include absolute('' 0 0 0);
     }
   }
-
-  > .loginBox {
+  .login-wrapper {
     position: relative;
-    padding: $space;
     width: 90%;
     max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .loginBox {
+    padding: $space;
     background: lighten($contentColor, 2%) url($managerContentPatternUrl);
-    margin: 15px auto 0;
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;
@@ -101,15 +97,15 @@
       radius: $containerBorderRadius;
     }
 
-    > .contentTitle {
+    .contentTitle {
       margin-bottom: 10px;
 
     }
     .input {
-      width: 100% !important;
+      width: 100%;
     }
     .labelInput {
-      width: 100% !important;
+      width: 100%;
       line-height: 10px;
     }
 
@@ -126,13 +122,14 @@
   .logoContainer {
     text-align: center;
     display: block;
-    position: relative;
-    margin-top: 20px;
     height: auto;
     .logo {
       max-height: 120px;
 
     }
+  }
+  .logoContainer, .loginBox {
+    margin-top: 15px;
   }
 
   .labelInput {
@@ -148,6 +145,14 @@
     margin-right: $space/2;
   }
 
-
+  .sitelinks {
+    text-align: right;
+    li {
+      display: inline-block;
+      a, a:visited {
+        color: inherit;
+      }
+    }
+  }
 }
 

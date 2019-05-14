@@ -93,11 +93,13 @@ class UploadsManager
         // FileSystem::mirror will not create the target directory if the source is empty, so
         // we do it ourselves
         $absTo = $this->getSubdirectoryPath($to, true);
-        $this->fileSystem->mirror($absFrom, $absTo, null, array(
-            'delete' => true,
-            'override' => true,
-            'copy_on_windows' => true,
-        ));
+        if ($this->fileSystem->exists($absFrom) && is_dir($absFrom) && is_readable($absFrom)) {
+            $this->fileSystem->mirror($absFrom, $absTo, null, array(
+                'delete' => true,
+                'override' => true,
+                'copy_on_windows' => true,
+            ));
+        }
     }
 
     /**

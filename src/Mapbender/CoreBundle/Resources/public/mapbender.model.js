@@ -1,12 +1,14 @@
 ((function($) {
 
 window.Mapbender = Mapbender || {};
-    /**
-     * @param {Object} mbMap
-     * @constructor
-     */
-    window.Mapbender.MapModelOl2 = function(mbMap) {
+/**
+ * @param {Object} mbMap
+ * @constructor
+ */
+window.Mapbender.MapModelOl2 = function(mbMap) {
     Mapbender.MapModelBase.apply(this, arguments);
+    this._geoJsonReader = new OpenLayers.Format.GeoJSON();
+    this._wktReader = new OpenLayers.Format.WKT();
     this._initMap(mbMap);
 };
 Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
@@ -70,6 +72,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
 
     map: null,
     _highlightLayer: null,
+    _geoJsonReader: null,
+    _wktReader: null,
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
@@ -447,6 +451,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         this.olMap.zoomToExtent(bounds);
     },
+    getMaxExtentArray: function(srsName) {
+        var targetSrs = srsName || this.getCurrentProjectionCode();
+        var extentObj = this._transformExtent(this.mapMaxExtent.extent, this._configProj, targetSrs);
+        return extentObj.toArray();
+    },
     zoomIn: function() {
         this.olMap.zoomIn();
     },
@@ -767,6 +776,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             olLayer.mbConfig = source;
             this._initLayerEvents(olLayer, source, i);
         }
+    },
+    parseGeoJson: function(data) {
+        return this._geoJsonReader.read(data);
     },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;

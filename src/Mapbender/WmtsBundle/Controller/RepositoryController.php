@@ -18,8 +18,6 @@ use Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType;
 use Mapbender\WmtsBundle\Form\Type\WmtsSourceSimpleType;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,7 +72,6 @@ class RepositoryController extends Controller
 
     /**
      * @ManagerRoute("/create", methods={"POST"})
-     * @Template("MapbenderWmtsBundle:Repository:new.html.twig")
      * @param Request $request
      * @return Response
      */
@@ -231,8 +228,7 @@ class RepositoryController extends Controller
     /**
      * Removes a WmtsInstance
      *
-     * @ManagerRoute("/{slug}/instance/{instanceId}/delete")
-     * @Method({"GET"})
+     * @ManagerRoute("/{slug}/instance/{instanceId}/delete", methods={"GET"})
      * @param string $slug
      * @param string $instanceId
      * @return Response

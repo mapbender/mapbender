@@ -5,7 +5,6 @@
         <li class="filterItem">
             <a class="checkContainer chooseElement" data-tags="{{ meta.tags | join(',') | lower }}" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">
                 <span class="subTitle">{{ meta.title }}</span>
-                <span class="iconOk iconBig"></span>
                 <div class="description">{{ meta.description }}</div>
             </a>
         </li>

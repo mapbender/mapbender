@@ -91,18 +91,32 @@ $pageWidth: $contentPaneWidth + $navWidth;
   hr{@include absolute('' 0 0 0);}
 }
 
+.account-bar-wrap {
+  float: right;
+}
+.sitelinks {
+  margin-top: 0.5em;
+  li {
+    display: inline-block;
+    a, a:visited {
+      color: inherit;
+    }
+    a:hover, a:focus {
+      color: $lightFontColor;
+    }
+  }
+}
 .accountBar {
+  display: inline-block;
   color: $middleFontColor;
   cursor: pointer;
   padding: ($space/4) ($space/2) ($space/4) ($space/2);
   background-color: $contentColor;
   border-bottom-left-radius: $containerBorderRadius;
   border-bottom-right-radius: $containerBorderRadius;
-  @include absolute(0 0 '' '');
   > .accountMenu {
     height: 20px;
     overflow: hidden;
-    position: relative;
     @include transition(all 0.2s ease-in-out);
 
     &.opened {
@@ -188,6 +202,9 @@ $pageWidth: $contentPaneWidth + $navWidth;
 .rightPane {
   width: $contentPaneWidth;
   @include absolute(0 0 '' $navWidth);
+  .top {
+    height: $space * 6;
+  }
 }
 
 textarea, input[type=text], input[type=submit], input[type=password],  a.button, button, div.dropdown {
@@ -246,9 +263,6 @@ ul.dropdownList{
 }
 
 .contentPane {
-  $top: $space*5;
-  padding-top: $top + $space;
-
   > .content {
     min-height: 600px;
     position: relative;

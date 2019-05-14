@@ -18,7 +18,7 @@ parameters:
             roles: [IS_AUTHENTICATED_ANONYMOUSLY]
 
     mapbender.branding.name: Mapbender
-    mapbender.version: 3.0.8
+    mapbender.version: 3.0.8.1
     mapbender.branding.logo: bundles/mapbendercore/image/logo_mb3.png
     # These should all remain empty here, they are just for IDE search results.
     # Customize these in your parameters.yml.
@@ -27,3 +27,7 @@ parameters:
     branding.project_name: ~
     branding.project_version: ~
     branding.logo: ~                # web-relative path
+
+    # Sitelinks displayed below login box and backend content
+    # Should be a list of items each with keys 'link' and 'text'
+    mapbender.sitelinks: []
