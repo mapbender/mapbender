@@ -84,8 +84,6 @@ class ConfigService
 
     /**
      * Get runtime URLs
-     * Hack to get proper urls when embedded in drupal
-     * @todo: Drupal hacks should reside in DrupalIntegrationBundle
      *
      * @param Application $entity
      * @return array
@@ -94,25 +92,15 @@ class ConfigService
     {
         $config        = array('slug' => $entity->getSlug());
         $router        = $this->getRouter();
-        $searchSubject = 'mapbender';
-        $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
 
         $urls = array(
-            'base'     => $this->container->get('request_stack')->getCurrentRequest()->getBaseUrl(),
+            'base' => $router->getContext()->getBaseUrl(),
             'asset'    => $this->container->get('assets.packages')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
             'metadata' => $router->generate('mapbender_core_application_metadata', $config),
-            'config'   => $router->generate('mapbender_core_application_configuration', $config));
-
-        if ($searchSubject !== $drupal_mark) {
-            foreach ($urls as $k => $v) {
-                if ($k == "asset") {
-                    continue;
-                }
-                $urls[$k] = str_replace($searchSubject, $drupal_mark, $v);
-            }
-        }
+            'config'   => $router->generate('mapbender_core_application_configuration', $config),
+        );
 
         return $urls;
     }
