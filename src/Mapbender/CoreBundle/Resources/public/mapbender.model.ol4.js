@@ -748,7 +748,6 @@ createTextStyle: function(options) {
         var newResolutions = this.viewOptions_.resolutions.map(function(r) {
             return r*resolutionFactor;
         });
-        console.log("Okok", newResolutions, nr2);
         // Amend this.viewOptions_, we need the applied values for the next SRS switch
         var newViewOptions = $.extend(this.viewOptions_, {
             projection: srsNameTo,
