@@ -777,8 +777,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this._initLayerEvents(olLayer, source, i);
         }
     },
-    parseGeoJson: function(data) {
-        return this._geoJsonReader.read(data);
+    parseGeoJsonFeature: function(data) {
+        return this._geoJsonReader.read(data)[0];
     },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;

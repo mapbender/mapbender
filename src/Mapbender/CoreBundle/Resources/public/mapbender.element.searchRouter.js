@@ -313,7 +313,7 @@
                             geometry: data.geometry,
                             properties: data.properties || {}
                         };
-                        return self.mbMap.model.parseGeoJson(gjInput)[0];
+                        return self.mbMap.model.parseGeoJsonFeature(gjInput);
                     });
                     self._searchResults(features);
                 });

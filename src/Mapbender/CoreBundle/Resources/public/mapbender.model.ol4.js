@@ -8,12 +8,14 @@ window.Mapbender.MapModelOl4 = (function() {
      */
     function MapModelOl4(mbMap) {
         Mapbender.MapModelBase.apply(this, arguments);
+        this._geojsonFormat = new ol.format.GeoJSON();
         this._initMap();
     }
 
     MapModelOl4.prototype = Object.create(Mapbender.MapModelBase.prototype);
     Object.assign(MapModelOl4.prototype, {
         constructor: MapModelOl4,
+        _geojsonFormat: null,
         sourceTree: [],
 
 
@@ -275,6 +277,9 @@ window.Mapbender.MapModelOl4 = (function() {
         } else {
             return this._startProj;
         }
+    },
+    parseGeoJsonFeature: function(data) {
+        return this._geojsonFormat.readFeature(data);
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
@@ -888,13 +893,6 @@ getMapSize: function() {
  */
 getMapCenter: function() {
     return this.olMap.getView().getCenter();
-},
-
-/**
- * @returns {ol.format.GeoJSON}
- */
-createOlFormatGeoJSON: function() {
-    return new ol.format.GeoJSON;
 },
 
 /**

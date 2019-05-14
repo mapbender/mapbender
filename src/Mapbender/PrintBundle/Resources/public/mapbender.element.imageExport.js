@@ -8,7 +8,6 @@
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
-        _geometryToGeoJson: null,
         $form: null,
 
         _create: function(){
@@ -17,11 +16,6 @@
             }
             this.$form = $('form', this.element);
             $(this.element).show();
-
-            var olGeoJson = this.model.createOlFormatGeoJSON();
-            this._geometryToGeoJson = function(geometry) {
-                return olGeoJson.writeGeometryObject.call(olGeoJson, geometry, olGeoJson);
-            };
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function() {
