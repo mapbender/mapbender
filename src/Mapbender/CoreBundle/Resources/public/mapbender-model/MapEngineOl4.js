@@ -167,6 +167,9 @@ window.Mapbender.MapEngineOl4 = (function() {
         getFeatureBounds: function(olFeature) {
             return this.boundsFromArray(olFeature.getGeometry().getExtent());
         },
+        getFeatureProperties: function(olFeature) {
+            return olFeature.getProperties();
+        },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);

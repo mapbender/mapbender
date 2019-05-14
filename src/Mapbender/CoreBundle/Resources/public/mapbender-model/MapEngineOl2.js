@@ -182,6 +182,9 @@ window.Mapbender.MapEngineOl2 = (function() {
         getFeatureBounds: function(olFeature) {
             return this.boundsFromArray(feature.geometry.getBounds().toArray());
         },
+        getFeatureProperties: function(olFeature) {
+            return olFeature.data;
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {

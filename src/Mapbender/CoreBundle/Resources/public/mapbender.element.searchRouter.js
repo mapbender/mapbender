@@ -383,11 +383,11 @@
                 var row = $('<tr/>');
                 row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
-
-                for (var header in headers) {
-                    var d = feature.data[header];
+                var props = Mapbender.mapEngine.getFeatureProperties(feature);
+                Object.keys(headers).map(function(header) {
+                    var d = props[header];
                     row.append($('<td>' + (d || '') + '</td>'));
-                }
+                });
 
                 tbody.append(row);
 
