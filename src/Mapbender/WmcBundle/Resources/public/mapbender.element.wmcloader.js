@@ -219,14 +219,6 @@
                 keepSources: this.options.keepSources});
             wmcHandlier.removeFromMap();
         },
-        wmcAsXml: function(){
-            var state = this.mbMap.getMapState();
-            var form = $('<form method="POST" action="' + (this.elementUrl + 'wmcasxml') + '" target="_BLANK" />');
-            $('<input>').attr('type', 'hidden').attr('name', 'state').val(JSON.stringify(state)).appendTo(form);
-            form.appendTo($('body'));
-            form.submit();
-            form.remove();
-        },
         _destroy: $.noop
     });
 

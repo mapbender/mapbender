@@ -143,9 +143,6 @@ class WmcLoader extends WmcBase
             case 'loadxml':
                 return $this->loadXml();
                 break;
-            case 'wmcasxml': // TODO at client
-                return $this->getWmcAsXml();
-                break;
             case 'wmcfromurl': // TODO at client
                 return $this->getWmcFromUrl();
                 break;
@@ -231,41 +228,6 @@ class WmcLoader extends WmcBase
         } else {
             $response->setContent($this->trans("mb.wmc.error.wmclistloader_notallowed"));
             return $response;
-        }
-    }
-
-    /**
-     *
-     * @return Response
-     */
-    private function getWmcAsXml()
-    {
-        $config = $this->getConfiguration();
-        if (in_array("wmcxmlloader", $config['components'])) {
-            $json = $this->container->get('request_stack')->getCurrentRequest()->get("state", null);
-            if ($json) {
-                $wmc = Wmc::create();
-                $state = $wmc->getState();
-                $state->setJson(json_decode($json));
-                if ($state !== null && $state->getJson() !== null) {
-                    $wmchandler = $this->wmcHandlerFactory();
-                    $state->setSlug($this->entity->getApplication()->getSlug());
-                    $state->setTitle("Mapbender State");
-                    $wmc->setWmcid(round((microtime(true) * 1000)));
-                    $wmc->setState($wmchandler->unSignUrls($state));
-                    $xml = $this->container->get('templating')->render(
-                        'MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig', array(
-                        'wmc' => $wmc));
-                    return new Response($xml, 200, array(
-                        'Content-Type' => 'application/xml',
-                        'Content-Disposition' => 'attachment; filename=wmc.xml',
-                    ));
-                }
-            }
-        } else {
-            return new JsonResponse(array(
-                "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"),
-            ));
         }
     }
 
