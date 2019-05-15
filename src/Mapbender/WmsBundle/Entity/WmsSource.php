@@ -203,6 +203,7 @@ class WmsSource extends Source implements ContainingKeyword
     public function __construct()
     {
         parent::__construct(Source::TYPE_WMS);
+        $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
@@ -894,6 +895,14 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->instances->add($instance);
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection|WmsInstance[]
+     */
+    public function getInstances()
+    {
+        return $this->instances;
     }
 
     /**

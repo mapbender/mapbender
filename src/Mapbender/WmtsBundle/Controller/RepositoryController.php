@@ -161,12 +161,8 @@ class RepositoryController extends Controller
             }
 
             $wmtssource->setOriginUrl($wmtssource_req->getOriginUrl());
-//            $rootlayer = $wmtssource->getLayers()->get(0);
-//            $this->getDoctrine()->getManager()->persist($rootlayer);
-//            $this->saveLayer($this->getDoctrine()->getManager(), $rootlayer);
-
-            WmtsSourceEntityHandler::createHandler($this->container, $wmtssource)->save();
-//            $this->getDoctrine()->getManager()->persist($wmtssource);
+            $sourceHandler = new WmtsSourceEntityHandler($this->container, $wmtssource);
+            $sourceHandler->save();
             $this->getDoctrine()->getManager()->flush();
 
             /** @var MutableAclProviderInterface $aclProvider */
@@ -216,9 +212,11 @@ class RepositoryController extends Controller
         $aclProvider->deleteAcl($oid);
 
         foreach ($wmtsinstances as $wmtsinstance) {
-            EntityHandler::createHandler($this->container, $wmtsinstance)->remove();
+            $instanceHandler = new WmtsInstanceEntityHandler($this->container, $wmtsinstance);
+            $instanceHandler->remove();
         }
-        EntityHandler::createHandler($this->container, $wmtssource)->remove();
+        $sourceHandler = new WmtsSourceEntityHandler($this->container, $wmtssource);
+        $sourceHandler->remove();
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', "Your WMTS has been deleted");
@@ -240,7 +238,8 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em       = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        EntityHandler::createHandler($this->container, $instance)->remove();
+        $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
+        $instanceHandler->remove();
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', 'Your source instance has been deleted.');

@@ -8,11 +8,14 @@
 namespace Mapbender\WmtsBundle\Component;
 
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\WmtsBundle\Entity\Theme;
 
 /**
  * Description of WmsSourceHandler
  *
  * @author Paul Schmidt
+ *
+ * @property Theme $entity
  */
 class ThemeEntityHandler extends EntityHandler
 {
@@ -30,9 +33,10 @@ class ThemeEntityHandler extends EntityHandler
      */
     public function save()
     {
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        parent::save();
         foreach ($this->entity->getThemes() as $theme) {
-            self::createHandler($this->container, $theme)->save();
+            $recursionHandler = new ThemeEntityHandler($this->container, $theme);
+            $recursionHandler->save();
         }
     }
 
@@ -42,8 +46,9 @@ class ThemeEntityHandler extends EntityHandler
     public function remove()
     {
         foreach ($this->entity->getThemes() as $theme) {
-            self::createHandler($this->container, $theme)->remove();
+            $recursionHandler = new ThemeEntityHandler($this->container, $theme);
+            $recursionHandler->remove();
         }
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
+        parent::remove();
     }
 }

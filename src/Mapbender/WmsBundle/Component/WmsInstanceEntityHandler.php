@@ -216,16 +216,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @inheritdoc
-     * @deprecated, use the appropriate service directly
-     */
-    public function getConfiguration(Signer $signer = null)
-    {
-        $service = $this->getService();
-        return $service->getConfiguration($this->entity);
-    }
-
-    /**
      * @return array
      * @deprecated, use the service directly
      */
@@ -234,19 +224,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         /** @var WmsSourceService $service */
         $service = $this->getService();
         return $service->getRootLayerConfig($this->entity);
-    }
-
-    /**
-     * Returns ALL vendorspecific parameters, NOT just the hidden ones
-     * @return string[]
-     * @deprecated for bad wording, limited utility; last remaining use was in InnstanceTunnelService, which now
-     *     handles this itself
-     */
-    public function getSensitiveVendorSpecific()
-    {
-        $handler = new VendorSpecificHandler();
-        $token = $this->container->get('security.token_storage')->getToken();
-        return $handler->getAllParams($this->entity, $token);
     }
 
     /**

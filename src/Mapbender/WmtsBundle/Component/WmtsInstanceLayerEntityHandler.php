@@ -47,58 +47,8 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function remove()
-    {
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function update(SourceInstance $instance, SourceItem $wmtslayersource)
     {
-        /* remove instance layers for missed layer sources */
-//        foreach ($this->entity->getSublayer() as $wmsinstlayer) {
-//            if (!$wmsinstlayer->getSourceItem()) {
-//                self::createHandler($this->container, $wmsinstlayer)->remove();
-//            }
-//        }
-//
-//        foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
-//            $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
-//            if ($layer) {
-//                self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
-//            } else {
-//                self::createHandler($this->container, new WmsInstanceLayer())->create(
-//                    $instance,
-//                    $wmslayersourceSub
-//                );
-//            }
-//        }
-//        $this->entity->setPriority($wmslayersource->getPriority());
-//        $origMinMax  = $wmslayersource->getScaleRecursive();
-//        $scaleMinMax = null;
-//        if ($origMinMax) {
-//            $scaleMinMax = MinMax::create(
-//                $origMinMax->getInRange($this->entity->getMinScale()),
-//                $origMinMax->getInRange($this->entity->getMaxScale())
-//            );
-//        } else {
-//            $scaleMinMax = MinMax::create($this->entity->getMinScale(), $this->entity->getMaxScale());
-//        }
-//        $this->entity->setMinScale($scaleMinMax ? $scaleMinMax->getMin() : null);
-//        $this->entity->setMaxScale($scaleMinMax ? $scaleMinMax->getMax() : null);
-//        $queryable = Utils::getBool($wmslayersource->getQueryable());
-//        $this->entity->setInfo($queryable === true ? $this->entity->getInfo() : $queryable);
-//        $this->entity->setAllowinfo($queryable === true ? $this->entity->getInfo() : $queryable);
-//        if ($wmslayersource->getSublayer()->count() > 0) {
-//            $this->entity->setToggle(is_bool($this->entity->getToggle()) ? $this->entity->getToggle() : false);
-//            $alowtoggle = is_bool($this->entity->getAllowtoggle()) ? $this->entity->getAllowtoggle() : true;
-//            $this->entity->setAllowtoggle($alowtoggle);
-//        } else {
-//            $this->entity->setToggle(null);
-//            $this->entity->setAllowtoggle(null);
-//        }
     }
 
     /**
