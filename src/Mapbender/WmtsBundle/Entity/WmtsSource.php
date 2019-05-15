@@ -92,11 +92,6 @@ class WmtsSource extends Source
     public $getFeatureInfo = null;
 
     /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    protected $serviceMetadataURL = "";
-
-    /**
      * @var ArrayCollection A list of WMTS Theme
      * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
@@ -257,27 +252,6 @@ class WmtsSource extends Source
     }
 
     /**
-     * Set serviceType
-     * @param string $serviceType
-     * @return $this
-     */
-    public function setServiceType($serviceType)
-    {
-        $this->serviceType = $serviceType;
-        return $this;
-    }
-
-    /**
-     * Get serviceType
-     * @return string
-     */
-    public function getServiceType()
-    {
-        return $this->serviceType;
-    }
-
-
-    /**
      * Set layers
      * @param ArrayCollection $layers
      * @return $this
@@ -401,17 +375,6 @@ class WmtsSource extends Source
     }
 
     /**
-     * Set getCapabilities
-     * @param RequestInformation $getCapabilities
-     * @return $this
-     */
-    public function setGetCapabilities(RequestInformation $getCapabilities)
-    {
-        $this->getCapabilities = $getCapabilities;
-        return $this;
-    }
-
-    /**
      * Get getCapabilities
      * @return string
      */
@@ -458,27 +421,6 @@ class WmtsSource extends Source
     public function getGetFeatureInfo()
     {
         return $this->getFeatureInfo;
-    }
-
-    /**
-     * Set serviceMetadataURL
-     * @param string $serviceMetadataURL
-     * @return $this
-     */
-    public function setServiceMetadataURL($serviceMetadataURL)
-    {
-        $this->serviceMetadataURL = $serviceMetadataURL;
-        return $this;
-    }
-
-    /**
-     * Get serviceMetadataURL
-     *
-     * @return string
-     */
-    public function getServiceMetadataURL()
-    {
-        return $this->serviceMetadataURL;
     }
 
     /**

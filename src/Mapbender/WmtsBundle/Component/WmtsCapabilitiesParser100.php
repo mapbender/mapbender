@@ -61,9 +61,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $this->parseCapabilityRequest($wmtssource, $this->getValue("./ows:OperationsMetadata", $root));
         }
 
-        $serviceMetadataUrl = $this->getValue("./wmts:ServiceMetadataURL/@xlink:href", $root);
-        $wmtssource->setServiceMetadataURL($serviceMetadataUrl);
-
         $layerElms = $this->xpath->query("./wmts:Contents/wmts:Layer", $root);
         foreach ($layerElms as $layerEl) {
             $layer = new WmtsLayerSource();
@@ -106,7 +103,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $keyword->setReferenceObject($wmts);
             $keywords->add($keyword);
         }
-        $wmts->setServiceType($this->getValue("./ows:ServiceType/text()", $contextElm));
         $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
         $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
     }
@@ -167,10 +163,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $operations = $this->xpath->query("./*", $contextElm);
         foreach ($operations as $operation) {
             $name = $this->getValue("./@name", $operation);
-            if ($name === "GetCapabilities") {
-                $getCapabilities = $this->parseOperationRequestInformation($operation);
-                $wmts->setGetCapabilities($getCapabilities);
-            } elseif ($name === "GetTile") {
+            if ($name === "GetTile") {
                 $getTile = $this->parseOperationRequestInformation($operation);
                 $wmts->setGetTile($getTile);
             } elseif ($name === "GetFeatureInfo") {

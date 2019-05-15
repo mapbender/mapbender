@@ -27,8 +27,6 @@
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ wmts.title }}</div>
     <div class="clearContainer"></div>
-    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.name" | trans }}:</div><div class="metaText">ToDo{#{ wmts.name }#}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</div><div class="metaText">{{ wmts.version }}</div>
     <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.originurl" | trans }}:</div><div class="metaText metaUrl">{{ wmts.originUrl }}</div>
@@ -99,9 +97,6 @@
           <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</span>
           <span class="metaText">{{ wmts.version }}</span>
       </li>
-      {% if wmts.getCapabilities is not empty %}
-          <li>{{ view.requestinformation(wmts.getCapabilities, "GetCapabilities") }}</li>
-      {% endif %}
       {% if wmts.getTile is not empty %}
           <li>{{ view.requestinformation(wmts.getTile, "GetMap") }}</li>
       {% endif %}
