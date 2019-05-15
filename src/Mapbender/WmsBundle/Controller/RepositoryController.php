@@ -335,20 +335,17 @@ class RepositoryController extends Controller
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
-                foreach ($wmsinstance->getLayers() as $layer) {
-                    $em->persist($layer);
-                    $em->flush();
-                    $em->refresh($layer);
-                }
                 $em->persist($wmsinstance);
+                $layerSet = $wmsinstance->getLayerset();
+                if ($layerSet) {
+                    $application = $layerSet->getApplication();
+                    if ($application) {
+                        $application->setUpdated(new \DateTime('now'));
+                        $em->persist($application);
+                    }
+                }
                 $em->flush();
                 $em->getConnection()->commit();
-                // reload instance after saving ... why?
-                /** @var WmsInstance $wmsinstance */
-                $wmsinstance = $this->loadEntityByPk($repositoryName, $wmsinstance->getId());
-                $entityHandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
-                $entityHandler->save();
-                $em->flush();
 
                 $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
                 return $this

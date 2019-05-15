@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
@@ -164,10 +163,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function save()
     {
         $entityManager = $this->getEntityManager();
-        if ($this->entity->getRootlayer()) {
-            $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
-            $rootlayerSaveHandler->save();
-        }
         $layerSet = $this->entity->getLayerset();
         $num = 0;
         foreach ($layerSet->getInstances() as $instance) {

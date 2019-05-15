@@ -80,7 +80,7 @@ abstract class Source
     /**
      * Set id
      * @param integer $id source id
-     * @return Source
+     * @return $this
      */
     public function setId($id)
     {
@@ -102,7 +102,7 @@ abstract class Source
      * Set title
      *
      * @param  string $title
-     * @return Source
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -125,7 +125,7 @@ abstract class Source
      * Set description
      *
      * @param  string $description
-     * @return Source
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -148,7 +148,7 @@ abstract class Source
      * Set alias
      *
      * @param  string $alias
-     * @return Source
+     * @return $this
      */
     public function setAlias($alias)
     {
@@ -181,7 +181,7 @@ abstract class Source
      * Set valid
      *
      * @param  boolean $valid
-     * @return Source
+     * @return $this
      */
     public function setValid($valid)
     {

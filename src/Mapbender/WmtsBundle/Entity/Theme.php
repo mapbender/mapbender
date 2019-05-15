@@ -58,7 +58,7 @@ class Theme
     protected $parent = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="Theme",mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="Theme",mappedBy="parent", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $themes;

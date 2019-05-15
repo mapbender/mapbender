@@ -32,38 +32,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        $this->persistRecursive($this->getEntityManager(), $this->entity);
-    }
-
-    /**
-     * Persists the source, all keywords and all layers, recursively.
-     *
-     * @param ObjectManager $manager
-     * @param WmsSource $entity
-     */
-    private static function persistRecursive(ObjectManager $manager, WmsSource $entity)
-    {
-        $rootLayer = $entity->getRootlayer();
-        if ($rootLayer) {
-            WmsLayerSourceEntityHandler::persistRecursive($manager, $rootLayer);
-        }
-        $manager->persist($entity);
-        $cont = $entity->getContact();
-        if ($cont == null) {
-            $cont = new Contact();
-            $entity->setContact($cont);
-        }
-        $manager->persist($cont);
-        foreach ($entity->getKeywords() as $kwd) {
-            $manager->persist($kwd);
-        }
-    }
-
-    /**
      * Creates a new WmsInstance, optionally attaches it to a layerset, then updates
      * the ordering of the layers.
      *

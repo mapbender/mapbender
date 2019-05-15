@@ -39,14 +39,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     }
 
     /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        $this->persistRecursive($this->getEntityManager(), $this->entity);
-    }
-
-    /**
      * Persists the instance layer and all child layers, recursively
      *
      * @param ObjectManager $manager
@@ -90,7 +82,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 $sublayerInstance->setParent($this->entity);
                 $instance->getLayers()->add($sublayerInstance);
                 $this->entity->getSublayer()->add($sublayerInstance);
-                $this->persistRecursive($manager, $sublayerInstance);
+                $manager->persist($sublayerInstance);
             }
         }
         $this->entity->setPriority($wmslayersource->getPriority());
@@ -111,7 +103,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
-        $this->save();
+        $manager->persist($this->entity);
     }
 
     /**

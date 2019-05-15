@@ -32,32 +32,6 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function save()
-    {
-        $this->persistRecursive($this->getEntityManager(), $this->entity);
-    }
-
-    /**
-     * Persists the source layer and all child layers, recursively
-     *
-     * @param ObjectManager $manager
-     * @param WmsLayerSource $entity
-     */
-    public static function persistRecursive(ObjectManager $manager, WmsLayerSource $entity)
-    {
-        $manager->persist($entity);
-        foreach ($entity->getSublayer() as $sublayer) {
-            static::persistRecursive($manager, $sublayer);
-        }
-        foreach ($entity->getKeywords() as $kwd) {
-            $kwd->setReferenceObject($entity);
-            $manager->persist($kwd);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function remove()
     {
         $this->removeRecursively($this->entity);

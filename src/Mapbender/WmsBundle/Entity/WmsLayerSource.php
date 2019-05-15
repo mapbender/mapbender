@@ -44,7 +44,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $parent = null;
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist", "remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $sublayer;
@@ -143,7 +143,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords
-     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
@@ -978,7 +978,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get keywords
      *
-     * @return ArrayCollection collection of keywords
+     * @return ArrayCollection|Keyword[]
      */
     public function getKeywords()
     {

@@ -61,7 +61,7 @@ class WmtsSource extends Source
 
     /**
      * @var Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
     protected $contact;
 
@@ -98,14 +98,14 @@ class WmtsSource extends Source
 
     /**
      * @var ArrayCollection A list of WMTS Theme
-     * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $themes;
 
     /**
      * @var ArrayCollection A list of WMTS layers
-     * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $tilematrixsets;
@@ -122,7 +122,7 @@ class WmtsSource extends Source
 
     /**
      * @var ArrayCollection A list of WMTS layers
-     * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $layers;
@@ -140,6 +140,7 @@ class WmtsSource extends Source
     public function __construct($type)
     {
         parent::__construct($type);
+        $this->contact = new Contact();
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
