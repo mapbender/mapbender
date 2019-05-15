@@ -1,9 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Mapbender\WmtsBundle\Component;
 
@@ -44,12 +39,13 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
             $cont = new Contact();
             $this->entity->setContact($cont);
         }
-        $this->container->get('doctrine')->getManager()->persist($cont);
+        $entityManager->persist($cont);
         foreach ($this->entity->getLayers() as $layer) {
-            self::createHandler($this->container, $layer)->save();
+            $entityManager->persist($layer);
         }
         foreach ($this->entity->getThemes() as $theme) {
-            self::createHandler($this->container, $theme)->save();
+            $themeHandler = new ThemeEntityHandler($this->container, $theme);
+            $themeHandler->save();
         }
         foreach ($this->entity->getTilematrixsets() as $tms) {
             $entityManager->persist($tms);
@@ -60,28 +56,19 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function createInstance(Layerset $layerset = NULL, $persist = true)
+    public function createInstance(Layerset $layerset = NULL)
     {
         $instance = new WmtsInstance();
         $instance->setSource($this->entity);
         $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
         $instanceHandler->create();
-        $entityManager = $this->getEntityManager();
         if ($layerset) {
             $instance->setLayerset($layerset);
             $num = 0;
             foreach ($layerset->getInstances() as $instanceAtLayerset) {
                 /** @var WmsInstance|WmtsInstance $instanceAtLayerset */
                 $instanceAtLayerset->setWeight($num);
-                if ($persist) {
-                    $this->container->get('doctrine')->getManager()->persist($instanceAtLayerset);
-                }
                 $num++;
-            }
-        }
-        if ($persist) {
-            foreach ($instance->getLayers() as $instanceLayer) {
-                $entityManager->persist($instanceLayer);
             }
         }
         return $instance;
@@ -92,11 +79,9 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
-        foreach ($this->entity->getLayers() as $layer) {
-            self::createHandler($this->container, $layer)->remove();
-        }
         foreach ($this->entity->getThemes() as $theme) {
-            self::createHandler($this->container, $theme)->remove();
+            $themeHandler = new ThemeEntityHandler($this->container, $theme);
+            $themeHandler->remove();
         }
         $this->getEntityManager()->remove($this->entity);
     }
@@ -106,65 +91,6 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
-        $transaction = $this->container->get('doctrine')->getManager()->getConnection()->isTransactionActive();
-        if (!$transaction) {
-            $this->container->get('doctrine')->getManager()->getConnection()->beginTransaction();
-        }
-//        $updater = new WmtsUpdater($this->entity);
-//        /* Update source attributes */
-//        $mapper  = $updater->getMapper();
-//        foreach ($mapper as $propertyName => $properties) {
-//            if ($propertyName === 'layers' || $propertyName === 'keywords' ||
-//                $propertyName === 'id' || $propertyName === 'instances') {
-//                continue;
-//            } else {
-//                $getMeth = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
-//                $value   = $getMeth->invoke($sourceNew);
-//                if (is_object($value)) {
-//                    $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
-//                    $valueNew  = clone $value;
-//                    $this->container->get('doctrine')->getManager()->detach($valueNew);
-//                    $refMethod->invoke($this->entity, $valueNew);
-//                } elseif(isset($properties[EntityUtil::TOSET])) {
-//                    $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
-//                    $refMethod->invoke($this->entity, $value);
-//                }
-//            }
-//        }
-//        $updater->updateKeywords(
-//            $this->entity,
-//            $sourceNew,
-//            $this->container->get('doctrine')->getManager(),
-//            'Mapbender\WmtsBundle\Entity\WmtsSourceKeyword'
-//        );
-//
-//        $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-//        $rootHandler->update($sourceNew->getRootlayer());
-//
-//        $this->updateInstances();
-
-        if (!$transaction) {
-            $this->container->get('doctrine')->getManager()->getConnection()->commit();
-        }
     }
 
-    private function updateInstances()
-    {
-//        foreach ($this->getInstances() as $instance) {
-//            self::createHandler($this->container, $instance)->update();
-//        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getInstances()
-    {
-        $query    = $this->container->get('doctrine')->getManager()->createQuery(
-            "SELECT i FROM MapbenderWmtsBundle:WmtsInstance i WHERE i.source=:sid"
-        );
-        $query->setParameters(array("sid" => $this->entity->getId()));
-        $instList = $query->getResult();
-        return $instList;
-    }
 }

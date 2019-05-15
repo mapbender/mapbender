@@ -72,7 +72,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function createInstance(Layerset $layerSet = null)
     {
-        $instance        = new WmsInstance();
+        $instance = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->populateFromSource($this->entity);
         if ($layerSet) {
@@ -136,7 +136,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
 
-        foreach ($this->getInstances() as $instance) {
+        foreach ($this->entity->getInstances() as $instance) {
             $instanceUpdateHandler = new WmsInstanceEntityHandler($this->container, $instance);
             $instanceUpdateHandler->update();
         }
@@ -144,18 +144,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if (!$transaction) {
             $em->getConnection()->commit();
         }
-    }
-
-    /**
-     * @return WmsInstance[]
-     */
-    public function getInstances()
-    {
-        $objectManager = $this->getEntityManager();
-        $query         = $objectManager->createQuery("SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid");
-        return $query->setParameters(
-            array("sid" => $this->entity->getId())
-        )->getResult();
     }
 
     /**

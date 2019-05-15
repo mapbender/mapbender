@@ -140,13 +140,20 @@ class WmtsSource extends Source
     public function __construct($type)
     {
         parent::__construct($type);
+        $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->tilematrixsets = new ArrayCollection();
         $this->themes = new ArrayCollection();
     }
 
-
+    /**
+     * @return ArrayCollection|WmtsInstance[]
+     */
+    public function getInstances()
+    {
+        return $this->instances;
+    }
 
     /**
      * @inheritdoc

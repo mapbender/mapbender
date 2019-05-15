@@ -49,26 +49,6 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function update();
     
     /**
-     * Returns the instance configuration with signed urls or null if an instance configuration isn't valid.
-     * @return array instance configuration or null
-     */
-    abstract public function getConfiguration(Signer $signer);
-    
-    /**
-     * Does nothing, returns nothing, is never called
-     * @deprecated
-     */
-    public function generateConfiguration()
-    {
-    }
-
-    /**
-     * Returns ALL vendorspecific parameters, NOT just the hidden ones
-     * @return string[]
-     */
-    abstract public function getSensitiveVendorSpecific();
-
-    /**
      * Returns a source config generating service appropriate for the bound source instance (polymorphic).
      *
      * @return SourceService
