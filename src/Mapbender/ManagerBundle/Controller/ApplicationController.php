@@ -210,9 +210,8 @@ class ApplicationController extends WelcomeController
         $application      = new Application();
         $uploadScreenShot = new UploadScreenshot();
 
-        if (!$this->getContext()->isUserAllowedToCreate($application)) {
-            throw new AccessDeniedException();
-        }
+        $oid = new ObjectIdentity('class', get_class($application));
+        $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $form          = $this->createApplicationForm($application);
         $request       = $this->getRequest();
