@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * Welcome controller.
@@ -29,30 +30,23 @@ class WelcomeController extends Controller
      */
     public function listAction()
     {
-        $securityContext     = $this->getContext();
-        $applications        = $this->get('mapbender')->getApplicationEntities();
         $allowedApplications = array();
 
-        foreach ($applications as $application) {
-            if ($application->isExcludedFromList()) {
-                continue;
-            }
-
-            if ($securityContext->isUserAllowedToView($application)) {
-                if (!$application->isPublished()
-                    && !$securityContext->isUserAllowedToEdit($application)) {
-                    continue;
-                }
+        foreach ($this->get('mapbender')->getApplicationEntities() as $application) {
+            if ($this->isGranted('VIEW', $application)
+                && ($this->isGranted('EDIT', $application) || $application->isPublished())
+                && !$application->isExcludedFromList()) {
                 $allowedApplications[] = $application;
             }
         }
 
-        return array(
+        return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
             'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
-            'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
-            'time'              => new \DateTime()
-        );
+            'time'              => new \DateTime(),
+            'create_permission' => $this
+                ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
+        ));
     }
 
     /**
