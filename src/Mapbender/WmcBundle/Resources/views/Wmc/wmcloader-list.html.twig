@@ -1,6 +1,3 @@
-{% if 'wmcxmlloader' in configuration.components %}
-<a href="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'loadform' }) }}" class="iconAdd hover-highlight-effect loadWmcXml" title="{{'mb.wmc.wmcloader.load_xml_wmc'|trans}}"></a>
-{% endif %}
 {% if 'wmclistloader' in configuration.components %}
 <table class="tableCore">
     <thead>

@@ -491,13 +491,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         for (var i = 0; i < sources.length; i++) {
             var source = sources[i];
             var sourceState = JSON.parse(JSON.stringify(source));
-            // HACK amenity for completely unused XML representation
-            // see src/Mapbender/WmcBundle/Resources/views/Wmc/wmc110_simple.xml.twig
-            sourceState.layers = [];
-            var list = Mapbender.source[source.type].getLayersList(source);
-            $.each(list.layers, function(idx, layer) {
-                sourceState.layers.push(layer.options.name);
-            });
             state.sources.push(sourceState);
         }
         return state;
