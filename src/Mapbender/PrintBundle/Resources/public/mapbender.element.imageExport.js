@@ -214,11 +214,12 @@
          */
         _extractFeatureGeometry: function(layer, feature) {
             var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style !== null) {
+            if (feature.style === null || typeof feature.style === "undefined" ) {
+                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
+
+            } else {
                 // stringify => decode: makes a deep copy of the style at the moment of capture
                 geometry.style = JSON.parse(JSON.stringify(feature.style));
-            } else {
-                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
             }
             return geometry;
         },
