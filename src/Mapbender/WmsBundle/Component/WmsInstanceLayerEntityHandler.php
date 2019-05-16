@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -20,38 +19,6 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  */
 class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
-
-    /**
-     * Creates a SourceInstanceItem
-     *
-     * @param WmsInstance|SourceInstance  $instance
-     * @param WmsLayerSource|SourceItem $layerSource
-     * @param int                       $num
-     * @return WmsInstanceLayer
-     * @deprecated for poor wording and unnecessary container dependency
-     * @internal
-     */
-    public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
-    {
-        $instanceLayer = $this->entity;
-        $instanceLayer->populateFromSource($instance, $layerSource, $num);
-        return $this->entity;
-    }
-
-    /**
-     * Persists the instance layer and all child layers, recursively
-     *
-     * @param ObjectManager $manager
-     * @param WmsInstanceLayer $entity
-     */
-    private static function persistRecursive(ObjectManager $manager, WmsInstanceLayer $entity)
-    {
-        $manager->persist($entity);
-        foreach ($entity->getSublayer() as $sublayer) {
-            static::persistRecursive($manager, $sublayer);
-        }
-    }
-
     /**
      * @inheritdoc
      */

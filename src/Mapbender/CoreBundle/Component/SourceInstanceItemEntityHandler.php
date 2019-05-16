@@ -13,15 +13,6 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
 {
 
     /**
-     * Creates a SourceInstanceItem
-     *
-     * @param SourceInstance $instance
-     * @param SourceItem     $item
-     * @param int            $num
-     */
-    abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0);
-
-    /**
      * Generates an item configuration
      */
     abstract public function generateConfiguration();

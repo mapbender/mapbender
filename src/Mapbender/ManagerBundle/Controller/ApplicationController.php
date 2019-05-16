@@ -8,13 +8,13 @@ use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
@@ -228,11 +228,10 @@ class ApplicationController extends WelcomeController
             return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
         }
         $application->setUpdated(new \DateTime('now'));
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        /** @var Connection $connection */
-        $connection = $em->getConnection();
-        $connection->beginTransaction();
+        $em->beginTransaction();
         $em->persist($application);
         $em->flush();
         $this->checkRegionProperties($application);
@@ -263,7 +262,7 @@ class ApplicationController extends WelcomeController
         $em->flush();
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $connection->commit();
+        $em->commit();
         $this->addFlash('success', $this->translate('mb.application.create.success'));
 
         return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
@@ -627,34 +626,35 @@ class ApplicationController extends WelcomeController
      * @param int     $layersetId Layer set ID
      * @param int     $sourceId Layer set source ID
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
-        /** @var Connection $connection */
         $application     = $this->getMapbender()->getApplicationEntity($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
-        $doctrine      = $this->getDoctrine();
-        $entityManager = $doctrine->getManager();
-        $connection    = $entityManager->getConnection();
-        $container     = $this->container;
+        /** @var EntityManager $em */
+        $entityManager = $this->getDoctrine()->getManager();
         $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        /** @var Layerset|null $layerSet */
         $layerSet      = $entityManager->getRepository("MapbenderCoreBundle:Layerset")->find($layersetId);
-        $eHandler      = SourceEntityHandler::createHandler($container, $source);
-        $connection->beginTransaction();
-        $sourceInstance = $eHandler->createInstance($layerSet);
-        $instanceSaveHandler = SourceInstanceEntityHandler::createHandler($container, $sourceInstance);
-        $instanceSaveHandler->save();
+        $eHandler      = SourceEntityHandler::createHandler($this->container, $source);
+        $newInstance = $eHandler->createInstance();
+        $layerSet->getInstances()->add($newInstance);
+        $newInstance->setLayerset($layerSet);
+        foreach ($layerSet->getInstances()->getValues() as $newWeight => $lsInstance) {
+            /** @var SourceInstance $lsInstance */
+            $lsInstance->setWeight($newWeight);
+            $entityManager->persist($lsInstance);
+        }
+        $entityManager->persist($layerSet->getApplication());
+        $layerSet->getApplication()->setUpdated(new \DateTime('now'));
+
+        $entityManager->persist($newInstance);
         $entityManager->flush();
-        $connection->commit();
-        $this->get("logger")
-            ->debug('A new instance "' . $sourceInstance->getId() . '"has been created. Please edit it!');
-        $flashBag = $request->getSession()->getFlashBag();
-        $flashBag->set('success', $this->translate('mb.source.instance.create.success'));
-        return $this->redirect($this->generateUrl(
-            "mapbender_manager_repository_instance",
-            array("slug" => $slug, "instanceId" => $sourceInstance->getId())
+        $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
+        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
+            "slug" => $slug,
+            "instanceId" => $newInstance->getId(),
         ));
     }
 

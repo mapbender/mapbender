@@ -111,16 +111,16 @@ class RepositoryController extends Controller
                 return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
             $this->setAliasForDuplicate($wmssource);
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $em->beginTransaction();
 
-            $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
+            $em->persist($wmssource);
 
-            $sourceHandler = new WmsSourceEntityHandler($this->container, $wmssource);
-            $sourceHandler->save();
-
-            $this->getDoctrine()->getManager()->flush();
+            $em->flush();
             $this->initializeAccessControl($wmssource);
-            $this->getDoctrine()->getManager()->getConnection()->commit();
-            $this->get('session')->getFlashBag()->set('success', "Your WMS has been created");
+            $em->commit();
+            $this->addFlash('success', "Your WMS has been created");
             return $this->redirect($this
                 ->generateUrl("mapbender_manager_repository_view", array("sourceId" => $wmssource->getId()), true));
         }
@@ -206,7 +206,9 @@ class RepositoryController extends Controller
                     return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
                 }
 
-                $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
+                /** @var EntityManager $em */
+                $em = $this->getDoctrine()->getManager();
+                $em->beginTransaction();
                 try {
                     $wmssourcehandler = new WmsSourceEntityHandler($this->container, $wmsOrig);
                     $wmssourcehandler->update($wmssource);
@@ -221,15 +223,14 @@ class RepositoryController extends Controller
                         )
                     );
                 }
-                $this->getDoctrine()->getManager()->persist($wmsOrig);
+                $em->persist($wmsOrig);
                 $importer->updateOrigin($wmsOrig, $origin);
                 $wmsOrig->setValid($wmssource->getValid());
 
-                $wmssourcehandler->save();
-                $this->getDoctrine()->getManager()->flush();
-                $this->getDoctrine()->getManager()->getConnection()->commit();
+                $em->flush();
+                $em->commit();
 
-                $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');
+                $this->addFlash('success', 'Your wms source has been updated.');
                 return $this->redirect(
                     $this->generateUrl(
                         "mapbender_manager_repository_view",
@@ -379,9 +380,7 @@ class RepositoryController extends Controller
         $objectIdentity = ObjectIdentity::fromDomainObject($entity);
         $acl            = $aclProvider->createAcl($objectIdentity);
 
-        $securityContext  = $this->get('security.token_storage');
-        $user             = $securityContext->getToken()->getUser();
-        $securityIdentity = UserSecurityIdentity::fromAccount($user);
+        $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);

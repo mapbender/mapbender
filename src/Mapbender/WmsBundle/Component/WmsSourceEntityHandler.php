@@ -1,57 +1,33 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
-use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsSourceEntityHandler
  *
  * @author Paul Schmidt
+ *
+ * @property WmsSource $entity
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
-    /** @var  WmsSource */
-    protected $entity;
-
     /**
-     * @inheritdoc
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * Creates a new WmsInstance, optionally attaches it to a layerset, then updates
-     * the ordering of the layers.
+     * Creates a new WmsInstance from the bound WmsSource entity
      *
-     * @param Layerset|null $layerSet new instance will be attached to layerset if given
      * @return WmsInstance
      */
-    public function createInstance(Layerset $layerSet = null)
+    public function createInstance()
     {
         $instance = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->populateFromSource($this->entity);
-        if ($layerSet) {
-            $instance->setLayerset($layerSet);
-            $num = 0;
-            foreach ($layerSet->getInstances() as $instanceAtLayerset) {
-                /** @var WmsInstance $instanceAtLayerset */
-                $instanceAtLayerset->setWeight($num);
-                $num++;
-            }
-        }
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $directory->getSourceService($instance)->initializeInstance($instance);
@@ -112,23 +88,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if (!$transaction) {
             $em->getConnection()->commit();
         }
-    }
-
-    /**
-     * Find the named WmsLayerSource in the given WmsSource
-     *
-     * @param WmsSource $source
-     * @param string $layerName
-     * @return WmsLayerSource|null
-     */
-    public static function getLayerSourceByName(WmsSource $source, $layerName)
-    {
-        foreach ($source->getLayers() as $layer) {
-            if ($layer->getName() == $layerName) {
-                return $layer;
-            }
-        }
-        return null;
     }
 
     /**

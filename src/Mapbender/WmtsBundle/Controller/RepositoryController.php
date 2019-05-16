@@ -2,13 +2,12 @@
 
 namespace Mapbender\WmtsBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
-use Mapbender\WmtsBundle\Component\WmtsInstanceEntityHandler;
-use Mapbender\WmtsBundle\Component\WmtsSourceEntityHandler;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType;
@@ -148,9 +147,9 @@ class RepositoryController extends Controller
                     . $wmtssource_req->getOriginUrl() . '"');
                 return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
-            $wmtsWithSameTitle = $this->getDoctrine()
-                ->getManager()
-                ->getRepository("MapbenderWmtsBundle:WmtsSource")
+            /** @var EntityManagerInterface $em */
+            $em = $this->getDoctrine()->getManager();
+            $wmtsWithSameTitle = $em->getRepository("MapbenderWmtsBundle:WmtsSource")
                 ->findBy(array('title' => $wmtssource->getTitle()));
 
             if (count($wmtsWithSameTitle) > 0) {
@@ -158,9 +157,8 @@ class RepositoryController extends Controller
             }
 
             $wmtssource->setOriginUrl($wmtssource_req->getOriginUrl());
-            $sourceHandler = new WmtsSourceEntityHandler($this->container, $wmtssource);
-            $sourceHandler->save();
-            $this->getDoctrine()->getManager()->flush();
+            $em->persist($wmtssource);
+            $em->flush();
 
             /** @var MutableAclProviderInterface $aclProvider */
             $aclProvider    = $this->get('security.acl.provider');
@@ -218,8 +216,7 @@ class RepositoryController extends Controller
                 $wmtsinstance    = $this->getDoctrine()
                     ->getRepository("MapbenderWmtsBundle:WmtsInstance")
                     ->find($wmtsinstance->getId());
-                $wmtsinsthandler = new WmtsInstanceEntityHandler($this->container, $wmtsinstance);
-                $wmtsinsthandler->save();
+                $em->persist($wmtsinstance);
                 $em->flush();
                 $em->getConnection()->commit();
                 $this->get('session')->getFlashBag()->set('success', 'Your Wmts Instance has been changed.');

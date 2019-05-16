@@ -8,23 +8,12 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmtsBundle\Component\WmtsInstanceLayerEntityHandler;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WmtsSourceService extends SourceService
 {
-
-    /** @var WmtsInstanceLayerEntityHandler */
-    protected $instanceLayerHandler;
-
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct($container);
-        $this->instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
-    }
 
     /**
      * @param WmtsInstance $sourceInstance

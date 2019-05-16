@@ -22,22 +22,6 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     protected $entity;
 
     /**
-     * @inheritdoc
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function remove()
-    {
-        $this->removeRecursively($this->entity);
-    }
-
-    /**
      * Recursively remove a nested Layerstructure
      *
      * @param WmsLayerSource $wmslayer

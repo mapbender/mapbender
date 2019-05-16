@@ -38,22 +38,6 @@ class EntityHandler
     }
 
     /**
-     * Persists the entity
-     */
-    public function save()
-    {
-        $this->getEntityManager()->persist($this->entity);
-    }
-
-    /**
-     * Removes the entity from a database
-     */
-    public function remove()
-    {
-        $this->getEntityManager()->remove($this->entity);
-    }
-
-    /**
      * @param ContainerInterface $container
      * @param  Source|SourceInstance|object $entity
      * @return static|null

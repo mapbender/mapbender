@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
@@ -12,18 +11,11 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  */
 abstract class SourceEntityHandler extends EntityHandler
 {
-    
     /**
      * Creates a SourceInstance
-     */
-    abstract public function create();
-        
-    /**
-     * Creates a SourceInstance
-     * @param Layerset|null $layerset layerset
      * @return SourceInstance
      */
-    abstract public function createInstance(Layerset $layerset = null);
+    abstract public function createInstance();
     
     /**
      * Update a source from a new source

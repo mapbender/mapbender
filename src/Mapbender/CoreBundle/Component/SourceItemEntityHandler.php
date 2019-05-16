@@ -12,11 +12,6 @@ abstract class SourceItemEntityHandler extends EntityHandler
 {
 
     /**
-     * Creates a Sourcetem
-     */
-    abstract public function create();
-
-    /**
      * Updates a SourceItem from another SourceItem
      * @param SourceItem $sourceItem a SourceItemobject
      */
