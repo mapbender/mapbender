@@ -287,31 +287,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     * Removes a WmsInstance
-     *
-     * @ManagerRoute("/{slug}/instance/{instanceId}/delete", methods={"GET"})
-     * @param string $slug
-     * @param string $instanceId
-     * @return Response
-     * @throws ORMException
-     */
-    public function deleteInstanceAction($slug, $instanceId)
-    {
-        /** @var WmsInstance $instance */
-        $instance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
-        $application = $instance->getLayerset()->getApplication();
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($application);
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $application->setUpdated(new \DateTime('now'));
-        $em->remove($instance);
-        $em->flush();
-        $this->get('session')->getFlashBag()->set('success', 'Your source instance has been deleted.');
-        return new Response();
-    }
-
-    /**
      * Edits, saves the WmsInstance
      *
      * @ManagerRoute("/instance/{slug}/{instanceId}")

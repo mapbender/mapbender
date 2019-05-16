@@ -31,8 +31,6 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     /**
      * @inheritdoc
      * @deprecated Should be inlined to controller. All instance types can use the same logic
-     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteInstanceAction()
-     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteAction()
      */
     public function remove()
     {

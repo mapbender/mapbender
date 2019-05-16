@@ -221,29 +221,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     * Removes a WmtsInstance
-     *
-     * @ManagerRoute("/{slug}/instance/{instanceId}/delete", methods={"GET"})
-     * @param string $slug
-     * @param string $instanceId
-     * @return Response
-     */
-    public function deleteInstanceAction($slug, $instanceId)
-    {
-        $instance = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-        $em       = $this->getDoctrine()->getManager();
-        $em->getConnection()->beginTransaction();
-        $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
-        $instanceHandler->remove();
-        $em->flush();
-        $em->getConnection()->commit();
-        $this->get('session')->getFlashBag()->set('success', 'Your source instance has been deleted.');
-        return new Response();
-    }
-
-    /**
      * Edits, saves the WmtsInstance
      *
      * @ManagerRoute("/instance/{slug}/{instanceId}")

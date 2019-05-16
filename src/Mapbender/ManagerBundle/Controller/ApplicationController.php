@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
@@ -23,8 +24,7 @@ use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -670,20 +670,34 @@ class ApplicationController extends WelcomeController
      */
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
-
-        $this->denyAccessUnlessGranted('EDIT', $application);
-
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-
-        $managers   = $this->getMapbender()->getRepositoryManagers();
-        $manager    = $managers[ $sourceInst->getSource()->getManagertype() ];
-        return $this->forward("{$manager['bundle']}:Repository:deleteInstance", array(
-            "slug"        => $slug,
-            "instanceId"  => $instanceId,
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Application|null $application */
+        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
         ));
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        }
+        $layerSetCriteria = new Criteria(Criteria::expr()->eq('id', $layersetId));
+        /** @var Layerset|null $layerset */
+        $layerset = $application->getLayersets()->matching($layerSetCriteria)->first();
+        $instanceCriteria = new Criteria(Criteria::expr()->eq('id', $instanceId));
+        $instance = $layerset ? $layerset->getInstances()->matching($instanceCriteria)->first() : null;
+        if (!$layerset || !$instance) {
+            throw $this->createNotFoundException();
+        }
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        // renumber weights and persist other instances in the same layerset
+        WeightSortedCollectionUtil::removeOne($layerset->getInstances(), $instance);
+        foreach ($layerset->getInstances() as $remainingInstance) {
+            $em->persist($remainingInstance);
+        }
+        $em->remove($instance);
+        $em->flush();
+        $this->addFlash('success', 'Your source instance has been deleted');
+        return new Response();  // ???
     }
 
     /**
