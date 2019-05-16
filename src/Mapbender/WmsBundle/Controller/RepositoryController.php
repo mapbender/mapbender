@@ -251,42 +251,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     * Removes a WmsSource
-     *
-     * @ManagerRoute("/{sourceId}/delete", methods={"GET"})
-     * @param string $sourceId
-     * @return Response
-     * @throws \Doctrine\ORM\ORMException
-     */
-    public function deleteAction($sourceId)
-    {
-        /** @var WmsSource $wmssource */
-        $wmssource    = $this->loadEntityByPk("MapbenderWmsBundle:WmsSource", $sourceId);
-        /** @var WmsInstance[] $wmsinstances */
-        $wmsinstances = $this->getRepository("MapbenderWmsBundle:WmsInstance")
-            ->findBy(array('source' => $sourceId));
-
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-        $em->beginTransaction();
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider = $this->get('security.acl.provider');
-        $oid         = ObjectIdentity::fromDomainObject($wmssource);
-        $aclProvider->deleteAcl($oid);
-        foreach ($wmsinstances as $instance) {
-            $application = $instance->getLayerset()->getApplication();
-            $em->persist($application);
-            /** @noinspection PhpUnhandledExceptionInspection */
-            $application->setUpdated(new \DateTime('now'));
-        }
-        $em->remove($wmssource);
-        $em->flush();
-        $em->commit();
-        $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
-        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
-    }
-
-    /**
      * Edits, saves the WmsInstance
      *
      * @ManagerRoute("/instance/{slug}/{instanceId}")

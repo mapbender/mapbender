@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -76,6 +77,11 @@ abstract class Source
     {
         $this->type = $type;
     }
+
+    /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    abstract public function getInstances();
 
     /**
      * Set id

@@ -187,40 +187,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     * Removes a WmtsSource
-     *
-     * @ManagerRoute("/{sourceId}/delete", methods={"GET"})
-     * @param string $sourceId
-     * @return Response
-     */
-    public function deleteAction($sourceId)
-    {
-        $wmtssource    = $this->getDoctrine()
-            ->getRepository("MapbenderWmtsBundle:WmtsSource")
-            ->find($sourceId);
-        $wmtsinstances = $this->getDoctrine()
-            ->getRepository("MapbenderWmtsBundle:WmtsInstance")
-            ->findBy(array('source' => $sourceId));
-        $em            = $this->getDoctrine()->getManager();
-        $em->getConnection()->beginTransaction();
-
-        $aclProvider = $this->get('security.acl.provider');
-        $oid         = ObjectIdentity::fromDomainObject($wmtssource);
-        $aclProvider->deleteAcl($oid);
-
-        foreach ($wmtsinstances as $wmtsinstance) {
-            $instanceHandler = new WmtsInstanceEntityHandler($this->container, $wmtsinstance);
-            $instanceHandler->remove();
-        }
-        $sourceHandler = new WmtsSourceEntityHandler($this->container, $wmtssource);
-        $sourceHandler->remove();
-        $em->flush();
-        $em->getConnection()->commit();
-        $this->get('session')->getFlashBag()->set('success', "Your WMTS has been deleted");
-        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
-    }
-
-    /**
      * Edits, saves the WmtsInstance
      *
      * @ManagerRoute("/instance/{slug}/{instanceId}")

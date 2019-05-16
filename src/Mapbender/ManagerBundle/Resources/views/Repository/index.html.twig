@@ -39,7 +39,7 @@
               {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
                  <span class="iconRemove hover-highlight-effect"
                   title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                  data-url="{{ path("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
+                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                   data-id="{{ source.id }}"></span>
               {% endif %}
             </div>

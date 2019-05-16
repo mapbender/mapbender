@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -12,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 
 /**
  *  Mapbender repository controller
@@ -100,16 +103,19 @@ class RepositoryController extends Controller
     }
 
     /**
-     * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/confirmdelete", methods={"GET"})
+     * Deletes a Source (POST) or renders confirmation markup (GET)
+     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST"})
+     * @param Request $request
      * @param string $sourceId
      * @return Response
      */
-    public function confirmdeleteAction($sourceId)
+    public function deleteAction(Request $request, $sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        /** @var EntityManagerInterface $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Source $source */
+        $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
             // If delete action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
@@ -125,45 +131,34 @@ class RepositoryController extends Controller
         if (!($this->isGranted('DELETE', $oid))) {
             $this->denyAccessUnlessGranted('DELETE', $source);
         }
-        return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
-            'source' => $source,
-        ));
-    }
+        if ($request->getMethod() === Request::METHOD_GET) {
+            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
+                'source' => $source,
+            ));
+        }
+        // capture ACL and entity updates in a single transaction
+        $em->beginTransaction();
+        /** @var MutableAclProviderInterface $aclProvider */
+        $aclProvider = $this->get('security.acl.provider');
+        $oid         = ObjectIdentity::fromDomainObject($source);
+        $aclProvider->deleteAcl($oid);
 
-    /**
-     * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/delete", methods={"POST"})
-     * @param string $sourceId
-     * @return Response
-     */
-    public function deleteAction($sourceId)
-    {
-        /** @todo: fold identical preface code shared with confirmdeleteAction */
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        if (!$source) {
-            // If delete action is forbidden, hide the fact that the source doesn't
-            // exist behind an access denied.
-            $this->denyAccessUnlessGranted('VIEW', $oid);
-            $this->denyAccessUnlessGranted('DELETE', $oid);
-            throw $this->createNotFoundException();
+        // update modification timestamp on affected applications
+        $dtNow = new \DateTime('now');
+        $instances = $source->getInstances();
+        $iDesc = array();
+        foreach ($instances as $instance) {
+            $iDesc[] = get_class($instance) . "#{$instance->getId()}";
+            $layerset = $instance->getLayerset();
+            $application = $layerset->getApplication();
+            $em->persist($application);
+            $application->setUpdated($dtNow);
         }
-        // Must have VIEW + DELETE on either any Source globally, or on this particular
-        // Source
-        if (!($this->isGranted('VIEW', $oid))) {
-            $this->denyAccessUnlessGranted('VIEW', $source);
-        }
-        if (!($this->isGranted('DELETE', $oid))) {
-            $this->denyAccessUnlessGranted('DELETE', $source);
-        }
-        // -- common preface code end --
-
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$source->getManagertype()];
-        return $this->forward($manager['bundle'] . ":" . "Repository:delete", array(
-            "sourceId" => $source->getId(),
-        ));
+        $em->remove($source);
+        $em->flush();
+        $em->commit();
+        $this->addFlash('success', 'Your source has been deleted');
+        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
 
     /**
