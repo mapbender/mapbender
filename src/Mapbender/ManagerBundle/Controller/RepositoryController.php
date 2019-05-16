@@ -340,29 +340,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     *
-     * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
-     * @param string $slug
-     * @param string $instanceId
-     * @param string $instLayerId
-     * @return Response
-     */
-    public function instanceLayerWeightAction($slug, $instanceId, $instLayerId)
-    {
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
-
-        return $this->forward($manager['bundle'] . ":" . "Repository:instancelayerpriority", array(
-            "slug" => $slug,
-            "instanceId" => $sourceInst->getId(),
-            "instLayerId" => $instLayerId
-        ));
-    }
-
-    /**
      * @return array[]
      */
     protected function getRepositoryManagers()

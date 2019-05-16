@@ -8,8 +8,7 @@
 
 {% for form_layer in form_layers %}
     {% if form_layer.vars.value.id == layer.id %}
-        <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}"
-            data-href="{{path("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": form_layer.vars.value.id})}}">
+        <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}">
             <td class="level{{ level }} itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></td>
             <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
 

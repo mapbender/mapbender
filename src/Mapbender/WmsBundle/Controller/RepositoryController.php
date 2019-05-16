@@ -2,18 +2,15 @@
 
 namespace Mapbender\WmsBundle\Controller;
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -374,84 +371,6 @@ class RepositoryController extends Controller
                 "instance" => $wmsinstance,
             ));
         }
-    }
-
-    /**
-     * Changes the priority of WmsInstanceLayers
-     *
-     * @ManagerRoute("/{slug}/instance/{instanceId}/priority/{instLayerId}")
-     * @param Request $request
-     * @param string $slug
-     * @param string $instanceId
-     * @param string $instLayerId
-     * @return Response
-     * @throws ORMException
-     * @throws DBALException
-     */
-    public function instanceLayerPriorityAction(Request $request, $slug, $instanceId, $instLayerId)
-    {
-        $number  = $request->get("number");
-        /** @var WmsInstanceLayer|null $instLay */
-        $instLay = $this->loadEntityByPk('MapbenderWmsBundle:WmsInstanceLayer', $instLayerId);
-
-        if (!$instLay) {
-            return new JsonResponse(array(
-                /** @todo: use http status codes to communicate error conditions */
-                'error' => 'The wms instance layer with'
-                    .' the id "'.$instanceId.'" does not exist.',
-                'result' => '',     // why?
-            ));
-        }
-        if (intval($number) === $instLay->getPriority()) {
-            return new JsonResponse(array(
-                'error' => '',      // why?
-                'result' => 'ok',   // why?
-            ));
-        }
-        /** @var EntityManager $em */
-        $em       = $this->getDoctrine()->getManager();
-        $instLay->setPriority($number);
-        $em->persist($instLay);
-        $em->flush();
-        $query    = $em->createQuery(
-            "SELECT il FROM MapbenderWmsBundle:WmsInstanceLayer il  WHERE il.wmsinstance=:wmsi ORDER BY il.priority ASC"
-        );
-        $query->setParameters(array("wmsi" => $instanceId));
-        /** @var WmsInstanceLayer[] $instList */
-        $instList = $query->getResult();
-
-        $num = 0;
-        foreach ($instList as $inst) {
-            if ($num === intval($instLay->getPriority())) {
-                if ($instLay->getId() === $inst->getId()) {
-                    $num++;
-                } else {
-                    $num++;
-                    $inst->setPriority($num);
-                    $num++;
-                }
-            } else {
-                if ($instLay->getId() !== $inst->getId()) {
-                    $inst->setPriority($num);
-                    $num++;
-                }
-            }
-        }
-        $em->getConnection()->beginTransaction();
-        foreach ($instList as $inst) {
-            $em->persist($inst);
-        }
-        $em->flush();
-        /** @var WmsInstance $wmsinstance */
-        $wmsinstance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
-        $wmsinsthandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
-        $wmsinsthandler->save();
-        $em->flush();
-        $em->getConnection()->commit();
-        return new JsonResponse(array(
-            'error' => '',      // why?
-            'result' => 'ok',   // why?
-        ));
     }
 
     /**
