@@ -4,7 +4,7 @@
 # Locale: es, Spanish
 # Exported by: Unregistered user
 # Exported at: Fri, 25 May 2018 12:00:33 +0200
----
+
 mb:
   wmts:
     wmtsloader:
@@ -112,12 +112,3 @@ mb:
             topleftcorner: TopLeftCorner
             tilesize: TileSize
             matrixsize: MatrixSize
-        form:
-          label:
-            onlyvalid: only valid
-            serviceurl: Service URL
-            username: Username
-            password: Password
-            load: Load
-            cancel: Cancel
-...

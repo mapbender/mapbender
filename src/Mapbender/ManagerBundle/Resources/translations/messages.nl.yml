@@ -146,6 +146,12 @@ mb:
         description: Beschrijving
         template: Sjabloon
       applications: Applicaties
+    source:
+      serviceurl: 'Service URL'
+      username: 'Gebruikers naam'
+      password: Wachtwoord
+      load: Laad
+      cancel: Annuleren
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'

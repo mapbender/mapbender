@@ -144,6 +144,12 @@ mb:
         description: Beschreibung
         template: Vorlage
       applications: Anwendungen
+    source:
+      serviceurl: Dienst-URL
+      username: Benutzername
+      password: Passwort
+      load: Laden
+      cancel: Abbrechen
     managerbundle:
       applications: Anwendungen
       new_application: 'Neue Anwendung'

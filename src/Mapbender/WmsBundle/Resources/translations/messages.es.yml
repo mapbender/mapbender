@@ -151,12 +151,6 @@ mb:
             save: Guardar
         form:
           label:
-            ogcwms: 'OGC WMS'
-            serviceurl: 'Servicio URL'
-            username: Usuario
-            password: Clave
-            load: Cargar
-            cancel: Cancelar
             onlyvalid: 'Only valid'
       class:
         title: 'WMS cargador'

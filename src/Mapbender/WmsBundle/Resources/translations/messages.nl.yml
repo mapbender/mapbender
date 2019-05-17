@@ -151,13 +151,7 @@ mb:
             save: Bewaar
         form:
           label:
-            ogcwms: 'OGC WMS'
             onlyvalid: 'alleen geldig'
-            serviceurl: 'Service URL'
-            username: 'Gebruikers naam'
-            password: Wachtwoord
-            load: Laad
-            cancel: Annuleren
       class:
         title: 'WMS lader'
         description: 'Laad een WMS via de getCapabilities-Request'

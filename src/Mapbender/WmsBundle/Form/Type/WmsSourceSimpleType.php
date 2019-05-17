@@ -27,21 +27,21 @@ class WmsSourceSimpleType extends AbstractType
         $builder
             ->add('originUrl', 'text', array(
                 'required' => true,
-                'label' => 'mb.wms.wmsloader.repo.form.label.serviceurl',
+                'label' => 'mb.manager.source.serviceurl',
                 'attr' => array(
                     'title' => 'The wms GetCapabilities url',
                 ),
             ))
             ->add('username', 'text', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.form.label.username',
+                'label' => 'mb.manager.source.username',
                 'attr' => array(
                     'autocomplete' => 'off',
                 ),
             ))
             ->add('password', 'password', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.form.label.password',
+                'label' => 'mb.manager.source.password',
                 'attr' => array(
                     'autocomplete' => 'off',
                 ),

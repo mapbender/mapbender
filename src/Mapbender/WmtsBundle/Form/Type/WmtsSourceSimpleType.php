@@ -27,14 +27,14 @@ class WmtsSourceSimpleType extends AbstractType
         $builder
             ->add('originUrl', 'text', array(
                 'required' => true,
-                'label' => 'mb.wmts.wmtsloader.repo.form.label.serviceurl',
+                'label' => 'mb.manager.source.serviceurl',
                 'attr' => array(
                     'title' => 'The wmts GetCapabilities url',
                 ),
             ))
             ->add('username', 'text', array(
                 'required' => false,
-                'label' => 'mb.wmts.wmtsloader.repo.form.label.username',
+                'label' => 'mb.manager.source.username',
                 'attr' => array(
                     'title' => 'The username.',
                     'autocomplete' => 'off',
@@ -43,7 +43,7 @@ class WmtsSourceSimpleType extends AbstractType
             ->add('password', 'password',
                 array(
                 'required' => false,
-                'label' => 'mb.wmts.wmtsloader.repo.form.label.password',
+                'label' => 'mb.manager.source.password',
                 'attr' => array(
                     'autocomplete' => 'off',
                 ),
