@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\VendorSpecific;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -598,8 +598,8 @@ class WmsInstance extends SourceInstance
     /**
      * Returns desired layer order, as a string enum ('standard' or 'reverse')
      * NOTE: this is a recently added column; there will be NULLs in the DB for updated applications.
-     *       The default for these cases is provided at the "Handler" level.
-     * @see WmsInstanceLayerEntityHandler::generateConfiguration()
+     *       The default for these cases is provided at the config service level.
+     * @see WmsSourceService::getLayerConfiguration()
      *
      * @return string|null
      */

@@ -89,15 +89,4 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             $em->getConnection()->commit();
         }
     }
-
-    /**
-     * Checks if service has auth information that needs to be hidden from client.
-     *
-     * @param WmsSource $source
-     * @return bool
-     */
-    public static function useTunnel(WmsSource $source)
-    {
-        return !!$source->getUsername();
-    }
 }

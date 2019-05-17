@@ -8,6 +8,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
@@ -16,11 +17,12 @@ class WmtsSourceService extends SourceService
 {
 
     /**
-     * @param WmtsInstance $sourceInstance
+     * @param SourceInstance $sourceInstance
      * @return array|mixed[]|null
      */
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
+        /** @var WmtsInstance $sourceInstance */
         return array_replace(parent::getInnerConfiguration($sourceInstance), array(
             'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
@@ -247,21 +249,16 @@ class WmtsSourceService extends SourceService
     protected function getLayerLegendConfig($instanceLayer)
     {
         // @todo: tunnel support
-        foreach ($instanceLayer->getSourceItem()->getStyles() as $style) {
-            $sourceStyle = $instanceLayer->getStyle();
-            if (!$sourceStyle || $sourceStyle === $style->getIdentifier()) {
-                if ($style->getLegendurl()) {
-                    $legendHref = $style->getLegendurl()->getHref();
-                    /** @var WmtsInstance $sourceInstance */
-                    $sourceInstance = $instanceLayer->getSourceInstance();
-                    if ($sourceInstance->getProxy()) {
-                        $legendHref = $this->urlProcessor->proxifyUrl($legendHref);
-                    }
-                    return array(
-                        'url' => $legendHref,
-                    );
-                }
+        $legendHref = $this->getInternalLegendUrl($instanceLayer);
+        if ($legendHref) {
+            /** @var WmtsInstance $sourceInstance */
+            $sourceInstance = $instanceLayer->getSourceInstance();
+            if ($sourceInstance->getProxy()) {
+                $legendHref = $this->urlProcessor->proxifyUrl($legendHref);
             }
+            return array(
+                'url' => $legendHref,
+            );
         }
         return array();
     }
@@ -286,6 +283,26 @@ class WmtsSourceService extends SourceService
             '%7B' => '{',
             '%7D' => '}',
         ));
+    }
+
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
+    {
+        /** @var WmtsInstanceLayer $instanceLayer */
+        foreach ($instanceLayer->getSourceItem()->getStyles() as $style) {
+            $sourceStyle = $instanceLayer->getStyle();
+            if (!$sourceStyle || $sourceStyle === $style->getIdentifier()) {
+                if ($style->getLegendurl()) {
+                    return $style->getLegendurl()->getHref() ?: null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public function useTunnel(SourceInstance $sourceInstance)
+    {
+        // @todo: add tunnel support
+        return false;
     }
 
     public function getAssets(Application $application, $type)

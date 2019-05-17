@@ -116,9 +116,10 @@
             <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
         </service>
 
-        <service id="mapbender.source.instancetunnel.service" class="%mapbender.source.instancetunnel.service.class%">
+        <service id="mapbender.source.instancetunnel.service" class="%mapbender.source.instancetunnel.service.class%" lazy="true">
             <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="router" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>

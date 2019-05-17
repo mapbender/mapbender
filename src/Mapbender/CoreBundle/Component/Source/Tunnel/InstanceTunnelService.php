@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
@@ -13,7 +14,6 @@ use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -34,6 +34,8 @@ class InstanceTunnelService
     protected $httpTransport;
     /** @var RouterInterface */
     protected $router;
+    /** @var TypeDirectoryService */
+    protected $sourceTypeDirectory;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
     /** @var EntityManagerInterface */
@@ -48,16 +50,19 @@ class InstanceTunnelService
     /**
      * @param HttpTransportInterface $httpTransprot
      * @param RouterInterface $router
+     * @param TypeDirectoryService $sourceTypeDirectory
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(HttpTransportInterface $httpTransprot,
                                 RouterInterface $router,
+                                TypeDirectoryService $sourceTypeDirectory,
                                 TokenStorageInterface $tokenStorage,
                                 EntityManagerInterface $entityManager)
     {
         $this->httpTransport = $httpTransprot;
         $this->router = $router;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         // @todo: TBD if it's worth making this configurable
@@ -230,5 +235,13 @@ class InstanceTunnelService
     public function getHttpTransport()
     {
         return $this->httpTransport;
+    }
+
+    /**
+     * @return TypeDirectoryService
+     */
+    public function getSourceTypeDirectory()
+    {
+        return $this->sourceTypeDirectory;
     }
 }

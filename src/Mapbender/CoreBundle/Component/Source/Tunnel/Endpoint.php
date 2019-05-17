@@ -165,9 +165,8 @@ class Endpoint
             // instance layer is not connected to the source instance
             return null;
         }
-        /** @var WmsLayerSource $layerSource */
-        $layerSource = $layer->getSourceItem();
-        return WmsInstanceLayerEntityHandler::getLegendUrlFromStyles($layerSource, false);
+        $sourceService = $this->service->getSourceTypeDirectory()->getSourceService($wmsInstance);
+        return $sourceService->getInternalLegendUrl($layer);
     }
 
     /**
