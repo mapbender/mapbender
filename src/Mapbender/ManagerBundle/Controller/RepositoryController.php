@@ -314,23 +314,38 @@ class RepositoryController extends Controller
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}", methods={"POST"})
+     * @param Request $request
      * @param string $slug
      * @param string $layersetId
      * @param string $instanceId
      * @return Response
      */
-    public function instanceEnabledAction($slug, $layersetId, $instanceId)
+    public function instanceEnabledAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
-
-        return $this->forward($manager['bundle'] . ":" . "Repository:instanceenabled", array(
-            "slug" => $slug,
-            "layersetId" => $layersetId,
-            "instanceId" => $sourceInst->getId(),
+        /** @var EntityManagerInterface $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var SourceInstance|null $sourceInstance */
+        $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
+        if (!$sourceInstance) {
+            throw $this->createNotFoundException();
+        }
+        $application = $sourceInstance->getLayerset()->getApplication();
+        $wasEnabled = $sourceInstance->getEnabled();
+        $newEnabled = $request->get('enabled') === 'true';
+        $sourceInstance->setEnabled($newEnabled);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($sourceInstance);
+        $em->flush();
+        return new JsonResponse(array(
+            'success' => array(         // why?
+                "id" => $sourceInstance->getId(), // why?
+                "type" => "instance",   // why?
+                "enabled" => array(
+                    'before' => $wasEnabled,
+                    'after' => $newEnabled,
+                ),
+            ),
         ));
     }
 

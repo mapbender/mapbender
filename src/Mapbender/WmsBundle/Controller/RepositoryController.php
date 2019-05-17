@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\ORMException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer;
@@ -14,7 +13,6 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -309,51 +307,6 @@ class RepositoryController extends Controller
                 "form" => $form->createView(),
                 "slug" => $slug,
                 "instance" => $wmsinstance,
-            ));
-        }
-    }
-
-    /**
-     * Sets enabled/disabled for the WmsInstance
-     *
-     * @ManagerRoute("/instance/{slug}/enabled/{instanceId}", methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @param string $instanceId
-     * @return Response
-     * @throws ORMException
-     */
-    public function instanceEnabledAction(Request $request, $slug, $instanceId)
-    {
-        $enabled = $request->get("enabled");
-        /** @var WmsInstance|null $wmsinstance */
-        $wmsinstance = $this->loadEntityByPk("MapbenderWmsBundle:WmsInstance", $instanceId);
-        if (!$wmsinstance) {
-            return new JsonResponse(array(
-                /** @todo: use http status codes to communicate error conditions */
-                'error' => 'The wms instance with the id "'.$instanceId.'" does not exist.',
-            ));
-        } else {
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
-            $enabled_before = $wmsinstance->getEnabled();
-            $enabled        = $enabled === "true";
-            $wmsinstance->setEnabled($enabled);
-            $application = $wmsinstance->getLayerset()->getApplication();
-            /** @noinspection PhpUnhandledExceptionInspection */
-            $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->persist($wmsinstance);
-            $em->flush();
-            return new JsonResponse(array(
-                'success' => array(         // why?
-                    "id" => $wmsinstance->getId(),
-                    "type" => "instance",
-                    "enabled" => array(
-                        'before' => $enabled_before,
-                        'after' => $enabled,
-                    ),
-                ),
             ));
         }
     }

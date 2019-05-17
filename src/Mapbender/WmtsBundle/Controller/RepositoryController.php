@@ -15,7 +15,6 @@ use Mapbender\WmtsBundle\Form\Type\WmtsSourceSimpleType;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -233,46 +232,5 @@ class RepositoryController extends Controller
             "slug" => $slug,
             "instance" => $wmtsinstance,
         ));
-    }
-
-    /**
-     * Sets enabled/disabled for the WmtsInstance
-     *
-     * @ManagerRoute("/instance/{slug}/enabled/{instanceId}", methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @param string $instanceId
-     * @return Response
-     */
-    public function instanceEnabledAction(Request $request, $slug, $instanceId)
-    {
-        $enabled = $request->get("enabled");
-        /** @var WmtsInstance|null $wmtsinstance */
-        $wmtsinstance = $this->getDoctrine()
-            ->getRepository("MapbenderWmtsBundle:WmtsInstance")
-            ->find($instanceId);
-        if (!$wmtsinstance) {
-            return new JsonResponse(array(
-                // why?
-                'error' => 'The wmts instance with the id "' . $instanceId . '" does not exist.',
-            ));
-        } else {
-            $enabled_before = $wmtsinstance->getEnabled();
-            $enabled        = $enabled === "true" ? true : false;
-            $wmtsinstance->setEnabled($enabled);
-            $em             = $this->getDoctrine()->getManager();
-            $em->persist($wmtsinstance);
-            $em->flush();
-            return new JsonResponse(array(
-                'success' => array(
-                    "id" => $wmtsinstance->getId(),
-                    "type" => "instance",
-                    "enabled" => array(
-                        'before' => $enabled_before,
-                        'after' => $enabled,
-                    ),
-                ),
-            ));
-        }
     }
 }
