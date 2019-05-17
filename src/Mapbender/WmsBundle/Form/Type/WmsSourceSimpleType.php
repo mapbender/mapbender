@@ -29,7 +29,7 @@ class WmsSourceSimpleType extends AbstractType
                 'required' => true,
                 'label' => 'mb.wms.wmsloader.repo.form.label.serviceurl',
                 'attr' => array(
-                    'title' => 'The wms GetCapabilities url.',
+                    'title' => 'The wms GetCapabilities url',
                 ),
             ))
             ->add('username', 'text', array(
@@ -41,6 +41,7 @@ class WmsSourceSimpleType extends AbstractType
             ))
             ->add('password', 'password', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.form.label.password',
                 'attr' => array(
                     'autocomplete' => 'off',
                 ),

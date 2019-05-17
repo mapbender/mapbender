@@ -5,6 +5,7 @@ namespace Mapbender\WmtsBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
@@ -30,17 +31,6 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 class RepositoryController extends Controller
 {
     /**
-     * @ManagerRoute("/new", methods={"GET"})
-     */
-    public function newAction()
-    {
-        $form = $this->createForm(new WmtsSourceSimpleType(), new WmtsSource(Source::TYPE_WMTS));
-        return $this->render('@MapbenderWmts/Repository/new.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
      * @ManagerRoute("/start", methods={"GET"})
      */
     public function startAction()
@@ -53,6 +43,8 @@ class RepositoryController extends Controller
 
     /**
      * @ManagerRoute("{wmts}", methods={"GET"})
+     * @param WmtsSource $wmts
+     * @return Response
      */
     public function viewAction(WmtsSource $wmts)
     {
@@ -74,25 +66,24 @@ class RepositoryController extends Controller
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
-        $wmtssource_req = new WmtsSource(Source::TYPE_WMTS);
-        $form = $this->createForm(new WmtsSourceSimpleType(), $wmtssource_req);
+
+        $formModel = new HttpOriginModel();
+        $form = $this->createForm(new WmtsSourceSimpleType(), $formModel);
         $form->submit($request);
 
-        $onlyvalid = false;
         if ($form->isValid()) {
-            $purl = parse_url($wmtssource_req->getOriginUrl());
+            $purl = parse_url($formModel->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
                 $this->get("logger")->debug("The url is not valid.");
-                $this->get('session')->getFlashBag()->set('error', "The url is not valid.");
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
+                $this->addFlash('error', "The url is not valid.");
+                return $this->redirectToRoute("mapbender_manager_repository_new");
             }
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
             $proxy_query  = ProxyQuery::createFromUrl(
-                trim($wmtssource_req->getOriginUrl()),
-                $wmtssource_req->getUsername(),
-                $wmtssource_req->getPassword()
+                $formModel->getOriginUrl(),
+                $formModel->getUsername(),
+                $formModel->getPassword()
             );
-            $wmtssource_req->setOriginUrl($proxy_query->getGetUrl());
             $proxy = new CommonProxy($proxy_config, $proxy_query);
 
             $wmtssource = null;
@@ -101,51 +92,18 @@ class RepositoryController extends Controller
                 $content         = $browserResponse->getContent();
                 try {
                     $doc = WmtsCapabilitiesParser::createDocument($content);
-                    if ($onlyvalid === true) {
-                        // $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
-                        // $doc = $validator->validate($doc);
-                        $wmtsParser = WmtsCapabilitiesParser::getParser($doc);
-                        $wmtssource = $wmtsParser->parse();
-                        $wmtssource->setValid(true);
-                    } else {
-                        try {
-                            // $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
-                            // $doc = $validator->validate($doc);
-                            $wmtsParser = WmtsCapabilitiesParser::getParser($doc);
-                            $wmtssource = $wmtsParser->parse();
-                            $wmtssource->setValid(true);
-                        } catch (\Exception $e) {
-                            $this->get("logger")->warn($e->getMessage());
-                            $this->get('session')->getFlashBag()->set('warning', $e->getMessage());
-                            $wmtsParser = WmtsCapabilitiesParser::getParser($doc);
-                            $wmtssource = $wmtsParser->parse();
-                            $wmtssource->setValid(false);
-                        }
-                    }
+                    $parser = WmtsCapabilitiesParser::getParser($doc);
                 } catch (NoWmtsDocument $e) {
                     $doc = TmsCapabilitiesParser100::createDocument($content);
-                    try {
-                        $tmsParser = TmsCapabilitiesParser100::getParser($proxy_config, $doc);
-                        $wmtssource = $tmsParser->parse();
-                        $wmtssource->setValid(false);
-                    } catch (\Exception $e) {
-                        $this->get("logger")->warn($e->getMessage());
-                        $this->get('session')->getFlashBag()->set('warning', $e->getMessage());
-                    }
+                    $parser = TmsCapabilitiesParser100::getParser($proxy_config, $doc);
                 }
+                $wmtssource = $parser->parse();
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
-                $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute("mapbender_manager_repository_new");
             }
 
-            if (!$wmtssource) {
-                $this->get("logger")->err('Could not parse data for url "'
-                    . $wmtssource_req->getOriginUrl() . '"');
-                $this->get('session')->getFlashBag()->set('error', 'Could not parse data for url "'
-                    . $wmtssource_req->getOriginUrl() . '"');
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
-            }
             /** @var EntityManagerInterface $em */
             $em = $this->getDoctrine()->getManager();
             $wmtsWithSameTitle = $em->getRepository("MapbenderWmtsBundle:WmtsSource")
@@ -155,7 +113,7 @@ class RepositoryController extends Controller
                 $wmtssource->setAlias(count($wmtsWithSameTitle));
             }
 
-            $wmtssource->setOriginUrl($wmtssource_req->getOriginUrl());
+            $wmtssource->setOriginUrl($formModel->getOriginUrl());
             $em->persist($wmtssource);
             $em->flush();
 
@@ -169,18 +127,12 @@ class RepositoryController extends Controller
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
 
-            $this->get('session')->getFlashBag()->set('success', "Your WMTS has been created");
-            return $this->redirect($this->generateUrl(
-                "mapbender_manager_repository_view",
-                array("sourceId" => $wmtssource->getId()),
-                true
+            $this->addFlash('success', "Your WMTS has been created");
+            return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                "sourceId" => $wmtssource->getId(),
             ));
         }
-
-        return $this->render('@MapbenderWmts/Repository/new.html.twig', array(
-            'form' => $form->createView(),
-            'form_name' => $form->getName(),
-        ));
+        return $this->forward('MapbenderManagerBundle:Repository:new');
     }
 
     /**
@@ -218,13 +170,10 @@ class RepositoryController extends Controller
                 $em->persist($wmtsinstance);
                 $em->flush();
                 $em->getConnection()->commit();
-                $this->get('session')->getFlashBag()->set('success', 'Your Wmts Instance has been changed.');
-                return $this->redirect(
-                    $this->generateUrl(
-                        'mapbender_manager_application_edit',
-                        array("slug" => $slug)
-                    ) . '#layersets'
-                );
+                $this->addFlash('success', 'Your Wmts Instance has been changed.');
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    "slug" => $slug,
+                ));
             }
         }
         return $this->render('@MapbenderWmts/Repository/instance.html.twig', array(

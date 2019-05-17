@@ -4,6 +4,7 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -16,9 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source
+class WmtsSource extends Source implements HttpOriginInterface
 {
-    //
     /**
      * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
      */

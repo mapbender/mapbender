@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
@@ -29,17 +30,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class RepositoryController extends Controller
 {
     /**
-     * @ManagerRoute("/new", methods={"GET"})
-     */
-    public function newAction()
-    {
-        $form = $this->createForm(new WmsSourceSimpleType(), new WmsSource());
-        return $this->render('@MapbenderWms/Repository/new.html.twig', array(
-            "form" => $form->createView()
-        ));
-    }
-
-    /**
      * @ManagerRoute("/start", methods={"GET"})
      * @return Response
      */
@@ -58,9 +48,8 @@ class RepositoryController extends Controller
      */
     public function viewAction(WmsSource $wms)
     {
-        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $wms)) {
+        if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $wms)) {
             throw new AccessDeniedException();
         }
         return $this->render('@MapbenderWms/Repository/view.html.twig', array(
@@ -75,39 +64,27 @@ class RepositoryController extends Controller
      */
     public function createAction(Request $request)
     {
-        $wmssource_req = new WmsSource();
-
-        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (false === $securityContext->isGranted('CREATE', $oid)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $form      = $this->createForm(new WmsSourceSimpleType(), $wmssource_req);
+        $formModel = new HttpOriginModel();
+        $form      = $this->createForm(new WmsSourceSimpleType(), $formModel);
         $form->submit($request);
         if ($form->isValid()) {
             /** @var Importer $importer */
             $importer = $this->container->get('mapbender.importer.source.wms.service');
-            $origin = new WmsOrigin($wmssource_req->getOriginUrl(), $wmssource_req->getUsername(), $wmssource_req->getPassword());
+            $origin = new WmsOrigin($formModel->getOriginUrl(), $formModel->getUsername(), $formModel->getPassword());
 
             try {
                 $importerResponse = $importer->evaluateServer($origin, false);
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
-                $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute("mapbender_manager_repository_new");
             }
 
             $wmssource = $importerResponse->getWmsSourceEntity();
 
-            /** @TODO: this path can never be entered. Why is it here? */
-            if (!$wmssource) {
-                $this->get("logger")->err('Could not parse data for url "'
-                    .$wmssource_req->getOriginUrl().'"');
-                $this->get('session')->getFlashBag()
-                    ->set('error', 'Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
-            }
             $this->setAliasForDuplicate($wmssource);
             /** @var EntityManager $em */
             $em = $this->getDoctrine()->getManager();
@@ -119,13 +96,11 @@ class RepositoryController extends Controller
             $this->initializeAccessControl($wmssource);
             $em->commit();
             $this->addFlash('success', "Your WMS has been created");
-            return $this->redirect($this
-                ->generateUrl("mapbender_manager_repository_view", array("sourceId" => $wmssource->getId()), true));
+            return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                "sourceId" => $wmssource->getId(),
+            ));
         }
-        return $this->render('@MapbenderWms/Repository/new.html.twig', array(
-            'form' => $form->createView(),
-            'form_name' => $form->getName(),
-        ));
+        return $this->forward('MapbenderManagerBundle:Repository:new');
     }
 
     /**
@@ -138,9 +113,8 @@ class RepositoryController extends Controller
     {
         /** @var WmsSource $source */
         $source          = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
-        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+        if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
         }
         $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($source->getOriginUrl(), 'version', null);
@@ -168,81 +142,52 @@ class RepositoryController extends Controller
     {
         /** @var WmsSource|null $wmsOrig */
         $wmsOrig         = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
-        $securityContext = $this->get('security.authorization_checker');
 
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $wmsOrig)) {
+        if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('EDIT', $wmsOrig)) {
             throw new AccessDeniedException();
         }
-        if ($request->getMethod() === 'POST') { // check form and redirect to update
-            $wmssource_req = new WmsSource();
-            $form          = $this->createForm(new WmsSourceSimpleType(), $wmssource_req);
-            $form->submit($request);
-            if ($form->isValid()) {
-                /** @var Importer $importer */
-                $importer = $this->container->get('mapbender.importer.source.wms.service');
-                $origin = new WmsOrigin($wmssource_req->getOriginUrl(), $wmssource_req->getUsername(), $wmssource_req->getPassword());
-                try {
-                    $importerResponse = $importer->evaluateServer($origin, false);
-                } catch (\Exception $e) {
-                    $this->get("logger")->debug($e->getMessage());
-                    $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                    return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
-                }
-                $validationError = $importerResponse->getValidationError();
-                if ($validationError) {
-                    $this->get("logger")->warn($validationError->getMessage());
-                    $this->get('session')->getFlashBag()->set('warning', $validationError->getMessage());
-                }
-                $wmssource = $importerResponse->getWmsSourceEntity();
+        $form = $this->createForm(new WmsSourceSimpleType(), $wmsOrig);
+        $form->handleRequest($request);
 
-                /** @TODO: this path can never be entered. Why is it here? */
-                if (!$wmssource) {
-                    $this->get("logger")->debug('Could not parse data for url "'.$wmssource_req->getOriginUrl().'"');
-                    $this->get('session')->getFlashBag()
-                        ->set('error', 'Could not parse data for url "'.$wmssource_req->getOriginUrl().'"');
-                    return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
-                }
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Importer $importer */
+            $importer = $this->container->get('mapbender.importer.source.wms.service');
+            $origin = new WmsOrigin($wmsOrig->getOriginUrl(), $wmsOrig->getUsername(), $wmsOrig->getPassword());
+            try {
+                $importerResponse = $importer->evaluateServer($origin, false);
+            } catch (\Exception $e) {
+                $this->get("logger")->debug($e->getMessage());
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute("mapbender_manager_repository_index");
+            }
+            $wmssource = $importerResponse->getWmsSourceEntity();
 
-                /** @var EntityManager $em */
-                $em = $this->getDoctrine()->getManager();
-                $em->beginTransaction();
-                try {
-                    $wmssourcehandler = new WmsSourceEntityHandler($this->container, $wmsOrig);
-                    $wmssourcehandler->update($wmssource);
-                } catch (\Exception $e) {
-                    $this->get("logger")->debug($e->getMessage());
-                    $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                    return $this->redirect(
-                        $this->generateUrl(
-                            "mapbender_manager_repository_updateform",
-                            array("sourceId" => $wmsOrig->getId()),
-                            true
-                        )
-                    );
-                }
-                $em->persist($wmsOrig);
-                $importer->updateOrigin($wmsOrig, $origin);
-                $wmsOrig->setValid($wmssource->getValid());
-
-                $em->flush();
-                $em->commit();
-
-                $this->addFlash('success', 'Your wms source has been updated.');
-                return $this->redirect(
-                    $this->generateUrl(
-                        "mapbender_manager_repository_view",
-                        array("sourceId" => $wmsOrig->getId()),
-                        true
-                    )
-                );
-            } else {
-                return $this->render('@MapbenderWms/Repository/updateform.html.twig', array(
-                    "form" => $form->createView()
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $em->beginTransaction();
+            try {
+                $wmssourcehandler = new WmsSourceEntityHandler($this->container, $wmsOrig);
+                $wmssourcehandler->update($wmssource);
+            } catch (\Exception $e) {
+                $this->get("logger")->debug($e->getMessage());
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute("mapbender_manager_repository_updateform", array(
+                    "sourceId" => $wmsOrig->getId(),
                 ));
             }
+            $em->persist($wmsOrig);
+            $importer->updateOrigin($wmsOrig, $origin);
+            $wmsOrig->setValid($wmssource->getValid());
+
+            $em->flush();
+            $em->commit();
+
+            $this->addFlash('success', 'Your wms source has been updated.');
+            return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                "sourceId" => $wmsOrig->getId(),
+            ));
         } else { // create form for update
-            $form = $this->createForm(new WmsSourceSimpleType(), $wmsOrig);
             return $this->render('@MapbenderWms/Repository/updateform.html.twig', array(
                 "form" => $form->createView()
             ));
@@ -282,11 +227,12 @@ class RepositoryController extends Controller
                 $em->flush();
                 $em->getConnection()->commit();
 
-                $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
-                return $this
-                    ->redirect($this->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)));
+                $this->addFlash('success', 'Your Wms Instance has been changed.');
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    "slug" => $slug,
+                ));
             } else { // edit
-                $this->get('session')->getFlashBag()->set('warning', 'Your Wms Instance is not valid.');
+                $this->addFlash('warning', 'Your Wms Instance is not valid.');
                 return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
                     "form" => $form->createView(),
                     "slug" => $slug,
