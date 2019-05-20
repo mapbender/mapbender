@@ -1,5 +1,5 @@
 <ul class="itemLevel{{itemLevel}} list {% if itemLevel > 1 %}closed{% endif %}">
-  <li class="openCloseTitle hover-highlight-effect {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
+  <li class="openCloseTitle{% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
   {% if layer.name|length > 0 %}
     <li>
       <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.name" | trans }}:</span>
@@ -76,9 +76,7 @@
   <li>
     <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.srs" | trans }}:</span>
     <span class="metaText">
-      {% for srs in layer.srs %}
-        {% if not loop.first %}, {% endif %}{{ srs }}
-      {% endfor %}
+      {{ layer.srs | join(', ') }}
     </span>
   </li>
   {% endif %}
@@ -88,7 +86,7 @@
         {% for style in layer.styles %}
           {% if not loop.first %}<br/>{% endif %}
           <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.name" | trans }}: {{ style.name }}</span>
-          <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.title" | trans }}</dt>: {{ style.title }}</span>
+          <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.title" | trans }}: {{ style.title }}</span>
           <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.abstract" | trans }}: {{ style.abstract }}</span>
           <span class="metaText">
             {{ "mb.wms.wmsloader.repo.layer.label.legendurl" | trans }}: 
@@ -185,6 +183,7 @@
             {% if authority.name is defined %}
               {{ "mb.wms.wmsloader.repo.layer.label.name" | trans }} {{ authority.name }}<br/>
             {% endif%}
+            </span>
           </li>
         {% endfor %}
       </ul>
@@ -214,25 +213,10 @@
           name:'{{ dimension.name }}', units:'{{ dimension.units }}', unitSymbol:'{{ dimension.unitSymbol }}', 
           default:'{{ dimension.default }}', multipleValues:'{{ dimension.multipleValues }}', nearestValue:'{{ dimension.nearestValue }}',
           current:'{{ dimension.current }}', extent:'{{ dimension.extent }}'
-        <span>
+        </span>
       </li>
     {% endfor %}
     </ul>
-  </li>
-  {% endif %}
-  {% if layer.extent is defined and layer.extent|length > 0 %}
-  <li>
-    <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.extent" | trans }}:</span>
-      <ul>
-      {% for extent in layer.extent %}
-        <li>
-          <span class="metaText">
-            {{ extent.name }} {{ extent.default }} {{ extent.multipleValues }}
-            {#{ extent.nearestValue }} {{ extent.current }} {{ extent.extentValue }#}
-          <span>
-        </li>
-      {% endfor %}
-      </ul>
   </li>
   {% endif %}
   {% if layer.dataUrl is defined and layer.dataUrl|length > 0 %}
@@ -243,7 +227,7 @@
         <li>
           <span class="metaText">
             {{ dataUrl.format }} {{ dataUrl.href }}
-          <span>
+          </span>
         </li>
       {% endfor %}
       </ul>
@@ -257,7 +241,7 @@
           <li>
             <span class="metaText">
               {{ featureUrl.format }} {{ featureUrl.href }}
-            <span>
+            </span>
           </li>
         {% endfor %}
         </ul>

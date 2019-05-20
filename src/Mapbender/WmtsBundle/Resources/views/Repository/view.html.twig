@@ -90,26 +90,22 @@
 
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.country" | trans }}:</div>
     <div class="metaText">{{ wmts.contact.addressCountry }}</div>
-    <div class="clearContainer"></div> {# #}
+    <div class="clearContainer"></div>
     {% endif %}
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
-  <ul class="itemLevel0 list">
-      <li>
-          <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</span>
-          <span class="metaText">{{ wmts.version }}</span>
-      </li>
-      {% if wmts.getCapabilities is not empty %}
-          <li>{{ view.requestinformation(wmts.getCapabilities, "GetCapabilities") }}</li>
-      {% endif %}
-      {% if wmts.getTile is not empty %}
-          <li>{{ view.requestinformation(wmts.getTile, "GetMap") }}</li>
-      {% endif %}
-
-      {% if wmts.getFeatureinfo is not empty %}
-          <li>{{ view.requestinformation(wmts.getFeatureinfo, "GetFeatureinfo") }}</li>
-      {% endif %}
-  </ul>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</div>
+    <div class="metaText">{{ wmts.version }}</div>
+    <div class="clearContainer"></div>
+    {% if wmts.getCapabilities is not empty %}
+    {{ view.requestinformation(wmts.getCapabilities, "GetCapabilities") }}
+    {% endif %}
+    {% if wmts.getTile is not empty %}
+    {{ view.requestinformation(wmts.getTile, "GetMap") }}
+    {% endif %}
+    {% if wmts.getFeatureinfo is not empty %}
+    {{ view.requestinformation(wmts.getFeatureinfo, "GetFeatureinfo") }}
+    {% endif %}
   </div>
   <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
     {% for layer in wmts.layers %}

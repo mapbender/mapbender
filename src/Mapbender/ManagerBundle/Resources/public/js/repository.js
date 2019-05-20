@@ -1,19 +1,4 @@
 $(function() {
-    var showInfoBox = function(e) {
-        var me = $(this);
-        if (e.currentTarget == e.target) {
-            var infoBox = me.find(".infoMsgBox");
-            if (infoBox.hasClass("hide")) {
-                $(".infoMsgBox").addClass("hide");
-                infoBox.removeClass("hide");
-            } else {
-                infoBox.addClass("hide");
-            }
-            e.stopPropagation();
-            return false;
-        }
-    };
-
     function setRootState(groupId) {
         var root = $("#" + groupId);
         var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
@@ -114,5 +99,17 @@ $(function() {
         });
     });
 
-    $("#instanceTable").on("click", ".iconMore", showInfoBox);
+    $("#instanceTable").on("click", ".iconMore", function(e) {
+        var $target = $(e.target).filter('.iconMore');
+        if (!$target.length) {
+            return;
+        }
+        var $row = $target.closest('tr');
+        var $table = $row.closest('table');
+        var $targetBox = $('.infoMsgBox', $row);
+        if ($targetBox.length) {
+            $('.infoMsgBox', $table).not($targetBox).addClass('hidden');
+        }
+        $targetBox.toggleClass('hidden');
+    });
 });

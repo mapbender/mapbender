@@ -9,7 +9,7 @@
 {% for form_layer in form_layers %}
     {% if form_layer.vars.value.id == layer.id %}
         <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}">
-            <td class="level{{ level }} itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></td>
+            <td class="level{{ level }} itemType"><span class="itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></span></td>
             <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
 
             <td class="minScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.minscale"|trans }}">{{ form_widget(form_layer.minScale, {'attr': {'placeholder': form_layer.vars.value.getInheritedMinScale()}}) }}</td>
@@ -24,15 +24,14 @@
             <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.toggletoc"|trans }}">{{ form_widget(form_layer.toggle) }}</td>
             <td class="checkboxColumn" data-check-identifier="checkRecorderAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc"|trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
             <td class="moreColumn">
-              <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
-                <div class="infoMsgBox hide">
-                  <span class="hide layer-priority">{{ form_widget(form_layer.priority) }}</span>
-                  <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</span> <span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span><br>
-                  <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.sourceItem.name}}</span>
-                  <br>
-                  <span class="labelText">{{"mb.wms.wmsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form_layer.style) }}
-                </div>
-              </span>
+              <div class="infoMsgBox hidden">
+                <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
+                <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</span> <span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span><br>
+                <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.sourceItem.name}}</span>
+                <br>
+                <span class="labelText">{{"mb.wms.wmsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form_layer.style) }}
+              </div>
+              <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
             </td>
 
             {% if layer.sublayer|length > 0 %}
