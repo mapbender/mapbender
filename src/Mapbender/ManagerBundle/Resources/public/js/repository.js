@@ -14,76 +14,65 @@ $(function() {
         }
     };
 
-    function setRootState(className) {
-        var root = $("#" + className);
-        var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + className + "]");
-        var rowCount = column.find(".checkWrapper:not(.checkboxDisabled)").length;
-        var checkedCount = column.find(".iconCheckboxActive").length;
-
-        root.removeClass("iconCheckboxActive").removeClass("iconCheckboxHalf");
+    function setRootState(groupId) {
+        var root = $("#" + groupId);
+        var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
+        var checkboxes = $('input[type="checkbox"]:not(:disabled)', column);
+        var rowCount = checkboxes.length;
+        var checkedCount = checkboxes.filter(':checked').length;
 
         if (rowCount === checkedCount) {
+            root.removeClass("iconCheckbox iconCheckboxHalf");
             root.addClass("iconCheckboxActive");
         } else if (checkedCount === 0) {
-            // do nothing!
+            root.removeClass("iconCheckboxActive iconCheckboxHalf");
+            root.addClass("iconCheckbox");
         } else {
+            root.removeClass("iconCheckbox iconCheckboxActive");
             root.addClass("iconCheckboxHalf");
         }
     }
     // toggle all permissions
     var toggleAllStates = function() {
         var self = $(this);
-        var className = self.attr("id");
-        var checkElements = $(".checkboxColumn[data-check-identifier=" + className + "]");
+        var groupId = self.attr("id");
+        var $chkScope = $(".checkboxColumn[data-check-identifier=" + groupId + "]");
         var state = !self.hasClass("iconCheckboxActive");
-        var me;
 
         // change all tagboxes with the same permission type
-        checkElements.find(".checkbox:not(:disabled)").each(function(i, e) {
-            me = $(e);
-            me.get(0).checked = state;
-
-            if (state) {
-                me.parent().addClass("iconCheckboxActive");
-            } else {
-                me.parent().removeClass("iconCheckboxActive");
-            }
+        $chkScope.find('input[type="checkbox"]:not(:disabled)').each(function() {
+            var $chk = $(this);
+            $chk.prop('checked', state);
+            initCheckbox.call($chk);
         });
 
         // change root permission state
-        setRootState(className);
-    }
-    // init permission root state
-    var initRootState = function() {
-        $(this).find(".iconCheckbox").each(function() {
-            setRootState($(this).attr("id"));
-            $(this).bind("click", toggleAllStates);
-        });
+        setRootState(groupId);
     };
-    $("#instanceTableCheckHead").one("load", initRootState).load();
+    $("#instanceTableCheckHead .iconCheckbox").each(function() {
+        setRootState($(this).attr("id"));
+        $(this).bind("click", toggleAllStates);
+    });
 
-    // toggle permission Event
-    var toggleState = function() {
-        setRootState($(this).parent().attr("data-check-identifier"));
-    };
+    $('#instanceTable tbody').on("change", '[data-check-identifier] input[type="checkbox"]', function() {
+        var groupId = $(this).closest('[data-check-identifier]').attr('data-check-identifier');
+        setRootState(groupId);
+    });
     function resetLayerPriority() {
         $('tr:not(.dummy) .layer-priority input[type="hidden"]', $('.instanceTable tbody')).each(function(idx, item) {
-            $(item).val(idx).parents('tr:first').attr("data-priority", idx);
+            $(item).val(idx);
         });
     }
     resetLayerPriority();
-    $('tr[data-type="root"], tr[data-type="node"]', $('.instanceTable tbody')).each(function() {
-        var id = $(this).attr("data-id");
+    $('.instanceTable').each(function() {
         var children = [];
-        $('.instanceTable tbody').sortable({
+        $('tbody', this).sortable({
             cursor: 'move',
             axis: 'y',
-            items: 'tr:not(.root)',
+            items: 'tr:not(.root):not(.dummy)',
             distance: 6,
             containment: 'parent',
             start: function(event, ui) {
-                if ($(ui.item).hasClass('root') || $(ui.item).hasClass('dummy'))
-                    return false;
                 var subs = $('.instanceTable tbody tr[data-parent="' + $(ui.item).attr('data-id') + '"]');
                 children = [];
                 if (subs.length > 0) {
@@ -98,24 +87,18 @@ $(function() {
                 }
             },
             stop: function(event, ui) {
-                var item = $(ui.item);
-                if (item.prev().length > 0 && $(item.prev().get(0)).attr("data-parent") === item.attr("data-parent")) {
-                    if (item.next().length > 0 && $(item.next().get(0)).attr("data-parent") === $(item.prev().get(0)).attr("data-id")) {
-                        return false;
-                    }
-                    if (children.length > 0) {
-                        var elm = item;
-                        $.each(children, function(idx, item) {
-                            var mel = $('#' + item).remove();
-                            mel.insertAfter(elm);
-                            elm = mel;
-                        });
-                    }
-                    resetLayerPriority();
-                    return true;
-                } else if (item.next().length > 0 && $(item.next().get(0)).attr("data-parent") === item.attr("data-parent")) {
-                    if (children.length > 0) {
-                        var elm = item;
+                var $dragItem = $(ui.item);
+                var $prev = $dragItem.prev();
+                var $next = $dragItem.next();
+                var allowMove = $prev.length && $prev.attr("data-parent") === $dragItem.attr("data-parent");
+                if (allowMove) {
+                    allowMove = allowMove && !($next.length && $next.attr("data-parent") === $prev.attr("data-id"));
+                } else {
+                    allowMove = $next.length && $next.attr("data-parent") === $dragItem.attr("data-parent");
+                }
+                if (allowMove) {
+                    if (children.length) {
+                        var elm = $dragItem;
                         $.each(children, function(idx, item) {
                             var mel = $('#' + item).remove();
                             mel.insertAfter(elm);
@@ -125,12 +108,11 @@ $(function() {
                     resetLayerPriority();
                     return true;
                 } else {
-                    return false;
+                    return !!allowMove;
                 }
             }
         });
     });
 
     $("#instanceTable").on("click", ".iconMore", showInfoBox);
-    $(document).on("click", "#instanceTable .checkWrapper", toggleState);
 });
