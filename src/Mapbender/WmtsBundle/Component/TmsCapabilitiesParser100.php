@@ -135,7 +135,8 @@ class TmsCapabilitiesParser100
     public function parse()
     {
         $vers = '1.0.0';
-        $wmts = new WmtsSource(WmtsSource::TYPE_TMS);
+        $wmts = new WmtsSource();
+        $wmts->setType(WmtsSource::TYPE_TMS);
         $root       = $this->doc->documentElement;
         $this->parseService($wmts, $root);
         $titleMapElts = $this->xpath->query("./TileMaps/TileMap", $root);

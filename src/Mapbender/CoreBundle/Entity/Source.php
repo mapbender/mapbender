@@ -69,13 +69,8 @@ abstract class Source
      */
     protected $identifier;
 
-    /**
-     *
-     * @param string $type source type
-     */
-    public function __construct($type)
+    public function __construct()
     {
-        $this->type = $type;
     }
 
     /**

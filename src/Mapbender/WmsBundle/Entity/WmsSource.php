@@ -203,7 +203,8 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      */
     public function __construct()
     {
-        parent::__construct(Source::TYPE_WMS);
+        parent::__construct();
+        $this->setType(Source::TYPE_WMS);
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();

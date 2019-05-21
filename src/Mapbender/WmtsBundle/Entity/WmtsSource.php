@@ -133,13 +133,10 @@ class WmtsSource extends Source implements HttpOriginInterface
      */
     protected $instances;
 
-    /**
-     * Create an instance of WMTSService
-     * @param string $type
-     */
-    public function __construct($type)
+    public function __construct()
     {
-        parent::__construct($type);
+        parent::__construct();
+        $this->setType(Source::TYPE_WMTS);
         $this->contact = new Contact();
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();

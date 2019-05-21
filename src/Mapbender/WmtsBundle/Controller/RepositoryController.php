@@ -35,7 +35,7 @@ class RepositoryController extends Controller
      */
     public function startAction()
     {
-        $form = $this->createForm(new WmtsSourceSimpleType(), new WmtsSource(Source::TYPE_WMTS));
+        $form = $this->createForm(new WmtsSourceSimpleType(), new WmtsSource());
         return $this->render('@MapbenderWmts/Repository/form.html.twig', array(
             'form' => $form->createView(),
         ));
