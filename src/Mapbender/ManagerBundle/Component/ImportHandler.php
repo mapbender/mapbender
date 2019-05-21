@@ -310,13 +310,13 @@ class ImportHandler extends ExchangeHandler
                     foreach ($subObject as $item) {
                         if (is_a($item, 'Mapbender\CoreBundle\Entity\SourceItem', true)) {
                             $subdata = $data[$fieldName][$num];
-                            if ($classDef = $denormalizer->getClassDefinition($subdata)) {
-                                $meta = $this->em->getClassMetadata($classDef[0]);
+                            if ($className = $denormalizer->getClassName($subdata)) {
+                                $meta = $this->em->getClassMetadata($className);
                                 $criteria = $denormalizer->getIdentCriteria($subdata, $meta);
                                 $od = null;
                                 if ($denormalizer->isReference($subdata, $criteria)) {
-                                    if (!$denormalizer->getAfterFromBefore($classDef[0], $criteria)) {
-                                        $od = $denormalizer->getEntityData($classDef[0], $criteria);
+                                    if (!$denormalizer->getAfterFromBefore($className, $criteria)) {
+                                        $od = $denormalizer->getEntityData($className, $criteria);
                                         $this->addSourceToMapper($denormalizer, $item, $od);
                                     }
                                 }

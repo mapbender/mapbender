@@ -28,6 +28,13 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     /** @var \ReflectionMethod[][] */
     protected static $classPropertySetters = array();
 
+    protected $classMapping = array(
+        'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
+        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
+        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',
+        'Mapbender\WmtsBundle\Entity\Style' => 'Mapbender\WmtsBundle\Component\Style',
+    );
+
     /**
      * Creates an instance.
      * @param EntityManagerInterface $em
@@ -80,14 +87,14 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function handleData($data)
     {
-        if (is_array($data) && $classDef = $this->getClassDefinition($data)) {
+        if ($className = $this->getClassName($data)) {
             try {
-                $meta = $this->em->getClassMetadata($classDef[0]);
+                $meta = $this->em->getClassMetadata($className);
                 $identFields = $this->extractFields($data, $meta->getIdentifier());
                 if ($this->isReference($data, $identFields)) {
-                    if ($object = $this->getAfterFromBefore($classDef[0], $identFields)) {
+                    if ($object = $this->getAfterFromBefore($className, $identFields)) {
                         return $object['object'];
-                    } elseif ($objectdata = $this->getEntityData($classDef[0], $identFields)) {
+                    } elseif ($objectdata = $this->getEntityData($className, $identFields)) {
                         $object        = $this->handleEntity($objectdata, $meta);
                         return $object;
                     }
@@ -97,7 +104,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     return $object;
                 }
             } catch (MappingException $e) {
-                return $this->handleClass($data, $this->getReflectionClass($classDef[0]));
+                return $this->handleClass($data, $this->getReflectionClass($className));
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -300,13 +307,21 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         }
     }
 
+    /**
+     * @param $data
+     * @return string|null
+     */
     public function getClassName($data)
     {
-        $class = $this->getClassDefinition($data);
-        if (!$class) {
+        $classData = $this->getClassDefinition($data);
+        if (!$classData) {
             return null;
         } else {
-            return $class[0];
+            $className = $classData[0];
+            while (!empty($this->classMapping[$className])) {
+                $className = $this->classMapping[$className];
+            }
+            return $className;
         }
     }
 
