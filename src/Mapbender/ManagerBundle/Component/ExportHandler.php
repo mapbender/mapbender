@@ -5,8 +5,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\ManagerBundle\Form\Type\ExportJobType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -22,43 +20,12 @@ class ExportHandler extends ExchangeHandler
     /**
      * @param EntityManager $entityManager
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param FormFactoryInterface $formFactory
      */
     public function __construct(EntityManager $entityManager,
-                                AuthorizationCheckerInterface $authorizationChecker,
-                                FormFactoryInterface $formFactory)
+                                AuthorizationCheckerInterface $authorizationChecker)
     {
-        parent::__construct($entityManager, $formFactory);
+        parent::__construct($entityManager);
         $this->authorizationChecker = $authorizationChecker;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createForm()
-    {
-        $allowedApps = $this->getAllowedApplications();
-        $type = new ExportJobType();
-        $data = new ExportJob();
-        return $this->formFactory->create($type, $data, array('application' => $allowedApps));
-    }
-
-    /**
-     * Get current user allowed applications
-     *
-     * @return Application[]
-     */
-    protected function getAllowedApplications()
-    {
-        $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\Application');
-        $allowedApps = array();
-        foreach ($repository->findAll() as $application) {
-            /** @var Application $application */
-            if ($this->authorizationChecker->isGranted('EDIT', $application)) {
-                $allowedApps[] = $application;
-            }
-        }
-        return $allowedApps;
     }
 
     /**

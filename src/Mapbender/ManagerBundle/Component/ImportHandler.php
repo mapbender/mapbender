@@ -9,8 +9,6 @@ use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
-use Mapbender\ManagerBundle\Form\Type\ImportJobType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
@@ -41,23 +39,12 @@ class ImportHandler extends ExchangeHandler
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
                                 MutableAclProviderInterface $aclProvider,
-                                AclManager $aclManager,
-                                FormFactoryInterface $formFactory)
+                                AclManager $aclManager)
     {
-        parent::__construct($entityManager, $formFactory);
+        parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createForm()
-    {
-        $type = new ImportJobType();
-        $data = new ImportJob();
-        return $this->formFactory->create($type, $data);
     }
 
     /**
