@@ -255,7 +255,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             $latlonBounds->setMiny($this->getValue("./@miny", $latlonbboxEl));
             $latlonBounds->setMaxx($this->getValue("./@maxx", $latlonbboxEl));
             $latlonBounds->setMaxy($this->getValue("./@maxy", $latlonbboxEl));
-            //@TODO  resx="0.01" resy="0.01" ??
             $wmslayer->setLatlonBounds($latlonBounds);
         }
 
@@ -268,7 +267,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $bbox->setMiny($this->getValue("./@miny", $item));
                 $bbox->setMaxx($this->getValue("./@maxx", $item));
                 $bbox->setMaxy($this->getValue("./@maxy", $item));
-                //@TODO  resx="0.01" resy="0.01" ??
                 $wmslayer->addBoundingBox($bbox);
             }
         }
