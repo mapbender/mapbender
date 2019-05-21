@@ -172,7 +172,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         $this->featureListUrl = array();
         $this->styles = array();
         $this->srs = array();
-        $this->identifier = array();
         $this->authority = array();
     }
 
@@ -718,61 +717,25 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Add identifier
+     * Set identifier
      *
      * @param Identifier $identifier
      * @return $this
      */
-    public function addIdentifier(Identifier $identifier = null)
-    {
-        $this->identifier[] = $identifier;
-        return $this;
-    }
-
-    /**
-     * Set identifier
-     *
-     * @param Identifier[] $identifier
-     * @return $this
-     */
     public function setIdentifier($identifier)
     {
-        $this->identifier = $identifier ? $identifier : array();
+        $this->identifier = $identifier;
         return $this;
     }
 
     /**
      * Get identifier
      *
-     * @return Identifier[]
+     * @return Identifier
      */
     public function getIdentifier()
     {
         return $this->identifier;
-    }
-
-    /**
-     * Get identifier
-     *
-     * @return array
-     */
-    public function getIdentifierAuthority()
-    {
-        $result = array();
-        $authorities = $this->getAuthority(true);
-        if (count($this->identifier) != 0 && count($authorities) != 0) {
-            foreach ($this->identifier as $identifier) {
-                foreach ($authorities as $authority) {
-                    if ($authority->getName() == $identifier->getAuthority()) {
-                        $ident_auth = new IdentifierAuthority();
-                        $ident_auth->setAuthority($authority);
-                        $ident_auth->setIdentifier($identifier);
-                        $result[] = $ident_auth;
-                    }
-                }
-            }
-        }
-        return $result;
     }
 
     /**

@@ -151,24 +151,16 @@
         </ul>
     </li>
   {% endif %}
-  {% if layer.identifier is defined and layer.identifier|length > 0 %}
+  {% if layer.identifier is defined and layer.identifier %}
     <li>
       <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.identifier" | trans }}:</span>
       <ul>
-        {% for identifier in layer.identifier %}
-          {% if identifier.authority is defined and identifier.authority != '' %}
-            <li>
-              <span class="metaText">
-                {{ "mb.wms.wmsloader.repo.layer.label.authority" | trans }}: 
-                {{ "mb.wms.wmsloader.repo.layer.label.url" | trans }} {{ identifier.authority.url }}
-                {{ "mb.wms.wmsloader.repo.layer.label.name" | trans }} {{ identifier.authority.name }}
-              </span>
-            </li>
-          {% endif %}
-          {% if identifier.value is defined %}
-            <li><span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.value" | trans }}: {{ identifier.value }}</span></li>
-          {% endif %}
-        {% endfor %}
+        {% if layer.identifier.authority %}
+          <li><span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.authority" | trans }}: {{ layer.identifier.authority }}</span></li>
+        {% endif %}
+        {% if layer.identifier.value %}
+          <li><span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.value" | trans }}: {{ layer.identifier.value }}</span></li>
+        {% endif %}
       </ul>
     </li>
   {% endif %}
