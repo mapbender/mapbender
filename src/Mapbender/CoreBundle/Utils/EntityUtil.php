@@ -2,7 +2,7 @@
 namespace Mapbender\CoreBundle\Utils;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -27,14 +27,14 @@ class EntityUtil
     /**
      * Returns an unique value for an unique field.
      *
-     * @param \Doctrine\ORM\EntityManager $em an entity manager
-     * @param string $entityName entity name
+     * @param EntityManagerInterface $em
+     * @param string $entityName
      * @param string $uniqueField name of the unique field
      * @param string $toUniqueValue value to the unique field
      * @param string $suffix suffix to generate an unique value
      * @return string an unique value
      */
-    public static function getUniqueValue(EntityManager $em, $entityName, $uniqueField, $toUniqueValue, $suffix = "")
+    public static function getUniqueValue(EntityManagerInterface $em, $entityName, $uniqueField, $toUniqueValue, $suffix = "")
     {
         $criteria               = array();
         $criteria[$uniqueField] = $toUniqueValue;

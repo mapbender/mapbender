@@ -35,8 +35,6 @@ abstract class ExchangeSerializer
 
     /** @var \ReflectionClass[] */
     protected static $classReflection = array();
-    /** @var \ReflectionMethod[][] */
-    protected static $classPropertyGetters = array();
 
     /**
      *
@@ -56,11 +54,10 @@ abstract class ExchangeSerializer
         if (!array_key_exists($className, static::$reflectionInfo)) {
             $rfl = new \ReflectionClass($className);
             $propertyNames = array();
-            foreach ($rfl->getProperties() as $prop) {
-                $propertyNames[] = $prop->getName();
-            }
             $getters = array();
-            foreach ($propertyNames as $propertyName) {
+            foreach ($rfl->getProperties() as $prop) {
+                $propertyName = $prop->getName();
+                $propertyNames[] = $propertyName;
                 $method = static::getPropertyAccessor($rfl, $propertyName, array(
                     static::KEY_GET,
                     static::KEY_IS,

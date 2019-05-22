@@ -60,15 +60,13 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
 
     public function getEntityData($class, array $criteria)
     {
-        if (!is_string($class)) {
-            return null;
-        }
         if (isset($this->data[$class])) {
             foreach ($this->data[$class] as $item) {
                 $found = true;
                 foreach ($criteria as $key => $value) {
                     if (!isset($item[$key]) || $item[$key] !== $value) {
                         $found = false;
+                        break;
                     }
                 }
                 if ($found) {
@@ -94,7 +92,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     if ($object = $this->getAfterFromBefore($className, $identFields)) {
                         return $object['object'];
                     } elseif ($objectdata = $this->getEntityData($className, $identFields)) {
-                        $object        = $this->handleEntity($objectdata, $meta);
+                        $object = $this->handleEntity($objectdata, $meta);
                         return $object;
                     }
                     return null;
@@ -103,7 +101,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     return $object;
                 }
             } catch (MappingException $e) {
-                return $this->handleClass($data, $this->getReflectionClass($className));
+                return $this->handleClass($className, $data);
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -136,12 +134,11 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function handleEntity(array $data, ClassMetadata $classMeta)
     {
-        $args   = $this->getClassConstructParams($data) ? : array();
         $reflectionClass = $classMeta->getReflectionClass();
-        $object = $reflectionClass->newInstanceArgs($args);
-        foreach ($classMeta->getFieldNames() as $fieldName) {
-            if (!in_array($fieldName, $classMeta->getIdentifier()) && isset($data[$fieldName])
-                && $setMethod = $this->getSetMethod($fieldName, $reflectionClass)) {
+        $object = $reflectionClass->newInstance();
+        $nonIdentifierFieldNames = array_diff($classMeta->getFieldNames(), $classMeta->getIdentifier());
+        foreach ($nonIdentifierFieldNames as $fieldName) {
+            if (isset($data[$fieldName]) && $setMethod = $this->getSetMethod($fieldName, $reflectionClass)) {
                 $value = $this->handleData($data[$fieldName]);
                 $fm    = $classMeta->getFieldMapping($fieldName);
                 if ($fm['unique']) {
@@ -170,30 +167,27 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     if (count($result)) {
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
                         $setMethod->invoke($object, $collection);
-                        $this->em->persist($object);
-                        if ($this->doFlush) {
-                            $this->em->flush();
-                        }
                     }
                 } else {
                     $setMethod->invoke($object, $result);
-                    $this->em->persist($object);
-                    if ($this->doFlush) {
-                        $this->em->flush();
-                    }
+                }
+                $this->em->persist($object);
+                if ($this->doFlush) {
+                    $this->em->flush();
                 }
             }
         }
         return $object;
     }
 
-    public function handleClass(array $data, \ReflectionClass $class)
+    public function handleClass($className, array $data)
     {
-        $args = $this->getClassConstructParams($data) ? : array();
-        $object               = $class->newInstanceArgs($args);
-        foreach ($class->getProperties() as $property) { # only for mapbender classes
-            if (isset($data[$property->getName()]) && $setMethod = $this->getSetMethod($property->getName(), $class)) {
-                $value = $this->handleData($data[$property->getName()]);
+        $reflectionInfo = $this->getReflectionInfo($className);
+        $reflectionClass = $reflectionInfo['reflectionClass'];
+        $object = new $className();
+        foreach ($reflectionInfo['propertyNames'] as $propertyName) {
+            if (isset($data[$propertyName]) && $setMethod = $this->getSetMethod($propertyName, $reflectionClass)) {
+                $value = $this->handleData($data[$propertyName]);
                 if (is_array($value)) {
                     if (count($value)) {
                         $setMethod->invoke($object, $value);
@@ -306,37 +300,17 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function getClassName($data)
     {
-        $classData = $this->getClassDefinition($data);
-        if (!$classData) {
-            return null;
-        } else {
-            $className = $classData[0];
+        if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
+            $className = $data[self::KEY_CLASS];
+            if (is_array($className)) {
+                $className = $className[0];
+            }
             while (!empty($this->classMapping[$className])) {
                 $className = $this->classMapping[$className];
             }
             return $className;
         }
-    }
-
-    public function getClassDefinition($data)
-    {
-        if (!$data || !is_array($data)) {
-            return null;
-        } elseif (key_exists(self::KEY_CLASS, $data)) {
-            return $data[self::KEY_CLASS];
-        } else {
-            return null;
-        }
-    }
-
-    public function getClassConstructParams($data)
-    {
-        $class = $this->getClassDefinition($data);
-        if (!$class) {
-            return array();
-        } else {
-            return $class[1];
-        }
+        return null;
     }
 
     /**

@@ -226,7 +226,6 @@ class ExchangeNormalizer extends ExchangeSerializer
             array(
                 self::KEY_CLASS => array(
                     ClassUtils::getClass($object),
-                    array()
                 )
             ),
             $params
