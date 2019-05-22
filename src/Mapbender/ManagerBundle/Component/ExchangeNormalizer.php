@@ -213,8 +213,11 @@ class ExchangeNormalizer extends ExchangeSerializer
 
     public function normalizeObject($object)
     {
-        $params = $this->extractProperties($object, null);
-        return $this->createInstanceIdent($object, $params);
+        $values = array();
+        foreach ($this->extractProperties($object, null) as $name => $value) {
+            $values[$name] = $this->handleValue($value);
+        }
+        return $this->createInstanceIdent($object, $values);
     }
 
     public function createInstanceIdent($object, $params = array())

@@ -6,8 +6,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Utils\EntityUtil;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
 
 /**
  *
@@ -198,13 +196,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 $value = $this->handleData($data[$property->getName()]);
                 if (is_array($value)) {
                     if (count($value)) {
-                        if ($setMethod->name === 'setLegendUrl') {
-                            $rcl = new \ReflectionClass(new LegendUrl());
-                            $value = $this->handleClass($value, $rcl);
-                        } elseif ($setMethod->name === 'setOnlineResource') {
-                            $rcl = new \ReflectionClass(new OnlineResource());
-                            $value = $this->handleClass($value, $rcl);
-                        }
                         $setMethod->invoke($object, $value);
                     }
                 } else {
