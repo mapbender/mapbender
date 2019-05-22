@@ -24,7 +24,6 @@
         </service>
         <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="security.authorization_checker" />
         </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
