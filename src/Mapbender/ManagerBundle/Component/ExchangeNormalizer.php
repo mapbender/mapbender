@@ -5,6 +5,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
+use Mapbender\CoreBundle\Entity\Source;
 
 /**
  * ExchangeNormalizer class normalizes objects to array.
@@ -186,6 +187,11 @@ class ExchangeNormalizer extends ExchangeSerializer
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
+            // Avoid exporting instances related to the source. We will export instances
+            // only when related to exported applications.
+            if ($fieldName === 'instances' && $object instanceof Source) {
+                continue;
+            }
             if ($getMethod = $this->getReturnMethod($object, $fieldName)) {
                 $subObject = $getMethod->invoke($object);
                 if (!$subObject) {

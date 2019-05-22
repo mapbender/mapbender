@@ -2,7 +2,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * Description of ExportHandler
@@ -22,7 +22,7 @@ class ExportHandler extends ExchangeHandler
         $time = array(
             'start' => microtime(true)
         );
-        foreach ($this->getApplicationSources($application) as $source) {
+        foreach ($this->getApplicationSourceInstances($application) as $source) {
             $normalizer->handleValue($source);
             gc_collect_cycles();
         }
@@ -43,22 +43,21 @@ class ExportHandler extends ExchangeHandler
      * Get current user allowed application sources
      *
      * @param Application $app
-     * @return Source[]
+     * @return SourceInstance[]
      */
-    protected function getApplicationSources(Application $app)
+    protected function getApplicationSourceInstances(Application $app)
     {
-        $sourceIds = array();
-        $sources = array();
+        $instanceIds = array();
+        $instances = array();
         foreach ($app->getLayersets() as $layerSet) {
             foreach ($layerSet->getInstances() as $instance) {
-                $source = $instance->getSource();
-                $sourceId = $source->getId();
-                if (!in_array($sourceId, $sourceIds)) {
-                    $sourceIds[] = $sourceId;
-                    $sources[] = $source;
+                $instanceId = $instance->getId();
+                if (!in_array($instanceId, $instanceIds)) {
+                    $instanceIds[] = $instanceId;
+                    $instances[] = $instance;
                 }
             }
         }
-        return $sources;
+        return $instances;
     }
 }
