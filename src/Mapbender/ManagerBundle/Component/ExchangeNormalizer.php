@@ -1,8 +1,8 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
@@ -146,11 +146,10 @@ class ExchangeNormalizer extends ExchangeSerializer
         } elseif (is_array($value)) {
             return $this->handleArray($value);
         } elseif (is_object($value)) {
-            $realClass = $this->getRealClass($value);
             try {
-                return $this->normalizeEntity($value, $this->em->getClassMetadata($realClass));
+                return $this->normalizeEntity($value);
             } catch (MappingException $e) {
-                return $this->normalizeObject($value, $this->getReflectionClass($realClass));
+                return $this->normalizeObject($value);
             }
         } else {
             // why??
@@ -160,33 +159,35 @@ class ExchangeNormalizer extends ExchangeSerializer
 
     /**
      * @param object $object
-     * @param ClassMetadata|null $classMeta
      * @return array
      */
-    public function normalizeEntity($object, ClassMetadata $classMeta=null)
+    public function normalizeEntity($object)
     {
         gc_enable();
         $this->em->refresh($object);
-        if (!$classMeta) {
-            $classMeta = $this->em->getClassMetadata($this->getRealClass($object));
-        }
+        $className = get_class($object);
+        $classMeta = $this->em->getClassMetadata($className);
 
         $identFieldNames = $classMeta->getIdentifier();
-        $refl = $classMeta->getReflectionClass();
-        $identValues = $this->extractProperties($object, $identFieldNames, $refl);
+        $nonMappingFieldNames = $classMeta->getFieldNames();
+        $nonIdentFieldNames = array_diff($nonMappingFieldNames, $identFieldNames);
+
+        $fieldProperties = $this->extractProperties($object, $nonMappingFieldNames);
+        $identValues = array_intersect_key($fieldProperties, array_flip($identFieldNames));
+        $nonIdentValues = array_intersect_key($fieldProperties, array_flip($nonIdentFieldNames));
+
         $data = $this->createInstanceIdent($object, $identValues);
         if ($this->isInProcess($data, $classMeta)) {
             return $data;
         }
         $this->addInProcess($data, $classMeta);
-        $regularFields = array_diff($classMeta->getFieldNames(), $identFieldNames);
-        foreach ($this->extractProperties($object, $regularFields, $refl) as $fieldName => $fieldValue) {
+        foreach ($nonIdentValues as $fieldName => $fieldValue) {
             $data[$fieldName] = $this->handleValue($fieldValue);
         }
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            if ($getMethod = $this->getReturnMethod($fieldName, $refl)) {
+            if ($getMethod = $this->getReturnMethod($object, $fieldName)) {
                 $subObject = $getMethod->invoke($object);
                 if (!$subObject) {
                     $data[$fieldName] = null;
@@ -205,9 +206,9 @@ class ExchangeNormalizer extends ExchangeSerializer
         return $data;
     }
 
-    public function normalizeObject($object, \ReflectionClass $class)
+    public function normalizeObject($object)
     {
-        $params = $this->extractProperties($object, $this->getPropertyNames($class), $class);
+        $params = $this->extractProperties($object, null);
         return $this->createInstanceIdent($object, $params);
     }
 
@@ -216,7 +217,7 @@ class ExchangeNormalizer extends ExchangeSerializer
         return array_merge(
             array(
                 self::KEY_CLASS => array(
-                    $this->getRealClass($object),
+                    ClassUtils::getClass($object),
                     array()
                 )
             ),

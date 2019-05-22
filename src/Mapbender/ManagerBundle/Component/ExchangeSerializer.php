@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Utils\EntityAnnotationParser as EAP;
@@ -32,10 +31,10 @@ abstract class ExchangeSerializer
     /** @var EntityManagerInterface */
     protected $em;
 
+    protected static $reflectionInfo = array();
+
     /** @var \ReflectionClass[] */
     protected static $classReflection = array();
-    /** @var string[] */
-    protected static $classPropertyNames = array();
     /** @var \ReflectionMethod[][] */
     protected static $classPropertyGetters = array();
 
@@ -46,6 +45,38 @@ abstract class ExchangeSerializer
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+
+    /**
+     * @param string $className
+     * @return array
+     */
+    protected static function getReflectionInfo($className)
+    {
+        if (!array_key_exists($className, static::$reflectionInfo)) {
+            $rfl = new \ReflectionClass($className);
+            $propertyNames = array();
+            foreach ($rfl->getProperties() as $prop) {
+                $propertyNames[] = $prop->getName();
+            }
+            $getters = array();
+            foreach ($propertyNames as $propertyName) {
+                $method = static::getPropertyAccessor($rfl, $propertyName, array(
+                    static::KEY_GET,
+                    static::KEY_IS,
+                    static::KEY_HAS,
+                ));
+                if ($method) {
+                    $getters[$propertyName] = $method;
+                }
+            }
+            static::$reflectionInfo[$className] = array(
+                'reflectionClass' => $rfl,
+                'propertyNames' => $propertyNames,
+                'getters' => $getters,
+            );
+        }
+        return static::$reflectionInfo[$className];
     }
 
     /**
@@ -62,42 +93,18 @@ abstract class ExchangeSerializer
     }
 
     /**
-     * @param \ReflectionClass $refl
-     * @return string[]
-     */
-    protected static function getPropertyNames(\ReflectionClass $refl)
-    {
-        $className = $refl->getName();
-        if (!isset(static::$classPropertyNames[$className])) {
-            $propNames = array();
-            foreach ($refl->getProperties() as $prop) {
-                $propNames[] = $prop->getName();
-            }
-            static::$classPropertyNames[$className] = $propNames;
-        }
-        return static::$classPropertyNames[$className];
-    }
-
-    /**
-     * @param $fieldName
-     * @param \ReflectionClass $class
+     * @param object $object
+     * @param string $fieldName
      * @return null|\ReflectionMethod
      */
-    public function getReturnMethod($fieldName, \ReflectionClass $class)
+    public function getReturnMethod($object, $fieldName)
     {
-        $className = $class->getName();
-        if (!array_key_exists($className, static::$classPropertyGetters)) {
-            static::$classPropertyGetters[$className] = array();
+        $rfi = $this->getReflectionInfo(get_class($object));
+        if (array_key_exists($fieldName, $rfi['getters'])) {
+            return $rfi['getters'][$fieldName];
+        } else {
+            return null;
         }
-        if (!array_key_exists($fieldName, static::$classPropertyGetters[$className])) {
-            $method = $this->getPropertyAccessor($class, $fieldName, array(
-                self::KEY_GET,
-                self::KEY_IS,
-                self::KEY_HAS,
-            ));
-            static::$classPropertyGetters[$className][$fieldName] = $method;
-        }
-        return static::$classPropertyGetters[$className][$fieldName];
     }
 
     /**
@@ -121,76 +128,41 @@ abstract class ExchangeSerializer
         return null;
     }
 
-    public function getRealClass($object)
-    {
-        $objClass = "";
-        if (is_object($object)) {
-            $objClass = ClassUtils::getClass($object);
-        } elseif (is_string($object)) {
-            $objClass = ClassUtils::getRealClass($object);
-        }
-        return $objClass;
-    }
-
-    /**
-     * Creates a list of key value pairs for unique search of entities.
-     * @param mixed $data entity object or serialized entity object (array)
-     * @param ClassMetadata $meta
-     * @return array|null
-     */
-    public function getIdentCriteria($data, ClassMetadata $meta)
-    {
-        $identFields = $meta->getIdentifier();
-        if (is_array($data)) {
-            return array_intersect_key($data, array_flip($identFields));
-        } elseif (is_object($data)) {
-            return $this->extractProperties($data, $identFields, $meta->getReflectionClass());
-        } else {
-            // why??
-            return null;
-        }
-    }
-
     /**
      * @param object $object
-     * @param string[] $propertyNames
-     * @param \ReflectionClass $refl
+     * @param string[]|null $propertyNames null for all getter-accessible properties
      * @return array
      */
-    protected function extractProperties($object, $propertyNames, \ReflectionClass $refl)
+    public function extractProperties($object, $propertyNames)
     {
+        $rfi = $this->getReflectionInfo(get_class($object));
+        if ($propertyNames === null) {
+            $getters = $rfi['getters'];
+        } else {
+            $getters = array_intersect_key($rfi['getters'], array_flip($propertyNames));
+        }
         $values = array();
-        foreach ($propertyNames as $propertyName) {
-            if ($getMethod = $this->getReturnMethod($propertyName, $refl)) {
-                $values[$propertyName] = $getMethod->invoke($object);
-            }
+        foreach ($getters as $propertyName => $getter) {
+            /** @var \ReflectionMethod $getter */
+            $values[$propertyName] = $getter->invoke($object);
         }
         return $values;
     }
 
     /**
      * @param ClassMetadata $meta
-     * @param bool $includeIdent
-     * @param bool $includeUniques
      * @param string[] $extra
      * @return string[]
      */
-    public function collectEntityFieldNames(ClassMetadata $meta, $includeIdent, $includeUniques, $extra = array())
+    public function collectEntityFieldNames(ClassMetadata $meta, $extra = array())
     {
         $fieldNames = $extra;
-        if ($includeUniques) {
-            foreach ($meta->getFieldNames() as $fieldName) {
-                if ($meta->isUniqueField($fieldName)) {
-                    $fieldNames[] = $fieldName;
-                }
+        foreach ($meta->getFieldNames() as $fieldName) {
+            if ($meta->isUniqueField($fieldName)) {
+                $fieldNames[] = $fieldName;
             }
         }
-        if ($includeIdent) {
-            // put ident fields first
-            return array_unique(array_merge($meta->getIdentifier(), $fieldNames));
-        } else {
-            // make sure to remove ident fields, even if included in uniques or $extra
-            return array_unique(array_diff($fieldNames, $meta->getIdentifier()));
-        }
+        // make sure to remove ident fields, even if included in uniques or $extra
+        return array_unique(array_diff($fieldNames, $meta->getIdentifier()));
     }
 }

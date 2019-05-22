@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\PersistentCollection;
@@ -117,7 +118,7 @@ class ImportHandler extends ExchangeHandler
                     if (!$copyHint) {
                         // Avoid inserting "new" sources that are duplicates of already existing ones
                         // Finding equivalent sources is relatively expensive
-                        $identFields = $denormalizer->collectEntityFieldNames($classMeta, false, true, array(
+                        $identFields = $denormalizer->collectEntityFieldNames($classMeta, array(
                             'title',
                             'type',
                             'name',
@@ -133,7 +134,8 @@ class ImportHandler extends ExchangeHandler
                     } else {
                         // Performance hack: when "importing" from the same DB (actually just copying an
                         // application), detecting source duplicates based purely on id is sufficient
-                        $criteria = $denormalizer->getIdentCriteria($item, $classMeta);
+                        $identFields = $classMeta->getIdentifier();
+                        $criteria = $denormalizer->extractFields($data, $identFields);
                         $sources = $this->em->getRepository($class)->findBy($criteria);
                         $this->addSourceToMapper($denormalizer, $sources[0], $item);
                     }
@@ -178,7 +180,7 @@ class ImportHandler extends ExchangeHandler
             $configuration = $element->getConfiguration();
             foreach ($configuration as $key => $value) {
                 if ($key === 'target') {
-                    $realClass = $denormalizer->getRealClass($element);
+                    $realClass = ClassUtils::getClass($element);
                     $target = $denormalizer->getAfterFromBefore($realClass, array('id' => $value));
                     $configuration[$key] = $target['criteria']['id'];
                 } else {
@@ -282,7 +284,7 @@ class ImportHandler extends ExchangeHandler
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            $getMethod = $denormalizer->getReturnMethod($fieldName, $classMeta->getReflectionClass());
+            $getMethod = $denormalizer->getReturnMethod($object, $fieldName);
             if ($getMethod) {
                 $subObject = $getMethod->invoke($object);
                 $num = 0;
@@ -299,11 +301,11 @@ class ImportHandler extends ExchangeHandler
                             $subdata = $data[$fieldName][$num];
                             if ($className = $denormalizer->getClassName($subdata)) {
                                 $meta = $this->em->getClassMetadata($className);
-                                $criteria = $denormalizer->getIdentCriteria($subdata, $meta);
+                                $identCriteria = $denormalizer->extractFields($subdata, $meta->getIdentifier());
                                 $od = null;
-                                if ($denormalizer->isReference($subdata, $criteria)) {
-                                    if (!$denormalizer->getAfterFromBefore($className, $criteria)) {
-                                        $od = $denormalizer->getEntityData($className, $criteria);
+                                if ($denormalizer->isReference($subdata, $identCriteria)) {
+                                    if (!$denormalizer->getAfterFromBefore($className, $identCriteria)) {
+                                        $od = $denormalizer->getEntityData($className, $identCriteria);
                                         $this->addSourceToMapper($denormalizer, $item, $od);
                                     }
                                 }

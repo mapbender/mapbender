@@ -2,6 +2,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -225,19 +226,20 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function addToMapper($object, array $data, ClassMetadata $classMeta)
     {
-        $realClass = $this->getRealClass($object);
+        $realClass = ClassUtils::getClass($object);
         if (!isset($this->mapper[$realClass])) {
             $this->mapper[$realClass] = array();
         }
-        $criteriaBefore = $this->getIdentCriteria($data, $classMeta);
+        $identFieldNames = $classMeta->getIdentifier();
+        $identData = array_intersect_key($data, array_flip($identFieldNames));
         foreach ($this->mapper[$realClass] as $mapItem) {
-            if ($mapItem['before'] == $criteriaBefore) {
+            if ($mapItem['before'] == $identData) {
                 return;
             }
         }
-        $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
+        $criteriaAfter = $this->extractProperties($object, $identFieldNames);
         $this->mapper[$realClass][] = array(
-            'before' => $criteriaBefore,
+            'before' => $identData,
             'after' => array(
                 'criteria' => $criteriaAfter,
                 'object' => $object,

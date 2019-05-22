@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
