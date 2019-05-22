@@ -164,7 +164,6 @@ class ExchangeNormalizer extends ExchangeSerializer
     public function normalizeEntity($object)
     {
         gc_enable();
-        $this->em->refresh($object);
         $className = get_class($object);
         $classMeta = $this->em->getClassMetadata($className);
 
