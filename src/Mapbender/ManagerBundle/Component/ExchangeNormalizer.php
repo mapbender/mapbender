@@ -185,25 +185,26 @@ class ExchangeNormalizer extends ExchangeSerializer
             $data[$fieldName] = $this->handleValue($fieldValue);
         }
 
+        $rfi = $this->getReflectionInfo($className);
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            // Avoid exporting instances related to the source. We will export instances
-            // only when related to exported applications.
-            if ($fieldName === 'instances' && $object instanceof Source) {
+            // No point exporting a field that doesn't have a corresponding setter.
+            // This nicely avoids exporting informative relationships such as Source->getInstances
+            if (!array_key_exists($fieldName, $rfi['getters']) || !array_key_exists($fieldName, $rfi['setters'])) {
                 continue;
             }
-            if ($getMethod = $this->getReturnMethod($object, $fieldName)) {
-                $subObject = $getMethod->invoke($object);
-                if (!$subObject) {
-                    $data[$fieldName] = null;
-                } elseif ($subObject instanceof PersistentCollection) {
-                    $data[$fieldName] = array();
-                    foreach ($subObject as $item) {
-                        $data[$fieldName][] = $this->normalizeEntity($item);
-                    }
-                } else {
-                    $data[$fieldName] = $this->normalizeEntity($subObject);
+            /** @var \ReflectionMethod $getMethod */
+            $getMethod = $rfi['getters'][$fieldName];
+            $subObject = $getMethod->invoke($object);
+            if (!$subObject) {
+                $data[$fieldName] = null;
+            } elseif ($subObject instanceof PersistentCollection) {
+                $data[$fieldName] = array();
+                foreach ($subObject as $item) {
+                    $data[$fieldName][] = $this->normalizeEntity($item);
                 }
+            } else {
+                $data[$fieldName] = $this->normalizeEntity($subObject);
             }
         }
         $this->addExport($data, $classMeta);

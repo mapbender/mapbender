@@ -55,22 +55,30 @@ abstract class ExchangeSerializer
             $rfl = new \ReflectionClass($className);
             $propertyNames = array();
             $getters = array();
+            $setters = array();
             foreach ($rfl->getProperties() as $prop) {
                 $propertyName = $prop->getName();
                 $propertyNames[] = $propertyName;
-                $method = static::getPropertyAccessor($rfl, $propertyName, array(
+                $getterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
                     static::KEY_GET,
                     static::KEY_IS,
                     static::KEY_HAS,
                 ));
-                if ($method) {
-                    $getters[$propertyName] = $method;
+                $setterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
+                    self::KEY_SET,
+                    self::KEY_ADD,
+                ));
+                if ($getterMethod) {
+                    $getters[$propertyName] = $getterMethod;
+                }
+                if ($setterMethod) {
+                    $setters[$propertyName] = $setterMethod;
                 }
             }
             static::$reflectionInfo[$className] = array(
-                'reflectionClass' => $rfl,
                 'propertyNames' => $propertyNames,
                 'getters' => $getters,
+                'setters' => $setters,
             );
         }
         return static::$reflectionInfo[$className];

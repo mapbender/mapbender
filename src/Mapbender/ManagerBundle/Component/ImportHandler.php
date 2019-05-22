@@ -106,7 +106,6 @@ class ImportHandler extends ExchangeHandler
      * @param ExchangeDenormalizer $denormalizer
      * @param array $data data to import
      * @param bool $copyHint
-     * @throws ImportException
      * @throws ORMException
      */
     private function importSources($denormalizer, $data, $copyHint)
@@ -124,20 +123,26 @@ class ImportHandler extends ExchangeHandler
                             'name',
                             'onlineResource',
                         ));
-                        $criteria = $denormalizer->extractFields($item, $identFields);
-                        $sources = $this->em->getRepository($class)->findBy($criteria);
-                        if (!$this->findSourceToMapper($denormalizer, $sources, $item)) {
-                            $source = $denormalizer->handleData($item);
-                            $this->em->persist($source);
-                            $this->em->flush();
-                        }
                     } else {
                         // Performance hack: when "importing" from the same DB (actually just copying an
                         // application), detecting source duplicates based purely on id is sufficient
                         $identFields = $classMeta->getIdentifier();
-                        $criteria = $denormalizer->extractFields($data, $identFields);
-                        $sources = $this->em->getRepository($class)->findBy($criteria);
-                        $this->addSourceToMapper($denormalizer, $sources[0], $item);
+                    }
+                    $criteria = $denormalizer->extractFields($item, $identFields);
+                    $match = false;
+                    foreach ($this->em->getRepository($class)->findBy($criteria) as $source) {
+                        try {
+                            $this->addSourceToMapper($denormalizer, $source, $item);
+                            $match = true;
+                            break;
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+                    if (!$match) {
+                        $source = $denormalizer->handleData($item);
+                        $this->em->persist($source);
+                        $this->em->flush();
                     }
                 }
             }
@@ -246,25 +251,6 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param ExchangeDenormalizer $denormalizer
-     * @param array $sources
-     * @param array $item
-     * @return bool
-     */
-    private function findSourceToMapper($denormalizer, array $sources, array $item)
-    {
-        foreach ($sources as $source) {
-            try {
-                $this->addSourceToMapper($denormalizer, $source, $item);
-                return true;
-            } catch (\Exception $e) {
-                // continue loop
-            }
-        }
-        return false;
-    }
-
-    /**
      * Adds entitiy with assoc. items to mapper.
      *
      * @param ExchangeDenormalizer $denormalizer
@@ -275,12 +261,10 @@ class ImportHandler extends ExchangeHandler
      */
     private function addSourceToMapper($denormalizer, $object, array $data)
     {
-        $this->em->refresh($object);
-        if (!$this->em->contains($object)) {
-             $this->em->merge($object);
-        }
         $classMeta = $this->em->getClassMetadata(get_class($object));
-        $denormalizer->addToMapper($object, $data, $classMeta);
+        $identFieldNames = $classMeta->getIdentifier();
+        $identData = array_intersect_key($data, array_flip($identFieldNames));
+        $denormalizer->addToMapper($identData, $object);
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
@@ -302,7 +286,6 @@ class ImportHandler extends ExchangeHandler
                             if ($className = $denormalizer->getClassName($subdata)) {
                                 $meta = $this->em->getClassMetadata($className);
                                 $identCriteria = $denormalizer->extractFields($subdata, $meta->getIdentifier());
-                                $od = null;
                                 if ($denormalizer->isReference($subdata, $identCriteria)) {
                                     if (!$denormalizer->getAfterFromBefore($className, $identCriteria)) {
                                         $od = $denormalizer->getEntityData($className, $identCriteria);
