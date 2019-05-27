@@ -20,6 +20,8 @@
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
+        <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
+        <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
@@ -168,6 +170,15 @@
         </service>
         <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
             <argument type="service" id="security.acl.provider" />
+        </service>
+        <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="fom.acl.manager" />
+        </service>
+        <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />
