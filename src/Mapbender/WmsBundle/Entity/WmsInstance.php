@@ -23,12 +23,6 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
 class WmsInstance extends SourceInstance
 {
     /**
-     * @var array $configuration The instance configuration
-     * @ORM\Column(type="array", nullable=true)
-     */
-    protected $configuration;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Mapbender\WmsBundle\Entity\WmsSource", inversedBy="instances", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -39,7 +33,7 @@ class WmsInstance extends SourceInstance
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
-    protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
+    protected $layers;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -188,28 +182,6 @@ class WmsInstance extends SourceInstance
     {
         $this->vendorspecifics = $vendorspecifics;
         return $this;
-    }
-
-    /**
-     * Set configuration
-     *
-     * @param array $configuration
-     * @return $this
-     */
-    public function setConfiguration($configuration)
-    {
-        $this->configuration = $configuration;
-        return $this;
-    }
-
-    /**
-     * Get an Instance Configuration.
-     *
-     * @return array $configuration
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
     }
 
     /**

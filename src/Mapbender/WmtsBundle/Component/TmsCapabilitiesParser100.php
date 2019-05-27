@@ -6,10 +6,10 @@ use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmtsBundle\Component\Exception\WmtsException;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
+use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 
@@ -23,19 +23,14 @@ class TmsCapabilitiesParser100
 {
     /**
      * The XML representation of the Capabilites Document
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     protected $doc;
 
-    /**
-     * An Xpath-instance
-     */
+    /** @var \DOMXPath */
     protected $xpath;
 
-    /**
-     *
-     * @var type
-     */
+    /** @var array */
     protected $proxy_config;
 
     /**
@@ -90,13 +85,11 @@ class TmsCapabilitiesParser100
      * Creates a document
      *
      * @param string $data the string containing the XML
-     * @param boolean $validate to validate of xml
      * @return \DOMDocument a GetCapabilites document
      * @throws XmlParseException if a GetCapabilities xml is not valid
-     * @throws WmtsException if an service exception
      * @throws NotSupportedVersionException if a service version is not supported
      */
-    public static function createDocument($data, $validate = false)
+    public static function createDocument($data)
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
@@ -149,24 +142,18 @@ class TmsCapabilitiesParser100
             $url         = $this->getValue("./@href", $titleMapElt);
             $proxy_query = ProxyQuery::createFromUrl($url);
             $proxy       = new CommonProxy($this->proxy_config, $proxy_query);
-            try {
-                $browserResponse = $proxy->handle();
-                $content         = $browserResponse->getContent();
-                $doc             = new \DOMDocument();
-                if (!@$doc->loadXML($content)) {
-                    throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
-                }
-                $tilemap = new TmsCapabilitiesParser100($this->proxy_config, $doc);
-                $root    = $tilemap->getDoc()->documentElement;
-                // Url Service endpoint (without the version number)
-                $pos_vers = strpos($url, $vers);
-                $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
-                $url_layer = substr($url, $pos_vers + strlen($vers) + 1);
-                $tilemap->parseTileMap($wmts, $root, $url_raw, $url_layer);
-            } catch (\Exception $e) {
-                $this->removeFiles();
-                throw $e;
+            $browserResponse = $proxy->handle();
+            $content         = $browserResponse->getContent();
+            $doc             = new \DOMDocument();
+            if (!@$doc->loadXML($content)) {
+                throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
             }
+            $tilemap = new TmsCapabilitiesParser100($this->proxy_config, $doc);
+            // Url Service endpoint (without the version number)
+            $pos_vers = strpos($url, $vers);
+            $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
+            $url_layer = substr($url, $pos_vers + strlen($vers) + 1);
+            $tilemap->parseTileMap($wmts, $doc->documentElement, $url_raw, $url_layer);
         }
         return $wmts;
     }
@@ -174,7 +161,7 @@ class TmsCapabilitiesParser100
     /**
      * Parses the Service section of the GetCapabilities document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
+     * @param WmtsSource $wmts
      * @param \DOMElement $cntxt the element to use as context for
      * the Service section
      */
@@ -184,16 +171,15 @@ class TmsCapabilitiesParser100
         $wmts->setTitle($this->getValue("./Title/text()", $cntxt));
         $wmts->setDescription($this->getValue("./Abstract/text()", $cntxt));
 
-        $keywordsStr = $this->getValue("./KeywordList/text()", $cntxt);
-        if ($keywordsStr && $keywordList = explode(' ', $keywordsStr)) {
-            $keywords      = new ArrayCollection();
-            foreach ($keywordList as $keyword) {
+        $keywords = explode(' ', $this->getValue("./KeywordList/text()", $cntxt));
+        foreach ($keywords as $value) {
+            $value = trim($value);
+            if ($value) {
                 $keyword = new WmtsSourceKeyword();
-                $keyword->setValue(trim($keyword));
+                $keyword->setValue($value);
                 $keyword->setReferenceObject($wmts);
-                $keywords->add($keyword);
+                $wmts->addKeyword($keyword);
             }
-            $wmts->setKeywords($keywords);
         }
 
         $contact = new Contact();
@@ -236,7 +222,7 @@ class TmsCapabilitiesParser100
         $wmts->setContact($contact);
     }
     
-    public function parseTileMap(WmtsSource &$wmts, \DOMElement $cntx, $url, $layerIdent)
+    public function parseTileMap(WmtsSource $wmts, \DOMElement $cntx, $url, $layerIdent)
     {
 //        $title   = $this->getValue("./@title", $titleMapElt);
 //        $srs     = $this->getValue("./@srs", $titleMapElt);
@@ -281,20 +267,6 @@ class TmsCapabilitiesParser100
             floatval($this->getValue("./Origin/@y", $cntx))
         );
 
-        /* TODO
-         * /TileMap/Metadata
-         * /TileMap/Attribution
-            | <Attribution>
-            |   <Title>Goverment of British Columbia</Title>
-            |   <Logo width="10" height="10" href="http://www.gov.bc.ca/logo.gif" mime-type="image/gif" />
-            | </Attribution>
-         * /TileMap/WebMapContext
-            | <WebMapContext href="http://openmaps.gov.bc.ca" />
-         * /TileMap/Face
-            | <Face>0</Face>
-         */
-
-//        $ident = $this->getValue("./TileSets/@profile", $cntx) . $srs
         $tileSetsSet = new TileMatrixSet();
         $tileSetsSet->setIdentifier($layerIdent);
         $tileSetsSet->setTitle($this->getValue("./Title/text()", $cntx));

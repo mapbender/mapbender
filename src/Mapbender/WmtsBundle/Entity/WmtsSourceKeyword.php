@@ -26,11 +26,12 @@ class WmtsSourceKeyword extends Keyword
     /**
      * Set reference object
      *
-     * @return ContainingKeyword
+     * @return $this
      */
     public function setReferenceObject(ContainingKeyword $wmtssource)
     {
         $this->reference = $wmtssource;
+        return $this;
     }
 
     /**

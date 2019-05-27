@@ -14,7 +14,6 @@ use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\Identifier;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -37,7 +36,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
+    protected $source;
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
@@ -104,11 +103,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @ORM\Column(type="object",nullable=true)
      */
     protected $scale;
-
-    /**
-     * @ORM\Column(type="object",nullable=true)
-     */
-    protected $scaleHint;
 
     /**
      * @ORM\Column(type="object", nullable=true)
@@ -659,42 +653,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get scale hint
-     *
-     * @return MinMax
-     */
-    public function getScaleRecursive()
-    {
-        $minScale = $this->getMinScale(true);
-        $maxScale = $this->getMaxScale(true);
-        $mergedScale = new MinMax($minScale, $maxScale);
-
-        return $mergedScale;
-    }
-
-    /**
-     * Set scaleHint
-     *
-     * @param MinMax $scaleHint
-     * @return $this
-     */
-    public function setScaleHint(MinMax $scaleHint = null)
-    {
-        $this->scaleHint = $scaleHint;
-        return $this;
-    }
-
-    /**
-     * Get scaleHint
-     *
-     * @return MinMax
-     */
-    public function getScaleHint()
-    {
-        return $this->scaleHint;
-    }
-
-    /**
      * Set attribution
      *
      * @param Attribution $attribution
@@ -969,14 +927,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getClassname()
-    {
-        return get_class();
     }
 
     public function __toString()

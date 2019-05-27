@@ -122,15 +122,6 @@
 
     </li>
   {% endif %}
-  {% if layer.scaleHint is defined and layer.scaleHint != '' %}
-  <li>
-    <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scalehint" | trans }}:</span>
-    <span class="metaText">
-      {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{% if layer.scaleHint.min is not null %}{{ layer.scaleHint.min }}{% endif %}<br/>
-      {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{% if layer.scaleHint.max is not null %}{{ layer.scaleHint.max }}{% endif %}
-    </span>
-  </li>
-  {% endif %}
   {% if layer.attribution is defined and layer.attribution != '' and layer.attribution|length > 0 %}
     <li>
       <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.attribution" | trans }}:</span>

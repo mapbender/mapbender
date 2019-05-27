@@ -4,6 +4,7 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source implements HttpOriginInterface
+class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword
 {
     /**
      * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
@@ -260,27 +261,6 @@ class WmtsSource extends Source implements HttpOriginInterface
     {
         return $this->accessConstraints;
     }
-
-    /**
-     * Set serviceType
-     * @param string $serviceType
-     * @return $this
-     */
-    public function setServiceType($serviceType)
-    {
-        $this->serviceType = $serviceType;
-        return $this;
-    }
-
-    /**
-     * Get serviceType
-     * @return string
-     */
-    public function getServiceType()
-    {
-        return $this->serviceType;
-    }
-
 
     /**
      * Set layers

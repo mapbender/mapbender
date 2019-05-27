@@ -169,16 +169,6 @@ abstract class Source
     }
 
     /**
-     * Get full class name
-     *
-     * @return string
-     */
-    public function getClassname()
-    {
-        return get_class();
-    }
-
-    /**
      * Set valid
      *
      * @param  boolean $valid

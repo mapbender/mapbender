@@ -17,7 +17,7 @@ abstract class WmtsCapabilitiesParser
 {
     /**
      * The XML representation of the Capabilites Document
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     protected $doc;
 
@@ -56,8 +56,10 @@ abstract class WmtsCapabilitiesParser
                 return null;
             }
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
+                /** @var \DOMAttr $elm */
                 return $elm->value;
             } elseif ($elm->nodeType == XML_TEXT_NODE) {
+                /** @var \DOMText $elm */
                 return $elm->wholeText;
             } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
                 return $elm;
@@ -79,14 +81,13 @@ abstract class WmtsCapabilitiesParser
      * Creates a document
      *
      * @param string $data the string containing the XML
-     * @param boolean $validate to validate of xml
      * @return \DOMDocument a GetCapabilites document
      * @throws XmlParseException if a GetCapabilities xml is not valid
      * @throws WmtsException if an service exception
      * @throws NotSupportedVersionException if a service version is not supported
      * @throws NoWmtsDocument
      */
-    public static function createDocument($data, $validate = false)
+    public static function createDocument($data)
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
@@ -94,69 +95,22 @@ abstract class WmtsCapabilitiesParser
         }
         // substitute xincludes
         $doc->xinclude();
-        $a = $doc->documentElement->tagName;
-        if (is_integer(strpos($doc->documentElement->tagName, "Exception"))) {
-            $message = $doc->documentElement->nodeValue;
+        $rootTag = $doc->documentElement;
+        $rootTagName = $rootTag->tagName;
+        if (is_integer(strpos($rootTagName, "Exception"))) {
+            $message = $rootTag->nodeValue;
             throw new WmtsException($message);
-        } elseif (is_integer(strpos($doc->documentElement->tagName, "TileMapService"))) {
+        } elseif (is_integer(strpos($rootTagName, "TileMapService"))) {
             throw new NoWmtsDocument("TileMapService");
         }
 
-        if ($doc->documentElement->tagName !== "Capabilities") {
+        if ($rootTagName !== "Capabilities") {
             throw new NotSupportedVersionException("mb.wmts.repository.parser.not_supported_document");
         }
 
-        $version = $doc->documentElement->getAttribute("version");
+        $version = $rootTag->getAttribute("version");
         if ($version !== "1.0.0") {
             throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
-        }
-        return $doc;
-    }
-
-    public static function getSchemas(\DOMDocument $doc)
-    {
-        $schemaLocations = array();
-        $element = $dom->documentElement->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'schemaLocation');
-        if ($element) {
-            $items = preg_split('/\s+/', $element);
-            for ($i = 0, $nb = count($items); $i < $nb; $i += 2) {
-                $schemaLocations[$items[$i - 1]] = $items[$i];
-            }
-        }
-        return $schemaLocations;
-    }
-
-    public static function validate(\DOMDocument $doc)
-    {
-//        $doc = new \DOMDocument();
-        if (!@$doc->loadXML($data, $validate && isset($doc->doctype) ? LIBXML_DTDLOAD | LIBXML_DTDVALID : 0)) {
-            throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
-        }
-        // substitute xincludes
-        $doc->xinclude();
-        if ($doc->documentElement->tagName == "ServiceExceptionReport") {
-            $message = $doc->documentElement->nodeValue;
-            throw new WmtsException($message);
-        }
-
-        if ($doc->documentElement->tagName !== "Capabilities") {
-            throw new NotSupportedVersionException("mb.wmts.repository.parser.not_supported_document");
-        }
-
-        $version = $doc->documentElement->getAttribute("version");
-        if ($version !== "1.1.1" && $version !== "1.0.0") {
-            throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
-        }
-
-        if ($validate) {
-            if (isset($doc->doctype) && !@$doc->validate()) { // check with DTD
-                throw new XmlParseException("mb.wmts.repository.parser.not_valid_dtd");
-            } elseif (!isset($doc->doctype)) {
-                // TODO create CREATEDSCHEMA
-                if ($version === '1.0.0' && !$doc->schemaValidate('CREATEDSCHEMA')) {
-                    throw new XmlParseException("mb.wmts.repository.parser.not_valid_xsd");
-                }
-            }
         }
         return $doc;
     }

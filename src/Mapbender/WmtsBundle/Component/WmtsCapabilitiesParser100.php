@@ -107,7 +107,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $keyword->setReferenceObject($wmts);
             $keywords->add($keyword);
         }
-        $wmts->setServiceType($this->getValue("./ows:ServiceType/text()", $contextElm));
         $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
         $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
     }
@@ -334,10 +333,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $tileMatrix->setIdentifier($this->getValue("./ows:Identifier/text()", $tileMatrixEl));
             $tileMatrix
                 ->setScaledenominator(floatval($this->getValue("./wmts:ScaleDenominator/text()", $tileMatrixEl)));
-            $topleft = array_map(
-                create_function('$value', 'return (float) $value;'),
-                explode(' ', $this->getValue("./wmts:TopLeftCorner/text()", $tileMatrixEl))
-            );
+            $topleft = array_map('\floatval', explode(' ', $this->getValue("./wmts:TopLeftCorner/text()", $tileMatrixEl)));
             $tileMatrix->setTopleftcorner($topleft);
             $tileMatrix->setMatrixwidth(intval($this->getValue("./wmts:MatrixWidth/text()", $tileMatrixEl)));
             $tileMatrix->setMatrixheight(intval($this->getValue("./wmts:MatrixHeight/text()", $tileMatrixEl)));

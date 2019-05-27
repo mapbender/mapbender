@@ -109,16 +109,6 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns a full class name
-     *
-     * @return string
-     */
-    public function getClassname()
-    {
-        return get_class();
-    }
-
-    /**
      * Sets a weight
      *
      * @param integer $weight
@@ -231,25 +221,10 @@ abstract class SourceInstance
     abstract public function setId($id);
 
     /**
-     * Sets a configuration of a source instance
-     *
-     * @param array $configuration configuration of a source instance
-     */
-    abstract public function setConfiguration($configuration);
-
-    /**
-     *  Returns a configuration of a source instance
-     *
-     * @return array instance configuration
-     */
-    abstract public function getConfiguration();
-
-    /**
      *
      * @return SourceMetadata|null
      */
     abstract public function getMetadata();
-
 
     /**
      * @return string
