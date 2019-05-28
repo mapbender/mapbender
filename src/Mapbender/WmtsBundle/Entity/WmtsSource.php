@@ -105,7 +105,7 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     protected $themes;
 
     /**
-     * @var ArrayCollection A list of WMTS layers
+     * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */

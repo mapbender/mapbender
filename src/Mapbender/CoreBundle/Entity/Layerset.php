@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 
 /**
  * Layerset configuration entity
@@ -59,12 +58,7 @@ class Layerset
     }
 
     /**
-     * Set id. DANGER
-     *
-     * Set the entity id. DO NOT USE THIS unless you know what you're doing.
-     * Probably the only place where this should be used is in the
-     * ApplicationYAMLMapper class. Maybe this could be done using a proxy
-     * class instead?
+     * Set id.
      *
      * @param $id
      * @return $this

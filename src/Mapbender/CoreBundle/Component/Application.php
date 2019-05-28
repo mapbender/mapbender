@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application as Entity;
+use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -206,7 +207,9 @@ class Application
      */
     public static function generateSlug($container, $slug, $suffix = 'copy')
     {
-        $application = $container->get('mapbender')->getApplicationEntity($slug);
+        /** @var Mapbender $mapbender */
+        $mapbender = $container->get('mapbender');
+        $application = $mapbender->getApplicationEntity($slug);
         if (!$application) {
             return $slug;
         } else {
