@@ -246,46 +246,24 @@ $(function() {
 
         return false;
     });
-    var popup;
-
-    var deleteUserGroup = function(){
-        var self = $(this);
-        var parent = self.parent().parent();
-        var userGroup = ((parent.find(".iconUser").length == 1) ? "user " : "group ") + parent.find(".labelInput").text();
-
-        if(popup){
-            popup = popup.destroy();
-        }
-        popup = new Mapbender.Popup2({
-            title: Mapbender.trans('fom.core.components.popup.delete_user_group.title'),
-            closeOnOutsideClick: true,
-            content: [ Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}) ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans('fom.core.components.popup.delete_user_group.btn.cancel'),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans('fom.core.components.popup.delete_user_group.btn.ok'),
-                    cssClass: 'button right',
-                    callback: function() {
-                        parent.remove();
-                        this.close();
-                    }
-                }
-            }
+    $("#permissionsBody").on("click", '.iconRemove', function() {
+        var $row = $(this).closest('tr');
+        var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
+        var content = [
+            '<div>',
+            Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}),
+            '</div>'
+            ].join('');
+        var labels = {
+            // @todo: bring your own translation string
+            title: "mb.manager.components.popup.delete_element.title",
+            cancel: "mb.manager.components.popup.delete_element.btn.cancel",
+            confirm: "mb.manager.components.popup.delete_element.btn.ok"
+        };
+        Mapbender.Manager.confirmDelete(null, null, labels, content).then(function() {
+            $row.remove();
         });
-        return false;
-    }
-    $("#permissionsBody").on("click", '.iconRemove', deleteUserGroup);
-
-
-
-
-
+    });
 
     // init open toggle trees ----------------------------------------------------------------
     var toggleTree = function(){

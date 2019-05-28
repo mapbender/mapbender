@@ -25,6 +25,7 @@ class ManagerTemplate extends Template
         '@FOMCoreBundle/Resources/public/js/components.js',
         '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
         '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+        '@MapbenderManagerBundle/Resources/public/js/confirm-delete.js',
     );
 
     protected static $translations = array(

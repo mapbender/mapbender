@@ -2,12 +2,13 @@
     window.Mapbender = Mapbender || {};
     window.Mapbender.Manager = Mapbender.Manager || {};
     window.Mapbender.Manager.confirmDelete = function($el, deleteUrl, strings, popupContent) {
-        var defaultContent = $('<div/>').text($el.attr('title') + '?').html();
-        var deleteUrl_ = deleteUrl || $el.attr('data-url') || $el.attr('href');
-        if (!deleteUrl_) {
+        var defaultContent = $el && ($('<div/>').text($el.attr('title') + '?').html());
+        var deleteUrl_ = deleteUrl || ($el && ($el.attr('data-url') || $el.attr('href')));
+        if (false && !deleteUrl_) {
             console.error("Could not url of final delete action", $el);
             throw new Error("Could not url of final delete action");
         }
+        var deferred = $.Deferred();
         var popupOptions = {
             title: Mapbender.trans(strings.title),
             subTitle: strings.subTitle && (' - ' + Mapbender.trans(strings.subTitle)),
@@ -19,13 +20,22 @@
                     label: Mapbender.trans(strings.confirm),
                     cssClass: 'button',
                     callback: function() {
-                        $.ajax({
-                            url: deleteUrl_,
-                            type: 'POST',
-                            success: function() {
+                        if (deleteUrl_) {
+                            var popup = this;
+                            $.ajax({
+                                url: deleteUrl_,
+                                type: 'POST'
+                            }).then(function() {
+                                deferred.resolve(arguments);
                                 window.location.reload();
-                            }
-                        });
+                            }, function() {
+                                popup.close();
+                                deferred.resolve(arguments);
+                            });
+                        } else {
+                            this.close();
+                            deferred.resolve();
+                        }
                     }
                 },
                 {
@@ -33,10 +43,12 @@
                     cssClass: 'button buttonCancel critical',
                     callback: function() {
                         this.close();
+                        deferred.reject();
                     }
                 }
             ]
         };
-        return new Mapbender.Popup(popupOptions);
+        (new Mapbender.Popup(popupOptions));
+        return deferred.promise();
     };
 })(jQuery));
