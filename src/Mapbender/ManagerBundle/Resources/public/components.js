@@ -16,7 +16,7 @@ $(function() {
     var tabs = $(".tabContainer").find(".tab");
     tabs.attr("tabindex", 0);
     tabs.bind("click keypress", function(e) {
-        if(e.type == "keypress" && e.keyCode != 13) {
+        if (e.type === "keypress" && e.keyCode !== 13) {
             return;
         }
 
@@ -265,19 +265,18 @@ $(function() {
         });
     });
 
-    // init open toggle trees ----------------------------------------------------------------
-    var toggleTree = function(){
-        var me     = $(this);
-        var parent = me.parent();
-        if(parent.hasClass("closed")){
-            me.removeClass("iconExpandClosed").addClass("iconExpand");
-            parent.removeClass("closed");
+
+    $(".openCloseTitle").on("click", function() {
+        var $title = $(this);
+        var $list = $title.parent();
+        if ($list.hasClass("closed")) {
+            $title.removeClass("iconExpandClosed").addClass("iconExpand");
+            $list.removeClass("closed");
         }else{
-            me.addClass("iconExpandClosed").removeClass("iconExpand");
-            parent.addClass("closed");
+            $title.addClass("iconExpandClosed").removeClass("iconExpand");
+            $list.addClass("closed");
         }
-    }
-    $(".openCloseTitle").bind("click", toggleTree);
+    });
     $('.regionProperties .radiobox').each(function() {
         $(this).parent(".radioWrapper").attr('data-icon')
         initRadioButton.call(this, false, $(this).parent(".radioWrapper").attr('data-icon') + $(this).val());
