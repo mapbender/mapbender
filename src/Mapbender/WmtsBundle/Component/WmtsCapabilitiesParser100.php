@@ -44,7 +44,8 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
      */
     public function parse()
     {
-        $wmtssource = new WmtsSource(WmtsSource::TYPE_WMTS);
+        $wmtssource = new WmtsSource();
+        $wmtssource->setType(WmtsSource::TYPE_WMTS);
         $root       = $this->doc->documentElement;
 
         $wmtssource->setVersion($this->getValue("./@version", $root));
@@ -326,10 +327,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $tileMatrix->setIdentifier($this->getValue("./ows:Identifier/text()", $tileMatrixEl));
             $tileMatrix
                 ->setScaledenominator(floatval($this->getValue("./wmts:ScaleDenominator/text()", $tileMatrixEl)));
-            $topleft = array_map(
-                create_function('$value', 'return (float) $value;'),
-                explode(' ', $this->getValue("./wmts:TopLeftCorner/text()", $tileMatrixEl))
-            );
+            $topleft = array_map('\floatval', explode(' ', $this->getValue("./wmts:TopLeftCorner/text()", $tileMatrixEl)));
             $tileMatrix->setTopleftcorner($topleft);
             $tileMatrix->setMatrixwidth(intval($this->getValue("./wmts:MatrixWidth/text()", $tileMatrixEl)));
             $tileMatrix->setMatrixheight(intval($this->getValue("./wmts:MatrixHeight/text()", $tileMatrixEl)));

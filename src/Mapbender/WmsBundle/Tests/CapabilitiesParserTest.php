@@ -29,20 +29,6 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testMinimalInvalidNoName(){
-        // names are important but if they are missing they should not cause problems
-        $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimalinvalid.noname.xml"));
-        $doc = WmsCapabilitiesParser::createDocument($data);
-        $parser  = WmsCapabilitiesParser::getParser($doc);
-        try {
-            $wms = $parser->parse();
-        }
-        catch(Exception $E){
-            $this->assertSame("",$wms->getName());
-        }
-
-    }
-
     public function testLayersRootLayerOnly(){
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $doc = WmsCapabilitiesParser::createDocument($data);

@@ -25,31 +25,30 @@ class WmtsSourceSimpleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            // Base data
-            ->add('onlyvalid', 'checkbox',
-                array(
-                'mapped' => false,
-                'data' => true,
-                'attr' => array(
-                    'title' => 'The application title, as shown in the browser '
-                    . 'title bar and in lists.')))
-            ->add('originUrl', 'text',
-                array(
+            ->add('originUrl', 'text', array(
                 'required' => true,
+                'label' => 'mb.manager.source.serviceurl',
                 'attr' => array(
-                    'title' => 'The wmts GetCapabilities url.')))
-            ->add('username', 'text',
-                array(
+                    'title' => 'The wmts GetCapabilities url',
+                ),
+            ))
+            ->add('username', 'text', array(
                 'required' => false,
+                'label' => 'mb.manager.source.username',
                 'attr' => array(
                     'title' => 'The username.',
-                    'autocomplete' => 'off')))
+                    'autocomplete' => 'off',
+                ),
+            ))
             ->add('password', 'password',
                 array(
                 'required' => false,
+                'label' => 'mb.manager.source.password',
                 'attr' => array(
-                    'title' => 'The password.',
-                    'autocomplete' => 'off')));
+                    'autocomplete' => 'off',
+                ),
+            ))
+        ;
     }
 
 }

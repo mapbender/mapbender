@@ -151,38 +151,7 @@ mb:
             save: Guardar
         form:
           label:
-            ogcwms: 'OGC WMS'
             onlyvalid: 'only valid'
-            serviceurl: 'URL de serviço'
-            username: 'Nome de usuário'
-            password: Senha
-            load: Carregar
-            cancel: Cancelar
-            metadata: Metadados
-            contact: Contato
-            details: Detalhes
-            layers: Camada
-            title: Título
-            name: Nome
-            version: Versão
-            originurl: 'URL de origem'
-            abstract: Descrição
-            onlineresource: 'Recurso online'
-            exceptionformats: 'Formatos de exceção'
-            fees: Taxa
-            accessconstraints: 'Limitações de acesso'
-            person: Pessoa
-            organization: Organização
-            position: Posição
-            telephone: Telefone
-            facsimile: Fax
-            email: Email
-            address: Endereço
-            addresstype: 'Tipo de endereço'
-            city: Cidade
-            state: Estado
-            postcode: 'Código postal'
-            country: País
           message:
             cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
       class:

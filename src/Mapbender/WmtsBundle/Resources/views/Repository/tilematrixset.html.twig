@@ -1,5 +1,5 @@
 <ul class="itemLevel1 list">  
-  <li class="openCloseTitle hover-highlight-effect {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ tilematrixset.identifier }}</li>
+  <li class="openCloseTitle iconExpandClosed">{{ tilematrixset.identifier }}</li>
   <li>
     <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</span>
     <span class="metaText">{{ tilematrixset.identifier }}</span>
@@ -16,13 +16,12 @@
     <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</span>
     <span class="metaText">{{ tilematrixset.abstract }}</span>
   </li>
-  <ul class="itemLevel2 list closed">
-      <li class="openCloseTitle hover-highlight-effect iconExpandClosed">{{ "mb.wmts.wmtsloader.repo.tilematrixset.matrixes" | trans }}</li>
   <li>
-  {% for tilematrix in tilematrixset.tilematrices %}
-    <ul class="itemLevel2 list">
-    {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig"  with {'tilematrix': tilematrix, 'itemLevel': 2 }%}
+    <ul class="itemLevel2 list closed">
+      <li class="openCloseTitle iconExpandClosed">{{ "mb.wmts.wmtsloader.repo.tilematrixset.matrixes" | trans }}</li>
+      {% for tilematrix in tilematrixset.tilematrices %}
+        {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
+      {% endfor %}
     </ul>
-  {% endfor %}
   </li>
 </ul>

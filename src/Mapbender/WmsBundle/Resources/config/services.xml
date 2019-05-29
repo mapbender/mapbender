@@ -10,6 +10,8 @@
         <parameter key="mapbender.preview.element.dimensionshandler">true</parameter>
         <!-- set this to true in your parameters.yml to enable layer order control in "Layersets" backend -->
         <parameter key="mapbender.preview.layer_order.wms">true</parameter>
+        <!-- null for built-in source service default -->
+        <parameter key="wms.default_layer_order">null</parameter>
     </parameters>
     <services>
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
@@ -17,7 +19,9 @@
             <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.source.url_processor.service" />
+            <argument type="service" id="security.token_storage" />
+            <argument>%wms.default_layer_order%</argument>
         </service>
         <!-- servicy form type for wms instances; required to inject other services / params -->
         <service id="mapbender.sourceinstance.wms.form" class="Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType">

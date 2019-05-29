@@ -3,11 +3,10 @@
 namespace Mapbender\WmtsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
-use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
+use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
+use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
@@ -19,72 +18,44 @@ use Mapbender\WmtsBundle\Entity\WmtsSource;
  */
 class WmtsSourceEntityHandler extends SourceEntityHandler
 {
-
     /**
      * @inheritdoc
      */
-    public function create()
+    public function createInstance()
     {
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($this->entity);
-        $cont = $this->entity->getContact();
-        if ($cont == null) {
-            $cont = new Contact();
-            $this->entity->setContact($cont);
-        }
-        $entityManager->persist($cont);
-        foreach ($this->entity->getLayers() as $layer) {
-            $entityManager->persist($layer);
-        }
-        foreach ($this->entity->getThemes() as $theme) {
-            $themeHandler = new ThemeEntityHandler($this->container, $theme);
-            $themeHandler->save();
-        }
-        foreach ($this->entity->getTilematrixsets() as $tms) {
-            $entityManager->persist($tms);
-        }
-        $entityManager->persist($this->entity);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createInstance(Layerset $layerset = NULL)
-    {
+        $source = $this->entity;
         $instance = new WmtsInstance();
         $instance->setSource($this->entity);
-        $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
-        $instanceHandler->create();
-        if ($layerset) {
-            $instance->setLayerset($layerset);
-            $num = 0;
-            foreach ($layerset->getInstances() as $instanceAtLayerset) {
-                /** @var WmsInstance|WmtsInstance $instanceAtLayerset */
-                $instanceAtLayerset->setWeight($num);
-                $num++;
-            }
+        $instance->setTitle($source->getTitle());
+        $instance->setRoottitle($source->getTitle());
+
+        foreach ($source->getLayers() as $layer) {
+            $instLayer = $this->createInstanceLayer($layer);
+            $instLayer->setSourceInstance($instance);
+            $instance->addLayer($instLayer);
         }
         return $instance;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function remove()
+    protected function createInstanceLayer(WmtsLayerSource $sourceLayer)
     {
-        foreach ($this->entity->getThemes() as $theme) {
-            $themeHandler = new ThemeEntityHandler($this->container, $theme);
-            $themeHandler->remove();
+        $instanceLayer = new WmtsInstanceLayer();
+        $instanceLayer->setSourceItem($sourceLayer);
+        $instanceLayer->setTitle($sourceLayer->getTitle());
+        $infoFormats = array_values(array_filter($sourceLayer->getInfoformats() ?: array()));
+        if ($infoFormats) {
+            $instanceLayer->setInfoformat($infoFormats[0]);
+            $instanceLayer->setInfo(true);
+            $instanceLayer->setAllowinfo(true);
         }
-        $this->getEntityManager()->remove($this->entity);
+        $styles = $sourceLayer->getStyles();
+        if ($styles && count($styles)) {
+            $instanceLayer->setStyle($styles[0]->identifier);
+        }
+        return $instanceLayer;
     }
+
+
 
     /**
      * @inheritdoc

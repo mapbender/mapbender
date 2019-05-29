@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\DataFixtures\ORM\Application;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Mapbender\CoreBundle\Mapbender;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,6 +31,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
      */
     public function load(ObjectManager $manager = null)
     {
+        /** @var Mapbender $core */
         $core = $this->container->get("mapbender");
         foreach ($core->getYamlApplicationEntities(true) as $slug => $application) {
             $core->importYamlApplication($slug);

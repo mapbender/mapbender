@@ -52,12 +52,6 @@ mb:
             country: Страна
         form:
           label:
-            ogcwms: 'OGC WMS'
-            serviceurl: 'Сервис URL'
-            username: 'Имя пользователя'
-            password: Пароль
-            load: Загрузить
-            cancel: Отменить
             onlyvalid: 'Валидировать'
         new:
           label:
@@ -225,15 +219,6 @@ mb:
       instance:
         label:
           dimensions: Dimensions
-    dimhandler:
-      class:
-        title: 'Dimensions handler'
-        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
-      tag:
-        dimension: dimension
-        handler: handler
-    dimensionsets:
-      no_dimension: 'no dimension'
   wmc:
     wmsloader:
       class:

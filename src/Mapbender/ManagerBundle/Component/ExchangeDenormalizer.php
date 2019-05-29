@@ -2,11 +2,9 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Utils\EntityUtil;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
 
 /**
  *
@@ -25,8 +23,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
 
     protected $data;
 
-    /** @var \ReflectionMethod[][] */
-    protected static $classPropertySetters = array();
+    protected $classMapping = array(
+        'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
+        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
+        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',
+        'Mapbender\WmtsBundle\Entity\Style' => 'Mapbender\WmtsBundle\Component\Style',
+    );
 
     /**
      * Creates an instance.
@@ -54,15 +56,13 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
 
     public function getEntityData($class, array $criteria)
     {
-        if (!is_string($class)) {
-            return null;
-        }
         if (isset($this->data[$class])) {
             foreach ($this->data[$class] as $item) {
                 $found = true;
                 foreach ($criteria as $key => $value) {
                     if (!isset($item[$key]) || $item[$key] !== $value) {
                         $found = false;
+                        break;
                     }
                 }
                 if ($found) {
@@ -80,24 +80,11 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function handleData($data)
     {
-        if (is_array($data) && $classDef = $this->getClassDefinition($data)) {
+        if ($className = $this->getClassName($data)) {
             try {
-                $meta = $this->em->getClassMetadata($classDef[0]);
-                $identFields = $this->extractFields($data, $meta->getIdentifier());
-                if ($this->isReference($data, $identFields)) {
-                    if ($object = $this->getAfterFromBefore($classDef[0], $identFields)) {
-                        return $object['object'];
-                    } elseif ($objectdata = $this->getEntityData($classDef[0], $identFields)) {
-                        $object        = $this->handleEntity($objectdata, $meta);
-                        return $object;
-                    }
-                    return null;
-                } else {
-                    $object        = $this->handleEntity($data, $meta);
-                    return $object;
-                }
+                return $this->handleEntity($className, $data);
             } catch (MappingException $e) {
-                return $this->handleClass($data, $this->getReflectionClass($classDef[0]));
+                return $this->handleClass($className, $data);
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -123,26 +110,42 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     }
 
     /**
+     * @param string $className
      * @param array $data
-     * @param ClassMetadata $classMeta
-     * @return object
+     * @return object|null
      * @throws \Doctrine\ORM\ORMException
+     * @throws MappingException
      */
-    public function handleEntity(array $data, ClassMetadata $classMeta)
+    public function handleEntity($className, array $data)
     {
-        $args   = $this->getClassConstructParams($data) ? : array();
-        $reflectionClass = $classMeta->getReflectionClass();
-        $object = $reflectionClass->newInstanceArgs($args);
-        foreach ($classMeta->getFieldNames() as $fieldName) {
-            if (!in_array($fieldName, $classMeta->getIdentifier()) && isset($data[$fieldName])
-                && $setMethod = $this->getSetMethod($fieldName, $reflectionClass)) {
+        $classMeta = $this->em->getClassMetadata($className);
+        $identFieldNames = $classMeta->getIdentifier();
+        $identValues = $this->extractFields($data, $identFieldNames);
+        if ($this->isReference($data, $identValues)) {
+            if ($object = $this->getAfterFromBefore($className, $identValues)) {
+                return $object['object'];
+            } elseif ($objectdata = $this->getEntityData($className, $identValues)) {
+                $data = $objectdata;
+            } else {
+                return null;
+            }
+        }
+
+        $reflectionInfo = $this->getReflectionInfo($className);
+        $setters = $reflectionInfo['setters'];
+        $object = new $className();
+        $nonIdentifierFieldNames = array_diff($classMeta->getFieldNames(), $identFieldNames);
+        foreach ($nonIdentifierFieldNames as $fieldName) {
+            if (isset($data[$fieldName]) && array_key_exists($fieldName, $setters)) {
+                /** @var \ReflectionMethod $setter */
+                $setter = $setters[$fieldName];
                 $value = $this->handleData($data[$fieldName]);
                 $fm    = $classMeta->getFieldMapping($fieldName);
                 if ($fm['unique']) {
                     $value =
                         EntityUtil::getUniqueValue($this->em, $classMeta->getName(), $fm['columnName'], $value, '_imp');
                 }
-                $setMethod->invoke($object, $value);
+                $setter->invoke($object, $value);
             }
         }
 
@@ -150,57 +153,49 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if ($this->doFlush) {
             $this->em->flush();
         }
-        $this->addToMapper($object, $data, $classMeta);
+        $this->addToMapper($identValues, $object);
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
             if (is_a($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword", true)) {
                 continue;
             }
-            $setMethod = $this->getSetMethod($assocItem['fieldName'], $reflectionClass);
-            if ($setMethod && isset($data[$assocItem['fieldName']])) {
+            $assocFieldName = $assocItem['fieldName'];
+            if (array_key_exists($assocFieldName, $setters) && isset($data[$assocFieldName])) {
+                /** @var \ReflectionMethod $setter */
+                $setter = $setters[$assocFieldName];
                 $result = $this->handleData($data[$assocItem['fieldName']]);
                 if (is_array($result)) {
                     if (count($result)) {
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
-                        $setMethod->invoke($object, $collection);
-                        $this->em->persist($object);
-                        if ($this->doFlush) {
-                            $this->em->flush();
-                        }
+                        $setter->invoke($object, $collection);
                     }
                 } else {
-                    $setMethod->invoke($object, $result);
-                    $this->em->persist($object);
-                    if ($this->doFlush) {
-                        $this->em->flush();
-                    }
+                    $setter->invoke($object, $result);
+                }
+                $this->em->persist($object);
+                if ($this->doFlush) {
+                    $this->em->flush();
                 }
             }
         }
         return $object;
     }
 
-    public function handleClass(array $data, \ReflectionClass $class)
+    public function handleClass($className, array $data)
     {
-        $args = $this->getClassConstructParams($data) ? : array();
-        $object               = $class->newInstanceArgs($args);
-        foreach ($class->getProperties() as $property) { # only for mapbender classes
-            if (isset($data[$property->getName()]) && $setMethod = $this->getSetMethod($property->getName(), $class)) {
-                $value = $this->handleData($data[$property->getName()]);
+        $reflectionInfo = $this->getReflectionInfo($className);
+        $object = new $className();
+        foreach ($reflectionInfo['setters'] as $propertyName => $setter) {
+            /** @var \ReflectionMethod $setter */
+            if (isset($data[$propertyName])) {
+                $value = $this->handleData($data[$propertyName]);
                 if (is_array($value)) {
                     if (count($value)) {
-                        if ($setMethod->name === 'setLegendUrl') {
-                            $rcl = new \ReflectionClass(new LegendUrl());
-                            $value = $this->handleClass($value, $rcl);
-                        } elseif ($setMethod->name === 'setOnlineResource') {
-                            $rcl = new \ReflectionClass(new OnlineResource());
-                            $value = $this->handleClass($value, $rcl);
-                        }
-                        $setMethod->invoke($object, $value);
+                        $setter->invoke($object, $value);
                     }
                 } else {
-                    $setMethod->invoke($object, $value);
+                    $setter->invoke($object, $value);
                 }
             }
         }
@@ -212,25 +207,23 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      * support lookups of the instance from pre-import references -- most notably newly assigned
      * ids.
      *
+     * @param array $identData
      * @param object $object object
-     * @param array $data from which the object was created
-     * @param ClassMetaData $classMeta
      */
-    public function addToMapper($object, array $data, ClassMetadata $classMeta)
+    public function addToMapper(array $identData, $object)
     {
-        $realClass = $this->getRealClass($object);
+        $realClass = ClassUtils::getClass($object);
         if (!isset($this->mapper[$realClass])) {
             $this->mapper[$realClass] = array();
         }
-        $criteriaBefore = $this->getIdentCriteria($data, $classMeta);
         foreach ($this->mapper[$realClass] as $mapItem) {
-            if ($mapItem['before'] == $criteriaBefore) {
+            if ($mapItem['before'] == $identData) {
                 return;
             }
         }
-        $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
+        $criteriaAfter = $this->extractProperties($object, array_keys($identData));
         $this->mapper[$realClass][] = array(
-            'before' => $criteriaBefore,
+            'before' => $identData,
             'after' => array(
                 'criteria' => $criteriaAfter,
                 'object' => $object,
@@ -260,27 +253,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     }
 
     /**
-     * Returns an original object.
-     *
-     * @param string $class class name
-     * @param array $criteriaAfter
-     * @return array|null
-     */
-    public function getBeforeFromAfter($class, $criteriaAfter)
-    {
-        if (!isset($this->mapper[$class])) {
-            return null;
-        }
-
-        foreach ($this->mapper[$class] as $mapItem) {
-            if ($mapItem['after']['criteria'] == $criteriaAfter) {
-                return $mapItem['before'];
-            }
-        }
-        return null;
-    }
-
-    /**
      *
      * @inheritdoc
      */
@@ -300,55 +272,22 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         }
     }
 
+    /**
+     * @param $data
+     * @return string|null
+     */
     public function getClassName($data)
     {
-        $class = $this->getClassDefinition($data);
-        if (!$class) {
-            return null;
-        } else {
-            return $class[0];
+        if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
+            $className = $data[self::KEY_CLASS];
+            if (is_array($className)) {
+                $className = $className[0];
+            }
+            while (!empty($this->classMapping[$className])) {
+                $className = $this->classMapping[$className];
+            }
+            return $className;
         }
-    }
-
-    public function getClassDefinition($data)
-    {
-        if (!$data || !is_array($data)) {
-            return null;
-        } elseif (key_exists(self::KEY_CLASS, $data)) {
-            return $data[self::KEY_CLASS];
-        } else {
-            return null;
-        }
-    }
-
-    public function getClassConstructParams($data)
-    {
-        $class = $this->getClassDefinition($data);
-        if (!$class) {
-            return array();
-        } else {
-            return $class[1];
-        }
-    }
-
-    /**
-     * @param $fieldName
-     * @param \ReflectionClass $class
-     * @return \ReflectionMethod
-     */
-    public function getSetMethod($fieldName, \ReflectionClass $class)
-    {
-        $className = $class->getName();
-        if (!array_key_exists($className, static::$classPropertySetters)) {
-            static::$classPropertySetters[$className] = array();
-        }
-        if (!array_key_exists($fieldName, static::$classPropertySetters[$className])) {
-            $method = $this->getPropertyAccessor($class, $fieldName, array(
-                self::KEY_SET,
-                self::KEY_ADD,
-            ));
-            static::$classPropertySetters[$className][$fieldName] = $method;
-        }
-        return static::$classPropertySetters[$className][$fieldName];
+        return null;
     }
 }

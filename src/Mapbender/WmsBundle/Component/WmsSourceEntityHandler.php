@@ -1,89 +1,33 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
-use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsSourceEntityHandler
  *
  * @author Paul Schmidt
+ *
+ * @property WmsSource $entity
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
-    /** @var  WmsSource */
-    protected $entity;
-
     /**
-     * @inheritdoc
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        $this->persistRecursive($this->getEntityManager(), $this->entity);
-    }
-
-    /**
-     * Persists the source, all keywords and all layers, recursively.
+     * Creates a new WmsInstance from the bound WmsSource entity
      *
-     * @param ObjectManager $manager
-     * @param WmsSource $entity
-     */
-    private static function persistRecursive(ObjectManager $manager, WmsSource $entity)
-    {
-        $rootLayer = $entity->getRootlayer();
-        if ($rootLayer) {
-            WmsLayerSourceEntityHandler::persistRecursive($manager, $rootLayer);
-        }
-        $manager->persist($entity);
-        $cont = $entity->getContact();
-        if ($cont == null) {
-            $cont = new Contact();
-            $entity->setContact($cont);
-        }
-        $manager->persist($cont);
-        foreach ($entity->getKeywords() as $kwd) {
-            $manager->persist($kwd);
-        }
-    }
-
-    /**
-     * Creates a new WmsInstance, optionally attaches it to a layerset, then updates
-     * the ordering of the layers.
-     *
-     * @param Layerset|null $layerSet new instance will be attached to layerset if given
      * @return WmsInstance
      */
-    public function createInstance(Layerset $layerSet = null)
+    public function createInstance()
     {
         $instance = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->populateFromSource($this->entity);
-        if ($layerSet) {
-            $instance->setLayerset($layerSet);
-            $num = 0;
-            foreach ($layerSet->getInstances() as $instanceAtLayerset) {
-                /** @var WmsInstance $instanceAtLayerset */
-                $instanceAtLayerset->setWeight($num);
-                $num++;
-            }
-        }
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $directory->getSourceService($instance)->initializeInstance($instance);
@@ -144,33 +88,5 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if (!$transaction) {
             $em->getConnection()->commit();
         }
-    }
-
-    /**
-     * Find the named WmsLayerSource in the given WmsSource
-     *
-     * @param WmsSource $source
-     * @param string $layerName
-     * @return WmsLayerSource|null
-     */
-    public static function getLayerSourceByName(WmsSource $source, $layerName)
-    {
-        foreach ($source->getLayers() as $layer) {
-            if ($layer->getName() == $layerName) {
-                return $layer;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if service has auth information that needs to be hidden from client.
-     *
-     * @param WmsSource $source
-     * @return bool
-     */
-    public static function useTunnel(WmsSource $source)
-    {
-        return !!$source->getUsername();
     }
 }

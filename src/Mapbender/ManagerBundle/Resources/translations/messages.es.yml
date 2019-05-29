@@ -146,6 +146,12 @@ mb:
         description: Description
         template: Plantilla
       applications: Aplicaciones
+    source:
+      serviceurl: 'Servicio URL'
+      username: Usuario
+      password: Clave
+      load: Cargar
+      cancel: Cancelar
     managerbundle:
       applications: Aplicaciones
       new_application: 'Nueva aplicación'

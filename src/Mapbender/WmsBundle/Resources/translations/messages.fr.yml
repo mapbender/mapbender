@@ -152,13 +152,7 @@ mb:
             save: Sauvegarder
         form:
           label:
-            ogcwms: 'OGC WMS'
             onlyvalid: 'Valide seulement'
-            serviceurl: 'URL du service'
-            username: 'Nom d''utilisateur'
-            password: 'Mot de passe'
-            load: Charger
-            cancel: Annuler
       class:
         title: 'Chargeur de WMS'
         description: 'Charge un service WMS via une requête ''getCapabilities'''

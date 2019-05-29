@@ -1,19 +1,20 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
@@ -23,8 +24,9 @@ use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Mapbender\ManagerBundle\Form\Type\ExportJobType;
+use Mapbender\ManagerBundle\Form\Type\ImportJobType;
+use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -87,10 +89,13 @@ class ApplicationController extends WelcomeController
     public function exportAction(Request $request)
     {
         $expHandler = $this->getApplicationExporter();
-        $form = $expHandler->createForm();
-        if ($request->isMethod(Request::METHOD_POST) && $form->submit($request)->isValid()) {
-            /** @var ExportJob $job */
-            $job = $form->getData();
+        $job = new ExportJob();
+        $form = $this->createForm(new ExportJobType(), $job, array(
+            'application' => $this->getExportableApplications(),
+        ));
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $expHandler->exportApplication($job->getApplication());
             switch ($job->getFormat()) {
                 case ExportJob::FORMAT_JSON:
@@ -129,11 +134,11 @@ class ApplicationController extends WelcomeController
         $applicationOid = new ObjectIdentity('class', get_class(new Application()));
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);
         $impHandler = $this->getApplicationImporter();
+        $job = new ImportJob();
+        $form = $this->createForm(new ImportJobType(), $job);
+        $form->handleRequest($request);
 
-        $form = $impHandler->createForm();
-        if ($request->isMethod(Request::METHOD_POST) && $form->submit($request)->isValid()) {
-            /** @var ImportJob $job */
-            $job = $form->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
             $file = $job->getImportFile();
             /** @var Connection $defaultConnection */
             $defaultConnection = $this->getDoctrine()->getConnection('default');
@@ -146,9 +151,7 @@ class ApplicationController extends WelcomeController
                 }
 
                 $defaultConnection->commit();
-                return $this->redirect(
-                    $this->generateUrl('mapbender_manager_application_index')
-                );
+                return $this->redirectToRoute('mapbender_manager_application_index');
             } catch (ImportException $e) {
                 $defaultConnection->rollBack();
                 $message = $this->translate('mb.manager.import.application.failed') . " " . $e->getMessage();
@@ -185,7 +188,7 @@ class ApplicationController extends WelcomeController
         try {
             $impHandler->importApplicationData($data, true);
             $defaultConnection->commit();
-            return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
+            return $this->redirectToRoute('mapbender_manager_application_index');
         } catch (ImportException $e) {
             $defaultConnection->rollBack();
             $this->addFlash('error', $e->getMessage());
@@ -225,14 +228,13 @@ class ApplicationController extends WelcomeController
             $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
         } catch (IOException $e) {
             $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
-            return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
+            return $this->redirectToRoute('mapbender_manager_application_index');
         }
         $application->setUpdated(new \DateTime('now'));
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        /** @var Connection $connection */
-        $connection = $em->getConnection();
-        $connection->beginTransaction();
+        $em->beginTransaction();
         $em->persist($application);
         $em->flush();
         $this->checkRegionProperties($application);
@@ -263,10 +265,10 @@ class ApplicationController extends WelcomeController
         $em->flush();
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $connection->commit();
+        $em->commit();
         $this->addFlash('success', $this->translate('mb.application.create.success'));
 
-        return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
+        return $this->redirectToRoute('mapbender_manager_application_index');
     }
 
     /**
@@ -364,9 +366,8 @@ class ApplicationController extends WelcomeController
             $connection->rollBack();
             $em->close();
         }
-        return $this->redirect($this->generateUrl(
-            'mapbender_manager_application_edit',
-            array('slug' => $application->getSlug())
+        return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            'slug' => $application->getSlug(),
         ));
     }
 
@@ -525,7 +526,9 @@ class ApplicationController extends WelcomeController
         } else {
             $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
         }
-        return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
+        return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            'slug' => $slug,
+        ));
     }
 
     /**
@@ -627,34 +630,42 @@ class ApplicationController extends WelcomeController
      * @param int     $layersetId Layer set ID
      * @param int     $sourceId Layer set source ID
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
-        /** @var Connection $connection */
-        $application     = $this->getMapbender()->getApplicationEntity($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getDoctrine()->getManager();
+        /** @var Application|null $application */
+        $application = $entityManager->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        } else {
+            throw $this->createNotFoundException();
+        }
 
-        $doctrine      = $this->getDoctrine();
-        $entityManager = $doctrine->getManager();
-        $connection    = $entityManager->getConnection();
-        $container     = $this->container;
         $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        /** @var Layerset|null $layerSet */
         $layerSet      = $entityManager->getRepository("MapbenderCoreBundle:Layerset")->find($layersetId);
-        $eHandler      = SourceEntityHandler::createHandler($container, $source);
-        $connection->beginTransaction();
-        $sourceInstance = $eHandler->createInstance($layerSet);
-        $instanceSaveHandler = SourceInstanceEntityHandler::createHandler($container, $sourceInstance);
-        $instanceSaveHandler->save();
+        $eHandler      = SourceEntityHandler::createHandler($this->container, $source);
+        $newInstance = $eHandler->createInstance();
+        $layerSet->getInstances()->add($newInstance);
+        $newInstance->setLayerset($layerSet);
+        foreach ($layerSet->getInstances()->getValues() as $newWeight => $lsInstance) {
+            /** @var SourceInstance $lsInstance */
+            $lsInstance->setWeight($newWeight);
+            $entityManager->persist($lsInstance);
+        }
+        $entityManager->persist($layerSet->getApplication());
+        $layerSet->getApplication()->setUpdated(new \DateTime('now'));
+
+        $entityManager->persist($newInstance);
         $entityManager->flush();
-        $connection->commit();
-        $this->get("logger")
-            ->debug('A new instance "' . $sourceInstance->getId() . '"has been created. Please edit it!');
-        $flashBag = $request->getSession()->getFlashBag();
-        $flashBag->set('success', $this->translate('mb.source.instance.create.success'));
-        return $this->redirect($this->generateUrl(
-            "mapbender_manager_repository_instance",
-            array("slug" => $slug, "instanceId" => $sourceInstance->getId())
+        $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
+        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
+            "slug" => $slug,
+            "instanceId" => $newInstance->getId(),
         ));
     }
 
@@ -670,20 +681,34 @@ class ApplicationController extends WelcomeController
      */
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
-
-        $this->denyAccessUnlessGranted('EDIT', $application);
-
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-
-        $managers   = $this->getMapbender()->getRepositoryManagers();
-        $manager    = $managers[ $sourceInst->getSource()->getManagertype() ];
-        return $this->forward("{$manager['bundle']}:Repository:deleteInstance", array(
-            "slug"        => $slug,
-            "instanceId"  => $instanceId,
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Application|null $application */
+        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
         ));
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        }
+        $layerSetCriteria = new Criteria(Criteria::expr()->eq('id', $layersetId));
+        /** @var Layerset|null $layerset */
+        $layerset = $application->getLayersets()->matching($layerSetCriteria)->first();
+        $instanceCriteria = new Criteria(Criteria::expr()->eq('id', $instanceId));
+        $instance = $layerset ? $layerset->getInstances()->matching($instanceCriteria)->first() : null;
+        if (!$layerset || !$instance) {
+            throw $this->createNotFoundException();
+        }
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        // renumber weights and persist other instances in the same layerset
+        WeightSortedCollectionUtil::removeOne($layerset->getInstances(), $instance);
+        foreach ($layerset->getInstances() as $remainingInstance) {
+            $em->persist($remainingInstance);
+        }
+        $em->remove($instance);
+        $em->flush();
+        $this->addFlash('success', 'Your source instance has been deleted');
+        return new Response();  // ???
     }
 
     /**
@@ -861,5 +886,21 @@ class ApplicationController extends WelcomeController
         /** @var UploadsManager $service */
         $service = $this->get('mapbender.uploads_manager.service');
         return $service;
+    }
+
+    /**
+     * @return Application[]
+     */
+    protected function getExportableApplications()
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $allowed = array();
+        foreach ($em->getRepository('Mapbender\CoreBundle\Entity\Application')->findAll() as $application) {
+            if ($this->isGranted('EDIT', $application)) {
+                $allowed[] = $application;
+            }
+        }
+        return $allowed;
     }
 }

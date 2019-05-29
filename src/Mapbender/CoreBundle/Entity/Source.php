@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -68,19 +69,19 @@ abstract class Source
      */
     protected $identifier;
 
-    /**
-     *
-     * @param string $type source type
-     */
-    public function __construct($type)
+    public function __construct()
     {
-        $this->type = $type;
     }
+
+    /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    abstract public function getInstances();
 
     /**
      * Set id
      * @param integer $id source id
-     * @return Source
+     * @return $this
      */
     public function setId($id)
     {
@@ -102,7 +103,7 @@ abstract class Source
      * Set title
      *
      * @param  string $title
-     * @return Source
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -125,7 +126,7 @@ abstract class Source
      * Set description
      *
      * @param  string $description
-     * @return Source
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -148,7 +149,7 @@ abstract class Source
      * Set alias
      *
      * @param  string $alias
-     * @return Source
+     * @return $this
      */
     public function setAlias($alias)
     {
@@ -168,20 +169,10 @@ abstract class Source
     }
 
     /**
-     * Get full class name
-     *
-     * @return string
-     */
-    public function getClassname()
-    {
-        return get_class();
-    }
-
-    /**
      * Set valid
      *
      * @param  boolean $valid
-     * @return Source
+     * @return $this
      */
     public function setValid($valid)
     {

@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\VendorSpecific;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -23,23 +23,17 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
 class WmsInstance extends SourceInstance
 {
     /**
-     * @var array $configuration The instance configuration
-     * @ORM\Column(type="array", nullable=true)
-     */
-    protected $configuration;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Mapbender\WmsBundle\Entity\WmsSource", inversedBy="instances", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"refresh", "remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "refresh", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
-    protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
+    protected $layers;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -188,28 +182,6 @@ class WmsInstance extends SourceInstance
     {
         $this->vendorspecifics = $vendorspecifics;
         return $this;
-    }
-
-    /**
-     * Set configuration
-     *
-     * @param array $configuration
-     * @return $this
-     */
-    public function setConfiguration($configuration)
-    {
-        $this->configuration = $configuration;
-        return $this;
-    }
-
-    /**
-     * Get an Instance Configuration.
-     *
-     * @return array $configuration
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
     }
 
     /**
@@ -598,8 +570,8 @@ class WmsInstance extends SourceInstance
     /**
      * Returns desired layer order, as a string enum ('standard' or 'reverse')
      * NOTE: this is a recently added column; there will be NULLs in the DB for updated applications.
-     *       The default for these cases is provided at the "Handler" level.
-     * @see WmsInstanceLayerEntityHandler::generateConfiguration()
+     *       The default for these cases is provided at the config service level.
+     * @see WmsSourceService::getLayerConfiguration()
      *
      * @return string|null
      */

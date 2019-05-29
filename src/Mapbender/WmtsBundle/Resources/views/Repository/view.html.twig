@@ -22,23 +22,18 @@
     <li id="tabService" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.details" | trans }}</li>
     <li id="tabLayers" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.layers" | trans }}</li>
     <li id="tabMatrixsets" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.matrixsets" | trans }}</li>
-    <li id="tabTheme" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.theme" | trans }}</li>
+    {% if wmts.themes | length() %}
+      <li id="tabTheme" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.theme" | trans }}</li>
+    {% endif %}
   </ul>
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ wmts.title }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</div><div class="metaText">{{ wmts.version }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.originurl" | trans }}:</div><div class="metaText metaUrl">{{ wmts.originUrl }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.abstract" | trans }}:</div><div class="metaText">{{ wmts.description }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidername" | trans }}:</div><div class="metaText">{{ wmts.serviceProviderName }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidersite" | trans }}:</div><div class="metaText">{{ wmts.serviceProviderSite }}</div>
-    <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ wmts.accessConstraints }}</div>
-    <div class="clearContainer"></div>
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
     {% if wmts.contact is not null %}
@@ -88,7 +83,7 @@
 
     <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.country" | trans }}:</div>
     <div class="metaText">{{ wmts.contact.addressCountry }}</div>
-    <div class="clearContainer"></div> {# #}
+    <div class="clearContainer"></div>
     {% endif %}
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
@@ -98,29 +93,30 @@
           <span class="metaText">{{ wmts.version }}</span>
       </li>
       {% if wmts.getTile is not empty %}
-          <li>{{ view.requestinformation(wmts.getTile, "GetMap") }}</li>
+      {{ view.requestinformation(wmts.getTile, "GetMap") }}
       {% endif %}
-
       {% if wmts.getFeatureinfo is not empty %}
-          <li>{{ view.requestinformation(wmts.getFeatureinfo, "GetFeatureinfo") }}</li>
+      {{ view.requestinformation(wmts.getFeatureinfo, "GetFeatureinfo") }}
       {% endif %}
-  </ul>
+    </ul>
   </div>
   <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
     {% for layer in wmts.layers %}
-      {% include "MapbenderWmtsBundle:Repository:layer.html.twig"  with {'layer': layer, 'itemLevel': 1 }%}
+      {% include "MapbenderWmtsBundle:Repository:layer.html.twig" with {'layer': layer, 'itemLevel': 1 }%}
     {% endfor %}
   </div>
   <div id="containerMatrixsets" class="container serviceContainer serviceLayersContainer">
     {% for tilematrixset in wmts.tilematrixsets %}
-      {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig"  with {'tilematrixset': tilematrixset, 'itemLevel': 1 }%}
+      {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig" with {'tilematrixset': tilematrixset }%}
     {% endfor %}
   </div>
-  <div id="containerTheme" class="container serviceContainer serviceLayersContainer">
-    {% for theme in wmts.themes %}
-      {% include "MapbenderWmtsBundle:Repository:theme.html.twig"  with {'theme': theme, 'itemLevel': 1 }%}
-    {% endfor %}
-  </div>
+  {% if wmts.themes | length() %}
+    <div id="containerTheme" class="container serviceContainer serviceLayersContainer">
+      {% for theme in wmts.themes %}
+        {% include "MapbenderWmtsBundle:Repository:theme.html.twig" with {'theme': theme, 'itemLevel': 1 }%}
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>
 <div class="clearContainer"></div>
 

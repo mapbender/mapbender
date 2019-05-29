@@ -42,12 +42,14 @@ class AssetFactory extends AssetFactoryBase
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
+     * @param string[] $publishedBundleNameMap
      * @param EngineInterface $templateEngine
      * @param FilterInterface $sassFilter
      * @param FilterInterface $cssRewriteFilter
      */
     public function __construct(FileLocatorInterface $fileLocator,
                                 $webDir,
+                                $publishedBundleNameMap,
                                 EngineInterface $templateEngine,
                                 FilterInterface $sassFilter,
                                 FilterInterface $cssRewriteFilter)
@@ -55,7 +57,7 @@ class AssetFactory extends AssetFactoryBase
         $this->sassFilter = $sassFilter;
         $this->cssRewriteFilter = $cssRewriteFilter;
         $this->templateEngine = $templateEngine;
-        parent::__construct($fileLocator, $webDir);
+        parent::__construct($fileLocator, $webDir, $publishedBundleNameMap);
     }
 
     /**
@@ -67,7 +69,26 @@ class AssetFactory extends AssetFactoryBase
      */
     public function compileRaw($inputs, $debug)
     {
-        return $this->buildAssetCollection($inputs, null, $debug)->dump();
+        $parts = array();
+        $uniqueRefs = array();
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $input->load();
+                $parts[] = $input->getContent();
+            } else {
+                $normalizedReference = $this->normalizeReference($input);
+                if (empty($uniqueRefs[$normalizedReference])) {
+                    $realAssetPath = $this->locateAssetFile($normalizedReference);
+                    if ($debug) {
+                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                    }
+                    $parts[] = file_get_contents($realAssetPath);
+                    $uniqueRefs[$normalizedReference] = true;
+                }
+            }
+        }
+        return implode("\n", $parts);
     }
 
     /**
@@ -79,7 +100,8 @@ class AssetFactory extends AssetFactoryBase
      */
     public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
     {
-        $content = $this->buildAssetCollection($inputs, $targetPath, $debug)->dump();
+        $content = $this->compileRaw($inputs, $debug);
+        $content = $this->squashImports($content);
 
         $sass = clone $this->sassFilter;
         $sass->setStyle($debug ? 'nested' : 'compressed');
@@ -87,7 +109,6 @@ class AssetFactory extends AssetFactoryBase
             $sass,
             $this->cssRewriteFilter,
         );
-        $content = $this->squashImports($content);
 
         $assets = new StringAsset($content, $filters, '/', $sourcePath);
         $assets->setTargetPath($targetPath);

@@ -6,11 +6,9 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\HttpFoundation\Request;
@@ -167,9 +165,8 @@ class Endpoint
             // instance layer is not connected to the source instance
             return null;
         }
-        /** @var WmsLayerSource $layerSource */
-        $layerSource = $layer->getSourceItem();
-        return WmsInstanceLayerEntityHandler::getLegendUrlFromStyles($layerSource, false);
+        $sourceService = $this->service->getSourceTypeDirectory()->getSourceService($wmsInstance);
+        return $sourceService->getInternalLegendUrl($layer);
     }
 
     /**

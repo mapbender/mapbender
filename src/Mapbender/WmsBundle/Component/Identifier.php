@@ -9,14 +9,9 @@ namespace Mapbender\WmsBundle\Component;
 class Identifier
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string */
     public $authority;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string */
     public $value;
 
     /**
@@ -30,7 +25,6 @@ class Identifier
     }
 
     /**
-     * Set authority
      * @param string $value
      * @return $this
      */
@@ -41,8 +35,6 @@ class Identifier
     }
 
     /**
-     * Get value
-     *
      * @return string
      */
     public function getValue()
@@ -51,9 +43,8 @@ class Identifier
     }
 
     /**
-     * Set value
      * @param string $value
-     * @return Identifier
+     * @return $this
      */
     public function setValue($value)
     {

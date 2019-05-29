@@ -5,10 +5,9 @@ namespace Mapbender\CoreBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Generator for frontend-facing configuration for SourceInstance entities.
@@ -18,15 +17,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class SourceService
 {
-    /** @var ContainerInterface */
-    protected $container;
     /** @var UrlProcessor */
     protected $urlProcessor;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(UrlProcessor $urlProcessor)
     {
-        $this->container = $container;
-        $this->urlProcessor= $container->get('mapbender.source.url_processor.service');
+        $this->urlProcessor = $urlProcessor;
     }
 
     /**
@@ -166,4 +162,12 @@ abstract class SourceService
      * @return string[]
      */
     abstract public function getAssets(Application $application, $type);
+
+    abstract public function getInternalLegendUrl(SourceInstanceItem $instanceLayer);
+
+    /**
+     * @param SourceInstance $sourceInstance
+     * @return bool
+     */
+    abstract public function useTunnel(SourceInstance $sourceInstance);
 }
