@@ -14,17 +14,21 @@ class AssetFactoryBase
     protected $webDir;
     /** @var FileLocatorInterface */
     protected $fileLocator;
+    /** @var string[] */
+    protected $publishedBundleNameMap;
 
     protected $migratedRefs = array();
 
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
+     * @param string[] $publishedBundleNameMap
      */
-    public function __construct(FileLocatorInterface $fileLocator, $webDir)
+    public function __construct(FileLocatorInterface $fileLocator, $webDir, $publishedBundleNameMap)
     {
         $this->fileLocator = $fileLocator;
         $this->webDir = $webDir;
+        $this->publishedBundleNameMap = $publishedBundleNameMap;
     }
 
     protected function getDebugHeader($finalPath, $originalRef)
@@ -53,19 +57,17 @@ class AssetFactoryBase
                 $uniqueKey = 'stringasset_' . $stringAssetCounter++;
                 $uniqueAssets[$uniqueKey] = $input;
             } else {
-                $realAssetPath = $this->locateAssetFile($input);
+                $normalizedReference = $this->normalizeReference($input);
+                $realAssetPath = $this->locateAssetFile($normalizedReference);
                 $fileAsset = new FileAsset($realAssetPath);
                 $fileAsset->setTargetPath($targetPath);
-                $uniqueKey = str_replace(array('@', 'Resources/public/'), '', $input);
-                $uniqueKey = str_replace(array('/', '.', '-'), '__', $uniqueKey);
                 if ($debug) {
                     $debugInfo = $this->getDebugHeader($realAssetPath, $input);
-                    $uniqueAssets["{$uniqueKey}+dbgInfo"] = new StringAsset($debugInfo);
+                    $uniqueAssets["{$normalizedReference}+dbgInfo"] = new StringAsset($debugInfo);
                 }
-                $uniqueAssets[$uniqueKey] = $fileAsset;
+                $uniqueAssets[$normalizedReference] = $fileAsset;
             }
         }
-
         $collection = new AssetCollection($uniqueAssets, array(), $this->webDir);
         $collection->setTargetPath($targetPath);
 
@@ -81,32 +83,33 @@ class AssetFactoryBase
         while (!empty($this->migratedRefs[$input])) {
             $input = $this->migratedRefs[$input];
         }
-        return $this->fileLocator->locate($this->getSourcePath($input));
-    }
-
-    /**
-     * @param $input
-     * @return string
-     */
-    protected function getSourcePath($input)
-    {
-        $matches = array();
-        if (preg_match('#^@([\w]+)Bundle/Resources/public/(.+)$#i', $input, $matches)) {
-            // rewrite reference to look into published bundle asset dir below web
-            $input = implode('/', array(
-                '/bundles',
-                strtolower($matches[1]), // lower-case bundle name minus 'bundle'
-                $matches[2],             // remainder of reference after 'public/'
-            ));
-        }
         if ($input[0] == '/') {
             $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {
-                return $inWeb;
+                return realpath($inWeb);
             }
         }
-        // This makes FileLocator look in app/Resources, but in a way that's not tied to bundle structure
-        // and doesn't support asset drop-in replacements.
+        return $this->fileLocator->locate($input);
+    }
+
+    /**
+     * Retranslates published asset reference ("/bundles/somename/apath/something.ext") back to bundle-scoped
+     * reference ("@SomeNameBundle/Resources/public/apath/something.ext"), which allows FileLocator to pick
+     * up resource overrides in app/Resources.
+     *
+     * @param string $input
+     * @return string
+     */
+    protected function normalizeReference($input)
+    {
+        if ($input && preg_match('#^/bundles/.+/.+#', $input)) {
+            $parts = explode('/', $input, 4);
+            $publishedBundleName = $parts[2];
+            if (!empty($this->publishedBundleNameMap[$publishedBundleName])) {
+                $pathInside = $parts[3];
+                return '@' . $this->publishedBundleNameMap[$publishedBundleName] . '/Resources/public/' . $pathInside;
+            }
+        }
         return $input;
     }
 }
