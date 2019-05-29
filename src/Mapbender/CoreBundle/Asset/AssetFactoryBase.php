@@ -3,9 +3,6 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
-use Assetic\Asset\FileAsset;
-use Assetic\Asset\AssetCollection;
-use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
 
 class AssetFactoryBase
@@ -39,39 +36,6 @@ class AssetFactoryBase
             . "  * (original reference: {$originalRef})\n"
             . "  */\n"
         ;
-    }
-
-    /**
-     * @param (StringAsset|string)[] $inputs
-     * @param string|null $targetPath
-     * @param bool $debug to emit file markers
-     * @return AssetCollection
-     */
-    protected function buildAssetCollection($inputs, $targetPath, $debug=false)
-    {
-        $uniqueAssets = array();
-        $stringAssetCounter = 0;
-
-        foreach ($inputs as $input) {
-            if ($input instanceof StringAsset) {
-                $uniqueKey = 'stringasset_' . $stringAssetCounter++;
-                $uniqueAssets[$uniqueKey] = $input;
-            } else {
-                $normalizedReference = $this->normalizeReference($input);
-                $realAssetPath = $this->locateAssetFile($normalizedReference);
-                $fileAsset = new FileAsset($realAssetPath);
-                $fileAsset->setTargetPath($targetPath);
-                if ($debug) {
-                    $debugInfo = $this->getDebugHeader($realAssetPath, $input);
-                    $uniqueAssets["{$normalizedReference}+dbgInfo"] = new StringAsset($debugInfo);
-                }
-                $uniqueAssets[$normalizedReference] = $fileAsset;
-            }
-        }
-        $collection = new AssetCollection($uniqueAssets, array(), $this->webDir);
-        $collection->setTargetPath($targetPath);
-
-        return $collection;
     }
 
     /**

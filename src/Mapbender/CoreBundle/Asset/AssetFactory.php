@@ -69,7 +69,26 @@ class AssetFactory extends AssetFactoryBase
      */
     public function compileRaw($inputs, $debug)
     {
-        return $this->buildAssetCollection($inputs, null, $debug)->dump();
+        $parts = array();
+        $uniqueRefs = array();
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $input->load();
+                $parts[] = $input->getContent();
+            } else {
+                $normalizedReference = $this->normalizeReference($input);
+                if (empty($uniqueRefs[$normalizedReference])) {
+                    $realAssetPath = $this->locateAssetFile($normalizedReference);
+                    if ($debug) {
+                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                    }
+                    $parts[] = file_get_contents($realAssetPath);
+                    $uniqueRefs[$normalizedReference] = true;
+                }
+            }
+        }
+        return implode("\n", $parts);
     }
 
     /**
@@ -81,7 +100,8 @@ class AssetFactory extends AssetFactoryBase
      */
     public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
     {
-        $content = $this->buildAssetCollection($inputs, $targetPath, $debug)->dump();
+        $content = $this->compileRaw($inputs, $debug);
+        $content = $this->squashImports($content);
 
         $sass = clone $this->sassFilter;
         $sass->setStyle($debug ? 'nested' : 'compressed');
@@ -89,7 +109,6 @@ class AssetFactory extends AssetFactoryBase
             $sass,
             $this->cssRewriteFilter,
         );
-        $content = $this->squashImports($content);
 
         $assets = new StringAsset($content, $filters, '/', $sourcePath);
         $assets->setTargetPath($targetPath);
