@@ -2,8 +2,6 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmsBundle\Form\Type\OnlineResourceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

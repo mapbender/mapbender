@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 
 /**
@@ -19,15 +18,6 @@ class WmsInstanceLayerType extends AbstractType
     public function getName()
     {
         return 'wmsinstancelayer';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'num_layers' => 0));
     }
 
     /**
