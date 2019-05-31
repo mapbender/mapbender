@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Collection of servicy behaviors related to application
@@ -300,6 +301,7 @@ class Application
      */
     public static function getBaseUrl($container)
     {
+        /** @var Request $request */
         $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
     }

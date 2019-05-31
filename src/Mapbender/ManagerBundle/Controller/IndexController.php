@@ -10,14 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Manager index controller.
  * Redirects to first menu item.
- * Provides menu via twig "render controller" construct.
  *
- * Copied into Mapbender from FOM v3.0.6.3
+ * Originally copied into Mapbender from FOM v3.0.6.3
  * see https://github.com/mapbender/fom/blob/v3.0.6.3/src/FOM/ManagerBundle/Controller/ManagerController.php
  *
  * @author Christian Wygoda
- * @todo: render menu via twig extension + runtime https://symfony.com/doc/3.4/templating/twig_extension.html#creating-lazy-loaded-twig-extensions
- */
+  */
 class IndexController extends Controller
 {
     /**

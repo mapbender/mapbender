@@ -1,11 +1,12 @@
 <?php
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Mapbender;
+use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
@@ -19,14 +20,16 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class WelcomeController extends Controller
+class WelcomeController extends ApplicationControllerBase
 {
     /**
      * Render user application list.
      *
-     * @Route("/")
+     * @Route("/", methods={"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
         $allowedApplications = array();
 
@@ -40,22 +43,11 @@ class WelcomeController extends Controller
 
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
-            'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
+            'uploads_web_url' => $this->getUploadsBaseUrl($request),
             'time'              => new \DateTime(),
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
         ));
-    }
-
-    /**
-     * Translate string;
-     *
-     * @param string $key Key name
-     * @return string
-     */
-    protected function translate($key)
-    {
-        return $this->get('translator')->trans($key);
     }
 
     /**

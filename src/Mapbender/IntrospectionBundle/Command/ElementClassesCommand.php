@@ -4,7 +4,6 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
-use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Mapbender;
@@ -31,9 +30,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class ElementClassesCommand extends ContainerAwareCommand
 {
-    /** @var  Application */
-    protected static $dummyApplication;
-
     protected function configure()
     {
         $this->setName('mapbender:inspect:element:classes');

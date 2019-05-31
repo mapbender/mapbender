@@ -1,14 +1,11 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,15 +22,15 @@ use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  * @ManagerRoute("/repository")
  */
-class RepositoryController extends Controller
+class RepositoryController extends ApplicationControllerBase
 {
     /**
      * Renders the layer service repository.
      *
-     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" }, methods={"GET"})
+     * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction($page)
+    public function indexAction()
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
@@ -112,8 +109,7 @@ class RepositoryController extends Controller
     public function deleteAction(Request $request, $sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        /** @var EntityManagerInterface $em */
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var Source $source */
         $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
@@ -272,13 +268,12 @@ class RepositoryController extends Controller
 
         $newWeight = $request->get("number");
         $targetLayersetId = $request->get("new_layersetId");
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var EntityRepository $instanceRepository */
         $instanceRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:SourceInstance');
-        $lsRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Layerset');
 
         /** @var SourceInstance $instance */
-        $instance = $instanceRepository->findOneBy(array('id' => $instanceId));
+        $instance = $instanceRepository->find($instanceId);
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
@@ -290,13 +285,11 @@ class RepositoryController extends Controller
             ));
         }
 
-        /** @var Layerset $layerset */
-        $layerset = $lsRepository->findOneBy(array('id' => $layersetId));
+        $layerset = $this->requireLayerset($layersetId);
         if ($layersetId === $targetLayersetId) {
             WeightSortedCollectionUtil::updateSingleWeight($layerset->getInstances(), $instance, $newWeight);
         } else {
-            /** @var Layerset $targetLayerset */
-            $targetLayerset = $lsRepository->findOneBy(array('id' => $targetLayersetId));
+            $targetLayerset = $this->requireLayerset($targetLayersetId);
             $targetCollection = $targetLayerset->getInstances();
             WeightSortedCollectionUtil::moveBetweenCollections($targetCollection, $layerset->getInstances(), $instance, $newWeight);
             $instance->setLayerset($targetLayerset);
@@ -322,8 +315,7 @@ class RepositoryController extends Controller
      */
     public function instanceEnabledAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var SourceInstance|null $sourceInstance */
         $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
         if (!$sourceInstance) {
