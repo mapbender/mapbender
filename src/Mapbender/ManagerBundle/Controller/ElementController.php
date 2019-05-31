@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
@@ -263,8 +262,7 @@ class ElementController extends ApplicationControllerBase
         if ($request->getMethod() === 'POST' && $form->submit($request)->isValid()) {
             $entityManager->beginTransaction();
             try {
-                /** @var AclManager $aclManager */
-                $aclManager  = $this->get('fom.acl.manager');
+                $aclManager  = $this->getAclManager();
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
                 $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');

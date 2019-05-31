@@ -821,7 +821,6 @@ class ApplicationController extends WelcomeController
 
         return array(
             'application'         => $application,
-            'aclManager'          => $this->get("fom.acl.manager"),
             'regions'             => $templateClass::getRegions(),
             'slug'                => $slug,
             'form'                => $form->createView(),
