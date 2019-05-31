@@ -142,7 +142,6 @@
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="security.acl.provider" />
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
