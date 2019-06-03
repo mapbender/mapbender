@@ -40,6 +40,13 @@
         <!-- Storage path can be anywhere, should probably be /var/ in proper LSB setups
              Storage in web is pre-standardization legacy behavior -->
         <parameter key="mapbender.print.queue.storage_dir">%kernel.root_dir%/../web/prints</parameter>
+        <!-- Memory limit for jobs immediately executed in the web browser scope (not queued).
+             Supports null to use existing php-configured value and avoid any attempt to change memory limit.
+             Additionally supports formats understood by php.ini
+             see http://php.net/manual/en/ini.core.php#ini.memory-limit
+             see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+             NOTE: this will never REDUCE memory limit vs a system configuration (php.ini etc), it only works upwards -->
+        <parameter key="mapbender.print.memory_limit">null</parameter>
         <!-- Memory limit for execution of queued jobs. Supports any format understood by php.ini
              see http://php.net/manual/en/ini.core.php#ini.memory-limit
              see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes

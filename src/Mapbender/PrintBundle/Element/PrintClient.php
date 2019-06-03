@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
+use Mapbender\Utils\MemoryUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -238,6 +239,7 @@ class PrintClient extends Element
                 $rawData = $this->extractRequestData($request);
                 $jobData = $this->preparePrintData($rawData, $configuration);
 
+                $this->checkMemoryLimit();
                 $pdfBody = $bridgeService->dumpPrint($jobData);
 
                 $displayInline = true;
@@ -569,5 +571,17 @@ class PrintClient extends Element
             return $url;
 
         return $url . $pattern['default'][$dpi];
+    }
+
+    /**
+     * Dynamically bumps the memory limit up to the configured value.
+     */
+    protected function checkMemoryLimit()
+    {
+        $parameter = $this->container->getParameter('mapbender.print.memory_limit');
+        // ignore null values as documented
+        if ($parameter) {
+            MemoryUtil::increaseMemoryLimit($parameter);
+        }
     }
 }
