@@ -1,12 +1,5 @@
 parameters:
-    applications:
-        # Login app definition
-        mb3-login:
-            title: Mapbender Login
-            template:  Mapbender\ManagerBundle\Template\LoginTemplate
-            excludeFromList: true
-            published: true
-            roles: [IS_AUTHENTICATED_ANONYMOUSLY]
+    applications: {}
 
     mapbender.branding.name: Mapbender
     mapbender.version: 3.0.8.1

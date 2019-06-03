@@ -36,6 +36,8 @@ class MapbenderCoreBundle extends MapbenderBundle
         if (is_dir($yamlAppDir)) {
             $container->addCompilerPass(new MapbenderYamlCompilerPass($yamlAppDir));
         }
+        $loginAppDir = dirname(__FILE__) . '/Resources/config/applications';
+        $container->addCompilerPass(new MapbenderYamlCompilerPass($loginAppDir));
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
 
