@@ -1,3 +1,12 @@
+## dev-release/3.0.7 @ 6806baac2
+- Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
+- Fix various application import errors on exports created with older versions
+- Improve export file size and import / export performance
+- Add mapbender:application:export CLI command
+- Add mapbender:application:import CLI command
+- Fix sizing and missing localization of layerset, group and user delete confirmation popups
+- Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
+
 ## v3.0.8.1
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
 - SearchRouter: add full reprojection support and misc smaller improvements / config simplifcations ([PR#1159](https://github.com/mapbender/mapbender/pull/1159/files))
