@@ -1,9 +1,10 @@
-## dev-release/3.0.7 @ 6806baac2
+## dev-release/3.0.7 @ f36a7a728
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Improve export file size and import / export performance
 - Add mapbender:application:export CLI command
 - Add mapbender:application:import CLI command
+- Add separate memory limit configuration parameter `mapbender.print.memory_limit` for direct print jobs
 - Fix sizing and missing localization of layerset, group and user delete confirmation popups
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
 
