@@ -51,34 +51,32 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * @ORM\ManyToOne(targetEntity="WmtsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
      */
-    protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
+    protected $source;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    public $latlonBounds;
+    protected $latlonBounds;
     
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $boundingBoxes;
+    protected $boundingBoxes;
 
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    public $styles;
-
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    public $infoformats;
+    protected $styles;
 
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    public $tilematrixSetlinks;
+    protected $infoformats;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $tilematrixSetlinks;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -92,7 +90,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     public function __construct()
     {
-//        $this->keywords = new ArrayCollection();
         $this->infoformats = array();
         $this->styles = array();
         $this->dimensions = array();
@@ -100,6 +97,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
         $this->tilematrixSetlinks = array();
         $this->boundingBoxes = array();
     }
+
     /**
      * Get id
      *

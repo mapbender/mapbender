@@ -2,7 +2,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Utils\EntityAnnotationParser as EAP;
 
 /**
@@ -152,22 +151,5 @@ abstract class ExchangeSerializer
             $values[$propertyName] = $getter->invoke($object);
         }
         return $values;
-    }
-
-    /**
-     * @param ClassMetadata $meta
-     * @param string[] $extra
-     * @return string[]
-     */
-    public function collectEntityFieldNames(ClassMetadata $meta, $extra = array())
-    {
-        $fieldNames = $extra;
-        foreach ($meta->getFieldNames() as $fieldName) {
-            if ($meta->isUniqueField($fieldName)) {
-                $fieldNames[] = $fieldName;
-            }
-        }
-        // make sure to remove ident fields, even if included in uniques or $extra
-        return array_unique(array_diff($fieldNames, $meta->getIdentifier()));
     }
 }

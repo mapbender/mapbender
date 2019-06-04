@@ -3,12 +3,14 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\PersistentCollection;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -113,33 +115,7 @@ class ImportHandler extends ExchangeHandler
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
                 foreach ($content as $item) {
-                    $classMeta = $this->em->getClassMetadata($class);
-                    if (!$copyHint) {
-                        // Avoid inserting "new" sources that are duplicates of already existing ones
-                        // Finding equivalent sources is relatively expensive
-                        $identFields = $denormalizer->collectEntityFieldNames($classMeta, array(
-                            'title',
-                            'type',
-                            'name',
-                            'onlineResource',
-                        ));
-                    } else {
-                        // Performance hack: when "importing" from the same DB (actually just copying an
-                        // application), detecting source duplicates based purely on id is sufficient
-                        $identFields = $classMeta->getIdentifier();
-                    }
-                    $criteria = $denormalizer->extractFields($item, $identFields);
-                    $match = false;
-                    foreach ($this->em->getRepository($class)->findBy($criteria) as $source) {
-                        try {
-                            $this->addSourceToMapper($denormalizer, $source, $item);
-                            $match = true;
-                            break;
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                    }
-                    if (!$match) {
+                    if (!$this->findMatchingSource($denormalizer, $item, $copyHint)) {
                         $source = $denormalizer->handleData($item);
                         $this->em->persist($source);
                         $this->em->flush();
@@ -147,6 +123,43 @@ class ImportHandler extends ExchangeHandler
                 }
             }
         }
+    }
+
+    /**
+     * @param ExchangeDenormalizer $denormalizer
+     * @param array $data data to import
+     * @param bool $copyHint
+     * @return Source|null
+     */
+    private function findMatchingSource($denormalizer, $data, $copyHint)
+    {
+        $className = $denormalizer->getClassName($data);
+        if (!$copyHint) {
+            // Avoid inserting "new" sources that are duplicates of already existing ones
+            // Finding equivalent sources is relatively expensive
+            $identFields = array(
+                'title',
+                'type',
+                'name',
+                'onlineResource',
+            );
+        } else {
+            // Performance hack: when "importing" from the same DB (actually just copying an
+            // application), detecting source duplicates based purely on id is sufficient
+            $classMeta = $this->em->getClassMetadata($className);
+            $identFields = $classMeta->getIdentifier();
+        }
+        $criteria = $denormalizer->extractFields($data, $identFields);
+        foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
+            try {
+                $this->addSourceToMapper($denormalizer, $source, $data);
+                return $source;
+                break;
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+        return null;
     }
 
     /**
@@ -251,24 +264,52 @@ class ImportHandler extends ExchangeHandler
      * Adds entitiy with assoc. items to mapper.
      *
      * @param ExchangeDenormalizer $denormalizer
-     * @param object $object source
-     * @param array  $data
+     * @param Source $source
+     * @param array $data
      * @throws ImportException
      * @throws ORMException
      */
-    private function addSourceToMapper($denormalizer, $object, array $data)
+    private function addSourceToMapper($denormalizer, $source, array $data)
     {
-        $classMeta = $this->em->getClassMetadata(get_class($object));
+        $classMeta = $this->em->getClassMetadata(get_class($source));
         $identFieldNames = $classMeta->getIdentifier();
         $identData = array_intersect_key($data, array_flip($identFieldNames));
-        $denormalizer->addToMapper($identData, $object);
+        $denormalizer->addToMapper($identData, $source);
 
+        $this->validateMatchingRelations($denormalizer, $classMeta, $source, $data);
+
+        foreach ($source->getLayers()->getValues() as $layerIndex => $layer) {
+            $layerData = $data['layers'][$layerIndex];
+            $layerClass = $denormalizer->getClassName($layerData);
+            if (!$layerClass) {
+                throw new ImportException("Missing source item class definition");
+            }
+            $layerMeta = $this->em->getClassMetadata($layerClass);
+            $layerIdentData = $denormalizer->extractFields($layerData, $layerMeta->getIdentifier());
+            if ($denormalizer->isReference($layerData, $layerIdentData)) {
+                if (!$denormalizer->getImportedObject($layerClass, $layerIdentData)) {
+                    $od = $denormalizer->getEntityData($layerClass, $layerIdentData);
+                    $this->validateMatchingRelations($denormalizer, $layerMeta, $layer, $od);
+                    $layerIdentData = $denormalizer->extractFields($od, $layerMeta->getIdentifier());
+                    $denormalizer->addToMapper($layerIdentData, $layer);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param ExchangeDenormalizer $denormalizer
+     * @param ClassMetadata $classMeta
+     * @param object $entity
+     * @param array $data
+     */
+    private function validateMatchingRelations($denormalizer, ClassMetadata $classMeta, $entity, $data)
+    {
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            $getMethod = $denormalizer->getReturnMethod($object, $fieldName);
+            $getMethod = $denormalizer->getReturnMethod($entity, $fieldName);
             if ($getMethod) {
-                $subObject = $getMethod->invoke($object);
-                $num = 0;
+                $subObject = $getMethod->invoke($entity);
                 if ($subObject instanceof PersistentCollection) {
                     if (is_a($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword", true)) {
                         continue;
@@ -277,22 +318,12 @@ class ImportHandler extends ExchangeHandler
                     } elseif (count($data[$fieldName]) !== $subObject->count()) {
                         throw new ImportException("Collection member count mismatch for field {$fieldName}, " . count($data[$fieldName]) . " vs " . $subObject->count());
                     }
-                    foreach ($subObject as $item) {
-                        if (is_a($item, 'Mapbender\CoreBundle\Entity\SourceItem', true)) {
-                            $subdata = $data[$fieldName][$num];
-                            if ($className = $denormalizer->getClassName($subdata)) {
-                                $meta = $this->em->getClassMetadata($className);
-                                $identCriteria = $denormalizer->extractFields($subdata, $meta->getIdentifier());
-                                if ($denormalizer->isReference($subdata, $identCriteria)) {
-                                    if (!$denormalizer->getImportedObject($className, $identCriteria)) {
-                                        $od = $denormalizer->getEntityData($className, $identCriteria);
-                                        $this->addSourceToMapper($denormalizer, $item, $od);
-                                    }
-                                }
-                                $num++;
-                            } else {
-                                throw new ImportException("Missing source item class definition");
-                            }
+                    if (is_a($assocItem['targetEntity'], 'Mapbender\CoreBundle\Entity\SourceItem', true) && !($entity instanceof Source)) {
+                        // recursively validate sublayer structure (only on WmsLayer)
+                        foreach ($subObject->getValues() as $index => $related) {
+                            $relatedMeta = $this->em->getClassMetadata(get_class($related));
+                            $relatedData = $data[$fieldName][$index];
+                            $this->validateMatchingRelations($denormalizer, $relatedMeta, $related, $relatedData);
                         }
                     }
                 }
