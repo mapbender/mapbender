@@ -5,7 +5,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
-use Mapbender\CoreBundle\Entity\Source;
 
 /**
  * ExchangeNormalizer class normalizes objects to array.

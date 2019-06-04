@@ -122,8 +122,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         $identFieldNames = $classMeta->getIdentifier();
         $identValues = $this->extractFields($data, $identFieldNames);
         if ($this->isReference($data, $identValues)) {
-            if ($object = $this->getAfterFromBefore($className, $identValues)) {
-                return $object['object'];
+            if ($object = $this->getImportedObject($className, $identValues)) {
+                return $object;
             } elseif ($objectdata = $this->getEntityData($className, $identValues)) {
                 $data = $objectdata;
             } else {
@@ -221,33 +221,34 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 return;
             }
         }
-        $criteriaAfter = $this->extractProperties($object, array_keys($identData));
         $this->mapper[$realClass][] = array(
             'before' => $identData,
-            'after' => array(
-                'criteria' => $criteriaAfter,
-                'object' => $object,
-            ),
+            'object' => $object,
         );
     }
 
     /**
-     * Returns an imported object.
-     *
-     * @param string $class class name
-     * @param array $criteriaBefore
-     * @return array|null
+     * @param string $class
+     * @param string[] $identifier
+     * @return object|null
      */
-    public function getAfterFromBefore($class, $criteriaBefore)
+    public function getImportedObject($class, $identifier)
     {
-        if (!isset($this->mapper[$class])) {
-            return null;
-        }
-
-        foreach ($this->mapper[$class] as $mapItem) {
-            if ($mapItem['before'] == $criteriaBefore) {
-                return $mapItem['after'];
+        if (!empty($this->mapper[$class])) {
+            foreach ($this->mapper[$class] as $mapItem) {
+                if ($mapItem['before'] == $identifier) {
+                    return $mapItem['object'];
+                }
             }
+        }
+        return null;
+    }
+
+    public function getPostImportId($class, $preImportIdentifier)
+    {
+        $object = $this->getImportedObject($class, $preImportIdentifier);
+        if ($object) {
+            return implode('', $this->extractProperties($object, array('id'))) ?: null;
         }
         return null;
     }
@@ -258,18 +259,19 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function getIdentFromMapper($className, $id, $isSuperClass = false)
     {
-        if ($isSuperClass) {
-            foreach ($this->mapper as $key => $value) {
-                if (class_exists($key) && is_a($key, $className, true)) {
-                    return $this->getIdentFromMapper($key, $id, false);
+        $postImportId = $this->getPostImportId($className, array('id' => $id));
+        if (!$postImportId && $isSuperClass) {
+            $uniqueClasses = array_unique(array_keys($this->mapper));
+            foreach ($uniqueClasses as $uniqueClass) {
+                if (class_exists($uniqueClass) && is_a($uniqueClass, $className, true)) {
+                    $mappedId = $this->getIdentFromMapper($uniqueClass, $id, false);
+                    if ($mappedId) {
+                        return $mappedId;
+                    }
                 }
             }
-            return null;
-        } else {
-            $result = $this->getAfterFromBefore($className, array('id' => $id));
-            return $result && isset($result['criteria']) && isset($result['criteria']['id'])
-                ? $result['criteria']['id'] : null;
         }
+        return $postImportId;
     }
 
     /**

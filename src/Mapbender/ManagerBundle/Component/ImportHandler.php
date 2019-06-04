@@ -183,14 +183,11 @@ class ImportHandler extends ExchangeHandler
     {
         foreach ($app->getElements() as $element) {
             $configuration = $element->getConfiguration();
-            foreach ($configuration as $key => $value) {
-                if ($key === 'target') {
-                    $realClass = ClassUtils::getClass($element);
-                    $target = $denormalizer->getAfterFromBefore($realClass, array('id' => $value));
-                    $configuration[$key] = $target['criteria']['id'];
-                } else {
-                    $configuration[$key] = $value;
-                }
+            if (!empty($configuration['target'])) {
+                $realClass = ClassUtils::getClass($element);
+                $configuration['target'] = $denormalizer->getPostImportId($realClass, array(
+                    'id' => $configuration['target'],
+                ));
             }
             try {
                 // allow Component\Element to fix relational data references post import (e.g. layerset ids on Map)
@@ -287,7 +284,7 @@ class ImportHandler extends ExchangeHandler
                                 $meta = $this->em->getClassMetadata($className);
                                 $identCriteria = $denormalizer->extractFields($subdata, $meta->getIdentifier());
                                 if ($denormalizer->isReference($subdata, $identCriteria)) {
-                                    if (!$denormalizer->getAfterFromBefore($className, $identCriteria)) {
+                                    if (!$denormalizer->getImportedObject($className, $identCriteria)) {
                                         $od = $denormalizer->getEntityData($className, $identCriteria);
                                         $this->addSourceToMapper($denormalizer, $item, $od);
                                     }
