@@ -19,7 +19,6 @@ use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -92,11 +91,15 @@ class ImportHandler extends ExchangeHandler
             try {
                 $dec = json_decode($data, true);
                 if ($dec === null && trim($data) !== json_encode(null)) {
-                    throw new ImportException("Input string could not be parsed into an array", 0, $e);
+                    throw new ImportException("Dummy text");
                 }
                 return $dec;
             } catch (\Exception $e) {
-                return Yaml::parse($data);
+                try {
+                    return Yaml::parse($data);
+                } catch (\Exception $e) {
+                    throw new ImportException("Input string could not be parsed into an array", 0, $e);
+                }
             }
         } else {
             throw new \InvalidArgumentException("Invalid input type " . (is_object($data) ? get_class($data) : gettype($data)));
