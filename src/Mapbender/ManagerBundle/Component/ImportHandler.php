@@ -90,13 +90,13 @@ class ImportHandler extends ExchangeHandler
             return static::parseImportData(file_get_contents($data->getRealPath()));
         } elseif (is_string($data)) {
             try {
-                return Yaml::parse($data);
-            } catch (ParseException $e) {
                 $dec = json_decode($data, true);
                 if ($dec === null && trim($data) !== json_encode(null)) {
                     throw new ImportException("Input string could not be parsed into an array", 0, $e);
                 }
                 return $dec;
+            } catch (\Exception $e) {
+                return Yaml::parse($data);
             }
         } else {
             throw new \InvalidArgumentException("Invalid input type " . (is_object($data) ? get_class($data) : gettype($data)));
