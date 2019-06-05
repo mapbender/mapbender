@@ -14,8 +14,6 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 class ExchangeDenormalizer extends ExchangeSerializer
 {
 
-    protected $doFlush;
-
     protected $data;
 
     protected $classMapping = array(
@@ -33,8 +31,6 @@ class ExchangeDenormalizer extends ExchangeSerializer
     public function __construct(EntityManagerInterface $em, array $data)
     {
         parent::__construct($em);
-        $name = $em->getConnection()->getDatabasePlatform()->getName();
-        $this->doFlush = $name === 'sqlite' || $name === 'mysql' || $name === 'spatialite' ? true : false;
         $this->data   = $data;
     }
 
@@ -146,9 +142,6 @@ class ExchangeDenormalizer extends ExchangeSerializer
         }
 
         $this->em->persist($object);
-        if ($this->doFlush) {
-            $this->em->flush();
-        }
         $entityPool->add($object, $identValues);
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
@@ -170,9 +163,6 @@ class ExchangeDenormalizer extends ExchangeSerializer
                     $setter->invoke($object, $result);
                 }
                 $this->em->persist($object);
-                if ($this->doFlush) {
-                    $this->em->flush();
-                }
             }
         }
         return $object;

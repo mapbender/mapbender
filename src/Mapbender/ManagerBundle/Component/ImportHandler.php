@@ -184,10 +184,13 @@ class ImportHandler extends ExchangeHandler
                     $app = $denormalizer->handleData($entityPool, $item);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $this->em->persist($app);
-                    $this->updateElementConfiguration($entityPool, $app);
-                    $apps[] = $app;
-                    $this->em->persist($app);
+                    // Flush once to generate Application and Element ids before Element
+                    // configuration update.
                     $this->em->flush();
+                    $this->updateElementConfiguration($entityPool, $app);
+                    // Flush again to store updated Element configuration
+                    $this->em->flush();
+                    $apps[] = $app;
                 }
             }
         }
