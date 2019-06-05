@@ -2,9 +2,9 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 
 /**
  *
@@ -13,15 +13,12 @@ use Mapbender\CoreBundle\Utils\EntityUtil;
  */
 class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
 {
-    /**
-     *
-     * @var array mapper entity id before import <-> entity id after import
-     */
-    protected $mapper;
 
     protected $doFlush;
 
     protected $data;
+
+    protected $entityPool;
 
     protected $classMapping = array(
         'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
@@ -40,8 +37,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         parent::__construct($em);
         $name = $em->getConnection()->getDatabasePlatform()->getName();
         $this->doFlush = $name === 'sqlite' || $name === 'mysql' || $name === 'spatialite' ? true : false;
-        $this->mapper = array();
         $this->data   = $data;
+        $this->entityPool = new EntityPool();
     }
 
     public function isReference($data, array $criteria)
@@ -212,19 +209,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function addToMapper(array $identData, $object)
     {
-        $realClass = ClassUtils::getClass($object);
-        if (!isset($this->mapper[$realClass])) {
-            $this->mapper[$realClass] = array();
-        }
-        foreach ($this->mapper[$realClass] as $mapItem) {
-            if ($mapItem['before'] == $identData) {
-                return;
-            }
-        }
-        $this->mapper[$realClass][] = array(
-            'before' => $identData,
-            'object' => $object,
-        );
+        $this->entityPool->add($object, $identData, false);
     }
 
     /**
@@ -234,14 +219,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     public function getImportedObject($class, $identifier)
     {
-        if (!empty($this->mapper[$class])) {
-            foreach ($this->mapper[$class] as $mapItem) {
-                if ($mapItem['before'] == $identifier) {
-                    return $mapItem['object'];
-                }
-            }
-        }
-        return null;
+        return $this->entityPool->get($class, $identifier);
     }
 
     public function getPostImportId($class, $preImportIdentifier)
@@ -261,7 +239,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     {
         $postImportId = $this->getPostImportId($className, array('id' => $id));
         if (!$postImportId && $isSuperClass) {
-            $uniqueClasses = array_unique(array_keys($this->mapper));
+            $uniqueClasses = $this->entityPool->getUniqueClassNames();
             foreach ($uniqueClasses as $uniqueClass) {
                 if (class_exists($uniqueClass) && is_a($uniqueClass, $className, true)) {
                     $mappedId = $this->getIdentFromMapper($uniqueClass, $id, false);
