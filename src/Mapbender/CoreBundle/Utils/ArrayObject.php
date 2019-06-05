@@ -10,15 +10,15 @@ use Doctrine\ORM\PersistentCollection;
  */
 class ArrayObject
 {
-    const GETTER = EntityAnnotationParser::GETTER;
-    const SETTER = EntityAnnotationParser::SETTER;
+    const GETTER = EntityUtil::GETTER;
+    const SETTER = EntityUtil::SETTER;
 
     /**
      * Transforms an array to an object.
      * 
      * @param string  $classname
-     * @param array $data 
-     * @return object | null
+     * @param array|object $data
+     * @return object|null
      */
     public static function arrayToObject($classname, $data)
     {
