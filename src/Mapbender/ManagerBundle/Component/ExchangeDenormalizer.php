@@ -11,14 +11,12 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
  *
  * @author Paul Schmidt
  */
-class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
+class ExchangeDenormalizer extends ExchangeSerializer
 {
 
     protected $doFlush;
 
     protected $data;
-
-    protected $entityPool;
 
     protected $classMapping = array(
         'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
@@ -38,7 +36,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         $name = $em->getConnection()->getDatabasePlatform()->getName();
         $this->doFlush = $name === 'sqlite' || $name === 'mysql' || $name === 'spatialite' ? true : false;
         $this->data   = $data;
-        $this->entityPool = new EntityPool();
     }
 
     public function isReference($data, array $criteria)
@@ -71,22 +68,23 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     }
 
     /**
-     * @param $data
+     * @param EntityPool $entityPool
+     * @param mixed $data
      * @return array|null|number|string|object
      * @throws \Doctrine\ORM\ORMException
      */
-    public function handleData($data)
+    public function handleData(EntityPool $entityPool, $data)
     {
         if ($className = $this->getClassName($data)) {
             try {
-                return $this->handleEntity($className, $data);
+                return $this->handleEntity($entityPool, $className, $data);
             } catch (MappingException $e) {
-                return $this->handleClass($className, $data);
+                return $this->handleClass($entityPool, $className, $data);
             }
         } elseif (is_array($data)) {
             $result = array();
             foreach ($data as $key => $item) {
-                $result[$key] = $this->handleData($item);
+                $result[$key] = $this->handleData($entityPool, $item);
             }
             return $result;
         } elseif ($data === null || is_integer($data) || is_float($data) || is_string($data) || is_bool($data)) {
@@ -107,19 +105,20 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     }
 
     /**
+     * @param EntityPool $entityPool
      * @param string $className
      * @param array $data
      * @return object|null
      * @throws \Doctrine\ORM\ORMException
      * @throws MappingException
      */
-    public function handleEntity($className, array $data)
+    public function handleEntity(EntityPool $entityPool, $className, array $data)
     {
         $classMeta = $this->em->getClassMetadata($className);
         $identFieldNames = $classMeta->getIdentifier();
         $identValues = $this->extractFields($data, $identFieldNames);
         if ($this->isReference($data, $identValues)) {
-            if ($object = $this->getImportedObject($className, $identValues)) {
+            if ($object = $entityPool->get($className, $identValues)) {
                 return $object;
             } elseif ($objectdata = $this->getEntityData($className, $identValues)) {
                 $data = $objectdata;
@@ -136,7 +135,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             if (isset($data[$fieldName]) && array_key_exists($fieldName, $setters)) {
                 /** @var \ReflectionMethod $setter */
                 $setter = $setters[$fieldName];
-                $value = $this->handleData($data[$fieldName]);
+                $value = $this->handleData($entityPool, $data[$fieldName]);
                 $fm    = $classMeta->getFieldMapping($fieldName);
                 if ($fm['unique']) {
                     $value =
@@ -150,7 +149,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if ($this->doFlush) {
             $this->em->flush();
         }
-        $this->addToMapper($identValues, $object);
+        $entityPool->add($object, $identValues);
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
@@ -161,7 +160,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             if (array_key_exists($assocFieldName, $setters) && isset($data[$assocFieldName])) {
                 /** @var \ReflectionMethod $setter */
                 $setter = $setters[$assocFieldName];
-                $result = $this->handleData($data[$assocItem['fieldName']]);
+                $result = $this->handleData($entityPool, $data[$assocItem['fieldName']]);
                 if (is_array($result)) {
                     if (count($result)) {
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
@@ -179,14 +178,21 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         return $object;
     }
 
-    public function handleClass($className, array $data)
+    /**
+     * @param EntityPool $entityPool
+     * @param string $className
+     * @param array $data
+     * @return object
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function handleClass(EntityPool $entityPool, $className, array $data)
     {
         $reflectionInfo = $this->getReflectionInfo($className);
         $object = new $className();
         foreach ($reflectionInfo['setters'] as $propertyName => $setter) {
             /** @var \ReflectionMethod $setter */
             if (isset($data[$propertyName])) {
-                $value = $this->handleData($data[$propertyName]);
+                $value = $this->handleData($entityPool, $data[$propertyName]);
                 if (is_array($value)) {
                     if (count($value)) {
                         $setter->invoke($object, $value);
@@ -197,59 +203,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
         }
         return $object;
-    }
-
-    /**
-     * Tracks an instantiated object along with the serialized data it was created from, to
-     * support lookups of the instance from pre-import references -- most notably newly assigned
-     * ids.
-     *
-     * @param array $identData
-     * @param object $object object
-     */
-    public function addToMapper(array $identData, $object)
-    {
-        $this->entityPool->add($object, $identData, false);
-    }
-
-    /**
-     * @param string $class
-     * @param string[] $identifier
-     * @return object|null
-     */
-    public function getImportedObject($class, $identifier)
-    {
-        return $this->entityPool->get($class, $identifier);
-    }
-
-    public function getPostImportId($class, $preImportIdentifier)
-    {
-        $object = $this->getImportedObject($class, $preImportIdentifier);
-        if ($object) {
-            return implode('', $this->extractProperties($object, array('id'))) ?: null;
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @inheritdoc
-     */
-    public function getIdentFromMapper($className, $id, $isSuperClass = false)
-    {
-        $postImportId = $this->getPostImportId($className, array('id' => $id));
-        if (!$postImportId && $isSuperClass) {
-            $uniqueClasses = $this->entityPool->getUniqueClassNames();
-            foreach ($uniqueClasses as $uniqueClass) {
-                if (class_exists($uniqueClass) && is_a($uniqueClass, $className, true)) {
-                    $mappedId = $this->getIdentFromMapper($uniqueClass, $id, false);
-                    if ($mappedId) {
-                        return $mappedId;
-                    }
-                }
-            }
-        }
-        return $postImportId;
     }
 
     /**

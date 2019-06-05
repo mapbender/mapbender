@@ -6,12 +6,13 @@ namespace Mapbender\ManagerBundle\Component\Exchange;
 
 use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  * Maps imported entities to their "import space" identifiers, which are
  * usually old ids from the export origin that need adjusting.
  */
-class EntityPool
+class EntityPool implements Mapper
 {
     /** @var object[] */
     protected $entities;
@@ -36,14 +37,6 @@ class EntityPool
     }
 
     /**
-     * @return string[]
-     */
-    public function getUniqueClassNames()
-    {
-        return array_values($this->uniqueClassNames);
-    }
-
-    /**
      * @param object $entity
      * @param string[] $identifier
      * @param bool $allowReplace
@@ -56,6 +49,32 @@ class EntityPool
             $this->entities[$key] = $entity;
             $this->uniqueClassNames[$className] = $className;
         }
+    }
+
+    /**
+     *
+     * @inheritdoc
+     */
+    public function getIdentFromMapper($className, $id, $isSuperClass = false)
+    {
+        $identValues = array(
+            'id' => $id,
+        );
+        $entity = $this->get($className, $identValues);
+        if (!$entity && $isSuperClass) {
+            $realBaseClass = ClassUtils::getRealClass($className);
+            foreach ($this->uniqueClassNames as $uniqueClass) {
+                if (class_exists($uniqueClass) && is_a($uniqueClass, $realBaseClass, true)) {
+                    if ($entity = $this->get($uniqueClass, $identValues)) {
+                        break;
+                    }
+                }
+            }
+        }
+        if ($entity && method_exists($entity, 'getId')) {
+            return $entity->getId();
+        }
+        return null;
     }
 
     /**
