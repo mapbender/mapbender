@@ -312,24 +312,27 @@ class ImportHandler extends ExchangeHandler
     {
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            $getMethod = $denormalizer->getReturnMethod($entity, $fieldName);
-            if ($getMethod) {
-                $subObject = $getMethod->invoke($entity);
-                if ($subObject instanceof PersistentCollection) {
-                    if (is_a($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword", true)) {
-                        continue;
-                    } elseif (!isset($data[$fieldName])) {
-                        throw new ImportException("Missing data for field {$fieldName} on target {$assocItem['targetEntity']}");
-                    } elseif (count($data[$fieldName]) !== $subObject->count()) {
-                        throw new ImportException("Collection member count mismatch for field {$fieldName}, " . count($data[$fieldName]) . " vs " . $subObject->count());
-                    }
-                    if (is_a($assocItem['targetEntity'], 'Mapbender\CoreBundle\Entity\SourceItem', true) && !($entity instanceof Source)) {
-                        // recursively validate sublayer structure (only on WmsLayer)
-                        foreach ($subObject->getValues() as $index => $related) {
-                            $relatedMeta = $this->em->getClassMetadata(get_class($related));
-                            $relatedData = $data[$fieldName][$index];
-                            $this->validateMatchingRelations($denormalizer, $relatedMeta, $related, $relatedData);
-                        }
+            try {
+                $subObject = $denormalizer->extractProperty($entity, $fieldName);
+            } catch (\LogicException $e) {
+                // no such property on entity
+                continue;
+            }
+            if ($subObject && ($subObject instanceof PersistentCollection)) {
+                $targetClass = $assocItem['targetEntity'];
+                if (is_a($targetClass, "Mapbender\CoreBundle\Entity\Keyword", true)) {
+                    continue;
+                } elseif (!isset($data[$fieldName])) {
+                    throw new ImportException("Missing data for field {$fieldName} on target {$targetClass}");
+                } elseif (count($data[$fieldName]) !== $subObject->count()) {
+                    throw new ImportException("Collection member count mismatch for field {$fieldName}, " . count($data[$fieldName]) . " vs " . $subObject->count());
+                }
+                if (is_a($targetClass, 'Mapbender\CoreBundle\Entity\SourceItem', true) && !($entity instanceof Source)) {
+                    // recursively validate sublayer structure (only on WmsLayer)
+                    foreach ($subObject->getValues() as $index => $related) {
+                        $relatedMeta = $this->em->getClassMetadata(get_class($related));
+                        $relatedData = $data[$fieldName][$index];
+                        $this->validateMatchingRelations($denormalizer, $relatedMeta, $related, $relatedData);
                     }
                 }
             }

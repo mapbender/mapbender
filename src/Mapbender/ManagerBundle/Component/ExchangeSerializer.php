@@ -2,7 +2,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Utils\EntityAnnotationParser as EAP;
+use Mapbender\Component\StringUtil;
 
 /**
  * ExchangeNormalizer class normalizes objects to array.
@@ -12,15 +12,6 @@ use Mapbender\CoreBundle\Utils\EntityAnnotationParser as EAP;
 abstract class ExchangeSerializer
 {
     const KEY_CLASS         = '__class__';
-    const KEY_SLUG          = 'slug';
-    const KEY_IDENTIFIER    = 'identifier';
-    const KEY_GETTER        = EAP::GETTER;
-    const KEY_SETTER        = EAP::SETTER;
-    const KEY_COLUMN        = EAP::COLUMN;
-    const KEY_UNIQUE        = 'unique';
-    const KEY_MAP           = 'map';
-    const KEY_PRIMARY       = 'primary';
-    const KEY_CONFIGURATION = 'configuration';
     const KEY_GET = 'get';
     const KEY_SET = 'set';
     const KEY_ADD = 'add';
@@ -31,9 +22,6 @@ abstract class ExchangeSerializer
     protected $em;
 
     protected static $reflectionInfo = array();
-
-    /** @var \ReflectionClass[] */
-    protected static $classReflection = array();
 
     /**
      *
@@ -61,11 +49,9 @@ abstract class ExchangeSerializer
                 $getterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
                     static::KEY_GET,
                     static::KEY_IS,
-                    static::KEY_HAS,
                 ));
                 $setterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
                     self::KEY_SET,
-                    self::KEY_ADD,
                 ));
                 if ($getterMethod) {
                     $getters[$propertyName] = $getterMethod;
@@ -84,34 +70,6 @@ abstract class ExchangeSerializer
     }
 
     /**
-     * @param $realClass
-     * @return \ReflectionClass
-     * @throws \ReflectionException
-     */
-    protected static function getReflectionClass($realClass)
-    {
-        if (!isset(static::$classReflection[$realClass])) {
-            static::$classReflection[$realClass] = new \ReflectionClass($realClass);
-        }
-        return static::$classReflection[$realClass];
-    }
-
-    /**
-     * @param object $object
-     * @param string $fieldName
-     * @return null|\ReflectionMethod
-     */
-    public function getReturnMethod($object, $fieldName)
-    {
-        $rfi = $this->getReflectionInfo(get_class($object));
-        if (array_key_exists($fieldName, $rfi['getters'])) {
-            return $rfi['getters'][$fieldName];
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param \ReflectionClass $class
      * @param string $fieldName
      * @param string[] $prefixes
@@ -119,14 +77,11 @@ abstract class ExchangeSerializer
      */
     protected static function getPropertyAccessor(\ReflectionClass $class, $fieldName, $prefixes)
     {
-        $methodHash = "";
-        foreach (preg_split("/_/", $fieldName) as $chunk) {
-            $chunk = ucwords($chunk);
-            $methodHash .= $chunk;
-        }
+        $camelCasedFieldName = StringUtil::snakeToCamelCase($fieldName, true);
         foreach ($prefixes as $prefix) {
-            if ($class->hasMethod($prefix . $methodHash)) {
-                return $class->getMethod($prefix . $methodHash);
+            $methodName = $prefix . $camelCasedFieldName;
+            if ($class->hasMethod($methodName)) {
+                return $class->getMethod($methodName);
             }
         }
         return null;
@@ -151,5 +106,20 @@ abstract class ExchangeSerializer
             $values[$propertyName] = $getter->invoke($object);
         }
         return $values;
+    }
+
+    /**
+     * @param object $object
+     * @param string $propertyName
+     * @return mixed
+     * @throws \LogicException
+     */
+    public function extractProperty($object, $propertyName)
+    {
+        $data = $this->extractProperties($object, array($propertyName));
+        if (!array_key_exists($propertyName, $data)) {
+            throw new \LogicException("No getter for property {$propertyName} on " . get_class($object));
+        }
+        return $data[$propertyName];
     }
 }
