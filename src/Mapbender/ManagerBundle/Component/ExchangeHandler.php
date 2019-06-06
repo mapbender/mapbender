@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 abstract class ExchangeHandler
 {
+    const KEY_CLASS         = '__class__';
+
     /** @var EntityManagerInterface $em */
     protected $em;
 

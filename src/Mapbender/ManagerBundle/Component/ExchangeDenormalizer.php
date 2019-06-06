@@ -13,7 +13,7 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
  *
  * @author Paul Schmidt
  */
-class ExchangeDenormalizer extends ExchangeSerializer
+class ExchangeDenormalizer extends ExchangeHandler
 {
 
     protected $data;

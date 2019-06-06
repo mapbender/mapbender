@@ -14,9 +14,8 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
  *
  * @author Paul Schmidt
  */
-class ExchangeNormalizer extends ExchangeSerializer
+class ExchangeNormalizer extends ExchangeHandler
 {
-
     protected $export;
 
     protected $inProcess;
