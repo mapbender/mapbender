@@ -8,10 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ImportState
 {
-    /** @var array */
-    protected $data;
     /** @var EntityPool */
     protected $entityPool;
+    /** @var ObjectIdentityPool */
     protected $globalList;
 
     /**
@@ -30,13 +29,13 @@ class ImportState
                 }
                 continue;
             }
+            $identifierNames = $eh->getClassMeta()->getIdentifier();
 
             foreach ($instanceList as $instanceData) {
-                $identValues = array_intersect_key($instanceData, array_flip($eh->getClassMeta()->getIdentifier()));
+                $identValues = array_intersect_key($instanceData, array_flip($identifierNames));
                 $this->globalList->addEntry($className, $identValues, $instanceData, false);
             }
         }
-        $this->data = $data;
         $this->entityPool = $entityPool ?: new EntityPool();
     }
 
