@@ -147,8 +147,7 @@ class ExchangeDenormalizer extends ExchangeHandler
         $entityPool->add($object, $this->extractFields($data, $identFieldNames));
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
-            // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
-            if (is_a($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword", true)) {
+            if ($this->isEntityClassBlacklisted($assocItem['targetEntity'])) {
                 continue;
             }
             $assocFieldName = $assocItem['fieldName'];

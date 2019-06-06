@@ -112,6 +112,9 @@ class ExchangeNormalizer extends ExchangeHandler
         // This nicely avoids exporting informative relationships such as Source->getInstances
         $getters = $entityInfo->getGetters(array_keys($entityInfo->getSetters()));
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
+            if ($this->isEntityClassBlacklisted($assocItem['targetEntity'])) {
+                continue;
+            }
             $fieldName = $assocItem['fieldName'];
             if (!array_key_exists($fieldName, $getters)) {
                 continue;
@@ -129,6 +132,7 @@ class ExchangeNormalizer extends ExchangeHandler
                 $data[$fieldName] = $this->handleObject($exportPool, $subObject);
             }
         }
+
         // replace dummy data with full export value
         $exportPool->addEntry($classMeta->getName(), $identValues, $data, true);
         gc_collect_cycles();
