@@ -23,7 +23,7 @@ class ObjectIdentityPool
     /**
      * @param string $className
      * @param string[] $identifier
-     * @return object|null
+     * @return mixed|null
      */
     public function get($className, $identifier)
     {

@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
@@ -57,11 +58,12 @@ class ImportHandler extends ExchangeHandler
      */
     public function importApplicationData(array $data, $copyHint=false)
     {
-        $denormalizer = new ExchangeDenormalizer($this->em, $data);
+        $denormalizer = new ExchangeDenormalizer($this->em);
         $entityPool = new EntityPool();
+        $importState = new ImportState($this->em, $data, $entityPool);
         try {
-            $this->importSources($entityPool, $denormalizer, $data, $copyHint);
-            $apps = $this->importApplicationEntities($entityPool, $denormalizer, $data);
+            $this->importSources($importState, $denormalizer, $data, $copyHint);
+            $apps = $this->importApplicationEntities($importState, $denormalizer, $data);
             if (!$apps) {
                 throw new ImportException("No applications found");
             }
@@ -109,19 +111,19 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * Imports sources.
-     * @param EntityPool $entityPool
+     * @param ImportState $state
      * @param ExchangeDenormalizer $denormalizer
      * @param array $data data to import
      * @param bool $copyHint
      * @throws ORMException
      */
-    private function importSources(EntityPool $entityPool, $denormalizer, $data, $copyHint)
+    private function importSources(ImportState $state, $denormalizer, $data, $copyHint)
     {
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
                 foreach ($content as $item) {
-                    if (!$this->findMatchingSource($entityPool, $denormalizer, $item, $copyHint)) {
-                        $source = $denormalizer->handleData($entityPool, $item);
+                    if (!$this->findMatchingSource($state, $item, $copyHint)) {
+                        $source = $denormalizer->handleData($state, $item);
                         $this->em->persist($source);
                         $this->em->flush();
                     }
@@ -131,13 +133,12 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param EntityPool $entityPool
-     * @param ExchangeDenormalizer $denormalizer
+     * @param ImportState $state
      * @param array $data data to import
      * @param bool $copyHint
      * @return Source|null
      */
-    private function findMatchingSource(EntityPool $entityPool, $denormalizer, $data, $copyHint)
+    private function findMatchingSource(ImportState $state, $data, $copyHint)
     {
         $className = $this->extractClassName($data);
         if (!$copyHint) {
@@ -158,10 +159,12 @@ class ImportHandler extends ExchangeHandler
         $criteria = $this->extractArrayFields($data, $identFields);
         foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
             $tempPool = new EntityPool();
-            if ($this->compareSource($tempPool, $denormalizer, $source, $data)) {
+            if ($this->compareSource($state, $tempPool, $source, $data)) {
+                $classMeta = $this->em->getClassMetadata($className);
+                $tempPool->add($source, $this->extractArrayFields($data, $classMeta->getIdentifier()));
                 // Move references to Source and its layers over into the "already imported" set,
                 // so no new entities will be created and persisted
-                $entityPool->merge($tempPool);
+                $state->getEntityPool()->merge($tempPool);
                 return $source;
             }
         }
@@ -169,26 +172,26 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param EntityPool $entityPool
+     * @param ImportState $state
      * @param ExchangeDenormalizer $denormalizer
      * @param array $data data to import
      * @return Application[]
      * @throws ORMException
      */
-    private function importApplicationEntities(EntityPool $entityPool, $denormalizer, $data)
+    private function importApplicationEntities(ImportState $state, $denormalizer, $data)
     {
         $apps = array();
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Application', true)) {
                 foreach ($content as $item) {
                     /** @var Application $app */
-                    $app = $denormalizer->handleData($entityPool, $item);
+                    $app = $denormalizer->handleData($state, $item);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $this->em->persist($app);
                     // Flush once to generate Application and Element ids before Element
                     // configuration update.
                     $this->em->flush();
-                    $this->updateElementConfiguration($entityPool, $app);
+                    $this->updateElementConfiguration($state->getEntityPool(), $app);
                     // Flush again to store updated Element configuration
                     $this->em->flush();
                     $apps[] = $app;
@@ -269,13 +272,13 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
+     * @param ImportState $state
      * @param EntityPool $entityPool
-     * @param ExchangeDenormalizer $denormalizer
      * @param Source $source
      * @param array $data
      * @return bool
      */
-    private function compareSource(EntityPool $entityPool, $denormalizer, $source, array $data)
+    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data)
     {
         foreach ($data['layers'] as $layerData) {
             $layerClass = $this->extractClassName($layerData);
@@ -292,7 +295,7 @@ class ImportHandler extends ExchangeHandler
             }
             $layerMeta = EntityHelper::getInstance($this->em, $layerClass)->getClassMeta();
             $layerIdentData = $this->extractArrayFields($layerData, $layerMeta->getIdentifier());
-            $layerData = $denormalizer->getEntityData($layerClass, $layerIdentData) ?: $layerData;
+            $layerData = $state->getEntityData($layerClass, $layerIdentData) ?: $layerData;
 
             $criteria = Criteria::create()->where(Criteria::expr()->eq($field, $layerData[$field]));
             $match = $source->getLayers()->matching($criteria)->first();

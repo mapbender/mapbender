@@ -37,10 +37,10 @@ abstract class ExchangeHandler
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return string|null
      */
-    protected function extractClassName(array $data)
+    protected function extractClassName($data)
     {
         if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
             $className = $data[self::KEY_CLASS];
@@ -84,7 +84,6 @@ abstract class ExchangeHandler
         $className = ClassUtils::getRealClass($className);
         foreach ($list as $listName) {
             if (is_a($className, $listName, true)) {
-                // die("Yes yes yes! " . $className . " " . $listName . "\n");
                 return true;
             }
         }

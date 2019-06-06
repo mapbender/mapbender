@@ -1,0 +1,60 @@
+<?php
+
+
+namespace Mapbender\ManagerBundle\Component\Exchange;
+
+
+use Doctrine\ORM\EntityManagerInterface;
+
+class ImportState
+{
+    /** @var array */
+    protected $data;
+    /** @var EntityPool */
+    protected $entityPool;
+    protected $globalList;
+
+    /**
+     * @param EntityManagerInterface $em
+     * @param array $data
+     * @param EntityPool|null $entityPool
+     */
+    public function __construct(EntityManagerInterface $em, array $data, EntityPool $entityPool = null)
+    {
+        $this->globalList = new ObjectIdentityPool();
+        foreach ($data as $className => $instanceList) {
+            $eh = EntityHelper::getInstance($em, $className);
+            if (!$eh) {
+                if (class_exists($className)) {
+                    throw new \LogicException("No entity helper for importable class {$className}");
+                }
+                continue;
+            }
+
+            foreach ($instanceList as $instanceData) {
+                $identValues = array_intersect_key($instanceData, array_flip($eh->getClassMeta()->getIdentifier()));
+                $this->globalList->addEntry($className, $identValues, $instanceData, false);
+            }
+        }
+        $this->data = $data;
+        $this->entityPool = $entityPool ?: new EntityPool();
+    }
+
+    /**
+     * @return EntityPool
+     */
+    public function getEntityPool()
+    {
+        return $this->entityPool;
+    }
+
+    /**
+     * @param string $className
+     * @param string[] $identifier
+     * @return array|null
+     */
+    public function getEntityData($className, $identifier)
+    {
+        return $this->globalList->get($className, $identifier);
+    }
+}

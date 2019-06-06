@@ -10,6 +10,8 @@ use Mapbender\ManagerBundle\Component\Mapper;
 /**
  * Maps imported entities to their "import space" identifiers, which are
  * usually old ids from the export origin that need adjusting.
+ *
+ * @method object|null get(string $className, string[] $identifier)
  */
 class EntityPool extends ObjectIdentityPool implements Mapper
 {
