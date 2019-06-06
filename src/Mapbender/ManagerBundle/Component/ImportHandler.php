@@ -139,7 +139,7 @@ class ImportHandler extends ExchangeHandler
      */
     private function findMatchingSource(EntityPool $entityPool, $denormalizer, $data, $copyHint)
     {
-        $className = $denormalizer->getClassName($data);
+        $className = $this->extractClassName($data);
         if (!$copyHint) {
             // Avoid inserting "new" sources that are duplicates of already existing ones
             // Finding equivalent sources is relatively expensive
@@ -155,7 +155,7 @@ class ImportHandler extends ExchangeHandler
             $classMeta = $this->em->getClassMetadata($className);
             $identFields = $classMeta->getIdentifier();
         }
-        $criteria = $denormalizer->extractFields($data, $identFields);
+        $criteria = $this->extractArrayFields($data, $identFields);
         foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
             $tempPool = new EntityPool();
             if ($this->compareSource($tempPool, $denormalizer, $source, $data)) {
@@ -278,7 +278,7 @@ class ImportHandler extends ExchangeHandler
     private function compareSource(EntityPool $entityPool, $denormalizer, $source, array $data)
     {
         foreach ($data['layers'] as $layerData) {
-            $layerClass = $denormalizer->getClassName($layerData);
+            $layerClass = $this->extractClassName($layerData);
 
             if (!$layerClass) {
                 throw new ImportException("Missing source item class definition");
@@ -291,7 +291,7 @@ class ImportHandler extends ExchangeHandler
                 throw new ImportException("Unsupported layer type {$layerClass}");
             }
             $layerMeta = EntityHelper::getInstance($this->em, $layerClass)->getClassMeta();
-            $layerIdentData = $denormalizer->extractFields($layerData, $layerMeta->getIdentifier());
+            $layerIdentData = $this->extractArrayFields($layerData, $layerMeta->getIdentifier());
             $layerData = $denormalizer->getEntityData($layerClass, $layerIdentData) ?: $layerData;
 
             $criteria = Criteria::create()->where(Criteria::expr()->eq($field, $layerData[$field]));

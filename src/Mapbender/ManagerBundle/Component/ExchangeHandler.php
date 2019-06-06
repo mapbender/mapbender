@@ -21,12 +21,48 @@ abstract class ExchangeHandler
         'Mapbender\CoreBundle\Entity\Keyword',
     );
 
+    protected $legacyClassMapping = array(
+        'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
+        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
+        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',
+        'Mapbender\WmtsBundle\Entity\Style' => 'Mapbender\WmtsBundle\Component\Style',
+    );
+
     /**
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
+    }
+
+    /**
+     * @param $data
+     * @return string|null
+     */
+    protected function extractClassName(array $data)
+    {
+        if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
+            $className = $data[self::KEY_CLASS];
+            if (is_array($className)) {
+                $className = $className[0];
+            }
+            while (!empty($this->legacyClassMapping[$className])) {
+                $className = $this->legacyClassMapping[$className];
+            }
+            return $className;
+        }
+        return null;
+    }
+
+    /**
+     * @param array $data
+     * @param string[] $fieldNames
+     * @return array
+     */
+    protected function extractArrayFields(array $data, array $fieldNames)
+    {
+        return array_intersect_key($data, array_flip($fieldNames));
     }
 
     /**

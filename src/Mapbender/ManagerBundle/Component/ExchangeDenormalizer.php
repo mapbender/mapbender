@@ -18,13 +18,6 @@ class ExchangeDenormalizer extends ExchangeHandler
 
     protected $data;
 
-    protected $classMapping = array(
-        'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
-        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
-        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',
-        'Mapbender\WmtsBundle\Entity\Style' => 'Mapbender\WmtsBundle\Component\Style',
-    );
-
     /**
      * Creates an instance.
      * @param EntityManagerInterface $em
@@ -68,9 +61,9 @@ class ExchangeDenormalizer extends ExchangeHandler
      */
     public function handleData(EntityPool $entityPool, $data)
     {
-        if ($className = $this->getClassName($data)) {
+        if ($className = $this->extractClassName($data)) {
             if ($entityInfo = EntityHelper::getInstance($this->em, $className)) {
-                $identValues = $this->extractFields($data, $entityInfo->getClassMeta()->getIdentifier());
+                $identValues = $this->extractArrayFields($data, $entityInfo->getClassMeta()->getIdentifier());
                 if ($this->isReference($data, $identValues)) {
                     if ($object = $entityPool->get($className, $identValues)) {
                         return $object;
@@ -100,23 +93,13 @@ class ExchangeDenormalizer extends ExchangeHandler
     }
 
     /**
-     * @param array $data
-     * @param string[] $fieldNames
-     * @return array
-     */
-    public function extractFields(array $data, array $fieldNames)
-    {
-        return array_intersect_key($data, array_flip($fieldNames));
-    }
-
-    /**
      * @param EntityPool $entityPool
      * @param EntityHelper $entityInfo
      * @param array $data
      * @return object|null
      * @throws \Doctrine\ORM\ORMException
      */
-    public function handleEntity(EntityPool $entityPool, EntityHelper $entityInfo, array $data)
+    protected function handleEntity(EntityPool $entityPool, EntityHelper $entityInfo, array $data)
     {
         $classMeta = $entityInfo->getClassMeta();
         $className = $classMeta->getName();
@@ -139,7 +122,7 @@ class ExchangeDenormalizer extends ExchangeHandler
         }
 
         $this->em->persist($object);
-        $entityPool->add($object, $this->extractFields($data, $identFieldNames));
+        $entityPool->add($object, $this->extractArrayFields($data, $identFieldNames));
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             if ($this->isEntityClassBlacklisted($assocItem['targetEntity'])) {
@@ -170,7 +153,7 @@ class ExchangeDenormalizer extends ExchangeHandler
      * @return object
      * @throws \Doctrine\ORM\ORMException
      */
-    public function handleClass(EntityPool $entityPool, AbstractObjectHelper $classInfo, array $data)
+    protected function handleClass(EntityPool $entityPool, AbstractObjectHelper $classInfo, array $data)
     {
         $className = $classInfo->getClassName();
         $object = new $className();
@@ -183,24 +166,5 @@ class ExchangeDenormalizer extends ExchangeHandler
             }
         }
         return $object;
-    }
-
-    /**
-     * @param $data
-     * @return string|null
-     */
-    public function getClassName($data)
-    {
-        if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
-            $className = $data[self::KEY_CLASS];
-            if (is_array($className)) {
-                $className = $className[0];
-            }
-            while (!empty($this->classMapping[$className])) {
-                $className = $this->classMapping[$className];
-            }
-            return $className;
-        }
-        return null;
     }
 }
