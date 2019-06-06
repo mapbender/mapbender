@@ -3,8 +3,11 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
-use Doctrine\Common\Persistence\Mapping\MappingException;
+use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
+use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
+use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 
 /**
  * ExchangeNormalizer class normalizes objects to array.
@@ -44,22 +47,28 @@ class ExchangeNormalizer extends ExchangeSerializer
 
     /**
      * @param array   $objectData
-     * @param  object $classMeta
+     * @param  ClassMetadata $classMeta
      * @return bool
      */
     private function isInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->inProcess[$class])) {
+        if (!$objectData) {
+            throw new \LogicException("Empty objectdata");
+        }
+        if (empty($this->inProcess[$class])) {
             return false;
         }
+        $idents = $classMeta->getIdentifier();
         foreach ($this->inProcess[$class] as $array) {
-            $idents = $classMeta->getIdentifier();
-            $found = true;
+            $match = true;
             foreach ($idents as $ident) {
-                $found = $found && $array[$ident] === $objectData[$ident];
+                if ($array[$ident] != $objectData[$ident]) {
+                    $match = false;
+                    break;
+                }
             }
-            if ($found) {
+            if ($match) {
                 return true;
             }
         }
@@ -73,12 +82,10 @@ class ExchangeNormalizer extends ExchangeSerializer
     private function addInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->inProcess[ $class ])) {
-            $this->inProcess[ $class ] = array();
+        if (!isset($this->inProcess[$class])) {
+            $this->inProcess[$class] = array();
         }
-        if (!$this->isInProcess($objectData, $classMeta)) {
-            $this->inProcess[ $class ][] = $objectData;
-        }
+        $this->inProcess[$class][] = $objectData;
     }
 
     /**
@@ -96,7 +103,7 @@ class ExchangeNormalizer extends ExchangeSerializer
             $idents = $classMeta->getIdentifier();
             $subfound = true;
             foreach ($idents as $ident) {
-                $subfound = $subfound && $array[$ident] === $objectData[$ident];
+                $subfound = $subfound && $array[$ident] == $objectData[$ident];
             }
             if ($subfound) {
                 return true;
@@ -146,11 +153,7 @@ class ExchangeNormalizer extends ExchangeSerializer
         } elseif (is_array($value)) {
             return $this->handleArray($value);
         } elseif (is_object($value)) {
-            try {
-                return $this->normalizeEntity($value);
-            } catch (MappingException $e) {
-                return $this->normalizeObject($value);
-            }
+            return $this->handleObject($value);
         } else {
             // why??
             return 'unsupported';
@@ -161,62 +164,77 @@ class ExchangeNormalizer extends ExchangeSerializer
      * @param object $object
      * @return array
      */
-    public function normalizeEntity($object)
+    public function handleObject($object)
+    {
+        $entityInfo = EntityHelper::getInstance($this->em, $object);
+        if ($entityInfo) {
+            return $this->normalizeEntity($entityInfo, $object);
+        } else {
+            return $this->normalizeObject(ObjectHelper::getInstance($object), $object);
+        }
+    }
+
+    /**
+     * @param EntityHelper $entityInfo
+     * @param object $object
+     * @return array
+     */
+    public function normalizeEntity(EntityHelper $entityInfo, $object)
     {
         gc_enable();
-        $className = get_class($object);
-        $classMeta = $this->em->getClassMetadata($className);
+        $classMeta = $entityInfo->getClassMeta();
 
         $identFieldNames = $classMeta->getIdentifier();
         $nonMappingFieldNames = $classMeta->getFieldNames();
-        $nonIdentFieldNames = array_diff($nonMappingFieldNames, $identFieldNames);
+        $identValues = $entityInfo->extractProperties($object, $identFieldNames);
 
-        $fieldProperties = $this->extractProperties($object, $nonMappingFieldNames);
-        $identValues = array_intersect_key($fieldProperties, array_flip($identFieldNames));
-        $nonIdentValues = array_intersect_key($fieldProperties, array_flip($nonIdentFieldNames));
-
-        $data = $this->createInstanceIdent($object, $identValues);
-        if ($this->isInProcess($data, $classMeta)) {
-            return $data;
+        $referenceData = $this->createInstanceIdent($object, $identValues);
+        if ($this->isInProcess($referenceData, $classMeta)) {
+            return $referenceData;
         }
-        $this->addInProcess($data, $classMeta);
+        $this->addInProcess($referenceData, $classMeta);
+
+        $data = $referenceData;
+        $nonIdentFieldNames = array_diff($nonMappingFieldNames, $identFieldNames);
+        $nonIdentValues = $entityInfo->extractProperties($object, $nonIdentFieldNames);
         foreach ($nonIdentValues as $fieldName => $fieldValue) {
             $data[$fieldName] = $this->handleValue($fieldValue);
         }
 
-        $rfi = $this->getReflectionInfo($className);
+        // No point exporting a field that doesn't have a corresponding setter.
+        // This nicely avoids exporting informative relationships such as Source->getInstances
+        $getters = $entityInfo->getGetters(array_keys($entityInfo->getSetters()));
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            // No point exporting a field that doesn't have a corresponding setter.
-            // This nicely avoids exporting informative relationships such as Source->getInstances
-            if (!array_key_exists($fieldName, $rfi['getters']) || !array_key_exists($fieldName, $rfi['setters'])) {
+            if (!array_key_exists($fieldName, $getters)) {
                 continue;
             }
-            /** @var \ReflectionMethod $getMethod */
-            $getMethod = $rfi['getters'][$fieldName];
-            $subObject = $getMethod->invoke($object);
+
+            $subObject = $getters[$fieldName]->invoke($object);
             if (!$subObject) {
                 $data[$fieldName] = null;
             } elseif ($subObject instanceof PersistentCollection) {
                 $data[$fieldName] = array();
                 foreach ($subObject as $item) {
-                    $data[$fieldName][] = $this->normalizeEntity($item);
+                    $data[$fieldName][] = $this->handleObject($item);
                 }
             } else {
-                $data[$fieldName] = $this->normalizeEntity($subObject);
+                $data[$fieldName] = $this->handleObject($subObject);
             }
         }
         $this->addExport($data, $classMeta);
         gc_collect_cycles();
-        return $data;
-    }
+        return $referenceData;
+   }
 
-    public function normalizeObject($object)
+    /**
+     * @param AbstractObjectHelper $classInfo
+     * @param object $object
+     * @return array
+     */
+    public function normalizeObject(AbstractObjectHelper $classInfo, $object)
     {
-        $values = array();
-        foreach ($this->extractProperties($object, null) as $name => $value) {
-            $values[$name] = $this->handleValue($value);
-        }
+        $values = $classInfo->extractProperties($object, null);
         return $this->createInstanceIdent($object, $values);
     }
 

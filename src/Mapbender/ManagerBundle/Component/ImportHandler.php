@@ -2,7 +2,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\PersistentCollection;
 use FOM\UserBundle\Component\AclManager;
@@ -11,6 +10,7 @@ use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
+use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -279,12 +279,12 @@ class ImportHandler extends ExchangeHandler
      */
     private function addSourceToMapper(EntityPool $entityPool, $denormalizer, $source, array $data)
     {
-        $classMeta = $this->em->getClassMetadata(get_class($source));
-        $identFieldNames = $classMeta->getIdentifier();
-        $identData = array_intersect_key($data, array_flip($identFieldNames));
+        $entityInfo = EntityHelper::getInstance($this->em, $source);
+        $classMeta = $entityInfo->getClassMeta();
+        $identData = array_intersect_key($data, array_flip($classMeta->getIdentifier()));
         $entityPool->add($source, $identData);
 
-        $this->validateMatchingRelations($denormalizer, $classMeta, $source, $data);
+        $this->validateMatchingRelations($entityInfo, $source, $data);
 
         foreach ($source->getLayers()->getValues() as $layerIndex => $layer) {
             $layerData = $data['layers'][$layerIndex];
@@ -292,12 +292,14 @@ class ImportHandler extends ExchangeHandler
             if (!$layerClass) {
                 throw new ImportException("Missing source item class definition");
             }
-            $layerMeta = $this->em->getClassMetadata($layerClass);
+            $layerInfo = EntityHelper::getInstance($this->em, $layerClass);
+            $layerMeta = $layerInfo->getClassMeta();
+
             $layerIdentData = $denormalizer->extractFields($layerData, $layerMeta->getIdentifier());
             if ($denormalizer->isReference($layerData, $layerIdentData)) {
                 if (!$entityPool->get($layerClass, $layerIdentData)) {
                     $od = $denormalizer->getEntityData($layerClass, $layerIdentData);
-                    $this->validateMatchingRelations($denormalizer, $layerMeta, $layer, $od);
+                    $this->validateMatchingRelations($layerInfo, $layer, $od);
                     $layerIdentData = $denormalizer->extractFields($od, $layerMeta->getIdentifier());
                     $entityPool->add($layer, $layerIdentData, false);
                 }
@@ -306,17 +308,17 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param ExchangeDenormalizer $denormalizer
-     * @param ClassMetadata $classMeta
+     * @param EntityHelper $entityInfo
      * @param object $entity
      * @param array $data
      */
-    private function validateMatchingRelations($denormalizer, ClassMetadata $classMeta, $entity, $data)
+    private function validateMatchingRelations(EntityHelper $entityInfo, $entity, $data)
     {
-        foreach ($classMeta->getAssociationMappings() as $assocItem) {
+        foreach ($entityInfo->getClassMeta()->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
+
             try {
-                $subObject = $denormalizer->extractProperty($entity, $fieldName);
+                $subObject = $entityInfo->extractProperty($entity, $fieldName);
             } catch (\LogicException $e) {
                 // no such property on entity
                 continue;
@@ -332,10 +334,10 @@ class ImportHandler extends ExchangeHandler
                 }
                 if (is_a($targetClass, 'Mapbender\CoreBundle\Entity\SourceItem', true) && !($entity instanceof Source)) {
                     // recursively validate sublayer structure (only on WmsLayer)
-                    foreach ($subObject->getValues() as $index => $related) {
-                        $relatedMeta = $this->em->getClassMetadata(get_class($related));
-                        $relatedData = $data[$fieldName][$index];
-                        $this->validateMatchingRelations($denormalizer, $relatedMeta, $related, $relatedData);
+                    foreach ($subObject->getValues() as $index => $layer) {
+                        $layerInfo = EntityHelper::getInstance($this->em, $layer);
+                        $layerData = $data[$fieldName][$index];
+                        $this->validateMatchingRelations($layerInfo, $layer, $layerData);
                     }
                 }
             }

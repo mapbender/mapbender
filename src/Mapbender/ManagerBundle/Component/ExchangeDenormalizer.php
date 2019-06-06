@@ -1,9 +1,11 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
+use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
+use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 
 /**
@@ -72,10 +74,22 @@ class ExchangeDenormalizer extends ExchangeSerializer
     public function handleData(EntityPool $entityPool, $data)
     {
         if ($className = $this->getClassName($data)) {
-            try {
-                return $this->handleEntity($entityPool, $className, $data);
-            } catch (MappingException $e) {
-                return $this->handleClass($entityPool, $className, $data);
+            if ($entityInfo = EntityHelper::getInstance($this->em, $className)) {
+                $identValues = $this->extractFields($data, $entityInfo->getClassMeta()->getIdentifier());
+                if ($this->isReference($data, $identValues)) {
+                    if ($object = $entityPool->get($className, $identValues)) {
+                        return $object;
+                    } elseif ($objectData = $this->getEntityData($className, $identValues)) {
+                        return $this->handleEntity($entityPool, $entityInfo, $objectData);
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return $this->handleEntity($entityPool, $entityInfo, $data);
+                }
+            } else {
+                $classInfo = ObjectHelper::getInstance($className);
+                return $this->handleClass($entityPool, $classInfo, $data);
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -102,34 +116,22 @@ class ExchangeDenormalizer extends ExchangeSerializer
 
     /**
      * @param EntityPool $entityPool
-     * @param string $className
+     * @param EntityHelper $entityInfo
      * @param array $data
      * @return object|null
      * @throws \Doctrine\ORM\ORMException
-     * @throws MappingException
      */
-    public function handleEntity(EntityPool $entityPool, $className, array $data)
+    public function handleEntity(EntityPool $entityPool, EntityHelper $entityInfo, array $data)
     {
-        $classMeta = $this->em->getClassMetadata($className);
+        $classMeta = $entityInfo->getClassMeta();
+        $className = $classMeta->getName();
         $identFieldNames = $classMeta->getIdentifier();
-        $identValues = $this->extractFields($data, $identFieldNames);
-        if ($this->isReference($data, $identValues)) {
-            if ($object = $entityPool->get($className, $identValues)) {
-                return $object;
-            } elseif ($objectdata = $this->getEntityData($className, $identValues)) {
-                $data = $objectdata;
-            } else {
-                return null;
-            }
-        }
 
-        $reflectionInfo = $this->getReflectionInfo($className);
-        $setters = $reflectionInfo['setters'];
+        $setters = $entityInfo->getSetters();
         $object = new $className();
         $nonIdentifierFieldNames = array_diff($classMeta->getFieldNames(), $identFieldNames);
         foreach ($nonIdentifierFieldNames as $fieldName) {
             if (isset($data[$fieldName]) && array_key_exists($fieldName, $setters)) {
-                /** @var \ReflectionMethod $setter */
                 $setter = $setters[$fieldName];
                 $value = $this->handleData($entityPool, $data[$fieldName]);
                 $fm    = $classMeta->getFieldMapping($fieldName);
@@ -142,7 +144,7 @@ class ExchangeDenormalizer extends ExchangeSerializer
         }
 
         $this->em->persist($object);
-        $entityPool->add($object, $identValues);
+        $entityPool->add($object, $this->extractFields($data, $identFieldNames));
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
@@ -151,7 +153,6 @@ class ExchangeDenormalizer extends ExchangeSerializer
             }
             $assocFieldName = $assocItem['fieldName'];
             if (array_key_exists($assocFieldName, $setters) && isset($data[$assocFieldName])) {
-                /** @var \ReflectionMethod $setter */
                 $setter = $setters[$assocFieldName];
                 $result = $this->handleData($entityPool, $data[$assocItem['fieldName']]);
                 if (is_array($result)) {
@@ -170,24 +171,19 @@ class ExchangeDenormalizer extends ExchangeSerializer
 
     /**
      * @param EntityPool $entityPool
-     * @param string $className
+     * @param AbstractObjectHelper $classInfo
      * @param array $data
      * @return object
      * @throws \Doctrine\ORM\ORMException
      */
-    public function handleClass(EntityPool $entityPool, $className, array $data)
+    public function handleClass(EntityPool $entityPool, AbstractObjectHelper $classInfo, array $data)
     {
-        $reflectionInfo = $this->getReflectionInfo($className);
+        $className = $classInfo->getClassName();
         $object = new $className();
-        foreach ($reflectionInfo['setters'] as $propertyName => $setter) {
-            /** @var \ReflectionMethod $setter */
-            if (isset($data[$propertyName])) {
+        foreach ($classInfo->getSetters(array_keys($data)) as $propertyName => $setter) {
+            if ($data[$propertyName] !== null) {
                 $value = $this->handleData($entityPool, $data[$propertyName]);
-                if (is_array($value)) {
-                    if (count($value)) {
-                        $setter->invoke($object, $value);
-                    }
-                } else {
+                if (!is_array($value) || count($value)) {
                     $setter->invoke($object, $value);
                 }
             }
