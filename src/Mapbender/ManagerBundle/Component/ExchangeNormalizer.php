@@ -3,9 +3,9 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
+use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 
@@ -16,10 +16,6 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
  */
 class ExchangeNormalizer extends ExchangeHandler
 {
-    protected $export;
-
-    protected $inProcess;
-
     /**
      * @param EntityManagerInterface $em
      */
@@ -31,128 +27,37 @@ class ExchangeNormalizer extends ExchangeHandler
             ->getConnection()
             ->getConfiguration()
             ->setSQLLogger(null);
-
-        $this->export = array();
-        $this->inProcess = array();
-    }
-
-    /**
-     * @return array
-     */
-    public function getExport()
-    {
-        return $this->export;
-    }
-
-    /**
-     * @param array   $objectData
-     * @param  ClassMetadata $classMeta
-     * @return bool
-     */
-    private function isInProcess(array $objectData, $classMeta)
-    {
-        $class = $classMeta->getReflectionClass()->getName();
-        if (!$objectData) {
-            throw new \LogicException("Empty objectdata");
-        }
-        if (empty($this->inProcess[$class])) {
-            return false;
-        }
-        $idents = $classMeta->getIdentifier();
-        foreach ($this->inProcess[$class] as $array) {
-            $match = true;
-            foreach ($idents as $ident) {
-                if ($array[$ident] != $objectData[$ident]) {
-                    $match = false;
-                    break;
-                }
-            }
-            if ($match) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param array  $objectData
-     * @param object $classMeta
-     */
-    private function addInProcess(array $objectData, $classMeta)
-    {
-        $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->inProcess[$class])) {
-            $this->inProcess[$class] = array();
-        }
-        $this->inProcess[$class][] = $objectData;
-    }
-
-    /**
-     * @param array  $objectData
-     * @param object $classMeta
-     * @return bool
-     */
-    private function isExported(array $objectData, $classMeta)
-    {
-        $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->export[$class])) {
-            return false;
-        }
-        foreach ($this->export[$class] as $array) {
-            $idents = $classMeta->getIdentifier();
-            $subfound = true;
-            foreach ($idents as $ident) {
-                $subfound = $subfound && $array[$ident] == $objectData[$ident];
-            }
-            if ($subfound) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param array  $objectData
-     * @param object $classMeta
-     */
-    private function addExport(array $objectData, $classMeta)
-    {
-        $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->export[$class])) {
-            $this->export[$class] = array();
-        }
-        if (!$this->isExported($objectData, $classMeta)) {
-            $this->export[$class][] = $objectData;
-        }
     }
 
     /**
      * Normalizes an array.
      *
-     * @param array $array array
+     * @param ExportDataPool $exportPool
+     * @param array $array
      * @return array normalized array
      */
-    private function handleArray($array)
+    private function handleArray(ExportDataPool $exportPool, $array)
     {
         $result = array();
         foreach ($array as $key => $item) {
-            $result[$key] = $this->handleValue($item);
+            $result[$key] = $this->handleValue($exportPool, $item);
         }
         return $result;
     }
 
     /**
-     * @param $value
+     * @param ExportDataPool $exportPool
+     * @param mixed $value
      * @return array|string
      */
-    public function handleValue($value)
+    public function handleValue(ExportDataPool $exportPool, $value)
     {
         if ($value === null || is_integer($value) || is_float($value) || is_string($value) || is_bool($value)) {
             return $value;
         } elseif (is_array($value)) {
-            return $this->handleArray($value);
+            return $this->handleArray($exportPool, $value);
         } elseif (is_object($value)) {
-            return $this->handleObject($value);
+            return $this->handleObject($exportPool, $value);
         } else {
             // why??
             return 'unsupported';
@@ -160,25 +65,27 @@ class ExchangeNormalizer extends ExchangeHandler
     }
 
     /**
+     * @param ExportDataPool $exportPool
      * @param object $object
      * @return array
      */
-    public function handleObject($object)
+    public function handleObject(ExportDataPool $exportPool, $object)
     {
         $entityInfo = EntityHelper::getInstance($this->em, $object);
         if ($entityInfo) {
-            return $this->normalizeEntity($entityInfo, $object);
+            return $this->normalizeEntity($exportPool, $entityInfo, $object);
         } else {
             return $this->normalizeObject(ObjectHelper::getInstance($object), $object);
         }
     }
 
     /**
+     * @param ExportDataPool $exportPool
      * @param EntityHelper $entityInfo
      * @param object $object
      * @return array
      */
-    public function normalizeEntity(EntityHelper $entityInfo, $object)
+    public function normalizeEntity(ExportDataPool $exportPool, EntityHelper $entityInfo, $object)
     {
         gc_enable();
         $classMeta = $entityInfo->getClassMeta();
@@ -188,16 +95,17 @@ class ExchangeNormalizer extends ExchangeHandler
         $identValues = $entityInfo->extractProperties($object, $identFieldNames);
 
         $referenceData = $this->createInstanceIdent($object, $identValues);
-        if ($this->isInProcess($referenceData, $classMeta)) {
+        // Try to store some dummy data in the export to mark the entity as 'started processing'
+        if (!$exportPool->addEntry($classMeta->getName(), $identValues, true, false)) {
+            // Already exported or marked as started => return backreference data only
             return $referenceData;
         }
-        $this->addInProcess($referenceData, $classMeta);
 
         $data = $referenceData;
         $nonIdentFieldNames = array_diff($nonMappingFieldNames, $identFieldNames);
         $nonIdentValues = $entityInfo->extractProperties($object, $nonIdentFieldNames);
         foreach ($nonIdentValues as $fieldName => $fieldValue) {
-            $data[$fieldName] = $this->handleValue($fieldValue);
+            $data[$fieldName] = $this->handleValue($exportPool, $fieldValue);
         }
 
         // No point exporting a field that doesn't have a corresponding setter.
@@ -215,13 +123,14 @@ class ExchangeNormalizer extends ExchangeHandler
             } elseif ($subObject instanceof PersistentCollection) {
                 $data[$fieldName] = array();
                 foreach ($subObject as $item) {
-                    $data[$fieldName][] = $this->handleObject($item);
+                    $data[$fieldName][] = $this->handleObject($exportPool, $item);
                 }
             } else {
-                $data[$fieldName] = $this->handleObject($subObject);
+                $data[$fieldName] = $this->handleObject($exportPool, $subObject);
             }
         }
-        $this->addExport($data, $classMeta);
+        // replace dummy data with full export value
+        $exportPool->addEntry($classMeta->getName(), $identValues, $data, true);
         gc_collect_cycles();
         return $referenceData;
    }
