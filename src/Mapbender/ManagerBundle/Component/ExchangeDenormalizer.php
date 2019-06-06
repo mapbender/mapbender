@@ -38,12 +38,7 @@ class ExchangeDenormalizer extends ExchangeHandler
 
     public function isReference($data, array $criteria)
     {
-        foreach ($data as $key => $value) {
-            if (!isset($criteria[$key])) { # has other fields
-                return true;
-            }
-        }
-        return false;
+        return !array_diff_key($criteria, $data);
     }
 
     public function getEntityData($class, array $criteria)
@@ -52,7 +47,7 @@ class ExchangeDenormalizer extends ExchangeHandler
             foreach ($this->data[$class] as $item) {
                 $found = true;
                 foreach ($criteria as $key => $value) {
-                    if (!isset($item[$key]) || $item[$key] !== $value) {
+                    if (!array_key_exists($key, $item) || $item[$key] !== $value) {
                         $found = false;
                         break;
                     }

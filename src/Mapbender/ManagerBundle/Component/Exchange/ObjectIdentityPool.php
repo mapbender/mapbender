@@ -50,6 +50,19 @@ class ObjectIdentityPool
     }
 
     /**
+     * @param static $other
+     * @param bool $allowReplace
+     */
+    public function merge($other, $allowReplace = false)
+    {
+        if ($allowReplace) {
+            $this->entries = array_replace($other->entries, $this->entries);
+        } else {
+            $this->entries = array_replace($this->entries, $other->entries);
+        }
+    }
+
+    /**
      * @param string $className
      * @param string[] $identifier
      * @return string

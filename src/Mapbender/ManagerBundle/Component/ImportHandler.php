@@ -1,9 +1,9 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\PersistentCollection;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
@@ -157,11 +157,12 @@ class ImportHandler extends ExchangeHandler
         }
         $criteria = $denormalizer->extractFields($data, $identFields);
         foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
-            try {
-                $this->addSourceToMapper($entityPool, $denormalizer, $source, $data);
+            $tempPool = new EntityPool();
+            if ($this->compareSource($tempPool, $denormalizer, $source, $data)) {
+                // Move references to Source and its layers over into the "already imported" set,
+                // so no new entities will be created and persisted
+                $entityPool->merge($tempPool);
                 return $source;
-            } catch (\Exception $e) {
-                continue;
             }
         }
         return null;
@@ -268,79 +269,39 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * Adds entitiy with assoc. items to mapper.
-     *
      * @param EntityPool $entityPool
      * @param ExchangeDenormalizer $denormalizer
      * @param Source $source
      * @param array $data
-     * @throws ImportException
-     * @throws ORMException
+     * @return bool
      */
-    private function addSourceToMapper(EntityPool $entityPool, $denormalizer, $source, array $data)
+    private function compareSource(EntityPool $entityPool, $denormalizer, $source, array $data)
     {
-        $entityInfo = EntityHelper::getInstance($this->em, $source);
-        $classMeta = $entityInfo->getClassMeta();
-        $identData = array_intersect_key($data, array_flip($classMeta->getIdentifier()));
-        $entityPool->add($source, $identData);
-
-        $this->validateMatchingRelations($entityInfo, $source, $data);
-
-        foreach ($source->getLayers()->getValues() as $layerIndex => $layer) {
-            $layerData = $data['layers'][$layerIndex];
+        foreach ($data['layers'] as $layerData) {
             $layerClass = $denormalizer->getClassName($layerData);
+
             if (!$layerClass) {
                 throw new ImportException("Missing source item class definition");
             }
-            $layerInfo = EntityHelper::getInstance($this->em, $layerClass);
-            $layerMeta = $layerInfo->getClassMeta();
-
+            if (is_a($layerClass, 'Mapbender\WmsBundle\Entity\WmsLayerSource', true)) {
+                $field = 'name';
+            } elseif (is_a($layerClass, 'Mapbender\WmtsBundle\Entity\WmtsLayerSource', true)) {
+                $field = 'identifier';
+            } else {
+                throw new ImportException("Unsupported layer type {$layerClass}");
+            }
+            $layerMeta = EntityHelper::getInstance($this->em, $layerClass)->getClassMeta();
             $layerIdentData = $denormalizer->extractFields($layerData, $layerMeta->getIdentifier());
-            if ($denormalizer->isReference($layerData, $layerIdentData)) {
-                if (!$entityPool->get($layerClass, $layerIdentData)) {
-                    $od = $denormalizer->getEntityData($layerClass, $layerIdentData);
-                    $this->validateMatchingRelations($layerInfo, $layer, $od);
-                    $layerIdentData = $denormalizer->extractFields($od, $layerMeta->getIdentifier());
-                    $entityPool->add($layer, $layerIdentData, false);
-                }
+            $layerData = $denormalizer->getEntityData($layerClass, $layerIdentData) ?: $layerData;
+
+            $criteria = Criteria::create()->where(Criteria::expr()->eq($field, $layerData[$field]));
+            $match = $source->getLayers()->matching($criteria)->first();
+            if ($match) {
+                $entityPool->add($match, $layerIdentData);
+            } else {
+                return false;
             }
         }
-    }
-
-    /**
-     * @param EntityHelper $entityInfo
-     * @param object $entity
-     * @param array $data
-     */
-    private function validateMatchingRelations(EntityHelper $entityInfo, $entity, $data)
-    {
-        foreach ($entityInfo->getClassMeta()->getAssociationMappings() as $assocItem) {
-            $fieldName = $assocItem['fieldName'];
-
-            try {
-                $subObject = $entityInfo->extractProperty($entity, $fieldName);
-            } catch (\LogicException $e) {
-                // no such property on entity
-                continue;
-            }
-            if ($subObject && ($subObject instanceof PersistentCollection)) {
-                $targetClass = $assocItem['targetEntity'];
-                if (is_a($targetClass, "Mapbender\CoreBundle\Entity\Keyword", true)) {
-                    continue;
-                } elseif (!isset($data[$fieldName])) {
-                    throw new ImportException("Missing data for field {$fieldName} on target {$targetClass}");
-                } elseif (count($data[$fieldName]) !== $subObject->count()) {
-                    throw new ImportException("Collection member count mismatch for field {$fieldName}, " . count($data[$fieldName]) . " vs " . $subObject->count());
-                }
-                if (is_a($targetClass, 'Mapbender\CoreBundle\Entity\SourceItem', true) && !($entity instanceof Source)) {
-                    // recursively validate sublayer structure (only on WmsLayer)
-                    foreach ($subObject->getValues() as $index => $layer) {
-                        $layerInfo = EntityHelper::getInstance($this->em, $layer);
-                        $layerData = $data[$fieldName][$index];
-                        $this->validateMatchingRelations($layerInfo, $layer, $layerData);
-                    }
-                }
-            }
-        }
+        return true;
     }
 }
