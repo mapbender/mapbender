@@ -178,6 +178,11 @@ class ImportHandler extends ExchangeHandler
                     $app = $this->handleData($state, $item);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $this->em->persist($app);
+                    $newSlug = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'slug', $app->getSlug(), '_imp');
+                    $newTitle = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'title', $app->getTitle(), '_imp');
+                    $app->setSlug($newSlug);
+                    $app->setTitle($newTitle);
+
                     // Flush once to generate Application and Element ids before Element
                     // configuration update.
                     $this->em->flush();
@@ -403,11 +408,6 @@ class ImportHandler extends ExchangeHandler
             if (isset($data[$fieldName]) && array_key_exists($fieldName, $setters)) {
                 $setter = $setters[$fieldName];
                 $value = $this->handleData($state, $data[$fieldName]);
-                $fm    = $classMeta->getFieldMapping($fieldName);
-                if ($fm['unique']) {
-                    $value =
-                        EntityUtil::getUniqueValue($this->em, $classMeta->getName(), $fm['columnName'], $value, '_imp');
-                }
                 $setter->invoke($object, $value);
             }
         }
