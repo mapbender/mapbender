@@ -810,7 +810,7 @@ class ApplicationController extends WelcomeController
         $templateClass = $application->getTemplate();
         $screenShot = $application->getScreenshot();
         if ($screenShot) {
-            $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+            $baseUrl = $this->getUploadsBaseUrl($request);
             $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
             $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
                 't' => date('d.m.Y-H:i:s'),
