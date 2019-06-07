@@ -1,4 +1,3 @@
-{% set application = {'slug': 'manager'} %}
 <!DOCTYPE html>
 <html class="no-js" lang="{{ app.request.locale }}">
 <head>
@@ -11,8 +10,7 @@
       document.write('<meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;target-densityDpi=240dpi"/>');
     }
   </script>
-  {##}
-  <link rel="shortcut icon" href="{% block favicon %}{% endblock %}"/>
+  <link rel="shortcut icon" href="{% block favicon %}{{ asset('favicon.png') }}{% endblock %}"/>
 
   {% block css %}
     <link rel="stylesheet"
@@ -22,7 +20,7 @@
 
   {% block trans %}
     <script type="text/javascript"
-            src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
+            src="{{ path('mapbender_core_application_assets', {'slug': 'mb3-login', 'type': 'trans'}) }}"></script>
     <script type="text/javascript">
       var Mapbender = Mapbender || {};
       Mapbender.configuration = {elements: {}};
@@ -33,7 +31,7 @@
     <script src="{{ asset('components/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('components/jquery-ui/jquery-ui.min.js') }}"></script>
     <script type="text/javascript"
-            src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
+            src="{{ path('mapbender_core_application_assets', {'slug': 'mb3-login', 'type': 'js'}) }}"></script>
   {% endblock %}
 </head>
 <body class="{% if app.debug %}debug{% endif %}">
