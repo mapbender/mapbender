@@ -100,7 +100,7 @@ class Dimension
     /**
      * Sets identifier.
      * @param string $identifier
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setIdentifier($identifier)
     {
@@ -111,7 +111,7 @@ class Dimension
     /**
      * Sets oum.
      * @param string $oum
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setOum($oum)
     {
@@ -122,7 +122,7 @@ class Dimension
     /**
      * Sets unitsSymbol.
      * @param string $unitsSymbol
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setUnitsSymbol($unitsSymbol)
     {
@@ -133,7 +133,7 @@ class Dimension
     /**
      * Sets default
      * @param string $default
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setDefault($default)
     {
@@ -144,7 +144,7 @@ class Dimension
     /**
      * Sets current.
      * @param boolean $current
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setCurrent($current)
     {
@@ -155,7 +155,7 @@ class Dimension
     /**
      * Sets value
      * @param array $value
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function setValue($value)
     {
@@ -166,7 +166,7 @@ class Dimension
     /**
      * Adds value
      * @param string $value
-     * @return \Mapbender\WmtsBundle\Entity\Dimension
+     * @return $this
      */
     public function addValue($value)
     {

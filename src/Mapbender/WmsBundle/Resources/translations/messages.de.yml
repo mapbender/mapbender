@@ -154,13 +154,7 @@ mb:
             save: Speichern
         form:
           label:
-            ogcwms: 'OGC WMS'
             onlyvalid: 'Nur valid'
-            serviceurl: Dienst-URL
-            username: Benutzername
-            password: Passwort
-            load: Laden
-            cancel: Abbrechen
       class:
         title: 'WMS laden'
         description: 'Lädt einen WMS per getCapabilities-Request'

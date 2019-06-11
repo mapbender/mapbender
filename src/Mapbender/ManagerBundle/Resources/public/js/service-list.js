@@ -1,35 +1,13 @@
 $(function() {
-    var popup;
-
-    // Delete element
-    $('.iconRemove').bind("click", function(){
-        var self    = $(this);
-        var content = self.attr('title');
-
-        if(popup){
-            popup = popup.destroy();
-        }
-        popup = new Mapbender.Popup2({
-            title:"Confirm delete",
-            subTitle: " - service",
-            closeOnOutsideClick: true,
-            content: [content + "?", $.ajax({ url: self.attr('data-url')})],
-            buttons: {
-                'cancel': {
-                    label: 'Cancel',
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: 'Delete',
-                    cssClass: 'button right',
-                    callback: function() {
-                        $('form', popup.$element).submit();
-                    }
-                }
-            }
+    $('#listFilterServices').on('click', '.iconRemove[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            // @todo: bring your own translation string
+            title: "mb.manager.components.popup.delete_element.title",
+            // @todo: bring your own translation string
+            cancel: "mb.manager.components.popup.delete_element.btn.cancel",
+            // @todo: bring your own translation string
+            confirm: "mb.manager.components.popup.delete_element.btn.ok"
         });
         return false;
     });

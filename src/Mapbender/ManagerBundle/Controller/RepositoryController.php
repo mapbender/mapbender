@@ -1,17 +1,17 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 
 /**
  *  Mapbender repository controller
@@ -22,15 +22,15 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  * @ManagerRoute("/repository")
  */
-class RepositoryController extends Controller
+class RepositoryController extends ApplicationControllerBase
 {
     /**
      * Renders the layer service repository.
      *
-     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" }, methods={"GET"})
+     * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction($page)
+    public function indexAction()
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
@@ -100,16 +100,18 @@ class RepositoryController extends Controller
     }
 
     /**
-     * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/confirmdelete", methods={"GET"})
+     * Deletes a Source (POST) or renders confirmation markup (GET)
+     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST"})
+     * @param Request $request
      * @param string $sourceId
      * @return Response
      */
-    public function confirmdeleteAction($sourceId)
+    public function deleteAction(Request $request, $sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $em = $this->getEntityManager();
+        /** @var Source $source */
+        $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
             // If delete action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
@@ -125,45 +127,34 @@ class RepositoryController extends Controller
         if (!($this->isGranted('DELETE', $oid))) {
             $this->denyAccessUnlessGranted('DELETE', $source);
         }
-        return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
-            'source' => $source,
-        ));
-    }
+        if ($request->getMethod() === Request::METHOD_GET) {
+            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
+                'source' => $source,
+            ));
+        }
+        // capture ACL and entity updates in a single transaction
+        $em->beginTransaction();
+        /** @var MutableAclProviderInterface $aclProvider */
+        $aclProvider = $this->get('security.acl.provider');
+        $oid         = ObjectIdentity::fromDomainObject($source);
+        $aclProvider->deleteAcl($oid);
 
-    /**
-     * deletes a Source
-     * @ManagerRoute("/source/{sourceId}/delete", methods={"POST"})
-     * @param string $sourceId
-     * @return Response
-     */
-    public function deleteAction($sourceId)
-    {
-        /** @todo: fold identical preface code shared with confirmdeleteAction */
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        if (!$source) {
-            // If delete action is forbidden, hide the fact that the source doesn't
-            // exist behind an access denied.
-            $this->denyAccessUnlessGranted('VIEW', $oid);
-            $this->denyAccessUnlessGranted('DELETE', $oid);
-            throw $this->createNotFoundException();
+        // update modification timestamp on affected applications
+        $dtNow = new \DateTime('now');
+        $instances = $source->getInstances();
+        $iDesc = array();
+        foreach ($instances as $instance) {
+            $iDesc[] = get_class($instance) . "#{$instance->getId()}";
+            $layerset = $instance->getLayerset();
+            $application = $layerset->getApplication();
+            $em->persist($application);
+            $application->setUpdated($dtNow);
         }
-        // Must have VIEW + DELETE on either any Source globally, or on this particular
-        // Source
-        if (!($this->isGranted('VIEW', $oid))) {
-            $this->denyAccessUnlessGranted('VIEW', $source);
-        }
-        if (!($this->isGranted('DELETE', $oid))) {
-            $this->denyAccessUnlessGranted('DELETE', $source);
-        }
-        // -- common preface code end --
-
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$source->getManagertype()];
-        return $this->forward($manager['bundle'] . ":" . "Repository:delete", array(
-            "sourceId" => $source->getId(),
-        ));
+        $em->remove($source);
+        $em->flush();
+        $em->commit();
+        $this->addFlash('success', 'Your source has been deleted');
+        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
 
     /**
@@ -277,13 +268,12 @@ class RepositoryController extends Controller
 
         $newWeight = $request->get("number");
         $targetLayersetId = $request->get("new_layersetId");
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var EntityRepository $instanceRepository */
         $instanceRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:SourceInstance');
-        $lsRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Layerset');
 
         /** @var SourceInstance $instance */
-        $instance = $instanceRepository->findOneBy(array('id' => $instanceId));
+        $instance = $instanceRepository->find($instanceId);
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
@@ -295,13 +285,11 @@ class RepositoryController extends Controller
             ));
         }
 
-        /** @var Layerset $layerset */
-        $layerset = $lsRepository->findOneBy(array('id' => $layersetId));
+        $layerset = $this->requireLayerset($layersetId);
         if ($layersetId === $targetLayersetId) {
             WeightSortedCollectionUtil::updateSingleWeight($layerset->getInstances(), $instance, $newWeight);
         } else {
-            /** @var Layerset $targetLayerset */
-            $targetLayerset = $lsRepository->findOneBy(array('id' => $targetLayersetId));
+            $targetLayerset = $this->requireLayerset($targetLayersetId);
             $targetCollection = $targetLayerset->getInstances();
             WeightSortedCollectionUtil::moveBetweenCollections($targetCollection, $layerset->getInstances(), $instance, $newWeight);
             $instance->setLayerset($targetLayerset);
@@ -319,46 +307,37 @@ class RepositoryController extends Controller
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}", methods={"POST"})
+     * @param Request $request
      * @param string $slug
      * @param string $layersetId
      * @param string $instanceId
      * @return Response
      */
-    public function instanceEnabledAction($slug, $layersetId, $instanceId)
+    public function instanceEnabledAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
-
-        return $this->forward($manager['bundle'] . ":" . "Repository:instanceenabled", array(
-            "slug" => $slug,
-            "layersetId" => $layersetId,
-            "instanceId" => $sourceInst->getId(),
-        ));
-    }
-
-    /**
-     *
-     * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
-     * @param string $slug
-     * @param string $instanceId
-     * @param string $instLayerId
-     * @return Response
-     */
-    public function instanceLayerWeightAction($slug, $instanceId, $instLayerId)
-    {
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
-
-        return $this->forward($manager['bundle'] . ":" . "Repository:instancelayerpriority", array(
-            "slug" => $slug,
-            "instanceId" => $sourceInst->getId(),
-            "instLayerId" => $instLayerId
+        $em = $this->getEntityManager();
+        /** @var SourceInstance|null $sourceInstance */
+        $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
+        if (!$sourceInstance) {
+            throw $this->createNotFoundException();
+        }
+        $application = $sourceInstance->getLayerset()->getApplication();
+        $wasEnabled = $sourceInstance->getEnabled();
+        $newEnabled = $request->get('enabled') === 'true';
+        $sourceInstance->setEnabled($newEnabled);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($sourceInstance);
+        $em->flush();
+        return new JsonResponse(array(
+            'success' => array(         // why?
+                "id" => $sourceInstance->getId(), // why?
+                "type" => "instance",   // why?
+                "enabled" => array(
+                    'before' => $wasEnabled,
+                    'after' => $newEnabled,
+                ),
+            ),
         ));
     }
 

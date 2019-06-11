@@ -55,7 +55,7 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
                 $rootlayer = new WmsLayerSource();
                 $rootlayer->setPriority(0);
                 $wms->addLayer($rootlayer);
-                $layer = $this->parseLayer($wms, $rootlayer, $capabilityEl);
+                $this->parseLayer($wms, $rootlayer, $capabilityEl);
                 /* parse wms:_ExtendedOperation  */
             } elseif ($capabilityEl->localName === "UserDefinedSymbolization") {
                 $this->parseUserDefinedSymbolization($wms, $capabilityEl);
@@ -416,13 +416,10 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         $maxScaleEl = $this->getValue("./wms:MaxScaleDenominator", $contextElm);
         if ($minScaleEl !== null || $maxScaleEl !== null) {
             $min = $this->getValue("./text()", $minScaleEl);
-            $min = $min !== null ? floatval($min) : null;
             $max = $this->getValue("./text()", $maxScaleEl);
+            $min = $min !== null ? floatval($min) : null;
             $max = $max !== null ? floatval($max) : null;
-            $minScaleHint = $min === null ? null : sqrt(2.0) * $min / ($this->resolution / 2.54 * 100);
-            $maxScaleHint = $max === null ? null : sqrt(2.0) * $max / ($this->resolution / 2.54 * 100);
             $wmslayer->setScale(new MinMax($min, $max));
-            $wmslayer->setScaleHint(new MinMax($minScaleHint, $maxScaleHint));
         }
         $tempList = $this->xpath->query("./wms:Layer", $contextElm);
         if ($tempList !== null) {

@@ -1,0 +1,8 @@
+parameters:
+    applications:
+        manager:
+            title: Mapbender Administration
+            template:  Mapbender\ManagerBundle\Template\ManagerTemplate
+            excludeFromList: true
+            published: true
+            roles: [IS_AUTHENTICATED_ANONYMOUSLY]

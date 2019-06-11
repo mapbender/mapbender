@@ -1,10 +1,8 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -143,45 +141,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Copies attributes from bound instance's source to the bound instance.
-     * I.e. does not work for a new instance until you have called ->setSource on the WmsInstance yourself,
-     * and does not achieve anything useful for an already configured instance loaded from the DB (though it's
-     * expensive!).
-     * If your source changed, and you want to push updates to your instance, you want to call update, not create.
-     *
-     * @deprecated for misleading wording, arcane usage, redundant container dependency
-     */
-    public function create()
-    {
-        $this->entity->populateFromSource($this->entity->getSource());
-        $this->getService()->initializeInstance($this->entity);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        $entityManager = $this->getEntityManager();
-        if ($this->entity->getRootlayer()) {
-            $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
-            $rootlayerSaveHandler->save();
-        }
-        $layerSet = $this->entity->getLayerset();
-        $num = 0;
-        foreach ($layerSet->getInstances() as $instance) {
-            /** @var WmsInstance $instance */
-            $instance->setWeight($num);
-            $entityManager->persist($instance);
-            $num++;
-        }
-        $application = $layerSet->getApplication();
-        $application->setUpdated(new \DateTime('now'));
-        $entityManager->persist($application);
-        $entityManager->persist($this->entity);
-    }
-
-    /**
      * @inheritdoc
      */
     public function update()
@@ -212,40 +171,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $application->setUpdated(new \DateTime('now'));
         $entityManager->persist($application);
         $entityManager->persist($this->entity);
-    }
-
-    /**
-     * @inheritdoc
-     * @deprecated, use the appropriate service directly
-     */
-    public function getConfiguration(Signer $signer = null)
-    {
-        $service = $this->getService();
-        return $service->getConfiguration($this->entity);
-    }
-
-    /**
-     * @return array
-     * @deprecated, use the service directly
-     */
-    protected function getRootLayerConfig()
-    {
-        /** @var WmsSourceService $service */
-        $service = $this->getService();
-        return $service->getRootLayerConfig($this->entity);
-    }
-
-    /**
-     * Returns ALL vendorspecific parameters, NOT just the hidden ones
-     * @return string[]
-     * @deprecated for bad wording, limited utility; last remaining use was in InnstanceTunnelService, which now
-     *     handles this itself
-     */
-    public function getSensitiveVendorSpecific()
-    {
-        $handler = new VendorSpecificHandler();
-        $token = $this->container->get('security.token_storage')->getToken();
-        return $handler->getAllParams($this->entity, $token);
     }
 
     /**

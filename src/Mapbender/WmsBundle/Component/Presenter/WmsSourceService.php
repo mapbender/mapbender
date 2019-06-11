@@ -4,12 +4,17 @@
 namespace Mapbender\WmsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Instance registered in container at mapbender.source.wms.service and aliased as
@@ -18,6 +23,22 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  */
 class WmsSourceService extends SourceService
 {
+    /** @var string|null */
+    protected $defaultLayerOrder;
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
+    /**
+     * @param UrlProcessor $urlProcessor
+     * @param TokenStorageInterface $tokenStorage
+     * @param string|null $defaultLayerOrder
+     */
+    public function __construct(UrlProcessor $urlProcessor, TokenStorageInterface $tokenStorage, $defaultLayerOrder)
+    {
+        parent::__construct($urlProcessor);
+        $this->tokenStorage = $tokenStorage;
+        $this->defaultLayerOrder = $defaultLayerOrder;
+    }
 
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
@@ -67,7 +88,6 @@ class WmsSourceService extends SourceService
 
     /**
      * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
-     * @todo: this technically makes this whole class WmsInstance-specific, so it should be renamed / moved
      *
      * @param WmsInstance $sourceInstance
      * @return array
@@ -75,9 +95,86 @@ class WmsSourceService extends SourceService
     public function getRootLayerConfig(WmsInstance $sourceInstance)
     {
         $rootlayer = $sourceInstance->getRootlayer();
-        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, null);
-        $rootLayerConfig = $entityHandler->generateConfiguration($rootlayer);
-        return $rootLayerConfig;
+        if ($rootlayer->getActive()) {
+            return $this->getLayerConfiguration($rootlayer);
+        } else {
+            return array();
+        }
+    }
+
+    protected function getLayerConfiguration(WmsInstanceLayer $instanceLayer)
+    {
+        $configuration = array(
+            "options" => $this->getLayerOptionsConfiguration($instanceLayer),
+            "state" => array(
+                "visibility" => null,
+                "info" => null,
+                "outOfScale" => null,
+                "outOfBounds" => null,
+            ),
+        );
+        $children = array();
+        foreach ($instanceLayer->getSublayer() as $childLayer) {
+            if ($childLayer->getActive()) {
+                $children[] = $this->getLayerConfiguration($childLayer);
+            }
+        }
+        if ($children) {
+            $layerOrder = $instanceLayer->getSourceInstance()->getLayerOrder()
+                ?: $this->defaultLayerOrder
+                ?: WmsInstance::LAYER_ORDER_TOP_DOWN;
+            if ($layerOrder == WmsInstance::LAYER_ORDER_BOTTOM_UP) {
+                $children = array_reverse($children);
+            }
+            $configuration['children'] = $children;
+        }
+        return $configuration;
+    }
+
+    /**
+     * @param WmsInstanceLayer $instanceLayer
+     * @return array
+     */
+    protected function getLayerOptionsConfiguration(WmsInstanceLayer $instanceLayer)
+    {
+        $sourceItem = $instanceLayer->getSourceItem();
+        $configuration = array(
+            "id" => strval($instanceLayer->getId()),
+            "origId" => strval($instanceLayer->getId()),
+            "priority" => $instanceLayer->getPriority(),
+            "name" => $sourceItem->getName() ?: '',
+            "title" => $instanceLayer->getTitle() ?: $sourceItem->getTitle(),
+            "queryable" => $instanceLayer->getInfo(),
+            "style" => $instanceLayer->getStyle(),
+            "minScale" => $instanceLayer->getMinScale(true),
+            "maxScale" => $instanceLayer->getMaxScale(true),
+            "bbox" => $this->getLayerBboxConfiguration($sourceItem),
+            "treeOptions" => $this->getTreeOptionsLayerConfig($instanceLayer),
+        );
+        $configuration += array_filter(array(
+            'legend' => $this->getLegendConfig($instanceLayer),
+        ));
+        return $configuration;
+    }
+
+    /**
+     * @param WmsInstanceLayer $instanceLayer
+     * @return array
+     */
+    protected function getTreeOptionsLayerConfig(WmsInstanceLayer $instanceLayer)
+    {
+        $hasChildren = !!count($instanceLayer->getSublayer());
+        return array(
+            "info" => $instanceLayer->getInfo(),
+            "selected" => $instanceLayer->getSelected(),
+            "toggle" => $hasChildren ? $instanceLayer->getToggle() : null,
+            "allow" => array(
+                "info" => $instanceLayer->getAllowinfo(),
+                "selected" => $instanceLayer->getAllowselected(),
+                "toggle" => $hasChildren ? $instanceLayer->getAllowtoggle() : null,
+                "reorder" => $instanceLayer->getAllowreorder(),
+            ),
+        );
     }
 
     /**
@@ -117,7 +214,7 @@ class WmsSourceService extends SourceService
     public function getUrlOption(WmsInstance $sourceInstance)
     {
         $url = $sourceInstance->getSource()->getGetMap()->getHttpGet();
-        $userToken = $this->container->get('security.token_storage')->getToken();
+        $userToken = $this->tokenStorage->getToken();
         $vsHandler = new VendorSpecificHandler();
         $params = $vsHandler->getPublicParams($sourceInstance, $userToken);
         return UrlUtil::validateUrl($url, $params);
@@ -132,8 +229,17 @@ class WmsSourceService extends SourceService
     public function getBboxConfiguration(WmsInstance $sourceInstance)
     {
         $rootLayer = $sourceInstance->getRootlayer();
+        return $this->getLayerBboxConfiguration($rootLayer->getSourceItem());
+    }
+
+    /**
+     * @param WmsLayerSource $layer
+     * @return float[][]
+     */
+    protected function getLayerBboxConfiguration(WmsLayerSource $layer)
+    {
         $boundingBoxMap = array();
-        foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
+        foreach ($layer->getMergedBoundingBoxes() as $bbox) {
             $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         return $boundingBoxMap;
@@ -176,16 +282,71 @@ class WmsSourceService extends SourceService
      */
     public function initializeLayerOrder(WmsInstance $sourceInstance)
     {
-        $layerOrderDefaultKey = 'wms.default_layer_order';
-        if ($this->container->hasParameter($layerOrderDefaultKey)) {
-            $configuredDefaultLayerOrder = $this->container->getParameter($layerOrderDefaultKey);
-            $sourceInstance->setLayerOrder($configuredDefaultLayerOrder);
+        if ($this->defaultLayerOrder) {
+            $sourceInstance->setLayerOrder($this->defaultLayerOrder);
         }
         /**
          * NOTE: the entity has a built-in default, so new instances will work fine even without setting
          *       layer order explicitly
          * @see WmsInstance::getLayerOrder()
          */
+    }
+
+    /**
+     * @param WmsInstanceLayer $instanceLayer
+     * @return array
+     */
+    public function getLegendConfig(WmsInstanceLayer $instanceLayer)
+    {
+        $legendUrl = $this->getInternalLegendUrl($instanceLayer);
+
+        if ($legendUrl) {
+            if ($this->useTunnel($instanceLayer->getSourceInstance())) {
+                // request via tunnel, see ApplicationController::instanceTunnelLegendAction
+                $tunnelService = $this->urlProcessor->getTunnelService();
+                $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer);
+            } else {
+                $publicLegendUrl = $legendUrl;
+            }
+            return array(
+                "url"   => $publicLegendUrl,
+            );
+        }
+        return array();
+    }
+
+    /**
+     * @param SourceInstanceItem $instanceLayer
+     * @return string|null
+     */
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
+    {
+        /** @var WmsInstanceLayer $instanceLayer */
+        // scan styles for legend url entries backwards
+        // some WMS services may not populate every style with a legend, so just checking the last
+        // style for a legend is not enough
+        // @todo: style node selection should follow configured style
+        $layerSource = $instanceLayer->getSourceItem();
+        foreach (array_reverse($layerSource->getStyles(false)) as $style) {
+            /** @var Style $style */
+            $legendUrl = $style->getLegendUrl();
+            if ($legendUrl) {
+                return $legendUrl->getOnlineResource()->getHref();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if service has auth information that needs to be hidden from client.
+     *
+     * @param SourceInstance $sourceInstance
+     * @return bool
+     */
+    public function useTunnel(SourceInstance $sourceInstance)
+    {
+        /** @var WmsInstance $sourceInstance */
+        return !!$sourceInstance->getSource()->getUsername();
     }
 
     public function getAssets(Application $application, $type)

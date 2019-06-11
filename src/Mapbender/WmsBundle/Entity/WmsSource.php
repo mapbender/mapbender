@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements ContainingKeyword
+class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
 {
     /**
      * @var string An origin WMS URL
@@ -47,7 +48,7 @@ class WmsSource extends Source implements ContainingKeyword
 
     /**
      * @var Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
     protected $contact;
 
@@ -179,14 +180,14 @@ class WmsSource extends Source implements ContainingKeyword
 
     /**
      * @var WmsLayerSource[]|ArrayCollection A list of WMS layers
-     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
     /**
      * @var ArrayCollection A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
@@ -202,10 +203,13 @@ class WmsSource extends Source implements ContainingKeyword
      */
     public function __construct()
     {
-        parent::__construct(Source::TYPE_WMS);
+        parent::__construct();
+        $this->setType(Source::TYPE_WMS);
+        $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
+        $this->contact = new Contact();
     }
 
     /**
@@ -894,6 +898,14 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->instances->add($instance);
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection|WmsInstance[]
+     */
+    public function getInstances()
+    {
+        return $this->instances;
     }
 
     /**

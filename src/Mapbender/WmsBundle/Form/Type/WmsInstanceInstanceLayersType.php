@@ -4,9 +4,7 @@ namespace Mapbender\WmsBundle\Form\Type;
 
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * WmsInstanceInstanceLayersType class
@@ -35,24 +33,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            array(
-                'available_templates' => array(),
-                'gfg' => function (FormInterface $form) {
-                    $data = $form->getData()->getWmssourcelayer();
-                    return true;
-                }
-            )
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var WmsInstance $wmsinstance */
         $wmsinstance = $options["data"];
         $arr = $wmsinstance->getSource()->getGetMap()->getFormats() !== null ?
             $wmsinstance->getSource()->getGetMap()->getFormats() : array();
@@ -123,7 +106,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
-                    'num_layers' => count($wmsinstance->getLayers()))));
+                ),
+            ))
+        ;
 
         if ($this->exposeLayerOrder) {
             $layerOrderChoices = array();

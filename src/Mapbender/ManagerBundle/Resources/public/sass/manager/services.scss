@@ -78,23 +78,17 @@ fieldset.box {
     margin-right:$space/2;
   }
   .openCloseTitle{
-    color:$darkFontColor;
     cursor:pointer;
     display: inline-block;
     margin-left:-10px !important;
-    background-color:$contentColor;
     padding-left:5px;
     height:17px;
     font-style:italic;
     &:before {
       font-style: normal;
     }
-
-    @include opacity(1);
-
     &.iconSmall:before{margin-right:$space/2;}
   }
-  .closed .openCloseTitle{background-color:$contentColor;}
   .metaText{
     display: block;
     margin-left:$labeText + $space/2;
@@ -191,24 +185,40 @@ fieldset.box {
   tbody{
     .dropdown{min-width:100%;}
     .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
-    .checkboxColumn{padding:5px 3px 5px 3px;}
-    .checkWrapper{margin-top:5px;width: 100%;}
+    .checkboxColumn {
+      .checkWrapper {
+        display: inline-block;
+        line-height: $inputHeight;
+        float: none;
+        width: 1em;
+        &:before {
+          margin: 0;
+        }
+      }
+    }
   }
-  .level0{margin-left:4px;}
-  .level1{margin-left:10px;}
-  .level2{margin-left:16px;}
-  .level3{margin-left:22px;}
-  .level4{margin-left:28px;}
+  thead .checkboxColumn {
+    span:before {
+      margin: 0;
+    }
+  }
+  .level0 .itemType{margin-left:4px;}
+  .level1 .itemType{margin-left:10px;}
+  .level2 .itemType{margin-left:16px;}
+  .level3 .itemType{margin-left:22px;}
+  .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
   .itemType{
-    line-height:$inputHeight + 10;
-    padding:0px;
+    > span {
+      line-height:$inputHeight;
+    }
     cursor:ns-resize;
   }
-  .moreColumn{padding-left:0px;}
-  .iconMore{
+  .moreColumn{
     position: relative;
-    line-height:$inputHeight;
+    .iconMore{
+      line-height:$inputHeight;
+    }
   }
   .input{width:80px;}
   .titleColumn .input{width:200px;}
@@ -219,16 +229,11 @@ fieldset.box {
   padding: 3px $space/2 3px $space/2;
   background-color: white;
   border:solid 1px $thirdColor;
-  @include pos(-8px,$space + $space/2,'','');
+  position: absolute;
+  right: 2.5em;
+  top: $inputHeight - $space - 4px;
 
-  @include opacity(1);
   @include border-radius($radius);
-  @include transition(all 0.2s ease-in-out);
-
-  &.hide{
-    @include opacity(0);
-    @include pos('',1000px,'','');
-  }
 
   // small arrow left
   &:after, &:before {

@@ -48,11 +48,9 @@ $(function() {
         }
     });
 
-    var popup;
-
     function startEditElement(formUrl, strings, extraButtons) {
         $.ajax(formUrl).then(function(response) {
-            popup = new popupCls({
+            var popup = new popupCls({
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
@@ -95,7 +93,7 @@ $(function() {
         $.ajax({
             url: listUrl
         }).then(function(response) {
-            popup = new popupCls({
+            var popup = new popupCls({
                 title: Mapbender.trans(title),
                 subTitle: ' - ' + regionName,
                 modal: true,
@@ -179,7 +177,7 @@ $(function() {
         $.ajax({
             url: self.attr("data-url")
         }).then(function(response) {
-            popup = new popupCls({
+            var popup = new popupCls({
                 title: "Secure element",
                 closeOnOutsideClick: true,
                 content: response,
@@ -324,7 +322,7 @@ $(function() {
     // Delete element
     $('.removeElement').bind("click", function() {
         var $el = $(this);
-        popup = Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_element.title',
             confirm: 'mb.manager.components.popup.delete_element.btn.ok',
             cancel: 'mb.manager.components.popup.delete_element.btn.cancel',
@@ -340,7 +338,7 @@ $(function() {
         var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
                                 : "mb.manager.components.popup.add_edit_layerset.title_add";
         $.ajax({url: self.attr("href")}).then(function(html) {
-            popup = new popupCls({
+            var popup = new popupCls({
                 title: Mapbender.trans(popupTitle),
                 closeOnOutsideClick: true,
                 destroyOnClose: true,
@@ -380,7 +378,7 @@ $(function() {
         var $el = $(this);
         var actionUrl = $el.attr('href');
         $.ajax({url: actionUrl}).then(function(content) {
-            popup = Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
+            Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
         });
         return false;
     });
@@ -388,10 +386,7 @@ $(function() {
     $(".addInstance").bind("click", function(event) {
         var self = $(this);
         var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
-        if (popup) {
-            popup = popup.destroy();
-        }
-        popup = new popupCls({
+        var popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + layersetTitle,
             closeOnOutsideClick: true,
@@ -414,7 +409,7 @@ $(function() {
     // Delete instance
     $('.removeInstance').bind("click", function() {
         var $el = $(this);
-        popup = Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_instance.title',
             confirm: 'mb.manager.components.popup.delete_instance.btn.ok',
             cancel: 'mb.manager.components.popup.delete_instance.btn.cancel'

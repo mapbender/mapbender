@@ -4,7 +4,7 @@
 # Locale: de, German
 # Exported by: Unregistered user
 # Exported at: Fri, 25 May 2018 13:39:36 +0200
----
+
 mb:
   wmts:
     wmtsloader:
@@ -51,14 +51,6 @@ mb:
             title: Titel
             latlonbounds: Bounding Box
             tilematrixsetlinks: TileMatrixSetLinks
-        form:
-          label:
-            onlyvalid: Nur valid
-            serviceurl: Dienst-URL
-            username: Benutzername
-            password: Passwort
-            load: Laden
-            cancel: Abbrechen
         tilematrixset:
           label:
             title: Titel
@@ -162,4 +154,3 @@ mb:
           addressStateOrProvince: Bundesland
           addressPostCode: PLZ
           addressCountry: Staat
-...

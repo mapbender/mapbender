@@ -132,8 +132,8 @@ class ApplicationController extends Controller
     public function applicationAction(Request $request, $slug)
     {
         $session      = $this->get("session");
-        $application  = $this->getApplication($slug);
-        $appEntity = $application->getEntity();
+        $appEntity = $this->getApplicationEntity($slug);
+        $appComponent = new Application($this->container, $appEntity);
         // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
         $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
         $session->set("proxyAllowed", true); // @todo: ...why?
@@ -144,7 +144,7 @@ class ApplicationController extends Controller
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
-                $content = $application->render();
+                $content = $appComponent->render();
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache();
@@ -153,24 +153,8 @@ class ApplicationController extends Controller
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($application->render(), 200, $headers);
+            return new Response($appComponent->render(), 200, $headers);
         }
-    }
-
-    /**
-     * Get the application component by slug.
-     *
-     * Checks existance and grants and throws accordingly.
-     *
-     * @param string $slug
-     * @return Application
-     * @throws NotFoundHttpException
-     * @throws AccessDeniedHttpException
-     */
-    private function getApplication($slug)
-    {
-        $entity = $this->getApplicationEntity($slug);
-        return new Application($this->container, $entity);
     }
 
     /**

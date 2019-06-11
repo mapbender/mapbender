@@ -2,7 +2,10 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -44,27 +47,29 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Application $application */
         $application = $options["application"];
         $element = $options["element"];
         $instances = array();
         if ($element !== null && $element->getId() !== null) {
-            foreach ($application->getElements() as $appl_element) {
-                $configuration = $element->getConfiguration();
-                if ($appl_element->getId() === intval($configuration["target"])) {
-                    $mapconfig = $appl_element->getConfiguration();
-                    foreach ($application->getLayersets() as $layerset_) {
-                        if ((isset($mapconfig['layerset'])
-                            && strval($mapconfig['layerset']) === strval($layerset_->getId()))
-                            || (isset($mapconfig['layersets'])
-                            && in_array($layerset_->getId(), $mapconfig['layersets']))) {
-                            foreach ($layerset_->getInstances() as $instance) {
-                                if ($instance->isBasesource() && $instance->getEnabled()) {
-                                    $instances[strval($instance->getId())] = $instance->getTitle();
-                                }
+            $configuration = $element->getConfiguration();
+            $targetId = intval($configuration['target']);
+            $targetCriteria = Criteria::create()->where(Criteria::expr()->eq('id', $targetId));
+            $targetElement = $application->getElements()->matching($targetCriteria)->first();
+            if ($targetElement) {
+                /** @var Element $targetElement */
+                $mapconfig = $targetElement->getConfiguration();
+                foreach ($application->getLayersets() as $layerset_) {
+                    if ((isset($mapconfig['layerset'])
+                        && strval($mapconfig['layerset']) === strval($layerset_->getId()))
+                        || (isset($mapconfig['layersets'])
+                        && in_array($layerset_->getId(), $mapconfig['layersets']))) {
+                        foreach ($layerset_->getInstances() as $instance) {
+                            if ($instance->isBasesource() && $instance->getEnabled()) {
+                                $instances[strval($instance->getId())] = $instance->getTitle();
                             }
                         }
                     }
-                    break;
                 }
             }
         }

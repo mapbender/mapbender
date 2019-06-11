@@ -38,12 +38,6 @@ class TileMatrixSet
     protected $identifier;
 
     /**
-     * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS
-     * @var type
-     */
-    protected $boundingBox;
-
-    /**
      * @ORM\Column(type="string",nullable=true)
      */
     protected $title;
@@ -175,24 +169,6 @@ class TileMatrixSet
     }
 
     /**
-     * Get keyword
-     * @return string
-     */
-    public function getKeyword()
-    {
-        return $this->keyword;
-    }
-
-    /**
-     * Set keyword
-     * @param string $value
-     */
-    public function setKeyword($value)
-    {
-        $this->keyword = $value;
-    }
-    
-    /**
      * Get tilematrices
      * @return TileMatrix[]
      */
@@ -217,24 +193,6 @@ class TileMatrixSet
     public function addTilematrix(TileMatrix $tilematrix)
     {
         $this->tilematrices[] = $tilematrix;
-    }
-
-    /**
-     * Get boundingbox
-     * @return array
-     */
-    public function getBoundingbox()
-    {
-        return $this->boundingbox;
-    }
-
-    /**
-     * Set boundingbox.
-     * @param array $boundingbox
-     */
-    public function setBoundingbox($boundingbox)
-    {
-        $this->boundingbox = $boundingbox;
     }
 
     /**

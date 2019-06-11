@@ -16,7 +16,7 @@ $(function() {
     var tabs = $(".tabContainer").find(".tab");
     tabs.attr("tabindex", 0);
     tabs.bind("click keypress", function(e) {
-        if(e.type == "keypress" && e.keyCode != 13) {
+        if (e.type === "keypress" && e.keyCode !== 13) {
             return;
         }
 
@@ -246,60 +246,37 @@ $(function() {
 
         return false;
     });
-    var popup;
-
-    var deleteUserGroup = function(){
-        var self = $(this);
-        var parent = self.parent().parent();
-        var userGroup = ((parent.find(".iconUser").length == 1) ? "user " : "group ") + parent.find(".labelInput").text();
-
-        if(popup){
-            popup = popup.destroy();
-        }
-        popup = new Mapbender.Popup2({
-            title: Mapbender.trans('fom.core.components.popup.delete_user_group.title'),
-            closeOnOutsideClick: true,
-            content: [ Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}) ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans('fom.core.components.popup.delete_user_group.btn.cancel'),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans('fom.core.components.popup.delete_user_group.btn.ok'),
-                    cssClass: 'button right',
-                    callback: function() {
-                        parent.remove();
-                        this.close();
-                    }
-                }
-            }
+    $("#permissionsBody").on("click", '.iconRemove', function() {
+        var $row = $(this).closest('tr');
+        var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
+        var content = [
+            '<div>',
+            Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}),
+            '</div>'
+            ].join('');
+        var labels = {
+            // @todo: bring your own translation string
+            title: "mb.manager.components.popup.delete_element.title",
+            cancel: "mb.manager.components.popup.delete_element.btn.cancel",
+            confirm: "mb.manager.components.popup.delete_element.btn.ok"
+        };
+        Mapbender.Manager.confirmDelete(null, null, labels, content).then(function() {
+            $row.remove();
         });
-        return false;
-    }
-    $("#permissionsBody").on("click", '.iconRemove', deleteUserGroup);
+    });
 
 
-
-
-
-
-    // init open toggle trees ----------------------------------------------------------------
-    var toggleTree = function(){
-        var me     = $(this);
-        var parent = me.parent();
-        if(parent.hasClass("closed")){
-            me.removeClass("iconExpandClosed").addClass("iconExpand");
-            parent.removeClass("closed");
+    $(".openCloseTitle").on("click", function() {
+        var $title = $(this);
+        var $list = $title.parent();
+        if ($list.hasClass("closed")) {
+            $title.removeClass("iconExpandClosed").addClass("iconExpand");
+            $list.removeClass("closed");
         }else{
-            me.addClass("iconExpandClosed").removeClass("iconExpand");
-            parent.addClass("closed");
+            $title.addClass("iconExpandClosed").removeClass("iconExpand");
+            $list.addClass("closed");
         }
-    }
-    $(".openCloseTitle").bind("click", toggleTree);
+    });
     $('.regionProperties .radiobox').each(function() {
         $(this).parent(".radioWrapper").attr('data-icon')
         initRadioButton.call(this, false, $(this).parent(".radioWrapper").attr('data-icon') + $(this).val());

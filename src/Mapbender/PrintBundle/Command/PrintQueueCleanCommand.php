@@ -6,17 +6,19 @@ namespace Mapbender\PrintBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class PrintQueueCleanCommand extends AbstractPrintQueueCommand
+class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
 {
     protected function configure()
     {
         $this
             ->setDescription("Purge old jobs from the print queue (database + files)")
             ->setName('mapbender:print:queue:clean')
-            ->addArgument('age', InputArgument::OPTIONAL, "Cutoff age in days (default 20)", 20)
+            ->addArgument('age', InputArgument::OPTIONAL, "Cutoff age in days", 20)
+            ->addOption('remove-dangling-files', 'gc', InputOption::VALUE_NONE, "Delete locally found but unreferenced files")
         ;
     }
 
@@ -46,5 +48,8 @@ class PrintQueueCleanCommand extends AbstractPrintQueueCommand
             ++$countDeleted;
         }
         $output->writeln("Deleted {$countDeleted} print queue item(s)");
+        if ($input->getOption('remove-dangling-files')) {
+            $this->removeDanglingFiles();
+        }
     }
 }

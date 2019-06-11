@@ -4,6 +4,8 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -16,9 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source
+class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword
 {
-    //
     /**
      * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
      */
@@ -61,7 +62,7 @@ class WmtsSource extends Source
 
     /**
      * @var Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
     protected $contact;
 
@@ -92,20 +93,15 @@ class WmtsSource extends Source
     public $getFeatureInfo = null;
 
     /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    protected $serviceMetadataURL = "";
-
-    /**
      * @var ArrayCollection A list of WMTS Theme
-     * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $themes;
 
     /**
-     * @var ArrayCollection A list of WMTS layers
-     * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"remove"})
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $tilematrixsets;
@@ -122,7 +118,7 @@ class WmtsSource extends Source
 
     /**
      * @var ArrayCollection A list of WMTS layers
-     * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $layers;
@@ -133,20 +129,25 @@ class WmtsSource extends Source
      */
     protected $instances;
 
-    /**
-     * Create an instance of WMTSService
-     * @param string $type
-     */
-    public function __construct($type)
+    public function __construct()
     {
-        parent::__construct($type);
+        parent::__construct();
+        $this->setType(Source::TYPE_WMTS);
+        $this->contact = new Contact();
+        $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->tilematrixsets = new ArrayCollection();
         $this->themes = new ArrayCollection();
     }
 
-
+    /**
+     * @return ArrayCollection|WmtsInstance[]
+     */
+    public function getInstances()
+    {
+        return $this->instances;
+    }
 
     /**
      * @inheritdoc
@@ -255,27 +256,6 @@ class WmtsSource extends Source
     {
         return $this->accessConstraints;
     }
-
-    /**
-     * Set serviceType
-     * @param string $serviceType
-     * @return $this
-     */
-    public function setServiceType($serviceType)
-    {
-        $this->serviceType = $serviceType;
-        return $this;
-    }
-
-    /**
-     * Get serviceType
-     * @return string
-     */
-    public function getServiceType()
-    {
-        return $this->serviceType;
-    }
-
 
     /**
      * Set layers
@@ -401,17 +381,6 @@ class WmtsSource extends Source
     }
 
     /**
-     * Set getCapabilities
-     * @param RequestInformation $getCapabilities
-     * @return $this
-     */
-    public function setGetCapabilities(RequestInformation $getCapabilities)
-    {
-        $this->getCapabilities = $getCapabilities;
-        return $this;
-    }
-
-    /**
      * Get getCapabilities
      * @return string
      */
@@ -458,27 +427,6 @@ class WmtsSource extends Source
     public function getGetFeatureInfo()
     {
         return $this->getFeatureInfo;
-    }
-
-    /**
-     * Set serviceMetadataURL
-     * @param string $serviceMetadataURL
-     * @return $this
-     */
-    public function setServiceMetadataURL($serviceMetadataURL)
-    {
-        $this->serviceMetadataURL = $serviceMetadataURL;
-        return $this;
-    }
-
-    /**
-     * Get serviceMetadataURL
-     *
-     * @return string
-     */
-    public function getServiceMetadataURL()
-    {
-        return $this->serviceMetadataURL;
     }
 
     /**

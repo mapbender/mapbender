@@ -45,7 +45,7 @@ abstract class Keyword
      * Set value
      *
      * @param  string  $value
-     * @return Keyword
+     * @return $this
      */
     public function setValue($value)
     {

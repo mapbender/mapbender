@@ -4,7 +4,6 @@
 namespace Mapbender\PrintBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;

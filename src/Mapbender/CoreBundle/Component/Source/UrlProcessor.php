@@ -44,6 +44,14 @@ class UrlProcessor
     }
 
     /**
+     * @return InstanceTunnelService
+     */
+    public function getTunnelService()
+    {
+        return $this->tunnelService;
+    }
+
+    /**
      * Get base url for owsproxy controller action with no particular url.
      * Application config emits this for client-side proxy stripping / readding.
      *

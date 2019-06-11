@@ -9,9 +9,8 @@
 
 {% macro requestinformation(request, title) %}
     {% import _self as view %}
-    <li><span class="labelText left">{{ title }}:</span></li>
-    <li>
-        <ul class="itemLevel2 list">
+    <li><span class="labelText">{{ title }}:</span>
+        <ul class="list">
             {{ view.addNode('GET Restful',request, 'httpGetRestful') }}
             {{ view.addNode('GET KVP',request, 'httpGetKvp') }}
             {{ view.addNode('POST',request,'httpPost') }}

@@ -14,7 +14,6 @@ use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\Identifier;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -37,14 +36,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
+    protected $source;
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $parent = null;
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist", "remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $sublayer;
@@ -106,11 +105,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $scale;
 
     /**
-     * @ORM\Column(type="object",nullable=true)
-     */
-    protected $scaleHint;
-
-    /**
      * @ORM\Column(type="object", nullable=true)
      */
     protected $attribution;
@@ -143,7 +137,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords
-     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
@@ -172,14 +166,13 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         $this->featureListUrl = array();
         $this->styles = array();
         $this->srs = array();
-        $this->identifier = array();
         $this->authority = array();
     }
 
     /**
      * Sets an id
      * @param integer $id
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setId($id)
     {
@@ -218,7 +211,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set parent
      *
      * @param WmsLayerSource $parent
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setParent(WmsLayerSource $parent = null)
     {
@@ -246,8 +239,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     *
-     * @return WmsLayerSource
+     * @param ArrayCollection $sublayer
+     * @return $this
      */
     public function setSublayer($sublayer)
     {
@@ -259,7 +252,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Add sublayer
      *
      * @param WmsLayerSource $sublayer
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addSublayer(WmsLayerSource $sublayer)
     {
@@ -271,7 +264,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set name
      *
      * @param string $name
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setName($name = null)
     {
@@ -293,7 +286,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set title
      *
      * @param string $title
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setTitle($title = null)
     {
@@ -315,7 +308,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set abstract
      *
      * @param string $abstract
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setAbstract($abstract = null)
     {
@@ -337,7 +330,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set queryable
      *
      * @param boolean $queryable
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setQueryable($queryable)
     {
@@ -359,7 +352,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set cascaded
      *
      * @param integer $cascaded
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setCascaded($cascaded)
     {
@@ -381,7 +374,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set opaque
      *
      * @param boolean $opaque
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setOpaque($opaque)
     {
@@ -403,7 +396,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set noSubset
      *
      * @param boolean $noSubset
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setNoSubset($noSubset)
     {
@@ -425,7 +418,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set fixedWidth
      *
      * @param integer $fixedWidth
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setFixedWidth($fixedWidth = null)
     {
@@ -447,7 +440,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set fixedHeight
      *
      * @param integer $fixedHeight
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setFixedHeight($fixedHeight = null)
     {
@@ -456,8 +449,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get fixedHeight
-     *
      * @return integer
      */
     public function getFixedHeight()
@@ -466,10 +457,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Set latlonBounds
-     *
      * @param BoundingBox $latlonBounds
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setLatlonBounds(BoundingBox $latlonBounds = null)
     {
@@ -478,8 +467,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get latlonBounds
-     *
+     * @param bool $inherit
      * @return BoundingBox
      */
     public function getLatlonBounds($inherit = false)
@@ -495,7 +483,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Add boundingBox
      *
      * @param BoundingBox $boundingBoxes
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addBoundingBox(BoundingBox $boundingBoxes)
     {
@@ -507,7 +495,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set boundingBoxes
      *
      * @param BoundingBox[] $boundingBoxes
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setBoundingBoxes($boundingBoxes)
     {
@@ -520,14 +508,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return BoundingBox[]
      */
-    public function getBoundingBoxes($inherit = false)
+    public function getBoundingBoxes()
     {
-//        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
-//        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
-//            return $this->getParent()->getBoundingBoxes();
-//        } else {
-//            return $this->boundingBoxes;
-//        }
         return $this->boundingBoxes;
     }
 
@@ -535,7 +517,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set srs
      *
      * @param array $srs
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setSrs($srs)
     {
@@ -547,7 +529,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Add srs
      *
      * @param string $srs
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addSrs($srs)
     {
@@ -574,7 +556,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Add style
      *
      * @param Style $style
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addStyle(Style $style = null)
     {
@@ -586,7 +568,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set styles
      *
      * @param array $styles
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setStyles($styles)
     {
@@ -614,7 +596,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set scale
      *
      * @param MinMax $scale
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setScale(MinMax $scale = null)
     {
@@ -671,46 +653,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get scale hint
-     *
-     * @return MinMax
-     */
-    public function getScaleRecursive()
-    {
-        $minScale = $this->getMinScale(true);
-        $maxScale = $this->getMaxScale(true);
-        $mergedScale = new MinMax($minScale, $maxScale);
-
-        return $mergedScale;
-    }
-
-    /**
-     * Set scaleHint
-     *
-     * @param MinMax $scaleHint
-     * @return WmsLayerSource
-     */
-    public function setScaleHint(MinMax $scaleHint = null)
-    {
-        $this->scaleHint = $scaleHint;
-        return $this;
-    }
-
-    /**
-     * Get scaleHint
-     *
-     * @return MinMax
-     */
-    public function getScaleHint()
-    {
-        return $this->scaleHint;
-    }
-
-    /**
      * Set attribution
      *
      * @param Attribution $attribution
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setAttribution(Attribution $attribution = null)
     {
@@ -729,26 +675,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Add identifier
-     *
-     * @param Identifier $identifier
-     * @return WmsLayerSource
-     */
-    public function addIdentifier(Identifier $identifier = null)
-    {
-        $this->identifier[] = $identifier;
-        return $this;
-    }
-
-    /**
      * Set identifier
      *
-     * @param array $identifier
-     * @return WmsLayerSource
+     * @param Identifier $identifier
+     * @return $this
      */
     public function setIdentifier($identifier)
     {
-        $this->identifier = $identifier ? $identifier : array();
+        $this->identifier = $identifier;
         return $this;
     }
 
@@ -763,34 +697,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get identifier
-     *
-     * @return array
-     */
-    public function getIdentifierAuthority()
-    {
-        $result = array();
-        $authorities = $this->getAuthority(true);
-        if (count($this->identifier) != 0 && count($authorities) != 0) {
-            foreach ($this->identifier as $identifier) {
-                foreach ($authorities as $authority) {
-                    if ($authority->getName() == $identifier->getAuthority()) {
-                        $ident_auth = new IdentifierAuthority();
-                        $ident_auth->setAuthority($authority);
-                        $ident_auth->setIdentifier($identifier);
-                        $result[] = $ident_auth;
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Add authority
      *
      * @param Authority $authority
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addAuthority(Authority $authority)
     {
@@ -802,7 +712,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set authority
      *
      * @param array $authority
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setAuthority($authority)
     {
@@ -828,8 +738,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Add metadataUrl
      *
-     * @param array $metadataUrl
-     * @return WmsLayerSource
+     * @param MetadataUrl $metadataUrl
+     * @return $this
      */
     public function addMetadataUrl(MetadataUrl $metadataUrl)
     {
@@ -840,8 +750,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set metadataUrl
      *
-     * @param array $metadataUrl
-     * @return WmsLayerSource
+     * @param MetadataUrl[] $metadataUrl
+     * @return $this
      */
     public function setMetadataUrl($metadataUrl)
     {
@@ -852,7 +762,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get metadataUrl
      *
-     * @return array
+     * @return MetadataUrl[]
      */
     public function getMetadataUrl()
     {
@@ -863,7 +773,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Add dimension
      *
      * @param Dimension | null $dimension
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addDimension($dimension)
     {
@@ -877,7 +787,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set dimension
      *
      * @param array $dimension
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setDimension($dimension)
     {
@@ -898,8 +808,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Add dataUrl
      *
-     * @param array $dataUrl
-     * @return WmsLayerSource
+     * @param OnlineResource $dataUrl
+     * @return $this
      */
     public function addDataUrl(OnlineResource $dataUrl = null)
     {
@@ -910,8 +820,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set dataUrl
      *
-     * @param array $dataUrl
-     * @return WmsLayerSource
+     * @param OnlineResource[] $dataUrl
+     * @return $this
      */
     public function setDataUrl($dataUrl)
     {
@@ -922,7 +832,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get dataUrl
      *
-     * @return array
+     * @return OnlineResource[]
      */
     public function getDataUrl()
     {
@@ -932,8 +842,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Add featureListUrl
      *
-     * @param array $featureListUrl
-     * @return WmsLayerSource
+     * @param OnlineResource $featureListUrl
+     * @return $this
      */
     public function addFeatureListUrl(OnlineResource $featureListUrl)
     {
@@ -945,7 +855,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set featureListUrl
      *
      * @param array $featureListUrl
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setFeatureListUrl($featureListUrl)
     {
@@ -967,7 +877,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Set keywords
      *
      * @param ArrayCollection $keywords
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setKeywords(ArrayCollection $keywords)
     {
@@ -978,7 +888,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get keywords
      *
-     * @return ArrayCollection collection of keywords
+     * @return ArrayCollection|Keyword[]
      */
     public function getKeywords()
     {
@@ -988,8 +898,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Add keywords
      *
-     * @param WmsLayerSourceKeyword $keyword
-     * @return WmsLayerSource
+     * @param Keyword $keyword
+     * @return $this
      */
     public function addKeyword(Keyword $keyword)
     {
@@ -1017,14 +927,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getClassname()
-    {
-        return get_class();
     }
 
     public function __toString()

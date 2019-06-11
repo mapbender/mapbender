@@ -113,7 +113,10 @@ class ApplicationAssetService
                 $references[] = new StringAsset($this->renderAppLoader($application));
                 break;
             case 'css':
-                $references[] = new StringAsset(trim($application->getCustomCss()));
+                $customCss = trim($application->getCustomCss());
+                if ($customCss) {
+                    $references[] = new StringAsset($customCss);
+                }
                 break;
             default:
                 // do nothing

@@ -39,11 +39,10 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             } elseif ($capabilityEl->localName === "Layer") {
                 $rootlayer = new WmsLayerSource();
                 $wms->addLayer($rootlayer);
-                $layer = $this->parseLayer($wms, $rootlayer, $capabilityEl);
+                $this->parseLayer($wms, $rootlayer, $capabilityEl);
             } elseif ($capabilityEl->localName === "UserDefinedSymbolization") {
                 $this->parseUserDefinedSymbolization($wms, $capabilityEl);
             }
-            /* @TODO add other _ExtendedOperation ?? */
         }
         $this->validateDimension($wms->getRootlayer());
         return $wms;
@@ -255,7 +254,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             $latlonBounds->setMiny($this->getValue("./@miny", $latlonbboxEl));
             $latlonBounds->setMaxx($this->getValue("./@maxx", $latlonbboxEl));
             $latlonBounds->setMaxy($this->getValue("./@maxy", $latlonbboxEl));
-            //@TODO  resx="0.01" resy="0.01" ??
             $wmslayer->setLatlonBounds($latlonBounds);
         }
 
@@ -268,7 +266,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $bbox->setMiny($this->getValue("./@miny", $item));
                 $bbox->setMaxx($this->getValue("./@maxx", $item));
                 $bbox->setMaxy($this->getValue("./@maxy", $item));
-                //@TODO  resx="0.01" resy="0.01" ??
                 $wmslayer->addBoundingBox($bbox);
             }
         }
@@ -324,7 +321,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         if ($dimensionList !== null) {
             foreach ($dimensionList as $dimensionEl) {
                 $dimension = new Dimension();
-                $dimension->setName($this->getValue("./@name", $dimensionEl)); //($this->getValue("./@CRS", $item));
+                $dimension->setName($this->getValue("./@name", $dimensionEl));
                 $dimension->setUnits($this->getValue("./@units", $dimensionEl));
                 $dimension->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
                 $wmslayer->addDimension($dimension);
@@ -344,26 +341,13 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $extent['current'] = ($this->getValue("./@current", $extentEl) !== null ?
                     (bool)$this->getValue("./@name", $extentEl) : null);
                 $extent['value'] = $this->getValue("./text()", $extentEl);
-                $found = false;
                 foreach ($wmslayer->getDimension() as $dimension) {
                     if ($dimension->getName() === $extent['name']) {
-                        $found = true;
                         $dimension->setDefault($extent['default']);
                         $dimension->setMultipleValues($extent['multiplevalues']);
                         $dimension->setNearestValue($extent['nearestvalue']);
                         $dimension->setCurrent($extent['current']);
                         $dimension->setExtent($extent['value']);
-                    }
-                }
-                if (!$found && $wmslayer->getParent()) {
-                    $dimension = $this->findDimension($wmslayer->getParent(), $extent);
-                    if ($dimension) {
-                        $dimension->setDefault($extent->getDefault());
-                        $dimension->setMultipleValues($extent->getMultipleValues());
-                        $dimension->setNearestValue($extent->getNearestValue());
-                        $dimension->setCurrent($extent->getCurrent());
-                        $dimension->setExtent($extent->getExtentValue());
-                        $wmslayer->addDimension($dimension);
                     }
                 }
             }
@@ -437,7 +421,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             $maxScaleHint = $maxScaleHint !== null ? floatval($maxScaleHint) : null;
             $minScale = !$minScaleHint ? null : round(($minScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
             $maxScale = !$maxScaleHint ? null : round(($maxScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
-            $wmslayer->setScaleHint(new MinMax($minScaleHint, $maxScaleHint));
             $wmslayer->setScale(new MinMax($minScale, $maxScale));
         }
 
@@ -449,7 +432,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $subwmslayer->setSource($wms);
                 $wmslayer->addSublayer($subwmslayer);
                 $wms->addLayer($subwmslayer);
-                $subwmslayer = $this->parseLayer($wms, $subwmslayer, $item);
+                $this->parseLayer($wms, $subwmslayer, $item);
             }
         }
         $wmslayer->setSource($wms);
@@ -467,20 +450,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $wmslayer->setDimension($dimensions);
         foreach ($wmslayer->getSublayer() as $sublayer) {
             $this->validateDimension($sublayer);
-        }
-    }
-
-    private function findDimension(WmsLayerSource $wmslayer, Extent $extent)
-    {
-        foreach ($wmslayer->getDimension() as $dimension) {
-            if ($dimension->getName() === $extent->getName()) {
-                return $dimension;
-            }
-        }
-        if ($wmslayer->getParent() !== null) {
-            return $this->findDimension($wmslayer->getParent(), $extent);
-        } else {
-            return null;
         }
     }
 }

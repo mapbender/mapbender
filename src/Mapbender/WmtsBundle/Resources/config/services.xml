@@ -9,7 +9,7 @@
 	</parameters>
 	<services>
 		<service id="mapbender.source.wmts.service" class="%mapbender.source.wmts.service.class%">
-			<argument type="service" id="service_container" />
+			<argument type="service" id="mapbender.source.url_processor.service" />
 		</service>
 		<service id="mapbender.imageexport.renderer.wmts" class="%mapbender.imageexport.renderer.wmts.class%">
 		  <argument type="service" id="mapbender.imageexport.image_transport.service" />

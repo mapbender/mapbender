@@ -73,12 +73,15 @@ abstract class WmsCapabilitiesParser
                 return null;
             }
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
+                /** @var \DOMAttr $elm */
                 return $elm->value;
             } else if ($elm->nodeType == XML_TEXT_NODE) {
+                /** @var \DOMText $elm */
                 return $elm->wholeText;
             } else if ($elm->nodeType == XML_ELEMENT_NODE) {
                 return $elm;
             } else if ($elm->nodeType == XML_CDATA_SECTION_NODE) {
+                /** @var \DOMCdataSection $elm */
                 return $elm->wholeText;
             } else {
                 return null;
@@ -107,13 +110,12 @@ abstract class WmsCapabilitiesParser
      * Creates a document
      *
      * @param string $data the string containing the XML
-     * @param boolean $validate to validate of xml
      * @return \DOMDocument a GetCapabilites document
      * @throws XmlParseException if a GetCapabilities xml is not valid
      * @throws WmsException if an service exception
      * @throws NotSupportedVersionException if a service version is not supported
      */
-    public static function createDocument($data, $validate = false)
+    public static function createDocument($data)
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {

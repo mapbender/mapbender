@@ -5,7 +5,6 @@ namespace Mapbender\WmtsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmtsBundle\Component\WmtsMetadata;
 
 /**
  * WmtsInstance class
@@ -20,33 +19,16 @@ class WmtsInstance extends SourceInstance
 {
 
     /**
-     * @var array $configuration The instance configuration
-     * @ORM\Column(type="array", nullable=true)
-     */
-    protected $configuration;
-
-    /**
      * @ORM\ManyToOne(targetEntity="WmtsSource", inversedBy="instance", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
      */
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmtsInstanceLayer", mappedBy="sourceInstance", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmtsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      */
     protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
-//
-//    /**
-//     * @ORM\Column(type="string", nullable=true)
-//     */
-//    protected $srs;
-//
-//    /**
-//     * @ORM\Column(type="string", nullable=true)
-//     */
-//    protected $format;
-//
 //    /**
 //     * @ORM\Column(type="string", nullable=true)
 //     */
@@ -122,16 +104,6 @@ class WmtsInstance extends SourceInstance
      * ORM\Column(type="boolean", nullable=true)
      */
     protected $allowtoggle;
-//
-//    /**
-//     * @ORM\Column(type="integer", options={"default" = 0})
-//     */
-//    protected $buffer = 0;
-//
-//    /**
-//     * @ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
-//     */
-//    protected $ratio = 1.25;
 
     public function __construct()
     {
@@ -142,7 +114,7 @@ class WmtsInstance extends SourceInstance
     /**
      * Set id
      * @param integer $id
-     * @return WmtsInstance
+     * @return $this
      */
     public function setId($id)
     {
@@ -174,7 +146,7 @@ class WmtsInstance extends SourceInstance
      * Sets dimensions
      *
      * @param array $dimensions array of DimensionIst
-     * @return \Mapbender\WmtsBundle\Entity\WmtsInstance
+     * @return $this
      */
     public function setDimensions(array $dimensions)
     {
@@ -183,32 +155,10 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set configuration
-     *
-     * @param array $configuration
-     * @return $this
-     */
-    public function setConfiguration($configuration)
-    {
-        $this->configuration = $configuration;
-        return $this;
-    }
-
-    /**
-     * Get an Instance Configuration.
-     *
-     * @return array $configuration
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
-    }
-
-    /**
      * Set layers
      *
      * @param array $layers
-     * @return WmtsInstance
+     * @return $this
      */
     public function setLayers($layers)
     {
@@ -225,27 +175,12 @@ class WmtsInstance extends SourceInstance
     {
         return $this->layers;
     }
-//
-//    /**
-//     * Get root layer
-//     *
-//     * @return WmtsInstanceLayer
-//     */
-//    public function getRootlayer()
-//    {
-//        foreach ($this->layers as $layer) {
-//            if ($layer->getParent() === null) {
-//                return $layer;
-//            }
-//        }
-//        return null;
-//    }
 
     /**
      * Set title
      *
      * @param string $title
-     * @return WmtsInstance
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -262,51 +197,7 @@ class WmtsInstance extends SourceInstance
     {
         return $this->title;
     }
-//
-//    /**
-//     * Set srs
-//     *
-//     * @param array $srs
-//     * @return WmtsInstance
-//     */
-//    public function setSrs($srs)
-//    {
-//        $this->srs = $srs;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get srs
-//     *
-//     * @return array
-//     */
-//    public function getSrs()
-//    {
-//        return $this->srs;
-//    }
-//
-//    /**
-//     * Set format
-//     *
-//     * @param string $format
-//     * @return WmtsInstance
-//     */
-//    public function setFormat($format)
-//    {
-//        $this->format = $format;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get format
-//     *
-//     * @return string
-//     */
-//    public function getFormat()
-//    {
-//        return $this->format !== null ? $this->format : 'image/png';
-//    }
-//
+
 //    /**
 //     * Set infoformat
 //     *
@@ -437,58 +328,11 @@ class WmtsInstance extends SourceInstance
         return $this->proxy;
     }
 
-//
-//    /**
-//     * Set ratio
-//     *
-//     * @param boolean $ratio
-//     * @return WmtsInstance
-//     */
-//    public function setRatio($ratio)
-//    {
-//        $this->ratio = $ratio;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get ratio
-//     *
-//     * @return boolean
-//     */
-//    public function getRatio()
-//    {
-//        return $this->ratio;
-//    }
-//
-//    /**
-//     * Set buffer
-//     *
-//     * @param boolean $buffer
-//     * @return WmtsInstance
-//     */
-//    public function setBuffer($buffer)
-//    {
-//        $this->buffer = $buffer;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get buffer
-//     *
-//     * @return boolean
-//     */
-//    public function getBuffer()
-//    {
-//        return $this->buffer;
-//    }
-
     /**
      * Set wmtssource
      *
      * @param WmtsSource $wmtssource
-     * @return WmtsInstance
+     * @return $this
      */
     public function setSource($wmtssource = null)
     {
@@ -509,8 +353,8 @@ class WmtsInstance extends SourceInstance
     /**
      * Add layers
      *
-     * @param WmtsInstanceLayer $layers
-     * @return WmtsInstance
+     * @param WmtsInstanceLayer $layer
+     * @return $this
      */
     public function addLayer(WmtsInstanceLayer $layer)
     {

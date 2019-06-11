@@ -1,5 +1,5 @@
 <tr class="item level0" >
-    <td class="level1 itemType iconLinkButton hover-highlight-effect"></td>
+    <td class="level1 itemType"><span class="itemType iconLinkButton hover-highlight-effect"></span></td>
     <td class="titleColumn" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_title"|trans }}">{{ form_widget(form.title) }}</td>
     <td title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_matrixsets"|trans }}">{{ form_widget(form.tileMatrixSet) }}</td>
     <td title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_styles"|trans }}">{{ form_widget(form.infoformat) }}</td>
@@ -11,14 +11,12 @@
     <td class="checkboxColumn odd" data-check-identifier="checkToggleAllow" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.allowtoggletoc"|trans }}">{{ form_widget(form.allowtoggle) }}</td>
     <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.toggletoc"|trans }}">{{ form_widget(form.toggle) }}</td>
     <td class="moreColumn">
-      <span class="iconMore" title="{{'mb.wmts.wmtsloader.repo.instancelayerform.label.moreinfo'|trans}}">
-        <div class="infoMsgBox hide">
-          <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.id"|trans }}</span><span class="smallText">{{instance.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>
-          {#{ dump(form.vars.data.sourceItem) }#}
-          <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_name"|trans }}</span><span class="smallText">{{ form.vars.data.sourceItem.identifier }}</span>
-          <br>
-          <span class="labelText">{{"mb.wmts.wmtsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form.style) }}
-        </div>
-      </span>
+      <div class="infoMsgBox hidden">
+        <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.id"|trans }}</span><span class="smallText">{{instance.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>
+        <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_name"|trans }}</span><span class="smallText">{{ form.vars.data.sourceItem.identifier }}</span>
+        <br>
+        <span class="labelText">{{"mb.wmts.wmtsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form.style) }}
+      </div>
+      <span class="iconMore" title="{{'mb.wmts.wmtsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
     </td>
 </tr>
