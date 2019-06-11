@@ -33,6 +33,8 @@ class MapbenderCoreBundle extends MapbenderBundle
 
         $kernelPath = $container->getParameter('kernel.root_dir');
         $yamlAppDir = $kernelPath . "/config/applications";
+        $loginAppDir = dirname(__FILE__) . '/Resources/config/applications';
+        $container->addCompilerPass(new MapbenderYamlCompilerPass($loginAppDir));
         if (is_dir($yamlAppDir)) {
             $container->addCompilerPass(new MapbenderYamlCompilerPass($yamlAppDir));
         }

@@ -6,7 +6,6 @@ use Mapbender\CoreBundle\MapbenderCoreBundle;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
@@ -16,14 +15,10 @@ use Symfony\Component\Yaml\Yaml;
  * Need to load and create bundle application cache.
  * @see MapbenderCoreBundle::build()
  *
- * @package Mapbender\CoreBundle\DependencyInjection\Compiler
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  */
 class MapbenderYamlCompilerPass implements CompilerPassInterface
 {
-    /** @var ContainerBuilder|ContainerInterface Container */
-    protected $container;
-
     /** @var string Applications directory path where YAML files are */
     protected $applicationDir;
 
@@ -34,18 +29,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function __construct($applicationDir)
     {
-
         if ($applicationDir) {
             $this->applicationDir = $applicationDir;
         }
-    }
-
-    /**
-     * @param ContainerBuilder|ContainerInterface $container
-     */
-    public function setContainer($container)
-    {
-        $this->container = $container;
     }
 
     /**
@@ -53,78 +39,52 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container) {
-            $this->setContainer($container);
-        }
-
         if ($this->applicationDir) {
-            $this->loadYamlApplications($this->applicationDir);
+            $this->loadYamlApplications($container, $this->applicationDir);
         }
     }
 
     /**
      * Load YAML applications from path
      *
+     *
+     * @param ContainerBuilder $container
      * @param string $path Application directory path
      */
-    public function loadYamlApplications($path)
+    protected function loadYamlApplications($container, $path)
     {
-        $container = $this->container;
-        $finder    = new Finder();
+        $finder = new Finder();
         $finder
             ->in($path)
             ->files()
             ->name('*.yml');
+        $applications = array();
 
         foreach ($finder as $file) {
-            $this->loadAndMergeYamlParameters($file->getRealPath());
-        }
-
-        $container->getParameterBag()->resolve();
-    }
-
-    /**
-     * Load and merge d YAML file parameters data
-     *
-     * @param string $filePath Absolute file path
-     * @return FileResource
-     */
-    public function loadAndMergeYamlParameters($filePath)
-    {
-        $container    = $this->container;
-        $fileResource = new FileResource($filePath);
-        $yml          = Yaml::parse($filePath);
-
-        $container->addResource($fileResource);
-
-        if (array_key_exists('parameters', $yml) && is_array($yml['parameters'])) {
-            foreach ($yml['parameters'] as $key => $data) {
-                $this->mergeParameterData($key, $data);
+            $fileData = Yaml::parse($file->getRealPath());
+            if (!empty($fileData['parameters']['applications'])) {
+                $applications = array_replace($applications, $fileData['parameters']['applications']);
+                // Add a file resource to auto-invalidate the container build when the input file changes
+                $container->addResource(new FileResource($file->getRealPath()));
             }
         }
-
-        return $fileResource;
+        $this->addApplications($container, $applications);
     }
 
-
     /**
-     * Merge container parameter data
-     *
-     * @param $key
-     * @param $data
+     * @param ContainerBuilder $container
+     * @param array[][] $applications
      */
-    public function mergeParameterData($key, &$data)
+    protected function addApplications($container, $applications)
     {
-        $container = $this->container;
-        if ($container->hasParameter($key)) {
-            $container->setParameter($key,
-                array_merge_recursive(
-                    $container->getParameter($key),
-                    $data
-                )
-            );
-        } else {
-            $container->setParameter($key, $data);
+        if ($applications) {
+            if ($container->hasParameter('applications')) {
+                $applicationCollection = $container->getParameter('applications');
+                $applicationCollection = array_replace($applicationCollection, $applications);
+            } else {
+                $applicationCollection = $applications;
+            }
+            $container->setParameter('applications', $applicationCollection);
         }
     }
 }

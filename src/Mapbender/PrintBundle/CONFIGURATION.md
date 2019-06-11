@@ -48,10 +48,40 @@ operation can now be selected.
 
 For YAML-defined applications, the allowable values for `renderMode` are either `direct` or `queued`.
 
-## Memory limit
-The main motivation for queued print is to support more resource-intensive jobs with long execution
-times. These jobs may also require a lot of memory to finish.
+## Storage path
+Use `mapbender.print.queue.storage_dir` (string; default <webroot>/prints) to control where
+PDFs generated from queued print jobs are stored.
+
+## Separate load_path
+To support file forwarding from a "print queue server" installed separately from the browser-facing Mapbender
+installation, the path where PDFs are loaded from can be configured separately with the parameter
+`mapbender.print.queue.load_path` (string; default same as `mapbender.print.queue.storage_dir`).
+
+Unlike the storage_dir parameter, load_path allows urls.
+
+One example use case for urls is to keep the separate "print queue servers" storage_dir accessible under its
+web root, and set an appropriate http url into the load_path of the browser-facing frontend
+Mapbender install.
+
+Do note that in any case, a separately installed "print queue server" _must_ share the default
+database with the browser-facing frontend Mapbender installation.
+
+# Memory limit
+Print job execution may require more memory than generally available to PHP to
+finish. Mapbender can attempt to increase the PHP memory limit at runtime via
+`ini_set` before a print job starts.
+
+The main motivation for queued print is to support more resource-intensive jobs with
+long execution times. These jobs tend to require even more memory than direct print
+jobs, so the appliedmemory limit is configurable separately.
+
+Use `mapbender.print.memory_limit` (string or null; default null) for the memory limit
+used in direct print job execution. The default `null` means no attempt to touch the memory
+limit. The memory limit set via php.ini or SAPI configuration will apply.
+
+In addition to null, any value syntax valid in a php.ini (e.g. `512M`, `2G`, `2048M` etc) should work here.
+Use `-1` for unlimited memory consumption.
 
 Use `mapbender.print.queue.memory_limit` (string; default 1G) to increase the maximum allowed memory
-specifically during print job execution. Any value syntax valid in a php.ini (e.g. `512M`, `2G`, `2048M` etc)
-should work here.
+specifically during execution of queued print jobs. This parameter _does_ _not_
+support a null value.

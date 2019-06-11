@@ -3,10 +3,18 @@
 namespace Mapbender\ManagerBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class MapbenderManagerBundle extends MapbenderBundle
 {
+
+    public function build(ContainerBuilder $container)
+    {
+        $appFileDir = dirname(__FILE__) . '/Resources/config/applications';
+        $container->addCompilerPass(new MapbenderYamlCompilerPass(realpath($appFileDir)));
+    }
 
     public function getManagerControllers()
     {

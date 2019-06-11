@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,12 +40,14 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     protected $entityManager;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
-    /** @var string */
-    protected $storagePath;
     /** @var UrlGeneratorInterface */
     protected $router;
     /** @var Filesystem */
     protected $filesystem;
+    /** @var string */
+    protected $storagePath;
+    /** @var string */
+    protected $loadPath;
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -52,12 +55,14 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param UrlGeneratorInterface $router
      * @param Filesystem $filesystem
      * @param string $storagePath
+     * @param string $loadPath
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 TokenStorageInterface $tokenStorage,
                                 UrlGeneratorInterface $router,
                                 Filesystem $filesystem,
-                                $storagePath)
+                                $storagePath,
+                                $loadPath)
     {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
@@ -70,6 +75,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
         }
         $this->filesystem = $filesystem;
         $this->storagePath = realpath($storagePath);
+        $this->loadPath = rtrim($loadPath, '/\\');
     }
 
     /**
@@ -115,7 +121,6 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             throw new NotFoundHttpException();
         }
         $fileName = $entity->getFilename();
-        $fullPath = "{$this->storagePath}/{$fileName}";
 
         switch ($request->attributes->get('action')) {
             default:
@@ -124,23 +129,21 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 if (!$this->accessAllowed($entity, $config)) {
                     throw new AccessDeniedHttpException();
                 }
-                if (!file_exists($fullPath) || !is_readable($fullPath)) {
-                    throw new NotFoundHttpException();
-                }
-                $mimeType = 'application/pdf';
-                $headers = array(
-                    'Content-Type' => $mimeType,
-                    'Content-Disposition' => "inline; filename=\"{$fileName}\"",
-                );
-                return new BinaryFileResponse($fullPath, 200, $headers);
+                return $this->getOpenResponse($entity);
             case 'delete':
                 if (!$this->deleteAllowed($entity, $config)) {
                     throw new AccessDeniedHttpException();
                 }
-                $this->filesystem->remove($fullPath);
+                $fullPath = "{$this->storagePath}/{$fileName}";
+                try {
+                    $this->filesystem->remove($fullPath);
+                } catch (IOException $e) {
+                    // No file to delete
+                    // This will happen if storagePath != loadPath.
+                }
                 $this->entityManager->remove($entity);
                 $this->entityManager->flush();
-                return new Response('', 204);
+                return new Response('', Response::HTTP_NO_CONTENT);
         }
     }
 
@@ -267,6 +270,38 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             // user is either an object with __toString or just a string
             return "{$user}";
         }
+    }
+
+    /**
+     * @param QueuedPrintJob $entity
+     * @return Response
+     */
+    protected function getOpenResponse($entity)
+    {
+        $fileName = $entity->getFileName();
+        $mimeType = 'application/pdf';
+        $headers = array(
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => "inline; filename=\"{$fileName}\"",
+        );
+        $fullPath = "{$this->loadPath}/{$fileName}";
+
+        if (preg_match('#^[\w]+://#', $fullPath)) {
+            // URL. Delegate to fopen wrapper via file_get_contents.
+            // NOTE: We do not support proxy configurations here.
+            //       Any pair of browser-facing Mapbender + ~dedicated "print queue server"
+            //       installs must be able to exchange data directly, without involving
+            //       network proxies.
+            $content = file_get_contents($fullPath);
+            if ($content !== false) {
+                return new Response($content, 200, $headers);
+            }
+        } else {
+            if (file_exists($fullPath) && is_readable($fullPath)) {
+                return new BinaryFileResponse($fullPath, 200, $headers);
+            }
+        }
+        throw new NotFoundHttpException();
     }
 
     /**

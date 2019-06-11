@@ -23,6 +23,7 @@ class EntityAnnotationParser
 
     /**
      * @param $className
+     * @param bool $onlyAnnotation
      *
      * @return array
      */
@@ -30,15 +31,10 @@ class EntityAnnotationParser
     {
         $reflect = new \ReflectionClass($className);
         $fields = array();
-        $methods = array();
+        $methodNames = array();
 
-//        $method = new \ReflectionMethod($methods, $name);
-
-        /**
-         * @var $method \ReflectionMethod
-         */
         foreach ($reflect->getMethods() as $method) {
-            $methods[$method->getName()] = $method;
+            $methodNames[] = $method->getName();
         }
 
         // get all properties
@@ -66,59 +62,38 @@ class EntityAnnotationParser
                 $chunk = ucwords($chunk);
                 $methodHash .= $chunk;
             }
-
-            // exclude not annotated fields
-            if (count($annotations)) {
-                foreach ($methods as $methodName => $method) {
+            if ($annotations || !$onlyAnnotation) {
+                $fieldProperties = $annotations ?: array();
+                foreach ($methodNames as $methodName) {
                     switch ($methodName) {
-                        case self::GET . $methodHash: $annotations[self::GETTER] = $methodName;
+                        case self::GET . $methodHash:
+                            $fieldProperties[self::GETTER] = $methodName;
                             break;
-                        case self::SET . $methodHash: $annotations[self::SETTER] = $methodName;
+                        case self::SET . $methodHash:
+                            $fieldProperties[self::SETTER] = $methodName;
                             break;
-                        case self::HAS . $methodHash: $annotations[self::HAS_METHOD] = $methodName;
+                        case self::HAS . $methodHash:
+                            $fieldProperties[self::HAS_METHOD] = $methodName;
                             break;
-                        case self::IS . $methodHash: $annotations[self::IS_METHOD] = $methodName;
-                            break;
-                    }
-                }
-
-                // try to find getter if not founded before 
-                if (!isset($annotations[self::GETTER])) {
-                    if (isset($annotations[self::HAS_METHOD])) {
-                        $annotations[self::GETTER] = $annotations[self::HAS_METHOD];
-                    } elseif (isset($annotations[self::IS_METHOD])) {
-                        $annotations[self::GETTER] = $annotations[self::IS_METHOD];
-                    }
-                }
-
-                if (isset($annotations[self::COLUMN]) && isset($annotations[self::COLUMN][self::NAME])) {
-                    $annotations[self::NAME] = strtolower($annotations[self::COLUMN][self::NAME]);
-                } elseif (isset($annotations[self::JOIN_COLUMN]) && isset($annotations[self::JOIN_COLUMN][self::NAME])) {
-                    $annotations[self::NAME] = strtolower($annotations[self::JOIN_COLUMN][self::NAME]);
-                }
-                $fields[$fieldName] = $annotations;
-            } elseif (!$onlyAnnotation) {
-                $fieldProperties = array();
-
-                foreach ($methods as $methodName => $method) {
-                    switch ($methodName) {
-                        case self::GET . $methodHash: $fieldProperties[self::GETTER] = $methodName;
-                            break;
-                        case self::SET . $methodHash: $fieldProperties[self::SETTER] = $methodName;
-                            break;
-                        case self::HAS . $methodHash: $fieldProperties[self::HAS_METHOD] = $methodName;
-                            break;
-                        case self::IS . $methodHash: $fieldProperties[self::IS_METHOD] = $methodName;
+                        case self::IS . $methodHash:
+                            $fieldProperties[self::IS_METHOD] = $methodName;
                             break;
                     }
                 }
 
-                // try to find getter if not founded before 
                 if (!isset($fieldProperties[self::GETTER])) {
+                    // try to find alternative getter
                     if (isset($fieldProperties[self::HAS_METHOD])) {
-                        $annotation[self::GETTER] = $fieldProperties[self::HAS_METHOD];
-                    } elseif (isset($fieldProperties[self::IS_METHOD])) {
-                        $annotation[self::GETTER] = $fieldProperties[self::IS_METHOD];
+                        $fieldProperties[self::GETTER] = $fieldProperties[self::HAS_METHOD];
+                    } elseif (isset($annotations[self::IS_METHOD])) {
+                        $fieldProperties[self::GETTER] = $fieldProperties[self::IS_METHOD];
+                    }
+                }
+                if ($annotations) {
+                    if (isset($fieldProperties[self::COLUMN]) && isset($fieldProperties[self::COLUMN][self::NAME])) {
+                        $fieldProperties[self::NAME] = strtolower($fieldProperties[self::COLUMN][self::NAME]);
+                    } elseif (isset($fieldProperties[self::JOIN_COLUMN]) && isset($fieldProperties[self::JOIN_COLUMN][self::NAME])) {
+                        $fieldProperties[self::NAME] = strtolower($fieldProperties[self::JOIN_COLUMN][self::NAME]);
                     }
                 }
                 $fields[$fieldName] = $fieldProperties;

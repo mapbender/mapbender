@@ -1,15 +1,14 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Collection of servicy behaviors related to application
@@ -198,33 +197,6 @@ class Application
     }
 
     /**
-     * Checks and generates a valid slug.
-     *
-     * @param ContainerInterface $container container
-     * @param string             $slug      slug to check
-     * @param string             $suffix
-     * @return string a valid generated slug
-     */
-    public static function generateSlug($container, $slug, $suffix = 'copy')
-    {
-        /** @var Mapbender $mapbender */
-        $mapbender = $container->get('mapbender');
-        $application = $mapbender->getApplicationEntity($slug);
-        if (!$application) {
-            return $slug;
-        } else {
-            $count = 0;
-        }
-        /** @var ObjectRepository $rep */
-        $rep = $container->get('doctrine')->getRepository('MapbenderCoreBundle:Application');
-        do {
-            $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
-            $count++;
-        } while ($rep->findOneBy(array('slug' => $copySlug)));
-        return $copySlug;
-    }
-
-    /**
      * Returns the public "uploads" directory.
      * NOTE: this has nothing to with applications. Some legacy usages passed in an application
      * slug as a second argument, but it was only ever evaluated as a boolean.
@@ -300,6 +272,7 @@ class Application
      */
     public static function getBaseUrl($container)
     {
+        /** @var Request $request */
         $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
     }

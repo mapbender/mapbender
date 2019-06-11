@@ -8,8 +8,9 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
-use FOM\UserBundle\Component\AclManager;
-use Mapbender\CoreBundle\Component\SecurityContext;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -26,21 +27,19 @@ class ApplicationService
     protected $uploadsManager;
     /** @var AuthorizationCheckerInterface  */
     protected $authorizationChecker;
-    /** @var AclManager */
-    protected $aclManager;
-    /** @var Component\Application[] */
-    protected $bufferedApplicationComponents = array();
+    /** @var AclProviderInterface */
+    protected $aclProvider;
 
 
     public function __construct(ElementFactory $elementFactory,
                                 UploadsManager $uploadsManager,
                                 AuthorizationCheckerInterface $authorizationChecker,
-                                AclManager $aclManager)
+                                AclProviderInterface $aclProvider)
     {
         $this->elementFactory = $elementFactory;
         $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
-        $this->aclManager = $aclManager;
+        $this->aclProvider = $aclProvider;
     }
 
     /**
@@ -121,11 +120,17 @@ class ApplicationService
      * @param string $permission
      * @return bool
      */
-    protected function isElementGranted(Entity\Element $element, $permission = SecurityContext::PERMISSION_VIEW)
+    protected function isElementGranted(Entity\Element $element, $permission = 'VIEW')
     {
-        if ($this->aclManager->hasObjectAclEntries($element)) {
-            $isGranted = $this->authorizationChecker->isGranted($permission, $element);
-        } else {
+        $oid = ObjectIdentity::fromDomainObject($element);
+        try {
+            $acl = $this->aclProvider->findAcl($oid);
+            if ($acl->getObjectAces()) {
+                $isGranted = $this->authorizationChecker->isGranted($permission, $element);
+            } else {
+                $isGranted = true;
+            }
+        } catch (AclNotFoundException $e) {
             $isGranted = true;
         }
 

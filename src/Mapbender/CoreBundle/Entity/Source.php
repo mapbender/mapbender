@@ -79,6 +79,11 @@ abstract class Source
     abstract public function getInstances();
 
     /**
+     * @return ArrayCollection|SourceItem[]
+     */
+    abstract public function getLayers();
+
+    /**
      * Set id
      * @param integer $id source id
      * @return $this

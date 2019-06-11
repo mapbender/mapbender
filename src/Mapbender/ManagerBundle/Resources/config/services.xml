@@ -19,5 +19,9 @@
             <argument type="service" id="kernel" />
             <argument type="service" id="security.authorization_checker" />
         </service>
+        <service id="mapbender.twig.manager.acl" class="Mapbender\ManagerBundle\Extension\Twig\AclExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="security.acl.provider" />
+        </service>
     </services>
 </container>

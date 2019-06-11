@@ -1,0 +1,8 @@
+parameters:
+    applications:
+        mb3-login:
+            title: Mapbender Login
+            template:  Mapbender\ManagerBundle\Template\LoginTemplate
+            excludeFromList: true
+            published: true
+            roles: [IS_AUTHENTICATED_ANONYMOUSLY]

@@ -41,12 +41,14 @@
                   <span class="iconEdit editElement hover-highlight-effect"
                         title="{{"mb.manager.admin.element.edit"|trans}}  {{element.title}}"
                         data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
-                  <span class="iconKey secureElement {% if aclManager.hasObjectAclEntries(element) %}has {% endif %}hover-highlight-effect"
-                        title="{{ "mb.manager.managerbundle.acl_element"|trans }}  {{ element.title }}
+                  {% set _aces = mapbender_manager_object_aces(element) %}
+                  <span class="iconKey secureElement {% if _aces | length %}has {% endif %}hover-highlight-effect"
+                        title="{{ "mb.manager.managerbundle.acl_element"|trans }} {{ element.title }}{% if _aces | length %}
 
-{% for acl in aclManager.getObjectAclEntriesAsArray(element) %}
-{{acl.type}}: {{ acl.name }}
-{% endfor %}"
+
+{% for ace in _aces %}
+{{ace.type}}: {{ ace.name }}
+{% endfor %}{% endif %}"
                         data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}"></span>
                   <span class="iconRemove removeElement hover-highlight-effect"
                         title="{% trans with {'%element_title%': element.title} %} mb.manager.be.element.delete {% endtrans %}"
