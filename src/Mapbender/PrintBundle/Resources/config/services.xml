@@ -40,6 +40,11 @@
         <!-- Storage path can be anywhere, should probably be /var/ in proper LSB setups
              Storage in web is pre-standardization legacy behavior -->
         <parameter key="mapbender.print.queue.storage_dir">%kernel.root_dir%/../web/prints</parameter>
+        <!-- Queue load path is the same as storage_path by default, but can be set to some
+             other value to support a "print queue server" installed separately from the browser-facing
+             Mapbender install. This value will be used to retrieve the finished PDF when serving the
+             open / download requests. Unlike storage_path, this can be set to a http url. -->
+        <parameter key="mapbender.print.queue.load_path">%mapbender.print.queue.storage_dir%</parameter>
         <!-- Memory limit for jobs immediately executed in the web browser scope (not queued).
              Supports null to use existing php-configured value and avoid any attempt to change memory limit.
              Additionally supports formats understood by php.ini
@@ -124,7 +129,8 @@
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="router" />
             <argument type="service" id="filesystem" />
-            <argument key="storagePath">%mapbender.print.queue.storage_dir%</argument>
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+            <argument>%mapbender.print.queue.load_path%</argument>
         </service>
         <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
             <argument key="queuable">%mapbender.print.queueable%</argument>

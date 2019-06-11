@@ -48,6 +48,24 @@ operation can now be selected.
 
 For YAML-defined applications, the allowable values for `renderMode` are either `direct` or `queued`.
 
+## Storage path
+Use `mapbender.print.queue.storage_dir` (string; default <webroot>/prints) to control where
+PDFs generated from queued print jobs are stored.
+
+## Separate load_path
+To support file forwarding from a "print queue server" installed separately from the browser-facing Mapbender
+installation, the path where PDFs are loaded from can be configured separately with the parameter
+`mapbender.print.queue.load_path` (string; default same as `mapbender.print.queue.storage_dir`).
+
+Unlike the storage_dir parameter, load_path allows urls.
+
+One example use case for urls is to keep the separate "print queue servers" storage_dir accessible under its
+web root, and set an appropriate http url into the load_path of the browser-facing frontend
+Mapbender install.
+
+Do note that in any case, a separately installed "print queue server" _must_ share the default
+database with the browser-facing frontend Mapbender installation.
+
 # Memory limit
 Print job execution may require more memory than generally available to PHP to
 finish. Mapbender can attempt to increase the PHP memory limit at runtime via
