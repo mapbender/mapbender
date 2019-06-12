@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
@@ -41,48 +42,39 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
+        $this->updateSource($this->entity, $sourceNew);
+    }
+
+    public function updateSource(WmsSource $target, WmsSource $sourceNew)
+    {
         $em = $this->getEntityManager();
         $transaction = $em->getConnection()->isTransactionActive();
         if (!$transaction) {
             $em->getConnection()->beginTransaction();
         }
-        /* Update source attributes */
-        $classMeta = $em->getClassMetadata(EntityUtil::getRealClass($this->entity));
-
-        foreach ($classMeta->getFieldNames() as $fieldName) {
-            if (!in_array($fieldName, $classMeta->getIdentifier())
-                    && ($getter = EntityUtil::getReturnMethod($fieldName, $classMeta->getReflectionClass()))
-                    && ($setter = EntityUtil::getSetMethod($fieldName, $classMeta->getReflectionClass()))) {
-                $value     = $getter->invoke($sourceNew);
-                $setter->invoke($this->entity, is_object($value) ? clone $value : $value);
-            } elseif (($getter = EntityUtil::getReturnMethod($fieldName, $classMeta->getReflectionClass()))
-                    && ($setter = EntityUtil::getSetMethod($fieldName, $classMeta->getReflectionClass()))) {
-                if (!$getter->invoke($this->entity) && ($new = $getter->invoke($sourceNew))) {
-                    $setter->invoke($this->entity, $new);
-                }
-            }
-        }
+        $classMeta = $em->getClassMetadata(ClassUtils::getClass($target));
+        EntityUtil::copyEntityFields($target, $sourceNew, $classMeta, false);
 
         $contact = clone $sourceNew->getContact();
         $em->detach($contact);
-        if ($this->entity->getContact()) {
-            $em->remove($this->entity->getContact());
+        if ($target->getContact()) {
+            $em->remove($target->getContact());
         }
-        $this->entity->setContact($contact);
+        $target->setContact($contact);
 
-        $rootUpdateHandler = new WmsLayerSourceEntityHandler($this->container, $this->entity->getRootlayer());
-        $rootUpdateHandler->update($sourceNew->getRootlayer());
+        $rootUpdateHandler = new WmsLayerSourceEntityHandler($this->container, $target->getRootlayer());
+        $rootUpdateHandler->updateLayer($target->getRootlayer(), $sourceNew->getRootlayer());
 
         KeywordUpdater::updateKeywords(
-            $this->entity,
+            $target,
             $sourceNew,
             $em,
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
 
-        foreach ($this->entity->getInstances() as $instance) {
-            $instanceUpdateHandler = new WmsInstanceEntityHandler($this->container, $instance);
-            $instanceUpdateHandler->update();
+        $instanceUpdateHandler = new WmsInstanceEntityHandler($this->container, null);
+        foreach ($target->getInstances() as $instance) {
+            $instanceUpdateHandler->updateInstance($instance);
         }
 
         if (!$transaction) {

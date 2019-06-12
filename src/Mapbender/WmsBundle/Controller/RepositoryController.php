@@ -167,8 +167,8 @@ class RepositoryController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->beginTransaction();
             try {
-                $wmssourcehandler = new WmsSourceEntityHandler($this->container, $wmsOrig);
-                $wmssourcehandler->update($wmssource);
+                $wmssourcehandler = new WmsSourceEntityHandler($this->container, null);
+                $wmssourcehandler->updateSource($wmsOrig, $wmssource);
             } catch (\Exception $e) {
                 $this->get("logger")->debug($e->getMessage());
                 $this->addFlash('error', $e->getMessage());

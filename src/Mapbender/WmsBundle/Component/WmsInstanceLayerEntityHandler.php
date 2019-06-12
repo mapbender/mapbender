@@ -18,56 +18,58 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
     /**
      * @inheritdoc
+     * @param WmsInstance $instance
+     * @param WmsLayerSource $wmslayersource
      */
     public function update(SourceInstance $instance, SourceItem $wmslayersource)
     {
-        /** @var WmsInstance $instance */
-        /** @var WmsLayerSource $wmslayersource */
-        $manager = $this->getEntityManager();
+        return $this->updateInstanceLayer($this->entity);
+    }
+
+    public function updateInstanceLayer(WmsInstanceLayer $target)
+    {
+        $em = $this->getEntityManager();
+        $instance = $target->getSourceInstance();
         /* remove instance layers for missed layer sources */
-        $toRemove = array();
-        foreach ($this->entity->getSublayer() as $wmsinstlayer) {
-            if ($manager->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
-                $toRemove[] = $wmsinstlayer;
+        foreach ($target->getSublayer() as $wmsinstlayer) {
+            if ($em->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
+                $target->getSublayer()->removeElement($wmsinstlayer);
+                $em->remove($wmsinstlayer);
             }
         }
-        foreach ($toRemove as $rem) {
-            $this->entity->getSublayer()->removeElement($rem);
-            $manager->remove($rem);
-        }
-        foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
-            $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
+        $sourceItem = $target->getSourceItem();
+        foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
+            $layer = $this->findLayer($wmslayersourceSub, $target->getSublayer());
             if ($layer) {
-                $layerInstanceHandler = new WmsInstanceLayerEntityHandler($this->container, $layer);
-                $layerInstanceHandler->update($instance, $wmslayersourceSub);
+                $this->updateInstanceLayer($layer);
             } else {
                 $sublayerInstance = new WmsInstanceLayer();
                 $sublayerInstance->populateFromSource($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
-                $sublayerInstance->setParent($this->entity);
+                $sublayerInstance->setParent($target);
                 $instance->getLayers()->add($sublayerInstance);
-                $this->entity->getSublayer()->add($sublayerInstance);
-                $manager->persist($sublayerInstance);
+                $target->getSublayer()->add($sublayerInstance);
+                $em->persist($sublayerInstance);
             }
         }
-        $this->entity->setPriority($wmslayersource->getPriority());
-        $queryable = Utils::getBool($wmslayersource->getQueryable(), true);
+        $target->setPriority($sourceItem->getPriority());
+        $queryable = Utils::getBool($sourceItem->getQueryable(), true);
         if ($queryable === '0') {
             $queryable = false;
         }
         if ($queryable === '1') {
             $queryable = true;
         }
-        $this->entity->setInfo($queryable === true ? $this->entity->getInfo() : $queryable);
-        $this->entity->setAllowinfo($queryable === true ? $this->entity->getInfo() : $queryable);
-        if ($wmslayersource->getSublayer()->count() > 0) {
-            $this->entity->setToggle(is_bool($this->entity->getToggle()) ? $this->entity->getToggle() : false);
-            $alowtoggle = is_bool($this->entity->getAllowtoggle()) ? $this->entity->getAllowtoggle() : true;
-            $this->entity->setAllowtoggle($alowtoggle);
+        $target->setInfo($queryable === true ? $target->getInfo() : $queryable);
+        $target->setAllowinfo($queryable === true ? $target->getInfo() : $queryable);
+        if ($sourceItem->getSublayer()->count() > 0) {
+            $target->setToggle(is_bool($target->getToggle()) ? $target->getToggle() : false);
+            $alowtoggle = is_bool($target->getAllowtoggle()) ? $target->getAllowtoggle() : true;
+            $target->setAllowtoggle($alowtoggle);
         } else {
-            $this->entity->setToggle(null);
-            $this->entity->setAllowtoggle(null);
+            $target->setToggle(null);
+            $target->setAllowtoggle(null);
         }
-        $manager->persist($this->entity);
+        $em->persist($target);
     }
 
     /**

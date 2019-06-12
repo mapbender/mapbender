@@ -2,118 +2,71 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceItemEntityHandler;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsSourceHandler
  *
  * @author Paul Schmidt
+ * @property WmsLayerSource $entity
  */
 class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 {
 
-    /** @var  WmsLayerSource */
-    protected $entity;
-
-    /**
-     * Recursively remove a nested Layerstructure
-     *
-     * @param WmsLayerSource $wmslayer
-     * @internal
-     */
-    private function removeRecursively(WmsLayerSource $wmslayer)
-    {
-        /**
-         * @todo: recursive remove is redundant wrt entity manager, but detaching from the relational collections
-         *        may be necessary for update to work
-         */
-        foreach ($wmslayer->getSublayer() as $sublayer) {
-            $this->removeRecursively($sublayer);
-        }
-        if ($wmslayer->getParent()) {
-            $wmslayer->getParent()->getSublayer()->removeElement($wmslayer);
-        }
-        if ($wmslayer->getSource()) {
-            $wmslayer->getSource()->getLayers()->removeElement($wmslayer);
-        }
-        $this->getEntityManager()->remove($wmslayer);
-    }
-
     /**
      * @inheritdoc
+     * @param WmsLayerSource $itemNew
+     * @deprecated
      */
     public function update(SourceItem $itemNew)
     {
-        $prio = $this->entity->getPriority();
-        $manager = $this->getEntityManager();
-        $classMeta = $manager->getClassMetadata(EntityUtil::getRealClass($this->entity));
-        // set attribute values from $itemNew
-        foreach ($classMeta->getFieldNames() as $fieldName) {
-            if (!in_array($fieldName, $classMeta->getIdentifier())
-                    && ($getter = EntityUtil::getReturnMethod($fieldName, $classMeta->getReflectionClass()))
-                    && ($setter = EntityUtil::getSetMethod($fieldName, $classMeta->getReflectionClass()))) {
-                $value     = $getter->invoke($itemNew);
-                $setter->invoke($this->entity, is_object($value) ? clone $value : $value);
-            }
-            // ignore not identifier fields
-        }
-        /** @var WmsLayerSource $itemNew */
+        $this->updateLayer($this->entity, $itemNew);
+    }
 
-        $this->entity->setPriority($prio);
-        KeywordUpdater::updateKeywords(
-            $this->entity,
-            $itemNew,
-            $manager,
-            'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword'
-        );
+    /**
+     * @param WmsLayerSource $target
+     * @param WmsLayerSource $updatedLayer
+     */
+    public function updateLayer(WmsLayerSource $target, WmsLayerSource $updatedLayer)
+    {
+        $priorityOriginal = $target->getPriority();
+        $em = $this->getEntityManager();
+        $classMeta = $em->getClassMetadata(ClassUtils::getClass($target));
+        EntityUtil::copyEntityFields($target, $updatedLayer, $classMeta, false);
+        // restore original priority
+        $target->setPriority($priorityOriginal);
+        $this->copyKeywords($target, $updatedLayer);
 
         /* handle sublayer- layer. Name is a unique identifier for a wms layer. */
         /* remove missed layers */
-        $toRemove = array();
-        foreach ($this->entity->getSublayer() as $layerOldSub) {
-            $layerSublayer = $this->findLayer($layerOldSub, $itemNew->getSublayer());
+        $updatedSubLayers = $updatedLayer->getSublayer();
+        $targetSubLayers = $target->getSublayer();
+        foreach ($targetSubLayers as $layerOldSub) {
+            $layerSublayer = $this->findLayer($layerOldSub, $updatedSubLayers);
             if (count($layerSublayer) !== 1) {
-                $toRemove[] = $layerOldSub;
+                $em->remove($layerOldSub);
             }
-        }
-        foreach ($toRemove as $lay) {
-            $this->entity->getSublayer()->removeElement($lay);
-            $this->removeRecursively($lay);
         }
         $num = 0;
         /* update founded layers, add new layers */
-        foreach ($itemNew->getSublayer() as $subItemNew) {
+        foreach ($updatedSubLayers as $subItemNew) {
             $num++;
-            $subItemsOld = $this->findLayer($subItemNew, $this->entity->getSublayer());
-            if (count($subItemsOld) === 0) { # add a new layer
-                $lay = $this->cloneLayer(
-                    $this->entity->getSource(),
-                    $subItemNew,
-                    $manager,
-                    $this->entity
-                );
-                $lay->setPriority($prio + $num);
-            } elseif (count($subItemsOld) === 1) { # update a layer
-                $subItemsOld[0]->setPriority($prio + $num);
-                $subLayerHandler = new WmsLayerSourceEntityHandler($this->container, $subItemsOld[0]);
-                $subLayerHandler->update($subItemNew);
-            } else { # remove all old layers and add new layers
+            $subItemsOld = $this->findLayer($subItemNew, $targetSubLayers);
+            if (count($subItemsOld) === 1) {
+                // update single layer
+                $subItemsOld[0]->setPriority($priorityOriginal + $num);
+                $this->updateLayer($subItemsOld[0], $subItemNew);
+            } else {
                 foreach ($subItemsOld as $layerToRemove) {
-                    $this->removeRecursively($layerToRemove);
+                    $em->remove($layerToRemove);
                 }
-                $lay = $this->addLayer(
-                    $this->entity->getSource(),
-                    $subItemNew,
-                    $manager,
-                    $this->entity
-                );
-                $lay->setPriority($prio + $num);
+                $lay = $this->cloneLayer($subItemNew, $target);
+                $lay->setPriority($priorityOriginal + $num);
             }
         }
     }
@@ -127,75 +80,46 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     private function findLayer($layer, $layerList)
     {
         $found = array();
-        foreach ($layerList as $layerTmp) {
-            if ($layer->getName() != null && $layer->getName() === $layerTmp->getName() ||
-                ($layer->getName() == null && $layerTmp->getName() == null && $layer->getTitle() == $layerTmp->getTitle())) {
-                $found[] = $layerTmp;
-//                return $found;
+        $matchName = $layer->getName();
+        $matchTitle = $layer->getTitle();
+
+        foreach ($layerList as $candidate) {
+            $namesMatch = $matchName && $matchName === $candidate->getName();
+            $titlesMatch = $matchTitle && $matchTitle === $candidate->getTitle();
+            if ($namesMatch || (!$matchName && $titlesMatch)) {
+                $found[] = $candidate;
             }
         }
         return $found;
     }
 
-    private function cloneLayer(
-        WmsSource $wms,
-        WmsLayerSource $toClone,
-        ObjectManager $entityManager,
-        WmsLayerSource $parentForCloned = null
-    ) {
-        $cloned = clone $toClone;
-        $entityManager->detach($cloned);
-        $cloned->setId(null);
-        $cloned->setKeywords(new ArrayCollection());
-        $cloned->setParent($parentForCloned);
-        $cloned->setPriority($parentForCloned !== null ? $parentForCloned->getPriority() : null);
-        if ($parentForCloned !== null) {
-            $parentForCloned->addSublayer($cloned);
-        }
-        $cloned->setSource($wms);
-        $entityManager->persist($cloned);
+    private function copyKeywords(WmsLayerSource $targetLayer, WmsLayerSource $sourceLayer)
+    {
+        $targetLayer->setKeywords(new ArrayCollection());
         KeywordUpdater::updateKeywords(
-            $cloned,
-            $toClone,
-            $entityManager,
+            $targetLayer,
+            $sourceLayer,
+            $this->getEntityManager(),
             'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword'
         );
-        if ($cloned->getSublayer()->count() > 0) {
-            $children = new ArrayCollection();
-            foreach ($cloned->getSublayer() as $subToClone) {
-                $subCloned = $this->cloneLayer($wms, $subToClone, $entityManager, $cloned);
-                $children->add($subCloned);
-            }
-            $cloned->setSublayer($children);
-        }
-        return $cloned;
     }
 
-
-
-    private function addLayer(
-        WmsSource $wms,
-        WmsLayerSource $toClone,
-        ObjectManager $entityManager,
-        WmsLayerSource $parent = null
-    ) {
+    private function cloneLayer(WmsLayerSource $toClone, WmsLayerSource $cloneParent)
+    {
+        $em = $this->getEntityManager();
         $cloned = clone $toClone;
-        $entityManager->detach($cloned);
+        $em->detach($cloned);
         $cloned->setId(null);
-        $entityManager->persist($cloned);
-        $cloned->setParent($parent);
-        $cloned->setSource($wms);
-        $cloned->setPriority($parent !== null ? $parent->getPriority() : null);
-        $entityManager->persist($cloned);
-        $parent->addSublayer($parent);
-        $entityManager->persist($cloned);
-        $entityManager->persist($parent);
-        $wms->addLayer($cloned);
-        $entityManager->persist($wms);
+        $cloned->setSource($cloneParent->getSource());
+        $cloned->setParent($cloneParent);
+        $cloned->setPriority($cloneParent->getPriority());
+        $cloneParent->addSublayer($cloned);
+        $this->copyKeywords($cloned, $toClone);
+        $em->persist($cloned);
         if ($cloned->getSublayer()->count() > 0) {
             $children = new ArrayCollection();
             foreach ($cloned->getSublayer() as $subToClone) {
-                $subCloned = $this->addLayer($wms, $subToClone, $entityManager, $cloned);
+                $subCloned = $this->cloneLayer($subToClone, $cloned);
                 $children->add($subCloned);
             }
             $cloned->setSublayer($children);

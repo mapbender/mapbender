@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Utils;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -211,6 +212,32 @@ class EntityUtil
             return $class->getMethod($prefix . $methodHash);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * @param object $target
+     * @param object $source
+     * @param ClassMetadata $classMeta
+     * @param bool $includeIdent
+     */
+    public static function copyEntityFields($target, $source, ClassMetadata $classMeta, $includeIdent = false)
+    {
+        $reflectionClass = $classMeta->getReflectionClass();
+        $fieldNames = $classMeta->getFieldNames();
+        if (!$includeIdent) {
+            $fieldNames = array_diff($fieldNames, $classMeta->getIdentifier());
+        }
+        foreach ($fieldNames as $fieldName) {
+            $getter = static::getReturnMethod($fieldName, $reflectionClass);
+            $setter = static::getSetMethod($fieldName, $reflectionClass);
+            if ($getter && $setter) {
+                $value = $getter->invoke($source);
+                if (is_object($value)) {
+                    $value = clone $value;
+                }
+                $setter->invoke($target, $value);
+            }
         }
     }
 }

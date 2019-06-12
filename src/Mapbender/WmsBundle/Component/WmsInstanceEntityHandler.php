@@ -146,32 +146,37 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function update()
     {
-        $source     = $this->entity->getSource();
-        $this->entity->setFormat(
-            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $this->entity->getFormat(), 0)
+        $this->updateInstance($this->entity);
+    }
+
+    public function updateInstance(WmsInstance $instance)
+    {
+        $source = $instance->getSource();
+        $instance->setFormat(
+            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $instance->getFormat(), 0)
         );
-        $this->entity->setInfoformat(
+        $instance->setInfoformat(
             ArrayUtil::getValueFromArray(
                 $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                $this->entity->getInfoformat(),
+                $instance->getInfoformat(),
                 0
             )
         );
-        $this->entity->setExceptionformat(
-            ArrayUtil::getValueFromArray($source->getExceptionFormats(), $this->entity->getExceptionformat(), 0)
+        $instance->setExceptionformat(
+            ArrayUtil::getValueFromArray($source->getExceptionFormats(), $instance->getExceptionformat(), 0)
         );
         $layerDimensionInsts = $source->dimensionInstancesFactory();
-        $dimensions = $this->updateDimension($this->entity->getDimensions(), $layerDimensionInsts);
-        $this->entity->setDimensions($dimensions);
+        $dimensions = $this->updateDimension($instance->getDimensions(), $layerDimensionInsts);
+        $instance->setDimensions($dimensions);
 
-        $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
-        $rootUpdateHandler->update($this->entity, $this->entity->getSource()->getRootlayer());
+        $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, null);
+        $rootUpdateHandler->updateInstanceLayer($instance->getRootlayer());
 
         $entityManager = $this->getEntityManager();
-        $application = $this->entity->getLayerset()->getApplication();
+        $application = $instance->getLayerset()->getApplication();
         $application->setUpdated(new \DateTime('now'));
         $entityManager->persist($application);
-        $entityManager->persist($this->entity);
+        $entityManager->persist($instance);
     }
 
     /**
