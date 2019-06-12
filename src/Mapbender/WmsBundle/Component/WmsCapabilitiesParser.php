@@ -92,16 +92,6 @@ abstract class WmsCapabilitiesParser
     }
 
     /**
-     * @param $xpath
-     * @param null $contextElm
-     * @return bool
-     */
-    protected function getBoolean($xpath, $contextElm = null)
-    {
-        return !!$this->getValue($xpath, $contextElm);
-    }
-
-    /**
      * Parses the capabilities document
      */
     abstract public function parse();

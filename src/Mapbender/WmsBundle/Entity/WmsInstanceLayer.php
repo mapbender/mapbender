@@ -627,9 +627,9 @@ class WmsInstanceLayer extends SourceInstanceItem
         $this->setMinScale($layerSource->getMinScale());
         $this->setMaxScale($layerSource->getMaxScale());
 
-        $queryable = $layerSource->getQueryable();
-        $this->setInfo(Utils::getBool($queryable));
-        $this->setAllowinfo(Utils::getBool($queryable));
+        $queryable = !!$layerSource->getQueryable();
+        $this->setInfo($queryable);
+        $this->setAllowinfo($queryable);
         $this->setPriority($priority);
         $instance->addLayer($this);
         if ($layerSource->getSublayer()->count() > 0) {

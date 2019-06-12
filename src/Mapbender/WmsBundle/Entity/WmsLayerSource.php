@@ -334,7 +334,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function setQueryable($queryable)
     {
-        $this->queryable = Utils::getBool($queryable);
+        $this->queryable = !!$queryable;
         return $this;
     }
 
