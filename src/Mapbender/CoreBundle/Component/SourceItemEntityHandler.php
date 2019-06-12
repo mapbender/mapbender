@@ -4,9 +4,9 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\SourceItem;
 
 /**
- * Description of SourceItemEntityHandler
- *
  * @author Paul Schmidt
+ *
+ * @property SourceItem $entity
  */
 abstract class SourceItemEntityHandler extends EntityHandler
 {

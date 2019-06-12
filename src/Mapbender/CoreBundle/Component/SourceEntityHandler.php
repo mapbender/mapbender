@@ -5,9 +5,8 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
- * Description of SourceEntityHandler
- *
  * @author Paul Schmidt
+ * @property Source $entity
  */
 abstract class SourceEntityHandler extends EntityHandler
 {

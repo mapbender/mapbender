@@ -4,8 +4,6 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
- * Description of SourceInstanceEntityHandler
- *
  * @author Paul Schmidt
  *
  * @property SourceInstance $entity

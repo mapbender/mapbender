@@ -10,8 +10,6 @@ use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
- * Description of WmsInstanceLayerEntityHandler
- *
  * @author Paul Schmidt
  *
  * @property WmsInstanceLayer $entity
