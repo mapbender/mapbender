@@ -20,12 +20,4 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         throw new \Exception('not implemented yet');
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function update()
-    {
-    }
-
 }

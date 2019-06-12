@@ -16,9 +16,4 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * @internal param SourceInstance $instance
      */
     abstract public function setParameters(array $configuration = array());
-
-    /**
-     * Update instance parameters
-     */
-    abstract public function update();
 }

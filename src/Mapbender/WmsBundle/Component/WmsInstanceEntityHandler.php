@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -141,80 +140,4 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function update()
-    {
-        $this->updateInstance($this->entity);
-    }
-
-    public function updateInstance(WmsInstance $instance)
-    {
-        $source = $instance->getSource();
-        $instance->setFormat(
-            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $instance->getFormat(), 0)
-        );
-        $instance->setInfoformat(
-            ArrayUtil::getValueFromArray(
-                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                $instance->getInfoformat(),
-                0
-            )
-        );
-        $instance->setExceptionformat(
-            ArrayUtil::getValueFromArray($source->getExceptionFormats(), $instance->getExceptionformat(), 0)
-        );
-        $layerDimensionInsts = $source->dimensionInstancesFactory();
-        $dimensions = $this->updateDimension($instance->getDimensions(), $layerDimensionInsts);
-        $instance->setDimensions($dimensions);
-
-        $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, null);
-        $rootUpdateHandler->updateInstanceLayer($instance->getRootlayer());
-
-        $entityManager = $this->getEntityManager();
-        $application = $instance->getLayerset()->getApplication();
-        $application->setUpdated(new \DateTime('now'));
-        $entityManager->persist($application);
-        $entityManager->persist($instance);
-    }
-
-    /**
-     * @param \Mapbender\WmsBundle\Component\DimensionInst $dimension
-     * @param  DimensionInst[]                             $dimensionList
-     * @return null
-     */
-    private function findDimension(DimensionInst $dimension, $dimensionList)
-    {
-        foreach ($dimensionList as $help) {
-            /* check if dimensions equals (check only origextent) */
-            if ($help->getOrigextent() === $dimension->getOrigextent() &&
-                $help->getName() === $dimension->getName() &&
-                $help->getUnits() === $dimension->getUnits()) {
-                return $help;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param array $dimensionsOld
-     * @param array $dimensionsNew
-     * @return array
-     */
-    private function updateDimension(array $dimensionsOld, array $dimensionsNew)
-    {
-        $dimensions = array();
-        foreach ($dimensionsNew as $dimNew) {
-            $dimension    = $this->findDimension($dimNew, $dimensionsOld);
-            $dimension    = $dimension ? clone $dimension : clone $dimNew;
-            /* replace attribute values */
-            $dimension->setUnitSymbol($dimNew->getUnitSymbol());
-            $dimension->setNearestValue($dimNew->getNearestValue());
-            $dimension->setCurrent($dimNew->getCurrent());
-            $dimension->setMultipleValues($dimNew->getMultipleValues());
-            $dimensions[] = $dimension;
-        }
-        return $dimensions;
-    }
 }
