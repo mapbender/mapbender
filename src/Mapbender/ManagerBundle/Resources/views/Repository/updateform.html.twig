@@ -2,10 +2,6 @@
 
 {% block title %}{{ 'mb.manager.admin.source.update' | trans }}{% endblock %}
 
-{% block css %}
-  {{parent()}}
-{% endblock %}
-
 {% block manager_content %}
   {% render controller(manager.updateformAction, {'sourceId': source.id}) %}
   <div class="clearContainer"></div>

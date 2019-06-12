@@ -3,14 +3,6 @@
 
 {% block title %}{{ wmts.type }} {{ wmts.title }}{% endblock %}
 
-{% block css %}
-  {{parent()}}
-{% endblock %}
-
-{% block manager_js %}
-    <script type="text/javascript" src="{{ asset('bundles/mapbenderwmts/repository/repository.js') }}"></script>
-{% endblock %}
-
 {% block manager_content %}
 
 <a class="button right" title="{{"mb.wmts.wmtsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">Back</a>

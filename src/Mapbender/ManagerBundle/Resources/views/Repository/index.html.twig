@@ -2,10 +2,6 @@
 
 {% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
-{% block css %}
-  {{parent()}}
-{% endblock %}
-
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
