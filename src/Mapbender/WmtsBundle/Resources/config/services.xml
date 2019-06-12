@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 	<parameters>
 		<parameter key="mapbender.source.wmts.service.class">Mapbender\WmtsBundle\Component\Presenter\WmtsSourceService</parameter>
+		<parameter key="mapbender.source.wmts.instance_factory.class">Mapbender\WmtsBundle\Component\Wmts\SourceInstanceFactory</parameter>
 		<parameter key="mapbender.imageexport.renderer.wmts.class">Mapbender\WmtsBundle\Component\Export\LayerRendererWmts</parameter>
 		<parameter key="mapbender.imageexport.renderer.tms.class">Mapbender\WmtsBundle\Component\Export\LayerRendererTms</parameter>
 	</parameters>
@@ -11,6 +12,7 @@
 		<service id="mapbender.source.wmts.service" class="%mapbender.source.wmts.service.class%">
 			<argument type="service" id="mapbender.source.url_processor.service" />
 		</service>
+		<service id="mapbender.source.wmts.instance_factory" class="%mapbender.source.wmts.instance_factory.class%" />
 		<service id="mapbender.imageexport.renderer.wmts" class="%mapbender.imageexport.renderer.wmts.class%">
 		  <argument type="service" id="mapbender.imageexport.image_transport.service" />
 		  <argument type="service" id="logger" />

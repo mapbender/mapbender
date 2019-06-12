@@ -5,7 +5,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -21,22 +20,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
-    /**
-     * Creates a new WmsInstance from the bound WmsSource entity
-     *
-     * @return WmsInstance
-     */
-    public function createInstance()
-    {
-        $instance = new WmsInstance();
-        $instance->setSource($this->entity);
-        $instance->populateFromSource($this->entity);
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        $directory->getSourceService($instance)->initializeInstance($instance);
-        return $instance;
-    }
-
     /**
      * Update a source from a new source
      *

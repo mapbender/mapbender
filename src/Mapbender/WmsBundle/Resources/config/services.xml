@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceService</parameter>
+        <parameter key="mapbender.source.wms.instance_factory.class">Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory</parameter>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>
         <parameter key="wmsloader.example_url">https://wms.wheregroup.com/cgi-bin/mapbender_user.xml?VERSION=1.3.0&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</parameter>
         <!-- set this to true in your parameters.yml to expose DimensionsHandler element -->
@@ -21,6 +22,9 @@
         <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
             <argument type="service" id="mapbender.source.url_processor.service" />
             <argument type="service" id="security.token_storage" />
+            <argument>%wms.default_layer_order%</argument>
+        </service>
+        <service id="mapbender.source.wms.instance_factory" class="%mapbender.source.wms.instance_factory.class%">
             <argument>%wms.default_layer_order%</argument>
         </service>
         <!-- servicy form type for wms instances; required to inject other services / params -->

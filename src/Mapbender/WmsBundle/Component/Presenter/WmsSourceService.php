@@ -264,36 +264,6 @@ class WmsSourceService extends SourceService
     }
 
     /**
-     * @param WmsInstance $sourceInstance
-     * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
-     */
-    public function initializeInstance(SourceInstance $sourceInstance)
-    {
-        /** @var WmsInstance $sourceInstance */
-        parent::initializeInstance($sourceInstance);
-        $this->initializeLayerOrder($sourceInstance);
-    }
-
-    /**
-     * Initialize layer order if a default is configured. This configuration is optional. It's only applied to
-     * NEW WmsInstances. The parameter key for this default value is wms.default_layer_order (can be set in
-     * parameters.yml / xml configs).
-     *
-     * @param WmsInstance $sourceInstance
-     */
-    public function initializeLayerOrder(WmsInstance $sourceInstance)
-    {
-        if ($this->defaultLayerOrder) {
-            $sourceInstance->setLayerOrder($this->defaultLayerOrder);
-        }
-        /**
-         * NOTE: the entity has a built-in default, so new instances will work fine even without setting
-         *       layer order explicitly
-         * @see WmsInstance::getLayerOrder()
-         */
-    }
-
-    /**
      * @param WmsInstanceLayer $instanceLayer
      * @return array
      */

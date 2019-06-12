@@ -2,8 +2,10 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
+use Mapbender\Component\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
@@ -24,12 +26,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * This should be done in a DI compiler pass (extending service definition via XML / YAML does not work across bundles)
  * @see RegisterWmsSourceServicePass for a working example
  */
-class TypeDirectoryService
+class TypeDirectoryService implements SourceInstanceFactory
 {
     /** @var ContainerInterface */
     protected $container;
     /** @var SourceService[] */
-    protected $subtypeServices = array();
+    protected $configServices = array();
+    /** @var SourceInstanceFactory[] */
+    protected $instanceFactories = array();
 
     public function __construct(ContainerInterface $container)
     {
@@ -47,7 +51,7 @@ class TypeDirectoryService
     public function getSourceService(SourceInstance $sourceInstance)
     {
         $key = strtolower($sourceInstance->getType());
-        $service = ArrayUtil::getDefault($this->subtypeServices, $key, null);
+        $service = ArrayUtil::getDefault($this->configServices, $key, null);
         if (!$service) {
             $message = 'No config generator available for source instance type ' . print_r($key, true);
             throw new \RuntimeException($message);
@@ -56,7 +60,34 @@ class TypeDirectoryService
     }
 
     /**
-     * Adds (or replaces) the sub-service for generating configuration for a concrete sub-type of source instances.
+     * @param Source $source
+     * @return SourceInstanceFactory
+     */
+    public function getInstanceFactory(Source $source)
+    {
+        $key = strtolower($source->getType());
+        $service = ArrayUtil::getDefault($this->instanceFactories, $key, null);
+        if (!$service) {
+            $message = 'No instance factory available for source instance type ' . print_r($key, true);
+            throw new \RuntimeException($message);
+        }
+        return $service;
+    }
+
+    /**
+     * @param Source $source
+     * @return SourceInstance
+     */
+    public function createInstance(Source $source)
+    {
+        return $this->getInstanceFactory($source)->createInstance($source);
+    }
+
+    /**
+     * Adds (or replaces) the sub-services for a concrete sub-type of source instances. Each service type expects
+     * two handling services
+     * 1) service that generates frontend configuration
+     * 2) factory service for new instances
      *
      * Provided as a post-constructor customization hook. Should call from a DI compiler pass to plug in
      * support for new source types.
@@ -64,22 +95,32 @@ class TypeDirectoryService
      * @see RegisterWmsSourceServicePass for a working example
      *
      * @param string $instanceType
-     * @param SourceService $service
+     * @param SourceService $configService
+     * @param SourceInstanceFactory $instanceFactory
      */
-    public function registerSubtypeService($instanceType, $service)
+    public function registerSubtypeService($instanceType, $configService, $instanceFactory)
     {
         if (!$instanceType || !is_string($instanceType)) {
             throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
         }
         $key = strtolower($instanceType);
-        if (!$service) {
-            unset($this->subtypeServices[$key]);
+        if (!$configService) {
+            unset($this->configServices[$key]);
         } else {
-            if (!($service instanceof SourceService)) {
-                $type = is_object($service) ? get_class($service) : gettype($service);
-                throw new \InvalidArgumentException("Unsupported type {$type}, must SourceService");
+            if (!($configService instanceof SourceService)) {
+                $type = is_object($configService) ? get_class($configService) : gettype($configService);
+                throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceService");
             }
-            $this->subtypeServices[$key] = $service;
+            $this->configServices[$key] = $configService;
+        }
+        if (!$instanceFactory) {
+            unset($this->instanceFactories[$key]);
+        } else {
+            if (!($instanceFactory instanceof SourceInstanceFactory)) {
+                $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
+                throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
+            }
+            $this->instanceFactories[$key] = $instanceFactory;
         }
     }
 
@@ -103,7 +144,7 @@ class TypeDirectoryService
     public function getAssets(Application $application, $type)
     {
         $refs = array();
-        foreach ($this->subtypeServices as $subTypeService) {
+        foreach ($this->configServices as $subTypeService) {
             $typeRefs = $subTypeService->getAssets($application, $type);
             if ($typeRefs) {
                 $refs = array_merge($refs, $typeRefs);

@@ -4,12 +4,13 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\DBALException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\SourceEntityHandler;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -624,9 +625,12 @@ class ApplicationController extends WelcomeController
             throw $this->createNotFoundException();
         }
         $layerset = $this->requireLayerset($layersetId, $application);
-        $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $eHandler      = SourceEntityHandler::createHandler($this->container, $source);
-        $newInstance = $eHandler->createInstance();
+        /** @var Source|null $source */
+        $source = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $newInstance = $directory->createInstance($source);
+
         $layerset->getInstances()->add($newInstance);
         $newInstance->setLayerset($layerset);
         foreach ($layerset->getInstances()->getValues() as $newWeight => $lsInstance) {
@@ -634,10 +638,9 @@ class ApplicationController extends WelcomeController
             $lsInstance->setWeight($newWeight);
             $entityManager->persist($lsInstance);
         }
-        $entityManager->persist($layerset->getApplication());
-        $layerset->getApplication()->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $application->setUpdated(new \DateTime('now'));
 
-        $entityManager->persist($newInstance);
         $entityManager->flush();
         $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
