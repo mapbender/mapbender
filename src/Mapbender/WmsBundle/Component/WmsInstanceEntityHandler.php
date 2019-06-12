@@ -8,8 +8,6 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
- * Description of WmsSourceHandler
- *
  * @author Paul Schmidt
  *
  * @property WmsInstance $entity

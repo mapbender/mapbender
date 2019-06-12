@@ -8,6 +8,8 @@ use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
@@ -109,9 +111,69 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             $instance->setExceptionformat(null);
         }
         $this->updateInstanceDimensions($instance);
+        $this->updateInstanceLayer($instance->getRootlayer());
+    }
 
-        $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, null);
-        $rootUpdateHandler->updateInstanceLayer($instance->getRootlayer());
+    private function updateInstanceLayer(WmsInstanceLayer $target)
+    {
+        $em = $this->getEntityManager();
+        /* remove instance layers for missed layer sources */
+        foreach ($target->getSublayer() as $wmsinstlayer) {
+            if ($em->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
+                $target->getSublayer()->removeElement($wmsinstlayer);
+                $em->remove($wmsinstlayer);
+            }
+        }
+        $sourceItem = $target->getSourceItem();
+        foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
+            $layer = $this->findInstanceLayer($wmslayersourceSub, $target->getSublayer());
+            if ($layer) {
+                $this->updateInstanceLayer($layer);
+            } else {
+                $instance = $target->getSourceInstance();
+                $sublayerInstance = new WmsInstanceLayer();
+                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
+                $sublayerInstance->setParent($target);
+                $instance->getLayers()->add($sublayerInstance);
+                $target->getSublayer()->add($sublayerInstance);
+                $em->persist($sublayerInstance);
+            }
+        }
+        $target->setPriority($sourceItem->getPriority());
+        $queryable = $sourceItem->getQueryable();
+        if (!$queryable) {
+            if ($queryable !== null) {
+                $queryable = false;
+            }
+            $target->setInfo($queryable);
+            $target->setAllowinfo($queryable);
+        }
+        if ($sourceItem->getSublayer()->count() > 0) {
+            $target->setToggle(is_bool($target->getToggle()) ? $target->getToggle() : false);
+            $alowtoggle = is_bool($target->getAllowtoggle()) ? $target->getAllowtoggle() : true;
+            $target->setAllowtoggle($alowtoggle);
+        } else {
+            $target->setToggle(null);
+            $target->setAllowtoggle(null);
+        }
+        $em->persist($target);
+    }
+
+    /**
+     * Finds an instance layer, that is linked with a given wms source layer.
+     *
+     * @param WmsLayerSource $wmssourcelayer wms layer source
+     * @param array $instancelayerList list of instance layers
+     * @return WmsInstanceLayer|null the instance layer, otherwise null
+     */
+    private function findInstanceLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
+    {
+        foreach ($instancelayerList as $instancelayer) {
+            if ($wmssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
+                return $instancelayer;
+            }
+        }
+        return null;
     }
 
     /**
