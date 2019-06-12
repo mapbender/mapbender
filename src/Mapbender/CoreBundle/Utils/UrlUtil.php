@@ -5,8 +5,6 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 /**
- * Description of UrlUtil
- *
  * @author paul
  */
 class UrlUtil

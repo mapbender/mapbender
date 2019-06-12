@@ -7,8 +7,6 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
- * Description of WmtsSourceEntityHandler
- *
  * @property WmtsSource $entity
  *
  * @author Paul Schmidt

@@ -2,8 +2,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 /**
- * Description of Size
- *
  * @author Paul Schmidt
  */
 class Size

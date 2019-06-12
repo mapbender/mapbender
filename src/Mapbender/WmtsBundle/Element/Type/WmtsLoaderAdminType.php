@@ -6,8 +6,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Description of WmtsLoaderAdminType
- *
  * @author Paul Schmidt
  */
 class WmtsLoaderAdminType extends AbstractType

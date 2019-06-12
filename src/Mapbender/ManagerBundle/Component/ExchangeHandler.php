@@ -6,8 +6,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Description of ExportHandler
- *
  * @author Paul Schmidt
  */
 abstract class ExchangeHandler

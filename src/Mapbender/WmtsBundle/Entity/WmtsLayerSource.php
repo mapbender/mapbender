@@ -1,9 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Mapbender\WmtsBundle\Entity;
 
@@ -17,12 +12,11 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
 
 
 /**
- * Description of WmtsLayerSource
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtslayersource")
  */
-class WmtsLayerSource extends SourceItem # implements ContainingKeyword
+class WmtsLayerSource extends SourceItem
 {
     /**
      * @var integer $id

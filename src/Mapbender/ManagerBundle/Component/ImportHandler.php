@@ -26,8 +26,6 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Description of ImportHandler
- *
  * @author Paul Schmidt
  */
 class ImportHandler extends ExchangeHandler

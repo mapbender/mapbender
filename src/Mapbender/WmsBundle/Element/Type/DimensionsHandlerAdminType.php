@@ -13,8 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Description of WmsLoaderAdminType
- *
  * @author Paul Schmidt
  */
 class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollection

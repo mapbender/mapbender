@@ -4,7 +4,6 @@ namespace Mapbender\WmtsBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;

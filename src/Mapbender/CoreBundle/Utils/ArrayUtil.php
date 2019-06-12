@@ -2,8 +2,6 @@
 namespace Mapbender\CoreBundle\Utils;
 
 /**
- * Description of ArrayUtil
- *
  * @author Paul Schmidt
  */
 class ArrayUtil

@@ -12,8 +12,6 @@ use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 
 /**
- * Description of ExportHandler
- *
  * @author Paul Schmidt
  */
 class ExportHandler extends ExchangeHandler

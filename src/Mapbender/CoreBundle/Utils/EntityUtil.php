@@ -8,8 +8,6 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * Description of EntityUtils
- *
  * @author Paul Schmidt
  */
 class EntityUtil
