@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -51,12 +50,11 @@ class TypeDirectoryService implements SourceInstanceFactory
     public function getSourceService(SourceInstance $sourceInstance)
     {
         $key = strtolower($sourceInstance->getType());
-        $service = ArrayUtil::getDefault($this->configServices, $key, null);
-        if (!$service) {
+        if (!array_key_exists($key, $this->configServices)) {
             $message = 'No config generator available for source instance type ' . print_r($key, true);
             throw new \RuntimeException($message);
         }
-        return $service;
+        return $this->configServices[$key];
     }
 
     /**
@@ -66,12 +64,11 @@ class TypeDirectoryService implements SourceInstanceFactory
     public function getInstanceFactory(Source $source)
     {
         $key = strtolower($source->getType());
-        $service = ArrayUtil::getDefault($this->instanceFactories, $key, null);
-        if (!$service) {
+        if (!array_key_exists($key, $this->instanceFactories)) {
             $message = 'No instance factory available for source instance type ' . print_r($key, true);
             throw new \RuntimeException($message);
         }
-        return $service;
+        return $this->instanceFactories[$key];
     }
 
     /**
@@ -104,24 +101,16 @@ class TypeDirectoryService implements SourceInstanceFactory
             throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
         }
         $key = strtolower($instanceType);
-        if (!$configService) {
-            unset($this->configServices[$key]);
-        } else {
-            if (!($configService instanceof SourceService)) {
-                $type = is_object($configService) ? get_class($configService) : gettype($configService);
-                throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceService");
-            }
-            $this->configServices[$key] = $configService;
+        if (!($configService instanceof SourceService)) {
+            $type = is_object($configService) ? get_class($configService) : gettype($configService);
+            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceService");
         }
-        if (!$instanceFactory) {
-            unset($this->instanceFactories[$key]);
-        } else {
-            if (!($instanceFactory instanceof SourceInstanceFactory)) {
-                $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
-                throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
-            }
-            $this->instanceFactories[$key] = $instanceFactory;
+        $this->configServices[$key] = $configService;
+        if (!($instanceFactory instanceof SourceInstanceFactory)) {
+            $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
+            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
         }
+        $this->instanceFactories[$key] = $instanceFactory;
     }
 
     /**
