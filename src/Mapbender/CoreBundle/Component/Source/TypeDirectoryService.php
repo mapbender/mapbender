@@ -8,8 +8,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Directory for available polymorphic source types (shipping by default only with WMS). Each source type is
@@ -27,17 +25,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TypeDirectoryService implements SourceInstanceFactory
 {
-    /** @var ContainerInterface */
-    protected $container;
     /** @var SourceService[] */
     protected $configServices = array();
     /** @var SourceInstanceFactory[] */
     protected $instanceFactories = array();
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * Get the appropriate service to deal with the given SourceInstance child class.
@@ -111,16 +102,6 @@ class TypeDirectoryService implements SourceInstanceFactory
             throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
         }
         $this->instanceFactories[$key] = $instanceFactory;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-        return $logger;
     }
 
     /**
