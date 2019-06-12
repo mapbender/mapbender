@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Keyword;
 
 /**
@@ -31,8 +32,8 @@ class KeywordUpdater
      *
      * @param ContainingKeyword $componentOld
      * @param ContainingKeyword $compenentNew
-     * @param                   $entityManager
-     * @param                   $newKeywordClass
+     * @param EntityManagerInterface $entityManager
+     * @param string $newKeywordClass
      */
     public static function updateKeywords(
         ContainingKeyword $componentOld,
@@ -48,6 +49,7 @@ class KeywordUpdater
         }
         foreach ($compenentNew->getKeywords() as $keyword) {
             if (!self::keywordExists($keyword, $componentOld->getKeywords())) {
+                /** @var Keyword $keywordNew */
                 $keywordNew = new $newKeywordClass();
                 $keywordNew->setValue($keyword->getValue());
                 $keywordNew->setReferenceObject($componentOld);
