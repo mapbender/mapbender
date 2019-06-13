@@ -3,27 +3,21 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Authority class.
- *
  * @author Paul Schmidt
  */
 class Authority
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $url;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $name;
 
     /**
      * Get url
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -33,7 +27,7 @@ class Authority
     /**
      * Set url
      * @param string $value
-     * @return Authority
+     * @return $this
      */
     public function setUrl($value)
     {
@@ -44,7 +38,7 @@ class Authority
     /**
      * Get name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -54,7 +48,7 @@ class Authority
     /**
      * Set name
      * @param string $value
-     * @return Authority
+     * @return $this
      */
     public function setName($value)
     {

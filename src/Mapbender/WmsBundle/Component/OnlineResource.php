@@ -2,8 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * OnlineResource class.
- *
  * @author Paul Schmidt
  */
 class OnlineResource

@@ -723,7 +723,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Get authority
      *
      * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
-     * @return ArrayCollection|Authority[]
+     * @return Authority[]
      */
     public function getAuthority($inherit = false)
     {

@@ -3,52 +3,37 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Style class.
  * @author Paul Schmidt
  */
 class Style
 {
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string */
     public $name = "";
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string */
     public $title = "";
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string */
     public $abstract = "";
 
-    /**
-     * ORM\Column(type="object", nullable=true)
-     */
+    /** @var LegendUrl|null */
     public $legendUrl;
 
-    /**
-     * ORM\Column(type="object", nullable=true)
-     */
+    /** @var OnlineResource|null */
     public $styleSheetUrl;
 
-    /**
-     * ORM\Column(type="object", nullable=true)
-     */
+    /** @var OnlineResource|null */
     public $styleUlr;
 
     /**
      * Set name
      *
      * @param string $name
-     * @return Style
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -66,12 +51,11 @@ class Style
      * Set title
      *
      * @param string $title
-     * @return Style
+     * @return $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -89,12 +73,11 @@ class Style
      * Set abstract
      *
      * @param string $abstract
-     * @return Style
+     * @return $this
      */
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
-
         return $this;
     }
 
@@ -111,13 +94,12 @@ class Style
     /**
      * Set legendUrl
      *
-     * @param LegendUrl $legendUrl
-     * @return Style
+     * @param LegendUrl|null $legendUrl
+     * @return $this
      */
-    public function setLegendUrl(LegendUrl $legendUrl)
+    public function setLegendUrl(LegendUrl $legendUrl = null)
     {
         $this->legendUrl = $legendUrl;
-
         return $this;
     }
 
@@ -134,20 +116,19 @@ class Style
     /**
      * Set styleSheetUrl
      *
-     * @param OnlineResource $styleSheetUrl
-     * @return Style
+     * @param OnlineResource|null $styleSheetUrl
+     * @return $this
      */
     public function setStyleSheetUrl(OnlineResource $styleSheetUrl = NULL)
     {
         $this->styleSheetUrl = $styleSheetUrl;
-
         return $this;
     }
 
     /**
      * Get styleSheetUrl
      *
-     * @return \stdClass 
+     * @return OnlineResource
      */
     public function getStyleSheetUrl()
     {
@@ -157,20 +138,17 @@ class Style
     /**
      * Set styleUlr
      *
-     * @param OnlineResource $styleUlr
-     * @return Style
+     * @param OnlineResource|null $styleUlr
+     * @return $this
      */
     public function setStyleUlr(OnlineResource $styleUlr = NULL)
     {
         $this->styleUlr = $styleUlr;
-
         return $this;
     }
 
     /**
-     * Get styleUlr
-     *
-     * @return \stdClass 
+     * @return OnlineResource|null
      */
     public function getStyleUlr()
     {

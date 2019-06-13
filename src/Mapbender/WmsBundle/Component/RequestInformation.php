@@ -3,32 +3,22 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * RequestInformation class.
- *
  * @author Paul Schmidt
  */
 class RequestInformation
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpGet;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpPost;
-
-    /**
-     * ORM\Column(type="array", nullable=true)
-     */
+    /** @var string[] */
     public $formats = array();
 
     /**
      * Get httpGet
      * 
-     * @return string
+     * @return string|null
      */
     public function getHttpGet()
     {
@@ -37,7 +27,8 @@ class RequestInformation
 
     /**
      * Set httpGet
-     * @param string $value 
+     * @param string $value
+     * @return $this
      */
     public function setHttpGet($value)
     {
@@ -48,7 +39,7 @@ class RequestInformation
     /**
      * Get httpPost
      * 
-     * @return string
+     * @return string|null
      */
     public function getHttpPost()
     {
@@ -57,7 +48,8 @@ class RequestInformation
 
     /**
      * Set httpPost
-     * @param string $value 
+     * @param string $value
+     * @return $this
      */
     public function setHttpPost($value)
     {
@@ -68,7 +60,7 @@ class RequestInformation
     /**
      * Get formats
      * 
-     * @return array
+     * @return string[]
      */
     public function getFormats()
     {
@@ -77,7 +69,8 @@ class RequestInformation
 
     /**
      * Set formats
-     * @param array $value 
+     * @param string[] $value
+     * @return $this
      */
     public function setFormats($value)
     {
@@ -87,7 +80,8 @@ class RequestInformation
 
     /**
      * Add format
-     * @param string $value 
+     * @param string $value
+     * @return $this
      */
     public function addFormat($value)
     {

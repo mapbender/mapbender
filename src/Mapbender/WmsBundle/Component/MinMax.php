@@ -9,19 +9,15 @@ namespace Mapbender\WmsBundle\Component;
  */
 class MinMax
 {
-    /**
-     * ORM\Column(type="float", nullable=true)
-     */
+    /** @var float|null */
     public $min;
-    /**
-     * ORM\Column(type="float", nullable=true)
-     */
+    /** @var float|null */
     public $max;
 
     /**
      *
-     * @param float | null $min min value
-     * @param float | null $max max value
+     * @param float|null $min
+     * @param float|null $max
      */
     public function __construct($min = null, $max = null)
     {
@@ -32,7 +28,7 @@ class MinMax
     /**
      * Get min
      *
-     * @return float
+     * @return float|null
      */
     public function getMin()
     {
