@@ -3,7 +3,7 @@ namespace Mapbender\WmtsBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Paul Schmidt
@@ -19,10 +19,7 @@ class WmtsLoaderAdminType extends AbstractType
         return 'wmtsloader';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null
