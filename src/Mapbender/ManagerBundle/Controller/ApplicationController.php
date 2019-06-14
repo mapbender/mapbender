@@ -182,7 +182,16 @@ class ApplicationController extends WelcomeController
         try {
             $clonedApp = $impHandler->duplicateApplication($sourceApplication);
             $em->commit();
-            return $this->redirectToRoute('mapbender_manager_application_index');
+            if ($this->isGranted('EDIT', $clonedApp)) {
+                // Redirect to edit view of imported application
+                // @todo: distinct message for successful duplication?
+                $this->addFlash('success', $this->translate('mb.application.create.success'));
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    'slug' => $clonedApp->getSlug(),
+                ));
+            } else {
+                return $this->redirectToRoute('mapbender_manager_application_index');
+            }
         } catch (ImportException $e) {
             $em->rollback();
             $this->addFlash('error', $e->getMessage());
