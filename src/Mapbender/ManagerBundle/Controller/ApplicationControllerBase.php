@@ -10,6 +10,8 @@ use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Mapbender;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -38,15 +40,20 @@ abstract class ApplicationControllerBase extends Controller
 
     /**
      * @param string $slug
+     * @param bool $includeYaml
      * @return Application
      */
-    protected function requireApplication($slug)
+    protected function requireApplication($slug, $includeYaml = false)
     {
         $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application');
         /** @var Application|null $application */
         $application = $repository->findOneBy(array(
             'slug' => $slug,
         ));
+        if (!$application && $includeYaml) {
+            $allYamlApps = $this->getMapbender()->getYamlApplicationEntities();
+            $application = ArrayUtil::getDefault($allYamlApps, $slug, null);
+        }
         if (!$application) {
             throw $this->createNotFoundException("No such application");
         }
@@ -110,6 +117,17 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var TranslatorInterface $service */
         $service = $this->get('translator');
+        return $service;
+    }
+
+    /**
+     * Get Mapbender core service
+     * @return Mapbender
+     */
+    protected function getMapbender()
+    {
+        /** @var Mapbender $service */
+        $service = $this->get('mapbender');
         return $service;
     }
 }

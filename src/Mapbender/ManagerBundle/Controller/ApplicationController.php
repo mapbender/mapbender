@@ -171,7 +171,7 @@ class ApplicationController extends WelcomeController
      */
     public function copyDirectlyAction($slug)
     {
-        $sourceApplication = $this->requireApplication($slug);
+        $sourceApplication = $this->requireApplication($slug, true);
         $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
         $applicationOid = new ObjectIdentity('class', get_class(new Application()));
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);

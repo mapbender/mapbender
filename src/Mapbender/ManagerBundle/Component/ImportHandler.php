@@ -95,6 +95,7 @@ class ImportHandler extends ExchangeHandler
      */
     public function duplicateApplication(Application $app)
     {
+        $originalSlug = $app->getSlug();
         $importPool = new EntityPool();
         if ($app->getSource() !== Application::SOURCE_YAML) {
             foreach ($app->getLayersets() as $layerset) {
@@ -102,7 +103,14 @@ class ImportHandler extends ExchangeHandler
                     $this->markSourceImported($importPool, $instance->getSource());
                 }
             }
+        } else {
+            // Avoid saving an application clone to the db with the same slug
+            // as the Yaml version. There's a unique constraint on the
+            // database table, but it doesn't account for Yaml-defined
+            // applications!
+            $app->setSlug($app->getSlug() . '_db');
         }
+
         $exportData = $this->exportHandler->exportApplication($app);
         $importState = new ImportState($this->em, $exportData, $importPool);
         try {
@@ -116,7 +124,7 @@ class ImportHandler extends ExchangeHandler
             $clonedApp = $apps[0];
             $clonedApp->setScreenshot($app->getScreenshot());
             $this->em->persist($clonedApp);
-            $this->uploadsManager->copySubdirectory($app->getSlug(), $clonedApp->getSlug());
+            $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
 
             return $clonedApp;

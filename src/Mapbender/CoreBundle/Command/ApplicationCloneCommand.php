@@ -26,13 +26,6 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
         ));
         if (!$application) {
             $application = $this->getYamlApplication($slug);
-            if ($application) {
-                // Avoid saving an application to the db with the same slug
-                // as the Yaml version. There's a unique constraint on the
-                // database table, but it doesn't account for Yaml-defined
-                // applications!
-                $application->setSlug($application->getSlug() . '_db');
-            }
         }
         if (!$application) {
             throw new \RuntimeException("No application with slug {$slug}");
