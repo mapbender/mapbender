@@ -180,7 +180,7 @@ class ApplicationController extends WelcomeController
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $impHandler->duplicateApplication($sourceApplication);
+            $clonedApp = $impHandler->duplicateApplication($sourceApplication);
             $em->commit();
             return $this->redirectToRoute('mapbender_manager_application_index');
         } catch (ImportException $e) {

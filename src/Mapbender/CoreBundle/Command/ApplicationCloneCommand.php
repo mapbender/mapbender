@@ -41,8 +41,7 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
         }
 
         $importHandler = $this->getApplicationImporter();
-        $newApplications = $importHandler->duplicateApplication($application);
-        $clonedApp = $newApplications[0];
+        $clonedApp = $importHandler->duplicateApplication($application);
         $output->writeln("Application cloned to new slug {$clonedApp->getSlug()}, id {$clonedApp->getId()}");
     }
 

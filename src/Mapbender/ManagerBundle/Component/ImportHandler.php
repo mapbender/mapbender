@@ -78,6 +78,11 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
+    /**
+     * @param Application $app
+     * @return Application
+     * @throws ImportException
+     */
     public function duplicateApplication(Application $app)
     {
         $importPool = new EntityPool();
@@ -95,8 +100,11 @@ class ImportHandler extends ExchangeHandler
                 $this->importSources($importState, $exportData);
             }
             $apps = $this->importApplicationEntities($importState, $exportData);
+            if (count($apps) !== 1) {
+                throw new ImportException("Logic error, no applications imported");
+            }
             $this->em->flush();
-            return $apps;
+            return $apps[0];
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
         }
