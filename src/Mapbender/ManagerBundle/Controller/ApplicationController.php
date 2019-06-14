@@ -176,13 +176,11 @@ class ApplicationController extends WelcomeController
         $applicationOid = new ObjectIdentity('class', get_class(new Application()));
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);
 
-        $expHandler = $this->getApplicationExporter();
         $impHandler = $this->getApplicationImporter();
-        $data = $expHandler->exportApplication($sourceApplication);
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $impHandler->importApplicationData($data, true);
+            $impHandler->duplicateApplication($sourceApplication);
             $em->commit();
             return $this->redirectToRoute('mapbender_manager_application_index');
         } catch (ImportException $e) {

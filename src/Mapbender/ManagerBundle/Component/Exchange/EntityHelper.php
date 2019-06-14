@@ -79,4 +79,13 @@ class EntityHelper extends AbstractObjectHelper
     {
         return $this->classMeta->getName();
     }
+
+    /**
+     * @param object $entity
+     * @return string[]
+     */
+    public function extractIdentifier($entity)
+    {
+        return $this->extractProperties($entity, $this->classMeta->getIdentifier());
+    }
 }

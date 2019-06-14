@@ -32,6 +32,8 @@ class ImportHandler extends ExchangeHandler
 {
     /** @var ElementFactory */
     protected $elementFactory;
+    /** @var ExportHandler */
+    protected $exportHandler;
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
     /** @var AclManager */
@@ -42,27 +44,28 @@ class ImportHandler extends ExchangeHandler
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
+                                ExportHandler $exportHandler,
                                 MutableAclProviderInterface $aclProvider,
                                 AclManager $aclManager)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
+        $this->exportHandler = $exportHandler;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
     }
 
     /**
      * @param array $data
-     * @param bool $copyHint set to true to enable optimizations for a same-db / same-id-space scenario
      * @return Application[]
      * @throws ImportException
      */
-    public function importApplicationData(array $data, $copyHint=false)
+    public function importApplicationData(array $data)
     {
         $entityPool = new EntityPool();
         $importState = new ImportState($this->em, $data, $entityPool);
         try {
-            $this->importSources($importState, $data, $copyHint);
+            $this->importSources($importState, $data);
             $apps = $this->importApplicationEntities($importState, $data);
             if (!$apps) {
                 throw new ImportException("No applications found");
@@ -72,6 +75,37 @@ class ImportHandler extends ExchangeHandler
             return $apps;
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
+        }
+    }
+
+    public function duplicateApplication(Application $app)
+    {
+        $importPool = new EntityPool();
+        if ($app->getSource() !== Application::SOURCE_YAML) {
+            foreach ($app->getLayersets() as $layerset) {
+                foreach ($layerset->getInstances() as $instance) {
+                    $this->markSourceImported($importPool, $instance->getSource());
+                }
+            }
+        }
+        $exportData = $this->exportHandler->exportApplication($app);
+        $importState = new ImportState($this->em, $exportData, $importPool);
+        try {
+            $apps = $this->importApplicationEntities($importState, $exportData);
+            $this->em->flush();
+            return $apps;
+        } catch (ORMException $e) {
+            throw new ImportException("Database error {$e->getMessage()}", 0, $e);
+        }
+    }
+
+    protected function markSourceImported(EntityPool $targetPool, Source $source)
+    {
+        $sourceHelper = EntityHelper::getInstance($this->em, $source);
+        $targetPool->add($source, $sourceHelper->extractIdentifier($source));
+        foreach ($source->getLayers() as $layer) {
+            $layerHelper = EntityHelper::getInstance($this->em, $layer);
+            $targetPool->add($layer, $layerHelper->extractIdentifier($layer));
         }
     }
 
@@ -142,15 +176,14 @@ class ImportHandler extends ExchangeHandler
      * Imports sources.
      * @param ImportState $state
      * @param array $data data to import
-     * @param bool $copyHint
      * @throws ORMException
      */
-    private function importSources(ImportState $state, $data, $copyHint)
+    private function importSources(ImportState $state, $data)
     {
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
                 foreach ($content as $item) {
-                    if (!$this->findMatchingSource($state, $item, $copyHint)) {
+                    if (!$this->findMatchingSource($state, $item)) {
                         $source = $this->handleData($state, $item);
                         $this->em->persist($source);
                         $this->em->flush();
@@ -267,27 +300,19 @@ class ImportHandler extends ExchangeHandler
     /**
      * @param ImportState $state
      * @param array $data data to import
-     * @param bool $copyHint
      * @return Source|null
      */
-    private function findMatchingSource(ImportState $state, $data, $copyHint)
+    private function findMatchingSource(ImportState $state, $data)
     {
         $className = $this->extractClassName($data);
-        if (!$copyHint) {
-            // Avoid inserting "new" sources that are duplicates of already existing ones
-            // Finding equivalent sources is relatively expensive
-            $identFields = array(
-                'title',
-                'type',
-                'name',
-                'onlineResource',
-            );
-        } else {
-            // Performance hack: when "importing" from the same DB (actually just copying an
-            // application), detecting source duplicates based purely on id is sufficient
-            $classMeta = $this->em->getClassMetadata($className);
-            $identFields = $classMeta->getIdentifier();
-        }
+        // Avoid inserting "new" sources that are duplicates of already existing ones
+        // Finding equivalent sources is relatively expensive
+        $identFields = array(
+            'title',
+            'type',
+            'name',
+            'onlineResource',
+        );
         $criteria = $this->extractArrayFields($data, $identFields);
         foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
             $tempPool = new EntityPool();
