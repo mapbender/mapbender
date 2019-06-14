@@ -7,6 +7,7 @@ use Doctrine\ORM\ORMException;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -34,6 +35,8 @@ class ImportHandler extends ExchangeHandler
     protected $elementFactory;
     /** @var ExportHandler */
     protected $exportHandler;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
     /** @var AclManager */
@@ -45,12 +48,14 @@ class ImportHandler extends ExchangeHandler
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
                                 ExportHandler $exportHandler,
+                                UploadsManager $uploadsManager,
                                 MutableAclProviderInterface $aclProvider,
                                 AclManager $aclManager)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
         $this->exportHandler = $exportHandler;
+        $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
     }
@@ -69,6 +74,11 @@ class ImportHandler extends ExchangeHandler
             $apps = $this->importApplicationEntities($importState, $data);
             if (!$apps) {
                 throw new ImportException("No applications found");
+            }
+            foreach ($apps as $app) {
+                // screenshot image is neither exported nor imported
+                $app->setScreenshot(null);
+                $this->em->persist($app);
             }
             $this->em->flush();
 
@@ -103,8 +113,13 @@ class ImportHandler extends ExchangeHandler
             if (count($apps) !== 1) {
                 throw new ImportException("Logic error, no applications imported");
             }
+            $clonedApp = $apps[0];
+            $clonedApp->setScreenshot($app->getScreenshot());
+            $this->em->persist($clonedApp);
+            $this->uploadsManager->copySubdirectory($app->getSlug(), $clonedApp->getSlug());
             $this->em->flush();
-            return $apps[0];
+
+            return $clonedApp;
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
         }
@@ -218,7 +233,7 @@ class ImportHandler extends ExchangeHandler
                 foreach ($content as $item) {
                     /** @var Application $app */
                     $app = $this->handleData($state, $item);
-                    $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
+                    $app->setSource(Application::SOURCE_DB);
                     $app->setUpdated(new \DateTime());
                     $this->em->persist($app);
                     $newSlug = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'slug', $app->getSlug(), '_imp');
