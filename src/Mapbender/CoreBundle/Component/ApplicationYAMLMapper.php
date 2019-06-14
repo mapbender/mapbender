@@ -91,6 +91,7 @@ class ApplicationYAMLMapper
         $application
                 ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
+                ->setId($slug)
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])

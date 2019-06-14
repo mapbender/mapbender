@@ -1,9 +1,9 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
@@ -174,7 +174,7 @@ class ExportHandler extends ExchangeHandler
             $subObject = $getters[$fieldName]->invoke($object);
             if (!$subObject) {
                 $data[$fieldName] = null;
-            } elseif ($subObject instanceof PersistentCollection) {
+            } elseif ($subObject instanceof Collection) {
                 $data[$fieldName] = array();
                 foreach ($subObject as $item) {
                     $data[$fieldName][] = $this->handleObject($exportPool, $item);

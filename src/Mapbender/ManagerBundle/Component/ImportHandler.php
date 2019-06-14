@@ -91,6 +91,9 @@ class ImportHandler extends ExchangeHandler
         $exportData = $this->exportHandler->exportApplication($app);
         $importState = new ImportState($this->em, $exportData, $importPool);
         try {
+            if ($app->getSource() === Application::SOURCE_YAML) {
+                $this->importSources($importState, $exportData);
+            }
             $apps = $this->importApplicationEntities($importState, $exportData);
             $this->em->flush();
             return $apps;
@@ -208,6 +211,7 @@ class ImportHandler extends ExchangeHandler
                     /** @var Application $app */
                     $app = $this->handleData($state, $item);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
+                    $app->setUpdated(new \DateTime());
                     $this->em->persist($app);
                     $newSlug = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'slug', $app->getSlug(), '_imp');
                     $newTitle = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'title', $app->getTitle(), '_imp');
