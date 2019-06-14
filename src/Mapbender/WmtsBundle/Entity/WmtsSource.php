@@ -61,7 +61,7 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     protected $serviceProviderName = "";
 
     /**
-     * @var Contact A contact.
+     * @var Contact
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
     protected $contact;
@@ -74,25 +74,25 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     protected $keywords;
 
     /**
-     * @var RequestInformation A request information for the GetCapabilities operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getCapabilities = null;
 
     /**
-     * @var RequestInformation A request information for the GetTile operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getTile = null;
 
-    //It is recommended that FeatureInfo documents be offered in the MIME type format "application/gml+xml; version=3.1"
     /**
-     * @var RequestInformation A request information for the GetFeatureInfo operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getFeatureInfo = null;
 
     /**
+     * @var string|null
      * @ORM\Column(type="string",nullable=true)
      */
     protected $serviceMetadataURL = "";
@@ -398,7 +398,7 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
 
     /**
      * Get getCapabilities
-     * @return string
+     * @return RequestInformation|null
      */
     public function getGetCapabilities()
     {

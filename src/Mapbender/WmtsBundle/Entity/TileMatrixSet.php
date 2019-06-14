@@ -5,7 +5,6 @@ namespace Mapbender\WmtsBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\WmtsBundle\Component\TileMatrix;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
  * A TileMatrixSet entity describes a particular set of tile matrices.

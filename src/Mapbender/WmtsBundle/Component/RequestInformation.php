@@ -3,32 +3,24 @@
 namespace Mapbender\WmtsBundle\Component;
 
 /**
- * RequestInformation class.
- *
  * @author Paul Schmidt
  */
 class RequestInformation
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpGetRestful;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpGetKvp;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpPost;
 
     /**
      * Get httpGet
      *
-     * @return string
+     * @return string|null
      */
     public function getHttpGetRestful()
     {
@@ -50,7 +42,7 @@ class RequestInformation
     /**
      * Get httpGetKvp
      *
-     * @return string
+     * @return string|null
      */
     public function getHttpGetKvp()
     {
@@ -71,7 +63,7 @@ class RequestInformation
 
     /**
      * Get httpPost
-     * @return string
+     * @return string|null
      */
     public function getHttpPost()
     {

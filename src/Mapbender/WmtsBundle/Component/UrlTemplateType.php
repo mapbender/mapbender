@@ -61,7 +61,7 @@ class UrlTemplateType
     /**
      * Sets format
      * @param string $format
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -71,8 +71,8 @@ class UrlTemplateType
 
     /**
      * Sets resourceType
-     * @param type $resourceType
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @param string $resourceType
+     * @return $this
      */
     public function setResourceType($resourceType)
     {
@@ -82,8 +82,8 @@ class UrlTemplateType
 
     /**
      * Sets template
-     * @param type $template
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @param string $template
+     * @return $this
      */
     public function setTemplate($template)
     {

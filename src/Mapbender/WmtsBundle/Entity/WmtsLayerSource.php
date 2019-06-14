@@ -400,7 +400,7 @@ class WmtsLayerSource extends SourceItem
     /**
      * Get resourceUrl
      *
-     * @return UrlTemplateType[] resourceUrl
+     * @return UrlTemplateType[]
      */
     public function getResourceUrl()
     {
