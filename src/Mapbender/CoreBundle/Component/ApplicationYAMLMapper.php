@@ -76,11 +76,11 @@ class ApplicationYAMLMapper
         }
         $timestamp = round((microtime(true) * 1000));
         $definition = $definitions[$slug];
-        if (!key_exists('title', $definition)) {
+        if (!array_key_exists('title', $definition)) {
             $definition['title'] = "TITLE " . $timestamp;
         }
 
-        if (!key_exists('published', $definition)) {
+        if (!array_key_exists('published', $definition)) {
             $definition['published'] = false;
         } else {
             $definition['published'] = (boolean) $definition['published'];
@@ -89,14 +89,17 @@ class ApplicationYAMLMapper
         // First, create an application entity
         $application = new Application();
         $application
-                ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
                 ->setId($slug)
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
                 ->setExcludeFromList(isset($definition['excludeFromList'])?$definition['excludeFromList']:false)
-                ->setPublished($definition['published']);
+                ->setPublished($definition['published'])
+        ;
+        if (!empty($definition['screenshot'])) {
+            $application->setScreenshot($definition['screenshot']);
+        }
         if (isset($definition['custom_css'])) {
             $application->setCustomCss($definition['custom_css']);
         }
@@ -108,11 +111,13 @@ class ApplicationYAMLMapper
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
-        if (key_exists('regionProperties', $definition)) {
-            foreach ($definition['regionProperties'] as $regProps) {
+        if (array_key_exists('regionProperties', $definition)) {
+            foreach ($definition['regionProperties'] as $index => $regProps) {
                 $regionProperties = new RegionProperties();
+                $regionProperties->setId($application->getSlug() . ':' . $index);
                 $regionProperties->setName($regProps['name']);
                 $regionProperties->setProperties($regProps['properties']);
+                $regionProperties->setApplication($application);
                 $application->addRegionProperties($regionProperties);
             }
         }
