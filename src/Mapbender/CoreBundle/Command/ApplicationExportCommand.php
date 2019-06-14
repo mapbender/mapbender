@@ -42,6 +42,9 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
         $app = $this->getApplicationRepository()->findOneBy(array(
             'slug' => $input->getArgument('slug'),
         ));
+        if (!$app) {
+            $app = $this->getYamlApplication($input->getArgument('slug'));
+        }
         $exporter = $this->getExporter();
         $data = $exporter->exportApplication($app);
         unset($data['time']);

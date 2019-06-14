@@ -5,8 +5,6 @@ namespace Mapbender\CoreBundle\Command;
 
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Mapbender;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,17 +41,5 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
         $importHandler = $this->getApplicationImporter();
         $clonedApp = $importHandler->duplicateApplication($application);
         $output->writeln("Application cloned to new slug {$clonedApp->getSlug()}, id {$clonedApp->getId()}");
-    }
-
-    /**
-     * @param string $slug
-     * @return Application|null
-     */
-    protected function getYamlApplication($slug)
-    {
-        /** @var Mapbender $m */
-        $m = $this->getContainer()->get('mapbender');
-        $apps = $m->getYamlApplicationEntities();
-        return ArrayUtil::getDefault($apps, $slug, null);
     }
 }
