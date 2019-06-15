@@ -196,7 +196,44 @@ $.widget('mapbender.mbSimpleSearch', {
         return [olPoint.lon, olPoint.lat];
     },
 
+    /**
+     * create label string for autocomplete
+     * @param input
+     * @param object
+     * @returns {*|string}
+     * @private
+     */
+    _labelize: function (input,object) {
 
+        var itemNormalize = function (labelstring, object) {
+            console.assert(typeof labelstring == "string" && typeof object == "object" && !Array.isArray(object),"Wrong input!");
+
+            var split = labelstring.split(".");
+            var subObject = object;
+            split.forEach(function(prop){
+                subObject = subObject && subObject[prop];
+            });
+
+            if (!subObject) {
+                console.warn("Property "+labelstring+" not found in object:",object);
+                return '';
+            }
+
+            return subObject;
+        };
+
+        var labels = input.split("+");
+
+        var str = "";
+
+        labels.forEach(function(label) {
+
+            str += itemNormalize(label.trim(),object) + ' ';
+        });
+
+        return str.trim();
+
+    }
 });
 
 })(jQuery);
