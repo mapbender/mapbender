@@ -56,6 +56,7 @@ class SimpleSearch extends Element
             'label_attribute' => 'label',
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
+            'geom_srs'        => '4326',
             'delay'           => 300,
         );
     }

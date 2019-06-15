@@ -72,6 +72,9 @@ class SimpleSearchAdminType extends AbstractType
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON'),
                 'required' => true))
+            ->add('geom_srs', 'number', array(
+                'property_path' => '[geom_srs]',
+                'required' => true))
             ->add('delay', 'number', array(
                 'property_path' => '[delay]',
                 'required' => true))
