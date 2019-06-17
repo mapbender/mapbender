@@ -4,8 +4,10 @@ namespace Mapbender\ManagerBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+use Mapbender\ManagerBundle\Component\Menu\ApplicationItem;
+use Mapbender\ManagerBundle\Component\Menu\SourceCreationItem;
+use Mapbender\ManagerBundle\Component\Menu\TopLevelItem;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class MapbenderManagerBundle extends MapbenderBundle
 {
@@ -18,54 +20,19 @@ class MapbenderManagerBundle extends MapbenderBundle
 
     public function getManagerControllers()
     {
-        $trans = $this->container->get('translator');
         return array(
-            array(
-                'weight' => 10,
-                'title' => $trans->trans("mb.manager.managerbundle.applications"),
-                'route' => 'mapbender_manager_application_index',
-                'routes' => array(
-                    'mapbender_manager_application',
-                ),
-                'subroutes' => array(
-                    array('title' => $trans->trans("mb.manager.managerbundle.new_application"),
-                        'route' => 'mapbender_manager_application_new',
-                        'enabled' => function($securityContext) {
-                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                        return $securityContext->isGranted('CREATE', $oid);
-                    }),
-                    array('idx' => "application-export",
-                        'title' => $trans->trans("mb.manager.managerbundle.export_application"),
-                        'route' => 'mapbender_manager_application_export',
-                        'enabled' => function($securityContext) {
-                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                        return $securityContext->isGranted('CREATE', $oid);
-                    }),
-                    array('idx' => "application-import",
-                        'title' => $trans->trans("mb.manager.managerbundle.import_application"),
-                        'route' => 'mapbender_manager_application_import',
-                        'enabled' => function($securityContext) {
-                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                        return $securityContext->isGranted('CREATE', $oid);
-                    })
-                )
-            ),
-            array(
-                'weight' => 20,
-                'title' => $trans->trans("mb.manager.managerbundle.sources"),
-                'route' => 'mapbender_manager_repository_index',
-                'routes' => array(
-                    'mapbender_manager_repository',
-                ),
-                'subroutes' => array(
-                    array('title' => $trans->trans("mb.manager.managerbundle.add_source"),
-                        'route' => 'mapbender_manager_repository_new',
-                        'enabled' => function($securityContext) {
-                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-                        return $securityContext->isGranted('CREATE', $oid);
-                    })
-                )
-            ),
+            TopLevelItem::create("mb.manager.managerbundle.applications", 'mapbender_manager_application_index')
+                ->setWeight(10)
+                ->addChildren(array(
+                    ApplicationItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new'),
+                    ApplicationItem::create('mb.manager.managerbundle.export_application', 'mapbender_manager_application_export'),
+                    ApplicationItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import'),
+                )),
+            TopLevelItem::create('mb.manager.managerbundle.sources', 'mapbender_manager_repository_index')
+                ->setWeight(20)
+                ->addChildren(array(
+                    new SourceCreationItem()
+                )),
         );
     }
 

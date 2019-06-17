@@ -5,7 +5,9 @@ namespace Mapbender\ManagerBundle\Extension\Twig;
 
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
-use Symfony\Component\HttpFoundation\Request;
+use Mapbender\ManagerBundle\Component\Menu\LegacyItem;
+use Mapbender\ManagerBundle\Component\Menu\MenuItem;
+use Mapbender\ManagerBundle\Component\Menu\TopLevelItem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -40,15 +42,14 @@ class MenuExtension extends \Twig_Extension
         );
     }
 
-    public function mapbender_manager_menu_items(Request $request)
+    public function mapbender_manager_menu_items($legacyParamDummy = null)
     {
-        $currentRoute = $request->attributes->get('_route');
-        return $this->getManagerControllersDefinition($currentRoute);
+        return $this->getManagerControllersDefinition(true);
     }
 
     public function getDefaultRoute()
     {
-        $controllers = $this->getManagerControllersDefinition(null);
+        $controllers = $this->getManagerControllersDefinition(false);
         if (!$controllers) {
             throw new \RuntimeException("No manager routes defined");
         }
@@ -78,57 +79,34 @@ class MenuExtension extends \Twig_Extension
     }
 
     /**
-     * @param array[] $defs
-     * @param string|null $currentRoute
-     * @return array[]
-     */
-    protected function filterManagerControllerDefinitions($defs, $currentRoute)
-    {
-        $defsOut = array();
-        foreach ($defs ?: array() as $k => $def) {
-            $def = $this->filterAccess($def);
-            if (!$def) {
-                continue;
-            }
-            $def['active'] = ($def['route'] === $currentRoute);
-            if (!empty($def['subroutes'])) {
-                $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes'], $currentRoute);
-                if (!$def['active']) {
-                    foreach ($def['subroutes'] as $sub) {
-                        if (!empty($sub['active'])) {
-                            $def['active'] = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            // legacy menu.html.twig quirk: the template checks if 'active' is defined, not its boolean value
-            if (!$def['active']) {
-                unset($def['active']);
-            }
-            $defsOut[] = $def;
-        }
-        return $defsOut;
-    }
-
-    /**
-     * @param string|null $currentRoute
+     * @param bool $filterAccess
      * @return array
      */
-    protected function getManagerControllersDefinition($currentRoute)
+    protected function getManagerControllersDefinition($filterAccess)
     {
         $routeDefinitions = array();
         foreach ($this->managerBundles as $bundle) {
             $bundleDefinitions = $bundle->getManagerControllers();
-            $bundleDefinitions = $this->filterManagerControllerDefinitions($bundleDefinitions, $currentRoute);
-            $routeDefinitions = array_merge($routeDefinitions, $bundleDefinitions);
+            foreach ($bundleDefinitions as $item) {
+                if (is_array($item)) {
+                    $item = LegacyItem::fromArray($item);
+                }
+                /** @var MenuItem $item */
+                if (!$filterAccess || $item->filter($this->authorizationChecker)) {
+                    $routeDefinitions[] = $item;
+                }
+            }
         }
         usort($routeDefinitions, function($a, $b) {
-            if($a['weight'] == $b['weight']) {
+            /** @var TopLevelItem $a */
+            /** @var TopLevelItem $b */
+            $weightA = $a->getWeight();
+            $weightB = $b->getWeight();
+            if ($weightA == $weightB) {
                 return 0;
             }
 
-            return ($a['weight'] < $b['weight']) ? -1 : 1;
+            return ($weightA < $weightB) ? -1 : 1;
         });
         return $routeDefinitions;
     }
