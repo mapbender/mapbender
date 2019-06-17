@@ -26,14 +26,14 @@ $(function () {
         fixOptions(this);
         var $select = $('select', this);
 
-        var me = $(this);
-        var dropdownList = me.find(".dropdownList");
+        var dropdownList = $(".dropdownList", this);
         if (dropdownList.children().length === 0) {
-            me.find("option").each(function (i, e) {
-                $(e).addClass("opt-" + i);
-                var node = $('<li class="item-' + i + '"></li>');
-                dropdownList.append(node);
+            $('option', $select).each(function (i, e) {
+                var node = $('<li>');
+                node.addClass('choice');
+                node.attr('data-value', $(e).attr('value'));
                 node.text($(e).text());
+                dropdownList.append(node);
             });
         }
         $(".dropdownValue", this).text($('option:selected', $select).text());
