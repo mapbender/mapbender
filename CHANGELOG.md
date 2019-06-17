@@ -1,17 +1,22 @@
-## dev-release/3.0.7 @ 4eab6e611
+## dev-release/3.0.7 @ 19fa39b88
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
 - Fix missing favicon in login / password reset areas
 - Fix sizing and missing localization of layerset, group and user delete confirmation popups
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
-- Improve export file size and import / export performance
+- Improve export file size and import / export / copying performance
 - Add mapbender:application:export CLI command
 - Add mapbender:application:import CLI command
+- Add mapbender:application:clone CLI command
+- Support cloning of YAML-defined applications into the database (CLI + backend)
+- When cloning applications, also copy uploads directory (including screenshot)
 - Add separate memory limit configuration parameter `mapbender.print.memory_limit` for direct print jobs
 - Add spearate download base path / base url parameter `mapbender.print.queue.load_path` to support forwarding PDFs from
   externally installed "dedicated print queue servers"
 - Add mapbender:print:queue:gcfiles command to remove dangling local files
+- When adding a new Element requiring a map target to an Application, preselect the map Element automatically
+- [Framework] form theme now supports grouped choices in dropdowns (nested `<optgroup>` tags)
 
 ## v3.0.8.1
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))
