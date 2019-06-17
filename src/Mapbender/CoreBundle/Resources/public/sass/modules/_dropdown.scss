@@ -33,19 +33,29 @@
     border:solid 1px lighten($thirdColor, 15%);
 
     width: 100%;
-
-    li{
-      line-height: $lineHeight;
+    .group-label {
+      display: block;
       padding-left: 5px;
-      &:hover{
-        color:$ciColor;
-        background-color:$contentColor;
+      color: mix(#FFF, $secondColor, 90%);
+      background-color: $secondColor;
+    }
+
+    li {
+      line-height: $lineHeight;
+      &.choice {
+        padding-left: 5px;
+        &:hover{
+          color:$ciColor;
+          background-color:$contentColor;
+        }
       }
+    }
+    ul {
+      padding-left: 5px;
     }
   }
   .hiddenDropdown{
     display:none;
-    @include absolute(-9999px '' '' '');
   }
 
   @extend .smallText;

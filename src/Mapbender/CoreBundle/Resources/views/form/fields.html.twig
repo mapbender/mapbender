@@ -4,6 +4,8 @@
  See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
 #}
 
+{% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
+
 {% block form_widget %}
   {% spaceless %}
     {% if compound %}
@@ -132,71 +134,62 @@
   {% endspaceless %}
 {% endblock choice_widget_expanded_sortable %}
 
-{% block choice_widget_collapsed %}
-  {% spaceless %}
-    {% if multiple %}
-      <select {{ block('widget_attributes') }} multiple="multiple">
-        {% if empty_value is not none %}
-          <option value="">{{ empty_value|trans({}, translation_domain) }}</option>
-        {% endif %}
-        {% if preferred_choices|length > 0 %}
-          {% set options = preferred_choices %}
-          {{ block('choice_widget_options') }}
-          {% if choices|length > 0 and separator is not none %}
-            <option disabled="disabled">{{ separator }}</option>
-          {% endif %}
-        {% endif %}
-        {% set options = choices %}
-        {{ block('choice_widget_options') }}
-      </select>
-    {% else %}
-      <div class="dropdown {{ block('widget_attribute_class') }}" >
-        {% set selectedValue = "" %}
-        {% set firstValue = "" %}
+{%- block choice_widget_collapsed_selected_value -%}
+  {% for choice in options %}
+    {%- if choice is iterable -%}
+      {%- set options = choice -%}
+      {{- block('choice_widget_collapsed_selected_value') -}}
+    {%- elseif choice is selectedchoice(value) -%}
+      {{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}
+    {%- endif -%}
+  {% endfor %}
+{%- endblock -%}
 
-        <select class="hiddenDropdown" {{ block('widget_attributes') }}>
-          {% if empty_value is defined and empty_value is not none %}
-            <option class="opt-0" selected="selected" value="">{{ empty_value|trans({}, translation_domain) }}</option>
-            {% set selectedValue = empty_value|trans({}, translation_domain) %}
-          {% endif %}
+{%- block hiddendropdown_option_display -%}
+  {% for group_label, choice in options %}
+    {%- if choice is iterable and choice.nogroup is not defined -%}
+    <li><label class="group-label">{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}</label>
+      <ul class="group">
+        {% set options = choice %}
+        {{- block('hiddendropdown_option_display') }}
+      </ul>
+    </li>
+    {%- else -%}
+    <li class="choice" data-value="{{ choice.value }}">{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}</li>
+    {%- endif -%}
+  {% endfor %}
+{%- endblock %}
 
-          {% for choice in choices %}
-
-            {% if loop.index == 1 %}
-              {% set firstValue = choice.label %}
-            {% endif %}
-
-            {% if choice is selectedchoice(value) %}
-              {% set selectedValue = choice.label|trans({}, translation_domain) %}
-            {% endif %}
-
-            <option class="opt-{{ loop.index }}" {% if choice is selectedchoice(value) %} selected="selected" {% endif %} value="{{ choice.value }}">{{ choice.label|trans({}, translation_domain) }}</option>
-          {% endfor %}
-        </select>
-
-        <div class="dropdownValue iconDown">
-          {% if selectedValue|length == 0 %}
-            {% if empty_value is defined and empty_value is not none %}
-              {{ empty_value|trans({}, translation_domain) }}
-            {% else %}
-              {{ firstValue }}
-            {% endif %}
-          {% else %}
-            {{ selectedValue }}
-          {% endif %}
-        </div>
-        <ul class="dropdownList">
-          {% if empty_value is defined and empty_value is not none %}
-            <li class="item-0" value="">{{ empty_value|trans({}, translation_domain) }}</li>
-          {% endif %}
-          {% for choice in choices %}
-            <li class="item-{{ loop.index }}">{{ choice.label|trans({}, translation_domain) }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-  {% endspaceless %}
-{% endblock choice_widget_collapsed %}
+{%- block choice_widget_collapsed -%}
+  {%- if multiple -%}
+    {{- block('symfony_choice_widget_collapsed') -}}
+  {%- else -%}
+    <div class="dropdown {{ block('widget_attribute_class') }}" >
+    {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
+    {{- block('symfony_choice_widget_collapsed') -}}
+    <div class="dropdownValue iconDown">
+      {%- if placeholder is not none and value == '' -%}
+        {{ placeholder }}
+      {%- else -%}
+        {%- set options = preferred_choices|merge(choices) -%}
+        {{ block('choice_widget_collapsed_selected_value') }}
+      {%- endif -%}
+    </div>
+    <ul class="dropdownList">
+      {%- if placeholder is not none -%}
+        {%- set options = [{'value': '', 'label': placeholder, 'nogroup': 1}] -%}
+        {{- block('hiddendropdown_option_display') -}}
+      {%- endif -%}
+      {%- if preferred_choices|length > 0 -%}
+        {% set options = preferred_choices %}
+        {{- block('hiddendropdown_option_display') -}}
+      {%- endif -%}
+      {%- set options = choices -%}
+      {{- block('hiddendropdown_option_display') -}}
+    </ul>
+    </div>
+{%- endif -%}
+{%- endblock choice_widget_collapsed -%}
 
 {% block checkbox_widget %}
   {% spaceless %}

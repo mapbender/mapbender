@@ -104,7 +104,8 @@ fieldset{
   @include opacity(0);
 }
 /* ----------------------------------------------------------------- DROPDOWN */
-.dropdown{
+.dropdown {
+  .hiddenDropdown{display:none;}
   $lineHeight: $lineHeight + 8;
 
   cursor:pointer;
@@ -145,9 +146,6 @@ fieldset{
         background-color:$contentColor;
       }
     }
-  }
-  .hiddenDropdown{
-    @include pos(-9999px,'','','');
   }
   @extend .smallText;
   @include border-radius($radius);
@@ -385,7 +383,7 @@ fieldset{
   text-align: left;
   min-width: 200px;
 }
-.hiddenDropdown{display:none;}
+
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper{
   z-index: 12;
