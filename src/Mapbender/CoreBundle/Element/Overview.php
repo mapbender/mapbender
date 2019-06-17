@@ -131,7 +131,7 @@ class Overview extends Element
         if (isset($configuration['layerset'])) {
             $configuration['layerset'] = $mapper->getIdentFromMapper(
                 'Mapbender\CoreBundle\Entity\Layerset',
-                intval($configuration['layerset']),
+                $configuration['layerset'],
                 true
             );
         }

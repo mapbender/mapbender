@@ -171,20 +171,27 @@ class ApplicationController extends WelcomeController
      */
     public function copyDirectlyAction($slug)
     {
-        $sourceApplication = $this->requireApplication($slug);
+        $sourceApplication = $this->requireApplication($slug, true);
         $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
         $applicationOid = new ObjectIdentity('class', get_class(new Application()));
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);
 
-        $expHandler = $this->getApplicationExporter();
         $impHandler = $this->getApplicationImporter();
-        $data = $expHandler->exportApplication($sourceApplication);
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $impHandler->importApplicationData($data, true);
+            $clonedApp = $impHandler->duplicateApplication($sourceApplication);
             $em->commit();
-            return $this->redirectToRoute('mapbender_manager_application_index');
+            if ($this->isGranted('EDIT', $clonedApp)) {
+                // Redirect to edit view of imported application
+                // @todo: distinct message for successful duplication?
+                $this->addFlash('success', $this->translate('mb.application.create.success'));
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    'slug' => $clonedApp->getSlug(),
+                ));
+            } else {
+                return $this->redirectToRoute('mapbender_manager_application_index');
+            }
         } catch (ImportException $e) {
             $em->rollback();
             $this->addFlash('error', $e->getMessage());

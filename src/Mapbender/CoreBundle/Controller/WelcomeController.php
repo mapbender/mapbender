@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,16 +47,5 @@ class WelcomeController extends ApplicationControllerBase
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
         ));
-    }
-
-    /**
-     * Get Mapbender core service
-     * @return Mapbender
-     */
-    protected function getMapbender()
-    {
-        /** @var Mapbender $service */
-        $service = $this->get('mapbender');
-        return $service;
     }
 }
