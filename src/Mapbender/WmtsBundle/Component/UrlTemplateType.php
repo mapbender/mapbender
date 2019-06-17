@@ -2,12 +2,15 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
  * The UrlTemplateType describes:
  * URL template to a tile or a FeatureInfo resource on resource oriented architectural style.
  * @author Paul Schmidt
  */
-class UrlTemplateType
+class UrlTemplateType implements MutableUrlTarget
 {
 
     /**
@@ -89,5 +92,12 @@ class UrlTemplateType
     {
         $this->template = $template;
         return $this;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($url = $this->getTemplate()) {
+            $this->setTemplate($transformer->process($url));
+        }
     }
 }

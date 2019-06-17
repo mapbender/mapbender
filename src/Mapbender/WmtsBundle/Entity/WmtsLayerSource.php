@@ -3,6 +3,8 @@
 namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
@@ -16,7 +18,7 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtslayersource")
  */
-class WmtsLayerSource extends SourceItem
+class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 {
     /**
      * @var integer $id
@@ -436,5 +438,15 @@ class WmtsLayerSource extends SourceItem
             }
         }
         return array_unique($formats);
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $newResourceUrls = array();
+        foreach ($this->getResourceUrl() as $resourceUrl) {
+            $resourceUrl->mutateUrls($transformer);
+            $newResourceUrls[] = clone $resourceUrl;
+        }
+        $this->setResourceUrl($newResourceUrls);
     }
 }

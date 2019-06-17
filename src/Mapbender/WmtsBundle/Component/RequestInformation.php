@@ -2,10 +2,13 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
  * @author Paul Schmidt
  */
-class RequestInformation
+class RequestInformation implements MutableUrlTarget
 {
 
     /** @var string|null */
@@ -80,5 +83,18 @@ class RequestInformation
     {
         $this->httpPost = $value;
         return $this;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($url = $this->getHttpGetKvp()) {
+            $this->setHttpGetKvp($transformer->process($url));
+        }
+        if ($url = $this->getHttpGetRestful()) {
+            $this->setHttpGetRestful($transformer->process($url));
+        }
+        if ($url = $this->getHttpPost()) {
+            $this->setHttpPost($transformer->process($url));
+        }
     }
 }

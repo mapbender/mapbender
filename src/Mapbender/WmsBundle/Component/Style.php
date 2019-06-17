@@ -2,10 +2,13 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
  * @author Paul Schmidt
  */
-class Style
+class Style implements MutableUrlTarget
 {
     /** @var string */
     public $name = "";
@@ -155,4 +158,21 @@ class Style
         return $this->styleUlr;
     }
 
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $legendUrl = $this->getLegendUrl();
+        if ($legendUrl && ($onlineResource = $legendUrl->getOnlineResource())) {
+            $onlineResource->mutateUrls($transformer);
+            $this->setLegendUrl(clone $legendUrl);
+            $this->getLegendUrl()->setOnlineResource($onlineResource);
+        }
+        if ($onlineResource = $this->getStyleUlr()) {
+            $onlineResource->mutateUrls($transformer);
+            $this->setStyleUlr(clone $onlineResource);
+        }
+        if ($onlineResource = $this->getStyleSheetUrl()) {
+            $onlineResource->mutateUrls($transformer);
+            $this->setStyleSheetUrl(clone $onlineResource);
+        }
+    }
 }

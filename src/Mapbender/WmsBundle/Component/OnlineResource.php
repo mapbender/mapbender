@@ -1,10 +1,13 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
  * @author Paul Schmidt
  */
-class OnlineResource
+class OnlineResource implements MutableUrlTarget
 {
     /**
      * ORM\Column(type="string", nullable=true)
@@ -71,6 +74,11 @@ class OnlineResource
     public function getHref()
     {
         return $this->href;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $this->setHref($transformer->process($this->getHref()));
     }
 
 }

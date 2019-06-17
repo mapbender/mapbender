@@ -3,6 +3,8 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
@@ -18,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
+class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface, MutableUrlTarget
 {
     /**
      * @var string An origin WMS URL
@@ -951,5 +953,51 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
             }
         }
         return $dimensions;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $this->setOriginUrl($transformer->process($this->getOriginUrl()));
+
+        if ($onlineResource = $this->getOnlineResource()) {
+            $this->setOnlineResource($transformer->process($onlineResource));
+        }
+
+        if ($requestInfo = $this->getGetMap()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetMap(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetFeatureInfo()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetFeatureInfo(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetCapabilities()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetCapabilities(clone $requestInfo);
+        }
+
+        if ($requestInfo = $this->getDescribeLayer()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setDescribeLayer(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetLegendGraphic()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetLegendGraphic(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetStyles()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetStyles(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getPutStyles()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setPutStyles(clone $requestInfo);
+        }
+
+        $layers = $this->getLayers();
+        foreach ($layers as $layer) {
+            $layer->mutateUrls($transformer);
+        }
+
+        return $this;
     }
 }
