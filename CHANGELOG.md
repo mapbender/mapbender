@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 19fa39b88
+## dev-release/3.0.7 @ 7e3f93649
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
@@ -6,6 +6,7 @@
 - Fix sizing and missing localization of layerset, group and user delete confirmation popups
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
 - Improve export file size and import / export / copying performance
+- Add mapbender:source:rewrite:host CLI command (update matching source urls without reeavaluating capabilities)
 - Add mapbender:application:export CLI command
 - Add mapbender:application:import CLI command
 - Add mapbender:application:clone CLI command
