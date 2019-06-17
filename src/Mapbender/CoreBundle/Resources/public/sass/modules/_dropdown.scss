@@ -8,7 +8,9 @@
   border:solid 1px lighten($thirdColor, 15%);
   line-height:$lineHeight;
   height:$inputHeight;
-  text-align: left;
+  .toolBar & {
+    text-align: left;
+  }
   padding-right: $space + $space/2;
   background-color: #FFF;
 
@@ -18,7 +20,6 @@
     border:none;
     line-height:$lineHeight;
     cursor: pointer;
-    font-family: "Open Sans","Calluna Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif;
     &.iconDown:before{@include absolute(0 5px '' '');}
   }
   .dropdownList{
@@ -29,9 +30,7 @@
     display:none;
     overflow: auto;
     max-height:200px;
-
     border:solid 1px lighten($thirdColor, 15%);
-
     width: 100%;
     .group-label {
       display: block;

@@ -2,6 +2,7 @@
 @import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
+@import "modules/dropdown";
 
 .olControlZoom {
   display: none;
@@ -105,51 +106,11 @@ fieldset{
 }
 /* ----------------------------------------------------------------- DROPDOWN */
 .dropdown {
-  .hiddenDropdown{display:none;}
-  $lineHeight: $lineHeight + 8;
-
-  cursor:pointer;
-  display:inline-block;
-  position: relative;
-  color:$ciColor;
-  border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
-  height:$inputHeight;
-  padding-right: $space + $space/2;
-  background-color: #FFF;
-
-  .dropdownValue{
-    padding-left: 5px;
-    color:$secondColor;
-    border:none;
-    width: 100%;
-    line-height:$lineHeight;
-    cursor: pointer;
-    &.iconDown:before{@include pos(0px,5px,'','');}
-  }
   .dropdownList{
-    background-color: #FFF;
-    color:$secondColor;
-    position: absolute;
-    z-index: 2;
-    display:none;
-    overflow: auto;
-    max-height:200px;
-    border:solid 1px lighten($thirdColor, 15%);
-    width: 100%;
     @include box-shadow(0px 0px 2px rgba(0, 0, 0, 0.1),
                       inset 0px 0px 2px #fff);
-    li{
-      padding-left: 5px;
-      &:hover{
-        color:$ciColor;
-        background-color:$contentColor;
-      }
-    }
   }
-  @extend .smallText;
   @include border-radius($radius);
-  @include noUserSelect;
 }
 /* -------------------------------------------------------------------- INPUT */
 .input{
