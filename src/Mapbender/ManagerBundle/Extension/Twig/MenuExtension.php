@@ -64,16 +64,16 @@ class MenuExtension extends \Twig_Extension
 
     public function getDefaultRoute()
     {
-        $controllers = $this->getItems(false);
-        if (!$controllers) {
+        $items = $this->getItems(false);
+        if (!$items) {
             throw new \RuntimeException("No manager routes defined");
         }
-        return $controllers[0]['route'];
+        return $items[0]->getRoute();
     }
 
     /**
      * @param bool $filterAccess
-     * @return array
+     * @return MenuItem[]
      */
     protected function getItems($filterAccess)
     {

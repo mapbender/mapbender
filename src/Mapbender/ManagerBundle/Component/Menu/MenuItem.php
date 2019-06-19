@@ -184,6 +184,7 @@ class MenuItem implements \Serializable
     public function checkActive($route)
     {
         if ($this->route !== null && $route === $this->route) {
+            $this->active = true;
             $this->current = true;
             return true;
         } else {
