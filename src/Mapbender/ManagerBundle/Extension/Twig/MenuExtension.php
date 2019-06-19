@@ -13,21 +13,42 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuExtension extends \Twig_Extension
 {
-    /** @var KernelInterface */
-    protected $kernel;
     /** @var ManagerBundle[] */
     protected $managerBundles = array();
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
+    /** @var TopLevelitem[] */
+    protected $items;
+
 
     /**
-     * @param KernelInterface $kernel
+     * @param TopLevelItem[] $items
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param KernelInterface $kernel
+     * @param string[] $legacyBundleNames
+     * @param string[] $routePrefixBlacklist
      */
-    public function __construct(KernelInterface $kernel, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct($items, AuthorizationCheckerInterface $authorizationChecker,
+                                KernelInterface $kernel,
+                                $legacyBundleNames,
+                                $routePrefixBlacklist)
     {
-        $this->kernel = $kernel;
+        $this->items = array_map('\unserialize', $items);
         $this->authorizationChecker = $authorizationChecker;
+        if ($legacyBundleNames) {
+            foreach ($legacyBundleNames as $legacyBundleName) {
+                /** @var ManagerBundle $bundle */
+                $bundle = $kernel->getBundle($legacyBundleName);
+                foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
+                    $item = LegacyItem::fromArray($topLevelMenuDefinition);
+                    if (TopLevelItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
+                        $this->items[] = $item;
+                    }
+                }
+            }
+            $this->items = TopLevelItem::sortItems($this->items);
+        }
+
         foreach ($kernel->getBundles() as $bundle) {
             if ($bundle instanceof ManagerBundle) {
                 $this->managerBundles[] = $bundle;
@@ -84,30 +105,12 @@ class MenuExtension extends \Twig_Extension
      */
     protected function getManagerControllersDefinition($filterAccess)
     {
-        $routeDefinitions = array();
-        foreach ($this->managerBundles as $bundle) {
-            $bundleDefinitions = $bundle->getManagerControllers();
-            foreach ($bundleDefinitions as $item) {
-                if (is_array($item)) {
-                    $item = LegacyItem::fromArray($item);
-                }
-                /** @var MenuItem $item */
-                if (!$filterAccess || $item->filter($this->authorizationChecker)) {
-                    $routeDefinitions[] = $item;
-                }
+        $items = array();
+        foreach ($this->items as $item) {
+            if (!$filterAccess || $item->filter($this->authorizationChecker)) {
+                $routeDefinitions[] = $item;
             }
         }
-        usort($routeDefinitions, function($a, $b) {
-            /** @var TopLevelItem $a */
-            /** @var TopLevelItem $b */
-            $weightA = $a->getWeight();
-            $weightB = $b->getWeight();
-            if ($weightA == $weightB) {
-                return 0;
-            }
-
-            return ($weightA < $weightB) ? -1 : 1;
-        });
-        return $routeDefinitions;
+        return $items;
     }
 }

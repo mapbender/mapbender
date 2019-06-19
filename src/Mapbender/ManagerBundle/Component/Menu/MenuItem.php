@@ -90,6 +90,20 @@ class MenuItem
         }
     }
 
+    public function filterRoute($prefix)
+    {
+        if (0 === strpos($this->route, $prefix)) {
+            return false;
+        } else {
+            foreach ($this->children as $index => $child) {
+                if (!$child->filterRoute($prefix)) {
+                    unset($this->children[$index]);
+                }
+            }
+            return true;
+        }
+    }
+
     public function isCurrent(Request $request)
     {
         $route = $request->attributes->get('_route');
