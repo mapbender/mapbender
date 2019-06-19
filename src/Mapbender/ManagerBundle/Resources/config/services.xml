@@ -5,8 +5,12 @@
     <parameters>
         <parameter key="mapbender.manager.element_form_factory.service.class">Mapbender\ManagerBundle\Component\ElementFormFactory</parameter>
         <parameter key="mapbender.strict.element_api.form_type">%mapbender.strict.element_api%</parameter>
+        <!-- populated by compiler passes -->
+        <parameter type="collection" key="mapbender.manager.menu.items" />
+        <!-- popuplated by RegisterLegacyMenuRoutesPass -->
+        <parameter type="collection" key="mapbender.manager.menu.legacy_bundles" />
+        <parameter type="collection" key="mapbender.manager.menu.route_prefix_blacklist" />
     </parameters>
-
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
             <argument type="service" id="form.factory" />
@@ -16,8 +20,12 @@
         </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="kernel" />
+            <argument>%mapbender.manager.menu.items%</argument>
+            <argument type="service" id="request_stack" />
             <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="kernel" />
+            <argument>%mapbender.manager.menu.legacy_bundles%</argument>
+            <argument>%mapbender.manager.menu.route_prefix_blacklist%</argument>
         </service>
         <service id="mapbender.twig.manager.acl" class="Mapbender\ManagerBundle\Extension\Twig\AclExtension">
             <tag name="twig.extension"/>
