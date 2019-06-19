@@ -12,12 +12,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuExtension extends \Twig_Extension
 {
-    /** @var ManagerBundle[] */
-    protected $managerBundles = array();
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
     /** @var MenuItem[] */
     protected $items;
+    /** @var string[] (serialized items) */
+    protected $itemData;
+    /** @var bool */
+    protected $initialized = false;
+    /** @var array|null */
+    protected $legacyInitArgs;
 
 
     /**
@@ -32,26 +36,10 @@ class MenuExtension extends \Twig_Extension
                                 $legacyBundleNames,
                                 $routePrefixBlacklist)
     {
-        $this->items = array_map('\unserialize', $items);
+        $this->itemData = $items;
         $this->authorizationChecker = $authorizationChecker;
         if ($legacyBundleNames) {
-            foreach ($legacyBundleNames as $legacyBundleName) {
-                /** @var ManagerBundle $bundle */
-                $bundle = $kernel->getBundle($legacyBundleName);
-                foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
-                    $item = LegacyItem::fromArray($topLevelMenuDefinition);
-                    if (MenuItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
-                        $this->items[] = $item;
-                    }
-                }
-            }
-            $this->items = MenuItem::sortItems($this->items);
-        }
-
-        foreach ($kernel->getBundles() as $bundle) {
-            if ($bundle instanceof ManagerBundle) {
-                $this->managerBundles[] = $bundle;
-            }
+            $this->legacyInitArgs = array($kernel, $legacyBundleNames, $routePrefixBlacklist);
         }
     }
 
@@ -64,12 +52,12 @@ class MenuExtension extends \Twig_Extension
 
     public function mapbender_manager_menu_items($legacyParamDummy = null)
     {
-        return $this->getManagerControllersDefinition(true);
+        return $this->getItems(true);
     }
 
     public function getDefaultRoute()
     {
-        $controllers = $this->getManagerControllersDefinition(false);
+        $controllers = $this->getItems(false);
         if (!$controllers) {
             throw new \RuntimeException("No manager routes defined");
         }
@@ -102,14 +90,42 @@ class MenuExtension extends \Twig_Extension
      * @param bool $filterAccess
      * @return array
      */
-    protected function getManagerControllersDefinition($filterAccess)
+    protected function getItems($filterAccess)
     {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
         $items = array();
         foreach ($this->items as $item) {
             if (!$filterAccess || $item->filter($this->authorizationChecker)) {
-                $routeDefinitions[] = $item;
+                $items[] = $item;
             }
         }
         return $items;
+    }
+
+    protected function initialize()
+    {
+        $this->items = array_map('\unserialize', $this->itemData);
+        if ($args = $this->legacyInitArgs) {
+            $this->legacyInit($args[0], $args[1], $args[2]);
+        }
+
+        $this->initialized = true;
+    }
+
+    protected function legacyInit(KernelInterface $kernel, $bundleNames, $routePrefixBlacklist)
+    {
+        foreach ($bundleNames as $legacyBundleName) {
+            /** @var ManagerBundle $bundle */
+            $bundle = $kernel->getBundle($legacyBundleName);
+            foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
+                $item = LegacyItem::fromArray($topLevelMenuDefinition);
+                if (MenuItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
+                    $this->items[] = $item;
+                }
+            }
+        }
+        $this->items = MenuItem::sortItems($this->items);
     }
 }
