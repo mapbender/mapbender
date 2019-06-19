@@ -5,29 +5,21 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LayerTreeMenuType extends AbstractType
 {
     protected $exposedChoices = array();
 
-    /**
-     * @param boolean $showDimensions see services.xml, controlled via parameter `mapbender.preview.element.dimensionshandler`
-     */
-    public function __construct($showDimensions)
+    public function __construct($legacyDummy)
     {
         $this->exposedChoices = array(
             "layerremove" => "Remove layer",
             "opacity" => "Opacity",
             "zoomtolayer" => "Zoom to layer",
             "metadata" => "Metadata",
+            "dimension" => "Dimension",
         );
-        if ($showDimensions) {
-            $this->exposedChoices += array(
-                "dimension" => "Dimension",
-            );
-        }
     }
 
 

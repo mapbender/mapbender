@@ -31,10 +31,8 @@ class MapbenderWmsBundle extends MapbenderBundle
     {
         $elements = array(
             'Mapbender\WmsBundle\Element\WmsLoader',
+            'Mapbender\WmsBundle\Element\DimensionsHandler',
         );
-        if ($this->container->getParameter('mapbender.preview.element.dimensionshandler')) {
-            $elements[] = 'Mapbender\WmsBundle\Element\DimensionsHandler';
-        }
         return $elements;
     }
 

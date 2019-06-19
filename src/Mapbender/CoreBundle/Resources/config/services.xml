@@ -136,7 +136,7 @@
 
         <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
         <service id="mapbender.form_type.element.layertree.menuChoices" class="%mapbender.form_type.element.layertree.menu.class%">
-            <argument>%mapbender.preview.element.dimensionshandler%</argument>
+            <argument>true</argument>
             <tag name="form.type" alias="layertree_menu" />
         </service>
         <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
