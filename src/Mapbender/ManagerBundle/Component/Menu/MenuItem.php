@@ -184,8 +184,12 @@ class MenuItem implements \Serializable
     public function checkActive($route)
     {
         if ($this->route !== null && $route === $this->route) {
-            $this->active = true;
             $this->current = true;
+            // Special snowflake FOMUserBundle uses the same route on a parent and child
+            // entry...
+            foreach ($this->children as $child) {
+                $child->checkActive($route);
+            }
             return true;
         } else {
             foreach ($this->children as $child) {
@@ -194,8 +198,6 @@ class MenuItem implements \Serializable
                     return true;
                 }
             }
-            $this->current = false;
-            $this->active = false;
             return false;
         }
     }
