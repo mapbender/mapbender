@@ -5,9 +5,9 @@ namespace Mapbender\ManagerBundle;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\ManagerBundle\Component\Menu\ApplicationItem;
+use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\Component\Menu\SourceCreationItem;
-use Mapbender\ManagerBundle\Component\Menu\TopLevelItem;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,7 +24,7 @@ class MapbenderManagerBundle extends MapbenderBundle
 
     protected function addMenu(ContainerBuilder $container)
     {
-        $appMenu = TopLevelItem::create("mb.manager.managerbundle.applications", 'mapbender_manager_application_index')
+        $appMenu = MenuItem::create("mb.manager.managerbundle.applications", 'mapbender_manager_application_index')
             ->setWeight(10)
             ->addChildren(array(
                 ApplicationItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new'),
@@ -32,7 +32,7 @@ class MapbenderManagerBundle extends MapbenderBundle
                 ApplicationItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import'),
             ))
         ;
-        $sourceMenu = TopLevelItem::create('mb.manager.managerbundle.sources', 'mapbender_manager_repository_index')
+        $sourceMenu = MenuItem::create('mb.manager.managerbundle.sources', 'mapbender_manager_repository_index')
             ->setWeight(20)
             ->addChildren(array(
                 new SourceCreationItem()

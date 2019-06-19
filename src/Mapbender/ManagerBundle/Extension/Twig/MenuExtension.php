@@ -7,7 +7,6 @@ namespace Mapbender\ManagerBundle\Extension\Twig;
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\LegacyItem;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
-use Mapbender\ManagerBundle\Component\Menu\TopLevelItem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -17,12 +16,12 @@ class MenuExtension extends \Twig_Extension
     protected $managerBundles = array();
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
-    /** @var TopLevelitem[] */
+    /** @var MenuItem[] */
     protected $items;
 
 
     /**
-     * @param TopLevelItem[] $items
+     * @param MenuItem[] $items
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param KernelInterface $kernel
      * @param string[] $legacyBundleNames
@@ -41,12 +40,12 @@ class MenuExtension extends \Twig_Extension
                 $bundle = $kernel->getBundle($legacyBundleName);
                 foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
                     $item = LegacyItem::fromArray($topLevelMenuDefinition);
-                    if (TopLevelItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
+                    if (MenuItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
                         $this->items[] = $item;
                     }
                 }
             }
-            $this->items = TopLevelItem::sortItems($this->items);
+            $this->items = MenuItem::sortItems($this->items);
         }
 
         foreach ($kernel->getBundles() as $bundle) {

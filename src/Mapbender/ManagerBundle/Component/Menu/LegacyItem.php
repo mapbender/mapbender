@@ -6,7 +6,7 @@ namespace Mapbender\ManagerBundle\Component\Menu;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class LegacyItem extends TopLevelItem
+class LegacyItem extends MenuItem
 {
     /** @var \Closure|null */
     protected $grantsCheckCallable;

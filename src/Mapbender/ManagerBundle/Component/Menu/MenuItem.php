@@ -15,6 +15,8 @@ class MenuItem
     protected $route;
     /** @var MenuItem[] */
     protected $children;
+    /** @var int|null */
+    protected $weight;
 
     /**
      * @param string $title
@@ -122,5 +124,63 @@ class MenuItem
             }
             return false;
         }
+    }
+
+    /**
+     * @param $num
+     * @return $this
+     */
+    public function setWeight($num)
+    {
+        $this->weight = intval($num);
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * Static sorting utility used by compiler and menu extension
+     * @param MenuItem[] $items
+     * @return MenuItem[]
+     */
+    public static function sortItems($items)
+    {
+        usort($items, function($a, $b) {
+            /** @var MenuItem $a */
+            /** @var MenuItem $b */
+            $weightA = $a->getWeight();
+            $weightB = $b->getWeight();
+            if ($weightA == $weightB) {
+                return 0;
+            }
+
+            return ($weightA < $weightB) ? -1 : 1;
+        });
+        return $items;
+    }
+
+    /**
+     * Static filtering utility used by compiler and menu extension
+     * @param MenuItem[] $items
+     * @param string[] $routePrefixBlacklist
+     * @return MenuItem[]
+     */
+    public static function filterBlacklistedRoutes($items, $routePrefixBlacklist)
+    {
+        foreach ($items as $index => $item) {
+            foreach ($routePrefixBlacklist as $prefix) {
+                if (!$item->filterRoute($prefix)) {
+                    unset($items[$index]);
+                    break;
+                }
+            }
+        }
+        return $items;
     }
 }

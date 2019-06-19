@@ -4,7 +4,7 @@
 namespace Mapbender\ManagerBundle\DependencyInjection\Compiler;
 
 
-use Mapbender\ManagerBundle\Component\Menu\TopLevelItem;
+use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -13,11 +13,11 @@ class FinalizeMenuPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $itemsKey = 'mapbender.manager.menu.items';
-        /** @var TopLevelItem[] $items */
+        /** @var MenuItem[] $items */
         $items = array_map('\unserialize', $container->getParameter($itemsKey));
         $routeBlacklist = $container->getParameter('mapbender.manager.menu.route_prefix_blacklist');
-        $items = TopLevelItem::filterBlacklistedRoutes($items, $routeBlacklist);
-        $items = TopLevelItem::sortItems($items);
+        $items = MenuItem::filterBlacklistedRoutes($items, $routeBlacklist);
+        $items = MenuItem::sortItems($items);
         // serialize remaining items again, place back into container
         $itemsValue = array_map('\serialize', array_values($items));
         $container->setParameter($itemsKey, $itemsValue);
