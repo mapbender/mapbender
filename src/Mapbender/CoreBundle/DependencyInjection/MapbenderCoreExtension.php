@@ -30,8 +30,9 @@ class MapbenderCoreExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
+        if ($config['uploads_dir'] !== false) {
+            $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
+        }
 
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));

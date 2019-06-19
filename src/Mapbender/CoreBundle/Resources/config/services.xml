@@ -33,6 +33,7 @@
         <!-- populated properly by ProvidePublishedBundleNameMapPass -->
         <parameter type="collection" key="mapbender.published_bundle_name_map" />
         <parameter key="mapbender.cookieconsent">false</parameter>
+        <parameter key="mapbender.uploads_dir">uploads</parameter>
     </parameters>
 
     <services>

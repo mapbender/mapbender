@@ -9,6 +9,9 @@ namespace Mapbender\CoreBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * @deprecated remove in v3.1
+ */
 class Configuration implements ConfigurationInterface {
     /**
      * {@inheritDoc}
@@ -16,13 +19,10 @@ class Configuration implements ConfigurationInterface {
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('mapbender_core');
-
-    	$defaultUploadDir = "uploads"; # from application/web
-
         $rootNode
             ->children()
 	        ->scalarNode('uploads_dir')
-                    ->defaultValue($defaultUploadDir)
+                    ->defaultFalse()
                 ->end()
             ->end();
 
