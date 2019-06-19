@@ -21,6 +21,7 @@
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
             <argument>%mapbender.manager.menu.items%</argument>
+            <argument type="service" id="request_stack" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="kernel" />
             <argument>%mapbender.manager.menu.legacy_bundles%</argument>

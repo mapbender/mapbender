@@ -1,5 +1,5 @@
 {% for item in items %}
-  <li class="navItem {% if item.getActive(app.request) %} activeItem {% endif %}">
+  <li class="navItem{% if item.active %} activeItem{% endif %}">
     <a class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
   </li>
     {%- set items = item.subroutes  -%}

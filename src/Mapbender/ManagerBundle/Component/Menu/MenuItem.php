@@ -4,10 +4,12 @@
 namespace Mapbender\ManagerBundle\Component\Menu;
 
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * @since v3.0.8.2
+ */
 class MenuItem implements \Serializable
 {
     /** @var string */
@@ -20,6 +22,10 @@ class MenuItem implements \Serializable
     protected $weight;
     /** @var array[] */
     protected $requiredGrants = array();
+    /** @var bool */
+    protected $current = false;
+    /** @var bool */
+    protected $active = false;
 
     /**
      * @param string $title
@@ -175,24 +181,32 @@ class MenuItem implements \Serializable
         }
     }
 
-    public function isCurrent(Request $request)
+    public function checkActive($route)
     {
-        $route = $request->attributes->get('_route');
-        return $this->route !== null && $route === $this->route;
-    }
-
-    public function getActive(Request $request)
-    {
-        if ($this->isCurrent($request)) {
+        if ($this->route !== null && $route === $this->route) {
+            $this->current = true;
             return true;
         } else {
             foreach ($this->children as $child) {
-                if ($child->getActive($request)) {
+                if ($child->checkActive($route)) {
+                    $this->active = true;
                     return true;
                 }
             }
+            $this->current = false;
+            $this->active = false;
             return false;
         }
+    }
+
+    public function getActive()
+    {
+        return $this->current || $this->active;
+    }
+
+    public function getIsCurrent()
+    {
+        return $this->current;
     }
 
     /**

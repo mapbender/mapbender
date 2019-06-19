@@ -7,6 +7,7 @@ namespace Mapbender\ManagerBundle\Extension\Twig;
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\LegacyItem;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -22,21 +23,27 @@ class MenuExtension extends \Twig_Extension
     protected $initialized = false;
     /** @var array|null */
     protected $legacyInitArgs;
+    /** @var RequestStack */
+    protected $requestStack;
 
 
     /**
      * @param MenuItem[] $items
+     * @param RequestStack $requestStack
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param KernelInterface $kernel
      * @param string[] $legacyBundleNames
      * @param string[] $routePrefixBlacklist
      */
-    public function __construct($items, AuthorizationCheckerInterface $authorizationChecker,
+    public function __construct($items,
+                                RequestStack $requestStack,
+                                AuthorizationCheckerInterface $authorizationChecker,
                                 KernelInterface $kernel,
                                 $legacyBundleNames,
                                 $routePrefixBlacklist)
     {
         $this->itemData = $items;
+        $this->requestStack = $requestStack;
         $this->authorizationChecker = $authorizationChecker;
         if ($legacyBundleNames) {
             $this->legacyInitArgs = array($kernel, $legacyBundleNames, $routePrefixBlacklist);
@@ -65,28 +72,6 @@ class MenuExtension extends \Twig_Extension
     }
 
     /**
-     * @param array $routeDefinition
-     * @return array|false
-     */
-    protected function filterAccess($routeDefinition)
-    {
-        if (!empty($routeDefinition['enabled'])) {
-            if ($routeDefinition['enabled'] instanceof \Closure) {
-                $fn = $routeDefinition['enabled'];
-                $enabled = $fn($this->authorizationChecker);
-                if (!$enabled) {
-                    return false;
-                }
-            } else {
-                $type = is_object($routeDefinition['enabled']) ? get_class($routeDefinition['enabled']) : gettype($routeDefinition['enabled']);
-                throw new \RuntimeException("Unexpected type for 'enabled': {$type}");
-            }
-        }
-        unset($routeDefinition['enabled']);
-        return $routeDefinition;
-    }
-
-    /**
      * @param bool $filterAccess
      * @return array
      */
@@ -110,10 +95,20 @@ class MenuExtension extends \Twig_Extension
         if ($args = $this->legacyInitArgs) {
             $this->legacyInit($args[0], $args[1], $args[2]);
         }
+        $route = $this->requestStack->getCurrentRequest()->attributes->get('_route');
+        foreach ($this->items as $item) {
+            $item->checkActive($route);
+        }
 
         $this->initialized = true;
     }
 
+    /**
+     * @param KernelInterface $kernel
+     * @param $bundleNames
+     * @param $routePrefixBlacklist
+     * @deprecated remove in v3.1, plus all related DI dependencies and attributes
+     */
     protected function legacyInit(KernelInterface $kernel, $bundleNames, $routePrefixBlacklist)
     {
         foreach ($bundleNames as $legacyBundleName) {

@@ -10,6 +10,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\IdentityTranslator;
 
+/**
+ * @deprecated remove in v3.1
+ */
 class RegisterLegacyMenuRoutesPass extends RegisterMenuRoutesPass
 {
     /** @var KernelInterface */
