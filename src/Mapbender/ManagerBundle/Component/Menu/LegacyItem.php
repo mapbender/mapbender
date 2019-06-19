@@ -17,13 +17,26 @@ class LegacyItem extends MenuItem
         $this->grantsCheckCallable = $grantsCheckCallable;
     }
 
+    public function serialize()
+    {
+        // force an error serializing closure
+        \serialize($this->grantsCheckCallable);
+        // if errors are suppressed, force the issue
+        throw new \LogicException("Legacy menu items cannot be serialized because they contain closures");
+    }
+
     public static function fromArray($values)
     {
         $withDefaults = $values + array(
             'enabled' => null,
             'route' => null,
         );
-        $instance = new static($values['title'], $withDefaults['route'], $withDefaults['enabled']);
+        // if there's now grants check closure, generate a regular MenuItem
+        if (empty($withDefaults['enabled'])) {
+            $instance = new MenuItem($values['title'], $values['route']);
+        } else {
+            $instance = new static($values['title'], $withDefaults['route'], $withDefaults['enabled']);
+        }
         if (array_key_exists('weight', $values)) {
             $instance->setWeight($values['weight']);
         }

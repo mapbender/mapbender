@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class MenuItem
+class MenuItem implements \Serializable
 {
     /** @var string */
     protected $title;
@@ -30,6 +30,53 @@ class MenuItem
         $this->title = $title;
         $this->route = $route;
         $this->children = array();
+    }
+
+    public function serialize()
+    {
+        $data = array(
+            'title' => $this->title,
+            'route' => $this->route,
+        );
+        $data += array_filter(array(
+            'children' => $this->children,
+        ));
+        if ($this->weight !== null) {
+            $data += array(
+                'weight' => $this->weight,
+            );
+        }
+        if ($this->requiredGrants) {
+            $data['grants'] = array();
+            foreach ($this->requiredGrants as $grantInfo) {
+                /** @var ObjectIdentity $oid */
+                $oid = $grantInfo['oid'];
+                $data['grants'][] = $oid->getType() . ':' . implode(',', $grantInfo['attributes']);
+            }
+        }
+        return \serialize($data);
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = \unserialize($serialized);
+        $this->title = $data['title'];
+        $this->route = $data['route'];
+        if (isset($data['weight'])) {
+            $this->weight = $data['weight'];
+        }
+        if (isset($data['children'])) {
+            $this->children = $data['children'];
+        } else {
+            $this->children = array();
+        }
+        if (isset($data['grants'])) {
+            foreach ($data['grants'] as $grantSpec) {
+                $parts = explode(':', $grantSpec);
+                $attributes = explode(',', $parts[1]);
+                $this->requireEntityGrant($parts[0], $attributes);
+            }
+        }
     }
 
     /**
