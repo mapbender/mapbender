@@ -8,7 +8,10 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-
+/**
+ * @deprecated mostly loads configs; absorb into MapbenderCoreBundle::build in v3.1
+ *     remove support for ~nested-style mapbender_core: uploads_dir configuration in v3.1
+ */
 class MapbenderCoreExtension extends Extension
 {
     const CONFIG_PATH = '/../Resources/config';
