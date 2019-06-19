@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Component\Menu;
 
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuItem
@@ -17,6 +18,8 @@ class MenuItem
     protected $children;
     /** @var int|null */
     protected $weight;
+    /** @var array[] */
+    protected $requiredGrants = array();
 
     /**
      * @param string $title
@@ -63,6 +66,30 @@ class MenuItem
         return $this->children;
     }
 
+    public function enabled(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        foreach ($this->requiredGrants as $requiredGrant) {
+            if (!$authorizationChecker->isGranted($requiredGrant['attributes'], $requiredGrant['oid'])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param $className
+     * @param $attributes
+     * @return $this
+     */
+    public function requireEntityGrant($className, $attributes)
+    {
+        $this->requiredGrants[] = array(
+            'oid' => new ObjectIdentity('class', $className),
+            'attributes' => (array)$attributes,
+        );
+        return $this;
+    }
+
     /**
      * @param MenuItem[] $children
      * @return $this
@@ -71,11 +98,6 @@ class MenuItem
     {
         $this->children = array_merge($this->children, $children);
         return $this;
-    }
-
-    public function enabled(AuthorizationCheckerInterface $authorizationChecker)
-    {
-        return true;
     }
 
     public function filter(AuthorizationCheckerInterface $authorizationChecker)

@@ -4,10 +4,8 @@ namespace Mapbender\ManagerBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
-use Mapbender\ManagerBundle\Component\Menu\ApplicationItem;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
-use Mapbender\ManagerBundle\Component\Menu\SourceCreationItem;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,15 +25,19 @@ class MapbenderManagerBundle extends MapbenderBundle
         $appMenu = MenuItem::create("mb.manager.managerbundle.applications", 'mapbender_manager_application_index')
             ->setWeight(10)
             ->addChildren(array(
-                ApplicationItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new'),
-                ApplicationItem::create('mb.manager.managerbundle.export_application', 'mapbender_manager_application_export'),
-                ApplicationItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import'),
+                MenuItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new')
+                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
+                MenuItem::create('mb.manager.managerbundle.export_application', 'mapbender_manager_application_export')
+                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
+                MenuItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import')
+                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
             ))
         ;
         $sourceMenu = MenuItem::create('mb.manager.managerbundle.sources', 'mapbender_manager_repository_index')
             ->setWeight(20)
             ->addChildren(array(
-                new SourceCreationItem()
+                MenuItem::create('mb.manager.managerbundle.add_source', 'mapbender_manager_repository_new')
+                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'CREATE'),
             ))
         ;
 
