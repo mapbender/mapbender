@@ -31,14 +31,7 @@ class MapbenderCoreExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $screenshot_path = $container->getParameter('kernel.root_dir')
-            . '/../web/' . $config['screenshot_path'];
         $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
-        $container->setParameter('mapbender.screenshot_path', $screenshot_path);
-
-        $container->setParameter("mapbender.selfregister", $config["selfregister"]);
-        $container->setParameter("mapbender.max_registration_time", intval($config["max_registration_time"]));
-        $container->setParameter("mapbender.max_reset_time", intval($config["max_reset_time"]));
 
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));
