@@ -208,42 +208,23 @@ class ApplicationController extends Controller
     /**
      * Check access permissions for given application.
      *
-     * This will check if any ACE in the ACL for the given applications entity
-     * grants the VIEW permission.
+     * Unpublished applications are viewable only by users who can also edit them.
      *
      * @param ApplicationEntity $application
      */
     private function checkApplicationAccess(ApplicationEntity $application)
     {
-        $user = $this->getUser();
-
-        if ($application->isYamlBased()
-            && count($application->getYamlRoles())
-        ) {
-
-            // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
-            if (!$user) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
-                    return;
-                }
-            }
-
-            $passed = false;
-            foreach ($application->getYamlRoles() as $role) {
-                if ($this->isGranted($role)) {
-                    $passed = true;
-                    break;
-                }
-            }
-            if (!$passed) {
-                throw $this->createAccessDeniedException('You are not granted view permissions for this application.');
-            }
-        }
-        $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
-
         if (!$application->isPublished()) {
             $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
         }
+        if ($application->isYamlBased()) {
+            foreach ($application->getYamlRoles() as $role) {
+                if ($this->isGranted($role)) {
+                    return;
+                }
+            }
+        }
+        $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
     }
 
     /**
