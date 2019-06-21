@@ -277,8 +277,4 @@ $(function() {
             $list.addClass("closed");
         }
     });
-    $('.regionProperties .radiobox').each(function() {
-        $(this).parent(".radioWrapper").attr('data-icon')
-        initRadioButton.call(this, false, $(this).parent(".radioWrapper").attr('data-icon') + $(this).val());
-    });
 });

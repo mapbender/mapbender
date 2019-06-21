@@ -5,6 +5,7 @@
 #}
 
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
+{% use "form_div_layout.html.twig" with radio_widget as div_radio_widget %}
 
 {% block form_widget %}
   {% spaceless %}
@@ -208,12 +209,25 @@
 {% endblock checkbox_widget %}
 
 {% block radio_widget %}
-  {% spaceless %}
-    <div class="radioWrapper left iconRadio{% if checked %} iconRadioActive{% endif %} {% if disabled %} radioboxDisabled{% endif %}" data-icon="iconRadio">
-      <input class="radiobox" type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    </div>
-  {% endspaceless %}
+  {%- if 'region_properties' in form.parent.vars['block_prefixes'] -%}
+    {%- set _iconClass = 'iconRadio' ~ (value | default('')) %}
+    <span class="radioWrapper {{ _iconClass }}{% if checked %} {{ _iconClass ~ 'Active' }}{% endif %}{% if disabled %} radioboxDisabled{% endif %}" data-icon="{{ _iconClass }}" title="{{ form.vars.label | trans }}">
+      {%- set attr = attr | merge({'class' : attr.class | default('') ~  ' hidden radiobox' | trim }) -%}
+      {{ block('div_radio_widget') }}
+    </span>
+  {%- else -%}
+    {{ block('div_radio_widget') }}
+  {%- endif -%}
 {% endblock radio_widget %}
+
+{% block region_properties_widget %}
+  <div {{ block('widget_container_attributes') }}>
+    {%- for choice in form -%}
+      {# do not invoke form_label, label is placed into a title attribute tooltip #}
+      {{- form_widget(choice, {'block_name': 'region_properties_choice_value'}) -}}
+    {%- endfor -%}
+  </div>
+{% endblock region_properties_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}

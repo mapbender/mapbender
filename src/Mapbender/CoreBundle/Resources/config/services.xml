@@ -66,6 +66,10 @@
             <tag name="form.type" alias="layerset_instances"/>
         </service>
 
+        <service id="region_properties" class="Mapbender\CoreBundle\Form\Type\Application\RegionPropertiesType">
+            <tag name="form.type" />
+        </service>
+
         <service id="signer" class="%signer.class%">
             <argument>%secret%</argument>
         </service>

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -80,11 +81,12 @@ class ApplicationType extends AbstractType
                 'required' => false,
                 'label' => 'Published'));
 
+        /** @var Application $app */
         $app = $options['data'];
-        foreach ($options['available_properties'] as $region => $properties) {
+        foreach ($options['available_properties'] as $regionName => $properties) {
             $data = "";
             foreach ($app->getRegionProperties() as $key => $regProps) {
-                if ($regProps->getName() === $region) {
+                if ($regProps->getName() === $regionName) {
                     $help = $regProps->getProperties();
                     if (array_key_exists('name', $help)) {
                         $data = $help['name'];
@@ -95,13 +97,13 @@ class ApplicationType extends AbstractType
             foreach ($properties as $values) {
                 $choices[$values['name']] = $values['label'];
             }
-            $builder->add($region, 'choice', array(
-                'property_path' => '[' . $region . ']',
+            $builder->add($regionName, 'region_properties', array(
+                'property_path' => '[' . $regionName . ']',
                 'required' => false,
                 'mapped' => false,
                 'expanded' => true,
                 'data' => $data,
-                'choices' => $choices
+                'choices' => $choices,
             ));
         }
 

@@ -294,18 +294,12 @@
 }
 .regionProperties{
   .radioWrapper{margin-left: $space/2;}
-  label {display:none;}
   .iconRadio{@include opacity(.3);@extend .iconCheckbox}
   .iconRadioActive{@include opacity(1);@extend .iconCheckbox}
   .iconRadiotabs{@include opacity(.3);@extend .iconTabActive}
   .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
   .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
   .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
-  // FOM's idea of a radio group is a group of inline-display divs with float: left;
-  // Let's fix that
-  div {
-    float: none;
-  }
 }
 
 
