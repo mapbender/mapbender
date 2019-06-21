@@ -27,6 +27,25 @@ $(function() {
             });
         }
     });
+    $(".regionProperties").each(function() {
+        function updateGroupIcons() {
+            function updateWrapper() {
+                var $cb = $('input[type="radio"]', this);
+                $(this)
+                    .toggleClass('checked', $cb.prop('checked'))
+                    .toggleClass('disabled', $cb.prop('disabled'))
+                ;
+            }
+            $('.radioWrapper', this).each(updateWrapper);
+        }
+        function onClick() {
+            var $clickedRadio = $('input[type="radio"]', this);
+            $clickedRadio.prop('checked', true);
+            updateGroupIcons.call($(this).parent());
+        }
+        updateGroupIcons.call(this);
+        $(this).on('click', '.radioWrapper', onClick);
+    });
 
     $("table.layersetTable tbody").sortable({
         connectWith: "table.layersetTable tbody",

@@ -293,13 +293,22 @@
   }
 }
 .regionProperties{
-  .radioWrapper{margin-left: $space/2;}
-  .iconRadio{@include opacity(.3);@extend .iconCheckbox}
-  .iconRadioActive{@include opacity(1);@extend .iconCheckbox}
-  .iconRadiotabs{@include opacity(.3);@extend .iconTabActive}
-  .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
-  .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
-  .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
+  .radioWrapper {
+    margin-left: $space/2;
+    opacity: .45;
+    &.disabled {
+      opacity: .2;
+    }
+    &.checked {
+      opacity: 1;
+    }
+    &.checked.disabled {
+      opacity: .6;
+    }
+  }
+  .iconRadio {@extend .iconCheckbox}
+  .iconRadiotabs {@extend .iconTabActive}
+  .iconRadioaccordion {@extend .iconBars}
 }
 
 
