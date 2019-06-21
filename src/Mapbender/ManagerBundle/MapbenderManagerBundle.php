@@ -57,12 +57,4 @@ class MapbenderManagerBundle extends ManagerBundle
         // registration / removal passes.
         $container->addCompilerPass(new FinalizeMenuPass(), PassConfig::TYPE_AFTER_REMOVING);
     }
-
-    public function getRoles()
-    {
-        return array(
-            'ROLE_ADMIN_MAPBENDER_APPLICATION'
-            => 'Can administrate applications');
-    }
-
 }

@@ -26,12 +26,8 @@ class ManagerBundle extends Bundle
     }
 
     /**
-     * Getter for all available roles a bundles defines.
-     *
-     * The returned array must be a mapping of role id strings (e.g. "ROLE_USER_ADMIN") to displayable
-     * role descriptions (e.g. "Can administrate users")
-     *
-     * @return string[] roles
+     * @deprecated remove in v3.1
+     * Return whatever you want, it doesn't affect anything anywhere
      */
     public function getRoles()
     {
