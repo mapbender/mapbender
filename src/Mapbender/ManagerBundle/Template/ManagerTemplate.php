@@ -21,7 +21,6 @@ class ManagerTemplate extends Template
 
         '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
         '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js',
         '@FOMCoreBundle/Resources/public/js/components.js',
         '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
         '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
