@@ -90,7 +90,6 @@ class ApplicationYAMLMapper
         $application = new Application();
         $application
                 ->setSlug($slug)
-                ->setId($slug)
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
