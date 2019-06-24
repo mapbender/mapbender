@@ -68,29 +68,33 @@ table {
       background-color: #f0ffed;
     }
   }
-  th{cursor: pointer;padding:5px 0px;}
+  th, td {
+    padding:5px 0;
+  }
   td{
-    padding:5px 0px;
     .labelInput{width:150px;}
     .input{display:none;}
     .iconGroup:before, .iconUser:before{
-      text-align: center;
-      width:20px;
-      margin-right: 5px;
       display: inline-block;
+      text-align: center;
+      width: 1.5em;
     }
   }
   .listFilterInput{
     margin-bottom: 0;
   }
-
-  .checkWrapper, .headTagWrapper{
-    width:56px;
-    height:$height;
-    line-height:$height;
-    text-align:center;
+  .tagbox {
+    font-size: 85%;
+    cursor: pointer;
+    width: auto;
+    text-align: center;
+    padding: 3px .5em;
+    margin: 0 .25em;
     @include noUserSelect;
     @include border-radius($radius);
+    &.multi {
+      background-color:#c1c1c1;
+    }
 
     &.active {
       color:white;
@@ -104,12 +108,12 @@ table {
         background-color: #FF702A;
       }
     }
+    input {
+      display: none;
+    }
   }
-  .headTagWrapper.multi {
-    background-color:#c1c1c1;
-  }
-
 }
+
 .tableGroupsAndUsers{
   border:{
     top:solid 3px $firstColor;

@@ -99,25 +99,18 @@ $(function() {
     // init permissions table ----------------------------------------------------------------
     // set permission root state
     function setPermissionsRootState(className, scope){
-        var root         = $("#" + className, scope);
-        var permBody     = $("#permissionsBody", scope);
+        var root         = $('thead .tagbox[data-perm-type="' + className + '"]', scope);
+        var permBody     = $("tbody", scope);
         var rowCount     = permBody.find("tr").length;
-        var checkedCount = permBody.find(".checkWrapper." + className + ' > input[type="checkbox"]:checked').length;
-        root.removeClass("active").removeClass("multi");
-
-        if(rowCount == checkedCount){
-            root.addClass("active");
-        }else if(checkedCount == 0){
-            // do nothing!
-        }else{
-            root.addClass("multi");
-        }
+        var checkedCount = permBody.find(".tagbox." + className + ' input[type="checkbox"]:checked').length;
+        root.toggleClass("active", !!rowCount && checkedCount === rowCount);
+        root.toggleClass("multi", !!(rowCount && checkedCount) && checkedCount < rowCount);
     }
     // toggle all permissions
     var toggleAllPermissions = function(scope){
         var self           = $(this);
-        var className    = self.attr("id");
-        var permElements = $(".checkWrapper[data-perm-type=" + className + "]", scope);
+        var className    = self.attr("data-perm-type");
+        var permElements = $("tbody .checkWrapper[data-perm-type=" + className + "]", scope);
         var state        = !self.hasClass("active");
         $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
             $(this).parent().toggleClass("active", state);
@@ -125,19 +118,19 @@ $(function() {
 
         // change root permission state
         setPermissionsRootState(className, scope);
-    }
+    };
     // init permission root state
     var initPermissionRoot = function(){
         var $head = $(this);
         var $table = $head.closest('table');
-        $head.find(".headTagWrapper").each(function(){
-            setPermissionsRootState($(this).attr("id"), $table);
-            var self = this;
-            $(this).on('click', function() {
-                toggleAllPermissions.call(self, $table);
-            });
+
+        $head.find(".tagbox").each(function() {
+            setPermissionsRootState($(this).attr("data-perm-type"), $table);
         });
-    }
+        $head.on('click', '.tagbox', function() {
+            toggleAllPermissions.call(this, $table);
+        });
+    };
     $("#permissionsHead").one("load", initPermissionRoot).load();
 
     // toggle permission Event

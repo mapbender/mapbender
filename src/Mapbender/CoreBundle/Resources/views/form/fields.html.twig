@@ -432,7 +432,7 @@
           {% for child in form.ace.vars.prototype %}
             {% if child.vars.attr.class is defined %}
               <th>
-                <div id="{{ child.vars.attr.class }}" class="headTagWrapper smallText {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
+                <div data-perm-type="{{ child.vars.attr.class }}" class="tagbox {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
               </th>
             {% endif %}
           {% endfor %}
@@ -453,38 +453,11 @@
   {% endspaceless %}
 {% endblock %}
 
-{% block aclElement_widget %}
-  {% spaceless %}
-
-    {% set prototype = form_widget(form.ace.vars.prototype) %}
-    <table class="clear permissionsElementTable tableCore {% if form.ace|length == 0 %}hidePermissions{% endif %}">
-      <thead id="permissionsElementHead" data-prototype="{{ prototype }}">
-        <tr>
-          {% for child in form.ace.vars.prototype %}
-            {% if child.vars.attr.class is defined %}
-              <th>
-                <div id="{{ child.vars.attr.class }}" class="headTagWrapper smallText {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
-              </th>
-            {% endif %}
-          {% endfor %}
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="permissionsElementBody">
-        {% for ace in form.ace %}
-          {{ form_widget(ace) }}
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="clearContainer"></div>
-  {% endspaceless %}
-{% endblock %}
-
 {% block tagbox_widget %}
   {% spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper smallText {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
+    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
          data-icon-on="active" data-icon-off="" >
-      {{ form.vars.attr.class }}
+      {{- form.vars.attr.class -}}
       <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endspaceless %}
