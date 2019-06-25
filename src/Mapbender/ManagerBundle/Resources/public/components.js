@@ -120,9 +120,9 @@ $(function() {
         setPermissionsRootState(className, scope);
     };
     // init permission root state
-    var initPermissionRoot = function(){
-        var $head = $(this);
-        var $table = $head.closest('table');
+    var initPermissionRoot = function() {
+        var $table = $(this);
+        var $head = $('thead', this);
 
         $head.find(".tagbox").each(function() {
             setPermissionsRootState($(this).attr("data-perm-type"), $table);
@@ -131,14 +131,15 @@ $(function() {
             toggleAllPermissions.call(this, $table);
         });
     };
-    $("#permissionsHead").one("load", initPermissionRoot).load();
+    $(document).on('init-acl-edit', '.permissionsTable', initPermissionRoot);
+    $('.permissionsTable').trigger('init-acl-edit');
 
     // toggle permission Event
     var togglePermission = function(){
         var $this = $(this);
         var scope = $this.closest('table');
         setPermissionsRootState($this.attr("data-perm-type"), scope);
-    }
+    };
     $(document).on("click", ".permissionsTable .checkWrapper", togglePermission);
 
     var popup;
@@ -148,11 +149,13 @@ $(function() {
     // also causes some CSS quirks
     // Modern markup uses a div with a data-href attribute
     // @todo: scoping; unscoped, there can only be one user list in the markup at any given time
-    $(".-fn-add-permission, #addPermission").bind("click", function(event){
+    $(".-fn-add-permission, #addPermission").bind("click", function(event) {
         event.preventDefault();
         event.stopPropagation();
         var $this = $(this);
         var url = $this.attr('data-url') || $this.attr("href");
+        var $targetTable = $('.permissionsTable', $this.closest('.tabContainer,.container,.popup'));
+        var proto = $("thead", $targetTable).attr("data-prototype");
 
         if(popup){
             popup = popup.destroy();
@@ -171,11 +174,10 @@ $(function() {
                             label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
                             cssClass: 'button',
                             callback: function() {
-                                var body  = $("#permissionsBody");
-                                var proto = $("#permissionsHead").attr("data-prototype");
+                                var $targetBody  = $("tbody", $targetTable);
 
                                 if (proto) {
-                                    var count = body.find("tr").length;
+                                    var count = $targetBody.find("tr").length;
                                     var text, val, newEl;
 
                                     $('#listFilterGroupsAndUsers input[type="checkbox"]:checked', popup.$element).each(function() {
@@ -183,7 +185,7 @@ $(function() {
                                         var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
                                         text = $row.find(".labelInput").text().trim();
                                         val = $row.find(".hide").text().trim();
-                                        newEl = body.prepend(proto.replace(/__name__/g, count))
+                                        newEl = $targetBody.prepend(proto.replace(/__name__/g, count))
                                                     .find("tr:first");
 
                                         newEl.addClass("new").find(".labelInput").text(text);
@@ -239,7 +241,7 @@ $(function() {
 
         return false;
     });
-    $("#permissionsBody").on("click", '.iconRemove', function() {
+    $(".permissionsTable").on("click", '.iconRemove', function() {
         var $row = $(this).closest('tr');
         var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
         var content = [

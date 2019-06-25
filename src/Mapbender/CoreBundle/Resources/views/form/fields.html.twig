@@ -423,7 +423,7 @@
 
     {% set prototype = form_widget(form.ace.vars.prototype) %}
     <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidePermissions{% endif %}">
-      <thead id="permissionsHead" data-prototype="{{ prototype }}">
+      <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
             <label for="inputFilterPermission" class="labelInput left">{{"fom.core.fields.filter"|trans}}</label>
@@ -439,7 +439,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="permissionsBody">
+      <tbody>
         {% for ace in form.ace %}
           {{ form_widget(ace) }}
         {% endfor %}

@@ -237,8 +237,9 @@ $(function() {
                             toremove = null;
                             $(".contentItem:first", popup.$element).removeClass('hidden');
                             if ($(".contentItem", popup.$element).length > 1) {
-                                var body = $(".contentItem:first #permissionsBody", popup.$element);
-                                var proto = $(".contentItem:first #permissionsHead", popup.$element).attr("data-prototype");
+                                var $table = $('.permissionsTable', popup.$element);
+                                var body = $("tbody", $table);
+                                var proto = $("thead", $table).attr("data-prototype");
 
                                 if (proto) {
                                     var count = body.find("tr").length;
@@ -292,6 +293,8 @@ $(function() {
                     }
                 ]
             });
+            $('.permissionsTable', popup.$element).trigger('init-acl-edit');
+
             $('#addElmPermission', popup.$element).on('click', function(e) {
                 var $anchor = $(this);
                 var url = $anchor.attr('data-href') || $anchor.attr('href');
@@ -304,19 +307,18 @@ $(function() {
                         $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
                         $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
                         popup.addContent(data);
-                        var groupUserItem, text, me, groupUserType;
+                        var groupUserItem, groupUserType;
 
-                        $("#listFilterGroupsAndUsers", popup.$element).find(".filterItem").each(function(i, e) {
-
-                            groupUserItem = $(e);
+                        $("#listFilterGroupsAndUsers .filterItem", popup.$element).each(function() {
+                            groupUserItem = $(this);
                             groupUserType = (groupUserItem.find(".tdContentWrapper")
                                     .hasClass("iconGroup") ? "iconGroup"
                                     : "iconUser");
-                            $("#permissionsBody", popup.$element).find(".labelInput").each(function(i, e) {
-                                me = $(e);
-                                text = me.text().trim();
-                                if ((groupUserItem.text().trim().toUpperCase().indexOf(text.toUpperCase()) >= 0) &&
-                                        (me.parent().hasClass(groupUserType))) {
+                            var newItemText = $('label:first', groupUserItem).text().trim().toUpperCase();
+                            $('.permissionsTable tbody .userType', popup.$element).each(function() {
+                                var $existingRowLabel = $(this);
+                                var existingRowText = $existingRowLabel.text().trim().toUpperCase();
+                                if ((existingRowText === newItemText) && ($existingRowLabel.hasClass(groupUserType))) {
                                     groupUserItem.remove();
                                 }
                             });
@@ -325,12 +327,11 @@ $(function() {
                 });
                 return false;
             });
-            $("#permissionsBody", popup.$element).on("click", '.iconRemove', function(e) {
-                var self = $(e.target);
-                var parent = self.parent().parent();
-                var userGroup = ((parent.find(".iconUser").length == 1) ? "user " : "group ") + parent.find(".labelInput").text();
+            popup.$element.on("click", '.permissionsTable tbody .iconRemove', function() {
+                var $row = $(this).closest('tr');
+                var userGroup = (($row.find(".iconUser").length == 1) ? "user " : "group ") + $row.find(".labelInput").text();
                 popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
-                toremove = parent;
+                toremove = $row;
                 $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
                 $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
             });
