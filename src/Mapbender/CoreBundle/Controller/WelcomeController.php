@@ -33,9 +33,7 @@ class WelcomeController extends ApplicationControllerBase
         $allowedApplications = array();
 
         foreach ($this->getMapbender()->getApplicationEntities() as $application) {
-            if ($this->isGranted('VIEW', $application)
-                && ($this->isGranted('EDIT', $application) || $application->isPublished())
-                && !$application->isExcludedFromList()) {
+            if ($application->isPublished() || $this->isGranted('VIEW', $application) || $this->isGranted('EDIT', $application)) {
                 $allowedApplications[] = $application;
             }
         }

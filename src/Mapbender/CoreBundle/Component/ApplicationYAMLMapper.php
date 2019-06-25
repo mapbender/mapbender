@@ -94,7 +94,6 @@ class ApplicationYAMLMapper
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
-                ->setExcludeFromList(isset($definition['excludeFromList'])?$definition['excludeFromList']:false)
                 ->setPublished($definition['published'])
         ;
         if (!empty($definition['screenshot'])) {

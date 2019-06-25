@@ -35,9 +35,6 @@ class Application
 
     const MAP_ENGINE_OL2 = 'ol2';
 
-    /**  @var bool Exclude form application menu list */
-    protected $excludeFromList = false;
-
     /** @var array YAML roles */
     protected $yamlRoles;
 
@@ -595,26 +592,6 @@ class Application
             }
         }
         return null;
-    }
-
-    /**
-     * Hide application from menu list
-     *
-     * @param $exclude
-     * @return $this
-     */
-    public function setExcludeFromList($exclude)
-    {
-        $this->excludeFromList = $exclude;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExcludedFromList()
-    {
-        return $this->excludeFromList;
     }
 
     /**
