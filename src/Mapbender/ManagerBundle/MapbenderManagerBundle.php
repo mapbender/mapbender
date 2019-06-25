@@ -2,7 +2,6 @@
 
 namespace Mapbender\ManagerBundle;
 
-use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
@@ -21,8 +20,6 @@ class MapbenderManagerBundle extends ManagerBundle
         $loader = new XmlFileLoader($container, $configLocator);
         $loader->load('services.xml');
 
-        $appFileDir = dirname(__FILE__) . '/Resources/config/applications';
-        $container->addCompilerPass(new MapbenderYamlCompilerPass(realpath($appFileDir)));
         $this->addMenu($container);
     }
 

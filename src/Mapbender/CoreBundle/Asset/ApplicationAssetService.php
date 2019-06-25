@@ -5,13 +5,13 @@ namespace Mapbender\CoreBundle\Asset;
 
 
 use Assetic\Asset\StringAsset;
+use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -89,6 +89,21 @@ class ApplicationAssetService
         return $this->compileAssetContent($application, $refs, $type);
     }
 
+    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type, $slug)
+    {
+        if (!in_array($type, $this->getValidAssetTypes(), true)) {
+            throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
+        }
+        $referenceLists = array(
+            $this->getBaseAssetReferences($type),
+            $source->getAssets($type),
+            $source->getLateAssets($type),
+        );
+        $references = call_user_func_array('\array_merge', $referenceLists);
+        $references = array_unique($this->qualifyAssetReferencesBulk($source, $references, $type));
+        return $this->compileAssetContent($slug, $references, $type);
+    }
+
     /**
      * @param Entity\Application $application
      * @param $type
@@ -97,7 +112,8 @@ class ApplicationAssetService
     public function collectAssetReferences(Entity\Application $application, $type)
     {
         $referenceLists = array(
-            $this->getBaseAssetReferences($application, $type),
+            $this->getBaseAssetReferences($type),
+            $this->getMapEngineAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
@@ -126,17 +142,17 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param string $slug
      * @param string[] $refs
      * @param string $type
      * @return string
      */
-    protected function compileAssetContent(Entity\Application $application, $refs, $type)
+    protected function compileAssetContent($slug, $refs, $type)
     {
         switch ($type) {
             case 'css':
                 $sourcePath = $this->getCssAssetSourcePath();
-                $targetPath = $this->getCssAssetTargetPath($application);
+                $targetPath = $this->getCssAssetTargetPath($slug);
                 return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->debug);
             case 'js':
                 return $this->compiler->compileRaw($refs, $this->debug);
@@ -178,15 +194,14 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
      * @param string $type
      * @return string[]
      */
-    public function getBaseAssetReferences(Entity\Application $application, $type)
+    protected function getBaseAssetReferences($type)
     {
         switch ($type) {
             case 'js':
-                $commonAssets = array(
+                return array(
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
@@ -203,10 +218,8 @@ class ApplicationAssetService
                 );
                 break;
             default:
-                $commonAssets = array();
-                break;
+                return array();
         }
-        return array_merge($commonAssets, $this->getMapEngineAssetReferences($application, $type));
     }
 
     /**
@@ -271,13 +284,13 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param string $slug
      * @return string
      */
-    protected function getCssAssetTargetPath(Entity\Application $application)
+    protected function getCssAssetTargetPath($slug)
     {
         return $this->router->generate('mapbender_core_application_assets', array(
-            'slug' => $application->getSlug(),
+            'slug' => $slug,
             'type' => 'css',
         ));
     }
@@ -299,13 +312,13 @@ class ApplicationAssetService
 
     /**
      * @param Entity\Application $application
-     * @return Template|ManagerTemplate
+     * @return Template
      */
     protected function getDummyTemplateComponent(Entity\Application $application)
     {
         $templateClassName = $application->getTemplate();
         $appComp = $this->elementFactory->appComponentFromEntity($application);
-        /** @var Template|ManagerTemplate $instance */
+        /** @var Template $instance */
         $instance = new $templateClassName($this->dummyContainer, $appComp);
         return $instance;
     }

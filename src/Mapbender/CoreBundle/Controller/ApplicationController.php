@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
@@ -13,6 +14,8 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\ManagerBundle\Template\LoginTemplate;
+use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -61,7 +64,20 @@ class ApplicationController extends Controller
     {
         $isProduction = $this->isProduction();
         $cacheFile        = $this->getCachedAssetPath($slug, $type);
-        $appEntity = $this->getApplicationEntity($slug);
+        if ($source = $this->getManagerAssetDependencies($slug)) {
+            if (!$source) {
+                throw new NotFoundHttpException('The application can not be found.');
+            }
+            $isAppDbBased = false;
+        } else {
+            $source = $this->getApplicationEntity($slug);
+            $isAppDbBased = $source->getSource() === ApplicationEntity::SOURCE_DB;
+        }
+        if (!$isAppDbBased) {
+            $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
+        } else {
+            $appModificationTs = $source->getUpdated()->getTimestamp();
+        }
 
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
@@ -69,11 +85,10 @@ class ApplicationController extends Controller
 
         $useCached = $isProduction && file_exists($cacheFile);
         if ($useCached) {
-            $isAppDbBased = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
-            $modificationTs = filectime($cacheFile);
+            $cacheUpdateTs = filectime($cacheFile);
             // Always reuse cache entry for YAML applications
             // Check the update timestamp only for DB applications,
-            $useCached = !$isAppDbBased || ($appEntity->getUpdated()->getTimestamp() < $modificationTs);
+            $useCached = !$isAppDbBased || ($appModificationTs < $cacheUpdateTs);
 
             if ($useCached) {
                 $response = new BinaryFileResponse($cacheFile, 200, $headers);
@@ -85,7 +100,11 @@ class ApplicationController extends Controller
         }
         /** @var ApplicationAssetService $assetService */
         $assetService = $this->container->get('mapbender.application_asset.service');
-        $content = $assetService->getAssetContent($appEntity, $type);
+        if ($source instanceof ApplicationEntity) {
+            $content = $assetService->getAssetContent($source, $type);
+        } else {
+            $content = $assetService->getTemplateAssetContent($source, $type, $slug);
+        }
 
         if ($isProduction) {
             file_put_contents($cacheFile, $content);
@@ -174,6 +193,22 @@ class ApplicationController extends Controller
         }
         $this->checkApplicationAccess($entity);
         return $entity;
+    }
+
+    /**
+     * @param string $slug
+     * @return TemplateAssetDependencyInterface|null
+     */
+    private function getManagerAssetDependencies($slug)
+    {
+        switch ($slug) {
+            case 'manager':
+                return new ManagerTemplate();
+            case 'mb3-login':
+                return new LoginTemplate();
+            default:
+                return null;
+        }
     }
 
     /**

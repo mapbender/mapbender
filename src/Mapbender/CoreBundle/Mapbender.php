@@ -173,12 +173,6 @@ class Mapbender
         $applications = array();
         $yamlMapper   = new ApplicationYAMLMapper($this->container);
         foreach ($yamlMapper->getApplications() as $application) {
-
-            // Exclude administration applications
-            if (strpos($application->getTemplate(), "Mapbender\\ManagerBundle") === 0) {
-                continue;
-            }
-
             if ($onlyPublic && !$application->isPublished()) {
                 continue;
             }
