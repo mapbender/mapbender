@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\Component\Collections\YamlElementCollection;
+use Mapbender\Component\Collections\YamlSourceInstanceCollection;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -146,16 +147,10 @@ class ApplicationYAMLMapper
             ->setId($layersetId)
             ->setTitle(strval($layersetId))
         ;
-
-        $weight = 0;
-        foreach ($layersetDefinition as $instanceId => $instanceDefinition) {
-            /** @var TypeDirectoryService $typeDirectory */
-            $typeDirectory = $this->container->get('mapbender.source.typedirectory.service');
-            $instance = $typeDirectory->fromConfig($instanceDefinition, $instanceId);
-            $instance->setLayerset($layerset);
-            $instance->setWeight($weight++);
-            $layerset->addInstance($instance);
-        }
+        /** @var TypeDirectoryService $typeDirectory */
+        $typeDirectory = $this->container->get('mapbender.source.typedirectory.service');
+        $instanceCollection = new YamlSourceInstanceCollection($typeDirectory, $layerset, $layersetDefinition);
+        $layerset->setInstances($instanceCollection);
         return $layerset;
     }
 
