@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -116,6 +117,11 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         } else {
             unset($definition['elements']);
         }
+        foreach ($definition['layersets'] as $lsIndex => $instanceConfigs) {
+            foreach ($instanceConfigs as $instanceId => $instanceConfig) {
+                $definition['layersets'][$lsIndex][$instanceId] = $this->processSourceInstanceDefinition($instanceConfig, $instanceId, $lsIndex);
+            }
+        }
         return $definition;
     }
 
@@ -137,6 +143,29 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             }
             unset($definition['layerset']);
         }
+        return $definition;
+    }
+
+    /**
+     * @param array $definition
+     * @param string $instanceId
+     * @param mixed $lsIndex
+     * @return array
+     */
+    protected function processSourceInstanceDefinition($definition, $instanceId, $lsIndex)
+    {
+        if (empty($definition['type']) && !empty($definition['class'])) {
+            if (is_a($definition['class'], 'Mapbender\WmsBundle\Entity\WmsInstance', true)) {
+                $definition['type'] = Source::TYPE_WMS;
+            } else {
+                // NOTE: WmtsInstance is actually already two types, WMTS and TMS
+                throw new \RuntimeException("Can't infer type from instance class name {$definition['class']})");
+            }
+        }
+        if (empty($definition['type'])) {
+            throw new \RuntimeException("Missing instance type in yaml application layerset {$lsIndex}, instance id {$instanceId}");
+        }
+        unset($definition['class']);
         return $definition;
     }
 }

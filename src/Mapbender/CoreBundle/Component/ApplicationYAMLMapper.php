@@ -2,10 +2,10 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\Component\Collections\YamlElementCollection;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -149,13 +149,9 @@ class ApplicationYAMLMapper
 
         $weight = 0;
         foreach ($layersetDefinition as $instanceId => $instanceDefinition) {
-            $class = $instanceDefinition['class'];
-            unset($instanceDefinition['class']);
-            /** @var SourceInstance $instance */
-            $instance = new $class();
-            $instance->setId($instanceId);
-            $entityHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
-            $entityHandler->setParameters($instanceDefinition);
+            /** @var TypeDirectoryService $typeDirectory */
+            $typeDirectory = $this->container->get('mapbender.source.typedirectory.service');
+            $instance = $typeDirectory->fromConfig($instanceDefinition, $instanceId);
             $instance->setLayerset($layerset);
             $instance->setWeight($weight++);
             $layerset->addInstance($instance);
