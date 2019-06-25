@@ -63,7 +63,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         foreach ($finder as $file) {
             $fileData = Yaml::parse($file->getRealPath());
             if (!empty($fileData['parameters']['applications'])) {
-                $applications = array_replace($applications, $fileData['parameters']['applications']);
+                foreach ($fileData['parameters']['applications'] as $slug => $appDefinition) {
+                    $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
+                }
                 // Add a file resource to auto-invalidate the container build when the input file changes
                 $container->addResource(new FileResource($file->getRealPath()));
             }
@@ -86,5 +88,55 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             }
             $container->setParameter('applications', $applicationCollection);
         }
+    }
+
+    /**
+     * @param string $slug
+     * @param array $definition
+     * @return array
+     */
+    protected function processApplicationDefinition($slug, $definition)
+    {
+        if (!isset($definition['layersets'])) {
+            if (isset($definition['layerset'])) {
+                // @todo: add strict mode support and throw if enabled
+                @trigger_error("Deprecated: your YAML application {$slug} defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
+                $definition['layersets'] = array($definition['layerset']);
+            } else {
+                $definition['layersets'] = array();
+            }
+        }
+        unset($definition['layerset']);
+        if (!empty($definition['elements'])) {
+            foreach ($definition['elements'] as $region => $elementDefinitionList) {
+                foreach ($elementDefinitionList as $elementIndex => $elementDefinition) {
+                    $definition['elements'][$region][$elementIndex] = $this->processElementDefinition($elementDefinition);
+                }
+            }
+        } else {
+            unset($definition['elements']);
+        }
+        return $definition;
+    }
+
+    /**
+     * @param array $definition
+     * @return array
+     */
+    protected function processElementDefinition($definition)
+    {
+        if ($definition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
+            if (!isset($elementDefinition['layersets'])) {
+                if (isset($definition['layerset'])) {
+                    // @todo: add strict mode support and throw if enabled
+                    @trigger_error("Deprecated: your YAML Map Element defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
+                    $elementDefinition['layersets'] = array($definition['layerset']);
+                } else {
+                    $elementDefinition['layersets'] = array();
+                }
+            }
+            unset($definition['layerset']);
+        }
+        return $definition;
     }
 }

@@ -142,14 +142,6 @@ class ApplicationYAMLMapper
 
         $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
 
-        if (!isset($definition['layersets'])) {
-            $definition['layersets'] = array();
-            if (isset($definition['layerset'])) {
-                // @todo: add strict mode support and throw if enabled
-                @trigger_error("Deprecated: your YAML application defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
-                $definition['layersets'][] = $definition['layerset'];
-            }
-        }
         foreach ($definition['layersets'] as $layersetId => $layersetDefinition) {
             $layerset = $this->createLayerset($layersetId, $layersetDefinition);
             $layerset->setApplication($application);
@@ -162,34 +154,23 @@ class ApplicationYAMLMapper
     /**
      * @param string $id
      * @param string $region
-     * @param mixed[] $elementDefinition
+     * @param mixed[] $configuration
      * @return Element
      */
-    protected function createElement($id, $region, $elementDefinition)
+    protected function createElement($id, $region, $configuration)
     {
-        /**
-         * MAP Layersets handling
-         */
-        if ($elementDefinition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
-            if (!isset($elementDefinition['layersets'])) {
-                $elementDefinition['layersets'] = array();
-            }
-            if (isset($elementDefinition['layerset'])) {
-                // @todo: add strict mode support and throw if enabled
-                @trigger_error("Deprecated: your YAML Map Element defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
-                $elementDefinition['layersets'][] = $elementDefinition['layerset'];
-            }
-        }
-
-        $configuration = $elementDefinition;
+        $title = ArrayUtil::getDefault($configuration, 'title', false);
+        $className = $configuration['class'];
         unset($configuration['class']);
         unset($configuration['title']);
         try {
-            $element = $this->getElementFactory()->newEntity($elementDefinition['class'], $region);
+            $element = $this->getElementFactory()->newEntity($className, $region);
             $element->setConfiguration($configuration);
             $element->setId($id);
             $elComp = $this->getElementFactory()->componentFromEntity($element);
-            $title = ArrayUtil::getDefault($elementDefinition, 'title', $elComp->getTitle());
+            if (!$title) {
+                $title = $elComp->getTitle();
+            }
             if ($elComp::$merge_configurations) {
                 // Configuration may already have been modified once implicitly
                 /** @see ConfigMigrationInterface */
@@ -201,7 +182,7 @@ class ApplicationYAMLMapper
             return $element;
         } catch (ElementErrorException $e) {
             // @todo: add strict mode support and throw if enabled
-            $this->logger->warning("Your YAML application contains an invalid Elemenet {$elementDefinition['class']}: {$e->getMessage()}");
+            $this->logger->warning("Your YAML application contains an invalid Elemenet {$className}: {$e->getMessage()}");
             return null;
         }
     }
