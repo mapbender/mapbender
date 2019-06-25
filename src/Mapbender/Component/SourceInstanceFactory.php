@@ -14,4 +14,11 @@ interface SourceInstanceFactory
      * @return SourceInstance
      */
     public function createInstance(Source $source);
+
+    /**
+     * @param array $data
+     * @param string $id used for instance and as instance layer id prefix
+     * @return SourceInstance
+     */
+    public function fromConfig(array $data, $id);
 }

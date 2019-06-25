@@ -45,4 +45,9 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
         return $instanceLayer;
     }
+
+    public function fromConfig(array $data, $id)
+    {
+        throw new \RuntimeException("Yaml-defined Wmts sources not implemented");
+    }
 }

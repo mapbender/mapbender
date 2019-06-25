@@ -54,9 +54,18 @@ class TypeDirectoryService implements SourceInstanceFactory
      */
     public function getInstanceFactory(Source $source)
     {
-        $key = strtolower($source->getType());
+        return $this->getInstanceFactoryByType($source->getType());
+    }
+
+    /**
+     * @param string $type
+     * @return SourceInstanceFactory
+     */
+    public function getInstanceFactoryByType($type)
+    {
+        $key = strtolower($type);
         if (!array_key_exists($key, $this->instanceFactories)) {
-            $message = 'No instance factory available for source instance type ' . print_r($key, true);
+            $message = 'No instance factory available for source instance type ' . print_r($type, true);
             throw new \RuntimeException($message);
         }
         return $this->instanceFactories[$key];
@@ -69,6 +78,14 @@ class TypeDirectoryService implements SourceInstanceFactory
     public function createInstance(Source $source)
     {
         return $this->getInstanceFactory($source)->createInstance($source);
+    }
+
+    public function fromConfig(array $data, $id)
+    {
+        if (empty($data['type'])) {
+            throw new \RuntimeException("Missing mandatory value 'type' in given data");
+        }
+        return $this->getInstanceFactoryByType($data['type'])->fromConfig($data, $id);
     }
 
     /**

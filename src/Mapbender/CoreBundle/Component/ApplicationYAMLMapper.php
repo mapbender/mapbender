@@ -5,6 +5,7 @@ use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -140,7 +141,6 @@ class ApplicationYAMLMapper
      */
     protected function createLayerset($layersetId, $layersetDefinition)
     {
-        // TODO: Add roles
         $layerset = new Layerset();
         $layerset
             ->setId($layersetId)
@@ -148,17 +148,16 @@ class ApplicationYAMLMapper
         ;
 
         $weight = 0;
-        foreach ($layersetDefinition as $layerId => $layerDefinition) {
-            $class = $layerDefinition['class'];
-            unset($layerDefinition['class']);
+        foreach ($layersetDefinition as $instanceId => $instanceDefinition) {
+            $class = $instanceDefinition['class'];
+            unset($instanceDefinition['class']);
+            /** @var SourceInstance $instance */
             $instance = new $class();
+            $instance->setId($instanceId);
             $entityHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
-            $layerParams = array_merge($layerDefinition, array(
-                'weight'   => $weight++,
-                "id"       => $layerId,
-                "layerset" => $layerset,
-            ));
-            $entityHandler->setParameters($layerParams);
+            $entityHandler->setParameters($instanceDefinition);
+            $instance->setLayerset($layerset);
+            $instance->setWeight($weight++);
             $layerset->addInstance($instance);
         }
         return $layerset;
