@@ -1,13 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -120,23 +117,9 @@ class ApplicationYAMLMapper
                 $application->addRegionProperties($regionProperties);
             }
         }
-
-        if (!isset($definition['elements'])) {
-            $definition['elements'] = array();
-        }
-
-        foreach ($definition['elements'] as $region => $elementsDefinition) {
-            $weight = 0;
-            foreach ($elementsDefinition ?: array() as $id => $elementDefinition) {
-                $element = $this->createElement($id, $region, $elementDefinition);
-                if (!$element) {
-                    continue;
-                }
-                $element->setWeight($weight++);
-                $element->setApplication($application);
-                $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : array());
-                $application->addElement($element);
-            }
+        if (!empty($definition['elements'])) {
+            $collection = new YamlElementCollection($this->getElementFactory(), $application, $definition['elements'], $this->logger);
+            $application->setElements($collection);
         }
 
         $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
@@ -148,42 +131,6 @@ class ApplicationYAMLMapper
         }
         $application->setSource(Application::SOURCE_YAML);
         return $application;
-    }
-
-    /**
-     * @param string $id
-     * @param string $region
-     * @param mixed[] $configuration
-     * @return Element
-     */
-    protected function createElement($id, $region, $configuration)
-    {
-        $title = ArrayUtil::getDefault($configuration, 'title', false);
-        $className = $configuration['class'];
-        unset($configuration['class']);
-        unset($configuration['title']);
-        try {
-            $element = $this->getElementFactory()->newEntity($className, $region);
-            $element->setConfiguration($configuration);
-            $element->setId($id);
-            $elComp = $this->getElementFactory()->componentFromEntity($element);
-            if (!$title) {
-                $title = $elComp->getTitle();
-            }
-            if ($elComp::$merge_configurations) {
-                // Configuration may already have been modified once implicitly
-                /** @see ConfigMigrationInterface */
-                $configBefore = $element->getConfiguration();
-                $configAfter = $elComp->mergeArrays($elComp->getDefaultConfiguration(), $configBefore);
-                $element->setConfiguration($configAfter);
-            }
-            $element->setTitle($title);
-            return $element;
-        } catch (ElementErrorException $e) {
-            // @todo: add strict mode support and throw if enabled
-            $this->logger->warning("Your YAML application contains an invalid Elemenet {$className}: {$e->getMessage()}");
-            return null;
-        }
     }
 
     /**

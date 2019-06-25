@@ -325,7 +325,7 @@ class Application
     /**
      * Get elements
      *
-     * @return Element[]|ArrayCollection
+     * @return Element[]|Collection
      */
     public function getElements()
     {
@@ -335,10 +335,10 @@ class Application
     /**
      * Set elements
      *
-     * @param ArrayCollection $elements elements
+     * @param Collection $elements elements
      * @return $this
      */
-    public function setElements(ArrayCollection $elements)
+    public function setElements(Collection $elements)
     {
         $this->elements = $elements;
         return $this;
