@@ -215,14 +215,6 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getType()
-    {
-        return parent::getType() ? parent::getType() : Source::TYPE_WMS;
-    }
-
-    /**
      * Set originUrl
      *
      * @param string $originUrl
@@ -935,6 +927,11 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
     {
         $this->identifier = $identifier;
         return $this;
+    }
+
+    public function getTypeLabel()
+    {
+        return 'OGC WMS';
     }
 
     /**

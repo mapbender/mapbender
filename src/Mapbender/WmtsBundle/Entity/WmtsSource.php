@@ -139,7 +139,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     public function __construct()
     {
         parent::__construct();
-        $this->setType(Source::TYPE_WMTS);
         $this->contact = new Contact();
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
@@ -162,6 +161,20 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     public function getManagertype()
     {
         return strtolower(parent::TYPE_WMTS);
+    }
+
+    public function getTypeLabel()
+    {
+        if (!$this->type) {
+            // new entity, type undecided
+            return 'OGC WMTS / TMS';
+        } else {
+            if ($this->type === Source::TYPE_WMTS) {
+                return 'OGC WMTS';
+            } else {
+                return 'TMS';
+            }
+        }
     }
 
     /**

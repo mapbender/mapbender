@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
+use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\Component\SourceInstanceFactory;
 use Mapbender\Component\SourceLoader;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
@@ -86,6 +87,25 @@ class TypeDirectoryService implements SourceInstanceFactory
             throw new \RuntimeException($message);
         }
         return $this->loaders[$key];
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function getRefreshSupprtByType($type)
+    {
+        $loader = $this->getSourceLoaderByType($type);
+        return ($loader instanceof RefreshableSourceLoader);
+    }
+
+    /**
+     * @param Source $source
+     * @return bool
+     */
+    public function getRefreshSupport(Source $source)
+    {
+        return $this->getRefreshSupprtByType($source->getType());
     }
 
     /**

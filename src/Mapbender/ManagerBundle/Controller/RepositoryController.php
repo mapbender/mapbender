@@ -225,12 +225,17 @@ class RepositoryController extends ApplicationControllerBase
     public function updateformAction($sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        /** @var Source|null $source */
         $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
             // If edit action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
             $this->denyAccessUnlessGranted('VIEW', $oid);
             $this->denyAccessUnlessGranted('EDIT', $oid);
+            throw $this->createNotFoundException();
+        }
+        $canUpdate = $this->getTypeDirectory()->getRefreshSupport($source);
+        if (!$canUpdate) {
             throw $this->createNotFoundException();
         }
         // Must have VIEW + EDIT on either any Source globally, or on this particular
