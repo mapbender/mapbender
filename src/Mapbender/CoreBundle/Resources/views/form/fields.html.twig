@@ -17,6 +17,18 @@
   {% endspaceless %}
 {% endblock form_widget %}
 
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="messageBox error">
+            <ul>
+            {% for error in errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock -%}
+
 {% block form_widget_simple %}
   {% spaceless %}
     {% set type = type|default('text') %}
