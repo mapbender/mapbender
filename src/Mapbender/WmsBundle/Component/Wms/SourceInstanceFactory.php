@@ -57,6 +57,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $instance = $this->createInstance($source);
         $instance->setId($id);
         $instance
+            ->setTItle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))
             ->setProxy(!isset($data['proxy']) ? false : $data['proxy'])
             ->setVisible(!isset($data['visible']) ? true : $data['visible'])
             ->setFormat(!isset($data['format']) ? 'image/png' : $data['format'])
@@ -106,7 +107,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $source = new WmsSource();
         $source
             ->setId($id)
-            ->setTitle(!isset($data['id']) ? '' : $data['id'])
+            ->setTitle(ArrayUtil::getDefault($data, 'title', $id))
             ->setVersion(!isset($data['version']) ? '1.1.1' : $data['version'])
             ->setOriginUrl(!isset($data['url']) ? null : $data['url'])
         ;
