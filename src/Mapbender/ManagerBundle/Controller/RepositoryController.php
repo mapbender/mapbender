@@ -44,19 +44,26 @@ class RepositoryController extends ApplicationControllerBase
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
-        $sources = $repository->findBy(array(), array('id' => 'ASC'));
+        /** @var Source[] $allSources */
+        $allSources = $repository->findBy(array(), array('id' => 'ASC'));
 
-        $allowed_sources = array();
-        foreach ($sources as $source) {
+        $sources = array();
+        $reloadableIds = array();
+        $typeDirectory = $this->getTypeDirectory();
+        foreach ($allSources as $source) {
             if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $source)) {
                 continue;
             }
-            $allowed_sources[] = $source;
+            $sources[] = $source;
+            if ($typeDirectory->getRefreshSupport($source)) {
+                $reloadableIds[] = $source->getId();
+            }
         }
 
         return $this->render('@MapbenderManager/Repository/index.html.twig', array(
             'title' => 'Repository',
-            'sources' => $allowed_sources,
+            'sources' => $sources,
+            'reloadableIds' => $reloadableIds,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
         ));
