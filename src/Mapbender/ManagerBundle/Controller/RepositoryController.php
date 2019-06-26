@@ -219,11 +219,12 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * Returns a Source update form.
      *
-     * @ManagerRoute("/source/{sourceId}/updateform", methods={"GET"})
+     * @ManagerRoute("/source/{sourceId}/update", methods={"GET", "POST"})
+     * @param Request $request
      * @param string $sourceId
      * @return Response
      */
-    public function updateformAction($sourceId)
+    public function updateformAction(Request $request, $sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         /** @var Source|null $source */
@@ -249,52 +250,37 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         /** @var RefreshableSourceLoader $loader */
-        $loader = $this->getTypeDirectory()->getSourceLoaderByType('wms'); //$source->getType());
+        $loader = $this->getTypeDirectory()->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
-        $form = $this->createForm(new HttpSourceOriginType(), $formModel, array(
-            'action' => $this->generateUrl('mapbender_manager_repository_update', array(
-                'sourceId' => $sourceId,
-            )),
-        ));
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getEntityManager();
+            $em->beginTransaction();
+            try {
+                $loader->refresh($source, $formModel);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute("mapbender_manager_repository_updateform", array(
+                    "sourceId" => $source->getId(),
+                ));
+            }
+            $em->persist($source);
+
+            $em->flush();
+            $em->commit();
+
+            $this->addFlash('success', "Your {$source->getType()} source has been updated");
+            return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                "sourceId" => $source->getId(),
+            ));
+        }
 
         return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
             'form' => $form->createView(),
             'sourceTypeLabel' => $source->getTypeLabel(),
-        ));
-    }
-
-    /**
-     * Updates a Source
-     *
-     * @ManagerRoute("/source/{sourceId}/update", methods={"POST"})
-     * @param string $sourceId
-     * @return Response
-     */
-    public function updateAction($sourceId)
-    {
-        /** @todo: fold identical preface code shared with updateformAction */
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        if (!$source) {
-            // If edit action is forbidden, hide the fact that the source doesn't
-            // exist behind an access denied.
-            $this->denyAccessUnlessGranted('VIEW', $oid);
-            $this->denyAccessUnlessGranted('EDIT', $oid);
-            throw $this->createNotFoundException();
-        }
-        if (!$this->isGranted('VIEW', $oid)) {
-            $this->denyAccessUnlessGranted('VIEW', $source);
-        }
-        if (!$this->isGranted('EDIT', $oid)) {
-            $this->denyAccessUnlessGranted('EDIT', $source);
-        }
-
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$source->getManagertype()];
-        // -- common preface code end --
-        return $this->forward($manager['bundle'] . ":" . "Repository:update", array(
-            "sourceId" => $source->getId(),
         ));
     }
 
