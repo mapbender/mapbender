@@ -46,7 +46,6 @@ class MapbenderWmtsBundle extends MapbenderBundle
                 'id' => 'wmts',
                 'label' => 'OGC WMTS / TMS',
                 'manager' => 'mapbender_wmts_repository',
-                'startAction' => "MapbenderWmtsBundle:Repository:start",
                 'updateformAction' => "MapbenderWmtsBundle:Repository:updateform",
                 'bundle' => "MapbenderWmtsBundle"
             )

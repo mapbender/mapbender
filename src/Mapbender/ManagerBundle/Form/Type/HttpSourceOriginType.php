@@ -1,47 +1,33 @@
 <?php
 
-namespace Mapbender\WmtsBundle\Form\Type;
+
+namespace Mapbender\ManagerBundle\Form\Type;
+
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-/**
- * WmtsSourceSimpleType class
- */
-class WmtsSourceSimpleType extends AbstractType
+class HttpSourceOriginType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'wmtssource';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('originUrl', 'text', array(
+            ->add('originUrl', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
                 'label' => 'mb.manager.source.serviceurl',
                 'attr' => array(
-                    'title' => 'The wmts GetCapabilities url',
+                    // @todo: translate
+                    'title' => 'The GetCapabilities url',
                 ),
             ))
-            ->add('username', 'text', array(
+            ->add('username', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.manager.source.username',
                 'attr' => array(
-                    'title' => 'The username.',
                     'autocomplete' => 'off',
                 ),
             ))
-            ->add('password', 'password',
-                array(
+            ->add('password', 'Symfony\Component\Form\Extension\Core\Type\PasswordType', array(
                 'required' => false,
                 'label' => 'mb.manager.source.password',
                 'attr' => array(
@@ -50,5 +36,4 @@ class WmtsSourceSimpleType extends AbstractType
             ))
         ;
     }
-
 }

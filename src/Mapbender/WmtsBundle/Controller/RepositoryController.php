@@ -4,6 +4,7 @@ namespace Mapbender\WmtsBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
@@ -11,7 +12,6 @@ use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType;
-use Mapbender\WmtsBundle\Form\Type\WmtsSourceSimpleType;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,17 +29,6 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class RepositoryController extends Controller
 {
-    /**
-     * @ManagerRoute("/start", methods={"GET"})
-     */
-    public function startAction()
-    {
-        $form = $this->createForm(new WmtsSourceSimpleType(), new WmtsSource());
-        return $this->render('@MapbenderWmts/Repository/form.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-
     /**
      * @ManagerRoute("{wmts}", methods={"GET"})
      * @param WmtsSource $wmts
@@ -67,7 +56,7 @@ class RepositoryController extends Controller
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $formModel = new HttpOriginModel();
-        $form = $this->createForm(new WmtsSourceSimpleType(), $formModel);
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
         $form->submit($request);
 
         if ($form->isValid()) {

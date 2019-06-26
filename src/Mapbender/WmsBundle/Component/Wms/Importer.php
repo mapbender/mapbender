@@ -5,11 +5,11 @@ namespace Mapbender\WmsBundle\Component\Wms;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,14 +45,14 @@ class Importer
      * Performs a GetCapabilities request against WMS at $serviceOrigin and returns a WmsSource instance and the
      * (suppressed) XML validation error, if any, wrapped in a ImporterResponse object.
      *
-     * @param WmsOrigin $serviceOrigin
+     * @param HttpOriginInterface $serviceOrigin
      * @param bool $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
      * @throws XmlParseException
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
-    public function evaluateServer(WmsOrigin $serviceOrigin, $onlyValid=true)
+    public function evaluateServer(HttpOriginInterface $serviceOrigin, $onlyValid=true)
     {
         $capsDocument = $this->loadCapabilitiesDocument($serviceOrigin);
         $response = $this->evaluateCapabilitiesDocument($capsDocument, $onlyValid);
@@ -88,15 +88,15 @@ class Importer
     }
 
     /**
-     * @param WmsOrigin $serviceOrigin
+     * @param HttpOriginInterface $serviceOrigin
      * @return \DOMDocument
      * @throws XmlParseException
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
-    public function loadCapabilitiesDocument(WmsOrigin $serviceOrigin)
+    public function loadCapabilitiesDocument(HttpOriginInterface $serviceOrigin)
     {
-        static::validateUrl($serviceOrigin->getUrl());
+        static::validateUrl($serviceOrigin->getOriginUrl());
         $serviceResponse = $this->capabilitiesRequest($serviceOrigin);
         $capsDocument = WmsCapabilitiesParser::createDocument($serviceResponse->getContent());
         return $capsDocument;
@@ -113,13 +113,13 @@ class Importer
     }
 
     /**
-     * @param WmsOrigin $serviceOrigin
+     * @param HttpOriginInterface $serviceOrigin
      * @return Response
      */
-    protected function capabilitiesRequest(WmsOrigin $serviceOrigin)
+    protected function capabilitiesRequest(HttpOriginInterface $serviceOrigin)
     {
         $addParams = array();
-        $url = $serviceOrigin->getUrl();
+        $url = $serviceOrigin->getOriginUrl();
         $addParams['REQUEST'] = 'GetCapabilities';
         if (!UrlUtil::getQueryParameterCaseInsensitive($url, 'service')) {
             $addParams['SERVICE'] = 'WMS';
@@ -145,11 +145,11 @@ class Importer
      * Copies origin-related attributes (url, username, password) from $origin to $wmsSource
      *
      * @param WmsSource $wmsSource
-     * @param WmsOrigin $origin
+     * @param HttpOriginInterface $origin
      */
-    public static function updateOrigin(WmsSource $wmsSource, WmsOrigin $origin)
+    public static function updateOrigin(WmsSource $wmsSource, HttpOriginInterface $origin)
     {
-        $wmsSource->setOriginUrl($origin->getUrl());
+        $wmsSource->setOriginUrl($origin->getOriginUrl());
         $wmsSource->setUsername($origin->getUserName());
         $wmsSource->setPassword($origin->getPassword());
     }

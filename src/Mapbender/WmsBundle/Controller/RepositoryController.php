@@ -5,14 +5,13 @@ namespace Mapbender\WmsBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,18 +28,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RepositoryController extends Controller
 {
-    /**
-     * @ManagerRoute("/start", methods={"GET"})
-     * @return Response
-     */
-    public function startAction()
-    {
-        $form = $this->createForm(new WmsSourceSimpleType(), new WmsSource());
-        return $this->render('@MapbenderWms/Repository/form.html.twig', array(
-            "form" => $form->createView()
-        ));
-    }
-
     /**
      * @ManagerRoute("{wms}", methods={"GET"})
      * @param WmsSource $wms
@@ -68,15 +55,14 @@ class RepositoryController extends Controller
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $formModel = new HttpOriginModel();
-        $form      = $this->createForm(new WmsSourceSimpleType(), $formModel);
-        $form->submit($request);
-        if ($form->isValid()) {
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             /** @var Importer $importer */
             $importer = $this->container->get('mapbender.importer.source.wms.service');
-            $origin = new WmsOrigin($formModel->getOriginUrl(), $formModel->getUsername(), $formModel->getPassword());
 
             try {
-                $importerResponse = $importer->evaluateServer($origin, false);
+                $importerResponse = $importer->evaluateServer($formModel, false);
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
                 $this->addFlash('error', $e->getMessage());
@@ -125,7 +111,7 @@ class RepositoryController extends Controller
             $source->setOriginUrl($amendedUrl);
         }
 
-        $form = $this->createForm(new WmsSourceSimpleType(), $source);
+        $form = $this->createForm(new HttpSourceOriginType(), $source);
         return $this->render('@MapbenderWms/Repository/updateform.html.twig',  array(
             "form" => $form->createView()
         ));
@@ -147,15 +133,15 @@ class RepositoryController extends Controller
         if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('EDIT', $wmsOrig)) {
             throw new AccessDeniedException();
         }
-        $form = $this->createForm(new WmsSourceSimpleType(), $wmsOrig);
+        $formModel = HttpOriginModel::extract($wmsOrig);
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Importer $importer */
             $importer = $this->container->get('mapbender.importer.source.wms.service');
-            $origin = new WmsOrigin($wmsOrig->getOriginUrl(), $wmsOrig->getUsername(), $wmsOrig->getPassword());
             try {
-                $importerResponse = $importer->evaluateServer($origin, false);
+                $importerResponse = $importer->evaluateServer($formModel, false);
             } catch (\Exception $e) {
                 $this->get("logger")->debug($e->getMessage());
                 $this->addFlash('error', $e->getMessage());
@@ -177,7 +163,7 @@ class RepositoryController extends Controller
                 ));
             }
             $em->persist($wmsOrig);
-            $importer->updateOrigin($wmsOrig, $origin);
+            $importer->updateOrigin($wmsOrig, $formModel);
             $wmsOrig->setValid($wmssource->getValid());
 
             $em->flush();

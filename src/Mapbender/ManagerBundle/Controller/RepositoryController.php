@@ -5,11 +5,14 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
+use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 
@@ -62,8 +65,17 @@ class RepositoryController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $managers = $this->getRepositoryManagers();
+        $formViews = array();
+        foreach ($managers as $type => $manager) {
+            $formAction = $this->generateUrl('mapbender_manager_repository_create', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
+            $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
+                'action' => $formAction,
+            ));
+            $formViews[$type] = $form->createView();
+        }
         return $this->render('@MapbenderManager/Repository/new.html.twig', array(
-            'managers' => $managers
+            'managers' => $managers,
+            'forms' => $formViews,
         ));
     }
 

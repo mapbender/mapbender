@@ -59,4 +59,17 @@ class HttpOriginModel implements HttpOriginInterface
     {
         $this->password = $password;
     }
+
+    /**
+     * @param HttpOriginInterface $other
+     * @return static
+     */
+    public static function extract(HttpOriginInterface $other)
+    {
+        $instance = new static();
+        $instance->setOriginUrl($other->getOriginUrl());
+        $instance->setUsername($other->getUsername());
+        $instance->setPassword($other->getPassword());
+        return $instance;
+    }
 }

@@ -11,7 +11,7 @@
   </ul>
 {% for name, manager in managers %}
   <div id="container{{loop.index}}" class="container containerBaseData{% if loop.first %} active{% endif %}">
-    {% render controller(manager.startAction) %}
+    {% include 'MapbenderManagerBundle:Repository:form.html.twig' with {'form': forms[name]} %}
   </div>
 {% endfor %}
 </div>
