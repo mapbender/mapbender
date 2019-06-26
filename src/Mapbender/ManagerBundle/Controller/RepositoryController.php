@@ -137,7 +137,7 @@ class RepositoryController extends ApplicationControllerBase
                 $managertype = $type;
             }
             if ($loadError && $type === $managertype) {
-                $form->addError(new FormError($loadError->getMessage()));
+                $form->addError(new FormError($this->getTranslator()->trans($loadError->getMessage())));
             }
             $formViews[$type] = $form->createView();
         }
