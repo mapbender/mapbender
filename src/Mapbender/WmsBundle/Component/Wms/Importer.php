@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component\Wms;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Mapbender\Component\SourceLoader;
+use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
@@ -33,9 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */
-class Importer extends SourceLoader
+class Importer extends RefreshableSourceLoader
 {
-
     /** @var ContainerInterface */
     protected $container;
     /** @var EntityManager */
@@ -121,21 +121,23 @@ class Importer extends SourceLoader
         return new Importer\Response($sourceEntity, $document, $validationError);
     }
 
-    public function updateSource(WmsSource $target, WmsSource $sourceNew)
+    protected function updateSource(Source $target, Source $reloaded)
     {
+        /** @var WmsSource $target */
+        /** @var WmsSource $reloaded */
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
-        EntityUtil::copyEntityFields($target, $sourceNew, $classMeta, false);
+        EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
-        $contact = clone $sourceNew->getContact();
+        $contact = clone $reloaded->getContact();
         $this->entityManager->detach($contact);
         if ($target->getContact()) {
             $this->entityManager->remove($target->getContact());
         }
         $target->setContact($contact);
 
-        $this->updateLayer($target->getRootlayer(), $sourceNew->getRootlayer());
+        $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
-        $this->copyKeywords($target, $sourceNew, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);

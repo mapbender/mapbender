@@ -93,35 +93,23 @@ class RepositoryController extends Controller
             /** @var Importer $loader */
             $loader = $this->getTypeDirectory()->getSourceLoaderByType($targetSource->getType());
 
-            try {
-                $importerResponse = $loader->evaluateServer($formModel, false);
-            } catch (\Exception $e) {
-                $this->get("logger")->debug($e->getMessage());
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute("mapbender_manager_repository_index");
-            }
-            $reloadedSource = $importerResponse->getWmsSourceEntity();
-
             /** @var EntityManager $em */
             $em = $this->getDoctrine()->getManager();
             $em->beginTransaction();
             try {
-                $loader->updateSource($targetSource, $reloadedSource);
+                $loader->refresh($targetSource, $formModel);
             } catch (\Exception $e) {
-                $this->get("logger")->debug($e->getMessage());
                 $this->addFlash('error', $e->getMessage());
                 return $this->redirectToRoute("mapbender_manager_repository_updateform", array(
                     "sourceId" => $targetSource->getId(),
                 ));
             }
             $em->persist($targetSource);
-            $loader->updateOrigin($targetSource, $formModel);
-            $targetSource->setValid($reloadedSource->getValid());
 
             $em->flush();
             $em->commit();
 
-            $this->addFlash('success', 'Your wms source has been updated.');
+            $this->addFlash('success', "Your {$targetSource->getType()} source has been updated");
             return $this->redirectToRoute("mapbender_manager_repository_view", array(
                 "sourceId" => $targetSource->getId(),
             ));
