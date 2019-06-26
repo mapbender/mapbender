@@ -149,6 +149,24 @@ class Importer extends RefreshableSourceLoader
     }
 
     /**
+     * @param Source $target
+     * @return string
+     */
+    public function getRefreshUrl(Source $target)
+    {
+        /** @var WmsSource $target */
+        $persistedUrl = $target->getOriginUrl();
+        $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($persistedUrl, 'version', null);
+        if ($detectedVersion) {
+            return $persistedUrl;
+        } else {
+            return  UrlUtil::validateUrl($persistedUrl, array(
+                'VERSION' => $target->getVersion(),
+            ));
+        }
+    }
+
+    /**
      * @param \DOMDocument $capsDocument
      * @throws XmlParseException
      */

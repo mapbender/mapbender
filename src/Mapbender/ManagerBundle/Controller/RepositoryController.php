@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
@@ -247,11 +248,19 @@ class RepositoryController extends ApplicationControllerBase
             $this->denyAccessUnlessGranted('EDIT', $source);
         }
 
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$source->getManagertype()];
+        /** @var RefreshableSourceLoader $loader */
+        $loader = $this->getTypeDirectory()->getSourceLoaderByType('wms'); //$source->getType());
+        $formModel = HttpOriginModel::extract($source);
+        $formModel->setOriginUrl($loader->getRefreshUrl($source));
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel, array(
+            'action' => $this->generateUrl('mapbender_manager_repository_update', array(
+                'sourceId' => $sourceId,
+            )),
+        ));
+
         return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
-            'manager' => $manager,
-            'source' => $source
+            'form' => $form->createView(),
+            'sourceTypeLabel' => $source->getTypeLabel(),
         ));
     }
 

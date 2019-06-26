@@ -43,34 +43,6 @@ class RepositoryController extends Controller
 
     /**
      * Updates a WMS Source
-     * @ManagerRoute("/{sourceId}/updateform")
-     * @param string $sourceId
-     * @return Response
-     */
-    public function updateformAction($sourceId)
-    {
-        /** @var WmsSource $source */
-        $source          = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
-        $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('EDIT', $source)) {
-            throw new AccessDeniedException();
-        }
-        $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($source->getOriginUrl(), 'version', null);
-        if (!$detectedVersion) {
-            $amendedUrl = UrlUtil::validateUrl($source->getOriginUrl(), array(
-                'VERSION' => $source->getVersion(),
-            ));
-            $source->setOriginUrl($amendedUrl);
-        }
-
-        $form = $this->createForm(new HttpSourceOriginType(), $source);
-        return $this->render('@MapbenderWms/Repository/updateform.html.twig',  array(
-            "form" => $form->createView()
-        ));
-    }
-
-    /**
-     * Updates a WMS Source
      * @ManagerRoute("/{sourceId}/update")
      * @param Request $request
      * @param string $sourceId
@@ -115,7 +87,8 @@ class RepositoryController extends Controller
             ));
         } else { // create form for update
             return $this->render('@MapbenderWms/Repository/updateform.html.twig', array(
-                "form" => $form->createView()
+                "form" => $form->createView(),
+                'sourceTypeLabel' => $targetSource->getTypeLabel(),
             ));
         }
     }

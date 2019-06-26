@@ -31,4 +31,10 @@ abstract class RefreshableSourceLoader extends SourceLoader
     }
 
     abstract protected function updateSource(Source $target, Source $reloaded);
+
+    /**
+     * @param Source $target
+     * @return string
+     */
+    abstract public function getRefreshUrl(Source $target);
 }
