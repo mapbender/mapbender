@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component\Wms;
 
+use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -10,7 +11,6 @@ use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,13 +23,11 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */
-class Importer
+class Importer extends SourceLoader
 {
 
     /** @var ContainerInterface */
     protected $container;
-    /** @var HttpTransportInterface */
-    protected $transport;
 
     /**
      * @param HttpTransportInterface $transport
@@ -37,8 +35,25 @@ class Importer
      */
     public function __construct(HttpTransportInterface $transport, ContainerInterface $container)
     {
-        $this->transport = $transport;
+        parent::__construct($transport);
         $this->container = $container;
+    }
+
+    /**
+     * @inheritdoc
+     * @throws InvalidUrlException
+     */
+    protected function getResponse(HttpOriginInterface $origin)
+    {
+        static::validateUrl($origin->getOriginUrl());
+        return $this->capabilitiesRequest($origin);
+    }
+
+    protected function parseResponseContent($content)
+    {
+        $document = WmsCapabilitiesParser::createDocument($content);
+        $parser = WmsCapabilitiesParser::getParser($document);
+        return new Importer\Response($parser->parse($document), $document);
     }
 
     /**
@@ -48,16 +63,19 @@ class Importer
      * @param HttpOriginInterface $serviceOrigin
      * @param bool $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
-     * @throws XmlParseException
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function evaluateServer(HttpOriginInterface $serviceOrigin, $onlyValid=true)
     {
-        $capsDocument = $this->loadCapabilitiesDocument($serviceOrigin);
-        $response = $this->evaluateCapabilitiesDocument($capsDocument, $onlyValid);
-        $this->updateOrigin($response->getWmsSourceEntity(), $serviceOrigin);
-        return $response;
+        /** @var Importer\Response $response */
+        $response = parent::evaluateServer($serviceOrigin, $onlyValid);
+        if ($onlyValid) {
+            $validationError = new DeferredValidation($response->getSource(), $response->getDocument(), $this);
+        } else {
+            $validationError = null;
+        }
+        return new Importer\Response($response->getSource(), $response->getDocument(), $validationError);
     }
 
     /**
@@ -84,22 +102,7 @@ class Importer
             // valid attribute on WmsSource will be updated by deferred validation
             $sourceEntity->setValid(true);
         }
-        return new Importer\Response($sourceEntity, $validationError);
-    }
-
-    /**
-     * @param HttpOriginInterface $serviceOrigin
-     * @return \DOMDocument
-     * @throws XmlParseException
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
-     */
-    public function loadCapabilitiesDocument(HttpOriginInterface $serviceOrigin)
-    {
-        static::validateUrl($serviceOrigin->getOriginUrl());
-        $serviceResponse = $this->capabilitiesRequest($serviceOrigin);
-        $capsDocument = WmsCapabilitiesParser::createDocument($serviceResponse->getContent());
-        return $capsDocument;
+        return new Importer\Response($sourceEntity, $document, $validationError);
     }
 
     /**
@@ -126,31 +129,6 @@ class Importer
         }
         $url = UrlUtil::validateUrl($url, $addParams);
         $url = UrlUtil::addCredentials($url, $serviceOrigin->getUserName(), $serviceOrigin->getPassword());
-        return $this->transport->getUrl($url);
-    }
-
-    /**
-     * @param string $url
-     * @throws InvalidUrlException
-     */
-    public static function validateUrl($url)
-    {
-        $parts = parse_url($url);
-        if (empty($parts['scheme']) || empty($parts['host'])) {
-            throw new InvalidUrlException($url);
-        }
-    }
-
-    /**
-     * Copies origin-related attributes (url, username, password) from $origin to $wmsSource
-     *
-     * @param WmsSource $wmsSource
-     * @param HttpOriginInterface $origin
-     */
-    public static function updateOrigin(WmsSource $wmsSource, HttpOriginInterface $origin)
-    {
-        $wmsSource->setOriginUrl($origin->getOriginUrl());
-        $wmsSource->setUsername($origin->getUserName());
-        $wmsSource->setPassword($origin->getPassword());
+        return $this->httpTransport->getUrl($url);
     }
 }

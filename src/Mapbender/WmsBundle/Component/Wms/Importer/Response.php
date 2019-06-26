@@ -4,38 +4,24 @@
 namespace Mapbender\WmsBundle\Component\Wms\Importer;
 
 
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
-class Response
+/**
+ * @deprecated
+ * @method WmsSource getSource
+ */
+class Response extends SourceLoaderResponse
 {
-    protected $wmsSourceEntity;
-    /** @var DeferredValidation|XmlParseException|null */
-    protected $validationError;
-
-    public function __construct(WmsSource $wmsSourceEntity, $validationError = null)
-    {
-        $this->wmsSourceEntity = $wmsSourceEntity;
-        $this->validationError = $validationError;
-    }
+    /** @var \DOMDocument */
+    protected $document;
 
     /**
      * @return WmsSource
      */
     public function getWmsSourceEntity()
     {
-        return $this->wmsSourceEntity;
+        return $this->getSource();
     }
 
-    /**
-     * @return XmlParseException|null
-     */
-    public function getValidationError()
-    {
-        if ($this->validationError && ($this->validationError instanceof DeferredValidation)) {
-            // evaluate validation now, replace proxy with result
-            $this->validationError = $this->validationError->run();
-        }
-        return $this->validationError;
-    }
 }

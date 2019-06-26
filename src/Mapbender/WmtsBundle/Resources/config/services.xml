@@ -7,6 +7,7 @@
 		<parameter key="mapbender.source.wmts.instance_factory.class">Mapbender\WmtsBundle\Component\Wmts\SourceInstanceFactory</parameter>
 		<parameter key="mapbender.imageexport.renderer.wmts.class">Mapbender\WmtsBundle\Component\Export\LayerRendererWmts</parameter>
 		<parameter key="mapbender.imageexport.renderer.tms.class">Mapbender\WmtsBundle\Component\Export\LayerRendererTms</parameter>
+		<parameter key="mapbender.importer.source.wmts.class">Mapbender\WmtsBundle\Component\Wmts\Loader</parameter>
 	</parameters>
 	<services>
 		<service id="mapbender.source.wmts.service" class="%mapbender.source.wmts.service.class%">
@@ -20,6 +21,10 @@
 		<service id="mapbender.imageexport.renderer.tms" class="%mapbender.imageexport.renderer.tms.class%">
 		  <argument type="service" id="mapbender.imageexport.image_transport.service" />
 		  <argument type="service" id="logger" />
+		</service>
+		<service id="mapbender.importer.source.wmts.service" class="%mapbender.importer.source.wmts.class%">
+			<argument type="service" id="mapbender.http_transport.service" />
+			<argument>%owsproxy.proxy%</argument>
 		</service>
 	</services>
 </container>
