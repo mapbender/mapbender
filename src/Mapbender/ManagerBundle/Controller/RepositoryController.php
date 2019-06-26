@@ -261,21 +261,18 @@ class RepositoryController extends ApplicationControllerBase
             $em->beginTransaction();
             try {
                 $loader->refresh($source, $formModel);
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute("mapbender_manager_repository_updateform", array(
+                $em->persist($source);
+
+                $em->flush();
+                $em->commit();
+
+                $this->addFlash('success', "Your {$source->getType()} source has been updated");
+                return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
+            } catch (\Exception $e) {
+                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
             }
-            $em->persist($source);
-
-            $em->flush();
-            $em->commit();
-
-            $this->addFlash('success', "Your {$source->getType()} source has been updated");
-            return $this->redirectToRoute("mapbender_manager_repository_view", array(
-                "sourceId" => $source->getId(),
-            ));
         }
 
         return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
