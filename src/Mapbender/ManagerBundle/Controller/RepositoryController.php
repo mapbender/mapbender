@@ -11,9 +11,11 @@ use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -61,48 +63,42 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * @ManagerRoute("/new", methods={"GET"})
+     * @ManagerRoute("/new/{managertype}", methods={"POST"}, name="mapbender_manager_repository_new_submit")
+     * @param Request $request
+     * @param string|null $managertype
      * @return Response
      */
-    public function newAction()
+    public function newAction(Request $request, $managertype = null)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $managers = $this->getRepositoryManagers();
-        $formViews = array();
+        /** @var FormInterface[] $forms */
+        $forms = array();
         foreach ($managers as $type => $manager) {
-            $formAction = $this->generateUrl('mapbender_manager_repository_create', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
+            $formAction = $this->generateUrl('mapbender_manager_repository_new_submit', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
             $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
                 'action' => $formAction,
             ));
-            $formViews[$type] = $form->createView();
+            $forms[$type] = $form;
         }
-        return $this->render('@MapbenderManager/Repository/new.html.twig', array(
-            'managers' => $managers,
-            'forms' => $formViews,
-        ));
-    }
 
-    /**
-     * @ManagerRoute("/create/{managertype}", methods={"POST"})
-     * @param Request $request
-     * @param string $managertype
-     * @return Response
-     */
-    public function createAction(Request $request, $managertype)
-    {
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('CREATE', $oid);
-
-        $formModel = new HttpOriginModel();
-        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
-        $form->handleRequest($request);
+        if ($managertype) {
+            if (!array_key_exists($managertype, $forms)) {
+                throw new BadRequestHttpException();
+            }
+            $form = $forms[$managertype];
+            $form->handleRequest($request);
+        } else {
+            $form = null;
+        }
         $loadError = null;
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form && $form->isSubmitted() && $form->isValid()) {
             $directory = $this->getTypeDirectory();
             try {
                 $loader = $directory->getSourceLoaderByType($managertype);
-                $importerResponse = $loader->evaluateServer($formModel, false);
+                $importerResponse = $loader->evaluateServer($form->getData(), false);
             } catch (\Exception $e) {
                 $importerResponse = null;
                 $loadError = $e;
@@ -127,13 +123,8 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        $managers = $this->getRepositoryManagers();
         $formViews = array();
-        foreach ($managers as $type => $manager) {
-            $formAction = $this->generateUrl('mapbender_manager_repository_create', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
-            $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
-                'action' => $formAction,
-            ));
+        foreach ($forms as $type => $form) {
             if ($loadError && $type === $managertype) {
                 $form->addError(new FormError($loadError->getMessage()));
             }
@@ -143,6 +134,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Repository/new.html.twig', array(
             'managers' => $managers,
             'forms' => $formViews,
+            'activetype' => $managertype,
         ));
     }
 
