@@ -125,6 +125,9 @@ class RepositoryController extends ApplicationControllerBase
 
         $formViews = array();
         foreach ($forms as $type => $form) {
+            if (!$managertype) {
+                $managertype = $type;
+            }
             if ($loadError && $type === $managertype) {
                 $form->addError(new FormError($loadError->getMessage()));
             }
