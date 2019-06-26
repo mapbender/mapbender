@@ -16,9 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -42,51 +39,6 @@ class RepositoryController extends Controller
         return $this->render('@MapbenderWms/Repository/view.html.twig', array(
             'wms' => $wms,
         ));
-    }
-
-    /**
-     * @ManagerRoute("/create", methods={"POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function createAction(Request $request)
-    {
-        $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('CREATE', $oid);
-
-        $formModel = new HttpOriginModel();
-        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Importer $importer */
-            $importer = $this->container->get('mapbender.importer.source.wms.service');
-
-            try {
-                $importerResponse = $importer->evaluateServer($formModel, false);
-            } catch (\Exception $e) {
-                $this->get("logger")->err($e->getMessage());
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute("mapbender_manager_repository_new");
-            }
-
-            $wmssource = $importerResponse->getWmsSourceEntity();
-
-            $this->setAliasForDuplicate($wmssource);
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
-            $em->beginTransaction();
-
-            $em->persist($wmssource);
-
-            $em->flush();
-            $this->initializeAccessControl($wmssource);
-            $em->commit();
-            $this->addFlash('success', "Your WMS has been created");
-            return $this->redirectToRoute("mapbender_manager_repository_view", array(
-                "sourceId" => $wmssource->getId(),
-            ));
-        }
-        return $this->forward('MapbenderManagerBundle:Repository:new');
     }
 
     /**
@@ -241,34 +193,6 @@ class RepositoryController extends Controller
                 "instance" => $wmsinstance,
             ));
         }
-    }
-
-    protected function setAliasForDuplicate(WmsSource $wmsSource)
-    {
-        $wmsWithSameTitle = $this->getDoctrine()
-            ->getManager()
-            ->getRepository("MapbenderWmsBundle:WmsSource")
-            ->findBy(array('title' => $wmsSource->getTitle()));
-
-        if (count($wmsWithSameTitle) > 0) {
-            $wmsSource->setAlias(count($wmsWithSameTitle));
-        }
-    }
-
-    /**
-     * @param object $entity
-     */
-    protected function initializeAccessControl($entity)
-    {
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider    = $this->get('security.acl.provider');
-        $objectIdentity = ObjectIdentity::fromDomainObject($entity);
-        $acl            = $aclProvider->createAcl($objectIdentity);
-
-        $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
-
-        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-        $aclProvider->updateAcl($acl);
     }
 
     /**

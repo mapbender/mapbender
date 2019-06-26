@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
@@ -9,12 +10,15 @@ use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  *  Mapbender repository controller
@@ -81,18 +85,65 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * @ManagerRoute("/create/{managertype}", methods={"POST"})
+     * @param Request $request
      * @param string $managertype
      * @return Response
      */
-    public function createAction($managertype)
+    public function createAction(Request $request, $managertype)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$managertype];
+        $formModel = new HttpOriginModel();
+        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
+        $form->handleRequest($request);
+        $loadError = null;
+        if ($form->isSubmitted() && $form->isValid()) {
+            $directory = $this->getTypeDirectory();
+            try {
+                $loader = $directory->getSourceLoaderByType($managertype);
+                $importerResponse = $loader->evaluateServer($formModel, false);
+            } catch (\Exception $e) {
+                $importerResponse = null;
+                $loadError = $e;
+            }
+            if (!$loadError) {
+                $source = $importerResponse->getSource();
 
-        return $this->forward($manager['bundle'] . ":" . "Repository:create");
+                $this->setAliasForDuplicate($source);
+                $em = $this->getEntityManager();
+                $em->beginTransaction();
+
+                $em->persist($source);
+
+                $em->flush();
+                $this->initializeAccessControl($source);
+                $em->commit();
+                // @todo: provide translations
+                $this->addFlash('success', "A new {$source->getType()} source has been created");
+                return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                    "sourceId" => $source->getId(),
+                ));
+            }
+        }
+
+        $managers = $this->getRepositoryManagers();
+        $formViews = array();
+        foreach ($managers as $type => $manager) {
+            $formAction = $this->generateUrl('mapbender_manager_repository_create', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
+            $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
+                'action' => $formAction,
+            ));
+            if ($loadError && $type === $managertype) {
+                $form->addError(new FormError($loadError->getMessage()));
+            }
+            $formViews[$type] = $form->createView();
+        }
+
+        return $this->render('@MapbenderManager/Repository/new.html.twig', array(
+            'managers' => $managers,
+            'forms' => $formViews,
+        ));
     }
 
     /**
@@ -361,5 +412,43 @@ class RepositoryController extends ApplicationControllerBase
         /** @var Mapbender $service */
         $service = $this->get('mapbender');
         return $service->getRepositoryManagers();
+    }
+
+    /**
+     * @return TypeDirectoryService
+     */
+    protected function getTypeDirectory()
+    {
+        /** @var TypeDirectoryService $service */
+        $service = $this->get('mapbender.source.typedirectory.service');
+        return $service;
+    }
+
+    protected function setAliasForDuplicate(Source $source)
+    {
+        $wmsWithSameTitle = $this->getDoctrine()
+            ->getManager()
+            ->getRepository("MapbenderCoreBundle:Source")
+            ->findBy(array('title' => $source->getTitle()));
+
+        if (count($wmsWithSameTitle) > 0) {
+            $source->setAlias(count($wmsWithSameTitle));
+        }
+    }
+
+    /**
+     * @param object $entity
+     */
+    protected function initializeAccessControl($entity)
+    {
+        /** @var MutableAclProviderInterface $aclProvider */
+        $aclProvider    = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($entity);
+        $acl            = $aclProvider->createAcl($objectIdentity);
+
+        $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
+
+        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+        $aclProvider->updateAcl($acl);
     }
 }

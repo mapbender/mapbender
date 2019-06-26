@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component\Source;
 
 use Mapbender\Component\SourceInstanceFactory;
+use Mapbender\Component\SourceLoader;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
@@ -29,6 +30,8 @@ class TypeDirectoryService implements SourceInstanceFactory
     protected $configServices = array();
     /** @var SourceInstanceFactory[] */
     protected $instanceFactories = array();
+    /** @var SourceLoader[] */
+    protected $loaders = array();
 
     /**
      * Get the appropriate service to deal with the given SourceInstance child class.
@@ -72,6 +75,20 @@ class TypeDirectoryService implements SourceInstanceFactory
     }
 
     /**
+     * @param string $type
+     * @return SourceLoader
+     */
+    public function getSourceLoaderByType($type)
+    {
+        $key = strtolower($type);
+        if (!array_key_exists($key, $this->loaders)) {
+            $message = 'No loader available for source instance type ' . print_r($type, true);
+            throw new \RuntimeException($message);
+        }
+        return $this->loaders[$key];
+    }
+
+    /**
      * @param Source $source
      * @return SourceInstance
      */
@@ -102,8 +119,9 @@ class TypeDirectoryService implements SourceInstanceFactory
      * @param string $instanceType
      * @param SourceService $configService
      * @param SourceInstanceFactory $instanceFactory
+     * @param SourceLoader $loader
      */
-    public function registerSubtypeService($instanceType, $configService, $instanceFactory)
+    public function registerSubtypeService($instanceType, $configService, $instanceFactory, $loader)
     {
         if (!$instanceType || !is_string($instanceType)) {
             throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
@@ -119,6 +137,11 @@ class TypeDirectoryService implements SourceInstanceFactory
             throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
         }
         $this->instanceFactories[$key] = $instanceFactory;
+        if (!($loader instanceof SourceLoader)) {
+            $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
+            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceLoader");
+        }
+        $this->loaders[$key] = $loader;
     }
 
     /**

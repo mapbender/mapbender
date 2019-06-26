@@ -20,6 +20,7 @@ class RegisterWmsSourceServicePass implements CompilerPassInterface
             'wms',
             new Reference('mapbender.source.wms.service'),
             new Reference('mapbender.source.wms.instance_factory'),
+            new Reference('mapbender.importer.source.wms.service'),
         ));
     }
 }
