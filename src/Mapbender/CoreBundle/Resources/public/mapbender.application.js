@@ -447,14 +447,15 @@ Mapbender.Util.Url = function(urlString){
         return;
     var self = this;
     var tmp = document.createElement("a");
+    var port = urlString.match(/(.*):(\d*)\/?(.*)/);
     tmp.href = urlString;
     this.protocol = tmp.protocol;
     this.username = decodeURIComponent(tmp.username || '') || null;
     this.password = decodeURIComponent(tmp.password || '') || null;
     this.host = tmp.host;
-    this.hostname = tmp.hostname;
-    this.port = urlString.match(/(.*):(\d*)\/?(.*)/)[2]
-    this.pathname = tmp.pathname;
+    this.hostname = tmp.hostname;   
+    this.port = port ? port[2] : '';   
+    this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname
     this.parameters = {};
     var rawParams = (tmp.search || '?').substr(1).split('&');
     for (var i = 0; i < rawParams.length; ++i) {
