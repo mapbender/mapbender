@@ -16,13 +16,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
 {
 
-    public $hasSubForm = true;
-
-    public function isSubForm()
-    {
-        return $this->hasSubForm;
-    }
-
     /**
      * @inheritdoc
      */
