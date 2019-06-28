@@ -52,35 +52,45 @@ class ApplicationType extends AbstractType
             ))
             ->add('template', 'choice', array(
                 'choices' => $options['available_templates'],
-                'attr' => array(
-                    'title' => 'The HTML template used for this application.')))
+                'label' => 'mb.manager.admin.application.template',
+                'label_attr' => array(
+                    'title' => 'The HTML template used for this application.',
+                ),
+            ))
             ->add('screenshotFile', 'file', array(
                 'label' => 'Screenshot',
                 'attr' => array(
                     'required' => false,
-                    'accept'=>'image/*')))
+                    'accept'=>'image/*',
+                ),
+            ))
             ->add('removeScreenShot', 'hidden',array(
-                'mapped' => false))
+                'mapped' => false,
+            ))
             ->add('uploadScreenShot', 'hidden',array(
-                'mapped' => false))
+                'mapped' => false,
+            ))
             ->add('maxFileSize', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['maxFileSize']))
+                'data' => $options['maxFileSize'],
+            ))
             ->add('screenshotWidth', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['screenshotWidth']))
+                'data' => $options['screenshotWidth'],
+            ))
             ->add('screenshotHeight', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['screenshotHeight']))
+                'data' => $options['screenshotHeight'],
+            ))
             ->add('custom_css', 'textarea', array(
-                'required' => false))
-
-            // Security
+                'required' => false,
+            ))
             ->add('published', 'checkbox',
                 array(
                 'required' => false,
-                'label' => 'Published'));
-
+                'label' => 'mb.manager.admin.application.security.public',
+            ))
+        ;
         /** @var Application $app */
         $app = $options['data'];
         foreach ($options['available_properties'] as $regionName => $properties) {

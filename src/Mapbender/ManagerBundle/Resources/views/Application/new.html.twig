@@ -17,8 +17,7 @@
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
           <div class="col-xs-8">
-            <label class="labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.template" | trans}}:<span class="required">*</span></label>
-            {{ form_widget(form.template) }}
+            {{ form_row(form.template) }}
             {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
            <div class="col-xs-4">
