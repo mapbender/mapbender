@@ -705,8 +705,16 @@ class ApplicationController extends WelcomeController
         foreach ($templateProps as $regionName => $regionProperties) {
             foreach ($applicationRegionProperties as $regionProperty) {
                 if ($regionProperty->getName() === $regionName) {
-                    $regprops = $form->get($regionName)->getData();
-                    $regionProperty->setProperties($regprops ? $regionProperties[ $regprops ] : array());
+                    $propValues = $regionProperty->getProperties();
+                    $formValue = $form->get($regionName)->getData();
+                    $propValues = array_replace($propValues, array(
+                        'name' => $formValue ?: '',
+                    ));
+                    // Legacy quirk: label used to be copied into db but is redundant. Only used in form, where
+                    // it is taken from the Template, not from the entity.
+                    unset($propValues['label']);
+                    $regionProperty->setProperties($propValues);
+
                 }
             }
         }
@@ -756,15 +764,6 @@ class ApplicationController extends WelcomeController
 
         $properties->setApplication($application);
         $properties->setName($regionName);
-
-        if ($initValues) {
-            foreach ($initValues as $name => $value) {
-                if (array_key_exists('state', $value) && $value['state']) {
-                    $properties->addProperty($name);
-                }
-            }
-        }
-
         $em->persist($properties);
 
         return $properties;

@@ -143,36 +143,4 @@ class RegionProperties
     {
         return $this->properties;
     }
-
-    /**
-     * Get properties
-     *
-     * @param $property
-     * @return $this
-     */
-    public function addProperty($property)
-    {
-        $this->properties[] = $property;
-
-        return $this;
-    }
-
-    /**
-     * Get properties
-     *
-     * @param $property
-     * @return $this
-     */
-    public function removeProperty($property)
-    {
-        $help = array();
-        foreach ($this->properties as $prop) {
-            if ($prop !== $property) {
-                $help[] = $prop;
-            }
-        }
-        $this->setProperties($help);
-
-        return $this;
-    }
 }

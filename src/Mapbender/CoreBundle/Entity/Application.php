@@ -76,7 +76,7 @@ class Application
 
     /**
      * @var RegionProperties[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $regionProperties;
