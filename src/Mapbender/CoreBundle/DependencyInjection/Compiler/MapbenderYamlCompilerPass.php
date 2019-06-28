@@ -30,9 +30,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function __construct($applicationDir)
     {
-        if ($applicationDir) {
-            $this->applicationDir = $applicationDir;
-        }
+        $this->applicationDir = $applicationDir;
     }
 
     /**
@@ -121,6 +119,13 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             foreach ($instanceConfigs as $instanceId => $instanceConfig) {
                 $definition['layersets'][$lsIndex][$instanceId] = $this->processSourceInstanceDefinition($instanceConfig, $instanceId, $lsIndex);
             }
+        }
+        if (isset($definition['published'])) {
+            // force to boolean
+            $definition['published'] = !!$definition['published'];
+        } else {
+            // strip null value
+            unset($definition['published']);
         }
         return $definition;
     }

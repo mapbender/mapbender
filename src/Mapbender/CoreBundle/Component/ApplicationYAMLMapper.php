@@ -79,12 +79,6 @@ class ApplicationYAMLMapper
             $definition['title'] = "TITLE " . $timestamp;
         }
 
-        if (!array_key_exists('published', $definition)) {
-            $definition['published'] = false;
-        } else {
-            $definition['published'] = (boolean) $definition['published'];
-        }
-
         // First, create an application entity
         $application = new Application();
         $application
@@ -93,8 +87,10 @@ class ApplicationYAMLMapper
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
-                ->setPublished($definition['published'])
         ;
+        if (isset($definition['published'])) {
+            $application->setPublished($definition['published']);
+        }
         if (!empty($definition['screenshot'])) {
             $application->setScreenshot($definition['screenshot']);
         }

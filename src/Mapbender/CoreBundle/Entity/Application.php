@@ -97,7 +97,7 @@ class Application
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $published;
+    protected $published = false;
 
     /**
      * @ORM\Column(type="string", length=256, nullable=true)
