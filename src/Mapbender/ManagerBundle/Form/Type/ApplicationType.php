@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,7 +20,6 @@ class ApplicationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'available_templates' => array(),
-            'available_properties' => array(),
             'maxFileSize' => 0,
             'screenshotHeight' => 0,
             'screenshotWidth' => 0
@@ -91,30 +91,18 @@ class ApplicationType extends AbstractType
                 'label' => 'mb.manager.admin.application.security.public',
             ))
         ;
-        /** @var Application $app */
-        $app = $options['data'];
-        foreach ($options['available_properties'] as $regionName => $properties) {
-            $data = "";
-            foreach ($app->getRegionProperties() as $key => $regProps) {
-                if ($regProps->getName() === $regionName) {
-                    $help = $regProps->getProperties();
-                    if (array_key_exists('name', $help)) {
-                        $data = $help['name'];
-                    }
-                }
+        /** @var Application $application */
+        $application = $options['data'];
+        $templateClassName = $application->getTemplate();
+        if ($templateClassName) {
+            /** @var Template::class $templateClassName */
+            foreach (array_keys($templateClassName::getRegionsProperties()) as $regionName) {
+                $builder->add($regionName, 'region_properties', array(
+                    'property_path' => '[' . $regionName . ']',
+                    'application' => $options['data'],
+                    'region' => $regionName,
+                ));
             }
-            $choices = array();
-            foreach ($properties as $values) {
-                $choices[$values['name']] = $values['label'];
-            }
-            $builder->add($regionName, 'region_properties', array(
-                'property_path' => '[' . $regionName . ']',
-                'required' => false,
-                'mapped' => false,
-                'expanded' => true,
-                'data' => $data,
-                'choices' => $choices,
-            ));
         }
 
         // Security
@@ -123,5 +111,4 @@ class ApplicationType extends AbstractType
             'data' => $options['data'],
             'permissions' => 'standard::object'));
     }
-
 }

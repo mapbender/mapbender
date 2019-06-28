@@ -357,11 +357,9 @@ class ApplicationController extends WelcomeController
         } catch (IOException $e) {
             $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
             $em->rollback();
-            $em->close();
         } catch (\Exception $e) {
             $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
             $em->rollback();
-            $em->close();
         }
         return $this->redirectToRoute('mapbender_manager_application_edit', array(
             'slug' => $application->getSlug(),
@@ -704,28 +702,18 @@ class ApplicationController extends WelcomeController
     private function createApplicationForm(Application $application)
     {
         $availableTemplates = array();
-        $availableProperties = array();
 
         foreach ($this->getMapbender()->getTemplates() as $templateClassName) {
             $availableTemplates[$templateClassName] = $templateClassName::getTitle();
         }
         asort($availableTemplates);
-        if ($application->getTemplate() !== null) {
-            $templateClassName    = $application->getTemplate();
-            $availableProperties = $templateClassName::getRegionsProperties();
-        }
 
-        return $this->createForm(
-            new ApplicationType(),
-            $application,
-            array(
-                'available_templates'  => $availableTemplates,
-                'available_properties' => $availableProperties,
-                'maxFileSize'          => 2097152,
-                'screenshotWidth'      => 200,
-                'screenshotHeight'     => 200,
-            )
-        );
+        return $this->createForm(new ApplicationType(), $application, array(
+            'available_templates'  => $availableTemplates,
+            'maxFileSize'          => 2097152,
+            'screenshotWidth'      => 200,
+            'screenshotHeight'     => 200,
+        ));
     }
 
     /**
@@ -834,11 +822,10 @@ class ApplicationController extends WelcomeController
             'regions'             => $templateClass::getRegions(),
             'slug'                => $slug,
             'form'                => $form->createView(),
-            'form_name'           => $form->getName(),
             'template_name'       => $templateClass::getTitle(),
             'screenshot'          => $screenShotUrl,
             'screenshot_filename' => $screenShot,
-            'time'                => new \DateTime());
+        );
     }
 
     /**

@@ -295,7 +295,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return RegionProperties[]|ArrayCollection
+     * @return RegionProperties[]|Collection
      */
     public function getRegionProperties()
     {
@@ -565,7 +565,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return array
+     * @return RegionProperties[]
      */
     public function getNamedRegionProperties()
     {
@@ -581,7 +581,7 @@ class Application
      * Get region properties
      *
      * @param $regionName
-     * @return null
+     * @return RegionProperties|null
      */
     public function getPropertiesFromRegion($regionName)
     {
