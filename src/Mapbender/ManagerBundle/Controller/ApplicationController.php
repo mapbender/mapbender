@@ -59,21 +59,69 @@ class ApplicationController extends WelcomeController
     /**
      * Shows form for creating new applications
      *
-     * @ManagerRoute("/application/new", methods={"GET"})
+     * @ManagerRoute("/application/new", methods={"GET","POST"})
+     * @param Request $request
      * @return Response
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
         $application = new Application();
         $oid = new ObjectIdentity('class', get_class($application));
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $form = $this->createApplicationForm($application);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $parameters    = $request->request->get('application');
+            try {
+                $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
+            } catch (IOException $e) {
+                $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
+                return $this->redirectToRoute('mapbender_manager_application_index');
+            }
+            $application->setUpdated(new \DateTime('now'));
+            $em = $this->getEntityManager();
+
+            $em->beginTransaction();
+            $em->persist($application);
+            $em->flush();
+            $this->checkRegionProperties($application);
+            $aclManager = $this->getAclManager();
+            $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
+            $scFile = $application->getScreenshotFile();
+
+            if ($scFile !== null
+                && $parameters['removeScreenShot'] !== '1'
+                && $parameters['uploadScreenShot'] !== '1'
+            ) {
+                $uploadScreenShot = new UploadScreenshot();
+                $uploadScreenShot->upload($appDirectory, $scFile, $application);
+            }
+
+            $em->persist($application);
+            $em->flush();
+
+            $templateClass = $application->getTemplate();
+            $templateProps = $templateClass::getRegionsProperties();
+
+            foreach ($templateProps as $regionName => $regionProps) {
+                $application->addRegionProperties(
+                    $this->createRegionProperties($application, $regionName, $regionProps)
+                );
+            }
+
+            $em->persist($application);
+            $em->flush();
+            $em->commit();
+            $this->addFlash('success', $this->translate('mb.application.create.success'));
+
+            return $this->redirectToRoute('mapbender_manager_application_index');
+        }
 
         return $this->render('@MapbenderManager/Application/new.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
-            'form_name'           => $form->getName(),
             'screenshot_filename' => null,
         ));
     }
@@ -197,79 +245,6 @@ class ApplicationController extends WelcomeController
             $this->addFlash('error', $e->getMessage());
             return $this->forward('MapbenderManagerBundle:Application:index');
         }
-    }
-
-    /**
-     * Create a new application from POSTed data
-     *
-     * @ManagerRoute("/application", methods={"POST"})
-     * @param Request $request
-     * @return Response|array
-     */
-    public function createAction(Request $request)
-    {
-        $application      = new Application();
-        $uploadScreenShot = new UploadScreenshot();
-
-        $oid = new ObjectIdentity('class', get_class($application));
-        $this->denyAccessUnlessGranted('CREATE', $oid);
-
-        $form          = $this->createApplicationForm($application);
-        $form->handleRequest($request);
-        $parameters    = $request->request->get('application');
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->render('@MapbenderManager/Application/new.html.twig', array(
-                'application'         => $application,
-                'form'                => $form->createView(),
-                'form_name'           => $form->getName(),
-                'screenshot_filename' => null,
-            ));
-        }
-
-        try {
-            $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
-        } catch (IOException $e) {
-            $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
-            return $this->redirectToRoute('mapbender_manager_application_index');
-        }
-        $application->setUpdated(new \DateTime('now'));
-        $em = $this->getEntityManager();
-
-        $em->beginTransaction();
-        $em->persist($application);
-        $em->flush();
-        $this->checkRegionProperties($application);
-        $aclManager = $this->getAclManager();
-        $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $scFile = $application->getScreenshotFile();
-
-        if ($scFile !== null
-            && $parameters['removeScreenShot'] !== '1'
-            && $parameters['uploadScreenShot'] !== '1'
-        ) {
-            $uploadScreenShot->upload($appDirectory, $scFile, $application);
-        }
-
-        $em->persist($application);
-        $em->flush();
-
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-
-        foreach ($templateProps as $regionName => $regionProps) {
-            $application->addRegionProperties(
-                $this->createRegionProperties($application, $regionName, $regionProps)
-            );
-        }
-
-        $em->persist($application);
-        $em->flush();
-        $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $em->commit();
-        $this->addFlash('success', $this->translate('mb.application.create.success'));
-
-        return $this->redirectToRoute('mapbender_manager_application_index');
     }
 
     /**

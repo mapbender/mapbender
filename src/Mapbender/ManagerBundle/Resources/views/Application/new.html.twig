@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block manager_content %}
-    {{ form_start(form, {"attr": {"action": path('mapbender_manager_application_create'), "novalidate": "novalidate"}}) }}
+    {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
