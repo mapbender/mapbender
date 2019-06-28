@@ -52,7 +52,7 @@ $(function () {
                 var $target = $(this);
                 var val = $target.attr('data-value');
                 event.stopPropagation();
-                var opt = $('option[value="' + val.replace('"', '\\"') + '"]', opts);
+                var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', opts);
                 me.find(".dropdownValue").text(opt.text());
                 opts.val(opt.val());
                 opts.trigger('change');
