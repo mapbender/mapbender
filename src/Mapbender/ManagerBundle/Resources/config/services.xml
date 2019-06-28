@@ -31,5 +31,8 @@
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
+        <service id="region_properties" class="Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType">
+            <tag name="form.type" />
+        </service>
     </services>
 </container>

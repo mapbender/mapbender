@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\CoreBundle\Form\Type\Application;
+namespace Mapbender\ManagerBundle\Form\Type\Application;
 
 
 use Mapbender\CoreBundle\Component\Template;
