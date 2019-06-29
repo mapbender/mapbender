@@ -457,9 +457,7 @@ $(function() {
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var minWidth = applicationForm.find('#application_screenshotWidth').val();
     var minHeight = applicationForm.find('#application_screenshotHeight').val();
-    var uploadScreenShot = applicationForm.find('#application_uploadScreenShot');
 
-    
     fileInput.on('mouseover', function() {
         uploadButton.addClass('hover');
     }).on('mouseout', function() {
@@ -481,9 +479,7 @@ $(function() {
                 deleteScreenShotButtonInit();
                 screenShot.removeClass('default');
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
-                uploadScreenShot.val(0);
             } else {
-                uploadScreenShot.val(1);
                 validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
                     {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height });
                 setFileError(validationMessage);

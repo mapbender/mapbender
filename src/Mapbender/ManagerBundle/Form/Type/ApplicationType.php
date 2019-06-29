@@ -23,12 +23,24 @@ class ApplicationType extends AbstractType
             'available_templates' => array(),
             'maxFileSize' => 0,
             'screenshotHeight' => 0,
-            'screenshotWidth' => 0
+            'screenshotWidth' => 0,
+            'include_acls' => true,
+            'aces' => null,
         ));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$options['data']->getId()) {
+            // allow template choice only for new Application
+            $builder->add('template', 'choice', array(
+                'choices' => $options['available_templates'],
+                'label' => 'mb.manager.admin.application.template',
+                'label_attr' => array(
+                    'title' => 'The HTML template used for this application.',
+                ),
+            ));
+        }
         $builder
             ->add('title', 'text', array(
                 'label' => 'mb.manager.admin.application.title',
@@ -51,13 +63,7 @@ class ApplicationType extends AbstractType
                     'title' => 'The description is used in overview lists.',
                 ),
             ))
-            ->add('template', 'choice', array(
-                'choices' => $options['available_templates'],
-                'label' => 'mb.manager.admin.application.template',
-                'label_attr' => array(
-                    'title' => 'The HTML template used for this application.',
-                ),
-            ))
+
             ->add('screenshotFile', 'file', array(
                 'label' => 'Screenshot',
                 'mapped' => false,
@@ -69,13 +75,12 @@ class ApplicationType extends AbstractType
                     new Constraints\Image(array(
                         'maxSize' => '2M',
                         'mimeTypesMessage' => 'mb.core.entity.app.screenshotfile.format_error',
+                        'minWidth' => $options['screenshotWidth'],
+                        'minHeight' => $options['screenshotHeight'],
                     )),
                 ),
             ))
             ->add('removeScreenShot', 'hidden',array(
-                'mapped' => false,
-            ))
-            ->add('uploadScreenShot', 'hidden',array(
                 'mapped' => false,
             ))
             ->add('maxFileSize', 'hidden',array(

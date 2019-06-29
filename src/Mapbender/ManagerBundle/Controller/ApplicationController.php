@@ -88,7 +88,7 @@ class ApplicationController extends WelcomeController
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
             $scFile = $form->get('screenshotFile')->getData();
 
-            if ($scFile && !$form->get('removeScreenShot')->getData() && !$form->get('uploadScreenShot')->getData()) {
+            if ($scFile && !$form->get('removeScreenShot')->getData()) {
                 $uploadScreenShot = new UploadScreenshot();
                 $uploadScreenShot->upload($appDirectory, $scFile, $application);
             }
@@ -256,7 +256,6 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
 
         $oldSlug          = $application->getSlug();
-        $templateClassOld = $application->getTemplate();
 
         $form             = $this->createApplicationForm($application);
         $form->handleRequest($request);
@@ -264,7 +263,6 @@ class ApplicationController extends WelcomeController
             $em = $this->getEntityManager();
             $em->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
-            $application->setTemplate($templateClassOld);
             $this->setRegionProperties($application, $form);
             if ($form->get('removeScreenShot')->getData() == '1') {
                 $application->setScreenshot(null);
@@ -280,7 +278,7 @@ class ApplicationController extends WelcomeController
                     $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
                 }
                 $scFile = $form->get('screenshotFile')->getData();
-                if ($scFile && !$form->get('removeScreenShot')->getData() && !$form->get('uploadScreenShot')->getData()) {
+                if ($scFile && !$form->get('removeScreenShot')->getData()) {
                     $uploadScreenShot = new UploadScreenshot();
                     $uploadScreenShot->upload($uploadPath, $scFile, $application);
                 }
@@ -313,6 +311,7 @@ class ApplicationController extends WelcomeController
             $screenShotUrl = null;
         }
 
+        // restore old slug to keep urls working
         $application->setSlug($oldSlug);
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
