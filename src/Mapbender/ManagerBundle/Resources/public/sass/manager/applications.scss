@@ -16,6 +16,20 @@
   min-width: 300px;
   .upload {
     position: relative;
+    height: $inputHeight;
+    line-height: $inputHeight;
+    .upload_button, .upload_label {
+      height: inherit;
+      line-height: inherit;
+    }
+    .upload_button, .upload_label, input[type="file"] {
+      display: inline-block;
+      vertical-align: top;
+    }
+    .upload_label {
+      max-width: 60%;
+      text-overflow: ellipsis;
+    }
   }
 
   .inputWrapper {
@@ -32,9 +46,6 @@
       cursor: pointer;
     }
   }
-  .upload_label{
-    overflow: hidden;
-  }
   .upload_button {
     $buttonFirstColor: #6fb536;
     padding: 0 10px;
@@ -45,9 +56,6 @@
     &:hover {
       background-color: darken($buttonFirstColor, 5%);
     }
-  }
-  .upload_button, .upload_label, .inputWrapper input[type=file] {
-    line-height: 24px;
   }
 }
 

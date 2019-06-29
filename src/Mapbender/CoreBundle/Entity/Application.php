@@ -110,12 +110,6 @@ class Application
     protected $extra_assets;
 
     /**
-     * @Assert\File(maxSize="2097152")
-     * @var File
-     */
-    protected $screenshotFile;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     protected $updated;
@@ -397,28 +391,6 @@ class Application
     public function getScreenshot()
     {
         return $this->screenshot;
-    }
-
-    /**
-     * Set screenshotFile
-     *
-     * @param $screenshotFile
-     * @return $this
-     */
-    public function setScreenshotFile($screenshotFile)
-    {
-        $this->screenshotFile = $screenshotFile;
-
-        return $this;
-    }
-
-    /**
-     * Get screenshotFile
-     * @return File
-     */
-    public function getScreenshotFile()
-    {
-        return $this->screenshotFile;
     }
 
     /**

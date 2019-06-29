@@ -72,7 +72,6 @@ class ApplicationController extends WelcomeController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $parameters    = $request->request->get('application');
             try {
                 $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
             } catch (IOException $e) {
@@ -87,12 +86,9 @@ class ApplicationController extends WelcomeController
             $em->flush();
             $aclManager = $this->getAclManager();
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-            $scFile = $application->getScreenshotFile();
+            $scFile = $form->get('screenshotFile')->getData();
 
-            if ($scFile !== null
-                && $parameters['removeScreenShot'] !== '1'
-                && $parameters['uploadScreenShot'] !== '1'
-            ) {
+            if ($scFile && !$form->get('removeScreenShot')->getData() && !$form->get('uploadScreenShot')->getData()) {
                 $uploadScreenShot = new UploadScreenshot();
                 $uploadScreenShot->upload($appDirectory, $scFile, $application);
             }
@@ -283,16 +279,10 @@ class ApplicationController extends WelcomeController
                 } else {
                     $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
                 }
-                $scFile = $application->getScreenshotFile();
-                if ($scFile) {
-                    $fileType = getimagesize($scFile);
-                    $parameters = $request->request->get('application');
-                    if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
-                        && strpos($fileType['mime'], 'image') !== false
-                    ) {
-                        $uploadScreenShot = new UploadScreenshot();
-                        $uploadScreenShot->upload($uploadPath, $scFile, $application);
-                    }
+                $scFile = $form->get('screenshotFile')->getData();
+                if ($scFile && !$form->get('removeScreenShot')->getData() && !$form->get('uploadScreenShot')->getData()) {
+                    $uploadScreenShot = new UploadScreenshot();
+                    $uploadScreenShot->upload($uploadPath, $scFile, $application);
                 }
                 $em->persist($application);
                 $em->flush();
@@ -323,6 +313,7 @@ class ApplicationController extends WelcomeController
             $screenShotUrl = null;
         }
 
+        $application->setSlug($oldSlug);
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'regions'             => $templateClass::getRegions(),

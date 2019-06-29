@@ -14,11 +14,10 @@
 }
 .button{
   padding:($space/4) ($space/2);
-//  line-height:$fontSize;
   height: 24px;
-  line-height: 11px;
+  line-height: 1;
   display: inline-block;
-  margin:0px;
+  margin:0;
   text-decoration: none;
 
   border:1px solid darken($buttonSecondColor, 5%);

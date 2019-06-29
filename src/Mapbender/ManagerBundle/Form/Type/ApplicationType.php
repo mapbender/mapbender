@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
 
 
 class ApplicationType extends AbstractType
@@ -59,9 +60,16 @@ class ApplicationType extends AbstractType
             ))
             ->add('screenshotFile', 'file', array(
                 'label' => 'Screenshot',
+                'mapped' => false,
+                'required' => false,
                 'attr' => array(
-                    'required' => false,
                     'accept'=>'image/*',
+                ),
+                'constraints' => array(
+                    new Constraints\Image(array(
+                        'maxSize' => '2M',
+                        'mimeTypesMessage' => 'mb.core.entity.app.screenshotfile.format_error',
+                    )),
                 ),
             ))
             ->add('removeScreenShot', 'hidden',array(
