@@ -448,7 +448,6 @@ $(function() {
         var $box = $('.validationMsgBox', fileGroup);
         if (!$box.length) {
             $box = $('<span>').addClass('validationMsgBox smalltext');
-            console.log("Attaching new validationMsgBox", fileInput, $box);
             fileInput.after($box);
         }
         $box.text(message || '');
