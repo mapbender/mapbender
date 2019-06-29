@@ -21,7 +21,7 @@
 
 {% block manager_content %}
   <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"></a>
-    {{ form_start(form, {"attr": {"action": path('mapbender_manager_application_update', { 'slug': application.slug }), "novalidate": "novalidate"}}) }}
+    {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>

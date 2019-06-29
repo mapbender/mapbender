@@ -7,7 +7,6 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
@@ -86,7 +85,6 @@ class ApplicationController extends WelcomeController
             $em->beginTransaction();
             $em->persist($application);
             $em->flush();
-            $this->checkRegionProperties($application);
             $aclManager = $this->getAclManager();
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
             $scFile = $application->getScreenshotFile();
@@ -105,9 +103,9 @@ class ApplicationController extends WelcomeController
             $templateClass = $application->getTemplate();
             $templateProps = $templateClass::getRegionsProperties();
 
-            foreach ($templateProps as $regionName => $regionProps) {
+            foreach (array_keys($templateProps) as $regionName) {
                 $application->addRegionProperties(
-                    $this->createRegionProperties($application, $regionName, $regionProps)
+                    $this->createRegionProperties($application, $regionName)
                 );
             }
 
@@ -250,7 +248,7 @@ class ApplicationController extends WelcomeController
     /**
      * Edit application
      *
-     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
+     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
      * @param $request Request
      * @param string $slug Application name
      * @return Response
@@ -261,83 +259,77 @@ class ApplicationController extends WelcomeController
         $application = $this->requireApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
-        $this->checkRegionProperties($application);
-        $form = $this->createApplicationForm($application);
-
-        return $this->render('@MapbenderManager/Application/edit.html.twig',
-            $this->prepareApplicationUpdate($request, $form, $application));
-    }
-
-    /**
-     * Updates application
-     *
-     * @ManagerRoute("/application/{slug}/update", requirements = { "slug" = "[\w-]+" }, methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     * @throws \Doctrine\DBAL\ConnectionException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function updateAction(Request $request, $slug)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-
         $oldSlug          = $application->getSlug();
         $templateClassOld = $application->getTemplate();
+
         $form             = $this->createApplicationForm($application);
-
-        if (!$form->submit($request)->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getEntityManager();
+            $em->beginTransaction();
+            $application->setUpdated(new \DateTime('now'));
             $application->setTemplate($templateClassOld);
-            $application->setSlug($slug);
-            return $this->render('@MapbenderManager/Application/edit.html.twig',
-                $this->prepareApplicationUpdate($request, $form, $application));
-        }
-
-        $em = $this->getEntityManager();
-
-        $em->beginTransaction();
-        $application->setUpdated(new \DateTime('now'));
-        $application->setTemplate($templateClassOld);
-        $this->setRegionProperties($application, $form);
-        if ($form->get('removeScreenShot')->getData() == '1') {
-            $application->setScreenshot(null);
-        }
-        $em->persist($application);
-        $em->flush();
-
-        try {
-            $ulm = $this->getUploadsManager();
-            if ($oldSlug !== $application->getSlug()) {
-                $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
-            } else {
-                $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
-            }
-            $scFile = $application->getScreenshotFile();
-            if ($scFile) {
-                $fileType = getimagesize($scFile);
-                $parameters = $request->request->get('application');
-                if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
-                    && strpos($fileType['mime'], 'image') !== false
-                ) {
-                    $uploadScreenShot = new UploadScreenshot();
-                    $uploadScreenShot->upload($uploadPath, $scFile, $application);
-                }
+            $this->setRegionProperties($application, $form);
+            if ($form->get('removeScreenShot')->getData() == '1') {
+                $application->setScreenshot(null);
             }
             $em->persist($application);
             $em->flush();
-            $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
-            $em->commit();
-            $this->addFlash('success', $this->translate('mb.application.save.success'));
-        } catch (IOException $e) {
-            $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
-            $em->rollback();
-        } catch (\Exception $e) {
-            $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
-            $em->rollback();
+
+            try {
+                $ulm = $this->getUploadsManager();
+                if ($oldSlug !== $application->getSlug()) {
+                    $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
+                } else {
+                    $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
+                }
+                $scFile = $application->getScreenshotFile();
+                if ($scFile) {
+                    $fileType = getimagesize($scFile);
+                    $parameters = $request->request->get('application');
+                    if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
+                        && strpos($fileType['mime'], 'image') !== false
+                    ) {
+                        $uploadScreenShot = new UploadScreenshot();
+                        $uploadScreenShot->upload($uploadPath, $scFile, $application);
+                    }
+                }
+                $em->persist($application);
+                $em->flush();
+                $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                $em->commit();
+                $this->addFlash('success', $this->translate('mb.application.save.success'));
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    'slug' => $application->getSlug(),
+                ));
+            } catch (IOException $e) {
+                $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
+                $em->rollback();
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
+                $em->rollback();
+            }
         }
-        return $this->redirectToRoute('mapbender_manager_application_edit', array(
-            'slug' => $application->getSlug(),
+
+        $templateClass = $application->getTemplate();
+        $screenShot = $application->getScreenshot();
+        if ($screenShot) {
+            $baseUrl = $this->getUploadsBaseUrl($request);
+            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
+            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
+                't' => date('d.m.Y-H:i:s'),
+            ));
+        } else {
+            $screenShotUrl = null;
+        }
+
+        return $this->render('@MapbenderManager/Application/edit.html.twig', array(
+            'application'         => $application,
+            'regions'             => $templateClass::getRegions(),
+            'form'                => $form->createView(),
+            'template_name'       => $templateClass::getTitle(),
+            'screenshot'          => $screenShotUrl,
+            'screenshot_filename' => $screenShot,
         ));
     }
 
@@ -753,53 +745,17 @@ class ApplicationController extends WelcomeController
      * Create application region properties
      *
      * @param Application $application
-     * @param             $regionName
-     * @param             $initValues
+     * @param string $regionName
      * @return RegionProperties
      */
-    protected function createRegionProperties(Application $application, $regionName, array $initValues = null)
+    protected function createRegionProperties(Application $application, $regionName)
     {
-        $em = $this->getEntityManager();
         $properties = new RegionProperties();
 
         $properties->setApplication($application);
         $properties->setName($regionName);
-        $em->persist($properties);
 
         return $properties;
-    }
-
-    /**
-     * @param Request $request
-     * @param Form        $form
-     * @param Application $application
-     * @return array
-     */
-    protected function prepareApplicationUpdate(Request $request, Form $form, $application)
-    {
-        /** @var Element $element */
-        $slug          = $application->getSlug();
-        $templateClass = $application->getTemplate();
-        $screenShot = $application->getScreenshot();
-        if ($screenShot) {
-            $baseUrl = $this->getUploadsBaseUrl($request);
-            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
-            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
-                't' => date('d.m.Y-H:i:s'),
-            ));
-        } else {
-            $screenShotUrl = null;
-        }
-
-        return array(
-            'application'         => $application,
-            'regions'             => $templateClass::getRegions(),
-            'slug'                => $slug,
-            'form'                => $form->createView(),
-            'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $screenShot,
-        );
     }
 
     /**
