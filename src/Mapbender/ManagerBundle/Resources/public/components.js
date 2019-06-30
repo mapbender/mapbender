@@ -18,9 +18,18 @@ $(function() {
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
 
-
-
-
+    // List toggles used in source views (collapsible layer / matrix nodes)
+    $(".openCloseTitle").on("click", function() {
+        var $title = $(this);
+        var $list = $title.parent();
+        if ($list.hasClass("closed")) {
+            $title.removeClass("iconExpandClosed").addClass("iconExpand");
+            $list.removeClass("closed");
+        }else{
+            $title.addClass("iconExpandClosed").removeClass("iconExpand");
+            $list.addClass("closed");
+        }
+    });
 
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput", function(){
@@ -48,11 +57,6 @@ $(function() {
         }
     });
 
-
-
-
-
-
     // init validation feedback --------------------------------------------------------------
     $(document).on("keypress", ".validationInput", function(){
       $(this).siblings(".validationMsgBox").addClass("hide");
@@ -72,7 +76,6 @@ $(function() {
         }, (idx + 1) * 2000);
     });
 
-
     // init user box -------------------------------------------------------------------------
     $("#accountOpen").bind("click", function(){
         var menu = $("#accountMenu");
@@ -82,10 +85,6 @@ $(function() {
             menu.addClass("opened");
         }
     });
-
-
-
-
 
     // init permissions table ----------------------------------------------------------------
     // set permission root state
@@ -110,7 +109,59 @@ $(function() {
         // change root permission state
         setPermissionsRootState(className, scope);
     };
-    // init permission root state
+    function appendAces($permissionsTable, $sidSelector, defaultPermissions) {
+        var body = $("tbody", $permissionsTable);
+        var proto = $("thead", $permissionsTable).attr("data-prototype");
+
+        var count = body.find("tr").length;
+        $('input[type="checkbox"]:checked', $sidSelector).each(function() {
+            var $row = $(this).closest('tr');
+            var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
+            var text = $row.find(".labelInput").text().trim();
+            var val = $row.find(".hide").text().trim();
+            var newEl = $(proto.replace(/__name__/g, count++));
+            newEl.addClass('new');
+            $('.labelInput', newEl).text(text);
+            body.prepend(newEl);
+            newEl.find(".input").attr("value", val);
+            (defaultPermissions || []).map(function(permissionName) {
+                $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
+            });
+            newEl.find(".userType")
+                    .removeClass("iconGroup")
+                    .removeClass("iconUser")
+                    .addClass(userType);
+        });
+        // if table was previously empty, reveal it and hide placeholder text
+        $permissionsTable.removeClass('hidePermissions');
+        $('#permissionsDescription', $permissionsTable.parent()).addClass('hidden');
+    }
+    function filterSidContent(response, $permissionsTable) {
+        var $content = $(response);
+        $('tbody tr.filterItem', $content).each(function() {
+            var groupUserItem = $(this);
+            var groupUserType = $('.tdContentWrapper', this)
+                          .hasClass("iconGroup") ? "iconGroup" : "iconUser";
+            var newItemText = $('label:first', groupUserItem).text().trim().toUpperCase();
+            $('tbody .userType', $permissionsTable).each(function() {
+                var $existingRowLabel = $(this);
+                var existingRowText = $existingRowLabel.text().trim().toUpperCase();
+                var sameType = $existingRowLabel.hasClass(groupUserType);
+                // @todo: filter duplicates bassed on SIDs, not labels
+                var textMatch;
+                if (groupUserType === 'iconGroup') {
+                    textMatch = existingRowText === 'ROLE_GROUP_' + newItemText;
+                } else {
+                    textMatch = existingRowText === newItemText;
+                }
+                if (sameType && textMatch) {
+                    groupUserItem.remove();
+                }
+            });
+        });
+        return $content;
+    }
+
     var initPermissionRoot = function() {
         var $table = $(this);
         var $head = $('thead', this);
@@ -122,9 +173,6 @@ $(function() {
             toggleAllPermissions.call(this, $table);
         });
     };
-    $(document).on('init-acl-edit', '.permissionsTable', initPermissionRoot);
-    $('.permissionsTable').trigger('init-acl-edit');
-
     // toggle permission Event
     var togglePermission = function(){
         var $this = $(this);
@@ -132,8 +180,6 @@ $(function() {
         setPermissionsRootState($this.attr("data-perm-type"), scope);
     };
     $(document).on("click", ".permissionsTable .checkWrapper", togglePermission);
-
-    var popup;
 
     // add user or groups
     // Remaining FOM markup uses an anchor with a href, which allows undesirable "open in new tab" interactions and
@@ -146,53 +192,22 @@ $(function() {
         var $this = $(this);
         var url = $this.attr('data-url') || $this.attr("href");
         var $targetTable = $('.permissionsTable', $this.closest('.tabContainer,.container,.popup'));
-        var proto = $("thead", $targetTable).attr("data-prototype");
-
-        if(popup){
-            popup = popup.destroy();
-        }
 
         if (url.length > 0) {
             $.ajax({
                 url: url
             }).then(function(response) {
-                popup = new Mapbender.Popup({
+                var popup = new Mapbender.Popup({
                     title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
                     closeOnOutsideClick: true,
-                    content: response,
+                    content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
                             label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
                             cssClass: 'button',
                             callback: function() {
-                                var $targetBody  = $("tbody", $targetTable);
-
-                                if (proto) {
-                                    var count = $targetBody.find("tr").length;
-                                    var text, val, newEl;
-
-                                    $('#listFilterGroupsAndUsers input[type="checkbox"]:checked', popup.$element).each(function() {
-                                        var $row = $(this).closest('tr');
-                                        var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
-                                        text = $row.find(".labelInput").text().trim();
-                                        val = $row.find(".hide").text().trim();
-                                        newEl = $targetBody.prepend(proto.replace(/__name__/g, count))
-                                                    .find("tr:first");
-
-                                        newEl.addClass("new").find(".labelInput").text(text);
-                                        newEl.find(".input").attr("value", val);
-                                        newEl.find(".view.checkWrapper").trigger("click");
-                                        newEl.find(".userType")
-                                             .removeClass("iconGroup")
-                                             .removeClass("iconUser")
-                                             .addClass(userType);
-                                        ++count;
-                                    });
-
-                                    this.close();
-                                    $(".permissionsTable").show();
-                                    $("#permissionsDescription").hide();
-                                }
+                                appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
+                                this.close();
                             }
                         },
                         {
@@ -203,29 +218,6 @@ $(function() {
                             }
                         }
                     ]
-                });
-
-                var groupUserItem, roleName, me, groupUserType, groupName;
-
-                $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
-                    groupUserItem = $(e);
-                    groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                                  .hasClass("iconGroup") ? "iconGroup"
-                                                                         : "iconUser");
-                    $("#permissionsBody").find(".labelInput").each(function(i, e) {
-                        me = $(e);
-                        roleName = me.text().trim().toUpperCase();
-                        groupName = $(".labelInput", groupUserItem).text().toUpperCase();
-                        var isUserType = (me.parent().hasClass(groupUserType));
-
-                        if(roleName.indexOf("ROLE_GROUP_") === 0) {
-                            groupName = "ROLE_GROUP_" + groupName;
-                        }
-
-                        if(groupName == roleName && isUserType) {
-                            groupUserItem.remove();
-                        }
-                    });
                 });
             });
         }
@@ -249,18 +241,126 @@ $(function() {
         Mapbender.Manager.confirmDelete(null, null, labels, content).then(function() {
             $row.remove();
         });
+    }).each(initPermissionRoot);
+
+    // Element security
+    function initElementSecurity(response) {
+        var popup;
+        var $initialView, $permissionsTable;
+        var isModified = false;
+        var popupOptions = {
+            title: "Secure element",
+            closeOnOutsideClick: true,
+            content: response,
+            buttons: [
+                {
+                    // @todo: provide distinct label
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
+                    cssClass: 'button buttonReset hidden left',
+                    callback: function() {
+                        // reload entire popup
+                        initElementSecurity(response);
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
+                    cssClass: 'button buttonBack hidden left',
+                    callback: function() {
+                        $('.contentItem', popup.$element).not($initialView).remove();
+                        $initialView.removeClass('hidden');
+
+                        $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
+                        $(".buttonOk", popup.$element).removeClass('hidden');
+                        $('.buttonReset', popup.$element).toggleClass('hidden', !isModified);
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'),
+                    cssClass: 'button buttonRemove hidden',
+                    callback: function(evt) {
+                        var $button = $(evt.currentTarget);
+                        $('.contentItem', popup.$element).not($initialView).remove();
+                        $initialView.removeClass('hidden');
+                        $button.data('target-row').remove();
+                        $button.data('target-row', null);
+                        isModified = true;
+
+                        $(".buttonAdd,.buttonRemove,.buttonBack", popup.$element).addClass('hidden');
+                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'),
+                    cssClass: 'button buttonAdd hidden',
+                    callback: function() {
+                        $(".contentItem:first", popup.$element).removeClass('hidden');
+                        if ($(".contentItem", popup.$element).length > 1) {
+                            appendAces($permissionsTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
+                            $(".contentItem:not(.contentItem:first)", popup.$element).remove();
+                        }
+                        isModified = true;
+                        $(".buttonAdd,.buttonBack", popup.$element).addClass('hidden');
+                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.ok'),
+                    cssClass: 'button buttonOk',
+                    callback: function() {
+                        $("#elementSecurity", popup.$element).submit();
+                        window.setTimeout(function() {
+                            window.location.reload();
+                        }, 50);
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.cancel'),
+                    cssClass: 'button buttonCancel critical',
+                    callback: function() {
+                        this.close();
+                    }
+                }
+            ]
+        };
+        popup = new Mapbender.Popup(popupOptions);
+        $initialView = $(".contentItem:first", popup.$element);
+        $permissionsTable = $('.permissionsTable', $initialView);
+        $permissionsTable.each(initPermissionRoot);
+
+        $('#addElmPermission', popup.$element).on('click', function(e) {
+            var $anchor = $(this);
+            var url = $anchor.attr('data-href') || $anchor.attr('href');
+            e.preventDefault();
+            e.stopPropagation();
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(data) {
+                    $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
+                    $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
+                    popup.addContent(filterSidContent(data, $permissionsTable));
+                }
+            });
+            return false;
+        });
+        $permissionsTable.on("click", 'tbody .iconRemove', function() {
+            var $row = $(this).closest('tr');
+            var userGroup =($row.find(".iconUser").length ? "user " : "group ") + $row.find(".labelInput").text();
+            popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
+            $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
+            $('.buttonRemove', popup.$element).data('target-row', $row);
+            $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
+        });
+    }
+
+    $(".secureElement").on("click", function() {
+        $.ajax({
+            url: $(this).attr('data-url')
+        }).then(function(response) {
+            initElementSecurity(response);
+        });
+        return false;
     });
 
 
-    $(".openCloseTitle").on("click", function() {
-        var $title = $(this);
-        var $list = $title.parent();
-        if ($list.hasClass("closed")) {
-            $title.removeClass("iconExpandClosed").addClass("iconExpand");
-            $list.removeClass("closed");
-        }else{
-            $title.addClass("iconExpandClosed").removeClass("iconExpand");
-            $list.addClass("closed");
-        }
-    });
 });

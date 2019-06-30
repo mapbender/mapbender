@@ -1,32 +1,5 @@
 $(function() {
     var popupCls = Mapbender.Popup;
-    function appendAces($permissionsTable, $sidSelector, defaultPermissions) {
-        var body = $("tbody", $permissionsTable);
-        var proto = $("thead", $permissionsTable).attr("data-prototype");
-
-        var count = body.find("tr").length;
-        $('input[type="checkbox"]:checked', $sidSelector).each(function() {
-            var $row = $(this).closest('tr');
-            var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
-            var text = $row.find(".labelInput").text().trim();
-            var val = $row.find(".hide").text().trim();
-            var newEl = $(proto.replace(/__name__/g, count++));
-            newEl.addClass('new');
-            $('.labelInput', newEl).text(text);
-            body.prepend(newEl);
-            newEl.find(".input").attr("value", val);
-            (defaultPermissions || []).map(function(permissionName) {
-                $('.checkWrapper.' + permissionName, newEl).trigger('click');
-            });
-            newEl.find(".userType")
-                    .removeClass("iconGroup")
-                    .removeClass("iconUser")
-                    .addClass(userType);
-        });
-        // if table was previously empty, reveal it and hide placeholder text
-        $permissionsTable.removeClass('hidePermissions');
-        $('#permissionsDescription', $permissionsTable.parent()).addClass('hidden');
-    }
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -41,12 +14,12 @@ $(function() {
                             number: idx,
                             region: $(ui.item).closest('table').attr("data-region")
                         },
-                        success: function(data, textStatus, jqXHR) {
+                        success: function(data) {
                             if (data.error && data.error !== '') {
                                 document.location.reload();
                             }
                         },
-                        error: function(jqXHR, textStatus, errorThrown) {
+                        error: function() {
                             document.location.reload();
                         }
                     });
@@ -121,7 +94,7 @@ $(function() {
                     }
                 ])
             });
-            popup.$element.on('change', function(event) {
+            popup.$element.on('change', function() {
                 $('#elementForm', popup.$element).data('dirty', true);
             });
             popup.$element.on('close', function(event, token) {
@@ -180,7 +153,7 @@ $(function() {
         });
     }
 
-    $(".addElement").bind("click", function(event) {
+    $(".addElement").bind("click", function() {
         var regionName = $('.subTitle', $(this).closest('.region')).first().text();
         startElementChooser(regionName, $(this).attr('href'));
         return false;
@@ -215,141 +188,6 @@ $(function() {
             }
         });
     }
-
-    // Element security
-    function initElementSecurity(response) {
-        var popup;
-        var $initialView, $permissionsTable;
-        var isModified = false;
-        var popupOptions = {
-            title: "Secure element",
-            closeOnOutsideClick: true,
-            content: response,
-            buttons: [
-                {
-                    // @todo: provide distinct label
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
-                    cssClass: 'button buttonReset hidden left',
-                    callback: function() {
-                        // reload entire popup
-                        initElementSecurity(response);
-                    }
-                },
-                {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
-                    cssClass: 'button buttonBack hidden left',
-                    callback: function() {
-                        $('.contentItem', popup.$element).not($initialView).remove();
-                        $initialView.removeClass('hidden');
-
-                        $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
-                        $(".buttonOk", popup.$element).removeClass('hidden');
-                        $('.buttonReset', popup.$element).toggleClass('hidden', !isModified);
-                    }
-                },
-                {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'),
-                    cssClass: 'button buttonRemove hidden',
-                    callback: function(evt) {
-                        var $button = $(evt.currentTarget);
-                        $('.contentItem', popup.$element).not($initialView).remove();
-                        $initialView.removeClass('hidden');
-                        $button.data('target-row').remove();
-                        $button.data('target-row', null);
-                        isModified = true;
-
-                        $(".buttonAdd,.buttonRemove,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
-                    }
-                },
-                {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'),
-                    cssClass: 'button buttonAdd hidden',
-                    callback: function() {
-                        $(".contentItem:first", popup.$element).removeClass('hidden');
-                        if ($(".contentItem", popup.$element).length > 1) {
-                            appendAces($permissionsTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
-                            $(".contentItem:not(.contentItem:first)", popup.$element).remove();
-                        }
-                        isModified = true;
-                        $(".buttonAdd,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
-                    }
-                },
-                {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.ok'),
-                    cssClass: 'button buttonOk',
-                    callback: function() {
-                        $("#elementSecurity", popup.$element).submit();
-                        window.setTimeout(function() {
-                            window.location.reload();
-                        }, 50);
-                    }
-                },
-                {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.cancel'),
-                    cssClass: 'button buttonCancel critical',
-                    callback: function() {
-                        this.close();
-                    }
-                }
-            ]
-        };
-        popup = new popupCls(popupOptions);
-        $initialView = $(".contentItem:first", popup.$element);
-        $permissionsTable = $('.permissionsTable', $initialView);
-        $('.permissionsTable', popup.$element).trigger('init-acl-edit');
-
-        $('#addElmPermission', popup.$element).on('click', function(e) {
-            var $anchor = $(this);
-            var url = $anchor.attr('data-href') || $anchor.attr('href');
-            e.preventDefault();
-            e.stopPropagation();
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(data, textStatus, jqXHR) {
-                    $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
-                    $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
-                    popup.addContent(data);
-                    var groupUserItem, groupUserType;
-
-                    $("#listFilterGroupsAndUsers .filterItem", popup.$element).each(function() {
-                        groupUserItem = $(this);
-                        groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                .hasClass("iconGroup") ? "iconGroup"
-                                : "iconUser");
-                        var newItemText = $('label:first', groupUserItem).text().trim().toUpperCase();
-                        $('.permissionsTable tbody .userType', popup.$element).each(function() {
-                            var $existingRowLabel = $(this);
-                            var existingRowText = $existingRowLabel.text().trim().toUpperCase();
-                            if ((existingRowText === newItemText) && ($existingRowLabel.hasClass(groupUserType))) {
-                                groupUserItem.remove();
-                            }
-                        });
-                    });
-                }
-            });
-            return false;
-        });
-        popup.$element.on("click", '.permissionsTable tbody .iconRemove', function() {
-            var $row = $(this).closest('tr');
-            var userGroup =($row.find(".iconUser").length ? "user " : "group ") + $row.find(".labelInput").text();
-            popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
-            $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
-            $('.buttonRemove', popup.$element).data('target-row', $row);
-            $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
-        });
-    }
-
-    $(".secureElement").on("click", function() {
-        $.ajax({
-            url: $(this).attr('data-url')
-        }).then(function(response) {
-            initElementSecurity(response);
-        });
-        return false;
-    });
 
     // Delete element
     $('.removeElement').bind("click", function() {
@@ -415,7 +253,7 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function(event) {
+    $(".addInstance").bind("click", function() {
         var self = $(this);
         var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
         new popupCls({
@@ -548,7 +386,7 @@ $(function() {
         $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
             var self = this;
             initCheckbox.call(this);
-            $(self).on("change", function(e) {
+            $(self).on("change", function() {
                 $.ajax({
                     url: $(self).attr('data-url'),
                     type: 'POST',
