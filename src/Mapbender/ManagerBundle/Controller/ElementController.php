@@ -56,15 +56,10 @@ class ElementController extends ApplicationControllerBase
 
         foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
-            $tags = array();
-            foreach ($elementClassName::getClassTags() as $tag) {
-                $tags[] = $trans->trans($tag);
-            }
             $elements[$title] = array(
                 'class' => $elementClassName,
                 'title' => $title,
                 'description' => $trans->trans($elementClassName::getClassDescription()),
-                'tags' => $tags,
             );
         }
 
