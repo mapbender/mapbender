@@ -3,15 +3,6 @@
  * See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/public/js
  */
 $(function() {
-    //
-    // Add manually a string trim function for IE8 support
-    //
-    if(typeof String.prototype.trim !== 'function') {
-        String.prototype.trim = function() {
-            return this.replace(/^\s+|\s+$/g, '');
-        }
-    }
-
     // init tabcontainers --------------------------------------------------------------------
     var tabs = $(".tabContainer").find(".tab");
     tabs.attr("tabindex", 0);
