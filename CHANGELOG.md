@@ -1,15 +1,21 @@
-## dev-release/3.0.7 @ a11cf0656
+## dev-release/3.0.7 @ 059333276
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
+- Fix dropdown choice display for choice values containing backslashes or quotes (e.g. Application template chooser)
 - Fix missing favicon in login / password reset areas
 - Fix sizing and missing localization of layerset, group and user delete confirmation popups
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
 - Fix broken "toggle all" interaction in Element ACL assignment popup header
 - Fix application publish / unpublish interaction
+- Only allow Application ACL editing for Application owner and users with global ACL editing rights
+- Provide reasonable default region properties for new application
+- Redirect to edit view instead of index when creating new application
 - Translate source creation and source reloading error messages
 - Suppress broken link to source refresh for non-refreshable (i.e. WMTS + TMS) sources in sources index
+- Allow exiting user / group selector when trying to add a new Element permission
 - Improve HTML and asset response performance for complex YAML-defined applications
+- Enable HTML response caching for YAML-defined applications
 - Improve export file size and import / export / copying performance
 - Add mapbender:source:rewrite:host CLI command (update matching source urls without reeavaluating capabilities)
 - Add mapbender:application:export CLI command
