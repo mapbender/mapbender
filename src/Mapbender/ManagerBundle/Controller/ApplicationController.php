@@ -84,8 +84,9 @@ class ApplicationController extends WelcomeController
             $em->beginTransaction();
             $em->persist($application);
             $em->flush();
-            $aclManager = $this->getAclManager();
-            $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
+            if ($form->has('acl')) {
+                $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+            }
             $scFile = $form->get('screenshotFile')->getData();
 
             if ($scFile && !$form->get('removeScreenShot')->getData()) {
@@ -284,7 +285,9 @@ class ApplicationController extends WelcomeController
                 }
                 $em->persist($application);
                 $em->flush();
-                $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                if ($form->has('acl')) {
+                    $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                }
                 $em->commit();
                 $this->addFlash('success', $this->translate('mb.application.save.success'));
                 return $this->redirectToRoute('mapbender_manager_application_edit', array(
@@ -670,6 +673,7 @@ class ApplicationController extends WelcomeController
             'maxFileSize'          => 2097152,
             'screenshotWidth'      => 200,
             'screenshotHeight'     => 200,
+            'include_acl' => $this->allowAclEditing($application),
         ));
     }
 
@@ -699,6 +703,19 @@ class ApplicationController extends WelcomeController
 
                 }
             }
+        }
+    }
+
+    protected function allowAclEditing(Application $application)
+    {
+        if (!$application->getId()) {
+            // current user will become owner of the new application
+            return true;
+        } elseif ($this->isGranted('OWNER', $application)) {
+            return true;
+        } else {
+            $aclOid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
+            return $this->isGranted('EDIT', $aclOid);
         }
     }
 

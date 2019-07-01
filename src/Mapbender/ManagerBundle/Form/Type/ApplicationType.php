@@ -24,8 +24,7 @@ class ApplicationType extends AbstractType
             'maxFileSize' => 0,
             'screenshotHeight' => 0,
             'screenshotWidth' => 0,
-            'include_acls' => true,
-            'aces' => null,
+            'include_acl' => true,
         ));
     }
 
@@ -118,10 +117,15 @@ class ApplicationType extends AbstractType
             }
         }
 
-        // Security
-        $builder->add('acl', 'acl', array(
-            'mapped' => false,
-            'data' => $options['data'],
-            'permissions' => 'standard::object'));
+        if ($options['include_acl']) {
+            $builder
+                ->add('acl', 'acl', array(
+                    'mapped' => false,
+                    'data' => $options['data'],
+                    'create_standard_permissions' => true,
+                    'permissions' => 'standard::object',
+                ))
+            ;
+        }
     }
 }
