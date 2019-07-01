@@ -5,6 +5,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\DBALException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -96,15 +97,7 @@ class ApplicationController extends WelcomeController
 
             $em->persist($application);
             $em->flush();
-
-            $templateClass = $application->getTemplate();
-            $templateProps = $templateClass::getRegionsProperties();
-
-            foreach (array_keys($templateProps) as $regionName) {
-                $application->addRegionProperties(
-                    $this->createRegionProperties($application, $regionName)
-                );
-            }
+            $this->createRegionProperties($application);
 
             $em->persist($application);
             $em->flush();
@@ -706,6 +699,10 @@ class ApplicationController extends WelcomeController
         }
     }
 
+    /**
+     * @param Application $application
+     * @return bool
+     */
     protected function allowAclEditing(Application $application)
     {
         if (!$application->getId()) {
@@ -720,49 +717,29 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Update application region properties if they'r changed
-     *
-     * @param $application
-     */
-    private function checkRegionProperties(Application $application)
-    {
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-        $em = $this->getEntityManager();
-        // add RegionProperties if defined
-        foreach ($templateProps as $regionName => $regionProps) {
-            $exists = false;
-            foreach ($application->getRegionProperties() as $regprops) {
-                if ($regprops->getName() === $regionName) {
-                    $exists = true;
-                    break;
-                }
-            }
-            if (!$exists) {
-                $application->addRegionProperties(
-                    $this->createRegionProperties($application, $regionName)
-                );
-                $em->persist($application);
-                $em->flush();
-            }
-        }
-    }
-
-    /**
-     * Create application region properties
+     * Create initial application region properties
      *
      * @param Application $application
-     * @param string $regionName
-     * @return RegionProperties
      */
-    protected function createRegionProperties(Application $application, $regionName)
+    protected function createRegionProperties(Application $application)
     {
-        $properties = new RegionProperties();
+        /** @var Template::class $templateClass */
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
 
-        $properties->setApplication($application);
-        $properties->setName($regionName);
-
-        return $properties;
+        foreach ($templateProps as $regionName => $choices) {
+            if (!$choices) {
+                continue;
+            }
+            $propsEntity = new RegionProperties();
+            $propsEntity->setApplication($application);
+            $propsEntity->setName($regionName);
+            $choiceKeys = array_keys($choices);
+            $firstChoiceValues = $choices[$choiceKeys[0]];
+            unset($firstChoiceValues['label']);
+            $propsEntity->setProperties($firstChoiceValues);
+            $application->addRegionProperties($propsEntity);
+        }
     }
 
     /**
