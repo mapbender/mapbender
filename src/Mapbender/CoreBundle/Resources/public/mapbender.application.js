@@ -460,14 +460,16 @@ Mapbender.Util.Url = function(urlString){
         // check if the string preceding this first single slash is ":port"
         if (!(new RegExp('^([^/]+?//)?[^/]*?:' + this.port + '($|/)').test(urlString))) {
             this.port = '';
+            // also fix .host, see IE notes at https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/host
             this.host = this.host.replace(/:\d+$/, '');
         }
     }
-    // No .hostname support in IE
-    if (!this.hostname && this.host) {
+    // No reliable .hostname support in IE, see e.g. https://stackoverflow.com/questions/10755943/ie-forgets-an-a-tags-hostname-after-changing-href
+    if (this.host && !this.hostname) {
         // .hostname is same as .host minus port specification
         this.hostname = this.host.replace(/:\d+$/, '');
     }
+    // https://stackoverflow.com/questions/956233/javascript-pathname-ie-quirk
     this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
     this.parameters = {};
     var rawParams = (tmp.search || '?').substr(1).split('&');
