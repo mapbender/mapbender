@@ -463,6 +463,11 @@ Mapbender.Util.Url = function(urlString){
             this.host = this.host.replace(/:\d+$/, '');
         }
     }
+    // No .hostname support in IE
+    if (!this.hostname && this.host) {
+        // .hostname is same as .host minus port specification
+        this.hostname = this.host.replace(/:\d+$/, '');
+    }
     this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
     this.parameters = {};
     var rawParams = (tmp.search || '?').substr(1).split('&');
