@@ -115,22 +115,24 @@ $(function() {
 
         var count = body.find("tr").length;
         $('input[type="checkbox"]:checked', $sidSelector).each(function() {
+            // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
             var $row = $(this).closest('tr');
-            var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
+            var sid = $('span.hide', $row).text();
+            var sidType = (sid.split(':')[0]).toUpperCase();
             var text = $row.find(".labelInput").text().trim();
-            var val = $row.find(".hide").text().trim();
             var newEl = $(proto.replace(/__name__/g, count++));
             newEl.addClass('new');
+            newEl.attr('data-sid', sid);
             $('.labelInput', newEl).text(text);
             body.prepend(newEl);
-            newEl.find(".input").attr("value", val);
+            newEl.find(".input").attr("value", sid);
             (defaultPermissions || []).map(function(permissionName) {
                 $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
             });
-            newEl.find(".userType")
-                    .removeClass("iconGroup")
-                    .removeClass("iconUser")
-                    .addClass(userType);
+            $('.userType', newEl)
+                .toggleClass('iconGroup', sidType === 'R')
+                .toggleClass('iconUser', sidType === 'U')
+            ;
         });
         // if table was previously empty, reveal it and hide placeholder text
         $permissionsTable.removeClass('hidePermissions');
@@ -140,21 +142,12 @@ $(function() {
         var $content = $(response);
         $('tbody tr.filterItem', $content).each(function() {
             var groupUserItem = $(this);
-            var groupUserType = $('.tdContentWrapper', this)
-                          .hasClass("iconGroup") ? "iconGroup" : "iconUser";
-            var newItemText = $('label:first', groupUserItem).text().trim().toUpperCase();
+            // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
+            var newItemSid = $('span.hide', groupUserItem).text();
             $('tbody .userType', $permissionsTable).each(function() {
-                var $existingRowLabel = $(this);
-                var existingRowText = $existingRowLabel.text().trim().toUpperCase();
-                var sameType = $existingRowLabel.hasClass(groupUserType);
-                // @todo: filter duplicates bassed on SIDs, not labels
-                var textMatch;
-                if (groupUserType === 'iconGroup') {
-                    textMatch = existingRowText === 'ROLE_GROUP_' + newItemText;
-                } else {
-                    textMatch = existingRowText === newItemText;
-                }
-                if (sameType && textMatch) {
+                var existingRowSid = $(this).closest('tr').attr('data-sid');
+
+                if (existingRowSid === newItemSid) {
                     groupUserItem.remove();
                 }
             });

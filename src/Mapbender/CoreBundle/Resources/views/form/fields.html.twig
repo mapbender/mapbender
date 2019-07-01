@@ -477,10 +477,10 @@
 
 {% block ace_widget %}
   {% spaceless %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }}>
+    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ form['sid'].vars.value }}">
       {% for child in form %}
         <td>
-          {% if child.vars.block_prefixes.1 == "text" %}
+          {% if 'text' in child.vars.block_prefixes %}
               <div class="{% if child.vars.value|slice(0, 1) == "u" %}iconUser {% else %} iconGroup{% endif %} userType">
               <span class="labelInput">{{ child.vars.value|slice(2)|split(':')|first }}</span>
             </div>
