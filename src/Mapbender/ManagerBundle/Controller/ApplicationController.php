@@ -104,7 +104,9 @@ class ApplicationController extends WelcomeController
             $em->commit();
             $this->addFlash('success', $this->translate('mb.application.create.success'));
 
-            return $this->redirectToRoute('mapbender_manager_application_index');
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $application->getSlug(),
+            ));
         }
 
         return $this->render('@MapbenderManager/Application/new.html.twig', array(
