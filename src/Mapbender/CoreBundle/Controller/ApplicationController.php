@@ -154,7 +154,7 @@ class ApplicationController extends Controller
         $appEntity = $this->getApplicationEntity($slug);
         $appComponent = new Application($this->container, $appEntity);
         // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
-        $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
+        $useCache = $this->isProduction();
         $session->set("proxyAllowed", true); // @todo: ...why?
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',

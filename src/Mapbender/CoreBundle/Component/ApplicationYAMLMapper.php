@@ -73,14 +73,16 @@ class ApplicationYAMLMapper
         if (!array_key_exists($slug, $definitions)) {
             return null;
         }
-        $timestamp = round((microtime(true) * 1000));
+
         $definition = $definitions[$slug];
+        $timestamp = filemtime($definition['__filename__']);
+        unset($definition['__filename__']);
         if (!array_key_exists('title', $definition)) {
             $definition['title'] = "TITLE " . $timestamp;
         }
 
-        // First, create an application entity
         $application = new Application();
+        $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
                 ->setSlug($slug)
                 ->setId($slug)

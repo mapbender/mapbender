@@ -64,6 +64,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             if (!empty($fileData['parameters']['applications'])) {
                 foreach ($fileData['parameters']['applications'] as $slug => $appDefinition) {
                     $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
+                    $applications[$slug]['__filename__'] = $file->getRealPath();
                 }
                 // Add a file resource to auto-invalidate the container build when the input file changes
                 $container->addResource(new FileResource($file->getRealPath()));
