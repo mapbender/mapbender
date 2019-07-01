@@ -249,17 +249,23 @@ class ApplicationController extends Controller
      */
     private function checkApplicationAccess(ApplicationEntity $application)
     {
-        if (!$application->isPublished()) {
-            $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
-        }
         if ($application->isYamlBased()) {
             foreach ($application->getYamlRoles() as $role) {
                 if ($this->isGranted($role)) {
                     return;
                 }
             }
+            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
+            if (!$application->isPublished()) {
+                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                $this->denyAccessUnlessGranted('EDIT', $oid, 'This application is not published at the moment');
+            }
+        } else {
+            if (!$application->isPublished()) {
+                $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
+            }
+            $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
         }
-        $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
     }
 
     /**
