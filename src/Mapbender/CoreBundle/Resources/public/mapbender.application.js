@@ -460,6 +460,7 @@ Mapbender.Util.Url = function(urlString){
         // check if the string preceding this first single slash is ":port"
         if (!(new RegExp('^([^/]+?//)?[^/]*?:' + this.port + '($|/)').test(urlString))) {
             this.port = '';
+            this.host = this.host.replace(/:\d+$/, '');
         }
     }
     this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
