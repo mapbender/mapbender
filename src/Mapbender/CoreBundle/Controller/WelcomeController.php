@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Welcome controller.
@@ -33,8 +34,11 @@ class WelcomeController extends ApplicationControllerBase
         $allowedApplications = array();
 
         foreach ($this->getMapbender()->getApplicationEntities() as $application) {
-            if ($application->isPublished() || $this->isGranted('VIEW', $application) || $this->isGranted('EDIT', $application)) {
+            try {
+                $this->checkApplicationAccess($application);
                 $allowedApplications[] = $application;
+            } catch (AccessDeniedException $e) {
+                // skip silently
             }
         }
 

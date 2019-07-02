@@ -14,10 +14,10 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +35,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends Controller
+class ApplicationController extends ApplicationControllerBase
 {
 
     /**
@@ -238,34 +238,6 @@ class ApplicationController extends Controller
             }
         }
         return $response;
-    }
-
-    /**
-     * Check access permissions for given application.
-     *
-     * Unpublished applications are viewable only by users who can also edit them.
-     *
-     * @param ApplicationEntity $application
-     */
-    private function checkApplicationAccess(ApplicationEntity $application)
-    {
-        if ($application->isYamlBased()) {
-            foreach ($application->getYamlRoles() as $role) {
-                if ($this->isGranted($role)) {
-                    return;
-                }
-            }
-            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
-            if (!$application->isPublished()) {
-                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                $this->denyAccessUnlessGranted('EDIT', $oid, 'This application is not published at the moment');
-            }
-        } else {
-            if (!$application->isPublished()) {
-                $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
-            }
-            $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
-        }
     }
 
     /**

@@ -14,10 +14,40 @@ use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
 {
+    /**
+     * Check view access permissions for given application.
+     *
+     * Unpublished applications are viewable only by users who can also edit them.
+     *
+     * @param Application $application
+     */
+    protected function checkApplicationAccess(Application $application)
+    {
+        if ($application->isYamlBased()) {
+            foreach ($application->getYamlRoles() as $role) {
+                if ($this->isGranted($role)) {
+                    return;
+                }
+            }
+            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
+            if (!$application->isPublished()) {
+                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                $this->denyAccessUnlessGranted('EDIT', $oid, 'This application is not published at the moment');
+            }
+        } else {
+            if (!$application->isPublished()) {
+                $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
+            }
+            $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
+        }
+    }
+
     /**
      * @return AclManager
      */
@@ -25,6 +55,16 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var AclManager $service */
         $service = $this->get('fom.acl.manager');
+        return $service;
+    }
+
+    /**
+     * @return MutableAclProviderInterface
+     */
+    protected function getAclProvider()
+    {
+        /** @var MutableAclProviderInterface $service */
+        $service = $this->get('security.acl.provider');
         return $service;
     }
 
