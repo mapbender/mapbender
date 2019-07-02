@@ -2,28 +2,25 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
- * Authority class.
- *
  * @author Paul Schmidt
  */
-class Authority
+class Authority implements MutableUrlTarget
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $url;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $name;
 
     /**
      * Get url
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -33,7 +30,7 @@ class Authority
     /**
      * Set url
      * @param string $value
-     * @return Authority
+     * @return $this
      */
     public function setUrl($value)
     {
@@ -44,7 +41,7 @@ class Authority
     /**
      * Get name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -54,7 +51,7 @@ class Authority
     /**
      * Set name
      * @param string $value
-     * @return Authority
+     * @return $this
      */
     public function setName($value)
     {
@@ -71,5 +68,12 @@ class Authority
             'url' => $this->url,
             'name' => $this->name,
         );
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($this->getUrl()) {
+            $this->setUrl($transformer->process($this->getUrl()));
+        }
     }
 }

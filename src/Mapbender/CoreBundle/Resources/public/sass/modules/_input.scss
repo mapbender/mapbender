@@ -44,7 +44,8 @@
       content: "";
       height: 0;
       width: 0;
-      @include absolute('' 100% '' '');
+      position: absolute;
+      right: 100%;
     }
     &:after{
       border-right-color: lighten($errorColor, 50%);

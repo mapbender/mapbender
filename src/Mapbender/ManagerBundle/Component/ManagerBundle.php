@@ -17,24 +17,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class ManagerBundle extends Bundle
 {
     /**
-     * Getter for list of controllers to embed into Manager interface.
-     *
-     * The list must be an array of arrays, each giving the integer weight, name, route and array of route prefixes
-     * to match against. See source for an example.
-     *
-     * return array(
-     *      array(
-     *          weight => 5,
-     *          name => 'Users',
-     *          route => 'fom_user_useranager_index',
-     *          routes => array(
-     *              'fom_user_usermanager',
-     *              'fom_user_rolemanager'
-     *          )
-     *      )
-     *  );
-     *
-     * @return array[]
+     * @deprecated remove in v3.1
+     * To extend the menu, register MenuItem objects with a RegisterMenuRoutesPass
      */
     public function getManagerControllers()
     {
@@ -42,12 +26,8 @@ class ManagerBundle extends Bundle
     }
 
     /**
-     * Getter for all available roles a bundles defines.
-     *
-     * The returned array must be a mapping of role id strings (e.g. "ROLE_USER_ADMIN") to displayable
-     * role descriptions (e.g. "Can administrate users")
-     *
-     * @return string[] roles
+     * @deprecated remove in v3.1
+     * Return whatever you want, it doesn't affect anything anywhere
      */
     public function getRoles()
     {

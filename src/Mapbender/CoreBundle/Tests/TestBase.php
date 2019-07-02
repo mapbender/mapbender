@@ -26,11 +26,7 @@ class TestBase extends WebTestCase
         $kernel = $this->getContainer()->get("kernel");
         $isTestEnv = $kernel->getEnvironment() == "test";
 
-        $stdClass = $this->getContainer()->get("doctrine");
-
         if ($isTestEnv) {
-            //\ComposerBootstrap::allowWriteLogs();
-            //\ComposerBootstrap::clearCache();
             $this->runCommand('doctrine:database:drop --force');
             $this->runCommand('doctrine:database:create');
             $this->runCommand('doctrine:schema:create');

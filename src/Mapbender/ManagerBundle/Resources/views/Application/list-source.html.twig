@@ -3,12 +3,11 @@
 <ul id="listFilterSources" class="listFilterContainer">
 {% for source in sources %}
   <li class="filterItem">
-    <a id="repository-list" class="checkContainer" title="Choose {{source.title}}" href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">
+    <a class="checkContainer" href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">
       <span>{{ source.type }}</span>
       <span class="subTitle">{{ source.id }} / {{ source.title }}</span>
       <span>{{ source.alias }}</span>
       <div class="description">{{ source.description | trans }}</div>
-      <div class="clearContainer"></div>
     </a>
   </li>
 {% else %}

@@ -3,7 +3,7 @@
 
 namespace Mapbender\WmsBundle\Command;
 
-use Mapbender\WmsBundle\Entity\WmsOrigin;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +27,10 @@ class UrlValidateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $origin = new WmsOrigin($input->getArgument('serviceUrl'), $input->getOption('user'), $input->getOption('password'));
+        $origin = new HttpOriginModel();
+        $origin->setOriginUrl($input->getArgument('serviceUrl'));
+        $origin->setUsername($input->getOption('user'));
+        $origin->setPassword($input->getOption('password'));
 
         /** @var Importer $importer */
         $importer = $this->getContainer()->get('mapbender.importer.source.wms.service');

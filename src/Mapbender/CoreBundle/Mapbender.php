@@ -27,9 +27,6 @@ class Mapbender
     /** @var \Doctrine\ORM\EntityManager|\Doctrine\Common\Persistence\ObjectManager */
     protected $manager;
 
-    /** @var \Doctrine\DBAL\Connection */
-    protected $connection;
-
     /** @var ContainerInterface */
     private $container;
 
@@ -52,7 +49,6 @@ class Mapbender
         $bundles          = $container->get('kernel')->getBundles();
         $registry         = $container->get('doctrine');
         $this->manager    = $registry->getManager();
-        $this->connection = $this->manager->getConnection();
         $this->container  = $container;
 
         /** @var MapbenderBundle $bundle */
@@ -101,22 +97,6 @@ class Mapbender
     public function getTemplates()
     {
         return $this->templates;
-    }
-
-    /**
-     * @return \Doctrine\DBAL\Connection
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|\Doctrine\ORM\EntityManager
-     */
-    public function getManager()
-    {
-        return $this->manager;
     }
 
     /**
@@ -173,12 +153,6 @@ class Mapbender
         $applications = array();
         $yamlMapper   = new ApplicationYAMLMapper($this->container);
         foreach ($yamlMapper->getApplications() as $application) {
-
-            // Exclude administration applications
-            if (strpos($application->getTemplate(), "Mapbender\\ManagerBundle") === 0) {
-                continue;
-            }
-
             if ($onlyPublic && !$application->isPublished()) {
                 continue;
             }
@@ -195,7 +169,7 @@ class Mapbender
      */
     public function getDatabaseApplicationEntities()
     {
-        $repository = $this->getManager()->getRepository('MapbenderCoreBundle:Application');
+        $repository = $this->manager->getRepository('MapbenderCoreBundle:Application');
         /** @var Application[] $applications */
         $applications = $repository->findBy(array(), array(
             'title' => 'ASC',
@@ -216,12 +190,9 @@ class Mapbender
      */
     public function importYamlApplication($slug)
     {
-
-        $manager              = $this->getManager();
-        $connection           = $this->getConnection();
-        $application          = $this->getApplicationEntity($slug);
-        $newSlug = EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
-        $newTitle = EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
+        $application = $this->getApplicationEntity($slug);
+        $newSlug = EntityUtil::getUniqueValue($this->manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
+        $newTitle = EntityUtil::getUniqueValue($this->manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
         $elements             = array();
         /** @var Layerset[] $layerSetMap */
         $layerSetMap = array();
@@ -239,19 +210,19 @@ class Mapbender
         $ulm = $this->container->get('mapbender.uploads_manager.service');
         $ulm->copySubdirectory($slug, $newSlug);
 
-        $connection->beginTransaction();
+        $this->manager->beginTransaction();
 
         /**
          * Save application
          */
-        $manager->persist($application);
+        $this->manager->persist($application);
 
         /**
          * Save region properties
          */
         foreach ($application->getRegionProperties() as $prop) {
             $prop->setApplication($application);
-            $manager->persist($prop);
+            $this->manager->persist($prop);
         }
 
         /**
@@ -261,7 +232,7 @@ class Mapbender
             $elements[ $elm->getId() ] = $elm;
             $title                     = $translator->trans($elm->getTitle());
             $elm->setTitle($title);
-            $manager->persist($elm);
+            $this->manager->persist($elm);
         }
 
         /**
@@ -269,7 +240,7 @@ class Mapbender
          */
         foreach ($application->getLayersets() as $set) {
             $layerSetMap[$set->getId()] = $set;
-            $manager->persist($set);
+            $this->manager->persist($set);
             foreach ($set->getInstances() as $inst) {
                 $source        = $inst->getSource();
                 $srcId         = $source->getId();
@@ -283,18 +254,18 @@ class Mapbender
                     }
                 } else {
                     $this->sourceLayers[$srcId] = array();
-                    $manager->persist($source);
+                    $this->manager->persist($source);
                     foreach ($inst->getLayers() as $instanceLayer) {
                         $this->sourceLayers[$srcId][$instanceLayer->getId()] = $instanceLayer->getSourceItem();
-                        $manager->persist($instanceLayer);
+                        $this->manager->persist($instanceLayer);
                     }
                 }
-                $manager->persist($inst);
+                $this->manager->persist($inst);
             }
         }
 
         // Saves layers and need to get ID's
-        $manager->flush();
+        $this->manager->flush();
 
         /**
          * Post update element configurations
@@ -342,11 +313,11 @@ class Mapbender
             }
 
             $element->setConfiguration($config);
-            $manager->persist($element);
+            $this->manager->persist($element);
         }
 
-        $manager->flush();
-        $connection->commit();
+        $this->manager->flush();
+        $this->manager->commit();
 
         /** @var YamlApplicationImporter $importerService */
         $importerService = $this->container->get('mapbender.yaml_application_importer.service');
@@ -366,11 +337,9 @@ class Mapbender
             'service' => $source->getType()
         ));
 
-        /** @var \Mapbender\WmsBundle\Entity\WmsSource|Source $dbSource */
-        foreach ($this
-                     ->getManager()
-                     ->getRepository(get_class($source))
-                     ->findAll() as $dbSource) {
+        $repository = $this->manager->getRepository(get_class($source));
+        foreach ($repository->findAll() as $dbSource) {
+            /** @var \Mapbender\WmsBundle\Entity\WmsSource|Source $dbSource */
             $dbHash = static::genServiceHash($dbSource->getOriginUrl(), array(
                 'version' => $dbSource->getVersion(),
                 'service' => $dbSource->getType()

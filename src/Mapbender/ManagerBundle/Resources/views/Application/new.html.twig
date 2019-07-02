@@ -5,21 +5,21 @@
 
 {% block js %}
   {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
-    {{ form_start(form, {"attr": {"action": path('mapbender_manager_application_create'), "novalidate": "novalidate"}}) }}
+    {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
+          {% if form.acl is defined %}
+            <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
+          {% endif %}
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
           <div class="col-xs-8">
-            <label class="labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.template" | trans}}:<span class="required">*</span></label>
-            {{ form_widget(form.template) }}
+            {{ form_row(form.template) }}
             {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
            <div class="col-xs-4">

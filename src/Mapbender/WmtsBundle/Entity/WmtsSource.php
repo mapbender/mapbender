@@ -4,6 +4,8 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
@@ -18,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword
+class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword, MutableUrlTarget
 {
     /**
      * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
@@ -61,7 +63,7 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     protected $serviceProviderName = "";
 
     /**
-     * @var Contact A contact.
+     * @var Contact
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
     protected $contact;
@@ -74,20 +76,19 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     protected $keywords;
 
     /**
-     * @var RequestInformation A request information for the GetCapabilities operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getCapabilities = null;
 
     /**
-     * @var RequestInformation A request information for the GetTile operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getTile = null;
 
-    //It is recommended that FeatureInfo documents be offered in the MIME type format "application/gml+xml; version=3.1"
     /**
-     * @var RequestInformation A request information for the GetFeatureInfo operation
+     * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
     public $getFeatureInfo = null;
@@ -132,7 +133,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     public function __construct()
     {
         parent::__construct();
-        $this->setType(Source::TYPE_WMTS);
         $this->contact = new Contact();
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
@@ -155,6 +155,20 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     public function getManagertype()
     {
         return strtolower(parent::TYPE_WMTS);
+    }
+
+    public function getTypeLabel()
+    {
+        if (!$this->type) {
+            // new entity, type undecided
+            return 'OGC WMTS / TMS';
+        } else {
+            if ($this->type === Source::TYPE_WMTS) {
+                return 'OGC WMTS';
+            } else {
+                return 'TMS';
+            }
+        }
     }
 
     /**
@@ -382,7 +396,7 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
 
     /**
      * Get getCapabilities
-     * @return string
+     * @return RequestInformation|null
      */
     public function getGetCapabilities()
     {
@@ -547,5 +561,25 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     {
         $this->identifier = $identifier;
         return $this;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $this->setOriginUrl($transformer->process($this->getOriginUrl()));
+        if ($requestInfo = $this->getGetTile()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetTile(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetFeatureInfo()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetFeatureInfo(clone $requestInfo);
+        }
+        if ($requestInfo = $this->getGetCapabilities()) {
+            $requestInfo->mutateUrls($transformer);
+            $this->setGetCapabilities(clone $requestInfo);
+        }
+        foreach ($this->getLayers() as $layer) {
+            $layer->mutateUrls($transformer);
+        }
     }
 }

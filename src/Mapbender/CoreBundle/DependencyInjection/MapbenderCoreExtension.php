@@ -8,7 +8,10 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-
+/**
+ * @deprecated mostly loads configs; absorb into MapbenderCoreBundle::build in v3.1
+ *     remove support for ~nested-style mapbender_core: uploads_dir configuration in v3.1
+ */
 class MapbenderCoreExtension extends Extension
 {
     const CONFIG_PATH = '/../Resources/config';
@@ -30,15 +33,9 @@ class MapbenderCoreExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $screenshot_path = $container->getParameter('kernel.root_dir')
-            . '/../web/' . $config['screenshot_path'];
-        $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
-        $container->setParameter('mapbender.screenshot_path', $screenshot_path);
-
-        $container->setParameter("mapbender.selfregister", $config["selfregister"]);
-        $container->setParameter("mapbender.max_registration_time", intval($config["max_registration_time"]));
-        $container->setParameter("mapbender.max_reset_time", intval($config["max_reset_time"]));
+        if ($config['uploads_dir'] !== false) {
+            $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
+        }
 
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));

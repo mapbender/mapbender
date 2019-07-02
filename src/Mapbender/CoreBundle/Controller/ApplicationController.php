@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
@@ -13,8 +14,10 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
+use Mapbender\ManagerBundle\Template\LoginTemplate;
+use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +35,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends Controller
+class ApplicationController extends ApplicationControllerBase
 {
 
     /**
@@ -61,7 +64,20 @@ class ApplicationController extends Controller
     {
         $isProduction = $this->isProduction();
         $cacheFile        = $this->getCachedAssetPath($slug, $type);
-        $appEntity = $this->getApplicationEntity($slug);
+        if ($source = $this->getManagerAssetDependencies($slug)) {
+            if (!$source) {
+                throw new NotFoundHttpException('The application can not be found.');
+            }
+            $isAppDbBased = false;
+        } else {
+            $source = $this->getApplicationEntity($slug);
+            $isAppDbBased = $source->getSource() === ApplicationEntity::SOURCE_DB;
+        }
+        if (!$isAppDbBased) {
+            $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
+        } else {
+            $appModificationTs = $source->getUpdated()->getTimestamp();
+        }
 
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
@@ -69,11 +85,10 @@ class ApplicationController extends Controller
 
         $useCached = $isProduction && file_exists($cacheFile);
         if ($useCached) {
-            $isAppDbBased = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
-            $modificationTs = filectime($cacheFile);
+            $cacheUpdateTs = filectime($cacheFile);
             // Always reuse cache entry for YAML applications
             // Check the update timestamp only for DB applications,
-            $useCached = !$isAppDbBased || ($appEntity->getUpdated()->getTimestamp() < $modificationTs);
+            $useCached = !$isAppDbBased || ($appModificationTs < $cacheUpdateTs);
 
             if ($useCached) {
                 $response = new BinaryFileResponse($cacheFile, 200, $headers);
@@ -85,7 +100,11 @@ class ApplicationController extends Controller
         }
         /** @var ApplicationAssetService $assetService */
         $assetService = $this->container->get('mapbender.application_asset.service');
-        $content = $assetService->getAssetContent($appEntity, $type);
+        if ($source instanceof ApplicationEntity) {
+            $content = $assetService->getAssetContent($source, $type);
+        } else {
+            $content = $assetService->getTemplateAssetContent($source, $type, $slug);
+        }
 
         if ($isProduction) {
             file_put_contents($cacheFile, $content);
@@ -135,7 +154,7 @@ class ApplicationController extends Controller
         $appEntity = $this->getApplicationEntity($slug);
         $appComponent = new Application($this->container, $appEntity);
         // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
-        $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
+        $useCache = $this->isProduction();
         $session->set("proxyAllowed", true); // @todo: ...why?
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
@@ -177,6 +196,22 @@ class ApplicationController extends Controller
     }
 
     /**
+     * @param string $slug
+     * @return TemplateAssetDependencyInterface|null
+     */
+    private function getManagerAssetDependencies($slug)
+    {
+        switch ($slug) {
+            case 'manager':
+                return new ManagerTemplate();
+            case 'mb3-login':
+                return new LoginTemplate();
+            default:
+                return null;
+        }
+    }
+
+    /**
      *
      * @Route("/application/{slug}/config")
      * @param string $slug
@@ -203,47 +238,6 @@ class ApplicationController extends Controller
             }
         }
         return $response;
-    }
-
-    /**
-     * Check access permissions for given application.
-     *
-     * This will check if any ACE in the ACL for the given applications entity
-     * grants the VIEW permission.
-     *
-     * @param ApplicationEntity $application
-     */
-    private function checkApplicationAccess(ApplicationEntity $application)
-    {
-        $user = $this->getUser();
-
-        if ($application->isYamlBased()
-            && count($application->getYamlRoles())
-        ) {
-
-            // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
-            if (!$user) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
-                    return;
-                }
-            }
-
-            $passed = false;
-            foreach ($application->getYamlRoles() as $role) {
-                if ($this->isGranted($role)) {
-                    $passed = true;
-                    break;
-                }
-            }
-            if (!$passed) {
-                throw $this->createAccessDeniedException('You are not granted view permissions for this application.');
-            }
-        }
-        $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
-
-        if (!$application->isPublished()) {
-            $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
-        }
     }
 
     /**

@@ -3,24 +3,17 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * LegendUrl class.
  * @author Paul Schmidt
  */
 class LegendUrl
 {
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var OnlineResource|null */
     public $onlineResource;
 
-    /**
-     * ORM\Column(type="integer", nullable=true)
-     */
+    /** @var int|null */
     public $width;
 
-    /**
-     * ORM\Column(type="integer", nullable=true)
-     */
+    /** @var int|null */
     public $height;
     
     /**
@@ -40,19 +33,18 @@ class LegendUrl
      * Set onlineResource
      *
      * @param OnlineResource $onlineResource
-     * @return LegendUrl
+     * @return $this
      */
     public function setOnlineResource(OnlineResource $onlineResource)
     {
         $this->onlineResource = $onlineResource;
-
         return $this;
     }
 
     /**
      * Get onlineResource
      *
-     * @return OnlineResource 
+     * @return OnlineResource|null
      */
     public function getOnlineResource()
     {
@@ -62,20 +54,19 @@ class LegendUrl
     /**
      * Set width
      *
-     * @param integer $width
-     * @return LegendUrl
+     * @param int|null $width
+     * @return $this
      */
     public function setWidth($width)
     {
         $this->width = $width;
-
         return $this;
     }
 
     /**
      * Get width
      *
-     * @return integer 
+     * @return int|null
      */
     public function getWidth()
     {
@@ -85,20 +76,19 @@ class LegendUrl
     /**
      * Set height
      *
-     * @param integer $height
-     * @return LegendUrl
+     * @param int|null $height
+     * @return $this
      */
     public function setHeight($height)
     {
         $this->height = $height;
-
         return $this;
     }
 
     /**
      * Get height
      *
-     * @return integer 
+     * @return int|null
      */
     public function getHeight()
     {

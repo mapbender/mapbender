@@ -2,33 +2,28 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
- * RequestInformation class.
- *
  * @author Paul Schmidt
  */
-class RequestInformation
+class RequestInformation implements MutableUrlTarget
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpGetRestful;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpGetKvp;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $httpPost;
 
     /**
      * Get httpGet
      *
-     * @return string
+     * @return string|null
      */
     public function getHttpGetRestful()
     {
@@ -50,7 +45,7 @@ class RequestInformation
     /**
      * Get httpGetKvp
      *
-     * @return string
+     * @return string|null
      */
     public function getHttpGetKvp()
     {
@@ -71,7 +66,7 @@ class RequestInformation
 
     /**
      * Get httpPost
-     * @return string
+     * @return string|null
      */
     public function getHttpPost()
     {
@@ -88,5 +83,18 @@ class RequestInformation
     {
         $this->httpPost = $value;
         return $this;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($url = $this->getHttpGetKvp()) {
+            $this->setHttpGetKvp($transformer->process($url));
+        }
+        if ($url = $this->getHttpGetRestful()) {
+            $this->setHttpGetRestful($transformer->process($url));
+        }
+        if ($url = $this->getHttpPost()) {
+            $this->setHttpPost($transformer->process($url));
+        }
     }
 }

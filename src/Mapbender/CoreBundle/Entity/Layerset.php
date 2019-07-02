@@ -141,7 +141,7 @@ class Layerset
     /**
      * Set instances
      *
-     * @param  Collection $instances Collection of the SourceInstances
+     * @param Collection $instances Collection of the SourceInstances
      * @return Layerset
      */
     public function setInstances($instances)
@@ -154,7 +154,7 @@ class Layerset
     /**
      * Get instances
      *
-     * @return \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]|ArrayCollection
+     * @return \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]|Collection
      */
     public function getInstances()
     {

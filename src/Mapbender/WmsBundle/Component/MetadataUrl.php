@@ -2,26 +2,20 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * MetadataUrl class.
- *
  * @author Paul Schmidt
  */
 class MetadataUrl
 {
-    /**
-     * ORM\Column(type="object", nullable=true)
-     */
+    /** @var OnlineResource|null */
     public $onlineResource;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $type;
 
     /**
      * Get type
      *
-     * @return string
+     * @return string|null
      */
     public function getType()
     {
@@ -32,7 +26,7 @@ class MetadataUrl
      * Set type
      *
      * @param string $value
-     * @return MetadataUrl
+     * @return $this
      */
     public function setType($value)
     {
@@ -43,7 +37,7 @@ class MetadataUrl
     /**
      * Get online resource
      *
-     * @return OnlineResource
+     * @return OnlineResource|null
      */
     public function getOnlineResource()
     {
@@ -54,7 +48,7 @@ class MetadataUrl
      * Set online resource
      *
      * @param OnlineResource $onlineResource
-     * @return MetadataUrl
+     * @return $this
      */
     public function setOnlineResource(OnlineResource $onlineResource)
     {

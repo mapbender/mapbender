@@ -19,6 +19,20 @@ class DimensionInst extends Dimension
     public $type;
     public $id;
 
+    /**
+     * @param DimensionInst $other
+     * @return bool
+     */
+    public function compare(DimensionInst $other)
+    {
+        return
+            $this->getOrigextent() === $other->getOrigextent()
+            &&
+            $this->getName() === $other->getName()
+            &&
+            $this->getUnits() === $other->getUnits()
+        ;
+    }
 
     public function getOrigextent()
     {

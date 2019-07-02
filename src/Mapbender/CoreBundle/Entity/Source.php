@@ -74,6 +74,11 @@ abstract class Source
     }
 
     /**
+     * @return string
+     */
+    abstract public function getTypeLabel();
+
+    /**
      * @return ArrayCollection|SourceInstance[]
      */
     abstract public function getInstances();

@@ -1,18 +1,16 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Mapbender\WmtsBundle\Component;
+
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 
 /**
  * The UrlTemplateType describes:
  * URL template to a tile or a FeatureInfo resource on resource oriented architectural style.
  * @author Paul Schmidt
  */
-class UrlTemplateType
+class UrlTemplateType implements MutableUrlTarget
 {
 
     /**
@@ -66,7 +64,7 @@ class UrlTemplateType
     /**
      * Sets format
      * @param string $format
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -76,8 +74,8 @@ class UrlTemplateType
 
     /**
      * Sets resourceType
-     * @param type $resourceType
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @param string $resourceType
+     * @return $this
      */
     public function setResourceType($resourceType)
     {
@@ -87,12 +85,19 @@ class UrlTemplateType
 
     /**
      * Sets template
-     * @param type $template
-     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
+     * @param string $template
+     * @return $this
      */
     public function setTemplate($template)
     {
         $this->template = $template;
         return $this;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($url = $this->getTemplate()) {
+            $this->setTemplate($transformer->process($url));
+        }
     }
 }

@@ -4,9 +4,10 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
@@ -23,7 +24,7 @@ use Mapbender\WmsBundle\Component\Style;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource extends SourceItem implements ContainingKeyword
+class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrlTarget
 {
     /**
      * @var integer $id
@@ -334,7 +335,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function setQueryable($queryable)
     {
-        $this->queryable = Utils::getBool($queryable);
+        $this->queryable = !!$queryable;
         return $this;
     }
 
@@ -724,7 +725,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * Get authority
      *
      * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
-     * @return ArrayCollection|Authority[]
+     * @return Authority[]
      */
     public function getAuthority($inherit = false)
     {
@@ -948,5 +949,21 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
             $bboxes[] = $latLonBounds;
         }
         return array_merge($bboxes, $this->getBoundingBoxes());
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $stylesNew = array();
+        $authoritiesNew = array();
+        foreach ($this->getStyles(false) as $style) {
+            $style->mutateUrls($transformer);
+            $stylesNew[] = clone $style;
+        }
+        foreach ($this->getAuthority(false) as $authority) {
+            $authority->mutateUrls($transformer);
+            $authoritiesNew[] = clone $authority;
+        }
+        $this->setStyles($stylesNew);
+        $this->setAuthority($authoritiesNew);
     }
 }

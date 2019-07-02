@@ -2,8 +2,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 /**
- * Description of State
- *
  * @author Paul Schmidt
  */
 class StateHandler

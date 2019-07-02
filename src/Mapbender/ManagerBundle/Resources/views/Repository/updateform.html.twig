@@ -2,11 +2,15 @@
 
 {% block title %}{{ 'mb.manager.admin.source.update' | trans }}{% endblock %}
 
-{% block css %}
-  {{parent()}}
-{% endblock %}
-
 {% block manager_content %}
-  {% render controller(manager.updateformAction, {'sourceId': source.id}) %}
-  <div class="clearContainer"></div>
+  {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+      <fieldset class="box">
+        <legend>{{ sourceTypeLabel }}</legend>
+          {{ form_widget(form) }}
+            <div class="button-group">
+              <input class="button" type="submit" name="load" value="{{"mb.manager.source.load"|trans}}" />
+              <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.manager.source.cancel"|trans}}</a>
+            </div>
+        </fieldset>
+  {{ form_end(form) }}
 {% endblock %}

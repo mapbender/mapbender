@@ -16,6 +16,20 @@
   min-width: 300px;
   .upload {
     position: relative;
+    height: $inputHeight;
+    line-height: $inputHeight;
+    .upload_button, .upload_label {
+      height: inherit;
+      line-height: inherit;
+    }
+    .upload_button, .upload_label, input[type="file"] {
+      display: inline-block;
+      vertical-align: top;
+    }
+    .upload_label {
+      max-width: 60%;
+      text-overflow: ellipsis;
+    }
   }
 
   .inputWrapper {
@@ -32,9 +46,6 @@
       cursor: pointer;
     }
   }
-  .upload_label{
-    overflow: hidden;
-  }
   .upload_button {
     $buttonFirstColor: #6fb536;
     padding: 0 10px;
@@ -45,9 +56,6 @@
     &:hover {
       background-color: darken($buttonFirstColor, 5%);
     }
-  }
-  .upload_button, .upload_label, .inputWrapper input[type=file] {
-    line-height: 24px;
   }
 }
 
@@ -293,19 +301,22 @@
   }
 }
 .regionProperties{
-  .radioWrapper{margin-left: $space/2;}
-  label {display:none;}
-  .iconRadio{@include opacity(.3);@extend .iconCheckbox}
-  .iconRadioActive{@include opacity(1);@extend .iconCheckbox}
-  .iconRadiotabs{@include opacity(.3);@extend .iconTabActive}
-  .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
-  .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
-  .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
-  // FOM's idea of a radio group is a group of inline-display divs with float: left;
-  // Let's fix that
-  div {
-    float: none;
+  .radioWrapper {
+    margin-left: $space/2;
+    opacity: .45;
+    &.disabled {
+      opacity: .2;
+    }
+    &.checked {
+      opacity: 1;
+    }
+    &.checked.disabled {
+      opacity: .6;
+    }
   }
+  .iconRadio {@extend .iconCheckbox}
+  .iconRadiotabs {@extend .iconTabActive}
+  .iconRadioaccordion {@extend .iconBars}
 }
 
 

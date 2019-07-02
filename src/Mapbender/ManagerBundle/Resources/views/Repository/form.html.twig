@@ -1,0 +1,7 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'autocomplete': 'false'}}) }}
+{{ form_widget(form) }}
+<div class="button-group">
+  <input class="button" type="submit" name="load" value="{{"mb.manager.source.load"|trans}}" />
+  <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.manager.source.cancel"|trans}}</a>
+</div>
+{{ form_end(form) }}

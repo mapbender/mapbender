@@ -7,6 +7,7 @@ use Doctrine\ORM\ORMException;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -26,14 +27,16 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Description of ImportHandler
- *
  * @author Paul Schmidt
  */
 class ImportHandler extends ExchangeHandler
 {
     /** @var ElementFactory */
     protected $elementFactory;
+    /** @var ExportHandler */
+    protected $exportHandler;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
     /** @var AclManager */
@@ -44,36 +47,99 @@ class ImportHandler extends ExchangeHandler
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
+                                ExportHandler $exportHandler,
+                                UploadsManager $uploadsManager,
                                 MutableAclProviderInterface $aclProvider,
                                 AclManager $aclManager)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
+        $this->exportHandler = $exportHandler;
+        $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
     }
 
     /**
      * @param array $data
-     * @param bool $copyHint set to true to enable optimizations for a same-db / same-id-space scenario
      * @return Application[]
      * @throws ImportException
      */
-    public function importApplicationData(array $data, $copyHint=false)
+    public function importApplicationData(array $data)
     {
         $entityPool = new EntityPool();
         $importState = new ImportState($this->em, $data, $entityPool);
         try {
-            $this->importSources($importState, $data, $copyHint);
+            $this->importSources($importState, $data);
             $apps = $this->importApplicationEntities($importState, $data);
             if (!$apps) {
                 throw new ImportException("No applications found");
+            }
+            foreach ($apps as $app) {
+                // screenshot image is neither exported nor imported
+                $app->setScreenshot(null);
+                $this->em->persist($app);
             }
             $this->em->flush();
 
             return $apps;
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
+        }
+    }
+
+    /**
+     * @param Application $app
+     * @return Application
+     * @throws ImportException
+     */
+    public function duplicateApplication(Application $app)
+    {
+        $originalSlug = $app->getSlug();
+        $importPool = new EntityPool();
+        if ($app->getSource() !== Application::SOURCE_YAML) {
+            foreach ($app->getLayersets() as $layerset) {
+                foreach ($layerset->getInstances() as $instance) {
+                    $this->markSourceImported($importPool, $instance->getSource());
+                }
+            }
+        } else {
+            // Avoid saving an application clone to the db with the same slug
+            // as the Yaml version. There's a unique constraint on the
+            // database table, but it doesn't account for Yaml-defined
+            // applications!
+            $app->setSlug($app->getSlug() . '_db');
+        }
+
+        $exportData = $this->exportHandler->exportApplication($app);
+        $importState = new ImportState($this->em, $exportData, $importPool);
+        try {
+            if ($app->getSource() === Application::SOURCE_YAML) {
+                $this->importSources($importState, $exportData);
+            }
+            $apps = $this->importApplicationEntities($importState, $exportData);
+            if (count($apps) !== 1) {
+                throw new ImportException("Logic error, no applications imported");
+            }
+            $clonedApp = $apps[0];
+            $clonedApp->setScreenshot($app->getScreenshot());
+            $this->em->persist($clonedApp);
+            $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
+            $this->em->flush();
+
+            return $clonedApp;
+        } catch (ORMException $e) {
+            throw new ImportException("Database error {$e->getMessage()}", 0, $e);
+        }
+    }
+
+    protected function markSourceImported(EntityPool $targetPool, Source $source)
+    {
+        $sourceHelper = EntityHelper::getInstance($this->em, $source);
+        $targetPool->add($source, $sourceHelper->extractIdentifier($source));
+        foreach ($source->getLayers() as $layer) {
+            $layerHelper = EntityHelper::getInstance($this->em, $layer);
+            $targetPool->add($layer, $layerHelper->extractIdentifier($layer));
         }
     }
 
@@ -144,15 +210,14 @@ class ImportHandler extends ExchangeHandler
      * Imports sources.
      * @param ImportState $state
      * @param array $data data to import
-     * @param bool $copyHint
      * @throws ORMException
      */
-    private function importSources(ImportState $state, $data, $copyHint)
+    private function importSources(ImportState $state, $data)
     {
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
                 foreach ($content as $item) {
-                    if (!$this->findMatchingSource($state, $item, $copyHint)) {
+                    if (!$this->findMatchingSource($state, $item)) {
                         $source = $this->handleData($state, $item);
                         $this->em->persist($source);
                         $this->em->flush();
@@ -176,7 +241,8 @@ class ImportHandler extends ExchangeHandler
                 foreach ($content as $item) {
                     /** @var Application $app */
                     $app = $this->handleData($state, $item);
-                    $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
+                    $app->setSource(Application::SOURCE_DB);
+                    $app->setUpdated(new \DateTime());
                     $this->em->persist($app);
                     $newSlug = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'slug', $app->getSlug(), '_imp');
                     $newTitle = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'title', $app->getTitle(), '_imp');
@@ -269,27 +335,19 @@ class ImportHandler extends ExchangeHandler
     /**
      * @param ImportState $state
      * @param array $data data to import
-     * @param bool $copyHint
      * @return Source|null
      */
-    private function findMatchingSource(ImportState $state, $data, $copyHint)
+    private function findMatchingSource(ImportState $state, $data)
     {
         $className = $this->extractClassName($data);
-        if (!$copyHint) {
-            // Avoid inserting "new" sources that are duplicates of already existing ones
-            // Finding equivalent sources is relatively expensive
-            $identFields = array(
-                'title',
-                'type',
-                'name',
-                'onlineResource',
-            );
-        } else {
-            // Performance hack: when "importing" from the same DB (actually just copying an
-            // application), detecting source duplicates based purely on id is sufficient
-            $classMeta = $this->em->getClassMetadata($className);
-            $identFields = $classMeta->getIdentifier();
-        }
+        // Avoid inserting "new" sources that are duplicates of already existing ones
+        // Finding equivalent sources is relatively expensive
+        $identFields = array(
+            'title',
+            'type',
+            'name',
+            'onlineResource',
+        );
         $criteria = $this->extractArrayFields($data, $identFields);
         foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
             $tempPool = new EntityPool();

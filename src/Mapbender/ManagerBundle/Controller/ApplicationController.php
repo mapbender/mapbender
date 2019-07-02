@@ -4,12 +4,13 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\DBALException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\SourceEntityHandler;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -58,21 +59,59 @@ class ApplicationController extends WelcomeController
     /**
      * Shows form for creating new applications
      *
-     * @ManagerRoute("/application/new", methods={"GET"})
+     * @ManagerRoute("/application/new", methods={"GET","POST"})
+     * @param Request $request
      * @return Response
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
         $application = new Application();
         $oid = new ObjectIdentity('class', get_class($application));
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $form = $this->createApplicationForm($application);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
+            } catch (IOException $e) {
+                $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
+                return $this->redirectToRoute('mapbender_manager_application_index');
+            }
+            $application->setUpdated(new \DateTime('now'));
+            $em = $this->getEntityManager();
+
+            $em->beginTransaction();
+            $em->persist($application);
+            $em->flush();
+            if ($form->has('acl')) {
+                $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+            }
+            $scFile = $form->get('screenshotFile')->getData();
+
+            if ($scFile && !$form->get('removeScreenShot')->getData()) {
+                $uploadScreenShot = new UploadScreenshot();
+                $uploadScreenShot->upload($appDirectory, $scFile, $application);
+            }
+
+            $em->persist($application);
+            $em->flush();
+            $this->createRegionProperties($application);
+
+            $em->persist($application);
+            $em->flush();
+            $em->commit();
+            $this->addFlash('success', $this->translate('mb.application.create.success'));
+
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $application->getSlug(),
+            ));
+        }
 
         return $this->render('@MapbenderManager/Application/new.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
-            'form_name'           => $form->getName(),
             'screenshot_filename' => null,
         ));
     }
@@ -170,20 +209,27 @@ class ApplicationController extends WelcomeController
      */
     public function copyDirectlyAction($slug)
     {
-        $sourceApplication = $this->requireApplication($slug);
+        $sourceApplication = $this->requireApplication($slug, true);
         $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
         $applicationOid = new ObjectIdentity('class', get_class(new Application()));
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);
 
-        $expHandler = $this->getApplicationExporter();
         $impHandler = $this->getApplicationImporter();
-        $data = $expHandler->exportApplication($sourceApplication);
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $impHandler->importApplicationData($data, true);
+            $clonedApp = $impHandler->duplicateApplication($sourceApplication);
             $em->commit();
-            return $this->redirectToRoute('mapbender_manager_application_index');
+            if ($this->isGranted('EDIT', $clonedApp)) {
+                // Redirect to edit view of imported application
+                // @todo: distinct message for successful duplication?
+                $this->addFlash('success', $this->translate('mb.application.create.success'));
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    'slug' => $clonedApp->getSlug(),
+                ));
+            } else {
+                return $this->redirectToRoute('mapbender_manager_application_index');
+            }
         } catch (ImportException $e) {
             $em->rollback();
             $this->addFlash('error', $e->getMessage());
@@ -192,82 +238,9 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Create a new application from POSTed data
-     *
-     * @ManagerRoute("/application", methods={"POST"})
-     * @param Request $request
-     * @return Response|array
-     */
-    public function createAction(Request $request)
-    {
-        $application      = new Application();
-        $uploadScreenShot = new UploadScreenshot();
-
-        $oid = new ObjectIdentity('class', get_class($application));
-        $this->denyAccessUnlessGranted('CREATE', $oid);
-
-        $form          = $this->createApplicationForm($application);
-        $form->handleRequest($request);
-        $parameters    = $request->request->get('application');
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->render('@MapbenderManager/Application/new.html.twig', array(
-                'application'         => $application,
-                'form'                => $form->createView(),
-                'form_name'           => $form->getName(),
-                'screenshot_filename' => null,
-            ));
-        }
-
-        try {
-            $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
-        } catch (IOException $e) {
-            $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
-            return $this->redirectToRoute('mapbender_manager_application_index');
-        }
-        $application->setUpdated(new \DateTime('now'));
-        $em = $this->getEntityManager();
-
-        $em->beginTransaction();
-        $em->persist($application);
-        $em->flush();
-        $this->checkRegionProperties($application);
-        $aclManager = $this->getAclManager();
-        $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $scFile = $application->getScreenshotFile();
-
-        if ($scFile !== null
-            && $parameters['removeScreenShot'] !== '1'
-            && $parameters['uploadScreenShot'] !== '1'
-        ) {
-            $uploadScreenShot->upload($appDirectory, $scFile, $application);
-        }
-
-        $em->persist($application);
-        $em->flush();
-
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-
-        foreach ($templateProps as $regionName => $regionProps) {
-            $application->addRegionProperties(
-                $this->createRegionProperties($application, $regionName, $regionProps)
-            );
-        }
-
-        $em->persist($application);
-        $em->flush();
-        $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-        $em->commit();
-        $this->addFlash('success', $this->translate('mb.application.create.success'));
-
-        return $this->redirectToRoute('mapbender_manager_application_index');
-    }
-
-    /**
      * Edit application
      *
-     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
+     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
      * @param $request Request
      * @param string $slug Application name
      * @return Response
@@ -278,85 +251,73 @@ class ApplicationController extends WelcomeController
         $application = $this->requireApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
-        $this->checkRegionProperties($application);
-        $form = $this->createApplicationForm($application);
-
-        return $this->render('@MapbenderManager/Application/edit.html.twig',
-            $this->prepareApplicationUpdate($request, $form, $application));
-    }
-
-    /**
-     * Updates application
-     *
-     * @ManagerRoute("/application/{slug}/update", requirements = { "slug" = "[\w-]+" }, methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     * @throws \Doctrine\DBAL\ConnectionException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function updateAction(Request $request, $slug)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-
         $oldSlug          = $application->getSlug();
-        $templateClassOld = $application->getTemplate();
+
         $form             = $this->createApplicationForm($application);
-
-        if (!$form->submit($request)->isValid()) {
-            $application->setTemplate($templateClassOld);
-            $application->setSlug($slug);
-            return $this->render('@MapbenderManager/Application/edit.html.twig',
-                $this->prepareApplicationUpdate($request, $form, $application));
-        }
-
-        $em = $this->getEntityManager();
-
-        $em->beginTransaction();
-        $application->setUpdated(new \DateTime('now'));
-        $application->setTemplate($templateClassOld);
-        $this->setRegionProperties($application, $form);
-        if ($form->get('removeScreenShot')->getData() == '1') {
-            $application->setScreenshot(null);
-        }
-        $em->persist($application);
-        $em->flush();
-
-        try {
-            $ulm = $this->getUploadsManager();
-            if ($oldSlug !== $application->getSlug()) {
-                $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
-            } else {
-                $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
-            }
-            $scFile = $application->getScreenshotFile();
-            if ($scFile) {
-                $fileType = getimagesize($scFile);
-                $parameters = $request->request->get('application');
-                if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
-                    && strpos($fileType['mime'], 'image') !== false
-                ) {
-                    $uploadScreenShot = new UploadScreenshot();
-                    $uploadScreenShot->upload($uploadPath, $scFile, $application);
-                }
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getEntityManager();
+            $em->beginTransaction();
+            $application->setUpdated(new \DateTime('now'));
+            $this->setRegionProperties($application, $form);
+            if ($form->get('removeScreenShot')->getData() == '1') {
+                $application->setScreenshot(null);
             }
             $em->persist($application);
             $em->flush();
-            $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
-            $em->commit();
-            $this->addFlash('success', $this->translate('mb.application.save.success'));
-        } catch (IOException $e) {
-            $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
-            $em->rollback();
-            $em->close();
-        } catch (\Exception $e) {
-            $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
-            $em->rollback();
-            $em->close();
+
+            try {
+                $ulm = $this->getUploadsManager();
+                if ($oldSlug !== $application->getSlug()) {
+                    $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
+                } else {
+                    $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
+                }
+                $scFile = $form->get('screenshotFile')->getData();
+                if ($scFile && !$form->get('removeScreenShot')->getData()) {
+                    $uploadScreenShot = new UploadScreenshot();
+                    $uploadScreenShot->upload($uploadPath, $scFile, $application);
+                }
+                $em->persist($application);
+                $em->flush();
+                if ($form->has('acl')) {
+                    $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                }
+                $em->commit();
+                $this->addFlash('success', $this->translate('mb.application.save.success'));
+                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                    'slug' => $application->getSlug(),
+                ));
+            } catch (IOException $e) {
+                $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
+                $em->rollback();
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
+                $em->rollback();
+            }
         }
-        return $this->redirectToRoute('mapbender_manager_application_edit', array(
-            'slug' => $application->getSlug(),
+
+        $templateClass = $application->getTemplate();
+        $screenShot = $application->getScreenshot();
+        if ($screenShot) {
+            $baseUrl = $this->getUploadsBaseUrl($request);
+            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
+            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
+                't' => date('d.m.Y-H:i:s'),
+            ));
+        } else {
+            $screenShotUrl = null;
+        }
+
+        // restore old slug to keep urls working
+        $application->setSlug($oldSlug);
+        return $this->render('@MapbenderManager/Application/edit.html.twig', array(
+            'application'         => $application,
+            'regions'             => $templateClass::getRegions(),
+            'form'                => $form->createView(),
+            'template_name'       => $templateClass::getTitle(),
+            'screenshot'          => $screenShotUrl,
+            'screenshot_filename' => $screenShot,
         ));
     }
 
@@ -624,9 +585,12 @@ class ApplicationController extends WelcomeController
             throw $this->createNotFoundException();
         }
         $layerset = $this->requireLayerset($layersetId, $application);
-        $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $eHandler      = SourceEntityHandler::createHandler($this->container, $source);
-        $newInstance = $eHandler->createInstance();
+        /** @var Source|null $source */
+        $source = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $newInstance = $directory->createInstance($source);
+
         $layerset->getInstances()->add($newInstance);
         $newInstance->setLayerset($layerset);
         foreach ($layerset->getInstances()->getValues() as $newWeight => $lsInstance) {
@@ -634,10 +598,9 @@ class ApplicationController extends WelcomeController
             $lsInstance->setWeight($newWeight);
             $entityManager->persist($lsInstance);
         }
-        $entityManager->persist($layerset->getApplication());
-        $layerset->getApplication()->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $application->setUpdated(new \DateTime('now'));
 
-        $entityManager->persist($newInstance);
         $entityManager->flush();
         $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
@@ -694,28 +657,19 @@ class ApplicationController extends WelcomeController
     private function createApplicationForm(Application $application)
     {
         $availableTemplates = array();
-        $availableProperties = array();
 
         foreach ($this->getMapbender()->getTemplates() as $templateClassName) {
             $availableTemplates[$templateClassName] = $templateClassName::getTitle();
         }
         asort($availableTemplates);
-        if ($application->getTemplate() !== null) {
-            $templateClassName    = $application->getTemplate();
-            $availableProperties = $templateClassName::getRegionsProperties();
-        }
 
-        return $this->createForm(
-            new ApplicationType(),
-            $application,
-            array(
-                'available_templates'  => $availableTemplates,
-                'available_properties' => $availableProperties,
-                'maxFileSize'          => 2097152,
-                'screenshotWidth'      => 200,
-                'screenshotHeight'     => 200,
-            )
-        );
+        return $this->createForm(new ApplicationType(), $application, array(
+            'available_templates'  => $availableTemplates,
+            'maxFileSize'          => 2097152,
+            'screenshotWidth'      => 200,
+            'screenshotHeight'     => 200,
+            'include_acl' => $this->allowAclEditing($application),
+        ));
     }
 
     /**
@@ -732,103 +686,62 @@ class ApplicationController extends WelcomeController
         foreach ($templateProps as $regionName => $regionProperties) {
             foreach ($applicationRegionProperties as $regionProperty) {
                 if ($regionProperty->getName() === $regionName) {
-                    $regprops = $form->get($regionName)->getData();
-                    $regionProperty->setProperties($regprops ? $regionProperties[ $regprops ] : array());
+                    $propValues = $regionProperty->getProperties();
+                    $formValue = $form->get($regionName)->getData();
+                    $propValues = array_replace($propValues, array(
+                        'name' => $formValue ?: '',
+                    ));
+                    // Legacy quirk: label used to be copied into db but is redundant. Only used in form, where
+                    // it is taken from the Template, not from the entity.
+                    unset($propValues['label']);
+                    $regionProperty->setProperties($propValues);
+
                 }
             }
         }
     }
 
     /**
-     * Update application region properties if they'r changed
-     *
-     * @param $application
+     * @param Application $application
+     * @return bool
      */
-    private function checkRegionProperties(Application $application)
+    protected function allowAclEditing(Application $application)
     {
+        if (!$application->getId()) {
+            // current user will become owner of the new application
+            return true;
+        } elseif ($this->isGranted('OWNER', $application)) {
+            return true;
+        } else {
+            $aclOid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
+            return $this->isGranted('EDIT', $aclOid);
+        }
+    }
+
+    /**
+     * Create initial application region properties
+     *
+     * @param Application $application
+     */
+    protected function createRegionProperties(Application $application)
+    {
+        /** @var Template::class $templateClass */
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
-        $em = $this->getEntityManager();
-        // add RegionProperties if defined
-        foreach ($templateProps as $regionName => $regionProps) {
-            $exists = false;
-            foreach ($application->getRegionProperties() as $regprops) {
-                if ($regprops->getName() === $regionName) {
-                    $exists = true;
-                    break;
-                }
+
+        foreach ($templateProps as $regionName => $choices) {
+            if (!$choices) {
+                continue;
             }
-            if (!$exists) {
-                $application->addRegionProperties(
-                    $this->createRegionProperties($application, $regionName)
-                );
-                $em->persist($application);
-                $em->flush();
-            }
+            $propsEntity = new RegionProperties();
+            $propsEntity->setApplication($application);
+            $propsEntity->setName($regionName);
+            $choiceKeys = array_keys($choices);
+            $firstChoiceValues = $choices[$choiceKeys[0]];
+            unset($firstChoiceValues['label']);
+            $propsEntity->setProperties($firstChoiceValues);
+            $application->addRegionProperties($propsEntity);
         }
-    }
-
-    /**
-     * Create application region properties
-     *
-     * @param Application $application
-     * @param             $regionName
-     * @param             $initValues
-     * @return RegionProperties
-     */
-    protected function createRegionProperties(Application $application, $regionName, array $initValues = null)
-    {
-        $em = $this->getEntityManager();
-        $properties = new RegionProperties();
-
-        $properties->setApplication($application);
-        $properties->setName($regionName);
-
-        if ($initValues) {
-            foreach ($initValues as $name => $value) {
-                if (array_key_exists('state', $value) && $value['state']) {
-                    $properties->addProperty($name);
-                }
-            }
-        }
-
-        $em->persist($properties);
-
-        return $properties;
-    }
-
-    /**
-     * @param Request $request
-     * @param Form        $form
-     * @param Application $application
-     * @return array
-     */
-    protected function prepareApplicationUpdate(Request $request, Form $form, $application)
-    {
-        /** @var Element $element */
-        $slug          = $application->getSlug();
-        $templateClass = $application->getTemplate();
-        $screenShot = $application->getScreenshot();
-        if ($screenShot) {
-            $baseUrl = $this->getUploadsBaseUrl($request);
-            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
-            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
-                't' => date('d.m.Y-H:i:s'),
-            ));
-        } else {
-            $screenShotUrl = null;
-        }
-
-        return array(
-            'application'         => $application,
-            'regions'             => $templateClass::getRegions(),
-            'slug'                => $slug,
-            'form'                => $form->createView(),
-            'form_name'           => $form->getName(),
-            'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $screenShot,
-            'time'                => new \DateTime());
     }
 
     /**

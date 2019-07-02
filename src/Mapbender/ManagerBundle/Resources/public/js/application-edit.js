@@ -14,18 +14,37 @@ $(function() {
                             number: idx,
                             region: $(ui.item).closest('table').attr("data-region")
                         },
-                        success: function(data, textStatus, jqXHR) {
+                        success: function(data) {
                             if (data.error && data.error !== '') {
                                 document.location.reload();
                             }
                         },
-                        error: function(jqXHR, textStatus, errorThrown) {
+                        error: function() {
                             document.location.reload();
                         }
                     });
                 }
             });
         }
+    });
+    $(".regionProperties").each(function() {
+        function updateGroupIcons() {
+            function updateWrapper() {
+                var $cb = $('input[type="radio"]', this);
+                $(this)
+                    .toggleClass('checked', $cb.prop('checked'))
+                    .toggleClass('disabled', $cb.prop('disabled'))
+                ;
+            }
+            $('.radioWrapper', this).each(updateWrapper);
+        }
+        function onClick() {
+            var $clickedRadio = $('input[type="radio"]', this);
+            $clickedRadio.prop('checked', true);
+            updateGroupIcons.call($(this).parent());
+        }
+        updateGroupIcons.call(this);
+        $(this).on('click', '.radioWrapper', onClick);
     });
 
     $("table.layersetTable tbody").sortable({
@@ -75,7 +94,7 @@ $(function() {
                     }
                 ])
             });
-            popup.$element.on('change', function(event) {
+            popup.$element.on('change', function() {
                 $('#elementForm', popup.$element).data('dirty', true);
             });
             popup.$element.on('close', function(event, token) {
@@ -134,7 +153,7 @@ $(function() {
         });
     }
 
-    $(".addElement").bind("click", function(event) {
+    $(".addElement").bind("click", function() {
         var regionName = $('.subTitle', $(this).closest('.region')).first().text();
         startElementChooser(regionName, $(this).attr('href'));
         return false;
@@ -170,155 +189,6 @@ $(function() {
         });
     }
 
-    // Element security
-    $(".secureElement").bind("click", function() {
-        var self = $(this),
-                toremove = null;
-        $.ajax({
-            url: self.attr("data-url")
-        }).then(function(response) {
-            var popup = new popupCls({
-                title: "Secure element",
-                closeOnOutsideClick: true,
-                content: response,
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
-                        cssClass: 'button buttonBack hidden left',
-                        callback: function() {
-                            toremove = null;
-                            $(".contentItem:first", popup.$element).removeClass('hidden');
-                            if ($(".contentItem", popup.$element).length > 1) {
-                                $(".contentItem:not(.contentItem:first)", popup.$element).remove();
-                            }
-                            $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
-                            $(".buttonOk", popup.$element).removeClass('hidden');
-                        }
-                    },
-                    {
-                        label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
-                        cssClass: 'button buttonRemove hidden',
-                        callback: function() {
-                            $(".contentItem:first", popup.$element).removeClass('hidden');
-                            if (toremove !== null) {
-                                toremove.remove();
-                            }
-                            toremove = null;
-                            if ($(".contentItem", popup.$element).length > 1) {
-                                $(".contentItem:not(.contentItem:first)", popup.$element).remove();
-                            }
-                            $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
-                            $(".buttonOk", popup.$element).removeClass('hidden');
-                        }
-                    },
-                    {
-                        label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
-                        cssClass: 'button buttonAdd hidden',
-                        callback: function() {
-                            toremove = null;
-                            $(".contentItem:first", popup.$element).removeClass('hidden');
-                            if ($(".contentItem", popup.$element).length > 1) {
-                                var body = $(".contentItem:first #permissionsBody", popup.$element);
-                                var proto = $(".contentItem:first #permissionsHead", popup.$element).attr("data-prototype");
-
-                                if (proto) {
-                                    var count = body.find("tr").length;
-                                    var text, val, newEl;
-
-                                    $('#listFilterGroupsAndUsers input[type="checkbox"]:checked', popup.$element).each(function() {
-                                        var $row = $(this).closest('tr');
-                                        var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
-                                        text = $row.find(".labelInput").text().trim();
-                                        val = $row.find(".hide").text().trim();
-                                        newEl = body.prepend(proto.replace(/__name__/g, count))
-                                                .find("tr:first");
-
-                                        newEl.addClass("new").find(".labelInput").text(text);
-                                        newEl.find(".input").attr("value", val);
-                                        newEl.find(".view.checkWrapper").trigger("click");
-                                        newEl.find(".userType")
-                                                .removeClass("iconGroup")
-                                                .removeClass("iconUser")
-                                                .addClass(userType);
-                                        ++count;
-                                    });
-                                }
-                                $('.contentItem:first .permissionsTable', popup.$element).removeClass('hidePermissions');
-                                $('.contentItem:first #permissionsDescription', popup.$element).addClass('hidden');
-
-                                $(".contentItem:not(.contentItem:first)", popup.$element).remove();
-                            }
-                            $(".buttonAdd, .buttonBack", popup.$element).addClass('hidden');
-                            $(".buttonOk", popup.$element).removeClass('hidden');
-                        }
-                    },
-                    {
-                        label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.ok'),
-                        cssClass: 'button buttonOk',
-                        callback: function() {
-                            toremove = null;
-                            $("#elementSecurity", popup.$element).submit();
-                            window.setTimeout(function() {
-                                window.location.reload();
-                            }, 50);
-                        }
-                    },
-                    {
-                        label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function() {
-                            toremove = null;
-                            this.close();
-                        }
-                    }
-                ]
-            });
-            $('#addElmPermission', popup.$element).on('click', function(e) {
-                var $anchor = $(this);
-                var url = $anchor.attr('data-href') || $anchor.attr('href');
-                e.preventDefault();
-                e.stopPropagation();
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function(data, textStatus, jqXHR) {
-                        $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
-                        $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
-                        popup.addContent(data);
-                        var groupUserItem, text, me, groupUserType;
-
-                        $("#listFilterGroupsAndUsers", popup.$element).find(".filterItem").each(function(i, e) {
-
-                            groupUserItem = $(e);
-                            groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                    .hasClass("iconGroup") ? "iconGroup"
-                                    : "iconUser");
-                            $("#permissionsBody", popup.$element).find(".labelInput").each(function(i, e) {
-                                me = $(e);
-                                text = me.text().trim();
-                                if ((groupUserItem.text().trim().toUpperCase().indexOf(text.toUpperCase()) >= 0) &&
-                                        (me.parent().hasClass(groupUserType))) {
-                                    groupUserItem.remove();
-                                }
-                            });
-                        });
-                    }
-                });
-                return false;
-            });
-            $("#permissionsBody", popup.$element).on("click", '.iconRemove', function(e) {
-                var self = $(e.target);
-                var parent = self.parent().parent();
-                var userGroup = ((parent.find(".iconUser").length == 1) ? "user " : "group ") + parent.find(".labelInput").text();
-                popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
-                toremove = parent;
-                $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
-                $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
-            });
-        });
-        return false;
-    });
-
     // Delete element
     $('.removeElement').bind("click", function() {
         var $el = $(this);
@@ -338,7 +208,7 @@ $(function() {
         var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
                                 : "mb.manager.components.popup.add_edit_layerset.title_add";
         $.ajax({url: self.attr("href")}).then(function(html) {
-            var popup = new popupCls({
+            new popupCls({
                 title: Mapbender.trans(popupTitle),
                 closeOnOutsideClick: true,
                 destroyOnClose: true,
@@ -383,10 +253,10 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function(event) {
+    $(".addInstance").bind("click", function() {
         var self = $(this);
         var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
-        var popup = new popupCls({
+        new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + layersetTitle,
             closeOnOutsideClick: true,
@@ -423,19 +293,26 @@ $(function() {
     var screenShotImg = screenShotCell.find('img');
     var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
-    var validationMsgBox = applicationForm.find('.validationMsgBox');
+    var fileGroup = fileInput.closest('.upload');
+    function setFileError(message) {
+        var $box = $('.validationMsgBox', fileGroup);
+        if (!$box.length) {
+            $box = $('<span>').addClass('validationMsgBox smalltext');
+            fileInput.after($box);
+        }
+        $box.text(message || '');
+        $box.toggleClass('hidden', !message);
+    }
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var minWidth = applicationForm.find('#application_screenshotWidth').val();
     var minHeight = applicationForm.find('#application_screenshotHeight').val();
-    var uploadScreenShot = applicationForm.find('#application_uploadScreenShot');
 
-    
     fileInput.on('mouseover', function() {
         uploadButton.addClass('hover');
     }).on('mouseout', function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
-        setUploadFilename(e);  
+        setUploadFilename(e);
 
         var file = this.files;
         var reader = new FileReader();
@@ -445,54 +322,43 @@ $(function() {
         
         img.onload = function() {
             if (img.width >= minWidth && img.height >= minHeight) {
-                validationMsgBox.addClass('hidden');
+                setFileError(null);
                 screenShotImg.attr('src', src);
                 screenShotImg.before('<div class="delete button critical hidden">X</div>');
                 deleteScreenShotButtonInit();
                 screenShot.removeClass('default');
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
-                uploadScreenShot.val(0);
             } else {
-                uploadScreenShot.val(1);
                 validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
                     {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height });
-                validationMsgBox.text(validationMessage);
-                validationMsgBox.removeClass('hidden');
+                setFileError(validationMessage);
             }
         };
 
          if (file && file[0]) {
             if (file[0].type.match('image/')){
-                if (file[0].size <= 2097152) {
-                   
+                var uploadFileSize = file[0].size;
+                if (uploadFileSize <= 2097152) {
                     reader.onload = function (e) {
                         img.src = src = e.target.result;
                     };
 
                     reader.readAsDataURL(file[0]);
-                    
-                }else{
-                    var uploadFileSize = file[0].size;
+                } else {
                     validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.error', {'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize });
-                    validationMsgBox.text(validationMessage);
-                    validationMsgBox.removeClass('hidden');
+                    setFileError(validationMessage);
                 }
-             }else {
+             } else {
                  validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.format_error');
-                 validationMsgBox.removeClass('hidden');
+                 setFileError(validationMessage);
             }
         }
-        
     });
    
     var setUploadFilename = function(e){
         var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
         var displayFilename = fileName || Mapbender.trans('mb.manager.admin.application.upload.label');
-        if (displayFilename.length > 35) {
-            $('.upload_label').text(displayFilename.substring(0, 35) + '…');
-        } else {
-            $('.upload_label').text(displayFilename);
-        }
+        $('.upload_label').text(displayFilename);
     };
     
     var deleteScreenShotButtonInit = function() {
@@ -520,7 +386,7 @@ $(function() {
         $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
             var self = this;
             initCheckbox.call(this);
-            $(self).on("change", function(e) {
+            $(self).on("change", function() {
                 $.ajax({
                     url: $(self).attr('data-url'),
                     type: 'POST',
@@ -545,7 +411,7 @@ $(function() {
     (function($) {
         var textarea = $('#application_custom_css');
         if(!textarea.length) return;
-        codeMirror = CodeMirror.fromTextArea(textarea[0], {
+        var codeMirror = CodeMirror.fromTextArea(textarea[0], {
             mode: 'css',
             keyMap: 'sublime',
             styleActiveLine: true,

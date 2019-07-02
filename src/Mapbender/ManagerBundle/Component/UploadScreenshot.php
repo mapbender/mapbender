@@ -21,9 +21,9 @@ class UploadScreenshot
      */
     public function upload($filePath, File $screenShotFile, Application $application)
     {
-        $fileName      = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
         $fileExtension = strtolower($screenShotFile->guessExtension());
-        $fullFilePath  = $filePath . "/" . $fileName;
+        $fileName = "screenshot-{$application->getId()}.{$fileExtension}";
+        $fullFilePath = $filePath . "/" . $fileName;
 
         $screenShotFile->move($filePath, $fileName);
         $application->setScreenshot($fileName);

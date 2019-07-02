@@ -449,8 +449,8 @@
 
         /**
          * Add content. Can be string, DOM node, jQuery node or Ajax
-         * @param  {mixed}    content     Content
-         * @param  {boolean}  emptyFirst  Empty content container before adding
+         * @param {*} content
+         * @param {boolean} [emptyFirst]  Empty content container before adding
          */
         addContent: function(content, emptyFirst) {
             var contentContainer = $('.popupContent', this.$element.get(0));

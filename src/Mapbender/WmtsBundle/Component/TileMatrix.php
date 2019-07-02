@@ -2,11 +2,14 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
+
 /**
  * TileMatrix class describes a particular tile matrix.
  * @author Paul Schmidt
  */
-class TileMatrix
+class TileMatrix implements MutableUrlTarget
 {
     /**
      * Tile matrix identifier. Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
@@ -202,5 +205,12 @@ class TileMatrix
     public function setMatrixheight($value)
     {
         $this->matrixheight = intval($value);
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        if ($url = $this->getHref()) {
+            $this->setHref($transformer->process($url));
+        }
     }
 }

@@ -2,12 +2,12 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Welcome controller.
@@ -34,10 +34,11 @@ class WelcomeController extends ApplicationControllerBase
         $allowedApplications = array();
 
         foreach ($this->getMapbender()->getApplicationEntities() as $application) {
-            if ($this->isGranted('VIEW', $application)
-                && ($this->isGranted('EDIT', $application) || $application->isPublished())
-                && !$application->isExcludedFromList()) {
+            try {
+                $this->checkApplicationAccess($application);
                 $allowedApplications[] = $application;
+            } catch (AccessDeniedException $e) {
+                // skip silently
             }
         }
 
@@ -48,16 +49,5 @@ class WelcomeController extends ApplicationControllerBase
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
         ));
-    }
-
-    /**
-     * Get Mapbender core service
-     * @return Mapbender
-     */
-    protected function getMapbender()
-    {
-        /** @var Mapbender $service */
-        $service = $this->get('mapbender');
-        return $service;
     }
 }
