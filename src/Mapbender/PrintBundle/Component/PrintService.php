@@ -429,12 +429,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         if ($pluginText !== null) {
             return $pluginText;
         }
-
         switch ($fieldName) {
-            case 'date' :
+            case 'date':
                 return date('d.m.Y');
-            case 'scale' :
+            case 'scale':
                 return '1 : ' . $jobData['scale_select'];
+            case 'user_name';
+                return $jobData['userName'];
             case 'dynamic_text':
                 if (isset($jobData['dynamic_text']['text'])) {
                     return $jobData['dynamic_text']['text'] ?: null;
