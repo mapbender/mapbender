@@ -48,19 +48,33 @@ class LayertreeAdminType extends AbstractType
                     'element' => 'Element',
                     'dialog' => 'Dialog')))
             ->add('autoOpen', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.autoopen',
+            ))
             ->add('useTheme', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.usetheme',
+            ))
             ->add('showBaseSource', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.showbasesources',
+            ))
             ->add('showHeader', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.showheader',
+            ))
             ->add('hideInfo', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.hideinfo',
+            ))
             ->add('hideNotToggleable', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.hidenottoggleable',
+            ))
             ->add('hideSelect', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.hideselect',
+            ))
             // see LayerTreeMenuType.php
             ->add('menu', 'layertree_menu', array(
                 'required' => false,

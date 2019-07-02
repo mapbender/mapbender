@@ -38,39 +38,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SUBMIT => 'preSubmit',
         );
-    }
-
-    /**
-     * Checkt form fields by PRE_SUBMIT FormEvent
-     *
-     * @param FormEvent $event
-     */
-    public function preSubmit(FormEvent $event)
-    {
-        $data = $event->getData();
-        if (null === $data) {
-            return;
-        }
-        $form = $event->getForm();
-        if (key_exists("themes", $data)) {
-            $form->remove('themes');
-            foreach ($data['themes'] as &$theme) {
-                $theme['useTheme'] = isset($theme['useTheme']) ? (bool) ($theme['useTheme']) : false;
-                $theme['opened'] = isset($theme['opened']) ? (bool) ($theme['opened']) : false;
-                $theme['sourceVisibility'] = isset($theme['sourceVisibility']) ?
-                    (bool) ($theme['sourceVisibility']) : false;
-                $theme['allSelected'] = isset($theme['allSelected']) ? (bool) ($theme['allSelected']) : false;
-                $theme['id'] = intval($theme['id']);
-            }
-            $event->setData($data);
-            $form->add($this->factory->createNamed('themes', 'collection', null, array(
-                'data' => $data["themes"],
-                'required' => false,
-                'type' => new LayerThemeType(),
-                'auto_initialize' => false,)));
-        }
     }
 
     /**
@@ -92,17 +60,16 @@ class LayertreeSubscriber implements EventSubscriberInterface
         );
         $data["themes"] = $themesAll;
         $event->setData($data);
-        if (count($themesData) === 0) {
-            $form->add($this->factory->createNamed('themes', 'collection', null, array(
+        if ($themesData) {
+            $form->add($this->factory->createNamed('themes', 'collection', $themesData, array(
+                'label' => 'mb.core.admin.layertree.label.themes',
                 'required' => false,
                 'type' => new LayerThemeType(),
-                'auto_initialize' => false,)));
-        } else {
-            $form->add($this->factory->createNamed('themes', 'collection', null, array(
-                'data' => $themesData,
-                'required' => false,
-                'type' => new LayerThemeType(),
-                'auto_initialize' => false,)));
+                'auto_initialize' => false,
+                'label_attr' => array(
+                    'class' => 'left',
+                ),
+            )));
         }
     }
 
