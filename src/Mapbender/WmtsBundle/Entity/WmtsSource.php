@@ -395,15 +395,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
     }
 
     /**
-     * Get getCapabilities
-     * @return RequestInformation|null
-     */
-    public function getGetCapabilities()
-    {
-        return $this->getCapabilities;
-    }
-
-    /**
      * Set getTile
      * @param RequestInformation $getTile
      * @return \Mapbender\WmtsBundle\Entity\WmtsSource
@@ -573,10 +564,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         if ($requestInfo = $this->getGetFeatureInfo()) {
             $requestInfo->mutateUrls($transformer);
             $this->setGetFeatureInfo(clone $requestInfo);
-        }
-        if ($requestInfo = $this->getGetCapabilities()) {
-            $requestInfo->mutateUrls($transformer);
-            $this->setGetCapabilities(clone $requestInfo);
         }
         foreach ($this->getLayers() as $layer) {
             $layer->mutateUrls($transformer);
