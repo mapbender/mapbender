@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 4d291fe05
+## dev-release/3.0.7 @ 3af9813d9
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
@@ -33,6 +33,7 @@
 - Backend form for newly created BaseSourceSwitcher is immediately functional
 - When adding a new Element requiring a map target to an Application, preselect the map Element automatically
 - Support suppressing menu items for backend areas based on route prefixes. Add route prefixes to `mapbender.manager.menu.route_prefix_blacklist` param (list of strings; use app/console debug:route to see all available routes in correct format)
+- [Print templating] recognize text field named `user_name`, automatically insert name of submitting user
 - [Framework] form theme now supports grouped choices in dropdowns (nested `<optgroup>` tags)
 - [Framework] form theme can now properly render basic radio button groups (`choice` types with `expanded` option)
 
