@@ -6,8 +6,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Description of WmcEditorAdminType
- *
  * @author Paul Schmidt
  */
 class WmcLoaderAdminType extends AbstractType

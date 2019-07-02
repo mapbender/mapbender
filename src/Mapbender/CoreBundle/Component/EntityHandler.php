@@ -9,8 +9,6 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Description of EntityHandler
- *
  * @author Paul Schmidt
  */
 class EntityHandler

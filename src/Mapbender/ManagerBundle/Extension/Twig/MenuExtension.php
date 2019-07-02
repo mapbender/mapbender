@@ -5,31 +5,48 @@ namespace Mapbender\ManagerBundle\Extension\Twig;
 
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
-use Symfony\Component\HttpFoundation\Request;
+use Mapbender\ManagerBundle\Component\Menu\LegacyItem;
+use Mapbender\ManagerBundle\Component\Menu\MenuItem;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuExtension extends \Twig_Extension
 {
-    /** @var KernelInterface */
-    protected $kernel;
-    /** @var ManagerBundle[] */
-    protected $managerBundles = array();
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
+    /** @var MenuItem[] */
+    protected $items;
+    /** @var string[] (serialized items) */
+    protected $itemData;
+    /** @var bool */
+    protected $initialized = false;
+    /** @var array|null */
+    protected $legacyInitArgs;
+    /** @var RequestStack */
+    protected $requestStack;
+
 
     /**
-     * @param KernelInterface $kernel
+     * @param MenuItem[] $items
+     * @param RequestStack $requestStack
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param KernelInterface $kernel
+     * @param string[] $legacyBundleNames
+     * @param string[] $routePrefixBlacklist
      */
-    public function __construct(KernelInterface $kernel, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct($items,
+                                RequestStack $requestStack,
+                                AuthorizationCheckerInterface $authorizationChecker,
+                                KernelInterface $kernel,
+                                $legacyBundleNames,
+                                $routePrefixBlacklist)
     {
-        $this->kernel = $kernel;
+        $this->itemData = $items;
+        $this->requestStack = $requestStack;
         $this->authorizationChecker = $authorizationChecker;
-        foreach ($kernel->getBundles() as $bundle) {
-            if ($bundle instanceof ManagerBundle) {
-                $this->managerBundles[] = $bundle;
-            }
+        if ($legacyBundleNames) {
+            $this->legacyInitArgs = array($kernel, $legacyBundleNames, $routePrefixBlacklist);
         }
     }
 
@@ -40,96 +57,70 @@ class MenuExtension extends \Twig_Extension
         );
     }
 
-    public function mapbender_manager_menu_items(Request $request)
+    public function mapbender_manager_menu_items($legacyParamDummy = null)
     {
-        $currentRoute = $request->attributes->get('_route');
-        return $this->getManagerControllersDefinition($currentRoute);
+        return $this->getItems(true);
     }
 
     public function getDefaultRoute()
     {
-        $controllers = $this->getManagerControllersDefinition(null);
-        if (!$controllers) {
+        $items = $this->getItems(false);
+        if (!$items) {
             throw new \RuntimeException("No manager routes defined");
         }
-        return $controllers[0]['route'];
+        return $items[0]->getRoute();
     }
 
     /**
-     * @param array $routeDefinition
-     * @return array|false
+     * @param bool $filterAccess
+     * @return MenuItem[]
      */
-    protected function filterAccess($routeDefinition)
+    protected function getItems($filterAccess)
     {
-        if (!empty($routeDefinition['enabled'])) {
-            if ($routeDefinition['enabled'] instanceof \Closure) {
-                $fn = $routeDefinition['enabled'];
-                $enabled = $fn($this->authorizationChecker);
-                if (!$enabled) {
-                    return false;
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+        $items = array();
+        foreach ($this->items as $item) {
+            if (!$filterAccess || $item->filter($this->authorizationChecker)) {
+                $items[] = $item;
+            }
+        }
+        return $items;
+    }
+
+    protected function initialize()
+    {
+        $this->items = array_map('\unserialize', $this->itemData);
+        if ($args = $this->legacyInitArgs) {
+            $this->legacyInit($args[0], $args[1], $args[2]);
+        }
+        $route = $this->requestStack->getCurrentRequest()->attributes->get('_route');
+        foreach ($this->items as $item) {
+            $item->checkActive($route);
+        }
+
+        $this->initialized = true;
+    }
+
+    /**
+     * @param KernelInterface $kernel
+     * @param $bundleNames
+     * @param $routePrefixBlacklist
+     * @deprecated remove in v3.1, plus all related DI dependencies and attributes
+     */
+    protected function legacyInit(KernelInterface $kernel, $bundleNames, $routePrefixBlacklist)
+    {
+        foreach ($bundleNames as $legacyBundleName) {
+            /** @var ManagerBundle $bundle */
+            $bundle = $kernel->getBundle($legacyBundleName);
+            foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
+                $item = LegacyItem::fromArray($topLevelMenuDefinition);
+                if (MenuItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
+                    $this->items[] = $item;
                 }
-            } else {
-                $type = is_object($routeDefinition['enabled']) ? get_class($routeDefinition['enabled']) : gettype($routeDefinition['enabled']);
-                throw new \RuntimeException("Unexpected type for 'enabled': {$type}");
             }
         }
-        unset($routeDefinition['enabled']);
-        return $routeDefinition;
-    }
-
-    /**
-     * @param array[] $defs
-     * @param string|null $currentRoute
-     * @return array[]
-     */
-    protected function filterManagerControllerDefinitions($defs, $currentRoute)
-    {
-        $defsOut = array();
-        foreach ($defs ?: array() as $k => $def) {
-            $def = $this->filterAccess($def);
-            if (!$def) {
-                continue;
-            }
-            $def['active'] = ($def['route'] === $currentRoute);
-            if (!empty($def['subroutes'])) {
-                $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes'], $currentRoute);
-                if (!$def['active']) {
-                    foreach ($def['subroutes'] as $sub) {
-                        if (!empty($sub['active'])) {
-                            $def['active'] = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            // legacy menu.html.twig quirk: the template checks if 'active' is defined, not its boolean value
-            if (!$def['active']) {
-                unset($def['active']);
-            }
-            $defsOut[] = $def;
-        }
-        return $defsOut;
-    }
-
-    /**
-     * @param string|null $currentRoute
-     * @return array
-     */
-    protected function getManagerControllersDefinition($currentRoute)
-    {
-        $routeDefinitions = array();
-        foreach ($this->managerBundles as $bundle) {
-            $bundleDefinitions = $bundle->getManagerControllers();
-            $bundleDefinitions = $this->filterManagerControllerDefinitions($bundleDefinitions, $currentRoute);
-            $routeDefinitions = array_merge($routeDefinitions, $bundleDefinitions);
-        }
-        usort($routeDefinitions, function($a, $b) {
-            if($a['weight'] == $b['weight']) {
-                return 0;
-            }
-
-            return ($a['weight'] < $b['weight']) ? -1 : 1;
-        });
-        return $routeDefinitions;
+        $this->items = MenuItem::sortItems($this->items);
     }
 }

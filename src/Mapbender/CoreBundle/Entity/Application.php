@@ -36,9 +36,6 @@ class Application
     const MAP_ENGINE_OL2 = 'ol2';
     const MAP_ENGINE_OL4 = 'ol4';
 
-    /**  @var bool Exclude form application menu list */
-    protected $excludeFromList = false;
-
     /** @var array YAML roles */
     protected $yamlRoles;
 
@@ -80,7 +77,7 @@ class Application
 
     /**
      * @var RegionProperties[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $regionProperties;
@@ -101,7 +98,7 @@ class Application
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $published;
+    protected $published = false;
 
     /**
      * @ORM\Column(type="string", length=256, nullable=true)
@@ -112,12 +109,6 @@ class Application
      * @ORM\Column(type="array", nullable=true)
      */
     protected $extra_assets;
-
-    /**
-     * @Assert\File(maxSize="2097152")
-     * @var File
-     */
-    protected $screenshotFile;
 
     /**
      * @ORM\Column(type="datetime")
@@ -299,7 +290,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return RegionProperties[]|ArrayCollection
+     * @return RegionProperties[]|Collection
      */
     public function getRegionProperties()
     {
@@ -329,7 +320,7 @@ class Application
     /**
      * Get elements
      *
-     * @return Element[]|ArrayCollection
+     * @return Element[]|Collection
      */
     public function getElements()
     {
@@ -339,10 +330,10 @@ class Application
     /**
      * Set elements
      *
-     * @param ArrayCollection $elements elements
+     * @param Collection $elements elements
      * @return $this
      */
-    public function setElements(ArrayCollection $elements)
+    public function setElements(Collection $elements)
     {
         $this->elements = $elements;
         return $this;
@@ -401,28 +392,6 @@ class Application
     public function getScreenshot()
     {
         return $this->screenshot;
-    }
-
-    /**
-     * Set screenshotFile
-     *
-     * @param $screenshotFile
-     * @return $this
-     */
-    public function setScreenshotFile($screenshotFile)
-    {
-        $this->screenshotFile = $screenshotFile;
-
-        return $this;
-    }
-
-    /**
-     * Get screenshotFile
-     * @return File
-     */
-    public function getScreenshotFile()
-    {
-        return $this->screenshotFile;
     }
 
     /**
@@ -569,7 +538,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return array
+     * @return RegionProperties[]
      */
     public function getNamedRegionProperties()
     {
@@ -585,7 +554,7 @@ class Application
      * Get region properties
      *
      * @param $regionName
-     * @return null
+     * @return RegionProperties|null
      */
     public function getPropertiesFromRegion($regionName)
     {
@@ -596,26 +565,6 @@ class Application
             }
         }
         return null;
-    }
-
-    /**
-     * Hide application from menu list
-     *
-     * @param $exclude
-     * @return $this
-     */
-    public function setExcludeFromList($exclude)
-    {
-        $this->excludeFromList = $exclude;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExcludedFromList()
-    {
-        return $this->excludeFromList;
     }
 
     /**

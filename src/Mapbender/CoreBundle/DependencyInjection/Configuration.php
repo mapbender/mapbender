@@ -9,6 +9,9 @@ namespace Mapbender\CoreBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * @deprecated remove in v3.1
+ */
 class Configuration implements ConfigurationInterface {
     /**
      * {@inheritDoc}
@@ -16,32 +19,10 @@ class Configuration implements ConfigurationInterface {
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('mapbender_core');
-
-        $defaultScreenshotPath = 'app_screenshots';
-    	$defaultUploadDir = "uploads"; # from application/web
-
         $rootNode
             ->children()
 	        ->scalarNode('uploads_dir')
-                    ->defaultValue($defaultUploadDir)
-                ->end()
-                ->scalarNode('selfregister')
                     ->defaultFalse()
-                ->end()
-                ->scalarNode('max_registration_time')
-                    ->defaultValue(24)
-                ->end()
-                ->scalarNode('max_reset_time')
-                    ->defaultValue(24)
-                ->end()
-                ->scalarNode('screenshot_path')
-                    ->defaultValue($defaultScreenshotPath)
-                ->end()
-                ->booleanNode('sass_assets')
-                    ->defaultFalse()
-                ->end()
-                ->scalarNode('static_assets_cache_path')
-                    ->defaultValue('%kernel.root_dir%/../web/assets')
                 ->end()
             ->end();
 

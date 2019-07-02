@@ -1,19 +1,18 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Component\Exception\UnpersistedEntity;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 
 /**
- * Description of ExportHandler
- *
  * @author Paul Schmidt
  */
 class ExportHandler extends ExchangeHandler
@@ -146,6 +145,9 @@ class ExportHandler extends ExchangeHandler
         $identFieldNames = $classMeta->getIdentifier();
         $nonMappingFieldNames = $classMeta->getFieldNames();
         $identValues = $entityInfo->extractProperties($object, $identFieldNames);
+        if ($identValues === array_fill_keys($identFieldNames, null)) {
+            throw new UnpersistedEntity();
+        }
 
         $referenceData = $this->createInstanceIdent($object, $identValues);
         // Try to store some dummy data in the export to mark the entity as 'started processing'
@@ -176,13 +178,17 @@ class ExportHandler extends ExchangeHandler
             $subObject = $getters[$fieldName]->invoke($object);
             if (!$subObject) {
                 $data[$fieldName] = null;
-            } elseif ($subObject instanceof PersistentCollection) {
+            } elseif ($subObject instanceof Collection) {
                 $data[$fieldName] = array();
                 foreach ($subObject as $item) {
                     $data[$fieldName][] = $this->handleObject($exportPool, $item);
                 }
             } else {
-                $data[$fieldName] = $this->handleObject($exportPool, $subObject);
+                try {
+                    $data[$fieldName] = $this->handleObject($exportPool, $subObject);
+                } catch (UnpersistedEntity $e) {
+                    // ignore
+                }
             }
         }
 

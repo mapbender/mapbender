@@ -4,10 +4,6 @@
 namespace Mapbender\ManagerBundle\Extension\Twig;
 
 
-use FOM\UserBundle\Entity\AclEntry;
-use Mapbender\ManagerBundle\Component\ManagerBundle;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -16,7 +12,6 @@ use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 use Symfony\Component\Security\Acl\Model\AclInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AclExtension extends \Twig_Extension
 {
@@ -54,12 +49,12 @@ class AclExtension extends \Twig_Extension
                 if ($identity instanceof UserSecurityIdentity) {
                     $data[] = array(
                         'name' => $identity->getUsername(),
-                        'type' => AclEntry::USER_TYPE,
+                        'type' => 'User',
                     );
                 } elseif ($identity instanceof RoleSecurityIdentity) {
                     $data[] = array(
                         'name' => $identity->getRole(),
-                        'type' => AclEntry::ROLE_TYPE,
+                        'type' => 'Role',
                     );
                 }
             }

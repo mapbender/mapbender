@@ -4,8 +4,6 @@ namespace Mapbender\CoreBundle\Utils;
 use Doctrine\ORM\PersistentCollection;
 
 /**
- * Description of ArrayObject
- *
  * @author paul
  */
 class ArrayObject

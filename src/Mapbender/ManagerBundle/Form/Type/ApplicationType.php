@@ -1,9 +1,12 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
+use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
 
 
 class ApplicationType extends AbstractType
@@ -18,15 +21,25 @@ class ApplicationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'available_templates' => array(),
-            'available_properties' => array(),
             'maxFileSize' => 0,
             'screenshotHeight' => 0,
-            'screenshotWidth' => 0
+            'screenshotWidth' => 0,
+            'include_acl' => true,
         ));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$options['data']->getId()) {
+            // allow template choice only for new Application
+            $builder->add('template', 'choice', array(
+                'choices' => $options['available_templates'],
+                'label' => 'mb.manager.admin.application.template',
+                'label_attr' => array(
+                    'title' => 'The HTML template used for this application.',
+                ),
+            ));
+        }
         $builder
             ->add('title', 'text', array(
                 'label' => 'mb.manager.admin.application.title',
@@ -49,67 +62,70 @@ class ApplicationType extends AbstractType
                     'title' => 'The description is used in overview lists.',
                 ),
             ))
-            ->add('template', 'choice', array(
-                'choices' => $options['available_templates'],
-                'attr' => array(
-                    'title' => 'The HTML template used for this application.')))
+
             ->add('screenshotFile', 'file', array(
                 'label' => 'Screenshot',
+                'mapped' => false,
+                'required' => false,
                 'attr' => array(
-                    'required' => false,
-                    'accept'=>'image/*')))
+                    'accept'=>'image/*',
+                ),
+                'constraints' => array(
+                    new Constraints\Image(array(
+                        'maxSize' => '2M',
+                        'mimeTypesMessage' => 'mb.core.entity.app.screenshotfile.format_error',
+                        'minWidth' => $options['screenshotWidth'],
+                        'minHeight' => $options['screenshotHeight'],
+                    )),
+                ),
+            ))
             ->add('removeScreenShot', 'hidden',array(
-                'mapped' => false))
-            ->add('uploadScreenShot', 'hidden',array(
-                'mapped' => false))
+                'mapped' => false,
+            ))
             ->add('maxFileSize', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['maxFileSize']))
+                'data' => $options['maxFileSize'],
+            ))
             ->add('screenshotWidth', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['screenshotWidth']))
+                'data' => $options['screenshotWidth'],
+            ))
             ->add('screenshotHeight', 'hidden',array(
                 'mapped' => false,
-                'data' => $options['screenshotHeight']))
+                'data' => $options['screenshotHeight'],
+            ))
             ->add('custom_css', 'textarea', array(
-                'required' => false))
-
-            // Security
+                'required' => false,
+            ))
             ->add('published', 'checkbox',
                 array(
                 'required' => false,
-                'label' => 'Published'));
-
-        $app = $options['data'];
-        foreach ($options['available_properties'] as $region => $properties) {
-            $data = "";
-            foreach ($app->getRegionProperties() as $key => $regProps) {
-                if ($regProps->getName() === $region) {
-                    $help = $regProps->getProperties();
-                    if (array_key_exists('name', $help)) {
-                        $data = $help['name'];
-                    }
-                }
+                'label' => 'mb.manager.admin.application.security.public',
+            ))
+        ;
+        /** @var Application $application */
+        $application = $options['data'];
+        $templateClassName = $application->getTemplate();
+        if ($templateClassName) {
+            /** @var Template::class $templateClassName */
+            foreach (array_keys($templateClassName::getRegionsProperties()) as $regionName) {
+                $builder->add($regionName, 'region_properties', array(
+                    'property_path' => '[' . $regionName . ']',
+                    'application' => $options['data'],
+                    'region' => $regionName,
+                ));
             }
-            $choices = array();
-            foreach ($properties as $values) {
-                $choices[$values['name']] = $values['label'];
-            }
-            $builder->add($region, 'choice', array(
-                'property_path' => '[' . $region . ']',
-                'required' => false,
-                'mapped' => false,
-                'expanded' => true,
-                'data' => $data,
-                'choices' => $choices
-            ));
         }
 
-        // Security
-        $builder->add('acl', 'acl', array(
-            'mapped' => false,
-            'data' => $options['data'],
-            'permissions' => 'standard::object'));
+        if ($options['include_acl']) {
+            $builder
+                ->add('acl', 'acl', array(
+                    'mapped' => false,
+                    'data' => $options['data'],
+                    'create_standard_permissions' => true,
+                    'permissions' => 'standard::object',
+                ))
+            ;
+        }
     }
-
 }

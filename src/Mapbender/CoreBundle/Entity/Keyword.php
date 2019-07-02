@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
 
 /**
  * Source entity
@@ -83,4 +84,12 @@ abstract class Keyword
      * @return mixed
      */
     abstract public function getReferenceObject();
+
+    /**
+     * Set reference object
+     *
+     * @param ContainingKeyword $reference
+     * @return $this
+     */
+    abstract public function setReferenceObject(ContainingKeyword $reference);
 }

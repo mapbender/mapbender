@@ -5,9 +5,6 @@ namespace Mapbender\WmsBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-/**
- * WmsSourceSimpleType class
- */
 class OnlineResourceType extends AbstractType
 {
 

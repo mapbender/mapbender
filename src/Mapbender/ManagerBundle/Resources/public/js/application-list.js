@@ -1,11 +1,12 @@
 $(function(){
+    var $appList = $('#listFilterApplications');
     // Switch application state via Ajax when the current state icon is clicked
-    $('#listFilterApplications .iconPublish[data-url]').bind('click', function() {
+    $appList.on('click', '.iconPublish[data-url],.iconPublishActive[data-url]', function() {
         var $this = $(this);
         var url = $this.attr('data-url');
         var requestedState;
 
-        if($this.hasClass("enabled")){
+        if (!$this.hasClass("disabled")){
             requestedState = "disabled";
         }else{
             requestedState = "enabled";
@@ -19,7 +20,7 @@ $(function(){
             if (response.newState === 'enabled') {
                 $this.removeClass("disabled").addClass('enabled iconPublishActive');
             } else {
-                $this.removeClass('enabled iconPublishActive').addClass('disabled');
+                $this.removeClass('enabled iconPublishActive').addClass('disabled iconPublish');
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             Mapbender.error(errorThrown);
@@ -27,7 +28,7 @@ $(function(){
         return false;
     });
 
-    $('#listFilterApplications').on('click', '.iconRemove[data-url]', function() {
+    $appList.on('click', '.iconRemove[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             // @todo: bring your own translation string

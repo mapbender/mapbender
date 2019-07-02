@@ -3,7 +3,9 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -16,6 +18,8 @@ use Symfony\Component\Form\FormView;
 /**
  * Choice-style form element for picking an element's "target" element (this is used e.g. for a generic Button
  * controlling a functional Element like a FeatureInfo).
+ *
+ * @see EntityType
  */
 class TargetElementType extends AbstractType
 {
@@ -105,9 +109,9 @@ class TargetElementType extends AbstractType
             $qb->setParameter('class', $options['element_class']);
         } else {
             $elementIds = array();
-            /** @var Application $applicationEntity */
-            $applicationEntity = $options['application'];
-            foreach ($applicationEntity->getElements() as $elementEntity) {
+            /** @var Application $application */
+            $application = $options['application'];
+            foreach ($application->getElements() as $elementEntity) {
                 $elementComponentClass = $elementEntity->getClass();
                 if (class_exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
@@ -133,6 +137,10 @@ class TargetElementType extends AbstractType
         $entityManager = $this->container->get('doctrine')->getManager();
         $transformer = new ElementIdTransformer($entityManager);
         $builder->addModelTransformer($transformer);
+        if (!empty($options['element_class']) && is_a('Mapbender\CoreBundle\Element\Map', $options['element_class'], true)) {
+            $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
+            $builder->addEventSubscriber($elementSubscriber);
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)

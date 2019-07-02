@@ -1,8 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Utils\UrlUtil;
-
 /**
  * The class with utility functions.
  *
@@ -31,11 +29,10 @@ class Utils
      *
      * @param string $baseUrl A base URL
      * @param string $parameters GET Parameters as array or as string
-     * @return generated Url
+     * @return string
      */
     public static function getHttpUrl($baseUrl, $parameters)
     {
-        $url = "";
         $pos = strpos($baseUrl, "?");
         if ($pos === false) {
             $url = $baseUrl . "?";

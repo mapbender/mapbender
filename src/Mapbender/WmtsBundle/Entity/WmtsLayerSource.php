@@ -1,13 +1,10 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
@@ -17,12 +14,11 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
 
 
 /**
- * Description of WmtsLayerSource
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtslayersource")
  */
-class WmtsLayerSource extends SourceItem # implements ContainingKeyword
+class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 {
     /**
      * @var integer $id
@@ -406,7 +402,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Get resourceUrl
      *
-     * @return UrlTemplateType[] resourceUrl
+     * @return UrlTemplateType[]
      */
     public function getResourceUrl()
     {
@@ -442,5 +438,15 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
             }
         }
         return array_unique($formats);
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $newResourceUrls = array();
+        foreach ($this->getResourceUrl() as $resourceUrl) {
+            $resourceUrl->mutateUrls($transformer);
+            $newResourceUrls[] = clone $resourceUrl;
+        }
+        $this->setResourceUrl($newResourceUrls);
     }
 }

@@ -6,8 +6,6 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Keyword;
 
 /**
- * Source entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity

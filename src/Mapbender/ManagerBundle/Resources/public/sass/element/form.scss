@@ -54,7 +54,7 @@
     }
   }
   // add margin between consecutive "inline" checkboxes with .left
-  .left > .labelCheck {
+  .left .labelCheck {
     margin-right: $space;
   }
 }

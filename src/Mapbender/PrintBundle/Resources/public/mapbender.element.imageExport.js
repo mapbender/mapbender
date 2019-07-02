@@ -190,7 +190,7 @@
          */
         _extractFeatureGeometry: function(layer, feature) {
             var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style !== null) {
+            if (feature.style) {
                 // stringify => decode: makes a deep copy of the style at the moment of capture
                 geometry.style = JSON.parse(JSON.stringify(feature.style));
             } else {

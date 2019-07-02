@@ -4,8 +4,9 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Mapbender\Component\Transformer\OneWayTransformer;
+use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\WmtsBundle\Component\TileMatrix;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
  * A TileMatrixSet entity describes a particular set of tile matrices.
@@ -14,7 +15,7 @@ use Mapbender\WmtsBundle\Entity\WmtsSource;
  * @ORM\Table(name="mb_wmts_tilematrixset")
  * ORM\DiscriminatorMap({"mb_wmts_tilematrixset" = "TileMatrixSet"})
  */
-class TileMatrixSet
+class TileMatrixSet implements MutableUrlTarget
 {
 
     /**
@@ -203,5 +204,15 @@ class TileMatrixSet
     public function __toString()
     {
         return (string) $this->id;
+    }
+
+    public function mutateUrls(OneWayTransformer $transformer)
+    {
+        $tileMatricesNew = array();
+        foreach ($this->getTilematrices() as $tileMatrix) {
+            $tileMatrix->mutateUrls($transformer);
+            $tileMatricesNew[] = clone $tileMatrix;
+        }
+        $this->setTilematrices($tileMatricesNew);
     }
 }

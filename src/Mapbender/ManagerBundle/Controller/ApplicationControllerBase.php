@@ -10,12 +10,44 @@ use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Mapbender;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
 {
+    /**
+     * Check view access permissions for given application.
+     *
+     * Unpublished applications are viewable only by users who can also edit them.
+     *
+     * @param Application $application
+     */
+    protected function checkApplicationAccess(Application $application)
+    {
+        if ($application->isYamlBased()) {
+            foreach ($application->getYamlRoles() as $role) {
+                if ($this->isGranted($role)) {
+                    return;
+                }
+            }
+            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
+            if (!$application->isPublished()) {
+                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                $this->denyAccessUnlessGranted('EDIT', $oid, 'This application is not published at the moment');
+            }
+        } else {
+            if (!$application->isPublished()) {
+                $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
+            }
+            $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
+        }
+    }
+
     /**
      * @return AclManager
      */
@@ -23,6 +55,16 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var AclManager $service */
         $service = $this->get('fom.acl.manager');
+        return $service;
+    }
+
+    /**
+     * @return MutableAclProviderInterface
+     */
+    protected function getAclProvider()
+    {
+        /** @var MutableAclProviderInterface $service */
+        $service = $this->get('security.acl.provider');
         return $service;
     }
 
@@ -38,15 +80,20 @@ abstract class ApplicationControllerBase extends Controller
 
     /**
      * @param string $slug
+     * @param bool $includeYaml
      * @return Application
      */
-    protected function requireApplication($slug)
+    protected function requireApplication($slug, $includeYaml = false)
     {
         $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application');
         /** @var Application|null $application */
         $application = $repository->findOneBy(array(
             'slug' => $slug,
         ));
+        if (!$application && $includeYaml) {
+            $allYamlApps = $this->getMapbender()->getYamlApplicationEntities();
+            $application = ArrayUtil::getDefault($allYamlApps, $slug, null);
+        }
         if (!$application) {
             throw $this->createNotFoundException("No such application");
         }
@@ -110,6 +157,17 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var TranslatorInterface $service */
         $service = $this->get('translator');
+        return $service;
+    }
+
+    /**
+     * Get Mapbender core service
+     * @return Mapbender
+     */
+    protected function getMapbender()
+    {
+        /** @var Mapbender $service */
+        $service = $this->get('mapbender');
         return $service;
     }
 }

@@ -4,17 +4,15 @@
 namespace Mapbender\CoreBundle\Command;
 
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ExportHandler;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class ApplicationExportCommand extends ContainerAwareCommand
+class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
     protected function configure()
     {
@@ -41,9 +39,12 @@ class ApplicationExportCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Application|null $app */
-        $app = $this->getRepository()->findOneBy(array(
+        $app = $this->getApplicationRepository()->findOneBy(array(
             'slug' => $input->getArgument('slug'),
         ));
+        if (!$app) {
+            $app = $this->getYamlApplication($input->getArgument('slug'));
+        }
         $exporter = $this->getExporter();
         $data = $exporter->exportApplication($app);
         unset($data['time']);
@@ -56,16 +57,6 @@ class ApplicationExportCommand extends ContainerAwareCommand
                 $output->writeln(Yaml::dump($data, 20, 2));
                 break;
         }
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityRepository
-     */
-    protected function getRepository()
-    {
-        /** @var EntityManager $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        return $em->getRepository('MapbenderCoreBundle:Application');
     }
 
     /**

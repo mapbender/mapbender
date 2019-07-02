@@ -24,7 +24,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  *
  * @see ApplicationController::instanceTunnelAction()
  * @see WmsSourceService::postProcessUrls()
- * @see WmsInstanceLayerEntityHandler::getLegendConfig()
  *
  * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
  */

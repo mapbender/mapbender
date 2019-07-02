@@ -454,7 +454,23 @@ Mapbender.Util.Url = function(urlString){
     this.host = tmp.host;
     this.hostname = tmp.hostname;
     this.port = tmp.port;
-    this.pathname = tmp.pathname;
+    // fix magically appearing explicit default port in some IE versions
+    if (this.port) {
+        // pattern: match until first single slash (ignore double slash between protocol and host),
+        // check if the string preceding this first single slash is ":port"
+        if (!(new RegExp('^([^/]+?//)?[^/]*?:' + this.port + '($|/)').test(urlString))) {
+            this.port = '';
+            // also fix .host, see IE notes at https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/host
+            this.host = this.host.replace(/:\d+$/, '');
+        }
+    }
+    // No reliable .hostname support in IE, see e.g. https://stackoverflow.com/questions/10755943/ie-forgets-an-a-tags-hostname-after-changing-href
+    if (this.host && !this.hostname) {
+        // .hostname is same as .host minus port specification
+        this.hostname = this.host.replace(/:\d+$/, '');
+    }
+    // https://stackoverflow.com/questions/956233/javascript-pathname-ie-quirk
+    this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
     this.parameters = {};
     var rawParams = (tmp.search || '?').substr(1).split('&');
     for (var i = 0; i < rawParams.length; ++i) {

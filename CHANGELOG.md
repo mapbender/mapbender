@@ -1,17 +1,41 @@
-## dev-release/3.0.7 @ 4eab6e611
+## dev-release/3.0.7 @ 3af9813d9
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
+- Fix dropdown choice display for choice values containing backslashes or quotes (e.g. Application template chooser)
 - Fix missing favicon in login / password reset areas
 - Fix sizing and missing localization of layerset, group and user delete confirmation popups
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
-- Improve export file size and import / export performance
+- Fix broken "toggle all" interaction in Element ACL assignment popup header
+- Fix application publish / unpublish interaction
+- Fix JavaScript extraction of url components `.port` and `.host` in Internet Explorer ([PR#1190](https://github.com/mapbender/mapbender/pull/1190), [PR#1191](https://github.com/mapbender/mapbender/pull/1190))
+- Fix errors in ImageExport / Print attempting to serialize undefined feature style
+- Only allow Application ACL editing for Application owner and users with global ACL editing rights
+- Provide reasonable default region properties for new application
+- Redirect to edit view instead of index when creating new application
+- Translate source creation and source reloading error messages
+- Suppress broken link to source refresh for non-refreshable (i.e. WMTS + TMS) sources in sources index
+- Allow exiting user / group selector when trying to add a new Element permission
+- Improve HTML and asset response performance for complex YAML-defined applications
+- Enable HTML response caching for YAML-defined applications
+- Improve export file size and import / export / copying performance
+- Add mapbender:source:rewrite:host CLI command (update matching source urls without reeavaluating capabilities)
 - Add mapbender:application:export CLI command
 - Add mapbender:application:import CLI command
+- Add mapbender:application:clone CLI command
+- Support cloning of YAML-defined applications into the database (CLI + backend)
+- When cloning applications, also copy uploads directory (including screenshot)
 - Add separate memory limit configuration parameter `mapbender.print.memory_limit` for direct print jobs
 - Add spearate download base path / base url parameter `mapbender.print.queue.load_path` to support forwarding PDFs from
   externally installed "dedicated print queue servers"
 - Add mapbender:print:queue:gcfiles command to remove dangling local files
+- Backend form for newly created DimensionsHandler is immediately functional
+- Backend form for newly created BaseSourceSwitcher is immediately functional
+- When adding a new Element requiring a map target to an Application, preselect the map Element automatically
+- Support suppressing menu items for backend areas based on route prefixes. Add route prefixes to `mapbender.manager.menu.route_prefix_blacklist` param (list of strings; use app/console debug:route to see all available routes in correct format)
+- [Print templating] recognize text field named `user_name`, automatically insert name of submitting user
+- [Framework] form theme now supports grouped choices in dropdowns (nested `<optgroup>` tags)
+- [Framework] form theme can now properly render basic radio button groups (`choice` types with `expanded` option)
 
 ## v3.0.8.1
 - Add configurable site links to login box and backend ([PR#1158](https://github.com/mapbender/mapbender/pull/1158))

@@ -4,15 +4,11 @@
 namespace Mapbender\CoreBundle\Command;
 
 
-use Doctrine\ORM\EntityManagerInterface;
-use FOM\UserBundle\Entity\User;
-use Mapbender\ManagerBundle\Component\ImportHandler;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ApplicationImportCommand extends ContainerAwareCommand
+class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
     protected function configure()
     {
@@ -52,37 +48,5 @@ class ApplicationImportCommand extends ContainerAwareCommand
         foreach ($applications as $application) {
             $output->writeln("* {$application->getSlug()}", OutputInterface::VERBOSITY_NORMAL);
         }
-    }
-
-    /**
-     * @return User|null
-     */
-    protected function getRootUser()
-    {
-        $repository = $this->getDefaultEntityManager()->getRepository('FOMUserBundle:User');
-        foreach ($repository->findAll() as $user) {
-            /** @var User $user*/
-            if ($user->isAdmin()) {
-                return $user;
-            }
-        }
-        return null;
-    }
-
-    protected function getDefaultEntityManager()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
-        return $em;
-    }
-
-    /**
-     * @return ImportHandler
-     */
-    protected function getApplicationImporter()
-    {
-        /** @var ImportHandler $service */
-        $service = $this->getContainer()->get('mapbender.application_importer.service');
-        return $service;
     }
 }

@@ -1,0 +1,6 @@
+mb:
+  core:
+    entity:
+      app:
+        screenshotfile:
+          format_error: Formato não suportado.

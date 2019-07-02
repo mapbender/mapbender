@@ -1,26 +1,38 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\Wms\Importer;
 
 /**
- * Description of SourceEntityHandler
- *
  * @author Paul Schmidt
+ * @property Source $entity
  */
-abstract class SourceEntityHandler extends EntityHandler
+class SourceEntityHandler extends EntityHandler
 {
     /**
-     * Creates a SourceInstance
      * @return SourceInstance
+     * @deprecated
      */
-    abstract public function createInstance();
-    
+    final public function createInstance()
+    {
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        return $directory->createInstance($this->entity);
+    }
+
     /**
      * Update a source from a new source
      * @param Source $source a Source object
      */
-    abstract public function update(Source $source);
-
+    final public function update(Source $source)
+    {
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        /** @var Importer $loader */
+        $loader = $directory->getSourceLoaderByType($this->entity->getType());
+        $loader->updateSource($this->entity, $source);
+    }
 }
