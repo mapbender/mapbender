@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 059333276
+## dev-release/3.0.7 @ 4d291fe05
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
@@ -8,6 +8,8 @@
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
 - Fix broken "toggle all" interaction in Element ACL assignment popup header
 - Fix application publish / unpublish interaction
+- Fix JavaScript extraction of url components `.port` and `.host` in Internet Explorer ([PR#1190](https://github.com/mapbender/mapbender/pull/1190), [PR#1191](https://github.com/mapbender/mapbender/pull/1190))
+- Fix errors in ImageExport / Print attempting to serialize undefined feature style
 - Only allow Application ACL editing for Application owner and users with global ACL editing rights
 - Provide reasonable default region properties for new application
 - Redirect to edit view instead of index when creating new application
