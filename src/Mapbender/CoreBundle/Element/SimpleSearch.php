@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -108,13 +109,9 @@ class SimpleSearch extends Element
         $url = $configuration['query_url'];
         $url .= (false === strpos($url, '?') ? '?' : '&');
         $url .= $configuration['query_key'] . '=' . sprintf($qf, $q);
-        $path       = array(
-            '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-            'url'         => $url
-        );
-        $subRequest = $request->duplicate(array(), null, $path);
-        $httpKernel = $this->container->get('http_kernel');
-        $response   = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        /** @var HttpTransportInterface $transport */
+        $transport = $this->container->get('mapbender.http_transport.service');
+        $response = $transport->getUrl($url);
 
         // Dive into result JSON if needed (Solr for example 'response.docs')
         if (!empty($configuration['collection_path'])) {
