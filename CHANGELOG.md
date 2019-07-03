@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ e431254ef
+## v3.0.8.2
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
