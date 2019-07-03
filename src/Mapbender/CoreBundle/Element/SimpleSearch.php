@@ -113,9 +113,14 @@ class SimpleSearch extends Element
         $transport = $this->container->get('mapbender.http_transport.service');
         $response = $transport->getUrl($url);
 
+        // prepare a valid json null encoding before testing for errors (encode clears json_last_error_msg!)
+        $validJsonNull = json_encode('null');
         // Dive into result JSON if needed (Solr for example 'response.docs')
         if (!empty($configuration['collection_path'])) {
             $data = json_decode($response->getContent(), true);
+            if ($data === null && $response->getContent() !== $validJsonNull) {
+                throw new \RuntimeException("Invalid json response " . json_last_error_msg());
+            }
             foreach (explode('.', $configuration['collection_path']) as $key) {
                 $data = $data[ $key ];
             }
