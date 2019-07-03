@@ -119,7 +119,7 @@ class SimpleSearch extends Element
         if (!empty($configuration['collection_path'])) {
             $data = json_decode($response->getContent(), true);
             if ($data === null && $response->getContent() !== $validJsonNull) {
-                throw new \RuntimeException("Invalid json response " . json_last_error_msg());
+                throw new \RuntimeException("Invalid json response " . json_last_error_msg() . " from " . $url);
             }
             foreach (explode('.', $configuration['collection_path']) as $key) {
                 $data = $data[ $key ];

@@ -8,6 +8,9 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Default implementation for service id mapbender.http_transport.service
+ */
 class OwsProxyTransport implements HttpTransportInterface
 {
     /** @var mixed[] */
