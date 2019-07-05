@@ -1,3 +1,7 @@
+## v3.0.8.3
+- [Regression fix] newly created source instances are again added to the top of the target layerset
+- DimensionsHandler configuration form no longer offers selection of disabled instances ([#1166](https://github.com/mapbender/mapbender/issues/1166))
+
 ## v3.0.8.2
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
