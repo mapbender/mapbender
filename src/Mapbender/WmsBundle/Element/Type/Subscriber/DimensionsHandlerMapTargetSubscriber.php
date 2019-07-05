@@ -54,7 +54,7 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
         $dimensions = array();
         foreach ($this->getMapLayersets($application, $mapId) as $layerset) {
             foreach ($layerset->getInstances() as $instance) {
-                if ($instance instanceof WmsInstance) {
+                if ($instance->getEnabled() && ($instance instanceof WmsInstance)) {
                     foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
                         /** @var DimensionInst $dimension */
                         $key = "{$instance->getId()}-{$ix}";
