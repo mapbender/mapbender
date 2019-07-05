@@ -43,7 +43,7 @@ class Layerset
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove", "persist"})
      * @ORM\JoinColumn(name="instances", referencedColumnName="id")
      * @ORM\OrderBy({"weight" = "asc"})
      */
