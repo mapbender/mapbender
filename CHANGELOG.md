@@ -1,4 +1,8 @@
-## dev-release/3.0.7 @ 3af9813d9
+## v3.0.8.3
+- [Regression fix] newly created source instances are again added to the top of the target layerset
+- DimensionsHandler configuration form no longer offers selection of disabled instances ([#1166](https://github.com/mapbender/mapbender/issues/1166))
+
+## v3.0.8.2
 - Restore support for app/Resources drop-in overrides for .js, .json.twig and .css application resources
 - Fix various application import errors on exports created with older versions
 - Fix application screenshot display in edit view
@@ -8,13 +12,11 @@
 - Fix "toggle all" visuals in instance form ([#1169](https://github.com/mapbender/mapbender/issues/1169))
 - Fix broken "toggle all" interaction in Element ACL assignment popup header
 - Fix application publish / unpublish interaction
-- Fix JavaScript extraction of url components `.port` and `.host` in Internet Explorer ([PR#1190](https://github.com/mapbender/mapbender/pull/1190), [PR#1191](https://github.com/mapbender/mapbender/pull/1190))
+- Fix JavaScript extraction of url components `.port` and `.host` in Internet Explorer ([#1187](https://github.com/mapbender/mapbender/issues/1187), [PR#1190](https://github.com/mapbender/mapbender/pull/1190), [PR#1191](https://github.com/mapbender/mapbender/pull/1190))
 - Fix errors in ImageExport / Print attempting to serialize undefined feature style
+- Adjust Layertree CSS for Internet Explorer
 - Only allow Application ACL editing for Application owner and users with global ACL editing rights
 - Provide reasonable default region properties for new application
-- Redirect to edit view instead of index when creating new application
-- Translate source creation and source reloading error messages
-- Suppress broken link to source refresh for non-refreshable (i.e. WMTS + TMS) sources in sources index
 - Allow exiting user / group selector when trying to add a new Element permission
 - Improve HTML and asset response performance for complex YAML-defined applications
 - Enable HTML response caching for YAML-defined applications
@@ -29,11 +31,15 @@
 - Add spearate download base path / base url parameter `mapbender.print.queue.load_path` to support forwarding PDFs from
   externally installed "dedicated print queue servers"
 - Add mapbender:print:queue:gcfiles command to remove dangling local files
-- Backend form for newly created DimensionsHandler is immediately functional
-- Backend form for newly created BaseSourceSwitcher is immediately functional
-- When adding a new Element requiring a map target to an Application, preselect the map Element automatically
 - Support suppressing menu items for backend areas based on route prefixes. Add route prefixes to `mapbender.manager.menu.route_prefix_blacklist` param (list of strings; use app/console debug:route to see all available routes in correct format)
 - [Print templating] recognize text field named `user_name`, automatically insert name of submitting user
+- [Backend] form for newly created DimensionsHandler is immediately functional
+- [Backend] form for newly created BaseSourceSwitcher is immediately functional
+- [Backend] no longer close Element form popup on outside click / selection drag
+- [Backend] When adding a new Element requiring a map target to an Application, preselect the map Element automatically
+- [Backend] Suppress broken link to source refresh for non-refreshable (i.e. WMTS + TMS) sources in sources index
+- [Backend] Translate source creation and source reloading error messages
+- [Backend] Redirect to edit view instead of index when creating new application
 - [Framework] form theme now supports grouped choices in dropdowns (nested `<optgroup>` tags)
 - [Framework] form theme can now properly render basic radio button groups (`choice` types with `expanded` option)
 
