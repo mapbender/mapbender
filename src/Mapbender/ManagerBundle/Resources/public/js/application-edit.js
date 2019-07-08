@@ -73,7 +73,7 @@ $(function() {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
-                closeOnOutsideClick: true,
+                closeOnOutsideClick: false,
                 destroyOnClose: true,
                 cssClass: "elementPopup",
                 content: response,

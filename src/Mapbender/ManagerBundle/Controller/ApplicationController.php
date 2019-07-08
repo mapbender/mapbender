@@ -590,14 +590,16 @@ class ApplicationController extends WelcomeController
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $newInstance = $directory->createInstance($source);
-
-        $layerset->getInstances()->add($newInstance);
+        $otherInstances = $layerset->getInstances()->getValues();
+        $newInstance->setWeight(0);
         $newInstance->setLayerset($layerset);
-        foreach ($layerset->getInstances()->getValues() as $newWeight => $lsInstance) {
+        $layerset->getInstances()->add($newInstance);
+
+        foreach ($otherInstances as $index => $lsInstance) {
             /** @var SourceInstance $lsInstance */
-            $lsInstance->setWeight($newWeight);
-            $entityManager->persist($lsInstance);
+            $lsInstance->setWeight($index + 1);
         }
+
         $entityManager->persist($application);
         $application->setUpdated(new \DateTime('now'));
 

@@ -192,7 +192,7 @@ class Mapbender
     {
         $application = $this->getApplicationEntity($slug);
         $newSlug = EntityUtil::getUniqueValue($this->manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
-        $newTitle = EntityUtil::getUniqueValue($this->manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
+        $newTitle = EntityUtil::getUniqueValue($this->manager, get_class($application), 'title', $application->getTitle(), ' ');
         $elements             = array();
         /** @var Layerset[] $layerSetMap */
         $layerSetMap = array();

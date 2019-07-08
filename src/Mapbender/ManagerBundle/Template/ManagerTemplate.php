@@ -18,10 +18,10 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
                     '/components/vis-ui.js/vis-ui.js-built.js',
 
-                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
-                    '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-                    '@FOMCoreBundle/Resources/public/js/components.js',
-                    '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+                    '@MapbenderManagerBundle/Resources/public/components.js',
+                    '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderManagerBundle/Resources/public/js/confirm-delete.js',
                 );

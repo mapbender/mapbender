@@ -121,7 +121,13 @@ class Importer extends RefreshableSourceLoader
         return new Importer\Response($sourceEntity, $document, $validationError);
     }
 
-    protected function updateSource(Source $target, Source $reloaded)
+    /**
+     * @param Source $target
+     * @param Source $reloaded
+     * @throws \Exception
+     * @internal, public only for legacy EntityHandler access
+     */
+    public function updateSource(Source $target, Source $reloaded)
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
