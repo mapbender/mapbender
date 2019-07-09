@@ -12,63 +12,36 @@
         tileActivity: false,
         loadingLayers: [],
         knownLayers: [],
-        targets: [],
 
         _create: function () {
-            var widget = this;
             var elementIds = Object.keys(Mapbender.configuration.elements);
             for (var i = 0; i < elementIds.length; ++i) {
                 var id = elementIds[i];
                 var elementConfig = Mapbender.configuration.elements[id];
                 if (elementConfig.init === 'mapbender.mbMap') {
-                    this.targets[id] = false;
                     if (Mapbender.checkTarget("mbActivityIndicator", id)) {
-                        Mapbender.elementRegistry.waitReady(id).then($.proxy(widget._setupMap, widget));
+                        Mapbender.elementRegistry.waitReady(id).then($.proxy(this._setupMap, this));
                     }
                 }
             }
             this.element.on('ajaxStart', $.proxy(this._onAjaxStart, this));
             this.element.on('ajaxStop', $.proxy(this._onAjaxStop, this));
         },
-        _setupMap: function (mbMap) {
+        _setupMap: function(mbMap) {
             var self = this;
-            var olMap = mbMap.map.olMap;
-            for (var i = 0; i < olMap.layers.length; ++i) {
-                this._bindToLayer(olMap.layers[i]);
-            }
-            olMap.events.register('addlayer', null, function(event) {
-                self._bindToLayer(event.layer);
+            mbMap.element.on('mbmapsourceloadstart', function(event, data) {
+                var source = data.source;
+                self.loadingLayers.push(source);
+                self._onLayerLoadChange();
             });
-            this._onLayerLoadChange();
-        },
-        _bindToLayer: function (olLayer) {
-            var self = this;
-            if (this.knownLayers.indexOf(olLayer.id) !== -1) {
-                return;
-            } else {
-                this.knownLayers.push(olLayer.id);
-            }
-            if (olLayer.numLoadingTiles && this.loadingLayers.indexOf(olLayer.id) === -1) {
-                this.loadingLayers.push(olLayer.id);
-            }
-            olLayer.events.on({
-                loadstart: function (event) {
-                    var position = self.loadingLayers.indexOf(event.object.id);
-                    if (position === -1) {
-                        self.loadingLayers.push(event.object.id);
-                        self._onLayerLoadChange();
-                    }
-                },
-                loadend: function (event) {
-                    var position = self.loadingLayers.indexOf(event.object.id);
-                    if (position !== -1) {
-                        self.loadingLayers.splice(position, 1);
-                        self._onLayerLoadChange();
-                    }
-                }
+            mbMap.element.on('mbmapsourceloadend mbmapsourceremoved', function(event, data) {
+                var source = data.source;
+                self.loadingLayers = self.loadingLayers.filter(function(x) {
+                    return x !== source;
+                });
+                self._onLayerLoadChange();
             });
         },
-
         /**
          * Listener for global ajaxStart events
          */
