@@ -4,19 +4,36 @@ namespace Mapbender\CoreBundle\Template;
 
 /**
  * Template Classic
- *
- * @deprecated
  */
 class Classic extends Fullscreen
 {
-    protected static $title   = "Classic template";
-    protected static $regions = array('toolbar', 'sidepane', 'content', 'footer');
-    protected static $css     = array(
-        '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss',
-    );
-    protected static $js      = array(
-        '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'
-    );
+    /**
+     * @inheritdoc
+     */
+    public static function getTitle()
+    {
+        return 'Classic template';
+    }
 
-    public $twigTemplate = 'MapbenderCoreBundle:Template:classic.html.twig';
+    /**
+     * {@inheritdoc}
+     */
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss',
+                );
+            case 'js':
+            case 'trans':
+            default:
+                return parent::getAssets($type);
+        }
+    }
+
+    public function getTwigTemplate()
+    {
+        return 'MapbenderCoreBundle:Template:classic.html.twig';
+    }
 }
