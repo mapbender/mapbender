@@ -54,7 +54,15 @@ class Fullscreen extends Template
                     '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
                     '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-                    '/components/vis-ui.js/vis-ui.js-built.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/elements/confirm.dialog.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/elements/data.result-table.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/elements/date.selector.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/elements/popup.dialog.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/elements/tab.navigator.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/utils/DataUtil.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/utils/fn.formData.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/utils/StringHelper.js',
+                    '/../vendor/mapbender/vis-ui.js/src/js/jquery.form.generator.js',
                 );
             case 'trans':
             default:
