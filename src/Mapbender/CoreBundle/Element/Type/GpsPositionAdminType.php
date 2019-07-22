@@ -42,16 +42,10 @@ class GpsPositionAdminType extends AbstractType
             ->add('label', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.gpsposition.show_label',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('autoStart', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add(
                 'target',
@@ -71,21 +65,12 @@ class GpsPositionAdminType extends AbstractType
             ))
             ->add('follow', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('centerOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('zoomToAccuracyOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
         ;
     }

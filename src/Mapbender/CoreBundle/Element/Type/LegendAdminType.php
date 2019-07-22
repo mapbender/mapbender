@@ -63,9 +63,6 @@ class LegendAdminType extends AbstractType
             ->add('showLayerTitle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showlayertitle',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('showGroupedLayerTitle', 'checkbox', array(
                 'required' => false,
