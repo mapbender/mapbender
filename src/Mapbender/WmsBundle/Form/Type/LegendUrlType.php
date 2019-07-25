@@ -21,17 +21,17 @@ class LegendUrlType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('width', 'text',
-                      array(
-                    'required' => false,))
-                ->add('height', 'text',
-                      array(
-                    'required' => false,))
-                ->add('onlineResource',new OnlineResourceType(),
-                      array(
-//                    'property_path' => '[onlineResource]',
-                    'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'))
-            ;
+        $builder
+            ->add('width', 'text', array(
+                'required' => false,
+            ))
+            ->add('height', 'text', array(
+                'required' => false,
+            ))
+            ->add('onlineResource', new OnlineResourceType(), array(
+                'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource',
+            ))
+        ;
     }
 
 }

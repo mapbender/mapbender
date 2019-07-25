@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OnlineResourceType extends AbstractType
 {
@@ -14,6 +15,16 @@ class OnlineResourceType extends AbstractType
     public function getName()
     {
         return 'onlineresource';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'compound' => true,
+            'label_attr' => array(
+                'class' => 'hidden',
+            ),
+        ));
     }
 
     /**
