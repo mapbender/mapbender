@@ -14,8 +14,7 @@
       <div class="infoMsgBox hidden">
         <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.id"|trans }}</span><span class="smallText">{{instance.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>
         <span class="labelText">{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_name"|trans }}</span><span class="smallText">{{ form.vars.data.sourceItem.identifier }}</span>
-        <br>
-        <span class="labelText">{{"mb.wmts.wmtsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form.style) }}
+        {{ form_row(form.style) }}
       </div>
       <span class="iconMore" title="{{'mb.wmts.wmtsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
     </td>

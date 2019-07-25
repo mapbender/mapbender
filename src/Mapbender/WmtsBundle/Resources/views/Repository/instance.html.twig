@@ -26,23 +26,14 @@
     <div class="clear"></div>
 
     <div class="row">
-      <div class="leftContainer col-md-6 col-xs-12">
+      <div class="col-md-6 col-xs-12">
         {{ form_row(form.title) }}
         {{ form_row(form.opacity) }}
       </div>
       <div class="col-md-6 col-xs-12">
-        <div class="checkboxGroup">
-          <div>
-          {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.repo.instance.label.visible"|trans}}</label>
-          </div>
-          <div>
-          {{ form_widget(form.basesource) }}<label for="{{form.basesource.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.repo.instance.label.basesource"|trans}}</label>
-          </div>
-          <div>
-          {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.repo.instance.label.proxy"|trans}}</label>
-          </div>
-        </div>
-        <div class="clear"></div>
+        {{ form_row(form.visible) }}
+        {{ form_row(form.basesource) }}
+        {{ form_row(form.proxy) }}
       </div>
     </div>
 

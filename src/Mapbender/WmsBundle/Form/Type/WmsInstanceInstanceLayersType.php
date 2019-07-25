@@ -71,18 +71,28 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'choices' => $formats_exc,
                 'required' => false))
             ->add('basesource', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
+            ))
             ->add('visible', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.visible',
+            ))
             ->add('proxy', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
+            ))
             ->add('opacity', 'choice', array(
                 'choices' => $opacity,
                 'required' => true))
             ->add('transparency', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.transparency',
+            ))
             ->add('tiled', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.tiled',
+            ))
             ->add('ratio', 'number', array(
                 'required' => false,
                 'precision' => 2,

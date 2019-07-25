@@ -30,13 +30,20 @@ class WmtsInstanceInstanceLayersType extends AbstractType
         }
         $builder
             ->add('title', 'text', array(
-                'required' => true))
+                'required' => true,
+            ))
             ->add('basesource', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wmts.wmtsloader.repo.instance.label.basesource',
+            ))
             ->add('visible', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wmts.wmtsloader.repo.instance.label.visible',
+            ))
             ->add('proxy', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wmts.wmtsloader.repo.instance.label.proxy',
+            ))
             ->add('opacity', 'choice', array(
                 'choices' => $opacity,
                 'required' => true))
