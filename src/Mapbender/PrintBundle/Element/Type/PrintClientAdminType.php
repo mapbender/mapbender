@@ -46,8 +46,7 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new PrintClientSubscriber($builder->getFormFactory(), $options["application"]);
-        $builder->addEventSubscriber($subscriber);
+        $builder->addEventSubscriber(new PrintClientSubscriber());
         $builder
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -92,18 +91,22 @@ class PrintClientAdminType extends AbstractType
         $builder
             ->add('rotatable', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.rotatable',
             ))
             ->add('legend', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.legend',
             ))
             ->add('legend_default_behaviour', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
             ))
             ->add('optional_fields', new YAMLConfigurationType(), array(
                 'required' => false,
             ))
             ->add('required_fields_first', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.required_fields_first',
             ))
             ->add('replace_pattern', new YAMLConfigurationType(), array(
                 'required' => false,

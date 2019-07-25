@@ -35,7 +35,8 @@ class WmsLoaderAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -54,9 +55,19 @@ class WmsLoaderAdminType extends AbstractType
                     "text/html" => "text/html",
                     "text/xml" => "text/xml",
                     "text/plain" => "text/plain")))
-            ->add('autoOpen', 'checkbox', array('required' => false))
-            ->add('splitLayers', 'checkbox', array('required' => false))
-            ->add('useDeclarative', 'checkbox', array('required' => false));
+            ->add('autoOpen', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.admin.label.autoopen',
+            ))
+            ->add('splitLayers', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.admin.label.splitlayers',
+            ))
+            ->add('useDeclarative', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.admin.label.declarative',
+            ))
+        ;
     }
 
 }

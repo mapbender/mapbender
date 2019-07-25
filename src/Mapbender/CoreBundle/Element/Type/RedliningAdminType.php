@@ -35,7 +35,8 @@ class RedliningAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('target', 'target_element', array(
+        $builder
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
@@ -43,8 +44,14 @@ class RedliningAdminType extends AbstractType
             ->add('display_type', 'choice', array(
                 'required' => true,
                 'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
-            ->add('auto_activate', 'checkbox', array('required' => false))
-            ->add('deactivate_on_close', 'checkbox', array('required' => false))
+            ->add('auto_activate', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.redlining.label.auto_activate',
+            ))
+            ->add('deactivate_on_close', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.redlining.label.deactivate_on_close',
+            ))
             ->add('geometrytypes', 'choice', array(
                 'required' => true,
                 'multiple' => true,
@@ -53,6 +60,9 @@ class RedliningAdminType extends AbstractType
                     'line' => 'Line',
                     'polygon' => 'Polygon',
                     'rectangle' => 'Rectangle',
-                    'text' => 'Text')));
+                    'text' => 'Text',
+                ),
+            ))
+        ;
     }
 }

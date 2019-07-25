@@ -42,11 +42,23 @@ class FeatureInfoAdminType extends AbstractType
             ->add('displayType', 'choice', array(
                 'required' => true,
                 'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
-            ->add('autoActivate', 'checkbox', array('required' => false))
+            ->add('autoActivate', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.autoopen',
+            ))
             ->add('printResult', 'checkbox', array('required' => false))
-            ->add('deactivateOnClose', 'checkbox', array('required' => false))
-            ->add('showOriginal', 'checkbox', array('required' => false))
-            ->add('onlyValid', 'checkbox', array('required' => false))
+            ->add('deactivateOnClose', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.deactivateonclose',
+            ))
+            ->add('showOriginal', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.showoriginal',
+            ))
+            ->add('onlyValid', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],

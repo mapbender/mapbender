@@ -34,18 +34,23 @@ class ButtonAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
             ->add('icon', new IconClassType(), array('required' => false))
-            ->add('label', 'checkbox', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.button.show_label',
+            ))
+            ->add('target', 'target_element', array(
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('click', 'text', array('required' => false))
             ->add('group', 'text', array('required' => false))
             ->add('action', 'text', array('required' => false))
-            ->add('deactivate', 'text', array('required' => false));
+            ->add('deactivate', 'text', array('required' => false))
+        ;
     }
 
 }

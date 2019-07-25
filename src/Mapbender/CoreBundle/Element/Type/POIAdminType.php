@@ -38,27 +38,25 @@ class POIAdminType extends AbstractType
     {
         $builder
             ->add('tooltip', 'text', array('required' => false))
-            ->add('useMailto', 'checkbox', array('required' => false))
-            ->add('body', 'text', array('required' => true))
-            ->add(
-                'gps',
-                'target_element',
-                array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\GpsPosition',
-                    'application' => $options['application'],
-                    'property_path' => '[gps]',
-                    'required' => false
-                )
-            )
-            ->add(
-                'target',
-                'target_element',
-                array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false
-                )
-            );
+            ->add('useMailto', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.poi.label.usemailto',
+            ))
+            ->add('body', 'text', array(
+                'required' => true,
+            ))
+            ->add('gps', 'target_element', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\GpsPosition',
+                'application' => $options['application'],
+                'property_path' => '[gps]',
+                'required' => false,
+            ))
+            ->add('target', 'target_element', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false,
+            ))
+        ;
     }
 }

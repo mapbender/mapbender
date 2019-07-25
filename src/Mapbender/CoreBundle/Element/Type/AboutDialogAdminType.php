@@ -34,8 +34,15 @@ class AboutDialogAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('label', 'checkbox', array('required' => false));
+        $builder
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.element.be.button.show_label',
+            ))
+            ->add('tooltip', 'text', array(
+                'required' => false,
+            ))
+        ;
     }
 
 }

@@ -44,7 +44,10 @@ class CoordinatesDisplayAdminType extends AbstractType
                     'right-top' => 'right-top',
                     'right-bottom' => 'right-bottom')))
             ->add('numDigits', 'integer', array('required' => true))
-            ->add('label', 'checkbox', array('required' => false))
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.corrdsdisplay.label', // sic
+            ))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
