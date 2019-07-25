@@ -7,9 +7,6 @@ use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-/**
- * DimensionInstType class
- */
 class DimensionInstType extends AbstractType
 {
 
@@ -30,7 +27,10 @@ class DimensionInstType extends AbstractType
         $builder->addEventSubscriber($subscriber);
         $transformer = new DimensionTransformer();
         $builder->addModelTransformer($transformer);
-        $builder->add('active', 'checkbox', array('required' => true, ));
+        $builder->add('active', 'checkbox', array(
+            'required' => true,
+            'label' => 'active',
+        ));
     }
 
 }

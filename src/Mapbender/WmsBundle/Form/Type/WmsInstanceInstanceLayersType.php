@@ -132,6 +132,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'choices' => $layerOrderChoices,
                 'required' => true,
                 'auto_initialize' => true,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.layerOrder',
             ));
         }
     }

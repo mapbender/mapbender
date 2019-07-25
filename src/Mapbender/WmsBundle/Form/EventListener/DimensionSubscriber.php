@@ -80,16 +80,19 @@ class DimensionSubscriber implements EventSubscriberInterface
             ))
             ->add('multipleValues', 'checkbox', array(
                 'auto_initialize' => false,
+                'label' => 'multiple',
                 'disabled' => $isVordefined,
                 'required' => false,
             ))
             ->add('nearestValue', 'checkbox', array(
                 'auto_initialize' => false,
+                'label' => 'nearest',
                 'disabled' => $isVordefined,
                 'required' => false,
             ))
             ->add('current', 'checkbox', array(
                 'auto_initialize' => false,
+                'label' => 'current',
                 'disabled' => $isVordefined,
                 'required' => false,
             ))
@@ -105,6 +108,7 @@ class DimensionSubscriber implements EventSubscriberInterface
             if ($data->getType() === $data::TYPE_SINGLE) {
                 $form
                     ->add('extentEdit', 'text', array(
+                        'label' => 'Extent',
                         'required' => true,
                         'auto_initialize' => false,
                     ))
@@ -116,6 +120,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                         'data' => $dataArr,
                         'mapped' => false,
                         'choices' => $choices,
+                        'label' => 'Extent',
                         'auto_initialize' => false,
                         'multiple' => true,
                         'required' => true,
@@ -129,6 +134,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                 $form
                     ->add('extentEdit', 'text', array(
                         'required' => true,
+                        'label' => 'Extent',
                         'auto_initialize' => false,
                     ))
                     ->add('default', 'text', array(
