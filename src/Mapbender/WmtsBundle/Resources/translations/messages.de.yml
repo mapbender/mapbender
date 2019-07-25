@@ -8,19 +8,6 @@
 mb:
   wmts:
     wmtsloader:
-      error:
-        url: 'WMTS laden: das WMTS Capabilities Dokument konnte nicht geladen werden! Die Capabilities-URL ist nicht gültig.'
-        service: 'WMTS laden: der Service %service% wird nicht unterstützt!'
-        operation: 'WMTS laden: die WMTS Operation %operation% wird nicht unterstützt!'
-        version: 'WMTS laden: die WMTS Version %version% wird nicht unterstützt!'
-        load: 'WMTS laden: das WMTS Capabilities Dokument konnte nicht geladen werden!'
-      dialog:
-        btn:
-          cancel: Abbrechen
-          load: Laden
-        label:
-          example: Beispiel
-          wmtsurl: URL
       repo:
         view:
           title:
