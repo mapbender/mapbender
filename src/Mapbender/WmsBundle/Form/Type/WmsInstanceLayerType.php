@@ -6,9 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 
-/**
- * 
- */
 class WmsInstanceLayerType extends AbstractType
 {
 
@@ -25,7 +22,7 @@ class WmsInstanceLayerType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new FieldSubscriber($builder->getFormFactory());
+        $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
             ->add('title', 'text', array(

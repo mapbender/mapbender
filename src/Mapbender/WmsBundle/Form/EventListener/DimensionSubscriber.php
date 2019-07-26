@@ -46,25 +46,20 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
-        $isVordefined = $data && $data->getOrigextent();
-        $form->add('creator', 'hidden',  array(
-                'auto_initialize' => false,
-                'read_only' => $isVordefined,
-                'required' => true,
-            ))
+        $form
             ->add('type', 'hidden', array(
                 'auto_initialize' => false,
-                'read_only' => $isVordefined,
+                'read_only' => true,
                 'required' => true,
             ))
             ->add('name', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => $isVordefined,
+                'read_only' => true,
                 'required' => true,
             ))
             ->add('units', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => $isVordefined,
+                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'units',
@@ -72,7 +67,7 @@ class DimensionSubscriber implements EventSubscriberInterface
             ))
             ->add('unitSymbol', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => $isVordefined,
+                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'unitSymbol',
@@ -81,69 +76,61 @@ class DimensionSubscriber implements EventSubscriberInterface
             ->add('multipleValues', 'checkbox', array(
                 'auto_initialize' => false,
                 'label' => 'multiple',
-                'disabled' => $isVordefined,
+                'disabled' => true,
                 'required' => false,
             ))
             ->add('nearestValue', 'checkbox', array(
                 'auto_initialize' => false,
                 'label' => 'nearest',
-                'disabled' => $isVordefined,
+                'disabled' => true,
                 'required' => false,
             ))
             ->add('current', 'checkbox', array(
                 'auto_initialize' => false,
                 'label' => 'current',
-                'disabled' => $isVordefined,
+                'disabled' => true,
                 'required' => false,
             ))
         ;
         $this->addExtentFields($form, $data);
 
-        if ($isVordefined) {
-            $dataArr = $data->getData($data->getExtent());
-            $dataOrigArr = $data->getData($data->getOrigextent());
-        } else {
-            $dataArr = $dataOrigArr = $data->getData($data->getExtent());
+        switch ($data->getType()) {
+            case DimensionInst::TYPE_MULTIPLE:
+                $extentArray = $data->getData($data->getExtent());
+                $origExtentArray = $data->getData($data->getOrigextent());
+                $choices = array_combine($origExtentArray, $origExtentArray);
+                $form->add('extentEdit', 'choice', array(
+                    'data' => $extentArray,
+                    'mapped' => false,
+                    'choices' => $choices,
+                    'label' => 'Extent',
+                    'auto_initialize' => false,
+                    'multiple' => true,
+                    'required' => true,
+                ));
+                $form->add('default', 'choice', array(
+                    'choices' => $choices,
+                    'auto_initialize' => false,
+                ));
+                break;
+            case DimensionInst::TYPE_SINGLE:
+            case DimensionInst::TYPE_INTERVAL:
+                $form->add('extentEdit', 'text', array(
+                    'label' => 'Extent',
+                    'required' => true,
+                    'auto_initialize' => false,
+                ));
+                break;
+            default:
+                break;
         }
-            if ($data->getType() === $data::TYPE_SINGLE) {
-                $form
-                    ->add('extentEdit', 'text', array(
-                        'label' => 'Extent',
-                        'required' => true,
-                        'auto_initialize' => false,
-                    ))
-                ;
-            } elseif ($data->getType() === $data::TYPE_MULTIPLE) {
-                $choices = array_combine($dataOrigArr, $dataOrigArr);
-                $form
-                    ->add('extentEdit', 'choice', array(
-                        'data' => $dataArr,
-                        'mapped' => false,
-                        'choices' => $choices,
-                        'label' => 'Extent',
-                        'auto_initialize' => false,
-                        'multiple' => true,
-                        'required' => true,
-                    ))
-                    ->add('default', 'choice', array(
-                        'choices' => $choices,
-                        'auto_initialize' => false,
-                    ))
-                ;
-            } elseif ($data->getType() === $data::TYPE_INTERVAL) {
-                $form
-                    ->add('extentEdit', 'text', array(
-                        'required' => true,
-                        'label' => 'Extent',
-                        'auto_initialize' => false,
-                    ))
-                    ->add('default', 'text', array(
-                        'auto_initialize' => false,
-                        'read_only' => false,
-                        'required' => false,
-                    ))
-                ;
-            }
+        if ($data->getType() === DimensionInst::TYPE_INTERVAL) {
+            $form->add('default', 'text', array(
+                'auto_initialize' => false,
+                'read_only' => false,
+                'required' => false,
+            ));
+        }
     }
 
     /**

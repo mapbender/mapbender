@@ -4,8 +4,6 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType;
-use Mapbender\CoreBundle\Element\DataTransformer\SearchRouterRouteTransformer;
 
 
 class SearchRouterAdminType extends AbstractType
@@ -14,19 +12,12 @@ class SearchRouterAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'search_form';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'routes' => array(),));
+            'routes' => array(),
+        ));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -36,20 +27,24 @@ class SearchRouterAdminType extends AbstractType
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('dialog', 'checkbox', array(
-                'property_path' => '[asDialog]'))
+                'property_path' => '[asDialog]',
+            ))
             ->add('timeout', 'integer', array(
                 'label' => 'Timeout factor',
-                'property_path' => '[timeoutFactor]'))
+                'property_path' => '[timeoutFactor]',
+            ))
             ->add('width', 'integer', array('required' => true))
             ->add('height', 'integer', array('required' => true))
-            ->add($builder->create('routes', 'collection', array(
+            ->add('routes', 'collection', array(
                 'type' => new SearchRouterRouteAdminType(),
                 'allow_add' => true,
                 'allow_delete' => true,
-                'auto_initialize' => false,))
-            ->addViewTransformer(new SearchRouterRouteTransformer()));
+                'auto_initialize' => false,
+            ))
+        ;
     }
 
 }

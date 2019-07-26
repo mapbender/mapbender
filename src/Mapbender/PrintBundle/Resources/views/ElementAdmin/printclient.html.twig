@@ -1,4 +1,4 @@
-<div class="elementFormPrintClient elementForm defaultForm">
+<div class="elementFormPrintClient elementForm">
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.target) }}
     {{ form_row(form.configuration.type) }}
@@ -18,14 +18,12 @@
         {{ form_label(form.configuration.quality_levels) }}
     </div>
     {% for level in form.configuration.quality_levels %}
-        <div class="row quality-grid">
+        <div class="row no-gutters quality-grid">
             <div class="col-xs-6">
-                {{form_label(level.dpi)}}
-                {{form_widget(level.dpi) }}
+                {{ form_row(level.dpi) }}
             </div>
             <div class="col-xs-6">
-                {{form_label(level.label)}}
-                {{ form_widget(level.label) }}
+                {{ form_row(level.label) }}
             </div>
         </div>
     {% endfor %}

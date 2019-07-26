@@ -1,16 +1,7 @@
 <div class="elementForm">
-  <div class="clearContainer"></div>
-  {{ form_label(form.title) }}{{ form_widget(form.title) }}
-  <div class="clearContainer"></div>
-  {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
-  <div class="clearContainer"></div>
-  {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-  <div class="clearContainer"></div>
-
-  {% if form.configuration.instancesets is defined %}
-  {{ form_label(form.configuration.instancesets) }}{{ form_widget(form.configuration.instancesets) }}
-  <div class="clearContainer"></div>
-  {% else %}
+  {{ form_row(form.title) }}
+  {{ form_rest(form.configuration) }}
+  {% if form.configuration.instancesets is not defined %}
   <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
   {% endif %}
 </div>

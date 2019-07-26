@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmtsBundle\Form\EventListener\FieldSubscriber;
 
 /**
- * WmtsInstanceLayerType
  * @author Paul Schmidt
  */
 class WmtsInstanceLayerType extends AbstractType
@@ -16,21 +15,14 @@ class WmtsInstanceLayerType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmtsinstancelayer';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new FieldSubscriber($builder->getFormFactory());
+        $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
             ->add('title', 'text', array(
-                'required' => false))
+                'required' => false,
+            ))
             ->add('active', 'checkbox', array(
                 'required' => false))
             ->add('selected', 'checkbox', array(
@@ -39,24 +31,21 @@ class WmtsInstanceLayerType extends AbstractType
                 'required' => false,
                 'disabled' => true))
             ->add('toggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+                "required" => false,
+                'auto_initialize' => false,
+            ))
             ->add('allowselected', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+            ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+            ))
             ->add('allowtoggle', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
-            ->add('style', 'choice', array(
-                'label' => 'style',
-                'choices' => array(),
-                'required' => false))
-            ->add('infoformat', 'choice', array(
-                'label' => 'style',
-                'choices' => array(),
-                'required' => false,
+                'disabled' => true,
+                'auto_initialize' => false,
             ))
         ;
     }

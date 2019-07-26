@@ -1,16 +1,9 @@
 {% form_theme form 'MapbenderWmsBundle::form/fields.html.twig' %}
 
-<div class="elementForm defaultForm">
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-    <div class="clearContainer"></div>
-    {% if form.configuration.dimensionsets is defined %}
-    {{ form_row(form.configuration.dimensionsets) }}
-    <div class="clearContainer"></div>
-    {% else %}
+<div class="elementForm">
+    {{ form_row(form.title) }}
+    {{ form_rest(form.configuration) }}
+    {% if form.configuration.dimensionsets is not defined %}
     <span>{{ "mb.wms.dimensionsets.no_dimension" | trans }}</span>
     {% endif %}
 </div>

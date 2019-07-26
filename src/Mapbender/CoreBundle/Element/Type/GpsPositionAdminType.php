@@ -7,21 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
-/**
- * Class GpsPositionAdminType
- * @package Mapbender\CoreBundle\Element\Type
- */
 class GpsPositionAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'gpsposition';
-    }
-
     /**
      * @inheritdoc
      */

@@ -5,19 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class ImageExportAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'imageexport';
-    }
 
     /**
      * @inheritdoc
@@ -25,7 +14,7 @@ class ImageExportAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -34,12 +23,12 @@ class ImageExportAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('target', 'target_element',
-            array(
+        $builder->add('target', 'target_element', array(
             'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
             'application' => $options['application'],
             'property_path' => '[target]',
-            'required' => false));
+            'required' => false,
+        ));
     }
 
 }

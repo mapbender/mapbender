@@ -5,20 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class SketchAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'sketch';
-    }
-
     /**
      * @inheritdoc
      */
@@ -37,20 +25,25 @@ class SketchAdminType extends AbstractType
         $types = array(
             "circle" => "circle",
         );
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+        $builder
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
-            ->add('defaultType', 'choice',
-                array("required" => true,
-                "choices" => $types))
+                'required' => false,
+            ))
+            ->add('defaultType', 'choice', array(
+                "required" => true,
+                'choices_as_values' => true,
+                "choices" => $types,
+            ))
             ->add('types', 'choice',
                 array("required" => true,
                 "choices" => $types,
-                "multiple" => true));
+                'choices_as_values' => true,
+                "multiple" => true,
+            ))
+        ;
     }
 
 }

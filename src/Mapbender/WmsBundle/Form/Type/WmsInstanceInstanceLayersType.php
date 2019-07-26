@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Form\Type;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints;
 
 /**
  * WmsInstanceInstanceLayersType class
@@ -37,39 +38,42 @@ class WmsInstanceInstanceLayersType extends AbstractType
     {
         /** @var WmsInstance $wmsinstance */
         $wmsinstance = $options["data"];
-        $arr = $wmsinstance->getSource()->getGetMap()->getFormats() !== null ?
-            $wmsinstance->getSource()->getGetMap()->getFormats() : array();
-        $formats = array();
-        foreach ($arr as $value) {
-            $formats[$value] = $value;
+        $source = $wmsinstance->getSource();
+
+        $getMapFormatChoices = array();
+        foreach ($source->getGetMap()->getFormats() ?: array() as $value) {
+            $getMapFormatChoices[$value] = $value;
         }
-        $builder->add('title', 'text', array(
-                'required' => true))
+        $featureInfoFormatChoices = array();
+        if ($gfi = $source->getGetFeatureInfo()) {
+            foreach ($gfi->getFormats() ?: array() as $value) {
+                $featureInfoFormatChoices[$value] = $value;
+            }
+        }
+        $exceptionFormatChoices = array();
+        foreach ($source->getExceptionFormats() ?: array() as $value) {
+            $exceptionFormatChoices[$value] = $value;
+        }
+
+        $builder
+            ->add('title', 'text', array(
+                'required' => true,
+            ))
             ->add('format', 'choice', array(
-                'choices' => $formats,
-                'required' => true));
-        $gfi = $wmsinstance->getSource()->getGetFeatureInfo();
-        $arr = $gfi && $gfi->getFormats() !== null ? $gfi->getFormats() : array();
-        $formats_gfi = array();
-        foreach ($arr as $value) {
-            $formats_gfi[$value] = $value;
-        }
-        $builder->add('infoformat', 'choice', array(
-            'choices' => $formats_gfi,
-            'required' => false));
-        $arr = $wmsinstance->getSource()->getExceptionFormats() !== null ?
-            $wmsinstance->getSource()->getExceptionFormats() : array();
-        $formats_exc = array();
-        foreach ($arr as $value) {
-            $formats_exc[$value] = $value;
-        }
-        $opacity = array();
-        foreach (range(0, 100, 10) as $value) {
-            $opacity[$value] = $value;
-        }
-        $builder->add('exceptionformat', 'choice', array(
-                'choices' => $formats_exc,
-                'required' => false))
+                'choices' => $getMapFormatChoices,
+                'required' => true,
+            ))
+            ->add('infoformat', 'choice', array(
+                'choices' => $featureInfoFormatChoices,
+                'required' => false,
+                'choices_as_values' => true,
+            ))
+            ->add('exceptionformat', 'choice', array(
+                'choices' => $exceptionFormatChoices,
+                'required' => false,
+            ))
+        ;
+        $builder
             ->add('basesource', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
@@ -82,9 +86,20 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
             ))
-            ->add('opacity', 'choice', array(
-                'choices' => $opacity,
-                'required' => true))
+            ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'attr' => array(
+                    'min' => 0,
+                    'max' => 100,
+                    'step' => 10,
+                ),
+                'constraints' => array(
+                    new Constraints\Range(array(
+                        'min' => 0,
+                        'max' => 100,
+                    )),
+                ),
+                'required' => true,
+            ))
             ->add('transparency', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.transparency',
@@ -126,10 +141,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
             $layerOrderChoices = array();
             foreach (WmsInstance::validLayerOrderChoices() as $validChoice) {
                 $translationKey = "mb.wms.wmsloader.repo.instance.label.layerOrder.$validChoice";
-                $layerOrderChoices[$validChoice] = $translationKey;
+                $layerOrderChoices[$translationKey] = $validChoice;
             }
             $builder->add('layerOrder', 'choice', array(
                 'choices' => $layerOrderChoices,
+                'choices_as_values' => true,
                 'required' => true,
                 'auto_initialize' => true,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.layerOrder',

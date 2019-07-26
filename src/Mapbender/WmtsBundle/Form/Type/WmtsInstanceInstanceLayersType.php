@@ -4,33 +4,19 @@ namespace Mapbender\WmtsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints;
 
-/**
- * WmisInstanceInstanceLayersType class
- */
 class WmtsInstanceInstanceLayersType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'wmtsinstanceinstancelayers';
-    }
-
     /**
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $opacity = array();
-        foreach (range(0, 100, 10) as $value) {
-            $opacity[$value] = $value;
-        }
         $builder
             ->add('title', 'text', array(
                 'required' => true,
+                'label' => 'mb.wmts.wmtsloader.repo.instance.label.title',
             ))
             ->add('basesource', 'checkbox', array(
                 'required' => false,
@@ -44,9 +30,20 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wmts.wmtsloader.repo.instance.label.proxy',
             ))
-            ->add('opacity', 'choice', array(
-                'choices' => $opacity,
-                'required' => true))
+            ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'attr' => array(
+                    'min' => 0,
+                    'max' => 100,
+                    'step' => 10,
+                ),
+                'constraints' => array(
+                    new Constraints\Range(array(
+                        'min' => 0,
+                        'max' => 100,
+                    )),
+                ),
+                'required' => true,
+            ))
             ->add('layers', 'collection', array(
                 'type' => new WmtsInstanceLayerType(),
                 'options' => array(
@@ -54,25 +51,36 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 ),
             ))
             ->add('roottitle', 'text', array(
-                'required' => true))
+                'required' => true,
+                'label' => 'mb.wmts.wmtsloader.repo.instancelayerform.label.layer_title',
+            ))
             ->add('active', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+            ))
             ->add('selected', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+            ))
             ->add('info', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+            ))
             ->add('toggle', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+                'data' => false,
+            ))
             ->add('allowselected', 'checkbox', array(
-                'required' => false))
+                'required' => false,
+            ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+            ))
             ->add('allowtoggle', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'disabled' => true,
+                'data' => false,
+            ))
         ;
     }
 }

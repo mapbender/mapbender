@@ -11,16 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Form\DataTransformer\ObjectIdTransformer;
 
-/**
- * 
- */
 class LayersetInstancesAdminType extends AbstractType
 {
 
-    /**
-     *
-     * @var type 
-     */
     protected $container;
 
     /**

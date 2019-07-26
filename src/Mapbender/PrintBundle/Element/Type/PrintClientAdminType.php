@@ -7,9 +7,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 
-/**
- * 
- */
 class PrintClientAdminType extends AbstractType
 {
     /** @var bool */
@@ -26,18 +23,10 @@ class PrintClientAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'printclient';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
