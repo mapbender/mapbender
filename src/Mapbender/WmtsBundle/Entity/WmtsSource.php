@@ -576,24 +576,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier ? $this->identifier : $this->originUrl;
-    }
-
-    /**
-     * @inheritdoc
-     * @return $this
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-        return $this;
-    }
-
     public function mutateUrls(OneWayTransformer $transformer)
     {
         $this->setOriginUrl($transformer->process($this->getOriginUrl()));

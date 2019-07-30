@@ -13,9 +13,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  */
 class Response extends SourceLoaderResponse
 {
-    /** @var \DOMDocument */
-    protected $document;
-
     /**
      * @return WmsSource
      */

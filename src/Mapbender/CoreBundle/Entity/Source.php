@@ -64,11 +64,6 @@ abstract class Source
      */
     protected $type;
     
-    /**
-     * @var string source identifier
-     */
-    protected $identifier;
-
     public function __construct()
     {
     }
@@ -212,19 +207,6 @@ abstract class Source
     {
         return self::STATUS_OK;
     }
-
-    /**
-     * Returns the source identifier
-     * @return string source indetifier
-     */
-    abstract public function getIdentifier();
-
-    /**
-     * Sets  the source identifier
-     * @param string $identifier the source identifier
-     * @return Source the source
-     */
-    abstract public function setIdentifier($identifier);
 
     /**
      * Returns a Source as String
