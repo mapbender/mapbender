@@ -613,4 +613,9 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
             $layer->mutateUrls($transformer);
         }
     }
+
+    public function getViewTemplate()
+    {
+        return '@MapbenderWmts/Repository/view.html.twig';
+    }
 }

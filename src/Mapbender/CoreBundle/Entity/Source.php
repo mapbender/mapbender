@@ -271,4 +271,9 @@ abstract class Source
     {
         return strtolower($this->getType());
     }
+
+    /**
+     * @return string
+     */
+    abstract public function getViewTemplate();
 }

@@ -2,15 +2,11 @@
 
 namespace Mapbender\WmsBundle\Controller;
 
-use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @ManagerRoute("/repository/wms")
@@ -19,22 +15,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RepositoryController extends Controller
 {
-    /**
-     * @ManagerRoute("{wms}", methods={"GET"})
-     * @param WmsSource $wms
-     * @return Response
-     */
-    public function viewAction(WmsSource $wms)
-    {
-        $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $wms)) {
-            throw new AccessDeniedException();
-        }
-        return $this->render('@MapbenderWms/Repository/view.html.twig', array(
-            'wms' => $wms,
-        ));
-    }
-
     /**
      * Edits, saves the WmsInstance
      *
@@ -106,15 +86,5 @@ class RepositoryController extends Controller
     protected function loadEntityByPk($repositoryName, $id)
     {
         return $this->getDoctrine()->getRepository($repositoryName)->find($id);
-    }
-
-    /**
-     * @param string $repositoryName
-     * @param string $persistentManagerName object manager name (leave as null for default manager)
-     * @return EntityRepository
-     */
-    protected function getRepository($repositoryName, $persistentManagerName = null)
-    {
-        return $this->getDoctrine()->getRepository($repositoryName, $persistentManagerName);
     }
 }

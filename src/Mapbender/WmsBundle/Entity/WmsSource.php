@@ -997,4 +997,9 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
 
         return $this;
     }
+
+    public function getViewTemplate()
+    {
+        return '@MapbenderWms/Repository/view.html.twig';
+    }
 }
