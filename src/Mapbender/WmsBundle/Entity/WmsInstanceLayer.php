@@ -5,8 +5,6 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
-use Mapbender\CoreBundle\Entity\SourceItem;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * WmsInstanceLayer class
@@ -16,18 +14,13 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  * @ORM\HasLifecycleCallbacks
+ *
  * @property WmsLayerSource $sourceItem
+ * @method WmsInstance getSourceInstance
+ * @method WmsLayerSource getSourceItem
  */
 class WmsInstanceLayer extends SourceInstanceItem
 {
-
-    /**
-     * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh"})
@@ -52,11 +45,6 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
     protected $sublayer;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $title;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -138,49 +126,6 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($this->maxScale == INF) {
             $this->maxScale = null;
         }
-    }
-
-    /**
-     * Set id
-     * @param integer $id
-     * @return WmsInstanceLayer
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return WmsInstanceLayer
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * Get title
-     *
-     * @return string|null
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -572,44 +517,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * @inheritdoc
      */
-    public function setSourceInstance(SourceInstance $sourceInstance = NULL)
-    {
-        $this->sourceInstance = $sourceInstance;
-        return $this;
-    }
-
-    /**
-     * @return WmsInstance
-     */
-    public function getSourceInstance()
-    {
-        return $this->sourceInstance;
-    }
-
-
-    /**
-     * @return WmsLayerSource
-     */
-    public function getSourceItem()
-    {
-        return $this->sourceItem;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSourceItem(SourceItem $sourceItem)
-    {
-        $this->sourceItem = $sourceItem;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __toString()
     {
-        return (string) $this->getId();
+        return (string)$this->getId();
     }
 
     /**

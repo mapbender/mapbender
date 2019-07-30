@@ -23,11 +23,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword, MutableUrlTarget
 {
     /**
-     * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
-     */
-    const DPI = 90.714285714;
-    
-    /**
      * @var string An origin WMTS URL
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank()
@@ -155,12 +150,10 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         return $this->instances;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getManagertype()
     {
-        return strtolower(parent::TYPE_WMTS);
+        // single controller for WMTS + TMS
+        return strtolower(Source::TYPE_WMTS);
     }
 
     public function getTypeLabel()

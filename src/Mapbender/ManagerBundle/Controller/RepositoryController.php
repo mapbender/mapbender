@@ -156,6 +156,7 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function viewAction($sourceId)
     {
+        /** @var Source|null $source */
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->getRepositoryManagers();
@@ -297,6 +298,7 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceAction($slug, $instanceId)
     {
+        /** @var SourceInstance|null $sourceInst */
         $sourceInst = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);

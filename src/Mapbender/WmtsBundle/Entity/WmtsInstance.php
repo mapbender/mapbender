@@ -28,21 +28,7 @@ class WmtsInstance extends SourceInstance
      * @ORM\OneToMany(targetEntity="WmtsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      */
-    protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
-//    /**
-//     * @ORM\Column(type="string", nullable=true)
-//     */
-//    protected $infoformat;
-//
-//    /**
-//     * @ORM\Column(type="string", nullable=true)
-//     */
-//    protected $exceptionformat = null;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $transparency = true;
+    protected $layers;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -112,27 +98,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set id
-     * @param integer $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
      * Returns dimensions
      *
      * @return array of DimensionIst
@@ -175,94 +140,6 @@ class WmtsInstance extends SourceInstance
     {
         return $this->layers;
     }
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-//    /**
-//     * Set infoformat
-//     *
-//     * @param string $infoformat
-//     * @return WmtsInstance
-//     */
-//    public function setInfoformat($infoformat)
-//    {
-//        $this->infoformat = $infoformat;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get infoformat
-//     *
-//     * @return string
-//     */
-//    public function getInfoformat()
-//    {
-//        return $this->infoformat;
-//    }
-//
-//    /**
-//     * Set exceptionformat
-//     *
-//     * @param string $exceptionformat
-//     * @return WmtsInstance
-//     */
-//    public function setExceptionformat($exceptionformat)
-//    {
-//        $this->exceptionformat = $exceptionformat;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get exceptionformat
-//     *
-//     * @return string
-//     */
-//    public function getExceptionformat()
-//    {
-//        return $this->exceptionformat;
-//    }
-//
-//    /**
-//     * Set transparency
-//     *
-//     * @param boolean $transparency
-//     * @return WmtsInstance
-//     */
-//    public function setTransparency($transparency)
-//    {
-//        $this->transparency = $transparency;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get transparency
-//     *
-//     * @return boolean
-//     */
-//    public function getTransparency()
-//    {
-//        return $this->transparency;
-//    }
 
     /**
      * Set visible
@@ -461,11 +338,6 @@ class WmtsInstance extends SourceInstance
     {
         $this->allowtoggle = $allowtoggle;
         return $this;
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getId();
     }
 
     /**
