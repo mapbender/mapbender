@@ -211,16 +211,5 @@ mb:
       class:
          title: 'Dimensie afhandelaar'
          description: 'Dimensie afhandelaar groepen en roept dimensie ondersteund op kaart aan'
-      tag:
-        dimension: dimensie
-        handler: afhandelaar
     dimensionsets:
       no_dimension: 'geen dimensie'
-  wmc:
-    wmsloader:
-      class:
-        title: 'WMS Lader'
-        description: 'Opent een dialoog waarin een WMS geladen kan worden via een GetCapabilities-aanvraag'
-      tag:
-        wms: wms
-        loader: lader

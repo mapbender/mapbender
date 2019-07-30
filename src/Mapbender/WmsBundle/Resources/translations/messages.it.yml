@@ -214,17 +214,5 @@ mb:
       class:
         title: 'Dimensioni del handler'
         description: 'DimensionsHandler raggruppa e chiama le istanze supportate dalla dimensione sulla mappa'
-      tag:
-        dimension: dimensione
-        handler: handler
     dimensionsets:
       no_dimension: 'nessuna dimensione'
-  wmc:
-    wmsloader:
-      class:
-        title: 'Wms Loader'
-        description: 'Apre una finestra di dialogo nella quale un WMS può essere caricato attraverso la getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader
-

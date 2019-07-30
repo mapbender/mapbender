@@ -216,8 +216,5 @@ mb:
       class:
         title: Dimensions-Handler
         description: 'Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen'
-      tag:
-        dimension: Dimension
-        handler: Handler
     dimensionsets:
       no_dimension: 'Keine Dimension vorhanden.'

@@ -87,7 +87,6 @@ mb:
         layer:
           label:
             name: Nom
-            name: Nom
             title: Titre
             abstract: Résumé
             queryable: Queryable
@@ -212,16 +211,5 @@ mb:
       class:
         title: 'Prise en charge des dimensions'
         description: 'DimensionsHandler groupe and fait appel aux instances supportant les dimensions'
-      tag:
-        dimension: dimension
-        handler: handler
     dimensionsets:
       no_dimension: 'Aucune dimension'
-  wmc:
-    wmsloader:
-      class:
-        title: 'Chargeur WMS'
-        description: 'Ouvre une fenêtre dans laquelle un service WMS peut être chargé avec une requête ''getCapabilities'''
-      tag:
-        wms: wms
-        loader: loader

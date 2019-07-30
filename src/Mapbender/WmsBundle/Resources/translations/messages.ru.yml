@@ -168,9 +168,6 @@ mb:
       class:
         title: 'Размеры проводник'
         description: 'Размеры обработчики группы и называет размерность поддерживается экземпляров на карту'
-      tag:
-        dimension: размерность
-        handler: проводник
     repository:
       parser:
         couldnotparse: 'Не удалось проанализировать CapabilitiesDocument'
@@ -217,11 +214,3 @@ mb:
       instance:
         label:
           dimensions: Dimensions
-  wmc:
-    wmsloader:
-      class:
-        title: 'Wms Loader'
-        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader

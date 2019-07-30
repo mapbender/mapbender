@@ -210,17 +210,6 @@ mb:
     dimhandler:
       class:
         title: 'Dimensions handler'
-        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
-      tag:
-        dimension: dimension
-        handler: handler
+        description: ~
     dimensionsets:
       no_dimension: 'no dimension'
-  wmc:
-    wmsloader:
-      class:
-        title: 'Wms Cargador'
-        description: 'Abre un diálogo el el cual un WMS puede ser cargado via getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: cargador
