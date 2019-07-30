@@ -9,8 +9,7 @@ use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
+use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SourceLoader
@@ -56,10 +55,10 @@ abstract class SourceLoader
     /**
      * Copies origin-related attributes (url, username, password) from $origin to $target
      *
-     * @param WmsSource|WmtsSource $target
+     * @param MutableHttpOriginInterface $target
      * @param HttpOriginInterface $origin
      */
-    public static function updateOrigin($target, HttpOriginInterface $origin)
+    public static function updateOrigin(MutableHttpOriginInterface $target, HttpOriginInterface $origin)
     {
         $target->setOriginUrl($origin->getOriginUrl());
         $target->setUsername($origin->getUserName());

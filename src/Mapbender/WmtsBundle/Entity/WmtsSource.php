@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -20,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword, MutableUrlTarget
+class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
 {
     /**
      * @var string An origin WMTS URL

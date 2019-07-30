@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
 /**
  * Source entity
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  */
-abstract class Source
+abstract class Source implements MutableHttpOriginInterface
 {
 
     /** @deprecated only relevant client-side, and it doesn't even use the same string values there */

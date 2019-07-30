@@ -5,8 +5,9 @@ namespace Mapbender\ManagerBundle\Form\Model;
 
 
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
-class HttpOriginModel implements HttpOriginInterface
+class HttpOriginModel implements MutableHttpOriginInterface
 {
     protected $originUrl;
     protected $username;
@@ -22,10 +23,12 @@ class HttpOriginModel implements HttpOriginInterface
 
     /**
      * @param string $originUrl
+     * @return $this
      */
     public function setOriginUrl($originUrl)
     {
         $this->originUrl = $originUrl;
+        return $this;
     }
 
     /**
@@ -38,10 +41,12 @@ class HttpOriginModel implements HttpOriginInterface
 
     /**
      * @param string|null $username
+     * @return $this
      */
     public function setUsername($username)
     {
         $this->username = $username;
+        return $this;
     }
 
     /**
@@ -54,10 +59,12 @@ class HttpOriginModel implements HttpOriginInterface
 
     /**
      * @param string|null $password
+     * @return $this
      */
     public function setPassword($password)
     {
         $this->password = $password;
+        return $this;
     }
 
     /**
