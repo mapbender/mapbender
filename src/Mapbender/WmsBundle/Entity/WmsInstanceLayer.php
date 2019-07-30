@@ -15,7 +15,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  *
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
- * @ORM\HasLifeCycleCallbacks()
+ * @ORM\HasLifecycleCallbacks
  * @property WmsLayerSource $sourceItem
  */
 class WmsInstanceLayer extends SourceInstanceItem
