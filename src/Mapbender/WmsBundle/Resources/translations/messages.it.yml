@@ -75,8 +75,6 @@ mb:
             reorder: riordina
             allow: permetti
             'on': attivo
-            save2: Salva
-            cancel2: Cancella
             ratio: 'fattore BBOX'
             buffer: 'Tile buffer'
             layerOrder: Ordine dei Layers

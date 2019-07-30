@@ -16,19 +16,19 @@ class WmtsInstanceInstanceLayersType extends AbstractType
         $builder
             ->add('title', 'text', array(
                 'required' => true,
-                'label' => 'mb.wmts.wmtsloader.repo.instance.label.title',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.title',
             ))
             ->add('basesource', 'checkbox', array(
                 'required' => false,
-                'label' => 'mb.wmts.wmtsloader.repo.instance.label.basesource',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
             ))
             ->add('visible', 'checkbox', array(
                 'required' => false,
-                'label' => 'mb.wmts.wmtsloader.repo.instance.label.visible',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.visible',
             ))
             ->add('proxy', 'checkbox', array(
                 'required' => false,
-                'label' => 'mb.wmts.wmtsloader.repo.instance.label.proxy',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
             ))
             ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'attr' => array(
@@ -52,7 +52,7 @@ class WmtsInstanceInstanceLayersType extends AbstractType
             ))
             ->add('roottitle', 'text', array(
                 'required' => true,
-                'label' => 'mb.wmts.wmtsloader.repo.instancelayerform.label.layer_title',
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
             ))
             ->add('active', 'checkbox', array(
                 'required' => false,

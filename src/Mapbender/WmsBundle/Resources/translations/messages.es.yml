@@ -75,8 +75,6 @@ mb:
             reorder: reordenar
             allow: permitir
             'on': 'on'
-            save2: Guardar
-            cancel2: Cancelar
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
           vendorspecific:

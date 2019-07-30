@@ -81,8 +81,6 @@ mb:
             reorder: 'Изменения порядка'
             allow: Позволять
             'on': Включи
-            save2: Сохранить
-            cancel2: Отменить
           vendorspecific:
             label: 'Vendor определенный'
 

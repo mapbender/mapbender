@@ -22,6 +22,7 @@ class WmtsInstanceLayerType extends AbstractType
         $builder
             ->add('title', 'text', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
             ))
             ->add('active', 'checkbox', array(
                 'required' => false))

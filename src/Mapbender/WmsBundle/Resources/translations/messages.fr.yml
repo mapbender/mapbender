@@ -75,8 +75,6 @@ mb:
             reorder: Réorganiser
             allow: permettre
             'on': 'on'
-            save2: Sauvegarder
-            cancel2: Annuler
             ratio: 'BBOX factor'
             buffer: 'Tampon de la tuile'
           vendorspecific:

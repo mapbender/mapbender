@@ -75,8 +75,6 @@ mb:
             reorder: reorder
             allow: allow
             'on': 'on'
-            save2: Save
-            cancel2: Cancel
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
             layerOrder: Layer ordering
@@ -136,7 +134,7 @@ mb:
             allowtoggletoc: 'Allow Toggle at TOC'
             toggletoc: 'Toggle at TOC'
             allowreordertoc: 'Allow Reorder at TOC'
-            moreinfo: 'More informations'
+            moreinfo: More information
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'

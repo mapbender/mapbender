@@ -24,7 +24,7 @@ mb:
           title:
             wms: WMS
           label:
-            backtoservicelist: 'Zurück zur Diensteliste'
+            backtoservicelist: Zurück zu Datenquellen
             metadata: Metadaten
             contact: Kontakt
             details: Details
@@ -75,8 +75,6 @@ mb:
             reorder: sortieren
             allow: erlauben
             'on': an
-            save2: Speichern
-            cancel2: Abbrechen
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
             layerOrder: Layer-Reihenfolge
@@ -133,7 +131,7 @@ mb:
             selectedtoc: 'Ausgewählt im Layerbaum'
             allowinfotoc: 'Erlaubt FeatureInfo im Layerbaum'
             infotoc: 'FeatureInfo im Layerbaum'
-            allowtoggletoc: 'Erlaubt umschalten im TOC'
+            allowtoggletoc: 'Erlaubt umschalten im Layerbaum'
             toggletoc: 'Umschalten im Layerbaum'
             allowreordertoc: 'Erlaubt sortieren im Layerbaum'
             moreinfo: 'Weitere Informationen'
