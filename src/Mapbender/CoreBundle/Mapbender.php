@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application;
@@ -224,7 +225,6 @@ class Mapbender
             $prop->setApplication($application);
             $this->manager->persist($prop);
         }
-
         /**
          * Save elements
          */
@@ -238,33 +238,22 @@ class Mapbender
         /**
          * Save layer sets
          */
+        /** @var TypeDirectoryService $instanceFactory */
+        $instanceFactory = $this->container->get('mapbender.source.typedirectory.service');
+        $siblingSources = array();
         foreach ($application->getLayersets() as $set) {
             $layerSetMap[$set->getId()] = $set;
-            $this->manager->persist($set);
             foreach ($set->getInstances() as $inst) {
-                $source        = $inst->getSource();
-                $srcId         = $source->getId();
-                $reusableSource = $this->findMatchingSource($source);
-
-                if ($reusableSource && !empty($this->sourceLayers[$srcId])) {
-                    $inst->setSource($reusableSource);
-                    foreach ($inst->getLayers() as $instanceLayer) {
-                        $sourceLayer = $this->sourceLayers[$srcId][$instanceLayer->getId()];
-                        $instanceLayer->setSourceItem($sourceLayer);
-                    }
-                } else {
-                    $this->sourceLayers[$srcId] = array();
-                    $this->manager->persist($source);
-                    foreach ($inst->getLayers() as $instanceLayer) {
-                        $this->sourceLayers[$srcId][$instanceLayer->getId()] = $instanceLayer->getSourceItem();
-                        $this->manager->persist($instanceLayer);
-                    }
+                if (!$instanceFactory->matchInstanceToPersistedSource($inst, $siblingSources)) {
+                    $this->manager->persist($inst->getSource());
                 }
+                $siblingSources[] = $inst->getSource();
                 $this->manager->persist($inst);
             }
+            $this->manager->persist($set);
         }
 
-        // Saves layers and need to get ID's
+        // Flush to generate final layer ids
         $this->manager->flush();
 
         /**
@@ -316,81 +305,12 @@ class Mapbender
             $this->manager->persist($element);
         }
 
-        $this->manager->flush();
-        $this->manager->commit();
 
         /** @var YamlApplicationImporter $importerService */
         $importerService = $this->container->get('mapbender.yaml_application_importer.service');
         $importerService->addViewPermissions($application);
-    }
 
-    /**
-     * Find matching database source
-     *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource|Source $source
-     * @return \Mapbender\WmsBundle\Entity\WmsSource|Source|null
-     */
-    private function findMatchingSource(Source $source)
-    {
-        $requiredHash = static::genServiceHash($source->getOriginUrl(), array(
-            'version' => $source->getVersion(),
-            'service' => $source->getType()
-        ));
-
-        $repository = $this->manager->getRepository(get_class($source));
-        foreach ($repository->findAll() as $dbSource) {
-            /** @var \Mapbender\WmsBundle\Entity\WmsSource|Source $dbSource */
-            $dbHash = static::genServiceHash($dbSource->getOriginUrl(), array(
-                'version' => $dbSource->getVersion(),
-                'service' => $dbSource->getType()
-            ));
-
-            if ($dbHash == $requiredHash) {
-                return $dbSource;
-            }
-        }
-        return null;
-    }
-
-
-    /**
-     * Gen unique WMS service hash
-     *
-     * @param string $url
-     * @param array  $queryVars
-     * @return string
-     */
-    private static function genServiceHash($url, array $queryVars = array())
-    {
-        $queryParams = array();
-        $baseUrl   = $url;
-        $query     = '';
-
-        if (strpos('?', $url)) {
-            list($baseUrl, $query) = explode('?', $url);
-        }
-
-        parse_str($query, $queryParams);
-
-        foreach ($queryParams as $key => $value) {
-            $queryVars[ mb_strtolower($key) ] = trim($value);
-        }
-
-        // remove default request
-        unset($queryVars["request"]);
-
-        if (!isset($queryVars["service"])) {
-            $queryVars["service"] = "WMS";
-        }
-
-        if (!isset($queryVars["version"])) {
-            $queryVars["version"] = "1.1.1";
-        }
-
-        $details     = parse_url($baseUrl);
-
-        asort($queryVars);
-
-        return md5($details['host'] . $details["path"] . "?" . http_build_query($queryVars));
+        $this->manager->flush();
+        $this->manager->commit();
     }
 }
