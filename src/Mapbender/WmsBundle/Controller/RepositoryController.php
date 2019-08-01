@@ -27,64 +27,38 @@ class RepositoryController extends Controller
     public function instanceAction(Request $request, $slug, $instanceId)
     {
         $repositoryName = "MapbenderWmsBundle:WmsInstance";
+        $em = $this->getDoctrine()->getManager();
         /** @var WmsInstance|null $wmsinstance */
-        $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
+        $wmsinstance = $em->getRepository($repositoryName)->find($instanceId);
 
-        if ($request->getMethod() == 'POST') { //save
-            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
-            $form->submit($request);
-            if ($form->isValid()) { //save
-                $em = $this->getDoctrine()->getManager();
-                $em->getConnection()->beginTransaction();
-                $em->persist($wmsinstance);
-                $layerSet = $wmsinstance->getLayerset();
-                if ($layerSet) {
-                    $application = $layerSet->getApplication();
-                    if ($application) {
-                        $application->setUpdated(new \DateTime('now'));
-                        $em->persist($application);
-                    }
-                }
-                $em->flush();
-                $em->getConnection()->commit();
+        $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
+        $form->handleRequest($request);
 
-                $this->addFlash('success', 'Your Wms Instance has been changed.');
-                return $this->redirectToRoute('mapbender_manager_application_edit', array(
-                    "slug" => $slug,
-                ));
-            } else { // edit
-                $this->addFlash('warning', 'Your Wms Instance is not valid.');
-                return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
-                    "form" => $form->createView(),
-                    "slug" => $slug,
-                    "instance" => $wmsinstance,
-                ));
-            }
-        } else { // edit
-            /* bug fix start @TODO remove after migration's introduction */
-            foreach ($wmsinstance->getLayers() as $layer) {
-                if ($layer->getSublayer()->count() === 0) {
-                    $layer->setToggle(null);
-                    $layer->setAllowtoggle(null);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($wmsinstance);
+            $layerSet = $wmsinstance->getLayerset();
+            if ($layerSet) {
+                $application = $layerSet->getApplication();
+                if ($application) {
+                    $application->setUpdated(new \DateTime('now'));
+                    $em->persist($application);
                 }
             }
-            /* bug fix end */
-            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
-            return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
-                "form" => $form->createView(),
+            $em->flush();
+
+            $this->addFlash('success', 'Your Wms Instance has been changed.');
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 "slug" => $slug,
-                "instance" => $wmsinstance,
             ));
         }
-    }
+        if ($form->isSubmitted()) {
+            $this->addFlash('warning', 'Your Wms Instance is not valid.');
+        }
 
-    /**
-     * @param string $repositoryName
-     * @param mixed $id
-     * @return object|null
-     */
-    protected function loadEntityByPk($repositoryName, $id)
-    {
-        return $this->getDoctrine()->getRepository($repositoryName)->find($id);
+        return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
+            "form" => $form->createView(),
+            "slug" => $slug,
+            "instance" => $wmsinstance,
+        ));
     }
 }
