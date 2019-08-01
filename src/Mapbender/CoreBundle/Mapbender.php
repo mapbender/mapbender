@@ -11,14 +11,12 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Mapbender - The central Mapbender3 service(core). Provides metadata about
- * available elements, layers and templates.
+ * available elements and templates.
  *
  * @author Christian Wygoda
  * @author Andriy Oblivantsev
@@ -180,9 +178,6 @@ class Mapbender
         }
         return $applications;
     }
-
-    /** @var SourceItem[] */
-    protected $sourceLayers = array();
 
     /**
      * Import YAML application

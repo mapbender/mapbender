@@ -149,6 +149,12 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         return null;
     }
 
+    /**
+     * Bake layer name and nesting depth for named layers
+     *
+     * @param WmsLayerSource $layer
+     * @return string|null
+     */
     protected static function getReusableLayerIdent(WmsLayerSource $layer)
     {
         if ($name = $layer->getName()) {
