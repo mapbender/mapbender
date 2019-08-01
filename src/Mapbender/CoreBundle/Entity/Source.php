@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
+ * @ORM\HasLifecycleCallbacks()
  */
 abstract class Source implements MutableHttpOriginInterface
 {
@@ -259,4 +260,16 @@ abstract class Source implements MutableHttpOriginInterface
      * @return string
      */
     abstract public function getViewTemplate();
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if (!$this->type) {
+            // Ancient db (Mapbender 3.0.4); amend missing value
+            @trigger_error("WARNING: Missing type value on " . get_class($this) . "#{$this->id}, assuming WMS");
+            $this->setType(self::TYPE_WMS);
+        }
+    }
 }
