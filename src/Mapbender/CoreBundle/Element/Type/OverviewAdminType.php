@@ -44,6 +44,7 @@ class OverviewAdminType extends AbstractType
                     'right-top'    => 'right-top',
                     'right-bottom' => 'right-bottom',
                 ),
+                'choices_as_values' => true,
             ))
             ->add('maximized', 'checkbox', array(
                 'required' => false,

@@ -39,11 +39,12 @@ class SuggestMapAdminType extends AbstractType
                 'multiple' => true,
                 'required' => true,
                 'choices' => array(
-                    'email' => 'E-Mail',
-                    'facebook' => 'Facebook',
-                    'twitter' => 'Twitter',
-                    'google+' => 'Google+',
+                    'E-Mail' => 'email',
+                    'Facebook' => 'facebook',
+                    'Twitter' => 'twitter',
+                    'Google+' => 'google+',
                 ),
+                'choices_as_values' => true,
             ))
         ;
     }

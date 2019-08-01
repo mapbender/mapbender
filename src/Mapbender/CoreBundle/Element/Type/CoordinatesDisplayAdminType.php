@@ -30,7 +30,10 @@ class CoordinatesDisplayAdminType extends AbstractType
                     'left-top' => 'left-top',
                     'left-bottom' => 'left-bottom',
                     'right-top' => 'right-top',
-                    'right-bottom' => 'right-bottom')))
+                    'right-bottom' => 'right-bottom',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('numDigits', 'integer', array('required' => true))
             ->add('label', 'checkbox', array(
                 'required' => false,

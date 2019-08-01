@@ -26,10 +26,20 @@ class FeatureInfoAdminType extends AbstractType
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('type', 'choice', array(
                 'required' => true,
-                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
+                'choices' => array(
+                    'Dialog' => 'dialog',
+                    'Element' => 'element',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('displayType', 'choice', array(
                 'required' => true,
-                'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
+                'choices' => array(
+                    'Tabs' => 'tabs',
+                    'Accordion' => 'accordion',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('autoActivate', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.autoopen',

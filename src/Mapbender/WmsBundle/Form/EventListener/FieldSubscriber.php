@@ -73,17 +73,18 @@ class FieldSubscriber implements EventSubscriberInterface
             ));
         }
         $arrStyles = $data->getSourceItem()->getStyles(true);
-        $styleOpt = array("" => " ");
+        $styleOpt = array(" " => "");
         foreach ($arrStyles as $style) {
             if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification
-                $styleOpt[$style->getName()] = $style->getTitle();
+                $styleOpt[$style->getTitle()] = $style->getName();
             }
         }
 
         $form->remove('style');
         $form->add('style', 'choice', array(
-            'label' => 'style',
+            'label' => 'Style',
             'choices' => $styleOpt,
+            'choices_as_values' => true,
             "required" => false,
             'auto_initialize' => false,
         ));

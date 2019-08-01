@@ -65,10 +65,12 @@ class FieldSubscriber implements EventSubscriberInterface
         $arrStyles = $data->getSourceItem()->getStyles();
         $styleOpt = array("" => "");
         foreach ($arrStyles as $style) {
-            $styleOpt[$style->getIdentifier()] = $style->getTitle();
+            $styleOpt[$style->getTitle()] = $style->getIdentifier();
         }
         $form->add('style', 'choice', array(
+            'label' => 'Style',
             'choices' => $styleOpt,
+            'choices_as_values' => true,
             "required" => false,
             'auto_initialize' => false
         ));
@@ -79,6 +81,7 @@ class FieldSubscriber implements EventSubscriberInterface
         }
         $form->add('infoformat', 'choice', array(
             'choices' => $infoFormatOpt,
+            'choices_as_values' => true,
             "required" => false,
             'auto_initialize' => false
         ));

@@ -32,7 +32,12 @@ class RulerAdminType extends AbstractType
             ->add('type', 'choice',
                 array(
                 'required' => true,
-                'choices' => array("line" => "line", "area" => "area")))
+                'choices' => array(
+                    "line" => "line",
+                    "area" => "area",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('immediate', 'checkbox',
                 array(
                     'required' => false,

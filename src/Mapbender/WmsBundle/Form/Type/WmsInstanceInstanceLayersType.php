@@ -61,15 +61,17 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ))
             ->add('format', 'choice', array(
                 'choices' => $getMapFormatChoices,
+                'choices_as_values' => true,
                 'required' => true,
             ))
             ->add('infoformat', 'choice', array(
                 'choices' => $featureInfoFormatChoices,
-                'required' => false,
                 'choices_as_values' => true,
+                'required' => false,
             ))
             ->add('exceptionformat', 'choice', array(
                 'choices' => $exceptionFormatChoices,
+                'choices_as_values' => true,
                 'required' => false,
             ))
         ;

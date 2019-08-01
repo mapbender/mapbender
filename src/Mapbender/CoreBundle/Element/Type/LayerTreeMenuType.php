@@ -14,11 +14,11 @@ class LayerTreeMenuType extends AbstractType
     public function __construct($legacyDummy)
     {
         $this->exposedChoices = array(
-            "layerremove" => "Remove layer",
-            "opacity" => "Opacity",
-            "zoomtolayer" => "Zoom to layer",
-            "metadata" => "Metadata",
-            "dimension" => "Dimension",
+            "Remove layer" => "layerremove",
+            "Opacity" => "opacity",
+            "Zoom to layer" => "zoomtolayer",
+            "Metadata" => "metadata",
+            "Dimension" => "dimension",
         );
     }
 
@@ -31,6 +31,7 @@ class LayerTreeMenuType extends AbstractType
         $resolver->setDefaults(array(
             'choices' => $this->exposedChoices,
             'multiple' => true,
+            'choices_as_values' => true,
         ));
     }
 

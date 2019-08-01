@@ -39,14 +39,16 @@ class ScaleBarAdminType extends AbstractType
                     'right-top' => 'right-top',
                     'right-bottom' => 'right-bottom',
                 ),
+                'choices_as_values' => true,
             ))
             ->add('units', 'choice', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    'km' => 'kilometer',
-                    'ml' => 'mile',
+                    'kilometer' => 'km',
+                    'mile' => 'ml',
                 ),
+                'choices_as_values' => true,
             ))
         ;
     }

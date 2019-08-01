@@ -31,7 +31,12 @@ class RedliningAdminType extends AbstractType
                 'required' => false))
             ->add('display_type', 'choice', array(
                 'required' => true,
-                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
+                'choices' => array(
+                    'Dialog' => 'dialog',
+                    'Element' => 'element',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('auto_activate', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.redlining.label.auto_activate',
@@ -44,12 +49,13 @@ class RedliningAdminType extends AbstractType
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    'point' => 'Point',
-                    'line' => 'Line',
-                    'polygon' => 'Polygon',
-                    'rectangle' => 'Rectangle',
-                    'text' => 'Text',
+                    'Point' => 'point',
+                    'Line' => 'line',
+                    'Polygon' => 'polygon',
+                    'Rectangle' => 'rectangle',
+                    'Text' => 'text',
                 ),
+                'choices_as_values' => true,
             ))
         ;
     }

@@ -29,7 +29,10 @@ class LegendAdminType extends AbstractType
                 'required' => true,
                 'choices' => array(
                     "dialog" => "dialog",
-                    "blockelement" => "blockelement")))
+                    "blockelement" => "blockelement",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('autoOpen', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
@@ -38,7 +41,10 @@ class LegendAdminType extends AbstractType
                 array(
                 'required' => true,
                 'choices' => array(
-                    "list" => "list")))
+                    "list" => "list",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',

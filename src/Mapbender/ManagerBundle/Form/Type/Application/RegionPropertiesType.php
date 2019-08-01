@@ -39,6 +39,7 @@ class RegionPropertiesType extends AbstractType
             'choices' => function (Options $options) use ($self) {
                 return $self->buildChoices($options);
             },
+            'choices_as_values' => true,
             'data' => function (Options $options) use ($self) {
                 return $self->getData($options);
             }

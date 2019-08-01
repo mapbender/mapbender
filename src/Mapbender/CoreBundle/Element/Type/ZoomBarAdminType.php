@@ -29,13 +29,14 @@ class ZoomBarAdminType extends AbstractType
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    "pan" => "Pan",
-                    "history" => "History",
-                    "zoom_box" => "Zoom box",
-                    "zoom_max" => "zoom to max extent",
-                    "zoom_in_out" => "Zoom in/out",
-                    "zoom_slider" => "Zoom slider",
+                    "Pan" => "pan",
+                    "History" => "history",
+                    "Zoom box" => "zoom_box",
+                    "zoom to max extent" => "zoom_max",
+                    "Zoom in/out" => "zoom_in_out",
+                    "Zoom slider" => "zoom_slider",
                 ),
+                'choices_as_values' => true,
                 'attr' => array(
                     'size' => 6,
                 ),
@@ -52,6 +53,7 @@ class ZoomBarAdminType extends AbstractType
                     'true' => 'true',
                     'false' => 'false',
                 ),
+                'choices_as_values' => true,
             ))
             ->add('anchor', "choice", array(
                 'required' => true,
@@ -62,6 +64,7 @@ class ZoomBarAdminType extends AbstractType
                     'right-top' => 'right-top',
                     'right-bottom' => 'right-bottom',
                 ),
+                'choices_as_values' => true,
             ))
             ->add('draggable', 'checkbox', array(
                 'required' => false,

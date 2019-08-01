@@ -37,21 +37,22 @@ class WmcLoaderAdminType extends AbstractType
             ->add('keepSources', 'choice', array(
                 'required' => false,
                 'choices' => array(
-                    "no" => " no ",
-                    "basesources" => "BaseSources",
-                    "allsources" => "AllSources",
+                    "no" => "no",
+                    "BaseSources" => "basesources",
+                    "AllSources" => "allsources",
                 ),
+                'choices_as_values' => true,
             ))
             ->add('components', 'choice', array(
                 'multiple' => true,
                 'required' => true,
-                'preferred_choices' => array("loader"),
                 'choices' => array(
-                    "wmcidloader" => "Id Loader",
-                    "wmclistloader" => "From List Loader",
-                    "wmcxmlloader" => "Wmc Xml Loader",
-                    "wmcurlloader" => "Wmc From Url Loader",
+                    "Id Loader" => "wmcidloader",
+                    "From List Loader" => "wmclistloader",
+                    "Wmc Xml Loader" => "wmcxmlloader",
+                    "Wmc From Url Loader" => "wmcurlloader",
                 ),
+                'choices_as_values' => true,
             ))
             ->add('keepExtent', 'checkbox', array(
                 'required' => false,

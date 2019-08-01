@@ -61,8 +61,9 @@ class WmsInstanceLayerType extends AbstractType
                 'required' => false,
             ))
             ->add('style', 'choice', array(
-                'label' => 'style',
+                'label' => 'Style',
                 'choices' => array(),
+                'choices_as_values' => true,
                 'required' => false,
             ))
             ->add('priority', 'hidden', array(

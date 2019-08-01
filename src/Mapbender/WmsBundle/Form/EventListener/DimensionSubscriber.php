@@ -103,6 +103,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                     'data' => $extentArray,
                     'mapped' => false,
                     'choices' => $choices,
+                    'choices_as_values' => true,
                     'label' => 'Extent',
                     'auto_initialize' => false,
                     'multiple' => true,
@@ -110,6 +111,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                 ));
                 $form->add('default', 'choice', array(
                     'choices' => $choices,
+                    'choices_as_values' => true,
                     'auto_initialize' => false,
                 ));
                 break;

@@ -45,8 +45,11 @@ class LayertreeAdminType extends AbstractType
             ->add('type', 'choice', array(
                 'required' => true,
                 'choices' => array(
-                    'element' => 'Element',
-                    'dialog' => 'Dialog')))
+                    'Element' => 'element',
+                    'Dialog' => 'dialog',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('autoOpen', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.autoopen',

@@ -58,12 +58,13 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ->add('units', 'choice', array(
                 'label' => 'Map units',
                 'choices' => array(
-                    'degrees' => 'Degrees',
-                    'm' => 'Meters',
-                    'ft' => 'Feet',
-                    'mi' => 'Miles',
-                    'inches' => 'Inches',
+                    'Degrees' => 'degrees',
+                    'Meters' => 'm',
+                    'Feet' => 'ft',
+                    'Miles' => 'mi',
+                    'Inches' => 'inches',
                 ),
+                'choices_as_values' => true,
             ))
             ->add('extent_max', new ExtentType(), array(
                 'label' => 'mb.manager.admin.map.max_extent',
