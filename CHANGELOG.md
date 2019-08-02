@@ -1,3 +1,9 @@
+## v3.0.8.4-RC1
+- Fix syntax error in 'map click' generated element ([PR#1185](https://github.com/mapbender/mapbender/pull/1158))
+- Fix reusable source layer matching in YAML-to-db-import to work with nested-transaction capable RDBMS
+- Readd basic support for ancient (Mapbender 3.0.4), now invalid, mb_core_source tables with empty `type` column
+- Align WMTS form label translations with WMS translations
+
 ## v3.0.8.3
 - [Regression fix] newly created source instances are again added to the top of the target layerset
 - DimensionsHandler configuration form no longer offers selection of disabled instances ([#1166](https://github.com/mapbender/mapbender/issues/1166))
