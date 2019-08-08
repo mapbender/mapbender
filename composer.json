@@ -18,7 +18,7 @@
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
-        "mapbender/vis-ui.js": "~0.0",
+        "mapbender/vis-ui.js": "*",
         "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
@@ -33,7 +33,7 @@
         "psr-4": {"Mapbender\\": "src/Mapbender"}
     },
     "conflict": {
-        "mapbender/digitizer": "<1.1.68",
+   
         "mapbender/data-source": "<0.1.11",
         "mapbender/wmts": "*"
     },
