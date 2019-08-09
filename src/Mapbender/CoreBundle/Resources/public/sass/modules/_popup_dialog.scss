@@ -91,7 +91,7 @@
         width: auto;
         white-space: normal;
         color: #000000 !important;
-        height: 20px;
+        height: 22px;
         overflow: hidden;
         background-color: transparent !important;
         border-radius: 0;
@@ -99,6 +99,7 @@
         text-shadow: rgb(255, 255, 255) 0px 1px 0px;
         padding-left: 4px !important;
         padding-right: 0 !important;
+        margin-top: -3px;
 
         &:hover, &:focus{
           background-color: transparent;
