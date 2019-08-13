@@ -43,6 +43,7 @@ class RepositoryController extends ApplicationControllerBase
     public function indexAction()
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('VIEW', $oid);
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
         /** @var Source[] $allSources */
         $allSources = $repository->findBy(array(), array('id' => 'ASC'));
@@ -51,9 +52,6 @@ class RepositoryController extends ApplicationControllerBase
         $reloadableIds = array();
         $typeDirectory = $this->getTypeDirectory();
         foreach ($allSources as $source) {
-            if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $source)) {
-                continue;
-            }
             $sources[] = $source;
             if ($typeDirectory->getRefreshSupport($source)) {
                 $reloadableIds[] = $source->getId();
