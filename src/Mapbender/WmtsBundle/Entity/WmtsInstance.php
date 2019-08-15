@@ -19,7 +19,7 @@ class WmtsInstance extends SourceInstance
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource", inversedBy="instance", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmtsSource", inversedBy="instances", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
      */
     protected $source;
