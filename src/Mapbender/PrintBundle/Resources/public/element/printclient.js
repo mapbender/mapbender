@@ -3,6 +3,7 @@
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
             locale: null,
+            rotatable: true,
             style: {
                 fillColor:     '#ffffff',
                 fillOpacity:   0.5,
@@ -301,7 +302,7 @@
                                 },
                                 getDisplay: function(feature) {
                                     // only display rotate handle at the se corner
-                                    return feature.attributes.role === 'se-rotate' ? '' : 'none';
+                                    return self.options.rotatable && feature.attributes.role === 'se-rotate' ? '' : 'none';
                                 }
                             }
                         })
