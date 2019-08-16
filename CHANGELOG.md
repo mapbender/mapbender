@@ -1,3 +1,13 @@
+## dev-release/3.0.7 @ 16b0af4bc
+- Fix basic auth secured services via WmsLoader ([#1201](https://github.com/mapbender/mapbender/issues/1201))
+- Fix SearchRouter visibility in mobile template ([#1200](https://github.com/mapbender/mapbender/issues/1200))
+- Fix PrintClient legend_default_behaviour option ([#1203](https://github.com/mapbender/mapbender/issues/1203))
+- Suppress PrintClient rotation handle if rotation is configured as disabled
+- Fix grants checks on Yaml-defined applications
+- Suppress "Sources" menu item for users with no source view grant
+- Update default Mapbender logo ([#1156](https://github.com/mapbender/mapbender/issues/1156), [PR#1202](https://github.com/mapbender/mapbender/pull/1202))
+- Enable foreign keys on Sqlite platform (required for [FOM user / group ACE deletion fix](https://github.com/mapbender/fom/releases/tag/v3.2.8) to work)
+
 ## v3.0.8.4-RC1
 - Fix syntax error in 'map click' generated element ([PR#1185](https://github.com/mapbender/mapbender/pull/1158))
 - Fix reusable source layer matching in YAML-to-db-import to work with nested-transaction capable RDBMS
