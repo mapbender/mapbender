@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 16b0af4bc
+## v3.0.8.4-RC2
 - Fix basic auth secured services via WmsLoader ([#1201](https://github.com/mapbender/mapbender/issues/1201))
 - Fix SearchRouter visibility in mobile template ([#1200](https://github.com/mapbender/mapbender/issues/1200))
 - Fix PrintClient legend_default_behaviour option ([#1203](https://github.com/mapbender/mapbender/issues/1203))
