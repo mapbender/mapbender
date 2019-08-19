@@ -17,6 +17,7 @@ class Regional extends Responsive
         '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
+        "/components/vis-ui.js/vis-ui.js-built.js",
         '@MapbenderCoreBundle/Resources/public/js/responsive.js'
     );
 

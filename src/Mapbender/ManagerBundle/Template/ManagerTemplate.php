@@ -16,6 +16,7 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
             case 'js':
                 return array(
                     '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
+                    '/components/vis-ui.js/vis-ui.js-built.js',
 
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
