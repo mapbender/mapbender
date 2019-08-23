@@ -61,7 +61,7 @@ class WmsSourceService extends SourceService
         return array(
             'url' => $this->getUrlOption($sourceInstance),
             'opacity' => ($sourceInstance->getOpacity() / 100),
-            'proxy' => $sourceInstance->getProxy(),
+            'proxy' => $this->useProxy($sourceInstance),
             'visible' => $sourceInstance->getVisible(),
             'version' => $sourceInstance->getSource()->getVersion(),
             'format' => $sourceInstance->getFormat(),
@@ -194,7 +194,7 @@ class WmsSourceService extends SourceService
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
         } else {
-            if ($sourceInstance->getProxy()) {
+            if ($this->useProxy($sourceInstance)) {
                 $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
                 $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0]);
             } else {
@@ -333,6 +333,27 @@ class WmsSourceService extends SourceService
         } else {
             // no layerset, dynamically added (~WmsLoader)
             return false;
+        }
+    }
+
+    /**
+     * @param SourceInstance $sourceInstance
+     * @return bool
+     */
+    public function useProxy(SourceInstance $sourceInstance)
+    {
+        if ($this->useTunnel($sourceInstance)) {
+            return false;
+        } else {
+            if ($sourceInstance->getSource()->getUsername() && !$sourceInstance->getLayerset()) {
+                // WmsLoader special: proxify url with embedded credentials to bypass browser
+                // filtering of basic auth in img tags.
+                // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
+                return true;
+            } else {
+                /** @var WmsInstance $sourceInstance */
+                return $sourceInstance->getProxy();
+            }
         }
     }
 
