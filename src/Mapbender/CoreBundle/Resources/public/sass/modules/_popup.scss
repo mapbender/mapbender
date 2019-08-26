@@ -153,12 +153,15 @@
     }
   }
 }
-.ui-resizable-se{
+.ui-resizable-se {
+  position: absolute;
   font-size: 16px;
-  @include absolute('' 3px -3px '');
-  @include transform(rotate(45deg));
-  cursor: default;
+  right: -.135em;
+  bottom: -8px;
+  cursor: se-resize;
+
   &:before{
+    @include transform(rotate(45deg));
     font-family: FontAwesome;
     content: "\f054";
     display: block;
