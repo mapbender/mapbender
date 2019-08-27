@@ -58,51 +58,30 @@
         white-space: normal;
         span{
           font-size: 0;
-
-          &:after{
-            font-family: FontAwesome;
-            font-size: 23px;
-            display: inline-block;
-            content: "\f00d";
-            font-weight: bold;
-          }
-
-          /** maximize */
-          &.ui-icon-extlink:after{
-            content: "\f0b2";
-            font-size: 18px;
-            margin-top: -2px;
-          }
-
-          /** collapse **/
-          &.ui-icon-triangle-1-s:after{
-            content: "\f062";
-            font-size: 18px;
-            margin-top: -3px;
-          }
-
-          /** restore to normal **/
-          &.ui-icon-newwin:after{
-            content: "\f063";
-            font-size: 18px;
-            margin-top: -3px;
-          }
         }
       }
-
-      > .close  > span.ui-button-text  {
-        font-size: 0;
-        margin-left: 4px;
-        margin-top: -1px;
-        margin-right: 5px;
-        display: block;
-
-        &:after{
-          font-family: FontAwesome;
-          font-size: 23px;
-          display: inline-block;
-          content: "\f00d";
-        }
+      .ui-icon:before {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .ui-icon.ui-icon-closethick:before {
+        font-size: 23px;
+        line-height: 18px;
+        font-family: FontAwesome;
+        content: "\f00d";
+      }
+      .ui-icon.ui-icon-extlink:before{
+        font-family: FontAwesome;
+        content: "\f0b2";
+      }
+      .ui-icon.ui-icon-triangle-1-s:before{
+        font-family: FontAwesome;
+        content: "\f062";
+      }
+      .ui-icon.ui-icon-newwin:before{
+        font-family: FontAwesome;
+        content: "\f063";
       }
     }
   }
