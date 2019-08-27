@@ -5,6 +5,5 @@
 {% endif %}
 
 {{ form_start(form, {"attr": {"id": "layersetForm", "novalidate": "novalidate", "action": form_url}}) }}
-    {{form_label(form.title)}}{{form_widget(form.title)}}
-    {{ form_row(form._token) }}
+    {{ form_widget(form) }}
 {{ form_end(form) }}

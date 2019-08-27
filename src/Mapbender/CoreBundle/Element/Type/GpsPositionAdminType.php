@@ -5,22 +5,10 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
-/**
- * Class GpsPositionAdminType
- * @package Mapbender\CoreBundle\Element\Type
- */
 class GpsPositionAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'gpsposition';
-    }
-
     /**
      * @inheritdoc
      */
@@ -28,7 +16,7 @@ class GpsPositionAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'average'     => 1
+            'average'     => 1,
         ));
     }
 
@@ -42,50 +30,41 @@ class GpsPositionAdminType extends AbstractType
             ->add('label', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.gpsposition.show_label',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('autoStart', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
-            ->add(
-                'target',
-                'target_element',
-                array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false
-                )
-            )
+            ->add('target',  'target_element', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false,
+            ))
             ->add('icon', new IconClassType(), array('required' => false))
-            ->add('action', 'text', array('required' => false))
-            ->add('refreshinterval', 'text', array('required' => false))
             ->add('average', 'text', array(
                 'required' => false,
             ))
+            ->add('refreshinterval', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => false,
+                'constraints' => array(
+                    new Range(array(
+                        'min' => 0,
+                    )),
+                ),
+                'attr' => array(
+                    'min' => 0,
+                    'step' => 200,
+                ),
+            ))
             ->add('follow', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('centerOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('zoomToAccuracyOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
         ;
     }

@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
@@ -26,25 +27,32 @@ abstract class ApplicationControllerBase extends Controller
      * Unpublished applications are viewable only by users who can also edit them.
      *
      * @param Application $application
+     * @throws AccessDeniedException
      */
     protected function checkApplicationAccess(Application $application)
     {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         if ($application->isYamlBased()) {
+            if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles() ?: array())) {
+                // skip all other grants checks and pass
+                return;
+            }
+            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
+            $aclTarget = $oid;
+        } else {
+            $aclTarget = $application;
+        }
+        if (!$application->isPublished()) {
+            $this->denyAccessUnlessGranted('EDIT', $aclTarget, 'This application is not published at the moment');
+        }
+        $this->denyAccessUnlessGranted('VIEW', $aclTarget, 'You are not granted view permissions for this application.');
+        if ($application->isYamlBased() && $application->getYamlRoles()) {
             foreach ($application->getYamlRoles() as $role) {
                 if ($this->isGranted($role)) {
                     return;
                 }
             }
-            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
-            if (!$application->isPublished()) {
-                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                $this->denyAccessUnlessGranted('EDIT', $oid, 'This application is not published at the moment');
-            }
-        } else {
-            if (!$application->isPublished()) {
-                $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
-            }
-            $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
+            throw $this->createAccessDeniedException('You are not granted view permissions for this application.');
         }
     }
 

@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
@@ -13,24 +12,6 @@ use Symfony\Component\Form\FormEvents;
  */
 class FieldSubscriber implements EventSubscriberInterface
 {
-
-    /**
-     * A FieldSubscriber's Factory
-     *
-     * @var \Symfony\Component\Form\FormFactoryInterface
-     */
-    private $factory;
-
-    /**
-     * Creates an instance
-     *
-     * @param \Symfony\Component\Form\FormFactoryInterface $factory
-     */
-    public function __construct(FormFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
     /**
      * Returns defined events
      *
@@ -62,64 +43,51 @@ class FieldSubscriber implements EventSubscriberInterface
                 'placeholder' => $data->getSourceItem()->getTitle(),
             ),
         ));
+        $hasSubLayers = !!$data->getSublayer()->count();
 
-        if ($data->getSublayer()->count() > 0) {
-            $form->remove('toggle');
-            $form->add($this->factory->createNamed(
-                    'toggle', 'checkbox', null, array(
-                    'disabled' => false,
-                    "required" => false,
-                    'auto_initialize' => false)));
-            $form->remove('allowtoggle');
-            $form->add($this->factory->createNamed(
-                    'allowtoggle', 'checkbox', null, array(
-                    'required' => false,
-                    'disabled' => false,
-                    'auto_initialize' => false)));
-        } else {
-            $form->remove('toggle');
-            $form->add($this->factory->createNamed(
-                    'toggle', 'checkbox', null, array(
-                    'disabled' => true,
-                    "required" => false,
-                    'auto_initialize' => false)));
-            $form->remove('allowtoggle');
-            $form->add($this->factory->createNamed(
-                    'allowtoggle', 'checkbox', null, array(
-                    'required' => false,
-                    'disabled' => true,
-                    'auto_initialize' => false)));
-        }
+        $form->remove('toggle');
+        $form->add('toggle', 'checkbox', array(
+            'disabled' => !$hasSubLayers,
+            'required' => false,
+            'auto_initialize' => false,
+        ));
+        $form->remove('allowtoggle');
+        $form->add('allowtoggle', 'checkbox', array(
+            'disabled' => !$hasSubLayers,
+            'required' => false,
+            'auto_initialize' => false,
+        ));
 
         if ($data->getSourceItem()->getQueryable() === true) {
             $form->remove('info');
-            $form->add($this->factory->createNamed(
-                    'info', 'checkbox', null, array(
-                    'disabled' => false,
-                    "required" => false,
-                    'auto_initialize' => false)));
+            $form->add('info', 'checkbox', array(
+                'disabled' => false,
+                'required' => false,
+                'auto_initialize' => false,
+            ));
             $form->remove('allowinfo');
-            $form->add($this->factory->createNamed(
-                    'allowinfo', 'checkbox', null, array(
-                    'disabled' => false,
-                    "required" => false,
-                    'auto_initialize' => false)));
+            $form->add('allowinfo', 'checkbox', array(
+                'disabled' => false,
+                'required' => false,
+                'auto_initialize' => false,
+            ));
         }
         $arrStyles = $data->getSourceItem()->getStyles(true);
-        $styleOpt = array("" => " ");
+        $styleOpt = array(" " => "");
         foreach ($arrStyles as $style) {
             if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification
-                $styleOpt[$style->getName()] = $style->getTitle();
+                $styleOpt[$style->getTitle()] = $style->getName();
             }
         }
 
         $form->remove('style');
-        $form->add($this->factory->createNamed(
-                'style', 'choice', null, array(
-                'label' => 'style',
-                'choices' => $styleOpt,
-                "required" => false,
-                'auto_initialize' => false)));
+        $form->add('style', 'choice', array(
+            'label' => 'Style',
+            'choices' => $styleOpt,
+            'choices_as_values' => true,
+            "required" => false,
+            'auto_initialize' => false,
+        ));
     }
 
 }

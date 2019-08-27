@@ -6,19 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- *
- */
 class SearchRouterSelectType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'search_routes';
-    }
-
     /**
      * @inheritdoc
      */
@@ -34,11 +23,12 @@ class SearchRouterSelectType extends AbstractType
     {
         $routes = array();
         foreach ($options['routes'] as $name => $conf) {
-            $routes[ $name ] = $conf['title'];
+            $routes[$conf['title']] = $name;
         }
 
         $builder->add('route', 'choice', array(
             'choices'  => $routes,
+            'choices_as_values' => true,
             'mapped'   => false,
             'multiple' => false,
             'expanded' => false,

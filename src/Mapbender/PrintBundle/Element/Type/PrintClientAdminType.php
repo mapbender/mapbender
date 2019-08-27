@@ -7,9 +7,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 
-/**
- * 
- */
 class PrintClientAdminType extends AbstractType
 {
     /** @var bool */
@@ -26,18 +23,10 @@ class PrintClientAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'printclient';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -46,8 +35,7 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new PrintClientSubscriber($builder->getFormFactory(), $options["application"]);
-        $builder->addEventSubscriber($subscriber);
+        $builder->addEventSubscriber(new PrintClientSubscriber());
         $builder
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -56,11 +44,12 @@ class PrintClientAdminType extends AbstractType
                 'required' => false,
             ))
             ->add('type', 'choice', array(
-                    'required' => true,
-                    'choices' => array(
-                        'dialog' => 'Dialog',
-                        'element' => 'Element',
-                    ),
+                'required' => true,
+                'choices' => array(
+                    'Dialog' => 'dialog',
+                    'Element' => 'element',
+                ),
+                'choices_as_values' => true,
             ))
             ->add('scales', 'text', array(
                 'required' => false,
@@ -73,37 +62,41 @@ class PrintClientAdminType extends AbstractType
             $builder->add('renderMode', 'choice', array(
                 'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
-                    'direct' => 'mb.print.admin.printclient.renderMode.choice.direct',
-                    'queued' => 'mb.print.admin.printclient.renderMode.choice.queued',
+                    'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
+                    'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
                 ),
-                'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
+                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
             $builder->add('queueAccess', 'choice', array(
                 'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
-                    'private' => 'mb.print.admin.printclient.queueAccess.choice.private',
-                    'global' => 'mb.print.admin.printclient.queueAccess.choice.global',
+                    'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
+                    'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
                 ),
-                'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
+                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.queueAccess.label',
             ));
         }
         $builder
             ->add('rotatable', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.rotatable',
             ))
             ->add('legend', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.legend',
             ))
             ->add('legend_default_behaviour', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
             ))
             ->add('optional_fields', new YAMLConfigurationType(), array(
                 'required' => false,
             ))
             ->add('required_fields_first', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.core.admin.printclient.label.required_fields_first',
             ))
             ->add('replace_pattern', new YAMLConfigurationType(), array(
                 'required' => false,

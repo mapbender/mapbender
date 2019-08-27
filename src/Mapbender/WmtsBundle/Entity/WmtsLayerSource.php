@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmtsBundle\Component\Style;
 use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
@@ -17,21 +16,12 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtslayersource")
+ *
+ * @property WmtsSource $source
+ * @method WmtsSource getSource
  */
 class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 {
-    /**
-     * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $title = "";
 
     /**
      * @ORM\Column(name="name", type="string", nullable=true)
@@ -95,26 +85,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get id
-     *
-     * @return integer $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set id
-     *
-     * @param $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * Set title
      *
      * @param string $title
@@ -172,23 +142,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function getAbstract()
     {
         return $this->abstract;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSource(Source $wmtssource)
-    {
-        $this->source = $wmtssource;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSource()
-    {
-        return $this->source;
     }
 
     /**

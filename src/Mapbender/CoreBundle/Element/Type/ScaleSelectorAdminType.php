@@ -5,20 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class ScaleSelectorAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'scaleselector';
-    }
-
     /**
      * @inheritdoc
      */
@@ -34,14 +22,19 @@ class ScaleSelectorAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('label', 'checkbox', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.scaleselector.show_label',
+            ))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false));
+                'required' => false,
+            ))
+        ;
     }
 
 }

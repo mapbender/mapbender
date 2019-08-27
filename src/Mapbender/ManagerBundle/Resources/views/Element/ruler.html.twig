@@ -1,10 +1,4 @@
-<div class="defaultForm elementForm">
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-
-
-    {% for configuration in form.configuration %}
-        {{ form_label(configuration)}}  {{ form_widget(configuration) }}
-        <div class="clearContainer"></div>
-    {% endfor %}
+<div class="elementForm">
+    {{ form_row(form.title) }}
+    {{ form_rest(form.configuration) }}
 </div>

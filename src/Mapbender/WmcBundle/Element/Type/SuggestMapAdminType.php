@@ -15,18 +15,10 @@ class SuggestMapAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'suggestmap';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -35,22 +27,26 @@ class SuggestMapAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
-            ->add('receiver', 'choice',
-                array(
+                'required' => false,
+            ))
+            ->add('receiver', 'choice', array(
                 'multiple' => true,
                 'required' => true,
                 'choices' => array(
-                    'email' => 'E-Mail',
-                    'facebook' => 'Facebook',
-                    'twitter' => 'Twitter',
-                    'google+' => 'Google+')));
+                    'E-Mail' => 'email',
+                    'Facebook' => 'facebook',
+                    'Twitter' => 'twitter',
+                    'Google+' => 'google+',
+                ),
+                'choices_as_values' => true,
+            ))
+        ;
     }
 
 }

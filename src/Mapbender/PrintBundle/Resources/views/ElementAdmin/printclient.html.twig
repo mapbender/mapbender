@@ -1,20 +1,12 @@
-<div class="elementFormPrintClient elementForm defaultForm">
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.scales) }}{{ form_widget(form.configuration.scales) }}
-    <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.rotatable) }}<label for="{{form.configuration.rotatable.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.rotatable"|trans}}</label>
-    <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.legend) }}<label for="{{form.configuration.legend.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.legend"|trans}}</label>
-    <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.legend_default_behaviour) }}<label for="{{form.configuration.legend_default_behaviour.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.legend_default_behaviour"|trans}}</label>
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.file_prefix) }}{{ form_widget(form.configuration.file_prefix) }}
-    <div class="clearContainer"></div>
+<div class="elementFormPrintClient elementForm">
+    {{ form_row(form.title) }}
+    {{ form_row(form.configuration.target) }}
+    {{ form_row(form.configuration.type) }}
+    {{ form_row(form.configuration.scales) }}
+    {{ form_row(form.configuration.rotatable) }}
+    {{ form_row(form.configuration.legend) }}
+    {{ form_row(form.configuration.legend_default_behaviour) }}
+    {{ form_row(form.configuration.file_prefix) }}
     {% if form.configuration.renderMode is defined %}
         {{ form_row(form.configuration.renderMode) }}
     {% endif %}
@@ -26,25 +18,19 @@
         {{ form_label(form.configuration.quality_levels) }}
     </div>
     {% for level in form.configuration.quality_levels %}
-        <div class="row quality-grid">
+        <div class="row no-gutters quality-grid">
             <div class="col-xs-6">
-                {{form_label(level.dpi)}}
-                {{form_widget(level.dpi) }}
+                {{ form_row(level.dpi) }}
             </div>
             <div class="col-xs-6">
-                {{form_label(level.label)}}
-                {{ form_widget(level.label) }}
+                {{ form_row(level.label) }}
             </div>
         </div>
     {% endfor %}
     <hr>
     <br>
-    {{ form_label(form.configuration.templates) }}{{ form_widget(form.configuration.templates) }}
+    {{ form_row(form.configuration.templates) }}
     <hr>
     <br>
-    {{ form_row(form.configuration.optional_fields) }}
-    {{ form_widget(form.configuration.required_fields_first) }}<label for="{{form.configuration.required_fields_first.vars.id}}" class="labelCheck">{{'mb.core.admin.printclient.label.required_fields_first'|trans}}</label>
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
-    
+    {{ form_rest(form.configuration) }}
 </div>

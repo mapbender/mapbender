@@ -33,7 +33,8 @@ class ApplicationType extends AbstractType
         if (!$options['data']->getId()) {
             // allow template choice only for new Application
             $builder->add('template', 'choice', array(
-                'choices' => $options['available_templates'],
+                'choices' => array_flip($options['available_templates']),
+                'choices_as_values' => true,
                 'label' => 'mb.manager.admin.application.template',
                 'label_attr' => array(
                     'title' => 'The HTML template used for this application.',

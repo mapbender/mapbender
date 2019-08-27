@@ -1,34 +1,32 @@
 <div class="elementForm">
-    <div class="left">
-        {{ form_widget(form.configuration.autoActivate) }}<label for="{{form.configuration.autoActivate.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.autoopen"|trans }}</label>
+    <div>
+        <div class="left">
+            {{ form_row(form.configuration.autoActivate) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.deactivateOnClose) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.printResult) }}
+        </div>
+        <div class="clearContainer"></div>
     </div>
-    <div class="left">
-    {{ form_widget(form.configuration.deactivateOnClose) }}<label for="{{form.configuration.deactivateOnClose.vars.id}}" class="labelCheck">{{"mb.core.admin.featureinfo.label.deactivateonclose"|trans}}</label>
-    </div>
-    <div class="left">
-    {{ form_widget(form.configuration.printResult) }}<label for="{{form.configuration.printResult.vars.id}}" class="labelCheck">print Result</label>
-    </div>
-    <div class="clearContainer"></div>
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.displayType) }}{{ form_widget(form.configuration.displayType) }}
-    <div class="clearContainer"></div>
+    {{ form_row(form.title) }}
+    {{ form_row(form.configuration.tooltip) }}
+    {{ form_row(form.configuration.target) }}
+    {{ form_row(form.configuration.type) }}
+    {{ form_row(form.configuration.displayType) }}
     {{ form_row(form.configuration.maxCount) }}
-    {{ form_label(form.configuration.width) }}{{ form_widget(form.configuration.width) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.height) }}{{ form_widget(form.configuration.height) }}
-    <div class="clearContainer"></div>
-    <div class="left">
-        {{ form_widget(form.configuration.showOriginal) }}<label for="{{form.configuration.showOriginal.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.showoriginal"|trans }}</label>
+    {{ form_row(form.configuration.width) }}
+    {{ form_row(form.configuration.height) }}
+    <div>
+        <div class="left">
+            {{ form_row(form.configuration.showOriginal) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.onlyValid) }}
+        </div>
+        <div class="clearContainer"></div>
     </div>
-    <div class="left">
-        {{ form_widget(form.configuration.onlyValid) }}<label for="{{form.configuration.onlyValid.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.onlyvalid"|trans }}</label>
-    </div>
-    <div class="clearContainer"></div>
+    {{ form_rest(form.configuration) }}
 </div>

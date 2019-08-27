@@ -75,8 +75,6 @@ mb:
             reorder: Organizar
             allow: Permitir
             'on': Ligado
-            save2: Guardar
-            cancel2: Cancelar
             ratio: 'Factor de BBox'
             buffer: 'Buffer de bloco'
           vendorspecific:
@@ -214,17 +212,6 @@ mb:
     dimhandler:
       class:
         title: 'Handler de dimensão'
-        description: Descrição
-      tag:
-        dimension: Dimensão
-        handler: Hander
+        description: ~
     dimensionsets:
       no_dimension: 'Não existe nenhuma dimensão'
-  wmc:
-    wmsloader:
-      class:
-        title: 'Wms Loader'
-        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader

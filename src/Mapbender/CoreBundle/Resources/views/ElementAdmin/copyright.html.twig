@@ -1,14 +1,5 @@
 <div class="elementForm wideLabelForm">
-    {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{ "mb.core.admin.copyright.label.autoopen"|trans }}</label>
-    <div class="clearContainer"></div>
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.popupWidth) }}{{ form_widget(form.configuration.popupWidth) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.popupHeight) }}{{ form_widget(form.configuration.popupHeight) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.content) }}{{ form_widget(form.configuration.content) }}
-    <div class="clearContainer"></div>
+    {{ form_row(form.configuration.autoOpen) }}
+    {{ form_row(form.title) }}
+    {{ form_rest(form.configuration) }}
 </div>

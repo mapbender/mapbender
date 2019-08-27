@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -20,13 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
-class WmtsSource extends Source implements HttpOriginInterface, ContainingKeyword, MutableUrlTarget
+class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
 {
-    /**
-     * DPI for WMTS: "standardized rendering pixel size": 0.28 mm × 0.28 mm -> DPI: 90.714285714
-     */
-    const DPI = 90.714285714;
-    
     /**
      * @var string An origin WMTS URL
      * @ORM\Column(type="string", nullable=true)
@@ -149,12 +143,10 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         return $this->instances;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getManagertype()
     {
-        return strtolower(parent::TYPE_WMTS);
+        // single controller for WMTS + TMS
+        return strtolower(Source::TYPE_WMTS);
     }
 
     public function getTypeLabel()
@@ -536,24 +528,6 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier ? $this->identifier : $this->originUrl;
-    }
-
-    /**
-     * @inheritdoc
-     * @return $this
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-        return $this;
-    }
-
     public function mutateUrls(OneWayTransformer $transformer)
     {
         $this->setOriginUrl($transformer->process($this->getOriginUrl()));
@@ -568,5 +542,10 @@ class WmtsSource extends Source implements HttpOriginInterface, ContainingKeywor
         foreach ($this->getLayers() as $layer) {
             $layer->mutateUrls($transformer);
         }
+    }
+
+    public function getViewTemplate()
+    {
+        return '@MapbenderWmts/Repository/view.html.twig';
     }
 }

@@ -29,7 +29,7 @@
     <div class="clear"></div>
 
     <div class="row">
-      <div class="leftContainer col-md-6 col-xs-12">
+      <div class="col-md-6 col-xs-12">
         {{ form_row(form.title) }}
         {{ form_row(form.format) }}
         {{ form_row(form.infoformat) }}
@@ -60,25 +60,14 @@
           </div>
         </div>
         <div class="checkboxGroup">
-        <div>
-        {{ form_widget(form.basesource) }}<label for="{{form.basesource.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.basesource"|trans}}</label>
-        </div>
-        <div>
-        {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.proxy"|trans}}</label>
-        </div>
-        <div>
-        {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.transparency"|trans}}</label>
-        </div>
-        <div>
-        {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
-        </div>
+          {{ form_row(form.basesource) }}
+          {{ form_row(form.proxy) }}
+          {{ form_row(form.transparency) }}
+          {{ form_row(form.tiled) }}
         {% if form.layerOrder is defined %}
-        <div>
-          {{ form_label(form.layerOrder, 'mb.wms.wmsloader.repo.instance.label.layerOrder', {}) }}{{ form_widget(form.layerOrder) }}
-        </div>
+          {{ form_row(form.layerOrder) }}
         {% endif %}
       </div>
-      <div class="clear"></div>
       </div>
     </div>
     {% set root = instance.source.getRootlayer() %}
@@ -128,14 +117,10 @@
       </tbody>
     </table>
 
-    <div class="clearContainer"></div>
-
-    <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.label.save2"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.label.cancel2"|trans}}</a>
+    <div class="button-group">
+      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
     </div>
-
-    <div class="clearContainer"></div>
 
     {{ form_row(form._token) }}
   </form>

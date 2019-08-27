@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -20,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface, MutableUrlTarget
+class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
 {
     /**
      * @var string An origin WMS URL
@@ -218,12 +217,11 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set originUrl
      *
      * @param string $originUrl
-     * @return WmsSource
+     * @return $this
      */
     public function setOriginUrl($originUrl)
     {
         $this->originUrl = $originUrl;
-        $this->setIdentifier($originUrl);
         return $this;
     }
 
@@ -241,7 +239,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set name
      *
      * @param string $name
-     * @return WmsSource
+     * @return $this
      */
     public function setName($name)
     {
@@ -263,7 +261,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set version
      *
      * @param string $version
-     * @return WmsSource
+     * @return $this
      */
     public function setVersion($version)
     {
@@ -285,7 +283,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set onlineResource
      *
      * @param string $onlineResource
-     * @return WmsSource
+     * @return $this
      */
     public function setOnlineResource($onlineResource)
     {
@@ -307,7 +305,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set contact
      *
      * @param string $contact
-     * @return WmsSource
+     * @return $this
      */
     public function setContact($contact)
     {
@@ -329,7 +327,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set fees
      *
      * @param string $fees
-     * @return WmsSource
+     * @return $this
      */
     public function setFees($fees)
     {
@@ -351,7 +349,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set accessConstraints
      *
      * @param string $accessConstraints
-     * @return WmsSource
+     * @return $this
      */
     public function setAccessConstraints($accessConstraints)
     {
@@ -373,7 +371,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set layerLimit
      *
      * @param integer $layerLimit
-     * @return WmsSource
+     * @return $this
      */
     public function setLayerLimit($layerLimit)
     {
@@ -395,7 +393,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set maxWidth
      *
      * @param integer $maxWidth
-     * @return WmsSource
+     * @return $this
      */
     public function setMaxWidth($maxWidth)
     {
@@ -417,7 +415,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set maxHeight
      *
      * @param integer $maxHeight
-     * @return WmsSource
+     * @return $this
      */
     public function setMaxHeight($maxHeight)
     {
@@ -439,7 +437,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set exceptionFormats
      *
      * @param array $exceptionFormats
-     * @return WmsSource
+     * @return $this
      */
     public function setExceptionFormats($exceptionFormats)
     {
@@ -451,7 +449,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Add exceptionFormat
      *
      * @param array $exceptionFormat
-     * @return WmsSource
+     * @return $this
      */
     public function addExceptionFormat($exceptionFormat)
     {
@@ -473,7 +471,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set supportSld
      *
      * @param boolean $supportSld
-     * @return WmsSource
+     * @return $this
      */
     public function setSupportSld($supportSld)
     {
@@ -495,7 +493,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set userLayer
      *
      * @param boolean $userLayer
-     * @return WmsSource
+     * @return $this
      */
     public function setUserLayer($userLayer)
     {
@@ -517,7 +515,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set userStyle
      *
      * @param boolean $userStyle
-     * @return WmsSource
+     * @return $this
      */
     public function setUserStyle($userStyle)
     {
@@ -539,7 +537,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set remoteWfs
      *
      * @param boolean $remoteWfs
-     * @return WmsSource
+     * @return $this
      */
     public function setRemoteWfs($remoteWfs = null)
     {
@@ -561,7 +559,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set inlineFeature
      *
      * @param boolean $inlineFeature
-     * @return WmsSource
+     * @return $this
      */
     public function setInlineFeature($inlineFeature = null)
     {
@@ -583,7 +581,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set remoteWcs
      *
      * @param boolean $remoteWcs
-     * @return WmsSource
+     * @return $this
      */
     public function setRemoteWcs($remoteWcs)
     {
@@ -605,7 +603,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set getCapabilities
      *
      * @param RequestInformation $getCapabilities
-     * @return WmsSource
+     * @return $this
      */
     public function setGetCapabilities(RequestInformation $getCapabilities = NULL)
     {
@@ -627,7 +625,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set getMap
      *
      * @param RequestInformation $getMap
-     * @return WmsSource
+     * @return $this
      */
     public function setGetMap(RequestInformation $getMap = NULL)
     {
@@ -649,7 +647,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set getFeatureInfo
      *
      * @param RequestInformation $getFeatureInfo
-     * @return WmsSource
+     * @return $this
      */
     public function setGetFeatureInfo(RequestInformation $getFeatureInfo = NULL)
     {
@@ -671,7 +669,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set describeLayer
      *
      * @param RequestInformation $describeLayer
-     * @return WmsSource
+     * @return $this
      */
     public function setDescribeLayer(RequestInformation $describeLayer = NULL)
     {
@@ -693,7 +691,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set getLegendGraphic
      *
      * @param RequestInformation $getLegendGraphic
-     * @return WmsSource
+     * @return $this
      */
     public function setGetLegendGraphic(RequestInformation $getLegendGraphic = NULL)
     {
@@ -715,7 +713,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set getStyles
      *
      * @param RequestInformation $getStyles
-     * @return WmsSource
+     * @return $this
      */
     public function setGetStyles(RequestInformation $getStyles = NULL)
     {
@@ -737,7 +735,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set putStyles
      *
      * @param RequestInformation $putStyles
-     * @return WmsSource
+     * @return $this
      */
     public function setPutStyles(RequestInformation $putStyles = NULL)
     {
@@ -759,7 +757,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set username
      *
      * @param string $username
-     * @return WmsSource
+     * @return $this
      */
     public function setUsername($username)
     {
@@ -781,7 +779,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set password
      *
      * @param string $password
-     * @return WmsSource
+     * @return $this
      */
     public function setPassword($password)
     {
@@ -803,7 +801,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Set layers
      *
      * @param array $layers
-     * @return WmsSource
+     * @return $this
      */
     public function setLayers($layers)
     {
@@ -825,7 +823,7 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
      * Add layer
      *
      * @param WmsLayerSource $layer
-     * @return WmsSource
+     * @return $this
      */
     public function addLayer(WmsLayerSource $layer)
     {
@@ -912,23 +910,6 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
         $this->layers->removeElement($layers);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier ? $this->identifier : $this->originUrl;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-        return $this;
-    }
-
     public function getTypeLabel()
     {
         return 'OGC WMS';
@@ -996,5 +977,10 @@ class WmsSource extends Source implements ContainingKeyword, HttpOriginInterface
         }
 
         return $this;
+    }
+
+    public function getViewTemplate()
+    {
+        return '@MapbenderWms/Repository/view.html.twig';
     }
 }

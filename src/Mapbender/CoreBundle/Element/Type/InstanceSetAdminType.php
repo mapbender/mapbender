@@ -6,9 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- *
- */
 class InstanceSetAdminType extends AbstractType
 {
 
@@ -26,7 +23,8 @@ class InstanceSetAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'instances' => null
+            'instances' => null,
+            'choices_as_values' => false,
         ));
     }
 
@@ -43,8 +41,11 @@ class InstanceSetAdminType extends AbstractType
                 'property_path' => '[group]'))
             ->add('instances', 'choice', array(
                 'choices' => $options['instances'],
+                'choices_as_values' => $options['choices_as_values'],
                 'required' => false,
-                'multiple' => true));
+                'multiple' => true,
+            ))
+        ;
     }
 
 }

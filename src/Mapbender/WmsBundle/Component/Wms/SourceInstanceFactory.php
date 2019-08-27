@@ -4,7 +4,11 @@
 namespace Mapbender\WmsBundle\Component\Wms;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -18,14 +22,18 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 
 class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactory
 {
+    /** @var EntityManagerInterface */
+    protected $entityManager;
     /** @var string|null */
     protected $defaultLayerOrder;
 
     /**
-     * @param $defaultLayerOrder
+     * @param EntityManagerInterface $entityManager
+     * @param string $defaultLayerOrder
      */
-    public function __construct($defaultLayerOrder)
+    public function __construct(EntityManagerInterface $entityManager, $defaultLayerOrder)
     {
+        $this->entityManager = $entityManager;
         $this->defaultLayerOrder = $defaultLayerOrder;
     }
 
@@ -72,6 +80,94 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
         $this->configureInstanceLayer($instance->getRootlayer(), $data);
         return $instance;
+    }
+
+    /**
+     * @param SourceInstance $instance
+     * @param Source[] $extraSources
+     * @return Source|null
+     */
+    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
+    {
+        /** @var WmsInstance $instance */
+        $repository = $this->entityManager->getRepository('MapbenderWmsBundle:WmsSource');
+        $yamlSource = $instance->getSource();
+        $matchValues = array(
+            'originUrl' => $yamlSource->getOriginUrl(),
+            'version' => $yamlSource->getVersion(),
+            'type' => $yamlSource->getType(),
+        );
+        /** @var WmsSource[] $candidates */
+        $candidates = $repository->findBy($matchValues);
+        $extraSourcesCollection = new ArrayCollection($extraSources);
+        $criteria = Criteria::create();
+        foreach ($matchValues as $matchProperty => $matchValue) {
+            $criteria->andWhere($criteria->expr()->eq($matchProperty, $matchValue));
+        }
+        $candidates = array_merge($candidates, $extraSourcesCollection->matching($criteria)->getValues());
+        $requiredLayerIdents = array();
+        foreach ($instance->getLayers() as $il) {
+            if ($layerIdent = $this->getReusableLayerIdent($il->getSourceItem())) {
+                $requiredLayerIdents[$layerIdent] = $il;
+            }
+        }
+        if (!$requiredLayerIdents) {
+            throw new \LogicException("Can't match WMS source instance with zero named layers");
+        }
+        foreach ($candidates as $index => $dbSourceCandidate) {
+            $candidateLayerIdents = array();
+            foreach ($dbSourceCandidate->getLayers() as $candidateLayer) {
+                if ($layerIdent = $this->getReusableLayerIdent($candidateLayer)) {
+                    $candidateLayerIdents[$layerIdent] = $candidateLayer;
+                }
+            }
+            if (array_diff(array_keys($requiredLayerIdents), array_keys($candidateLayerIdents))) {
+                unset($candidates[$index]);
+            } else {
+                // Filter props and layer structure match
+                // Rewrite SourceItem references on instance layers
+                foreach ($requiredLayerIdents as $layerIdent => $targetInstanceLayer) {
+                    /** @var WmsInstanceLayer $targetInstanceLayer */
+                    /** @var WmsLayerSource $sourceItem */
+                    $sourceItem = $candidateLayerIdents[$layerIdent];
+                    $targetInstanceLayer->setSourceItem($sourceItem);
+                    $ilParent = $targetInstanceLayer->getParent();
+                    $siParent = $sourceItem->getParent();
+                    do {
+                        if ($ilParent && !$siParent) {
+                            throw new \LogicException("Parent layer depth mismatch for target layer {$targetInstanceLayer->getTitle()}");
+                        }
+                        $ilParent->setSourceItem($siParent);
+                        $ilParent = $ilParent->getParent();
+                        $siParent = $siParent->getParent();
+                    } while ($ilParent);
+                }
+                $instance->setSource($dbSourceCandidate);
+                return $dbSourceCandidate;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Bake layer name and nesting depth for named layers
+     *
+     * @param WmsLayerSource $layer
+     * @return string|null
+     */
+    protected static function getReusableLayerIdent(WmsLayerSource $layer)
+    {
+        if ($name = $layer->getName()) {
+            $depth = 0;
+            $parent = $layer->getParent();
+            while ($parent) {
+                ++$depth;
+                $parent = $parent->getParent();
+            }
+            return "{$name}:{$depth}";
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -123,7 +219,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
             $getFeatureInfo->setHttpGet(!isset($data['url']) ? null : $data['url']);
             $source->setGetFeatureInfo($getFeatureInfo);
         }
-        $source->addLayer($this->rootLayerFromConfig($source, $data));
+        $this->rootLayerFromConfig($source, $data);
         return $source;
     }
 

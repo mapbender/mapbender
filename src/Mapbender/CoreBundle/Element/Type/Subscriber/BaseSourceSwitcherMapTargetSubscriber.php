@@ -39,6 +39,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
                     'auto_initialize' => false,
                     'options' => array(
                         'instances' => $baseSourceInstances,
+                        'choices_as_values' => true,
                     )
                 ));
             ;
@@ -56,7 +57,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
         foreach ($this->getMapLayersets($application, $mapId) as $layerset) {
             foreach ($layerset->getInstances() as $instance) {
                 if ($instance->isBasesource() && $instance->getEnabled()) {
-                    $instances[strval($instance->getId())] = $instance->getTitle();
+                    $instances[$instance->getTitle()] = strval($instance->getId());
                 }
             }
         }

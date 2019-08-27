@@ -43,6 +43,7 @@ class RepositoryController extends ApplicationControllerBase
     public function indexAction()
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('VIEW', $oid);
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
         /** @var Source[] $allSources */
         $allSources = $repository->findBy(array(), array('id' => 'ASC'));
@@ -51,9 +52,6 @@ class RepositoryController extends ApplicationControllerBase
         $reloadableIds = array();
         $typeDirectory = $this->getTypeDirectory();
         foreach ($allSources as $source) {
-            if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $source)) {
-                continue;
-            }
             $sources[] = $source;
             if ($typeDirectory->getRefreshSupport($source)) {
                 $reloadableIds[] = $source->getId();
@@ -156,12 +154,21 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function viewAction($sourceId)
     {
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$source->getManagertype()];
-        return $this->forward($manager['bundle'] . ":" . "Repository:view", array(
-            "id" => $source->getId(),
+        /** @var Source|null $source */
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        if (!$source) {
+            throw $this->createNotFoundException();
+        }
+
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$this->isGranted('VIEW', $oid)) {
+            $this->denyAccessUnlessGranted('VIEW', $source);
+        }
+        return $this->render($source->getViewTemplate(), array(
+            'source' => $source,
+            'title' => $source->getType() . ' ' . $source->getTitle(),
+            'wms' => $source,   // HACK: source name in legacy templates
+            'wmts' => $source,  // HACK: source name in legacy templates
         ));
     }
 
@@ -297,6 +304,7 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceAction($slug, $instanceId)
     {
+        /** @var SourceInstance|null $sourceInst */
         $sourceInst = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
@@ -308,7 +316,7 @@ class RepositoryController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 
         $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
+        $manager = $managers[$sourceInst->getSource()->getManagertype()];
 
         return $this->forward($manager['bundle'] . ":" . "Repository:instance", array(
             "slug" => $slug,

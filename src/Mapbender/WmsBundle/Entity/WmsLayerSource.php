@@ -9,7 +9,6 @@ use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Keyword;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
@@ -23,16 +22,12 @@ use Mapbender\WmsBundle\Component\Style;
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
+ *
+ * @property WmsSource $source
+ * @method WmsSource getSource
  */
 class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrlTarget
 {
-    /**
-     * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
     /**
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
@@ -52,10 +47,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @ORM\Column(type="string", nullable=true)
      */
     protected $name = null;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $title = "";
     /**
      * @ORM\Column(type="text", nullable=true)
      */
@@ -168,44 +159,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         $this->styles = array();
         $this->srs = array();
         $this->authority = array();
-    }
-
-    /**
-     * Sets an id
-     * @param integer $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSource(Source $wmssource)
-    {
-        $this->source = $wmssource;
-        return $this;
-    }
-
-    /**
-     * @return WmsSource
-     */
-    public function getSource()
-    {
-        return $this->source;
     }
 
     /**
@@ -928,11 +881,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    public function __toString()
-    {
-        return (string)$this->id;
     }
 
     /**

@@ -5,20 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Class HTMLElementAdminType
- * @package Mapbender\CoreBundle\Element\Type
- */
 class HTMLElementAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'htmlelement';
-    }
-
     /**
      * @inheritdoc
      */

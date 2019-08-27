@@ -125,6 +125,12 @@ class TypeDirectoryService implements SourceInstanceFactory
         return $this->getInstanceFactoryByType($data['type'])->fromConfig($data, $id);
     }
 
+    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
+    {
+        $implementation = $this->getInstanceFactoryByType($instance->getSource()->getType());
+        return $implementation->matchInstanceToPersistedSource($instance, $extraSources);
+    }
+
     /**
      * Adds (or replaces) the sub-services for a concrete sub-type of source instances. Each service type expects
      * two handling services

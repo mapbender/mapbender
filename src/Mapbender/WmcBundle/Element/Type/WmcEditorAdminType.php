@@ -15,21 +15,11 @@ class WmcEditorAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmceditor';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            array(
-                'application' => null
-            )
-        );
+        $resolver->setDefaults(array(
+            'application' => null,
+        ));
     }
 
     /**
@@ -37,30 +27,20 @@ class WmcEditorAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add(
-                'target',
-                'target_element',
-                array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false
-                )
-            )
-            ->add(
-                'width',
-                'integer',
-                array(
-                    'required' => false
-                )
-            )
-            ->add(
-                'height',
-                'integer',
-                array(
-                    'required' => false
-                )
-            );
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
+            ->add('target', 'target_element', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false,
+            ))
+            ->add('width', 'integer', array(
+                'required' => false,
+            ))
+            ->add('height', 'integer', array(
+                'required' => false,
+            ))
+        ;
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Paul Schmidt
  */
-class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollection
+class DimensionsHandlerAdminType extends AbstractType
 {
 
     /**
@@ -29,7 +29,6 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'element' => null,
         ));
     }
 

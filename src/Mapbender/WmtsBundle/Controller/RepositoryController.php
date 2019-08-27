@@ -4,12 +4,10 @@ namespace Mapbender\WmtsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * @ManagerRoute("/repository/wmts")
@@ -18,22 +16,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  */
 class RepositoryController extends Controller
 {
-    /**
-     * @ManagerRoute("{wmts}", methods={"GET"})
-     * @param WmtsSource $wmts
-     * @return Response
-     */
-    public function viewAction(WmtsSource $wmts)
-    {
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$this->isGranted('VIEW', $oid)) {
-            $this->denyAccessUnlessGranted('VIEW', $wmts);
-        }
-        return $this->render('@MapbenderWmts/Repository/view.html.twig', array(
-            "wmts" => $wmts,
-        ));
-    }
-
     /**
      * Edits, saves the WmtsInstance
      *

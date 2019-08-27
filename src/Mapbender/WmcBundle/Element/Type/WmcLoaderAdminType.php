@@ -14,18 +14,10 @@ class WmcLoaderAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmcloader';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -34,31 +26,37 @@ class WmcLoaderAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
-            ->add('keepSources', 'choice',
-                array(
+                'required' => false,
+            ))
+            ->add('keepSources', 'choice', array(
                 'required' => false,
                 'choices' => array(
-                    "no" => " no ",
-                    "basesources" => "BaseSources",
-                    "allsources" => "AllSources")))
+                    "no" => "no",
+                    "BaseSources" => "basesources",
+                    "AllSources" => "allsources",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('components', 'choice', array(
                 'multiple' => true,
                 'required' => true,
-                'preferred_choices' => array("loader"),
                 'choices' => array(
-                    "wmcidloader" => "Id Loader",
-                    "wmclistloader" => "From List Loader",
+                    "Id Loader" => "wmcidloader",
+                    "From List Loader" => "wmclistloader",
                 ),
+                'choices_as_values' => true,
             ))
             ->add('keepExtent', 'checkbox', array(
-                'required' => false));
+                'required' => false,
+                'label' => 'mb.wmc.admin.wmcloader.keep_extent',
+            ))
+        ;
     }
 
 }

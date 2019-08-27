@@ -6,9 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 
-/**
- * 
- */
 class WmsInstanceLayerType extends AbstractType
 {
 
@@ -25,51 +22,54 @@ class WmsInstanceLayerType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new FieldSubscriber($builder->getFormFactory());
+        $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
-        $builder->add('title', 'text',
-                      array(
-                    'required' => false))
-                ->add('active', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('selected', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('info', 'checkbox',
-                      array(
+        $builder
+            ->add('title', 'text', array(
                     'required' => false,
-                    'disabled' => true))
-                ->add('toggle', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('allowselected', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('allowinfo', 'checkbox',
-                      array(
-                    'required' => false,
-                    'disabled' => true))
-                ->add('allowtoggle', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('allowreorder', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('minScale', 'text',
-                      array(
-                    'required' => false))
-                ->add('maxScale', 'text',
-                      array(
-                    'required' => false))
-                ->add('style', 'choice',
-                      array(
-                    'label' => 'style',
-                    'choices' => array(),
-                    'required' => false))
-                ->add('priority', 'hidden',
-                      array(
-                    'required' => true));  
+            ))
+            ->add('active', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('selected', 'checkbox',
+                  array(
+                'required' => false))
+            ->add('info', 'checkbox',
+                  array(
+                'required' => false,
+                'disabled' => true))
+            ->add('toggle', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('allowselected', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('allowinfo', 'checkbox', array(
+                'required' => false,
+                'disabled' => true,
+            ))
+            ->add('allowtoggle', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('allowreorder', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('minScale', 'text',
+                  array(
+                'required' => false))
+            ->add('maxScale', 'text', array(
+                'required' => false,
+            ))
+            ->add('style', 'choice', array(
+                'label' => 'Style',
+                'choices' => array(),
+                'choices_as_values' => true,
+                'required' => false,
+            ))
+            ->add('priority', 'hidden', array(
+                'required' => true,
+            ))
+        ;
     }
 
 }

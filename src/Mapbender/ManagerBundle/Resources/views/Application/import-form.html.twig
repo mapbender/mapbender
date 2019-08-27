@@ -1,6 +1,6 @@
 {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
   <div>
-    {{ form_label(form.importFile) }}{{ form_widget(form.importFile) }}
+    {{ form_widget(form) }}
   </div>
   <div class="button-group">
     <input type="submit" value="{{ 'mb.manager.admin.application.import.btn.import' | trans }}" class="button"/>

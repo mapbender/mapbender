@@ -98,14 +98,6 @@ fieldset.box {
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
   .linkButton{display:inline-block;}
-  .leftContainer {
-    .inputWrapper, .dropdown {
-      margin-bottom:$space/2;
-    }
-    .inputWrapper input {
-      width: 100%;
-    }
-  }
   .extendedGroup {
     .on-off{
       border: solid 1px darken($contentColor,55%);
@@ -257,9 +249,16 @@ fieldset.box {
     margin-top: -5px;
   }
 
-  .labelText{
-    width:100px;
+  .labelText, label {
+    width: 4.5em;
     display:inline-block;
   }
-  .dropdown{min-width:130px !important;}
+  // also revert 100% set by .instanceTable... selector
+  .dropdown, .instanceTable tbody & .dropdown {
+    min-width: 130px;
+  }
+  // also revert 100% set by contentPane... selector
+  .dropdown, .contentPane > .content form & .dropdown {
+    width: auto;
+  }
 }

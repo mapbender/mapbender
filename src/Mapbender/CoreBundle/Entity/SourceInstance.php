@@ -59,9 +59,7 @@ abstract class SourceInstance
     protected $source;
 
     /**
-     * Returns an id
-     *
-     * @return integer id
+     * @return integer
      */
     public function getId()
     {
@@ -69,8 +67,16 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns a title
-     *
+     * @param integer $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -79,13 +85,13 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets a title
-     *
      * @param String $title
+     * @return $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -215,12 +221,6 @@ abstract class SourceInstance
     abstract public function getSource();
 
     /**
-     * Sets an id
-     * @param integer $id id
-     */
-    abstract public function setId($id);
-
-    /**
      *
      * @return SourceMetadata|null
      */
@@ -231,6 +231,6 @@ abstract class SourceInstance
      */
     public function __toString()
     {
-        return (string) $this->getId();
+        return (string)$this->getId();
     }
 }

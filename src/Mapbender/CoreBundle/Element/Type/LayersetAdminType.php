@@ -8,15 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Form\DataTransformer\ObjectIdTransformer;
 
-/**
- * 
- */
 class LayersetAdminType extends AbstractType
 {
-    /**
-     *
-     * @var type 
-     */
     protected $container;
 
     /**

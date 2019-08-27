@@ -31,7 +31,54 @@ window.Mapbender.WmsSource = (function() {
         // ... but we will not remember the following ~standard WMS params the same way
         _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
         createNativeLayers: function(srsName) {
+<<<<<<< HEAD
             return [Mapbender.mapEngine.createWmsLayer(this)];
+=======
+            var options = this.getNativeLayerOptions();
+            var params = this.getNativeLayerParams();
+            var url = this.configuration.options.url;
+            var name = this.title;
+            var olLayer = new OpenLayers.Layer.WMS(name, url, params, options);
+            this.nativeLayers = [olLayer];
+            return this.nativeLayers;
+        },
+        getNativeLayerOptions: function() {
+            var rootLayer = this.configuration.children[0];
+            var bufferConfig = this.configuration.options.buffer;
+            var ratioConfig = this.configuration.options.ratio;
+            var opts = {
+                isBaseLayer: false,
+                opacity: this.configuration.options.opacity,
+                visibility: this.configuration.options.visible,
+                singleTile: !this.configuration.options.tiled,
+                noMagic: true,
+                minScale: rootLayer.minScale,
+                maxScale: rootLayer.maxScale
+            };
+            if (!!((new Mapbender.Util.Url(this.configuration.options.url)).username)) {
+                opts.tileOptions = {
+                    crossOriginKeyword: 'use-credentials'
+                };
+            }
+            if (opts.singleTile) {
+                opts.ratio = parseFloat(ratioConfig) || 1.0;
+            } else {
+                opts.buffer = parseInt(bufferConfig) || 0;
+            }
+            return opts;
+        },
+        getNativeLayerParams: function() {
+            var params = $.extend({}, this.customParams, {
+                transparent: this.configuration.options.transparent,
+                format: this.configuration.options.format,
+                version: this.configuration.options.version
+            });
+            var exceptionFormatConfig = this.configuration.options.exception_format;
+            if (exceptionFormatConfig) {
+                params.exceptions = exceptionFormatConfig;
+            }
+            return params;
+>>>>>>> origin/master
         },
         addParams: function(params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {

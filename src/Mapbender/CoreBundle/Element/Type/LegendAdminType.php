@@ -5,19 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class LegendAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'legend';
-    }
 
     /**
      * @inheritdoc
@@ -25,7 +14,7 @@ class LegendAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -40,7 +29,10 @@ class LegendAdminType extends AbstractType
                 'required' => true,
                 'choices' => array(
                     "dialog" => "dialog",
-                    "blockelement" => "blockelement")))
+                    "blockelement" => "blockelement",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('autoOpen', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
@@ -49,7 +41,10 @@ class LegendAdminType extends AbstractType
                 array(
                 'required' => true,
                 'choices' => array(
-                    "list" => "list")))
+                    "list" => "list",
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -63,9 +58,6 @@ class LegendAdminType extends AbstractType
             ->add('showLayerTitle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showlayertitle',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('showGroupedLayerTitle', 'checkbox', array(
                 'required' => false,

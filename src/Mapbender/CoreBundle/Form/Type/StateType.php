@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StateType extends AbstractType
 {
@@ -13,6 +14,16 @@ class StateType extends AbstractType
     public function getName()
     {
         return 'state';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'label_attr' => array(
+                'class' => 'hidden',
+            ),
+            'compound' => true,
+        ));
     }
 
     /**
