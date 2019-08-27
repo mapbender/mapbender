@@ -171,7 +171,7 @@ class PrintClient extends Element
 
     public function getFrontendTemplateVars()
     {
-        $config = array_filter($this->entity->getConfiguration()) + array(
+        $config = $this->entity->getConfiguration() + array(
             'required_fields_first' => false,
             'type' => 'dialog',
         );

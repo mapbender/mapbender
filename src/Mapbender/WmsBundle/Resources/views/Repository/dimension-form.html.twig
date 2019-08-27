@@ -2,20 +2,20 @@
     <div class="row no-gutters">
         <div class="col-xs-3 col-md-2">{{ dim.vars.data.name | default('undefined') }}</div>
         <div class="col-xs-4 col-md-3">
-            {{ form_widget(dim.active) }}<label for="{{dim.active.vars.id}}" class="labelCheck" title="Active">active</label>
+            {{ form_row(dim.active) }}
         </div>
     </div>
 </div>
 <div id="dimension{{ num }}-content" class="on-off-content hidden" data-json="{{ dim.json.vars.data }}">
     <div class="row no-gutters">
         <div class="col-xs-3">
-            {{ form_widget(dim.multipleValues) }}<label for="{{dim.multipleValues.vars.id}}" class="labelCheck" title="multipleValues">multiple</label>
+            {{ form_row(dim.multipleValues) }}
         </div>
         <div class="col-xs-3">
-            {{ form_widget(dim.nearestValue) }}<label for="{{dim.nearestValue.vars.id}}" class="labelCheck" title="nearestValue">nearest</label>
+            {{ form_row(dim.nearestValue) }}
         </div>
         <div class="col-xs-3">
-            {{ form_widget(dim.current) }}<label for="{{dim.current.vars.id}}" class="labelCheck" title="current">current</label>
+            {{ form_row(dim.current) }}
         </div>
     </div>
     {{ form_row(dim.name) }}
@@ -24,8 +24,7 @@
     {% if dim.default is defined %}
         {{ form_row(dim.default) }}
     {% endif %}
-
-    <label for="{{dim.extentEdit.vars.id}}" class="labelInput" title="Extent">Extent</label>{{ form_widget(dim.extentEdit) }}
+    {{ form_row(dim.extentEdit) }}
     <div class="dimension-type">{{ form_widget(dim.type) }}</div>
     <div class="dimension-exent">{{ form_widget(dim.extent) }}</div>
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>

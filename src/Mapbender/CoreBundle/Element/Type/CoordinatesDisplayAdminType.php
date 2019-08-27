@@ -5,20 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class CoordinatesDisplayAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'coordinatesdisplay';
-    }
-
     /**
      * @inheritdoc
      */
@@ -42,9 +30,15 @@ class CoordinatesDisplayAdminType extends AbstractType
                     'left-top' => 'left-top',
                     'left-bottom' => 'left-bottom',
                     'right-top' => 'right-top',
-                    'right-bottom' => 'right-bottom')))
+                    'right-bottom' => 'right-bottom',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('numDigits', 'integer', array('required' => true))
-            ->add('label', 'checkbox', array('required' => false))
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.corrdsdisplay.label', // sic
+            ))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',

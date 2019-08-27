@@ -6,27 +6,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * RedliningAdminType class
- */
 class RedliningAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'redlining';
-    }
-
     /**
      * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -35,24 +23,40 @@ class RedliningAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('target', 'target_element', array(
+        $builder
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
             ->add('display_type', 'choice', array(
                 'required' => true,
-                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
-            ->add('auto_activate', 'checkbox', array('required' => false))
-            ->add('deactivate_on_close', 'checkbox', array('required' => false))
+                'choices' => array(
+                    'Dialog' => 'dialog',
+                    'Element' => 'element',
+                ),
+                'choices_as_values' => true,
+            ))
+            ->add('auto_activate', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.redlining.label.auto_activate',
+            ))
+            ->add('deactivate_on_close', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.redlining.label.deactivate_on_close',
+            ))
             ->add('geometrytypes', 'choice', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    'point' => 'Point',
-                    'line' => 'Line',
-                    'polygon' => 'Polygon',
-                    'rectangle' => 'Rectangle',
-                    'text' => 'Text')));
+                    'Point' => 'point',
+                    'Line' => 'line',
+                    'Polygon' => 'polygon',
+                    'Rectangle' => 'rectangle',
+                    'Text' => 'text',
+                ),
+                'choices_as_values' => true,
+            ))
+        ;
     }
 }

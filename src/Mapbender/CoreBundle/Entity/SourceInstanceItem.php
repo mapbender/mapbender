@@ -1,48 +1,107 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
+ * @ORM\MappedSuperclass
  *
  * @author Paul Schmidt
  */
 abstract class SourceInstanceItem
 {
     /**
-     *
-     * @var SourceInstance a source instance
+     * @var integer $id
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var SourceInstance
      */
     protected $sourceInstance;
 
     /**
-     *
      * @var SourceItem
      */
     protected $sourceItem;
 
     /**
-     * Set SourceInstance
-     * @param SourceInstance $sourceInstance Source instance
-     * @return SourceInstanceItem
+     * @ORM\Column(type="string", nullable=true)
      */
-    public abstract function setSourceInstance(SourceInstance $sourceInstance);
+    protected $title;
 
     /**
-     * Get SourceInstance
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param integer $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @return SourceInstance
      */
-    public abstract function getSourceInstance();
+    public function getSourceInstance()
+    {
+        return $this->sourceInstance;
+    }
 
     /**
-     * Get SourceItem
-     *
+     * @param SourceInstance $sourceInstance
+     * @return $this
+     */
+    public function setSourceInstance(SourceInstance $sourceInstance = NULL)
+    {
+        $this->sourceInstance = $sourceInstance;
+        return $this;
+    }
+
+    /**
      * @return SourceItem
      */
-    public abstract function getSourceItem();
+    public function getSourceItem()
+    {
+        return $this->sourceItem;
+    }
 
     /**
-     * Set SourceInstance
      * @param SourceItem $sourceItem the source item
-     * @return SourceInstanceItem
+     * @return $this
      */
-    public abstract function setSourceItem(SourceItem $sourceItem);
+    public function setSourceItem(SourceItem $sourceItem)
+    {
+        $this->sourceItem = $sourceItem;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
 }

@@ -14,6 +14,7 @@ use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -60,7 +61,7 @@ class WmsSourceService extends SourceService
         return array(
             'url' => $this->getUrlOption($sourceInstance),
             'opacity' => ($sourceInstance->getOpacity() / 100),
-            'proxy' => $sourceInstance->getProxy(),
+            'proxy' => $this->useProxy($sourceInstance),
             'visible' => $sourceInstance->getVisible(),
             'version' => $sourceInstance->getSource()->getVersion(),
             'format' => $sourceInstance->getFormat(),
@@ -187,14 +188,13 @@ class WmsSourceService extends SourceService
      */
     public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
     {
-        $vsHandler = new VendorSpecificHandler();
-        if ($sourceInstance->getSource()->getUsername() || $vsHandler->hasHiddenParams($sourceInstance)) {
+        if ($this->useTunnel($sourceInstance)) {
             $url = $this->urlProcessor->getPublicTunnelBaseUrl($sourceInstance);
             $configuration['options']['url'] = $url;
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
         } else {
-            if ($sourceInstance->getProxy()) {
+            if ($this->useProxy($sourceInstance)) {
                 $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
                 $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0]);
             } else {
@@ -215,6 +215,16 @@ class WmsSourceService extends SourceService
     public function getUrlOption(WmsInstance $sourceInstance)
     {
         $url = $sourceInstance->getSource()->getGetMap()->getHttpGet();
+        if (!$this->useTunnel($sourceInstance)) {
+            // WmsLoader special: public username + password transmission
+            $originUrl = $sourceInstance->getSource()->getOriginUrl();
+            $originHasCredentials = !!\parse_url($originUrl, PHP_URL_USER);
+            $getMapHasCredentials = !!\parse_url($url, PHP_URL_USER);
+            if ($originHasCredentials && !$getMapHasCredentials) {
+                $origin = new WmsOrigin($originUrl, null, null);
+                $url = UrlUtil::addCredentials($url, $origin->getUsername(), $origin->getPassword(), true);
+            }
+        }
         $userToken = $this->tokenStorage->getToken();
         $vsHandler = new VendorSpecificHandler();
         $params = $vsHandler->getPublicParams($sourceInstance, $userToken);
@@ -316,8 +326,35 @@ class WmsSourceService extends SourceService
      */
     public function useTunnel(SourceInstance $sourceInstance)
     {
-        /** @var WmsInstance $sourceInstance */
-        return !!$sourceInstance->getSource()->getUsername();
+        if ($sourceInstance->getLayerset()) {
+            /** @var WmsInstance $sourceInstance */
+            $vsHandler = new VendorSpecificHandler();
+            return (!!$sourceInstance->getSource()->getUsername()) || $vsHandler->hasHiddenParams($sourceInstance);
+        } else {
+            // no layerset, dynamically added (~WmsLoader)
+            return false;
+        }
+    }
+
+    /**
+     * @param SourceInstance $sourceInstance
+     * @return bool
+     */
+    public function useProxy(SourceInstance $sourceInstance)
+    {
+        if ($this->useTunnel($sourceInstance)) {
+            return false;
+        } else {
+            if ($sourceInstance->getSource()->getUsername() && !$sourceInstance->getLayerset()) {
+                // WmsLoader special: proxify url with embedded credentials to bypass browser
+                // filtering of basic auth in img tags.
+                // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
+                return true;
+            } else {
+                /** @var WmsInstance $sourceInstance */
+                return $sourceInstance->getProxy();
+            }
+        }
     }
 
     public function getAssets(Application $application, $type)

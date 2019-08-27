@@ -101,6 +101,7 @@ class ProvideBrandingPass implements CompilerPassInterface
             // history of mapbender-starter
             // hint: git log -p parameters.yml.dist | grep -P '^[+-]\s*server_logo:' | awk '{print $3}' | sort -u
             'bundles/mapbendercore/image/logo_mb3.png',
+            'bundles/mapbendercore/image/logo_mb.png',
             'bundles/mapbendercore/image/mapbender-logo.png',
             'bundles/web/mapbendermanager/logo.png',
         );

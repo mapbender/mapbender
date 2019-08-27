@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Element\EventListener;
 use Mapbender\CoreBundle\Element\Type\LayerThemeType;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
@@ -14,20 +13,14 @@ use Symfony\Component\Form\FormEvents;
  */
 class LayertreeSubscriber implements EventSubscriberInterface
 {
-
-    /** @var FormFactoryInterface */
-    private $factory;
-
     /** @var Application */
     private $application;
 
     /**
-     * @param FormFactoryInterface $factory
      * @param Application $application
      */
-    public function __construct(FormFactoryInterface $factory, $application)
+    public function __construct($application)
     {
-        $this->factory = $factory;
         $this->application = $application;
     }
 
@@ -61,15 +54,16 @@ class LayertreeSubscriber implements EventSubscriberInterface
         $data["themes"] = $themesAll;
         $event->setData($data);
         if ($themesData) {
-            $form->add($this->factory->createNamed('themes', 'collection', $themesData, array(
+            $form->add('themes', 'collection', array(
                 'label' => 'mb.core.admin.layertree.label.themes',
+                'data' => $themesData,
                 'required' => false,
                 'type' => new LayerThemeType(),
                 'auto_initialize' => false,
                 'label_attr' => array(
                     'class' => 'left',
                 ),
-            )));
+            ));
         }
     }
 

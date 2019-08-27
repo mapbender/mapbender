@@ -26,6 +26,7 @@
             <argument>%wms.default_layer_order%</argument>
         </service>
         <service id="mapbender.source.wms.instance_factory" class="%mapbender.source.wms.instance_factory.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument>%wms.default_layer_order%</argument>
         </service>
         <!-- servicy form type for wms instances; required to inject other services / params -->

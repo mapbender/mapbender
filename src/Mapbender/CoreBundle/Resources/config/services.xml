@@ -22,6 +22,7 @@
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
+        <parameter key="mapbender.sqlite_connection_listener.class">Mapbender\CoreBundle\Component\EventListener\SqliteConnectionListener</parameter>
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
         <parameter key="mapbender.strict.asset.bundle_scopes">%mapbender.strict%</parameter>
@@ -206,6 +207,9 @@
         </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
+        </service>
+        <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
+            <tag name="doctrine.event_listener" event="postConnect" />
         </service>
     </services>
 </container>

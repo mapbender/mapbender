@@ -5,27 +5,16 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- *
- */
 class SearchRouterFormType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'search_form';
-    }
-
     /**
      * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'fields' => array()));
+            'fields' => array(),
+        ));
     }
 
     private function escapeName($name)

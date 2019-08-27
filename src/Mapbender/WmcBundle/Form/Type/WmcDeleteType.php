@@ -4,8 +4,6 @@ namespace Mapbender\WmcBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-//use Symfony\Component\Form\FormBuilder;
-
 class WmcDeleteType extends AbstractType
 {
 

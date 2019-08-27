@@ -116,27 +116,6 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Set id
-     * @param integer $id
-     * @return WmsInstance
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
      * Returns dimensions
      *
      * @return DimensionInst[]
@@ -216,28 +195,6 @@ class WmsInstance extends SourceInstance
             }
         }
         return null;
-    }
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return WmsInstance
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -525,11 +482,6 @@ class WmsInstance extends SourceInstance
     public function removeLayer(WmsInstanceLayer $layers)
     {
         return $this->layers->removeElement($layers);
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getId();
     }
 
     /**

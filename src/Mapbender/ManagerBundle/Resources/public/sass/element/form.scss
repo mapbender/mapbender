@@ -97,6 +97,9 @@
     height: 100px;
     margin-bottom: $space;
   }
+  .inputWrapper textarea {
+    margin-bottom: 0;
+  }
 }
 
 .collectionRemove {

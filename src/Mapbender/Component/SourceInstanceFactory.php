@@ -21,4 +21,15 @@ interface SourceInstanceFactory
      * @return SourceInstance
      */
     public function fromConfig(array $data, $id);
+
+    /**
+     * Swaps an ephemeral Source (plus layers) on a SourceInstance for an already db-persisted Source.
+     * This is used when importing YAML-defined applications to db, to avoid persisting duplicate equivalent
+     * Source entities.
+     *
+     * @param SourceInstance $instance
+     * @param Source[] $extraSources
+     * @return Source|null
+     */
+    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources);
 }

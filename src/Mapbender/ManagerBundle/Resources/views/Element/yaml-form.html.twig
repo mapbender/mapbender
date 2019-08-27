@@ -2,8 +2,5 @@
     <div class="messageBox hint">
       {{ "mb.manager.element.yaml.message" | trans | raw }}
     </div>
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration) }}{{ form_widget(form.configuration) }}
-    <div class="clearContainer"></div>
+    {{ form_rest(form) }}
 </div>

@@ -5,13 +5,5 @@
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.tooltip) }}
     {{ form_row(form.configuration.icon) }}
-    {{ form_row(form.configuration.target) }}
-    {{ form_row(form.configuration.average) }}
-    {{ form_row(form.configuration.refreshinterval) }}
-    {{ form_row(form.configuration.follow) }}
-    <div class="clearContainer"></div>
-    {{ form_row(form.configuration.centerOnFirstPosition) }}
-    <div class="clearContainer"></div>
-    {{ form_row(form.configuration.zoomToAccuracyOnFirstPosition) }}
-    <div class="clearContainer"></div>
+    {{ form_rest(form.configuration) }}
 </div>

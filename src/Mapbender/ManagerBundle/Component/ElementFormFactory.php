@@ -4,7 +4,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
@@ -77,6 +76,7 @@ class ElementFormFactory
         }
         if ($configurationType === null) {
             $configurationType = $this->getFallbackConfigurationFormType($element);
+            unset($options['application']);
             $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
         } else {
             $twigTemplate = $componentClassName::getFormTemplate();

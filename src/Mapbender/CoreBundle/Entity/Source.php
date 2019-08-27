@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
 /**
  * Source entity
@@ -14,8 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
+ * @ORM\HasLifecycleCallbacks()
  */
-abstract class Source
+abstract class Source implements MutableHttpOriginInterface
 {
 
     /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
@@ -64,11 +66,6 @@ abstract class Source
      */
     protected $type;
     
-    /**
-     * @var string source identifier
-     */
-    protected $identifier;
-
     public function __construct()
     {
     }
@@ -214,19 +211,6 @@ abstract class Source
     }
 
     /**
-     * Returns the source identifier
-     * @return string source indetifier
-     */
-    abstract public function getIdentifier();
-
-    /**
-     * Sets  the source identifier
-     * @param string $identifier the source identifier
-     * @return Source the source
-     */
-    abstract public function setIdentifier($identifier);
-
-    /**
      * Returns a Source as String
      *
      * @return String Source as String
@@ -270,5 +254,22 @@ abstract class Source
     public function getManagertype()
     {
         return strtolower($this->getType());
+    }
+
+    /**
+     * @return string
+     */
+    abstract public function getViewTemplate();
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if (!$this->type) {
+            // Ancient db (Mapbender 3.0.4); amend missing value
+            @trigger_error("WARNING: Missing type value on " . get_class($this) . "#{$this->id}, assuming WMS");
+            $this->setType(self::TYPE_WMS);
+        }
     }
 }

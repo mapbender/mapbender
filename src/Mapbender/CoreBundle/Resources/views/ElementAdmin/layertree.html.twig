@@ -1,39 +1,42 @@
 <div class="elementForm elementFormLayerTree">
-    <div class="left">
-        {{ form_row(form.configuration.showBaseSource) }}
+    <div>
+        <div class="left">
+            {{ form_row(form.configuration.showBaseSource) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.showHeader) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.autoOpen) }}
+        </div>
+        <div class="clearContainer"></div>
     </div>
-    <div class="left">
-        {{ form_row(form.configuration.showHeader) }}
-    </div>
-    <div class="left">
-        {{ form_row(form.configuration.autoOpen) }}
-    </div>
-    <div class="clearContainer"></div>
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.target) }}
     {{ form_row(form.configuration.type) }}
     {{ form_row(form.configuration.menu) }}
-    <div class="left">
-        {{ form_row(form.configuration.hideNotToggleable) }}
+    <div>
+        <div class="left">
+            {{ form_row(form.configuration.hideNotToggleable) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.hideSelect) }}
+        </div>
+        <div class="left">
+            {{ form_row(form.configuration.hideInfo) }}
+        </div>
+        <div class="clearContainer"></div>
     </div>
-    <div class="left">
-        {{ form_row(form.configuration.hideSelect) }}
-    </div>
-    <div class="left">
-        {{ form_row(form.configuration.hideInfo) }}
-    </div>
-    <div class="clearContainer"></div>
-    <div class="left">
-        {{ form_row(form.configuration.useTheme) }}
-    </div>
-    <div class="clearContainer"></div>
+    {{ form_row(form.configuration.useTheme) }}
     {% if form.configuration.themes is defined %}
-      {{ form_label(form.configuration.themes) }}
-      <table id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
-      {% for theme in form.configuration.themes %}
-        {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
-      {% endfor %}
-      </table>
-      <div class="clearContainer"></div>
+        <div>
+          {{ form_label(form.configuration.themes) }}
+          <table id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
+          {% for theme in form.configuration.themes %}
+            {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
+          {% endfor %}
+          </table>
+          <div class="clearContainer"></div>
+        </div>
     {% endif %}
 </div>

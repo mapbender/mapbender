@@ -5,20 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- *
- */
 class FeatureInfoAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'featureinfo';
-    }
-
     /**
      * @inheritdoc
      */
@@ -38,15 +26,37 @@ class FeatureInfoAdminType extends AbstractType
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('type', 'choice', array(
                 'required' => true,
-                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
+                'choices' => array(
+                    'Dialog' => 'dialog',
+                    'Element' => 'element',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('displayType', 'choice', array(
                 'required' => true,
-                'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
-            ->add('autoActivate', 'checkbox', array('required' => false))
+                'choices' => array(
+                    'Tabs' => 'tabs',
+                    'Accordion' => 'accordion',
+                ),
+                'choices_as_values' => true,
+            ))
+            ->add('autoActivate', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.autoopen',
+            ))
             ->add('printResult', 'checkbox', array('required' => false))
-            ->add('deactivateOnClose', 'checkbox', array('required' => false))
-            ->add('showOriginal', 'checkbox', array('required' => false))
-            ->add('onlyValid', 'checkbox', array('required' => false))
+            ->add('deactivateOnClose', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.deactivateonclose',
+            ))
+            ->add('showOriginal', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.showoriginal',
+            ))
+            ->add('onlyValid', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],

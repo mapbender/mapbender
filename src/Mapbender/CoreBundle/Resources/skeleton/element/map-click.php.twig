@@ -25,7 +25,7 @@ class {{ className }} extends Button
 
     public static function getDefaultConfiguration()
     {
-        return array_replace(parent::getDefaultConfiguration, array(
+        return array_replace(parent::getDefaultConfiguration(), array(
             'label' => true,
             'icon' => 'iconPoi',
         ));

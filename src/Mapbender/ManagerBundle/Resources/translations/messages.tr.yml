@@ -1,255 +1,254 @@
 mb:
   application:
     create:
-      success: 'Uygulama oluşturuldu.' #Your application has been created.
+      success: 'Uygulama oluşturuldu.'
       failure:
-        create.directory: 'Dizin oluşturulamıyor.' #Application directory can't be created.
+        create.directory: 'Dizin oluşturulamıyor.'
     save:
-      success:  'Uygulama kaydedildi.' #Your application has been saved.
+      success:  'Uygulama kaydedildi.'
       failure:
-        general: 'Uygulamayı kaydederken bir hata oluştu.' #There was an error trying to save your application.
-        create.directory: 'Uygulama güncellendi, ancak uygulamanın dizinleri oluşturulamadı.' 
-                          #Your application has been updated but the application's directories can not be created.
+        general: 'Uygulamayı kaydederken bir hata oluştu.'
+        create.directory: 'Uygulama güncellendi, ancak uygulamanın dizinleri oluşturulamadı.'
     remove:
-      success: 'Uygulama silindi.' #Your application has been deleted.
+      success: 'Uygulama silindi.'
       failure:
-        general: 'Uygulama silinemiyor.' #Your application couldn't be deleted.
-        already.removed:  'Uygulama bulunamadı.' #Your application has been already deleted.
-        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.'                           #Your application has been deleted but the application's directories can not be removed.
+        general: 'Uygulama silinemiyor.'
+        already.removed:  'Uygulama bulunamadı.'
+        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.'
   layerset:
     create:
-      success: 'Katman oluşturuldu.' #Your layerset has been created.
+      success: 'Katman oluşturuldu.'
       failure:
-        unique.title: 'Bu Katman-ismi zaten var.' #Layerset title is already used.
+        unique.title: 'Bu Katman-ismi zaten var.'
     remove:
-      success: 'Katman silindi.' #Your layerset has been deleted.
-      failure: 'Katman silinemiyor.' #Your layerset can't be deleted.
+      success: 'Katman silindi.'
+      failure: 'Katman silinemiyor.'
   source:
     instance:
       create:
-        success: 'Yeni bir örnek oluşturuldu, lütfen düzenleyin.' #A new instance has been created. Please edit it.
+        success: 'Yeni bir örnek oluşturuldu, lütfen düzenleyin.'
   manager:
     admin:
-      sources: 'Kaynaklar' #Sources
+      sources: 'Kaynaklar'
       source:
-        add: 'Kaynak ekle' #'Add source'
-        show_metadata: 'Üstverileri göster (Metadata)' #'Show metadata'
-        delete: 'Kaynaği sil' #'Delete source'
+        add: 'Kaynak ekle'
+        show_metadata: 'Üstverileri göster (Metadata)'
+        delete: 'Kaynaği sil'
         new:
-          add: 'Kaynak ekle' #'Add source'
-        valid: 'Geçerli kaynak' #'Source valid'
-        notvalid: 'Kaynak geçerli değil' #'Source not valid.'
-        no_source: 'Kaynak yok' #'No source available'
-        update: 'Kaynağı güncelle' #'Update source'
+          add: 'Kaynak ekle'
+        valid: 'Geçerli kaynak'
+        notvalid: 'Kaynak geçerli değil'
+        no_source: 'Kaynak yok'
+        update: 'Kaynağı güncelle'
         status:
-          ok: 'Geçerli Kaynak' #'Source OK'
-          toupdate: 'Kaynak artık mevcut değil' #'Source not current anymore'
-          unreachable: 'Kaynağa erişilemiyor' #'Source unreachable'
+          ok: 'Geçerli Kaynak'
+          toupdate: 'Kaynak artık mevcut değil'
+          unreachable: 'Kaynağa erişilemiyor'
       map:
-        max_extent: 'Maks. kapsam' #'Max. extent'
-        start_extent: 'Baslangıç kapsamı' #'Start extent'
+        max_extent: 'Maks. kapsam'
+        start_extent: 'Baslangıç kapsamı'
       element:
         delete:
-          title: 'Öğe sil' #'Delete Element'
-          confirm: 'Öğe silinsin mi?' #'Do you really want to delete the element?'
+          title: 'Öğe sil'
+          confirm: 'Öğe silinsin mi?'
         btn:
-          delete: 'Sil' #Delete
-          cancel: 'Vazgeç' #Cancel
-        requirements: 'Zorunlu alanlar koyu renkli etiketlerle, isteğe bağlı alanlar ise daha açık renkli etiketlerle işaretlenir.'                     #'Required fields are marked with dark labels, while optional fields have lighter labels.'
-        base_data: 'Temel veriler' #'Base data'
-        configuration: 'Yapılandırma' #Configuration
-        title: 'Başlık' #Title
-        type: 'Öğe tipi' #Type
-        add: 'Yeni bir öğe oluştur' #'Add a new element to'
-        show_hide: 'Geçiş gösterme/gizleme öğesi' #'Toggle show/hide element'
-        edit: 'Öğe düzenle' #'Edit element'
+          delete: 'Sil'
+          cancel: 'Vazgeç'
+        requirements: 'Zorunlu alanlar koyu renkli etiketlerle, isteğe bağlı alanlar ise daha açık renkli etiketlerle işaretlenir.'
+        base_data: 'Temel veriler'
+        configuration: 'Yapılandırma'
+        title: 'Başlık'
+        type: 'Öğe tipi'
+        add: 'Yeni bir öğe oluştur'
+        show_hide: 'Geçiş gösterme/gizleme öğesi'
+        edit: 'Öğe düzenle'
         no_element_added:
-          '': 'Öğe eklenmedi' #'No element added'
+          '': 'Öğe eklenmedi'
       zoombar:
-        draggable: 'Sürüklenebilir' #Draggable
+        draggable: 'Sürüklenebilir'
       filter:
-        source: 'Kaynak filtrele' #'Filter source'
-        layerset: 'Katman filtrele' #'Filter layerset'
-        application: 'Uygulama filtrele' #'Filter application'
+        source: 'Kaynak filtrele'
+        layerset: 'Katman filtrele'
+        application: 'Uygulama filtrele'
       overview:
-        maximize: 'Maksimuma çıkarma' #Maximize
-        fix: 'Sabit' #Fix
+        maximize: 'Maksimuma çıkarma'
+        fix: 'Sabit'
       layerset:
-        add: 'Katman ekle' #'Add layerset'
-        title: 'Başlık' #Title
-        type:  'Tip' #Type
-        edit: 'Katmanı düzenle' #'Edit layerset'
+        add: 'Katman ekle'
+        title: 'Başlık'
+        type:  'Tip'
+        edit: 'Katmanı düzenle'
         delete:
-          title: 'Katmanı sil' #'Delete layerset'
-          confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'                  #'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id (Kimlik) KaynakId/ÖrnekId (SourceId/InstanceId) şeklinde oluşturulur' #'Id in the form of SourceId/InstanceId'
-        id: 'Kimlik' #Id
+          title: 'Katmanı sil'
+          confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'
+        id_description: 'Id (Kimlik) KaynakId/ÖrnekId (SourceId/InstanceId) şeklinde oluşturulur'
+        id: 'Kimlik'
       instance:
-        add: 'Örnek ekle' #'Add instance'
-        show_hide: 'Örneği göster/gizle' #'Toggle show/hide instance'
-        edit: 'Örneği düzenle' #'Edit instance'
+        add: 'Örnek ekle'
+        show_hide: 'Örneği göster/gizle'
+        edit: 'Örneği düzenle'
         delete:
-          title: 'Örneği sil' #'delete instance'
-          confirm: #'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Örnek oluşturlamadı' #'No instance added'
-        no_layer_added: 'Katman eklenmedi' #'No layer added'
-      template: 'Şablon(Kalıp)' #Template
+          title: 'Örneği sil'
+          confirm:
+        no_instance_added: 'Örnek oluşturlamadı'
+        no_layer_added: 'Katman eklenmedi'
+      template: 'Şablon(Kalıp)'
       application:
-        view: 'Görünüm' #View
+        view: 'Görünüm'
         edit:
-          title: 'Uygulamayı düzenle' #'Edit application'
-          base_data: 'Temel veriler' #'Base data'
-        layouts: 'Düzenler' #Layouts
-        layersets: 'Katmanlar' #Layersets
+          title: 'Uygulamayı düzenle'
+          base_data: 'Temel veriler'
+        layouts: 'Düzenler'
+        layersets: 'Katmanlar'
         custom_css: CSS
         security:
-          title: 'Güvenlik' #Security
-          add_users_groups: 'Kullanıcı ve Grup ekle' #'Add users and groups'
-          public: 'Aktif' #activated
-        save: 'Kaydet' #Save
-        cancel: 'Vazgeç' #Cancel
-        view_this: 'Bu uygulamayı görüntüle' #'View this application'
-        duplicate: 'Uygulamayı çoğaltın' #'Duplicate application'
+          title: 'Güvenlik'
+          add_users_groups: 'Kullanıcı ve Grup ekle'
+          public: 'Aktif'
+        save: 'Kaydet'
+        cancel: 'Vazgeç'
+        view_this: 'Bu uygulamayı görüntüle'
+        duplicate: 'Uygulamayı çoğaltın'
         public:
-          on_off: 'Yayını aç/kaldır' #'Toggle publish/unpublish application'
-        delete: 'Uygulamayı sil' #'Delete application'
-        no_application: 'Uygulama bulunamadı' #'No application available'
+          on_off: 'Yayını aç/kaldır'
+        delete: 'Uygulamayı sil'
+        no_application: 'Uygulama bulunamadı'
         new:
-          title: 'Uygulama oluştur' #'Create application'
-          base_data: 'Temel veriler' #'Base data'
-        create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."                   #"Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
+          title: 'Uygulama oluştur'
+          base_data: 'Temel veriler'
+        create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."
         btn:
-          create: 'Oluştur' #Create
-          cancel: 'Vazgeç' #Cancel
+          create: 'Oluştur'
+          cancel: 'Vazgeç'
         upload:
-          button: 'Veri seç' #'Select file:'
-          label: 'Veri seçilmedi' #'No file selected'
-          tooltip: 'Ekran görüntüsü yüklemek için tıklayın' #'Please click to upload a screenshot'
+          button: 'Veri seç'
+          label: 'Veri seçilmedi'
+          tooltip: 'Ekran görüntüsü yüklemek için tıklayın'
         export:
-          addAcl: 'Erisim kontrolü (ACLs)' #ACLs
-          addSources: 'Kaynak' #Sources
+          addAcl: 'Erisim kontrolü (ACLs)'
+          addSources: 'Kaynak'
           btn:
-            export: 'Dışa aktar (Export)' #Export
-            cancel: 'Vazgeç' #Cancel
+            export: 'Dışa aktar (Export)'
+            cancel: 'Vazgeç'
         import:
-          addApplications: 'Uygulama oluştur' #Create Application
-          addAcl: 'Erisim kontrolü (ACLs)' #ACLs
-          addSources: 'Kaynaklar' #Sources
+          addApplications: 'Uygulama oluştur'
+          addAcl: 'Erisim kontrolü (ACLs)'
+          addSources: 'Kaynaklar'
           btn:
-            import: 'İçe aktar (Import)' #Import
-            cancel: 'Vazgeç' #Cancel
-        title: 'Başlık' #Title
+            import: 'İçe aktar (Import)'
+            cancel: 'Vazgeç'
+        title: 'Başlık'
         url:
-          title: 'URL Başlık' #'URL Title'
-        description: 'Açıklama' #Description
-        template: 'Şablon(Kalıp)' #Template
-      applications: 'Uygulamalar' #Applications
+          title: 'URL Başlık'
+        description: 'Açıklama'
+        template: 'Şablon(Kalıp)'
+      applications: 'Uygulamalar'
     managerbundle:
-      applications: 'Uygulamalar' #Applications
-      new_application: 'Uygulama oluştur' #'Application'
-      sources: 'Kaynaklar' #Sources
-      add_source: 'Kaynak ekle' #'Add source'
-      add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle' #'Add users and groups'
+      applications: 'Uygulamalar'
+      new_application: 'Uygulama oluştur'
+      sources: 'Kaynaklar'
+      add_source: 'Kaynak ekle'
+      add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle'
       acl_element: 'Acl element'
-      import_application: 'İçe aktarım (Import)' #Import
-      export_application: 'Dışa aktarım (Export)' #Export
+      import_application: 'İçe aktarım (Import)'
+      export_application: 'Dışa aktarım (Export)'
     element:
       yaml:
-        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'                #'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
+        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
     be:
       element:
-        delete: 'Öğe sil %element_title%' #'Delete element ' '%element_title%'
+        delete: 'Öğe sil %element_title%'
     components:
       popup:
         add_element:
-          title: 'Öğe ekle' #'Add element'
+          title: 'Öğe ekle'
           btn:
-            ok: 'Ekle' #Ok
-            cancel: 'Vazgeç' #Cancel
-            back: 'Geri git' #Back
+            ok: 'Ekle'
+            cancel: 'Vazgeç'
+            back: 'Geri git'
         edit_element:
-          title: 'Öğeyi düzenle' #'Edit element'
+          title: 'Öğeyi düzenle'
           btn:
-            ok: 'Güncelle' #Update
-            cancel: 'Vazgeç' #Cancel
+            ok: 'Güncelle'
+            cancel: 'Vazgeç'
         delete_element:
-          subtitle: 'Öğe' #element
-          title: 'Silme işlemini onayla' #'Confirm delete'
+          subtitle: 'Öğe'
+          title: 'Silme işlemini onayla'
           btn:
-            ok: 'Sil' #Delete
-            cancel: 'Vazgeç' #Cancel
+            ok: 'Sil'
+            cancel: 'Vazgeç'
         add_edit_layerset:
-          title_edit: 'Katman düzenle' #'Edit layerset'
-          title_add: 'Katman ekle' #'Add layerset'
+          title_edit: 'Katman düzenle'
+          title_add: 'Katman ekle'
           btn:
-            ok: 'Ekle' #Ok
-            cancel: 'Vazgeç' #Cancel
+            ok: 'Ekle'
+            cancel: 'Vazgeç'
         delete_layerset:
-          title: 'Katmanı sil' #'Delete layerset'
+          title: 'Katmanı sil'
           btn:
-            ok: 'Sil' #Delete
-            cancel: 'Vazgeç' #Cancel
+            ok: 'Sil'
+            cancel: 'Vazgeç'
         add_instance:
-          title: 'Kaynak seç' #'Select source'
+          title: 'Kaynak seç'
           btn:
-            cancel: 'Vazgeç' #Cancel
+            cancel: 'Vazgeç'
         delete_instance:
-          title: 'Silme işlemini onayla' #'Confirm delete'
+          title: 'Silme işlemini onayla'
           btn:
-            ok: 'Sil' #Delete
-            cancel: 'Vazgeç' #Cancel
+            ok: 'Sil'
+            cancel: 'Vazgeç'
         element_acl:
           btn:
-            cancel: 'Vazgeç' #Cancel
-            ok: 'Güncelle' #Update
-            add: 'Ekle' #Add
-            back: 'Geri git' #Back
-            remove: 'Kaldır' #Remove
+            cancel: 'Vazgeç'
+            ok: 'Güncelle'
+            add: 'Ekle'
+            back: 'Geri git'
+            remove: 'Kaldır'
     template:
       region:
         tabs:
-          label: 'Sekmeler' #Tabs
+          label: 'Sekmeler'
         accordion:
-          label: 'Akordiyon' #Accordion
+          label: 'Akordiyon'
     upload:
-      label_delete: 'Ekran görüntüsü kaldırıldı (Screenshot).' #'Screenshot removed.'
+      label_delete: 'Ekran görüntüsü kaldırıldı (Screenshot).'
     import:
       application:
-        failed: 'Uygulama içeri aktarıllamıyor (Import).' #'Application cannot be imported.'
+        failed: 'Uygulama içeri aktarıllamıyor (Import).'
       acl:
-        failed: 'Erişim kontrol listesi içeri aktarıllamıyor (Import).' #'Acls cannot be imported.'
+        failed: 'Erişim kontrol listesi içeri aktarıllamıyor (Import).'
       source:
-        failed: 'Kaynaklar içeri aktarıllamıyor (Import).' #'Sources cannot be imported.'
+        failed: 'Kaynaklar içeri aktarıllamıyor (Import).'
   core:
     admin:
       button:
-        show_label: 'Etiketi göster' #'Show label'
+        show_label: 'Etiketi göster'
       scaleselector:
-        show_label: 'Etiketi göster' #'Show label'
+        show_label: 'Etiketi göster'
       corrdsdisplay:
-        label: 'Başlık etiketini göster' #'Show title label'
+        label: 'Başlık etiketini göster'
       srsselector:
-        show_label: 'Etiketi göster' #'Show label'
+        show_label: 'Etiketi göster'
       gpsposition:
-        show_label: 'Etiketi göster' #'Show label'
+        show_label: 'Etiketi göster'
       element:
-        autostart: 'Otomatik Başlat' #Autostart
+        autostart: 'Otomatik Başlat'
       about_dialog:
-        show_label: 'Tuş etiketini göster' #'Show button label'
+        show_label: 'Tuş etiketini göster'
     element:
       be:
         button:
-          show_label: 'Etiketi göster' #'Show label'
+          show_label: 'Etiketi göster'
     entity:
       app:
         screenshotfile:
-          error: 'Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.'                 #'The file is too large (%uploadFileSize% bytes). Allowed maximum size is %maxFileSize% bytes.'
-          format_error: 'Bu format desteklenmiyor!' #'This format is not supported!'
+          error: 'Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.'
+          format_error: 'Bu format desteklenmiyor!'
           resolution:
-            error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'                   #'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
+            error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
 form:
   manager:
     admin:
       application:
         export:
-          application: 'Uygulama' #Applications
+          application: 'Uygulama'

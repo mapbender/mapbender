@@ -135,10 +135,6 @@ class TmsCapabilitiesParser100
         $titleMapElts = $this->xpath->query("./TileMaps/TileMap", $root);
         
         foreach ($titleMapElts as $titleMapElt) {
-//            $this->parseTileMap($wmtssource, $titleMapElt);
-//            $title       = $this->getValue("./@title", $titleMapElt);
-//            $srs         = $this->getValue("./@srs", $titleMapElt);
-//            $profile     = $this->getValue("./@profile", $titleMapElt);
             $url         = $this->getValue("./@href", $titleMapElt);
             $proxy_query = ProxyQuery::createFromUrl($url);
             $proxy       = new CommonProxy($this->proxy_config, $proxy_query);
@@ -224,10 +220,6 @@ class TmsCapabilitiesParser100
     
     public function parseTileMap(WmtsSource $wmts, \DOMElement $cntx, $url, $layerIdent)
     {
-//        $title   = $this->getValue("./@title", $titleMapElt);
-//        $srs     = $this->getValue("./@srs", $titleMapElt);
-//        $profile = $this->getValue("./@profile", $titleMapElt);
-//        $url     = $this->getValue("./@href", $titleMapElt);
         #http://geo.sv.rostock.de/geodienste/luftbild/tms/1.0.0/luftbild/EPSG25833/5/10/10.png
         $layer = new WmtsLayerSource();
         $wmts->addLayer($layer);

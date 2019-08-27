@@ -1,34 +1,32 @@
 mb:
   application:
     create:
-      success: Your application has been created.
+      success: ~
       failure:
-        create.directory: Application directory can't be created.
+        create.directory: ~
     save:
-      success: Your application has been saved.
+      success: ~
       failure:
-        general: There was an error trying to save your application.
-        create.directory: |
-          Your application has been updated but the application's directories can not be created.
+        general: ~
+        create.directory: ~
     remove:
-      success: Your application has been deleted.
+      success: ~
       failure:
-        general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
-        remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
+        general: ~
+        already.removed: ~
+        remove.directory: ~
   layerset:
     create:
-      success: Your layerset has been created.
+      success: ~
       failure:
-        unique.title: Layerset title is already used.
+        unique.title: ~
     remove:
-      success: Your layerset has been deleted.
-      failure: Your layerset can't be deleted.
+      success: ~
+      failure: ~
   source:
     instance:
       create:
-        success: A new instance has been created. Please edit it.
+        success: ~
   manager:
     admin:
       sources: Fuentes
@@ -163,7 +161,7 @@ mb:
       export_application: Exportar
     element:
       yaml:
-        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
+        message: ~
     be:
       element:
         delete: 'Borrar elemento ''%element_title%'''
@@ -260,4 +258,4 @@ form:
     admin:
       application:
         export:
-          application: Applications
+          application: Aplicaciones

@@ -52,6 +52,11 @@ window.Mapbender.WmsSource = (function() {
                 minScale: rootLayer.minScale,
                 maxScale: rootLayer.maxScale
             };
+            if (!!((new Mapbender.Util.Url(this.configuration.options.url)).username)) {
+                opts.tileOptions = {
+                    crossOriginKeyword: 'use-credentials'
+                };
+            }
             if (opts.singleTile) {
                 opts.ratio = parseFloat(ratioConfig) || 1.0;
             } else {

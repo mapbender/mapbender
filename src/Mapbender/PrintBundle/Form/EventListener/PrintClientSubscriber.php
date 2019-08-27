@@ -3,7 +3,6 @@
 namespace Mapbender\PrintBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 use Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType;
@@ -13,18 +12,6 @@ use Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType;
  */
 class PrintClientSubscriber implements EventSubscriberInterface
 {
-
-    /** @var FormFactoryInterface */
-    private $factory;
-
-    /**
-     * @param FormFactoryInterface $factory
-     */
-    public function __construct(FormFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
     /**
      * @inheritdoc
      */
@@ -53,14 +40,12 @@ class PrintClientSubscriber implements EventSubscriberInterface
         }
 
         if (key_exists("quality_levels", $data)) {
-            $form->add($this->factory->createNamed(
-                    'quality_levels', "collection", null, array(
-                    'property_path' => '[quality_levels]',
-                    'auto_initialize' => false,
-                    'required' => false,
-                    'type' => new PrintClientQualityAdminType(),
-                    'options' => array(
-            ))));
+            $form->add('quality_levels', 'collection', array(
+                'property_path' => '[quality_levels]',
+                'auto_initialize' => false,
+                'required' => false,
+                'type' => new PrintClientQualityAdminType(),
+            ));
         }
     }
 
@@ -82,15 +67,13 @@ class PrintClientSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
 
-        if (key_exists("quality_levels", $data)) {
-            $form->add($this->factory->createNamed(
-                    'quality_levels', "collection", null, array(
-                    'property_path' => '[quality_levels]',
-                    'auto_initialize' => false,
-                    'required' => false,
-                    'type' => new PrintClientQualityAdminType(),
-                    'options' => array(
-            ))));
+        if (array_key_exists("quality_levels", $data)) {
+            $form->add('quality_levels', 'collection', array(
+                'property_path' => '[quality_levels]',
+                'auto_initialize' => false,
+                'required' => false,
+                'type' => new PrintClientQualityAdminType(),
+            ));
         }
     }
 

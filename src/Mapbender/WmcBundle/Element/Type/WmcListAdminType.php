@@ -14,18 +14,10 @@ class WmcListAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmclist';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -34,15 +26,18 @@ class WmcListAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+        $builder
+            ->add('tooltip', 'text', array('required' => false))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('label', 'checkbox', array(
-                'required' => false));
+                'required' => false,
+                'label' => 'mb.wmc.admin.wmclist.label',
+            ))
+        ;
     }
-
 }

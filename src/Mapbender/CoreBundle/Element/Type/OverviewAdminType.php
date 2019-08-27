@@ -6,27 +6,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * 
- */
 class OverviewAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'overview';
-    }
-
     /**
      * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
         ));
     }
 
@@ -35,32 +23,40 @@ class OverviewAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $options['application'];
         $builder
             ->add('tooltip', 'text', array('required' => false))
-            ->add('layerset', 'app_layerset',
-                  array(
-                'application'   => $options['application'],
+            ->add('layerset', 'app_layerset', array(
+                'application' => $options['application'],
                 'property_path' => '[layerset]',
-                'required'      => true))
-            ->add('target', 'target_element',
-                  array(
+                'required' => true,
+            ))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application'   => $options['application'],
                 'property_path' => '[target]',
-                'required'      => false))
-            ->add('anchor', "choice",
-                  array(
+                'required' => false,
+            ))
+            ->add('anchor', "choice", array(
                 'required' => true,
                 "choices"  => array(
                     'left-top'     => 'left-top',
                     'left-bottom'  => 'left-bottom',
                     'right-top'    => 'right-top',
-                    'right-bottom' => 'right-bottom')))
-            ->add('maximized', 'checkbox', array('required' => false))
-            ->add('fixed', 'checkbox', array('required' => false))
+                    'right-bottom' => 'right-bottom',
+                ),
+                'choices_as_values' => true,
+            ))
+            ->add('maximized', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.manager.admin.overview.maximize',
+            ))
+            ->add('fixed', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.manager.admin.overview.fix',
+            ))
             ->add('width', 'text', array('required' => true))
-            ->add('height', 'text', array('required' => true));
+            ->add('height', 'text', array('required' => true))
+        ;
     }
 
 }

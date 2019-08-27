@@ -45,8 +45,9 @@ class VendorSpecificType extends AbstractType
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
                     VS::TYPE_VS_USER => VS::TYPE_VS_USER,
-                    VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP
+                    VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP,
                 ),
+                'choices_as_values' => true,
             ))
             ->add('name', 'text', array(
                 'required' => true,

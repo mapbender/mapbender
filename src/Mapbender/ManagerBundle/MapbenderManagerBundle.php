@@ -37,6 +37,7 @@ class MapbenderManagerBundle extends ManagerBundle
             ))
         ;
         $sourceMenu = MenuItem::create('mb.manager.managerbundle.sources', 'mapbender_manager_repository_index')
+            ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
             ->setWeight(20)
             ->addChildren(array(
                 MenuItem::create('mb.manager.managerbundle.add_source', 'mapbender_manager_repository_new')

@@ -35,7 +35,7 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new LayertreeSubscriber($builder->getFormFactory(), $options['application']);
+        $subscriber = new LayertreeSubscriber($options['application']);
         $builder->addEventSubscriber($subscriber);
         $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -45,8 +45,11 @@ class LayertreeAdminType extends AbstractType
             ->add('type', 'choice', array(
                 'required' => true,
                 'choices' => array(
-                    'element' => 'Element',
-                    'dialog' => 'Dialog')))
+                    'Element' => 'element',
+                    'Dialog' => 'dialog',
+                ),
+                'choices_as_values' => true,
+            ))
             ->add('autoOpen', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.autoopen',

@@ -207,7 +207,7 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
-textarea, input[type=text], input[type=submit], input[type=password],  a.button, button, div.dropdown {
+textarea, input[type=text], input[type=submit], input[type=number], input[type=password],  a.button, button, div.dropdown {
   border-radius: $elementBorderRadius;
 }
 a.button{
@@ -292,6 +292,7 @@ ul.dropdownList{
         display: block;
         textarea,
         input[type="password"],
+        input[type="number"],
         input[type="email"],
         input[type="text"]{
           width: 100%;
