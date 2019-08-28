@@ -45,15 +45,14 @@ abstract class ApplicationControllerBase extends Controller
         if (!$application->isPublished()) {
             $this->denyAccessUnlessGranted('EDIT', $aclTarget, 'This application is not published at the moment');
         }
-        $this->denyAccessUnlessGranted('VIEW', $aclTarget, 'You are not granted view permissions for this application.');
         if ($application->isYamlBased() && $application->getYamlRoles()) {
             foreach ($application->getYamlRoles() as $role) {
                 if ($this->isGranted($role)) {
                     return;
                 }
             }
-            throw $this->createAccessDeniedException('You are not granted view permissions for this application.');
         }
+        $this->denyAccessUnlessGranted('VIEW', $aclTarget, 'You are not granted view permissions for this application.');
     }
 
     /**
