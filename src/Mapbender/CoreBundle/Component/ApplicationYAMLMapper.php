@@ -123,6 +123,11 @@ class ApplicationYAMLMapper
         }
 
         $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
+        if ($application->isPublished() && !$application->getYamlRoles()) {
+            $application->setYamlRoles(array(
+               'IS_AUTHENTICATED_ANONYMOUSLY',
+            ));
+        }
 
         foreach ($definition['layersets'] as $layersetId => $layersetDefinition) {
             $layerset = $this->createLayerset($layersetId, $layersetDefinition);
