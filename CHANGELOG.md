@@ -1,6 +1,8 @@
 ## v3.0.8.4-RC3
 - Support secured WmsLoader sources in modern browsers
 - Fix button misalignment in vis-ui popups (e.g. Digitizer)
+- Skip ACL-based grants check when passing `roles` grant in Yaml-defined application
+- [RC2 regression] restore default public access for Yaml-defined applications
 
 ## v3.0.8.4-RC2
 - Fix basic auth secured services via WmsLoader ([#1201](https://github.com/mapbender/mapbender/issues/1201))
