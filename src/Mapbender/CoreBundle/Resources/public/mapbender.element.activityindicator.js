@@ -11,7 +11,6 @@
         ajaxActivity: false,
         tileActivity: false,
         loadingLayers: [],
-        knownLayers: [],
 
         _create: function () {
             var elementIds = Object.keys(Mapbender.configuration.elements);
