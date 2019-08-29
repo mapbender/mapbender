@@ -239,7 +239,8 @@
             $('.layer-menu-btn', $li).remove();
             return $li;
         },
-        _createNode: function(source, sourceEl, isroot) {
+        _createLayerNode: function(source, sourceEl) {
+            var isroot = !sourceEl.getParent();
             var $li = this.template.clone();
             var config = this._getNodeProporties(sourceEl);
             $li.removeClass('hide-elm');
@@ -292,11 +293,14 @@
             if (this.options.menu.length === 0) {
                 $li.find('.layer-menu-btn').remove();
             }
-            var $childList = $li.find('ul:first');
+            var $childList = $('ul.layers', $li);
             if (sourceEl.children) {
                 $childList.attr('id', 'list-' + sourceEl.options.id);
                 if (config.toggle) {
                     $childList.addClass("closed");
+                }
+                for (var j = sourceEl.children.length - 1; j >= 0; j--) {
+                    $childList.append(this._createLayerNode(source, sourceEl.children[j]));
                 }
             } else {
                 $childList.remove();
@@ -309,17 +313,6 @@
             if (source.configuration.status !== 'ok') {
                 li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
                     source.configuration.status);
-            }
-            return li;
-        },
-        _createLayerNode: function(source, sourceEl) {
-            var isRoot = sourceEl === source.configuration.children[0];
-            var li = this._createNode(source, sourceEl, isRoot);
-            if (sourceEl.children && sourceEl.children.length) {
-                var $subList = $('ul:first', li);
-                for (var j = sourceEl.children.length - 1; j >= 0; j--) {
-                    $subList.append(this._createLayerNode(source, sourceEl.children[j]));
-                }
             }
             return li;
         },
