@@ -223,6 +223,9 @@ window.Mapbender.SourceLayer = (function() {
             }
             return r;
         },
+        getParent: function() {
+            return this.parent;
+        },
         rewriteChildIds: function(parentId) {
             if (!this.options.origId) {
                 this.options.origId = this.options.id;

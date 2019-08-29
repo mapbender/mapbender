@@ -268,8 +268,10 @@
                     if (typeof targetOptions.type !== 'undefined') {
                         // Layertree, FeatureInfo
                         isDialog = targetOptions.type === 'dialog';
-                    } else if (typeof targetOptions.displayType !== 'undefined') {
+                    } else if (typeof targetOptions.elementType !== 'undefined') {
                         // Legend
+                        isDialog = targetOptions.elementType === 'dialog';
+                    } else if (typeof targetOptions.displayType !== 'undefined') {
                         isDialog = targetOptions.displayType === 'dialog';
                     }
                     state = isDialog;

@@ -2,13 +2,10 @@
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
-            displaytype: 'tree',
             autoOpen: false,
             useTheme: false,
             target: null,
-            layerInfo: true, //!!!
             showBaseSource: true,
-            showHeader: false,
             hideNotToggleable: false,
             hideSelect: false,
             hideInfo: false,
@@ -16,14 +13,11 @@
             menu: []
         },
         model: null,
-        dlg: null,
         template: null,
         menuTemplate: null,
-        layerconf: null,
         popup: null,
         created: false,
         loadStarted: {},
-        sourceAtTree: {},
         consts: {
             source: "source",
             theme: "theme",
@@ -58,7 +52,7 @@
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if (this.options.type === 'element') {
                 this._createTree();
-            } else if (this.options.type === 'dialog' && new Boolean(this.options.autoOpen).valueOf() === true) {
+            } else if (this.options.type === 'dialog' && this.options.autoOpen) {
                 this.open();
             }
             this.element.removeClass('hidden');
@@ -323,16 +317,12 @@
             if (added.source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            if (this.options.displaytype === "tree") {
-                var li_s = this._createSourceTree(added.source);
-                var first_li = $(this.element).find('ul.layers:first li:first');
-                if (first_li && first_li.length !== 0) {
-                    first_li.before(li_s);
-                } else {
-                    $(this.element).find('ul.layers:first').append($(li_s));
-                }
+            var li_s = this._createSourceTree(added.source);
+            var first_li = $(this.element).find('ul.layers:first li:first');
+            if (first_li && first_li.length !== 0) {
+                first_li.before(li_s);
             } else {
-                return;
+                $(this.element).find('ul.layers:first').append($(li_s));
             }
             this._reset();
         },

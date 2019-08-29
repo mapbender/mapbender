@@ -37,14 +37,6 @@ class LegendAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
             ))
-            ->add('displayType', 'choice',
-                array(
-                'required' => true,
-                'choices' => array(
-                    "list" => "list",
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
