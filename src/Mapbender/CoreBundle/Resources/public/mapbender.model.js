@@ -75,8 +75,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     _geoJsonReader: null,
     _wktReader: null,
     _initMap: function _initMap() {
+        // dpi only used for scale to resolution / resolution to scale calculations
+        this.options = {
+            dpi: this.mbMap.options.dpi
+        };
         this._patchNavigationControl();
-        var self = this;
 
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,

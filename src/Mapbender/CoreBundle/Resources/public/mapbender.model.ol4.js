@@ -320,20 +320,6 @@ getMapExtent: function () {
     return this.olMap.getView().calculateExtent();
 },
 
-
-/**
- *
- * @param {float} resolution
- * @param {number} [dpi=72]
- * @param {string} unit "m" or "degrees"
- * @returns {number}
- */
-resolutionToScale: function(resolution, dpi) {
-    var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-    var inchesPerMetre = 39.37;
-    return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
-},
-
 createVectorLayer: function() {
     if (arguments.length) {
         console.error("Arguments passed to createVectorLayer", arguments);
