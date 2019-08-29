@@ -320,6 +320,11 @@ getMapExtent: function () {
     return this.olMap.getView().calculateExtent();
 },
 
+/**
+ * @param {int} scale
+ * @param {number} [dpi]
+ * @return {number}
+ */
 scaleToResolution: function (scale, dpi) {
     var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
     var inchesPerMetre = 39.37;
@@ -331,7 +336,6 @@ scaleToResolution: function (scale, dpi) {
  *
  * @param {number} resolution
  * @param {number} [dpi=72]
- * @param {string} unit "m" or "degrees"
  * @returns {number}
  */
 resolutionToScale: function(resolution, dpi) {
