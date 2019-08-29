@@ -236,6 +236,8 @@
         _createLayerNode: function(source, sourceEl) {
             var isroot = !sourceEl.getParent();
             var $li = this.template.clone();
+            $li.data('layer', sourceEl);
+
             var config = this._getNodeProporties(sourceEl);
             $li.removeClass('hide-elm');
             $li.attr('data-id', sourceEl.options.id);
@@ -496,10 +498,10 @@
                 $me.addClass("iconFolderActive");
                 $parent.addClass("showLeaves");
             }
-            var li = $me.parents('li:first[data-sourceid]');
-            if (li.length > 0) {
-                var sourceId = li.attr('data-sourceid');
-                this._resetSourceAtTree(this.model.getSourceById(sourceId));
+            var li = $me.closest('li.leave');
+            var layer = li.data('layer');
+            if (layer) {
+                this._resetSourceAtTree(layer.source);
             }
             return false;
         },
@@ -536,14 +538,15 @@
             return false;
         },
         _toggleSelected: function(e) {
-            var $li = $(e.target).parents('li:first');
-            var sourceId = $li.attr('data-sourceid');
-            if ($li.attr('data-type') === this.consts.root) {
-                if (this._isThemeChecked($li)) { // thematic layertree handling
-                    this.model.setSourceVisibility(sourceId, $(e.target).prop('checked'));
-                }
+            var $target = $(e.target);
+            var layer = $target.closest('li.leave').data('layer');
+            var source = layer && layer.source;
+            if (layer.parent) {
+                this.model.controlLayer(source, layer.options.id, $(e.target).prop('checked'));
             } else {
-                this.model.controlLayer(sourceId, $li.attr('data-id'), $(e.target).prop('checked'));
+                if (this._isThemeChecked($target)) {
+                    this.model.setSourceVisibility(source, $(e.target).prop('checked'));
+                }
             }
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
@@ -551,8 +554,8 @@
             return false;
         },
         _toggleInfo: function(e) {
-            var $li = $(e.target).closest('li.leave');
-            this.model.controlLayer($li.attr('data-sourceid'), $li.attr('data-id'), null, $(e.target).prop('checked'));
+            var layer = $(e.target).closest('li.leave').data('layer');
+            this.model.controlLayer(layer.source, layer.options.id, null, $(e.target).prop('checked'));
         },
         currentMenu: null,
         closeMenu: function(menu) {
@@ -771,10 +774,8 @@
             this.model.zoomToLayer(options);
         },
         _showMetadata: function(e) {
-            var $layer = $(e.target).closest('.leave', this.element);
-            var sourceOpts = {id: $layer.attr('data-sourceid')};
-            var layerOpts = {id: $layer.attr('data-id')};
-            Mapbender.Metadata.call(this.options.target, sourceOpts, layerOpts);
+            var layer = $(e.target).closest('li.leave', this.element).data('layer');
+            Mapbender.Metadata.call(null, null, layer);
         },
         _getUniqueSourceIds: function() {
             var sourceIds = [];
