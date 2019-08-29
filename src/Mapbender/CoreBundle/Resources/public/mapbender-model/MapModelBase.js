@@ -64,6 +64,29 @@ window.Mapbender.MapModelBase = (function() {
             return scales.indexOf(scale);
         },
         /**
+         * @param {int} scale
+         * @param {number} [dpi]
+         * @return {number}
+         * engine-agnostic
+         */
+        scaleToResolution: function (scale, dpi) {
+            var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var inchesPerMetre = 39.37;
+            return (scale * upm) / (inchesPerMetre * (dpi || this.options.dpi || 72));
+        },
+
+        /**
+         * @param {number} resolution
+         * @param {number} [dpi=72]
+         * @returns {number}
+         * engine-agnostic
+         */
+        resolutionToScale: function(resolution, dpi) {
+            var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var inchesPerMetre = 39.37;
+            return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
+        },
+        /**
          * @return {Array<Object>}
          * engine-agnostic
          */

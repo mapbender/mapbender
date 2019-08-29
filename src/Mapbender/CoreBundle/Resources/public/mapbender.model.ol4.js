@@ -320,30 +320,6 @@ getMapExtent: function () {
     return this.olMap.getView().calculateExtent();
 },
 
-/**
- * @param {int} scale
- * @param {number} [dpi]
- * @return {number}
- */
-scaleToResolution: function (scale, dpi) {
-    var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-    var inchesPerMetre = 39.37;
-    return (scale * upm) / (inchesPerMetre * (dpi || this.options.dpi || 72));
-},
-
-
-/**
- *
- * @param {number} resolution
- * @param {number} [dpi=72]
- * @returns {number}
- */
-resolutionToScale: function(resolution, dpi) {
-    var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-    var inchesPerMetre = 39.37;
-    return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
-},
-
 createVectorLayer: function() {
     if (arguments.length) {
         console.error("Arguments passed to createVectorLayer", arguments);
