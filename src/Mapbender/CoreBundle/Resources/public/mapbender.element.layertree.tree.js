@@ -106,6 +106,9 @@
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
+            this.element.on('click', '.layer-menu .exit-button', function() {
+                $(this).closest('.layer-menu').remove();
+            });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -557,21 +560,11 @@
             var layer = $(e.target).closest('li.leave').data('layer');
             this.model.controlLayer(layer.source, layer.options.id, null, $(e.target).prop('checked'));
         },
-        currentMenu: null,
-        closeMenu: function(menu) {
-            var $menu = menu || this.currentMenu;
-            $menu.remove();
-            this.currentMenu = null;
-            return false;
-        },
         _initMenu: function($layerNode) {
             var layer = $layerNode.data('layer');
             var source = layer.source;
             var atLeastOne;
-            var menu = $(this.menuTemplate.clone())
-                .attr("data-menuLayerId", layer.options.id)
-                .attr("data-menuSourceId", layer.source.id)
-            ;
+            var menu = $(this.menuTemplate.clone());
             var removeButton = menu.find('.layer-remove-btn');
             menu.on('mousedown mousemove', function(e) {
                 e.stopPropagation();
@@ -643,24 +636,11 @@
 
         },
         _toggleMenu: function(e) {
-            var self = this;
-            var $btnMenu = $(e.target);
-            var $layerNode = $btnMenu.closest('li.leave');
-            var layer = $layerNode.data('layer');
-            var currentLayerId = layer.options.id;
-            var layerIdMenu = null;
-            var $menu = this.currentMenu || $('.layer-menu', this.element);
-            if ($menu.length) {
-                layerIdMenu = $menu.attr("data-menuLayerId");
-            }
-            if (layerIdMenu !== currentLayerId) {
-                if ($menu.length) {
-                    this.closeMenu($menu);
-                }
-                this.currentMenu = this._initMenu($layerNode);
-                $('.exit-button', this.currentMenu).on('click', function(e) {
-                    self.closeMenu(self.currentMenu);
-                });
+            var $target = $(e.target);
+            var $layerNode = $target.closest('li.leave');
+            if (!$('>.layer-menu', $layerNode).length) {
+                $('.layer-menu', this.element).remove();
+                this._initMenu($layerNode);
             }
             return false;
         },
@@ -762,9 +742,10 @@
             }
         },
         _zoomToLayer: function(e) {
+            var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var options = {
-                sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
-                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")
+                sourceId: layer.source.id,
+                layerId: layer.options.id
             };
             this.model.zoomToLayer(options);
         },
