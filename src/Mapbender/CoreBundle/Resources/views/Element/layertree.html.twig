@@ -15,26 +15,30 @@
         <input class="layer-info checkbox" type="checkbox" name="info"/>
       </div>
       <span class="layer-title labelCheck"></span>
-      {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
+      {% if configuration.menu is defined and configuration.menu %}
       <span class="iconMenu layer-menu-btn"></span>
         <div class="layer-menu hidden">
           <div>
             <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
           </div>
           {% if 'opacity' in configuration.menu %}
-          <div id="layer-opacity" class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
-            <div class="layer-opacity-handle layer-slider-handle">100</div>
+              <div class="layer-control-opacity layer-control-root-only">
+                <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
+                    <div class="layer-opacity-handle layer-slider-handle">100</div>
+                </div>
           </div>
           {% endif %}
           {% if 'dimension' in configuration.menu %}
-          <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
-            <input type="checkbox" class="checkbox"/>
-          </div>
-          <span id="layer-dimension-value-" class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
-          <div id="layer-dimension-" class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
-            <div class="layer-dimension-handle layer-slider-handle"></div>
-          </div>
-          <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+              <div class="layer-control-dimensions layer-control-root-only">
+                  <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
+                    <input type="checkbox" class="checkbox"/>
+                  </div>
+                  <span class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+                  <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
+                    <div class="layer-dimension-handle layer-slider-handle"></div>
+                  </div>
+                  <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+              </div>
           {% endif %}
           <div>
             {% if 'zoomtolayer' in configuration.menu %}
@@ -50,7 +54,7 @@
         </div>
       {% endif %}
     </div>
-    <ul id="list-first" class="layers"></ul>
+    <ul class="layers"></ul>
   </li>
   {% if configuration.showHeader %}
   <h2>{{ 'mb.core.layertree.label.sources' | trans }} (<span id="counter">0</span>)<a href="#" id="delete-all" class="icononly" title="{{ 'mb.core.layertree.label.deleteallsources' |trans }}">&times;</a></h2>

@@ -545,7 +545,7 @@
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
             if (layer.parent) {
-                this.model.controlLayer(source, layer.options.id, $(e.target).prop('checked'));
+                this.model.controlLayer(layer, $(e.target).prop('checked'));
             } else {
                 if (this._isThemeChecked($target)) {
                     this.model.setSourceVisibility(source, $(e.target).prop('checked'));
@@ -558,13 +558,16 @@
         },
         _toggleInfo: function(e) {
             var layer = $(e.target).closest('li.leave').data('layer');
-            this.model.controlLayer(layer.source, layer.options.id, null, $(e.target).prop('checked'));
+            this.model.controlLayer(layer, null, $(e.target).prop('checked'));
         },
         _initMenu: function($layerNode) {
             var layer = $layerNode.data('layer');
             var source = layer.source;
             var atLeastOne;
             var menu = $(this.menuTemplate.clone());
+            if (layer.getParent()) {
+                $('.layer-control-root-only', menu).remove();
+            }
             var removeButton = menu.find('.layer-remove-btn');
             menu.on('mousedown mousemove', function(e) {
                 e.stopPropagation();
@@ -576,16 +579,13 @@
             menu.removeClass('hidden');
             $('.leaveContainer:first', $layerNode).after(menu);
 
-            var $opacitySliderWrap = $('#layer-opacity', menu);
-            if (layer.getParent()) {
-                $opacitySliderWrap.remove();
-                menu.find('#layer-opacity-title').remove();
-            } else if ($.inArray("opacity", this.options.menu) !== -1 && $opacitySliderWrap.length) {
+            var $opacityControl = $('.layer-control-opacity', menu);
+            if ($opacityControl.length) {
                 atLeastOne = true;
                 var self = this;
-                var $handle = $('.layer-opacity-handle', menu);
+                var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
-                new Dragdealer($opacitySliderWrap.get(0), {
+                new Dragdealer($('.layer-opacity-bar', $opacityControl).get(0), {
                     x: source.configuration.options.opacity,
                     horizontal: true,
                     vertical: false,
@@ -599,41 +599,31 @@
                     }
                 });
             }
-            if ($.inArray("zoomtolayer", this.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
-                && this.model.getLayerExtents({
-                    sourceId: source.id,
-                    layerId: layer.options.id
-                })) {
+            var $zoomControl = $('.layer-zoom', menu);
+            if ($zoomControl.length && this.model.getLayerExtents({sourceId: source.id, layerId: layer.options.id})) {
                 atLeastOne = true;
-                $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(this._zoomToLayer, this));
+                $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
             } else {
-                $('.layer-zoom', menu).remove();
+                $zoomControl.remove();
             }
-            if (this.options.menu.indexOf('metadata') !== -1 && source.supportsMetadata() && $('.layer-metadata', menu).length) {
+            var $metadataControl = $('.layer-metadata', menu);
+            if ($metadataControl.length && source.supportsMetadata()) {
                 atLeastOne = true;
-                $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(this._showMetadata, this));
+                $metadataControl.on('click', $.proxy(this._showMetadata, this));
             } else {
-                $('.layer-metadata', menu).remove();
+                $metadataControl.remove();
             }
-            var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
-            if ($.inArray("dimension", this.options.menu) !== -1 && source.type === 'wms'
-                && source.configuration.children[0].options.id === layer.options.id && dims.length) {
+            var dims = source.configuration.options.dimensions || [];
+            var $dimensionsControl = $('.layer-control-dimensions', menu);
+            if (dims.length && $dimensionsControl.length) {
                 this._initDimensionsMenu($layerNode, menu, dims, source);
                 atLeastOne = true;
             } else {
-                $('.layer-dimension-checkbox', menu).remove();
-                $('.layer-dimension-title', menu).remove();
-                $('.layer-dimension-bar', menu).remove();
-                $('.layer-dimension-textfield', menu).remove();
+                $dimensionsControl.remove();
             }
-
-            if (atLeastOne) {
-                menu.removeClass('hidden');
-                return menu;
-            } else {
-                return null;
+            if (!atLeastOne) {
+                menu.remove();
             }
-
         },
         _toggleMenu: function(e) {
             var $target = $(e.target);
@@ -646,75 +636,70 @@
         },
         _initDimensionsMenu: function($element, menu, dims, source) {
             var self = this;
-            var lastItem = $('.layer-dimension-checkbox', menu).prev();
-            var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
-            var dimTitle = $('.layer-dimension-title', menu).remove();
-            var dimBar = $('.layer-dimension-bar', menu).remove();
-            var dimTextfield = $('.layer-dimension-textfield', menu).remove();
+            var dimData = $element.data('dimensions') || {};
+            var template = $('.layer-control-dimensions', menu);
+            var $controls = [];
+            var dragHandlers = [];
+            var updateData = function(key, props) {
+                $.extend(dimData[key], props);
+                var ourData = {};
+                ourData[key] = dimData[key];
+                var mergedData = $.extend($element.data('dimensions') || {}, ourData);
+                $element.data('dimensions', mergedData);
+            };
             $.each(dims, function(idx, item) {
-                var dimData = $element.data('dimensions') || {};
+                var $control = template.clone();
+                var label = $('.layer-dimension-title', $control);
+                var dimCheckbox = $('.layer-dimension-checkbox', $control);
+
                 var dimDataKey = source.id + '~' + idx;
                 dimData[dimDataKey] = dimData[dimDataKey] || {
                     checked: false
                 };
-                var updateData = function(props) {
-                    $.extend(dimData[dimDataKey], props);
-                    var ourData = {};
-                    ourData[dimDataKey] = dimData[dimDataKey];
-                    var mergedData = $.extend($element.data('dimensions') || {}, ourData);
-                    $element.data('dimensions', mergedData);
-                };
-                var chkbox = dimCheckbox.clone();
-                var title = dimTitle.clone();
-                lastItem.after(chkbox);
-                var inpchkbox = chkbox.find('.checkbox');
+                var inpchkbox = $('input[type="checkbox"]', dimCheckbox);
                 inpchkbox.data('dimension', item);
                 inpchkbox.prop('checked', dimData[dimDataKey].checked);
                 inpchkbox.on('change', function(e) {
-                    updateData({checked: $(this).prop('checked')});
+                    updateData(dimDataKey, {checked: $(this).prop('checked')});
                     self._callDimension(source, $(e.target));
                 });
                 inpchkbox.mbCheckbox();
-                title.attr('title', title.attr('title') + ' ' + item.name);
-                title.attr('id', title.attr('id') + item.name);
-                chkbox.after(title);
+                label.attr('title', label.attr('title') + ' ' + item.name);
+                $('.layer-dimension-bar', menu).toggleClass('hidden', item.type === 'single');
+                $('.layer-dimension-textfield', $control)
+                    .toggleClass('hidden', item.type !== 'single')
+                    .val(dimData.value || item.extent)
+                ;
                 if (item.type === 'single') {
-                    var textf = dimTextfield.clone();
-                    title.after(textf);
-                    textf.val(item.extent);
                     inpchkbox.attr('data-value', dimData.value || item.extent);
-                    updateData({value: dimData.value || item.extent});
-                    lastItem = textf;
+                    updateData(dimDataKey, {value: dimData.value || item.extent});
                 } else if (item.type === 'multiple' || item.type === 'interval') {
-                    var bar = dimBar.clone();
-                    title.after(bar);
-                    bar.removeClass('layer-dimension-bar');
-                    bar.attr('id', bar.attr('id') + item.name);
-                    bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').
-                        addClass('layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
-                    lastItem = bar;
                     var dimHandler = Mapbender.Dimension(item);
-                    var label = $('#layer-dimension-value-' + item.name, menu);
-                    new Dragdealer('layer-dimension-' + item.name, {
+                    dragHandlers.push(new Dragdealer($('.layer-dimension-bar', $control).get(0), {
                         x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
                         steps: dimHandler.getStepsNum(),
-                        handleClass: 'layer-dimension-' + item.name + '-handle',
+                        handleClass: 'layer-dimension-handle',
                         callback: function(x, y) {
                             self._callDimension(source, inpchkbox);
                         },
-                        animationCallback: function(x, y) {
+                        animationCallback: function(x) {
                             var value = dimHandler.valueFromPart(x);
                             label.text(value);
-                            updateData({value: value});
+                            updateData(dimDataKey, {value: value});
                             inpchkbox.attr('data-value', value);
                         }
-                    });
+                    }));
                 } else {
                     Mapbender.error("Source dimension " + item.type + " is not supported.");
                 }
+                $controls.push($control);
+            });
+            template.replaceWith($controls);
+            dragHandlers.forEach(function(dh) {
+                dh.reflow();
             });
         },
         _callDimension: function(source, chkbox) {

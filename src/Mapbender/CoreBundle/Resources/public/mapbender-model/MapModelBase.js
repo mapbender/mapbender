@@ -120,15 +120,12 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
          *
-         * @param {string|number} sourceId
-         * @param {string|number} layerId
+         * @param {Mapbender.SourceLayer} layer
          * @param {boolean|null} [selected]
          * @param {boolean|null} [info]
          * engine-agnostic
          */
-        controlLayer: function controlLayer(sourceId, layerId, selected, info) {
-            var source = this.getSourceById(sourceId);
-            var layer = source && source.getLayerById(layerId);
+        controlLayer: function controlLayer(layer, selected, info) {
             var updated = false;
             if (layer && selected !== null && typeof selected !== 'undefined') {
                 var selected0 = layer.options.treeOptions.selected;
@@ -143,7 +140,7 @@ window.Mapbender.MapModelBase = (function() {
                 layer.options.treeOptions.info = infoAfter;
             }
             if (updated) {
-                this.updateSource(source);
+                this.updateSource(layer.source);
             }
         },
         /**
