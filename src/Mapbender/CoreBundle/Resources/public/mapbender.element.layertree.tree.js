@@ -45,9 +45,11 @@
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.template = $('li', this.element).remove();
-            this.template.removeClass('hidden');
+            this.template = $('li.-fn-template', this.element).remove();
+            this.template.removeClass('hidden').removeClass('-fn-template');
             this.menuTemplate = $('.layer-menu', this.template).remove();
+            this.themeTemplate = $('li.-fn-theme-template', this.element).remove();
+            this.themeTemplate.removeClass('hidden');
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if (this.options.type === 'element') {
@@ -61,8 +63,6 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
-            if (this.created)
-                this._unSortable();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var li_s = this._createSourceTree(sources[i]);
@@ -93,8 +93,8 @@
             $targetList.append($toAdd);
         },
         _reset: function() {
-            this._resetSortable();
-            this._resetCheckboxes();
+            this._createSortable();
+            $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
             this._setSourcesCount();
         },
         _createEvents: function() {
@@ -121,15 +121,6 @@
                     $('input[name="selected"]', this).click();
                 });
             }
-        },
-        _resetCheckboxes: function() {
-            $('input[type="checkbox"]', this.element).mbCheckbox();
-        },
-        _resetSortable: function() {
-            this._unSortable();
-            this._createSortable();
-        },
-        _unSortable: function() {
         },
         /**
          * Applies the new (going by DOM) layer order inside a source.
@@ -206,24 +197,15 @@
             if ($li.length === 1) {
                 return $li;
             } else {
-                $li = this.template.clone();
+                $li = this.themeTemplate.clone();
             }
             $('ul.layers:first', this.element).append($li);
-            $li.removeClass('hide-elm').addClass('toggleable');
+            $li.addClass('toggleable');
             $li.attr('data-layersetid', layerset.id);
-            $li.removeAttr('data-id');
-            $li.removeAttr('data-sourceid');
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
-            $li.addClass("themeContainer");
-            if (theme.opened)
-                $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
-            else
-                $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
+            $li.toggleClass('showLeaves', theme.opened);
+            $('.iconFolder', $li).toggleClass('.iconFolderActive', theme.opened);
             $('span.layer-title:first', $li).text(layerset.title);
-            $('span.layer-spinner:first', $li).remove();
-            $('span.layer-state:first', $li).remove();
-            $('div.featureInfoWrapper', $li).remove();
-            $('div.selectedWrapper', $li).remove();
             if (!theme.allSelected) {
                 $('div.selectAll', $li).remove();
             }
@@ -233,82 +215,64 @@
                 $('div.sourceVisibilityWrapper input[name="sourceVisibility"]', $li).prop('checked',
                     this._isThemeVisible(layerset));
             }
-            $('.layer-menu-btn', $li).remove();
             return $li;
         },
-        _createLayerNode: function(source, sourceEl) {
-            var isroot = !sourceEl.getParent();
+        _createLayerNode: function(layer) {
             var $li = this.template.clone();
-            $li.data('layer', sourceEl);
+            $li.data('layer', layer);
 
-            var config = this._getNodeProporties(sourceEl);
-            $li.removeClass('hide-elm');
-            $li.attr('data-id', sourceEl.options.id);
-            $li.attr('data-sourceid', source.id);
-            var nodeType = this._getNodeType(sourceEl, isroot);
-            $('div.selectAll', $li).remove();
-            $('div.sourceVisibilityWrapper', $li).remove();
-            $li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
-            if (nodeType === this.consts.root || nodeType === this.consts.group) {
-                $('.featureInfoWrapper:first', $li).remove();
-                if (nodeType === this.consts.root) {
-                    $li.addClass("serviceContainer");
-                } else if (nodeType === this.consts.group) {
+            var config = this._getNodeProporties(layer);
+            $li.attr('data-id', layer.options.id);
+            $li.attr('data-sourceid', layer.source.id);
+            var nodeType;
+            $li.attr('data-title', layer.options.title);
+            var selectHidden = false;
+            var $childList = $('ul.layers', $li);
+            if (this.options.hideInfo || layer.children) {
+                $('input[name="info"]', $li).closest('.checkWrapper').remove();
+            }
+            if (layer.children) {
+                if (layer.getParent()) {
                     $li.addClass("groupContainer");
-                }
-                if (config.toggle === true) {
-                    $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    nodeType = this.consts.group;
                 } else {
-                    $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
+                    $li.addClass("serviceContainer");
+                    nodeType = this.consts.root;
                 }
+                $li.toggleClass('showLeaves', config.toggle);
+                var $folder = $('.iconFolder', $li);
+                $folder.toggleClass('iconFolderActive', config.toggle);
                 if (config.toggleable) {
                     $li.addClass('toggleable');
                 }
-            }
-            $li.addClass(config.reorder);
-            $li.find('.layer-state').attr('title', config.visibility.tooltip);
-            this._updateLayerDisplay($li, sourceEl);
-            var infoHidden = false;
-            if (this.options.hideInfo) {
-                infoHidden = true;
-                $('input[name="info"]', $li).parents('.checkWrapper:first').remove();
-            }
-            var selectHidden = false;
-            if (this.options.hideSelect && config.selected && !config.selectable &&
-                (nodeType === this.consts.root || nodeType === this.consts.group)) {
-                selectHidden = true;
-                $('input[name="selected"]', $li).parents('.checkWrapper:first').remove();
-            }
-            if (config.toggleable === false && this.options.hideNotToggleable) {
-                var $folder = $li.find('.iconFolder');
-                if (selectHidden && infoHidden) {
-                    $folder.addClass('placeholder')
+                if (this.options.hideSelect && config.selected && !config.selectable) {
+                    $('input[name="selected"]', $li).closest('.checkWrapper').remove();
+                    if (this.options.hideNotToggleable && !config.toggleable && this.options.hideInfo) {
+                        $folder.addClass('placeholder');
+                        $folder.removeClass('iconFolder');
+                    }
                 }
-                $folder.removeClass('iconFolder');
-            }
-            $li.find('.layer-title:first')
-                .attr('title', sourceEl.options.title)
-                .text(sourceEl.options.title);
-            if (this.options.menu.length === 0) {
-                $li.find('.layer-menu-btn').remove();
-            }
-            var $childList = $('ul.layers', $li);
-            if (sourceEl.children) {
-                $childList.attr('id', 'list-' + sourceEl.options.id);
-                if (config.toggle) {
-                    $childList.addClass("closed");
-                }
-                for (var j = sourceEl.children.length - 1; j >= 0; j--) {
-                    $childList.append(this._createLayerNode(source, sourceEl.children[j]));
+                $childList.toggleClass('closed', config.toggle);
+                for (var j = layer.children.length - 1; j >= 0; j--) {
+                    $childList.append(this._createLayerNode(layer.children[j]));
                 }
             } else {
+                nodeType = this.consts.simple;
                 $childList.remove();
             }
+            $li.attr('data-type', nodeType);
+            $li.addClass(config.reorder);
+            $li.find('.layer-state').attr('title', config.visibility.tooltip);
+            this._updateLayerDisplay($li, layer);
+            $li.find('.layer-title:first')
+                .attr('title', layer.options.title)
+                .text(layer.options.title)
+            ;
 
             return $li;
         },
         _createSourceTree: function(source) {
-            var li = this._createLayerNode(source, source.configuration.children[0]);
+            var li = this._createLayerNode(source.configuration.children[0]);
             if (source.configuration.status !== 'ok') {
                 li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
                     source.configuration.status);
@@ -439,15 +403,6 @@
             if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
                 this.loadStarted[sourceId] = false;
                 $sourceEl.attr('data-state', 'error');
-            }
-        },
-        _getNodeType: function(node, isroot) {
-            if (isroot) {
-                return this.consts.root;
-            } else if (node.children) {
-                return this.consts.group;
-            } else {
-                return this.consts.simple;
             }
         },
         _getNodeProporties: function(nodeConfig) {
@@ -811,7 +766,6 @@
                 if (this.popup) {
                     $("ul.layers:first", this.element).empty();
                     $(this.element).hide().appendTo("body");
-                    this._unSortable();
                     this.created = false;
                     if (this.popup.$element) {
                         this.popup.destroy();

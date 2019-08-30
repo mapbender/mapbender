@@ -1,63 +1,71 @@
 <div id="{{ id }}" class="mb-element mb-element-layertree hidden" data-title="{{ title |trans }}">
-  <li class="hidden leave showLeaves" data-state="" data-title="">
-    <div class="leaveContainer">
-      <span class="layer-spinner"></span>
-      <span class="layer-state"></span>
-      <span class="iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
-      <div class="checkWrapper iconCheckbox sourceVisibilityWrapper" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans  }}">
-        <input class="layer-selected checkbox" type="checkbox" name="sourceVisibility">
-      </div>
-      <div class="iconOk selectAll" title="{{ 'mb.core.layertree.label.allvisibility_on' | trans  }}"></div>
-      <div class="checkWrapper iconCheckbox selectedWrapper" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans  }}">
-        <input class="layer-selected checkbox" type="checkbox" name="selected">
-      </div>
-      <div class="checkWrapper featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" data-icon-on="iconInfoActive" data-icon-off="iconInfo">
-        <input class="layer-info checkbox" type="checkbox" name="info"/>
-      </div>
-      <span class="layer-title labelCheck"></span>
-      {% if configuration.menu is defined and configuration.menu %}
-      <span class="iconMenu layer-menu-btn"></span>
-        <div class="layer-menu hidden">
-          <div>
-            <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
-          </div>
-          {% if 'opacity' in configuration.menu %}
-              <div class="layer-control-opacity layer-control-root-only">
-                <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
-                    <div class="layer-opacity-handle layer-slider-handle">100</div>
-                </div>
-          </div>
-          {% endif %}
-          {% if 'dimension' in configuration.menu %}
-              <div class="layer-control-dimensions layer-control-root-only">
-                  <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
-                    <input type="checkbox" class="checkbox"/>
-                  </div>
-                  <span class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
-                  <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
-                    <div class="layer-dimension-handle layer-slider-handle"></div>
-                  </div>
-                  <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
-              </div>
-          {% endif %}
-          <div>
-            {% if 'zoomtolayer' in configuration.menu %}
-            <span class="layer-zoom iconSearch hover-highlight-effect" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
-            {% endif %}
-            {% if 'metadata' in configuration.menu %}
-            <span class="layer-metadata iconFileText hover-highlight-effect" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
-            {% endif %}
-            {% if 'layerremove' in configuration.menu %}
-            <span class="layer-remove-btn iconRemove hover-highlight-effect" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
-            {% endif %}
-          </div>
-        </div>
-      {% endif %}
-    </div>
-    <ul class="layers"></ul>
-  </li>
   {% if configuration.showHeader %}
   <h2>{{ 'mb.core.layertree.label.sources' | trans }} (<span id="counter">0</span>)<a href="#" id="delete-all" class="icononly" title="{{ 'mb.core.layertree.label.deleteallsources' |trans }}">&times;</a></h2>
   {% endif %}
-  <ul id="list-root" class="layers" ></ul>
+  <ul class="layers" >
+      <li class="-fn-theme-template themeContainer hidden toggleable">
+        <div class="leaveContainer">
+          <span class="iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
+          <div class="checkWrapper iconCheckbox sourceVisibilityWrapper" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans  }}">
+            <input class="layer-selected checkbox" type="checkbox" name="sourceVisibility">
+          </div>
+          <div class="iconOk selectAll" title="{{ 'mb.core.layertree.label.allvisibility_on' | trans  }}"></div>
+          <span class="layer-title labelCheck"></span>
+        </div>
+        <ul class="layers"></ul>
+      </li>
+      <li class="-fn-template hidden leave showLeaves" data-state="" data-title="">
+        <div class="leaveContainer">
+          <span class="layer-spinner"></span>
+          <span class="layer-state"></span>
+          <span class="iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
+          <div class="checkWrapper iconCheckbox selectedWrapper" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans  }}">
+            <input class="layer-selected checkbox" type="checkbox" name="selected">
+          </div>
+          <div class="checkWrapper featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" data-icon-on="iconInfoActive" data-icon-off="iconInfo">
+            <input class="layer-info checkbox" type="checkbox" name="info"/>
+          </div>
+          <span class="layer-title labelCheck"></span>
+          {% if configuration.menu is defined and configuration.menu %}
+          <span class="iconMenu layer-menu-btn"></span>
+            <div class="layer-menu hidden">
+              <div>
+                <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
+              </div>
+              {% if 'opacity' in configuration.menu %}
+                  <div class="layer-control-opacity layer-control-root-only">
+                    <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
+                        <div class="layer-opacity-handle layer-slider-handle">100</div>
+                    </div>
+              </div>
+              {% endif %}
+              {% if 'dimension' in configuration.menu %}
+                  <div class="layer-control-dimensions layer-control-root-only">
+                      <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
+                        <input type="checkbox" class="checkbox"/>
+                      </div>
+                      <span class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+                      <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
+                        <div class="layer-dimension-handle layer-slider-handle"></div>
+                      </div>
+                      <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+                  </div>
+              {% endif %}
+              <div>
+                {% if 'zoomtolayer' in configuration.menu %}
+                <span class="layer-zoom iconSearch hover-highlight-effect" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+                {% endif %}
+                {% if 'metadata' in configuration.menu %}
+                <span class="layer-metadata iconFileText hover-highlight-effect" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+                {% endif %}
+                {% if 'layerremove' in configuration.menu %}
+                <span class="layer-remove-btn iconRemove hover-highlight-effect" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <ul class="layers"></ul>
+      </li>
+  </ul>
 </div>
