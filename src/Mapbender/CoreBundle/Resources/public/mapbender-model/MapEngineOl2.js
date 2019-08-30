@@ -47,7 +47,7 @@ window.Mapbender.MapEngineOl2 = (function() {
                     minScale: rootLayer.minScale,
                     maxScale: rootLayer.maxScale
                 };
-                if (!!((new Mapbender.Util.Url(this.configuration.options.url)).username)) {
+                if (!!((new Mapbender.Util.Url(source.configuration.options.url)).username)) {
                     opts.tileOptions = {
                         crossOriginKeyword: 'use-credentials'
                     };
