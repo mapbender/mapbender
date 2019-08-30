@@ -564,97 +564,90 @@
             this.currentMenu = null;
             return false;
         },
-        _toggleMenu: function(e) {
-            var self = this;
-            function createMenu($element, sourceId, layerId) {
-                var atLeastOne = false;
-                var source = self.model.getSourceById(sourceId);
-                var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
-                    sourceId));
-                var exitButton = menu.find('.exit-button');
-                if (self.currentMenu) {
-                    self.closeMenu(self.currentMenu);
-                }
-                self.currentMenu = menu;
+        _initMenu: function($layerNode) {
+            var layer = $layerNode.data('layer');
+            var source = layer.source;
+            var atLeastOne;
+            var menu = $(this.menuTemplate.clone())
+                .attr("data-menuLayerId", layer.options.id)
+                .attr("data-menuSourceId", layer.source.id)
+            ;
+            var removeButton = menu.find('.layer-remove-btn');
+            menu.on('mousedown mousemove', function(e) {
+                e.stopPropagation();
+            });
+            atLeastOne = removeButton.length > 0;
+            removeButton.on('click', $.proxy(this._removeSource, this));
 
-                exitButton.on('click', function(e) {
-                    self.closeMenu(menu);
+            // element must be added to dom and sized before Dragdealer init...
+            menu.removeClass('hidden');
+            $('.leaveContainer:first', $layerNode).after(menu);
+
+            var $opacitySliderWrap = $('#layer-opacity', menu);
+            if (layer.getParent()) {
+                $opacitySliderWrap.remove();
+                menu.find('#layer-opacity-title').remove();
+            } else if ($.inArray("opacity", this.options.menu) !== -1 && $opacitySliderWrap.length) {
+                atLeastOne = true;
+                var self = this;
+                var $handle = $('.layer-opacity-handle', menu);
+                $handle.attr('unselectable', 'on');
+                new Dragdealer($opacitySliderWrap.get(0), {
+                    x: source.configuration.options.opacity,
+                    horizontal: true,
+                    vertical: false,
+                    speed: 1,
+                    steps: 100,
+                    handleClass: "layer-opacity-handle",
+                    animationCallback: function(x, y) {
+                        var percentage = Math.round(x * 100);
+                        $handle.text(percentage);
+                        self._setOpacity(source, percentage / 100.0);
+                    }
                 });
-
-                var removeButton = menu.find('.layer-remove-btn');
-                atLeastOne = removeButton.length > 0;
-                removeButton.on('click', $.proxy(self._removeSource, self));
-
-                var $opacitySliderWrap = $('#layer-opacity', menu);
-                if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
-                    $opacitySliderWrap.remove();
-                    menu.find('#layer-opacity-title').remove();
-                    $opacitySliderWrap = [];
-                }
-
-                menu.removeClass('hidden');
-
-                $element.closest('.leaveContainer').after(menu);
-                $(menu).on('mousedown mousemove', function(e) {
-                    e.stopPropagation();
-                });
-
-                if ($.inArray("opacity", self.options.menu) !== -1 && $opacitySliderWrap.length) {
-                    atLeastOne = true;
-                    var $handle = $('.layer-opacity-handle', menu);
-                    $handle.attr('unselectable', 'on');
-                    new Dragdealer($opacitySliderWrap.get(0), {
-                        x: source.configuration.options.opacity,
-                        horizontal: true,
-                        vertical: false,
-                        speed: 1,
-                        steps: 100,
-                        handleClass: "layer-opacity-handle",
-                        animationCallback: function(x, y) {
-                            var percentage = Math.round(x * 100);
-                            $handle.text(percentage);
-                            var source = self.model.getSourceById(sourceId);
-                            self._setOpacity(source, percentage / 100.0);
-                        }
-                    });
-                }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
-                    && self.model.getLayerExtents({
-                        sourceId: sourceId,
-                        layerId: layerId
-                    })) {
-                    atLeastOne = true;
-                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
-                } else {
-                    $('.layer-zoom', menu).remove();
-                }
-                if (self.options.menu.indexOf('metadata') !== -1 && source.supportsMetadata() && $('.layer-metadata', menu).length) {
-                    atLeastOne = true;
-                    $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
-                        self));
-                } else {
-                    $('.layer-metadata', menu).remove();
-                }
-                var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
-                if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
-                    && source.configuration.children[0].options.id === layerId && dims.length > 0) {
-                    self._initDimensionsMenu($element, menu, dims, source);
-                    atLeastOne = true;
-                } else {
-                    $('.layer-dimension-checkbox', menu).remove();
-                    $('.layer-dimension-title', menu).remove();
-                    $('.layer-dimension-bar', menu).remove();
-                    $('.layer-dimension-textfield', menu).remove();
-                }
-                if(!atLeastOne) {
-                    self.closeMenu(menu);
-                    Mapbender.info(Mapbender.trans('mb.core.layertree.contextmenu.nooption'));
-                }
+            }
+            if ($.inArray("zoomtolayer", this.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
+                && this.model.getLayerExtents({
+                    sourceId: source.id,
+                    layerId: layer.options.id
+                })) {
+                atLeastOne = true;
+                $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(this._zoomToLayer, this));
+            } else {
+                $('.layer-zoom', menu).remove();
+            }
+            if (this.options.menu.indexOf('metadata') !== -1 && source.supportsMetadata() && $('.layer-metadata', menu).length) {
+                atLeastOne = true;
+                $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(this._showMetadata, this));
+            } else {
+                $('.layer-metadata', menu).remove();
+            }
+            var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
+            if ($.inArray("dimension", this.options.menu) !== -1 && source.type === 'wms'
+                && source.configuration.children[0].options.id === layer.options.id && dims.length) {
+                this._initDimensionsMenu($layerNode, menu, dims, source);
+                atLeastOne = true;
+            } else {
+                $('.layer-dimension-checkbox', menu).remove();
+                $('.layer-dimension-title', menu).remove();
+                $('.layer-dimension-bar', menu).remove();
+                $('.layer-dimension-textfield', menu).remove();
             }
 
+            if (atLeastOne) {
+                menu.removeClass('hidden');
+                return menu;
+            } else {
+                return null;
+            }
+
+        },
+        _toggleMenu: function(e) {
+            var self = this;
             var $btnMenu = $(e.target);
-            var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
-            var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
+            var $layerNode = $btnMenu.closest('li.leave');
+            var layer = $layerNode.data('layer');
+            var currentLayerId = layer.options.id;
             var layerIdMenu = null;
             var $menu = this.currentMenu || $('.layer-menu', this.element);
             if ($menu.length) {
@@ -664,8 +657,10 @@
                 if ($menu.length) {
                     this.closeMenu($menu);
                 }
-                createMenu($btnMenu, currentSourceId, currentLayerId);
-
+                this.currentMenu = this._initMenu($layerNode);
+                $('.exit-button', this.currentMenu).on('click', function(e) {
+                    self.closeMenu(self.currentMenu);
+                });
             }
             return false;
         },
