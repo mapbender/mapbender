@@ -25,11 +25,6 @@
             group: "group",
             simple: "simple"
         },
-        transConst: {
-            outOfScale: '',
-            outOfBounds: '',
-            parentInvisible: ''
-        },
         _mobilePane: null,
         _create: function() {
             this.loadStarted = {};
@@ -41,15 +36,13 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function() {
-            this.transConst.outOfScale = Mapbender.trans("mb.core.layertree.const.outofscale");
-            this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
-            this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li.-fn-template', this.element).remove();
-            this.template.removeClass('hidden').removeClass('-fn-template');
+            this.template.removeClass('hidden -fn-template');
             this.menuTemplate = $('.layer-menu', this.template).remove();
+            this.menuTemplate.removeClass('hidden');
             this.themeTemplate = $('li.-fn-theme-template', this.element).remove();
-            this.themeTemplate.removeClass('hidden');
+            this.themeTemplate.removeClass('hidden -fn-theme-template');
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if (this.options.type === 'element') {
@@ -86,8 +79,12 @@
                         theme = item;
                 });
                 if (theme.useTheme) {
-                    var $layersetEl = this._createThemeNode(layerset, theme);
-                    $targetList = $("ul.layers:first", $layersetEl);
+                    var $themeNode = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
+                    if (!$themeNode.length) {
+                        $themeNode = this._createThemeNode(layerset, theme);
+                        $themeNode.attr('data-layersetid', layerset.id);
+                    }
+                    $targetList = $("ul.layers:first", $themeNode);
                 }
             }
             $targetList.append($toAdd);
@@ -102,7 +99,7 @@
             this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
@@ -193,18 +190,11 @@
             return false;
         },
         _createThemeNode: function(layerset, theme) {
-            var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
-            if ($li.length === 1) {
-                return $li;
-            } else {
-                $li = this.themeTemplate.clone();
-            }
+            var $li = this.themeTemplate.clone();
             $('ul.layers:first', this.element).append($li);
-            $li.addClass('toggleable');
-            $li.attr('data-layersetid', layerset.id);
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
             $li.toggleClass('showLeaves', theme.opened);
-            $('.iconFolder', $li).toggleClass('.iconFolderActive', theme.opened);
+            $('.iconFolder', $li).toggleClass('iconFolderActive', theme.opened);
             $('span.layer-title:first', $li).text(layerset.title);
             if (!theme.allSelected) {
                 $('div.selectAll', $li).remove();
@@ -221,17 +211,16 @@
             var $li = this.template.clone();
             $li.data('layer', layer);
 
-            var config = this._getNodeProporties(layer);
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
             var nodeType;
             $li.attr('data-title', layer.options.title);
-            var selectHidden = false;
             var $childList = $('ul.layers', $li);
             if (this.options.hideInfo || layer.children) {
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
             }
             if (layer.children) {
+                var treeOptions = layer.options.treeOptions;
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
                     nodeType = this.consts.group;
@@ -239,20 +228,16 @@
                     $li.addClass("serviceContainer");
                     nodeType = this.consts.root;
                 }
-                $li.toggleClass('showLeaves', config.toggle);
+                $li.toggleClass('showLeaves', treeOptions.toggle);
                 var $folder = $('.iconFolder', $li);
-                $folder.toggleClass('iconFolderActive', config.toggle);
-                if (config.toggleable) {
-                    $li.addClass('toggleable');
-                }
-                if (this.options.hideSelect && config.selected && !config.selectable) {
+                $folder.toggleClass('iconFolderActive', treeOptions.toggle);
+                if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('input[name="selected"]', $li).closest('.checkWrapper').remove();
-                    if (this.options.hideNotToggleable && !config.toggleable && this.options.hideInfo) {
+                    if (!treeOptions.allow.toggle && this.options.hideNotToggleable && this.options.hideInfo) {
                         $folder.addClass('placeholder');
                         $folder.removeClass('iconFolder');
                     }
                 }
-                $childList.toggleClass('closed', config.toggle);
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }
@@ -261,8 +246,6 @@
                 $childList.remove();
             }
             $li.attr('data-type', nodeType);
-            $li.addClass(config.reorder);
-            $li.find('.layer-state').attr('title', config.visibility.tooltip);
             this._updateLayerDisplay($li, layer);
             $li.find('.layer-title:first')
                 .attr('title', layer.options.title)
@@ -310,15 +293,11 @@
                 return true;
             }
             var $sourceVisCheckbox = $('>.leaveContainer input[name="sourceVisibility"]', $themeNode);
-            if ($sourceVisCheckbox.length) {
-                return $sourceVisCheckbox.prop('checked');
-            } else {
-                return true;
-            }
+            return $sourceVisCheckbox.prop('checked');
         },
         _redisplayLayerState: function($li, state) {
             if (state.outOfScale) {
-                $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
+                $li.addClass("invisible").find('span.layer-state').attr("title", Mapbender.trans("mb.core.layertree.const.outofscale"));
             } else if (state.visibility) {
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
             } else {
@@ -405,62 +384,16 @@
                 $sourceEl.attr('data-state', 'error');
             }
         },
-        _getNodeProporties: function(nodeConfig) {
-            var conf = {
-                selected: nodeConfig.options.treeOptions.selected,
-                selectable: nodeConfig.options.treeOptions.allow.selected,
-                info: nodeConfig.options.treeOptions.info,
-                reorderable: nodeConfig.options.treeOptions.allow.reorder
-            };
-
-            if (nodeConfig.children) {
-                conf["toggle"] = nodeConfig.options.treeOptions.toggle;
-                conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
-            } else {
-                conf["toggle"] = null;
-                conf["toggleable"] = null;
-            }
-
-            if (nodeConfig.state.outOfScale) {
-                conf["visibility"] = {
-                    state: "invisible",
-                    tooltip: this.transConst.outOfScale
-                };
-            } else if (nodeConfig.state.outOfBounds) {
-                conf["visibility"] = {
-                    state: "invisible",
-                    tooltip: this.transConst.outOfBounds
-                };
-            } else if (!nodeConfig.state.visibility) {
-                conf["visibility"] = {
-                    state: "invisible",
-                    tooltip: this.transConst.parentinvisible
-                };
-            } else {
-                conf["visibility"] = {
-                    state: "",
-                    tooltip: ""
-                };
-            }
-            return conf;
-        },
-        _toggleContent: function(e) {
+        _toggleFolder: function(e) {
             var $me = $(e.target);
-            var $parent = $me.parents('li:first');
-            if (!$parent.hasClass('toggleable'))
+            var layer = $(e.target).closest('li.leave').data('layer');
+            if (layer && (!layer.children || !layer.options.treeOptions.allow.toggle)) {
                 return false;
-            if ($me.hasClass("iconFolderActive")) {
-                $me.removeClass("iconFolderActive");
-                $parent.removeClass("showLeaves");
-            } else {
-                $me.addClass("iconFolderActive");
-                $parent.addClass("showLeaves");
             }
-            var li = $me.closest('li.leave');
-            var layer = li.data('layer');
-            if (layer) {
-                this._resetSourceAtTree(layer.source);
-            }
+            var $node = $me.closest('.leave,.themeContainer');
+            var active = $node.hasClass('showLeaves');
+            $node.toggleClass('showLeaves', !active);
+            $me.toggleClass('iconFolderActive', !active);
             return false;
         },
         _toggleSourceVisibility: function(e) {
@@ -531,7 +464,6 @@
             removeButton.on('click', $.proxy(this._removeSource, this));
 
             // element must be added to dom and sized before Dragdealer init...
-            menu.removeClass('hidden');
             $('.leaveContainer:first', $layerNode).after(menu);
 
             var $opacityControl = $('.layer-control-opacity', menu);
