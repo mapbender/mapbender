@@ -4,11 +4,8 @@
 namespace Mapbender\ManagerBundle\Extension\Twig;
 
 
-use Mapbender\ManagerBundle\Component\ManagerBundle;
-use Mapbender\ManagerBundle\Component\Menu\LegacyItem;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MenuExtension extends \Twig_Extension
@@ -21,8 +18,6 @@ class MenuExtension extends \Twig_Extension
     protected $itemData;
     /** @var bool */
     protected $initialized = false;
-    /** @var array|null */
-    protected $legacyInitArgs;
     /** @var RequestStack */
     protected $requestStack;
 
@@ -31,23 +26,14 @@ class MenuExtension extends \Twig_Extension
      * @param MenuItem[] $items
      * @param RequestStack $requestStack
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param KernelInterface $kernel
-     * @param string[] $legacyBundleNames
-     * @param string[] $routePrefixBlacklist
      */
     public function __construct($items,
                                 RequestStack $requestStack,
-                                AuthorizationCheckerInterface $authorizationChecker,
-                                KernelInterface $kernel,
-                                $legacyBundleNames,
-                                $routePrefixBlacklist)
+                                AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->itemData = $items;
         $this->requestStack = $requestStack;
         $this->authorizationChecker = $authorizationChecker;
-        if ($legacyBundleNames) {
-            $this->legacyInitArgs = array($kernel, $legacyBundleNames, $routePrefixBlacklist);
-        }
     }
 
     public function getFunctions()
@@ -92,35 +78,11 @@ class MenuExtension extends \Twig_Extension
     protected function initialize()
     {
         $this->items = array_map('\unserialize', $this->itemData);
-        if ($args = $this->legacyInitArgs) {
-            $this->legacyInit($args[0], $args[1], $args[2]);
-        }
         $route = $this->requestStack->getCurrentRequest()->attributes->get('_route');
         foreach ($this->items as $item) {
             $item->checkActive($route);
         }
 
         $this->initialized = true;
-    }
-
-    /**
-     * @param KernelInterface $kernel
-     * @param $bundleNames
-     * @param $routePrefixBlacklist
-     * @deprecated remove in v3.1, plus all related DI dependencies and attributes
-     */
-    protected function legacyInit(KernelInterface $kernel, $bundleNames, $routePrefixBlacklist)
-    {
-        foreach ($bundleNames as $legacyBundleName) {
-            /** @var ManagerBundle $bundle */
-            $bundle = $kernel->getBundle($legacyBundleName);
-            foreach ($bundle->getManagerControllers() as $topLevelMenuDefinition) {
-                $item = LegacyItem::fromArray($topLevelMenuDefinition);
-                if (MenuItem::filterBlacklistedRoutes(array($item), $routePrefixBlacklist)) {
-                    $this->items[] = $item;
-                }
-            }
-        }
-        $this->items = MenuItem::sortItems($this->items);
     }
 }

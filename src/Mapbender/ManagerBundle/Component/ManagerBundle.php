@@ -18,15 +18,6 @@ class ManagerBundle extends Bundle
 {
     /**
      * @deprecated remove in v3.1
-     * To extend the menu, register MenuItem objects with a RegisterMenuRoutesPass
-     */
-    public function getManagerControllers()
-    {
-        return array();
-    }
-
-    /**
-     * @deprecated remove in v3.1
      * Return whatever you want, it doesn't affect anything anywhere
      */
     public function getRoles()
