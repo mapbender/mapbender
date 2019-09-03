@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Component;
 
 
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -67,9 +66,6 @@ class ElementFormFactory
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array('application' => $element->getApplication());
-        if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
-            $options['element'] = $element;
-        }
         $componentClassName = $this->getComponentClass($element);
         if (is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             $componentClassName::updateEntityConfig($element);
