@@ -13,7 +13,7 @@
     <form action="{{ path("mapbender_core_login_logincheck") }}" method="post" id="login" novalidate="novalidate">
       {% if error %}
         <div class="messageBox error">
-          {% if error.message == "Bad credentials" %}
+          {% if error.message == "Bad credentials." %}
             {{ 'fom.user.login.errors.bad-credentials' | trans }}
           {% else %}
             {{ error.message | trans }}
