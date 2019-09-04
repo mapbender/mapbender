@@ -17,15 +17,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class ManagerBundle extends Bundle
 {
     /**
-     * @deprecated remove in v3.1
-     * Return whatever you want, it doesn't affect anything anywhere
-     */
-    public function getRoles()
-    {
-        return array();
-    }
-
-    /**
      * Return a mapping of acl class names to displayable descriptions. E.g.
      * "FOM\UserBundle\Entity\Group" => "Groups"
      *
