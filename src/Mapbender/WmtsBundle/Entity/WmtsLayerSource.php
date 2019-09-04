@@ -43,7 +43,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @ORM\Column(type="object", nullable=true)
      */
     protected $latlonBounds;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
