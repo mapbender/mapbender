@@ -86,7 +86,7 @@ class ApplicationController extends WelcomeController
             $em->persist($application);
             $em->flush();
             if ($form->has('acl')) {
-                $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                $this->getAclManager()->setObjectACEs($application, $form->get('acl')->get('ace')->getData());
             }
             $scFile = $form->get('screenshotFile')->getData();
 
@@ -281,7 +281,7 @@ class ApplicationController extends WelcomeController
                 $em->persist($application);
                 $em->flush();
                 if ($form->has('acl')) {
-                    $this->getAclManager()->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                    $this->getAclManager()->setObjectACEs($application, $form->get('acl')->get('ace')->getData());
                 }
                 $em->commit();
                 $this->addFlash('success', $this->translate('mb.application.save.success'));
