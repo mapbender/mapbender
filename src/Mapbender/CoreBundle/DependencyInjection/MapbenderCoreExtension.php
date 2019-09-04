@@ -10,7 +10,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @deprecated mostly loads configs; absorb into MapbenderCoreBundle::build in v3.1
- *     remove support for ~nested-style mapbender_core: uploads_dir configuration in v3.1
  */
 class MapbenderCoreExtension extends Extension
 {
@@ -31,12 +30,6 @@ class MapbenderCoreExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-        if ($config['uploads_dir'] !== false) {
-            $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
-        }
-
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));
 
