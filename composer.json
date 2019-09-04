@@ -6,6 +6,8 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4.30",
+        "ext-dom": "*",
+        "ext-gd": "*",
         "symfony/symfony": "^2.3",
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
