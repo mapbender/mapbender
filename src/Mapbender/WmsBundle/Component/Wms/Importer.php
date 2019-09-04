@@ -125,9 +125,8 @@ class Importer extends RefreshableSourceLoader
      * @param Source $target
      * @param Source $reloaded
      * @throws \Exception
-     * @internal, public only for legacy EntityHandler access
      */
-    public function updateSource(Source $target, Source $reloaded)
+    protected function updateSource(Source $target, Source $reloaded)
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
