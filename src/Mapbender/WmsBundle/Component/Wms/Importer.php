@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
- * in-memory, or from a given WmsOrigin (which is just url + username + password).
+ * in-memory, or from a given HttpOriginInterface
  * WmsSource is bundled in a Response class with validation errors. This is done because validation exceptions
  * can be optionally suppressed ("onlyValid"=false). In that case, the Response will contain the exception, if
  * any. By default, validation exceptions are thrown.

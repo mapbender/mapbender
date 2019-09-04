@@ -14,7 +14,6 @@ use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -220,8 +219,9 @@ class WmsSourceService extends SourceService
             $originHasCredentials = !!\parse_url($originUrl, PHP_URL_USER);
             $getMapHasCredentials = !!\parse_url($url, PHP_URL_USER);
             if ($originHasCredentials && !$getMapHasCredentials) {
-                $origin = new WmsOrigin($originUrl, null, null);
-                $url = UrlUtil::addCredentials($url, $origin->getUsername(), $origin->getPassword(), true);
+                $username = \urldecode(\parse_url($originUrl, PHP_URL_USER));
+                $password = \urldecode(\parse_url($originUrl, PHP_URL_PASS) ?: '');
+                $url = UrlUtil::addCredentials($url, $username, $password);
             }
         }
         $userToken = $this->tokenStorage->getToken();

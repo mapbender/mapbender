@@ -6,9 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -209,15 +209,13 @@ class WmsLoader extends Element
      */
     protected function getWmsSource($request)
     {
-        $requestUrl = $request->get("url");
-        $requestUserName = $request->get("username");
-        $requestPassword = $request->get("password");
-        $onlyValid = false;
-
-        $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
+        $origin = new HttpOriginModel();
+        $origin->setOriginUrl($request->get("url"));
+        $origin->setUsername($request->get("username"));
+        $origin->setPassword($request->get("password"));
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
-        $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
+        $importerResponse = $importer->evaluateServer($origin, false);
 
         return $importerResponse->getWmsSourceEntity();
     }
