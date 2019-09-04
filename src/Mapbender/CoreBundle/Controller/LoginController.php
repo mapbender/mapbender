@@ -2,9 +2,12 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * User controller.
@@ -20,29 +23,34 @@ class LoginController extends Controller
      * User login
      *
      * @Route("/user/login", methods={"GET"})
+     * @Route("/user/login/check", methods={"POST"}, name="mapbender_core_login_logincheck")
+     * @param Request $request
      * @return Response
      */
-    public function loginAction()
+    public function loginAction(Request $request)
     {
-        /** @var AuthenticationUtils $authenticationUtils */
-        $authenticationUtils = $this->get('security.authentication_utils');
-        $error = $authenticationUtils->getLastAuthenticationError(true);
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LoginType', null, array(
+            'action' => 'login/check',
+        ));
+
+        if ($request->getMethod() === 'GET') {
+            /** @var AuthenticationUtils $authenticationUtils */
+            $authenticationUtils = $this->get('security.authentication_utils');
+            $error = $authenticationUtils->getLastAuthenticationError(true);
+            $lastUsername = $authenticationUtils->getLastUsername();
+            $form->get('_username')->setData($lastUsername);
+            if ($error) {
+                /** @var TranslatorInterface $translator */
+                $translator = $this->get('translator');
+                $form->addError(new FormError($translator->trans($error->getMessage())));
+            }
+        }
 
         return $this->render('@MapbenderCore/Login/login.html.twig', array(
-            'last_username' => $lastUsername,
-            'error' => $error,
+            'form' => $form->createView(),
             'selfregister' => $this->getParameter("fom_user.selfregister"),
             'reset_password' => $this->getParameter("fom_user.reset_password"),
         ));
-    }
-
-    /**
-     * @Route("/user/login/check")
-     */
-    public function loginCheckAction()
-    {
-        //Don't worry, this is actually intercepted by the security layer.
     }
 
     /**
