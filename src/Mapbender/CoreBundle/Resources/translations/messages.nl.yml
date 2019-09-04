@@ -416,3 +416,10 @@ mb:
       datails: 'De kaart kan niet getoond worden.'
       exception: 'Foutmelding: %exception%'
       statuscode: 'HTTP status code'
+
+# Login exceptions
+"Bad credentials.": Ongeldige inloggegevens.
+"User account is locked.": Gebruikers account is geblokkeerd.
+"User account is disabled.": Gebruikers account is uitgeschakeld.
+"User account has expired.": Gebruikers account is verlopen.
+"User credentials have expired.": Login gegevens zijn verlopen.
