@@ -388,3 +388,10 @@ mb:
       datails: 'Карта не отображается'
       exception: 'Ошибка: %exception%'
       statuscode: HTTP-Код
+
+# Login exceptions
+"Bad credentials.": 'Ошибка аутентификации'
+"User account is locked.": 'Учетная запись заблокирована.'
+"User account is disabled.": 'Учетная запись деактивирована.'
+'User account has expired.': 'Срок действия учетной записи истёк.'
+'User credentials have expired.': 'Срок действия пароля истёк.'

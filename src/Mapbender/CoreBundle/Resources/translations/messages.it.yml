@@ -388,3 +388,10 @@ mb:
       datails: 'La mappa non può essere mostrata.'
       exception: 'Eccezione: %exception%'
       statuscode: 'HTTP status code'
+
+# Login exceptions
+"Bad credentials.": Credentiali errate.
+"User account is locked.": L'account utente è bloccato.
+"User account is disabled.": L'account dell'utente è disabilitato.
+"User account has expired.": L'account utente è scaduto.
+"User credentials have expired.": Le credenziali dell'utente sono scadute.
