@@ -2,8 +2,6 @@
 
 {% set title %}{% block title %}{{ title|default('') }}{% endblock %}{% endset %}
 
-{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
-
 {% block css %}
   <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
 {% endblock %}

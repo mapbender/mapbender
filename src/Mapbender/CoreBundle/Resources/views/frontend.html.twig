@@ -1,5 +1,22 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
+{% block title %}{{ fom.server_name }} - {{ application.title }}{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}"/>
+{% endblock %}
+
+{% block trans %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
+{% endblock %}
+
+{% block js %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
+{% endblock %}
+
 {% block content %}
     {% block frontend_content %}{% endblock %}
 {% endblock %}
