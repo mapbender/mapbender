@@ -59,7 +59,7 @@ $(function() {
 
     // init validation feedback --------------------------------------------------------------
     $(document).on("keypress", ".validationInput", function(){
-      $(this).siblings(".validationMsgBox").addClass("hide");
+      $(this).siblings(".validationMsgBox").hide();
     });
 
     var flashboxes = $(".flashBox").addClass("kill");
