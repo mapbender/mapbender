@@ -1,0 +1,51 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+<div class="instanceContainer">
+  {{ form_start(form) }}
+
+    <div class="right">
+      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
+    </div>
+
+    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
+    <a class="linkButton origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
+    <div class="clear"></div>
+
+    <div class="row">
+      {% block form_main %}
+      <div class="col-md-6 col-xs-12">
+        {% block form_main1 %}
+            {{ form_row(form.title) }}
+            {{ form_row(form.opacity) }}
+        {% endblock form_main1 %}
+      </div>
+      <div class="col-md-6 col-xs-12">
+        {% block form_main2 %}
+            {{ form_row(form.visible) }}
+            {{ form_row(form.basesource) }}
+            {{ form_row(form.proxy) }}
+        {% endblock form_main2 %}
+      </div>
+      {% endblock form_main %}
+    </div>
+    {% block form_layers %}
+    {% endblock form_layers %}
+    <div class="button-group">
+      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
+    </div>
+    {{ form_row(form._token) }}
+  {# suppress visible post-form 'dimensions' collection'; @todo: fix dimensions integration into form #}
+  {{ form_end(form, {"render_rest": false}) }}
+</div>
+{% endblock manager_content %}
+
+
+

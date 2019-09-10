@@ -1,42 +1,8 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
 
 {% block title %}{{ form.vars.value.type }} {{ 'mb.wmts.wmtsloader.repo.instance.title.instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
 
-{% block css %}
-  {{parent()}}
-  <link rel="stylesheet" href="{{ asset('bundles/mapbenderwmts/backend/instance.css') }}" />
-{% endblock %}
-
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
-{% endblock %}
-
-{% block manager_content %}
-<div class="instanceContainer">
-  {{ form_start(form) }}
-
-    <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
-    </div>
-
-    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-    <a class="linkButton origin-url" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
-    <div class="clear"></div>
-
-    <div class="row">
-      <div class="col-md-6 col-xs-12">
-        {{ form_row(form.title) }}
-        {{ form_row(form.opacity) }}
-      </div>
-      <div class="col-md-6 col-xs-12">
-        {{ form_row(form.visible) }}
-        {{ form_row(form.basesource) }}
-        {{ form_row(form.proxy) }}
-      </div>
-    </div>
-
+{% block form_layers %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
         <tr>
@@ -94,13 +60,4 @@
         </tr>
       </tbody>
     </table>
-
-    <div class="button-group">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
-    </div>
-    {{ form_row(form._token) }}
-  {# suppress visible post-form 'dimensions' collection'; @todo: fix dimensions integration into form #}
-  {{ form_end(form, {"render_rest": false}) }}
-</div>
 {% endblock %}

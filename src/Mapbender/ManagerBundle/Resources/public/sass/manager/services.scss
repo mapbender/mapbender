@@ -97,7 +97,14 @@ fieldset.box {
 }
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
-  .linkButton{display:inline-block;}
+  .origin-url {
+      display: inline-block;
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+  }
+
   .extendedGroup {
     .on-off{
       border: solid 1px darken($contentColor,55%);
