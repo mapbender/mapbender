@@ -32,9 +32,6 @@ class Mapbender
     /** @var string[] */
     private $templates = array();
 
-    /** @var array */
-    private $repositoryManagers = array();
-
     /**
      * Mapbender constructor.
      *
@@ -56,7 +53,6 @@ class Mapbender
                 continue;
             }
             $this->templates          = array_merge($this->templates, $bundle->getTemplates());
-            $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
         }
     }
 
@@ -73,16 +69,6 @@ class Mapbender
         /** @var ElementInventoryService $inventoryService */
         $inventoryService = $this->container->get('mapbender.element_inventory.service');
         return $inventoryService->getActiveInventory();
-    }
-
-    /**
-     * Get list of all declared source factories.
-     *
-     * @return array
-     */
-    public function getRepositoryManagers()
-    {
-        return $this->repositoryManagers;
     }
 
     /**
