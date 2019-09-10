@@ -92,18 +92,18 @@
       {% endif %}
     </ul>
   </div>
-  <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
+  <div id="containerLayers" class="container serviceContainer serviceServiceContainer">
     {% for layer in source.layers %}
       {% include "MapbenderWmtsBundle:Repository:layer.html.twig" with {'layer': layer, 'itemLevel': 1 }%}
     {% endfor %}
   </div>
-  <div id="containerMatrixsets" class="container serviceContainer serviceLayersContainer">
+  <div id="containerMatrixsets" class="container serviceContainer serviceServiceContainer">
     {% for tilematrixset in source.tilematrixsets %}
       {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig" with {'tilematrixset': tilematrixset }%}
     {% endfor %}
   </div>
   {% if source.themes | length() %}
-    <div id="containerTheme" class="container serviceContainer serviceLayersContainer">
+    <div id="containerTheme" class="container serviceContainer serviceServiceContainer">
       {% for theme in source.themes %}
         {% include "MapbenderWmtsBundle:Repository:theme.html.twig" with {'theme': theme, 'itemLevel': 1 }%}
       {% endfor %}
