@@ -188,4 +188,14 @@ class TypeDirectoryService implements SourceInstanceFactory
         }
         return $refs;
     }
+
+    public function getFormType(SourceInstance $instance)
+    {
+        return $this->getInstanceFactory($instance->getSource())->getFormType($instance);
+    }
+
+    public function getFormTemplate(SourceInstance $instance)
+    {
+        return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
+    }
 }

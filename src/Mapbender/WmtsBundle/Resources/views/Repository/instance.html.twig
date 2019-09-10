@@ -14,7 +14,7 @@
 
 {% block manager_content %}
 <div class="instanceContainer">
-  <form action="{{path('mapbender_wmts_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
+  {{ form_start(form) }}
 
     <div class="right">
       <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
@@ -100,6 +100,7 @@
       <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
     </div>
     {{ form_row(form._token) }}
-  </form>
+  {# suppress visible post-form 'dimensions' collection'; @todo: fix dimensions integration into form #}
+  {{ form_end(form, {"render_rest": false}) }}
 </div>
 {% endblock %}

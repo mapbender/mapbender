@@ -298,29 +298,48 @@ class RepositoryController extends ApplicationControllerBase
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
+     * @param Request $request
      * @param string $slug
      * @param string $instanceId
      * @return Response
      */
-    public function instanceAction($slug, $instanceId)
+    public function instanceAction(Request $request, $slug, $instanceId)
     {
-        /** @var SourceInstance|null $sourceInst */
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
+        $em = $this->getDoctrine()->getManager();
+        /** @var SourceInstance|null $instance */
+        $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
 
-        if (null === $sourceInst) {
+        if (null === $instance) {
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+        $factory = $this->getTypeDirectory()->getInstanceFactory($instance->getSource());
+        $form = $this->createForm($factory->getFormType($instance), $instance);
 
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getSource()->getManagertype()];
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($instance);
+            $layerSet = $instance->getLayerset();
+            if ($layerSet) {
+                $application = $layerSet->getApplication();
+                if ($application) {
+                    $application->setUpdated(new \DateTime('now'));
+                    $em->persist($application);
+                }
+            }
+            $em->flush();
 
-        return $this->forward($manager['bundle'] . ":" . "Repository:instance", array(
+            $this->addFlash('success', 'Your instance has been updated.');
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                "slug" => $slug,
+            ));
+        }
+
+        return $this->render($factory->getFormTemplate($instance), array(
+            "form" => $form->createView(),
             "slug" => $slug,
-            "instanceId" => $sourceInst->getId(),
+            "instance" => $instance,
         ));
     }
 

@@ -282,4 +282,14 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
         return $layer;
     }
+
+    public function getFormType(SourceInstance $instance)
+    {
+        return 'Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType';
+    }
+
+    public function getFormTemplate(SourceInstance $instance)
+    {
+        return '@MapbenderWms/Repository/instance.html.twig';
+    }
 }
