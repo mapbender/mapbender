@@ -369,10 +369,8 @@ class ApplicationController extends WelcomeController
 
         try {
             $em = $this->getEntityManager();
-            $aclProvider = $this->get('security.acl.provider');
-            $oid         = ObjectIdentity::fromDomainObject($application);
             $em->beginTransaction();
-            $aclProvider->deleteAcl($oid);
+            $this->getAclProvider()->deleteAcl(ObjectIdentity::fromDomainObject($application));
             $em->remove($application);
             $em->flush();
             $em->commit();
