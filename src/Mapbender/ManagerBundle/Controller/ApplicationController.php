@@ -399,11 +399,11 @@ class ApplicationController extends WelcomeController
         $layerset    = new Layerset();
         $layerset->setApplication($application);
 
-        $form = $this->createForm(new LayersetType(), $layerset);
+        $form = $this->createForm(new LayersetType(), $layerset, array(
+            'action' => $this->generateUrl('mapbender_manager_application_savelayerset', array('slug' => $slug)),
+        ));
 
         return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            "isnew" => true,
-            "application" => $application,
             'form' => $form->createView(),
         ));
     }
@@ -422,11 +422,15 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset = $this->requireLayerset($layersetId, $application);
 
-        $form = $this->createForm(new LayersetType(), $layerset);
+        $actionParams = array(
+            'slug' => $slug,
+            'layersetId' => $layerset->getId(),
+        );
+        $form = $this->createForm(new LayersetType(), $layerset, array(
+            'action' => $this->generateUrl('mapbender_manager_application_savelayerset_1', $actionParams),
+        ));
 
         return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            "isnew" => false,
-            "application" => $application,
             'form' => $form->createView(),
         ));
     }

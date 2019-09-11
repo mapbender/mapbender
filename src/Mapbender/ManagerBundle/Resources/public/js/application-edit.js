@@ -218,7 +218,7 @@ $(function() {
                         label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
                         cssClass: 'button',
                         callback: function() {
-                            $("#layersetForm").submit();
+                            $('form', this.$element).submit();
                         }
                     },
                     {
