@@ -32,4 +32,16 @@ interface SourceInstanceFactory
      * @return Source|null
      */
     public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources);
+
+    /**
+     * @param SourceInstance $instance
+     * @return string
+     */
+    public function getFormType(SourceInstance $instance);
+
+    /**
+     * @param SourceInstance $instance
+     * @return string
+     */
+    public function getFormTemplate(SourceInstance $instance);
 }

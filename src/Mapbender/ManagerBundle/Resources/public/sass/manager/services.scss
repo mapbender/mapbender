@@ -52,8 +52,7 @@ fieldset.box {
   .labelText{width:$labelWidth; }
   .metaText{margin-left:$labelWidth + $space/2; }
 }
-.serviceServiceContainer,
-.serviceLayersContainer{
+.serviceServiceContainer {
   $labeText:85px;
 
   .list, li{clear:both;}
@@ -97,7 +96,14 @@ fieldset.box {
 }
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
-  .linkButton{display:inline-block;}
+  .origin-url {
+      display: inline-block;
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+  }
+
   .extendedGroup {
     .on-off{
       border: solid 1px darken($contentColor,55%);
@@ -166,6 +172,8 @@ fieldset.box {
       &.itemType {
         padding-right: 0;
         padding-left: 0;
+        cursor:ns-resize;
+        line-height:$inputHeight;
       }
       &.minScaleColumn,
       &.maxScaleColumn {
@@ -200,12 +208,6 @@ fieldset.box {
   .level3 .itemType{margin-left:22px;}
   .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
-  .itemType{
-    > span {
-      line-height:$inputHeight;
-    }
-    cursor:ns-resize;
-  }
   .moreColumn{
     position: relative;
     .iconMore{

@@ -56,4 +56,14 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
     {
         throw new \RuntimeException("Yaml-defined Wmts sources not implemented");
     }
+
+    public function getFormTemplate(SourceInstance $instance)
+    {
+        return '@MapbenderWmts/Repository/instance.html.twig';
+    }
+
+    public function getFormType(SourceInstance $instance)
+    {
+        return 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType';
+    }
 }

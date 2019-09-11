@@ -158,7 +158,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
           background-color: #E0DDDD;
           color: #000;
           @include transition(all 0.3s linear);
-
         }
       }
     }
@@ -194,7 +193,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
     &:hover{color:$darkFontColor;}
   }
   &.activeItem {
-    display: block;
     & > a{color: $ciColor;}
   }
 }

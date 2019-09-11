@@ -2,17 +2,17 @@
 
 namespace Mapbender\WmtsBundle;
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\WmtsBundle\DependencyInjection\Compiler\RegisterWmtsExportLayerRendererPass;
 use Mapbender\WmtsBundle\DependencyInjection\Compiler\RegisterWmtsSourceServicePass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * MapbenderWmtsBundle
  */
-class MapbenderWmtsBundle extends MapbenderBundle
+class MapbenderWmtsBundle extends Bundle
 {
 
     public function build(ContainerBuilder $container)
@@ -24,20 +24,5 @@ class MapbenderWmtsBundle extends MapbenderBundle
 
         $container->addCompilerPass(new RegisterWmtsSourceServicePass());
         $container->addCompilerPass(new RegisterWmtsExportLayerRendererPass());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRepositoryManagers()
-    {
-        return array(
-            'wmts' => array(
-                'id' => 'wmts',
-                'label' => 'OGC WMTS / TMS',
-                'manager' => 'mapbender_wmts_repository',
-                'bundle' => "MapbenderWmtsBundle"
-            )
-        );
     }
 }

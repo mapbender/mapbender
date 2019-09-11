@@ -5,11 +5,11 @@
 {% block manager_content %}
 <div id="sourceTabContainer" class="tabContainer sourceTabContainer">
   <ul class="tabs">
-{% for name, manager in managers %}
-    <li id="tab{{loop.index}}" class="tab{% if activetype == name %} active{% endif %}">{{manager.label }}</li>
+{% for name, label in sourceTypes %}
+    <li id="tab{{loop.index}}" class="tab{% if activetype == name %} active{% endif %}">{{ label }}</li>
 {% endfor %}
   </ul>
-{% for name, manager in managers %}
+{% for name in sourceTypes | keys() %}
   <div id="container{{loop.index}}" class="container {% if activetype == name %} active{% endif %}">
     {% include 'MapbenderManagerBundle:Repository:form.html.twig' with {'form': forms[name]} %}
   </div>

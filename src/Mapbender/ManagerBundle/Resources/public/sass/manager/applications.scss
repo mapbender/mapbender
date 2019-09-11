@@ -18,14 +18,6 @@
     position: relative;
     height: $inputHeight;
     line-height: $inputHeight;
-    .upload_button, .upload_label {
-      height: inherit;
-      line-height: inherit;
-    }
-    .upload_button, .upload_label, input[type="file"] {
-      display: inline-block;
-      vertical-align: top;
-    }
     .upload_label {
       max-width: 60%;
       text-overflow: ellipsis;
@@ -36,26 +28,25 @@
     position: absolute;
     left: 0;
     top: 0;
-
-    input[type=file] {
-      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-      filter: alpha(opacity=0);
-      -moz-opacity: 0;
-      -khtml-opacity: 0;
-      opacity: 0;
-      cursor: pointer;
+    cursor: pointer;
+    width: 100%;
+    input {
+        opacity: 0;
+    }
+    .validationMsgBox {
+        position: absolute;
+        max-width: 150px;
+        width: auto;
+        min-width: auto;
+        right: 0;
+        top: 0;
     }
   }
   .upload_button {
-    $buttonFirstColor: #6fb536;
-    padding: 0 10px;
     font-weight: normal;
-    cursor: pointer;
-
-    &.hover,
-    &:hover {
-      background-color: darken($buttonFirstColor, 5%);
-    }
+  }
+  .upload:hover .upload_button {
+    background-color: darken($buttonFirstColor, 5%);
   }
 }
 
@@ -317,19 +308,4 @@
   .iconRadio {@extend .iconCheckbox}
   .iconRadiotabs {@extend .iconTabActive}
   .iconRadioaccordion {@extend .iconBars}
-}
-
-
-
-
-
-// ------------------------------------------------------------- LAYERS
-.layersetForm{
-  .labelInput{width:40px;float:left;}
-}
-
-.containerCustomCss {
-  .inputWrapper {
-    width: 100%;
-  }
 }

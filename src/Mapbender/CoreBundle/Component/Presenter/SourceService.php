@@ -26,6 +26,17 @@ abstract class SourceService
     }
 
     /**
+     * @return string
+     */
+    abstract public function getTypeLabel();
+
+    /**
+     * @return string
+     */
+    abstract public function getTypeCode();
+
+
+    /**
      * @param SourceInstance $sourceInstance
      * @return mixed[]
      */
