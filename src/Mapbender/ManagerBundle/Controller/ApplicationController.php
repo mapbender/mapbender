@@ -386,93 +386,56 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Create a form for a new layerset
+     * Handle layerset creation and title editing
      *
-     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET"})
-     * @param string $slug
-     * @return Response
-     */
-    public function newLayersetAction($slug)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $layerset    = new Layerset();
-        $layerset->setApplication($application);
-
-        $form = $this->createForm(new LayersetType(), $layerset, array(
-            'action' => $this->generateUrl('mapbender_manager_application_savelayerset', array('slug' => $slug)),
-        ));
-
-        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Create a new layerset from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET"})
-     * @param string $slug
-     * @param string $layersetId
-     * @return Response
-     */
-    public function editLayersetAction($slug, $layersetId)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $layerset = $this->requireLayerset($layersetId, $application);
-
-        $actionParams = array(
-            'slug' => $slug,
-            'layersetId' => $layerset->getId(),
-        );
-        $form = $this->createForm(new LayersetType(), $layerset, array(
-            'action' => $this->generateUrl('mapbender_manager_application_savelayerset_1', $actionParams),
-        ));
-
-        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Create a new layerset from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/layerset/create", methods={"POST"})
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/save", methods={"POST"})
+     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET", "POST"}, name="mapbender_manager_application_newlayerset")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET", "POST"}, name="mapbender_manager_application_editlayerset")
      * @param Request $request
      * @param string $slug
      * @param string|null $layersetId
      * @return Response
      */
-    public function saveLayersetAction(Request $request, $slug, $layersetId = null)
+    public function editLayersetAction(Request $request, $slug, $layersetId = null)
     {
         $application = $this->requireApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
-
-        $isNew = ($layersetId === null);
-        $em = $this->getEntityManager();
-
-        if ($isNew) {
+        if ($layersetId) {
+            $layerset = $this->requireLayerset($layersetId, $application);
+            $action = $this->generateUrl('mapbender_manager_application_editlayerset', array(
+                'slug' => $slug,
+                'layersetId' => $layerset->getId(),
+            ));
+        } else {
             $layerset = new Layerset();
             $layerset->setApplication($application);
-        } else {
-            $layerset = $this->requireLayerset($layersetId, $application);
+            $action = $this->generateUrl('mapbender_manager_application_newlayerset', array(
+                'slug' => $slug,
+            ));
         }
-        $form = $this->createForm(new LayersetType(), $layerset);
-        $form->submit($request);
-        if ($form->isValid()) {
-            $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->persist($layerset);
-            $em->flush();
-            $this->get("logger")->debug("Layerset saved");
-            $this->addFlash('success', $this->translate('mb.layerset.create.success'));
-        } else {
-            $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+
+        $form = $this->createForm(new LayersetType(), $layerset, array(
+            'action' => $action,
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $em = $this->getEntityManager();
+                $application->setUpdated(new \DateTime('now'));
+                $em->persist($application);
+                $em->persist($layerset);
+                $em->flush();
+                $this->addFlash('success', $this->translate('mb.layerset.create.success'));
+            } else {
+                // @todo: use form error translations directly; also support message for empty title
+                $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+            }
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+            ));
         }
-        return $this->redirectToRoute('mapbender_manager_application_edit', array(
-            'slug' => $slug,
+
+        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
+            'form' => $form->createView(),
         ));
     }
 
@@ -521,7 +484,6 @@ class ApplicationController extends WelcomeController
             $em->persist($application);
             $em->flush();
             $em->commit();
-            $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
             $this->addFlash('success', $this->translate('mb.layerset.remove.success'));
         } else {
             /** @todo: emit 404 status */
