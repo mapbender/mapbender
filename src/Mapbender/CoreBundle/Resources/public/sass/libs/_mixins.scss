@@ -42,17 +42,12 @@
   @if($left != ''){left:$left;}
 }
 @mixin noUserSelect(){
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 
 // frontend
 @mixin frontendContainerStyle(){
   color:$lightFontColor;
-  background-color:darken($contentColor, 60%); //IE8 & 9 fallback
   background-color:rgba(0,0,0,0.8);
 }
 @mixin smartphones(){
