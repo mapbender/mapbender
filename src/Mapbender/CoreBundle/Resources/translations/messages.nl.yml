@@ -120,8 +120,8 @@ mb:
       form:
         required: 'Verplicht invoerveld'
       class:
-        title: 'Print client'
-        description: 'Opent dialoog-venster voor printen'
+        title: 'Printen'
+        description: 'Toont Print dialoog'
       tag:
         print: print
         pdf: pdf
@@ -201,7 +201,6 @@ mb:
         dimension: Dimensie
         sourcevisibility_onoff: 'Toon Bronnen'
         allvisibility_on: 'Toon alle Lagen'
-        opacity: Doorzichtigheid
       class:
         title: 'Lagenboom'
         description: 'Mappen-structuur (LayerTree) van kaartlagen'
@@ -381,36 +380,6 @@ mb:
       tag:
         redlining: tekenen
         geometry: geometrie
-    entity:
-      app:
-        screenshotfile:
-          error: Fout
-    printclient:
-      popup:
-        btn:
-          ok: Print
-          cancel: Annuleren
-      info:
-        noactivelayer: 'Er is geen actieve laag!'
-      form:
-        required: 'Vul dit veld in'
-      label:
-        template: Sjabloon
-        quality: Kwaliteit
-        scale: Schaal
-        rotation: Roteren
-        legend: Legenda
-      class:
-        title: 'Printen'
-        description: 'Toont Print dialoog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
-
   geosource:
     image_error:
       datails: 'De kaart kan niet getoond worden.'
