@@ -18,19 +18,19 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
-    use Symfony\Component\Security\Acl\Domain\Acl;
+use Symfony\Component\Security\Acl\Domain\Acl;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-    use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-    use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
-    use Symfony\Component\Security\Acl\Exception\Exception;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Symfony\Component\Security\Acl\Exception\Exception;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
-    use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
+use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-    use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -48,8 +48,8 @@ class ImportHandler extends ExchangeHandler
     protected $aclProvider;
     /** @var AclManager */
     protected $aclManager;
-        /** @var TokenStorage */
-        protected $tokenStorage;
+    /** @var TokenStorage */
+    protected $tokenStorage;
 
     /**
      * @inheritdoc
@@ -59,7 +59,7 @@ class ImportHandler extends ExchangeHandler
                                 ExportHandler $exportHandler,
                                 UploadsManager $uploadsManager,
                                 MutableAclProviderInterface $aclProvider,
-                                    AclManager $aclManager, TokenStorage $tokenStorage)
+                                AclManager $aclManager, TokenStorage $tokenStorage)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
@@ -67,7 +67,7 @@ class ImportHandler extends ExchangeHandler
         $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
-            $this->tokenStorage = $tokenStorage;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -137,14 +137,12 @@ class ImportHandler extends ExchangeHandler
             $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
 
-                $acl = $this->createAclForApplication($clonedApp);
-                $this->setApplicationOwnershipToCurrentUser($acl);
+            $acl = $this->createAclForApplication($clonedApp);
+            $this->setApplicationOwnershipToCurrentUser($acl);
             if ($app->getSource() !== Application::SOURCE_YAML) {
                 $this->copyAcls($clonedApp, $app);
             }
-            
-                
-                
+
             return $clonedApp;
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
@@ -314,7 +312,7 @@ class ImportHandler extends ExchangeHandler
         $aces = array(
             array(
                 'sid' => UserSecurityIdentity::fromAccount($currentUser),
-                    'mask' => MaskBuilder::MASK_OWNER,
+                'mask' => MaskBuilder::MASK_OWNER,
             ),
         );
         $this->aclManager->setObjectACL($application, $aces, 'object');
@@ -324,20 +322,19 @@ class ImportHandler extends ExchangeHandler
      * @param Application $target
      * @param Application $source
      * @throws InvalidDomainObjectException
-         * @throws Exception
+     * @throws Exception
      */
-        public function copyAcls(Application $target, Application $source )
+    public function copyAcls(Application $target, Application $source)
     {
-            /** @var MutableAclInterface $sourceAcl */
+        /** @var MutableAclInterface $sourceAcl */
         $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
         /** @var MutableAclInterface $targetAcl */
-            $targetAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($target));
+        $targetAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($target));
 
         foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
             /** @var EntryInterface $sourceEntry */
             $entryIdentity = $sourceEntry->getSecurityIdentity();
-                $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
-                
+            $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
         }
         $this->aclProvider->updateAcl($targetAcl);
     }
@@ -526,27 +523,25 @@ class ImportHandler extends ExchangeHandler
         }
         return $object;
     }
-        
-        /**
-         * @param Application $app
-         * @return MutableAclInterface
-         */
-        protected function createAclForApplication($app){
-    
-            $objectIdentityClonedApp =  ObjectIdentity::fromDomainObject($app);
-            $acl = $this->aclProvider->createAcl($objectIdentityClonedApp);
-            return $acl;
-        }
-    
-        /**
-         * @param MutableAclInterface $acl
-         */
-        protected function setApplicationOwnershipToCurrentUser($acl) {
 
-            $token = $this->tokenStorage->getToken();
-            $acl->insertObjectAce(UserSecurityIdentity::fromToken($token),MaskBuilder::MASK_OWNER );
-            $this->aclProvider->updateAcl($acl);
-            
-        }
-        
+    /**
+     * @param Application $app
+     * @return MutableAclInterface
+     */
+    protected function createAclForApplication($app)
+    {
+        $objectIdentityClonedApp = ObjectIdentity::fromDomainObject($app);
+        $acl = $this->aclProvider->createAcl($objectIdentityClonedApp);
+        return $acl;
+    }
+
+    /**
+     * @param MutableAclInterface $acl
+     */
+    protected function setApplicationOwnershipToCurrentUser($acl)
+    {
+        $token = $this->tokenStorage->getToken();
+        $acl->insertObjectAce(UserSecurityIdentity::fromToken($token), MaskBuilder::MASK_OWNER);
+        $this->aclProvider->updateAcl($acl);
+    }
 }
