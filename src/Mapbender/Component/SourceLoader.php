@@ -61,7 +61,7 @@ abstract class SourceLoader
     public static function updateOrigin(MutableHttpOriginInterface $target, HttpOriginInterface $origin)
     {
         $target->setOriginUrl($origin->getOriginUrl());
-        $target->setUsername($origin->getUserName());
+        $target->setUsername($origin->getUsername());
         $target->setPassword($origin->getPassword());
     }
 

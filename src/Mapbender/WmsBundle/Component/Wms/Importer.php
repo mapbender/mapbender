@@ -195,7 +195,7 @@ class Importer extends RefreshableSourceLoader
             $addParams['SERVICE'] = 'WMS';
         }
         $url = UrlUtil::validateUrl($url, $addParams);
-        $url = UrlUtil::addCredentials($url, $serviceOrigin->getUserName(), $serviceOrigin->getPassword(), false);
+        $url = UrlUtil::addCredentials($url, $serviceOrigin->getUsername(), $serviceOrigin->getPassword(), false);
         return $this->httpTransport->getUrl($url);
     }
 

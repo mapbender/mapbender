@@ -36,7 +36,7 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase
         $wms = $parser->parse();
         $this->assertEquals(1,$wms->getLayers()->count());
 
-        $rootLayer = $wms->getRootLayer();
+        $rootLayer = $wms->getRootlayer();
         $this->assertSame("The Title",$rootLayer->getTitle(),"Root layer title irsd wrong");
         $this->assertSame("TheLayer",$rootLayer->getName(), "Root Layer Name is wrong");
         $this->assertSame("A Layerabstract",$rootLayer->getAbstract(),"Root Layer abstract is wrong" );
@@ -56,12 +56,11 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame("image/png",$array[0]);
         $this->assertSame("http://example.com/ohmyawms",$wms->getGetMap()->getHttpGet());
 
-        $rootLayer = $wms->getRootLayer();
+        $rootLayer = $wms->getRootlayer();
         $array = $rootLayer->getSrs();
 
-        $rootLayer = $wms->getRootLayer();
         $this->assertEquals("EPSG:4326", $array[0]);
-        $bb = $rootLayer->getLatLonBounds();
+        $bb = $rootLayer->getLatlonBounds();
         $strbb = $bb->getMinx()." ".$bb->getMiny()." ".$bb->getMaxx()." ".$bb->getMaxy();
         $this->assertEquals("-10.4 35.7 -180 180",$strbb);
     }

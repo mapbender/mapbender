@@ -264,7 +264,7 @@ class ElementController extends ApplicationControllerBase
                 $this->addFlash('success', "Your element's access has been changed.");
             } catch (\Exception $e) {
                 $this->addFlash('error', "There was an error trying to change your element's access.");
-                $entityManager->rollBack();
+                $entityManager->rollback();
                 $entityManager->close();
                 if ($this->container->getParameter('kernel.debug')) {
                     throw($e);
