@@ -32,6 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -179,11 +182,12 @@ class ApplicationController extends WelcomeController
             $file = $job->getImportFile();
             $em = $this->getEntityManager();
             $em->beginTransaction();
+            $currentUserSid = UserSecurityIdentity::fromToken($this->getUserToken());
             try {
                 $data = $impHandler->parseImportData($file);
                 $applications = $impHandler->importApplicationData($data);
                 foreach ($applications as $app) {
-                    $impHandler->setDefaultAcls($app, $this->getUser());
+                    $impHandler->addOwner($app, $currentUserSid);
                 }
                 $em->commit();
                 return $this->redirectToRoute('mapbender_manager_application_index');
@@ -222,6 +226,7 @@ class ApplicationController extends WelcomeController
             if ($sourceApplication->getSource() !== Application::SOURCE_YAML) {
                 $impHandler->copyAcls($clonedApp, $sourceApplication);
             }
+            $impHandler->addOwner($clonedApp, UserSecurityIdentity::fromToken($this->getUserToken()));
 
             $em->commit();
             if ($this->isGranted('EDIT', $clonedApp)) {
@@ -794,5 +799,15 @@ class ApplicationController extends WelcomeController
             }
         }
         return $allowed;
+    }
+
+    /**
+     * @return TokenInterface|null
+     */
+    protected function getUserToken()
+    {
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->get('security.token_storage');
+        return $tokenStorage->getToken();
     }
 }

@@ -20,10 +20,12 @@ use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Yaml\Yaml;
@@ -133,7 +135,6 @@ class ImportHandler extends ExchangeHandler
             $this->em->flush();
 
             $acl = $this->createAclForApplication($clonedApp);
-            $this->setApplicationOwnershipToCurrentUser($acl);
 
             return $clonedApp;
         } catch (ORMException $e) {
@@ -293,21 +294,6 @@ class ImportHandler extends ExchangeHandler
             $element->setConfiguration($configuration);
             $this->em->persist($element);
         }
-    }
-
-    /**
-     * @param Application $application
-     * @param mixed $currentUser
-     */
-    public function setDefaultAcls(Application $application, $currentUser)
-    {
-        $aces = array(
-            array(
-                'sid' => UserSecurityIdentity::fromAccount($currentUser),
-                'mask' => MaskBuilder::MASK_OWNER,
-            ),
-        );
-        $this->aclManager->setObjectACL($application, $aces, 'object');
     }
 
     /**
@@ -528,12 +514,18 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param MutableAclInterface $acl
+     * @param Application $application
+     * @param SecurityIdentityInterface $sid
      */
-    protected function setApplicationOwnershipToCurrentUser($acl)
+    public function addOwner(Application $application, SecurityIdentityInterface $sid)
     {
-        $token = $this->tokenStorage->getToken();
-        $acl->insertObjectAce(UserSecurityIdentity::fromToken($token), MaskBuilder::MASK_OWNER);
+        $oid = ObjectIdentity::fromDomainObject($application);
+        try {
+            $acl = $this->aclProvider->createAcl($oid);
+        } catch (AclAlreadyExistsException $e) {
+            $acl = $this->aclProvider->findAcl($oid);
+        }
+        $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
         $this->aclProvider->updateAcl($acl);
     }
 }
