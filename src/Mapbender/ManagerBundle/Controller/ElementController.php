@@ -249,12 +249,10 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $formFactory = $this->getFormFactory();
-        $formArray = $formFactory->getSecurityForm($element);
-        /** @var FormInterface $form */
-        $form = $formArray['form'];
+        $form = $this->getSecurityForm($element);
+        $form->handleRequest($request);
 
-        if ($request->getMethod() === 'POST' && $form->submit($request)->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->beginTransaction();
             try {
                 $aclManager  = $this->getAclManager();
@@ -263,9 +261,9 @@ class ElementController extends ApplicationControllerBase
                 $aclManager->setObjectACEs($element, $form->get('acl')->get('ace')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
-                $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
+                $this->addFlash('success', "Your element's access has been changed.");
             } catch (\Exception $e) {
-                $this->get('session')->getFlashBag()->set('error', "There was an error trying to change your element's access.");
+                $this->addFlash('error', "There was an error trying to change your element's access.");
                 $entityManager->rollBack();
                 $entityManager->close();
                 if ($this->container->getParameter('kernel.debug')) {
@@ -451,5 +449,23 @@ class ElementController extends ApplicationControllerBase
         /** @var EntityRepository $repository */
         $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Element');
         return $repository;
+    }
+
+    /**
+     * @param Element $element
+     * @return FormInterface
+     */
+    protected function getSecurityForm(Element $element)
+    {
+        $builder = $this->createFormBuilder($element);
+        $builder->add('acl', 'acl', array(
+            'mapped' => false,
+            'data' => $element,
+            'create_standard_permissions' => false,
+            'permissions' => array(
+                1 => 'View',
+            ),
+        ));
+        return $builder->getForm();
     }
 }
