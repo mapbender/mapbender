@@ -24,7 +24,7 @@
         "components/underscore": "1.x",
         "wheregroup/open-sans": "1.x",
 
-        "mapbender/fom": "^3.0.6.2@dev || ~4.0.0@dev",
+        "mapbender/fom": "~3.1.2 || ^3.2.1",
         "mapbender/owsproxy": "^3.0.6.2@dev",
 
         "mapbender/mapquery": "1.x"

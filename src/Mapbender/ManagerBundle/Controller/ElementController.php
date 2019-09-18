@@ -260,7 +260,7 @@ class ElementController extends ApplicationControllerBase
                 $aclManager  = $this->getAclManager();
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
+                $aclManager->setObjectACEs($element, $form->get('acl')->get('ace')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
