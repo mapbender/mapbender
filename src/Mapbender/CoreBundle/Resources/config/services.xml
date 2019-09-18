@@ -174,7 +174,6 @@
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="fom.acl.manager" />
         </service>
         <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />

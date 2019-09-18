@@ -40,25 +40,25 @@ class ImportHandler extends ExchangeHandler
     protected $uploadsManager;
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
-    /** @var AclManager */
-    protected $aclManager;
 
     /**
-     * @inheritdoc
+     * @param EntityManagerInterface $entityManager
+     * @param ElementFactory $elementFactory
+     * @param ExportHandler $exportHandler
+     * @param UploadsManager $uploadsManager
+     * @param MutableAclProviderInterface $aclProvider
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
                                 ExportHandler $exportHandler,
                                 UploadsManager $uploadsManager,
-                                MutableAclProviderInterface $aclProvider,
-                                AclManager $aclManager)
+                                MutableAclProviderInterface $aclProvider)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
         $this->exportHandler = $exportHandler;
         $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
-        $this->aclManager = $aclManager;
     }
 
     /**
