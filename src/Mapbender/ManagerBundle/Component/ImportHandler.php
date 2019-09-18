@@ -134,9 +134,6 @@ class ImportHandler extends ExchangeHandler
 
             $acl = $this->createAclForApplication($clonedApp);
             $this->setApplicationOwnershipToCurrentUser($acl);
-            if ($app->getSource() !== Application::SOURCE_YAML) {
-                $this->copyAcls($clonedApp, $app);
-            }
 
             return $clonedApp;
         } catch (ORMException $e) {

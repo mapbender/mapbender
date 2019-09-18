@@ -219,6 +219,10 @@ class ApplicationController extends WelcomeController
         $em->beginTransaction();
         try {
             $clonedApp = $impHandler->duplicateApplication($sourceApplication);
+            if ($sourceApplication->getSource() !== Application::SOURCE_YAML) {
+                $impHandler->copyAcls($clonedApp, $sourceApplication);
+            }
+
             $em->commit();
             if ($this->isGranted('EDIT', $clonedApp)) {
                 // Redirect to edit view of imported application
