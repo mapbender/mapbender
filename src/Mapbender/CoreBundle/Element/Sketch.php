@@ -30,17 +30,6 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.sketch.tag.sketch",
-            "mb.core.sketch.tag.circle",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SketchAdminType';

@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 class ApplicationCloneCommand extends AbstractApplicationTransportCommand
 {
@@ -33,6 +34,10 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
 
         $importHandler = $this->getApplicationImporter();
         $clonedApp = $importHandler->duplicateApplication($application);
+        if ($root = $this->getRootUser()) {
+            $importHandler->addOwner($application, UserSecurityIdentity::fromAccount($root));
+        }
+
         $output->writeln("Application cloned to new slug {$clonedApp->getSlug()}, id {$clonedApp->getId()}");
     }
 }

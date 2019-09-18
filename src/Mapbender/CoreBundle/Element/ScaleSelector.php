@@ -32,16 +32,6 @@ class ScaleSelector extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.scaleselector.tag.scale",
-            "mb.core.scaleselector.tag.selector");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

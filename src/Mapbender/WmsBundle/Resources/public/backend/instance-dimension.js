@@ -30,8 +30,8 @@ $(function() {
             dimensionOrig['extent'] = dimensionOrig['origextent'];
             var dimHandler = Mapbender.Dimension(dimension);
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
-            var rangeMinVal = new TimeStr(dimHandler.valueFromStart()).toISOString();
-            var rangeMaxVal = new TimeStr(dimHandler.valueFromEnd()).toISOString();
+            var rangeMinVal = new Date(dimHandler.valueFromStart()).toISOString();
+            var rangeMaxVal = new Date(dimHandler.valueFromEnd()).toISOString();
             var rangeMin = dimHandlerOrig.partFromValue(rangeMinVal);// * 100;
             var rangeMax = dimHandlerOrig.partFromValue(rangeMaxVal);// * 100;
             var inputEdit = $('input[name*="\[extentEdit\]"]', $this);
@@ -42,7 +42,7 @@ $(function() {
                 inputEdit.val(inputExtent.val());
                 dimension['extent'] = [first, second, third];
                 dimHandler = Mapbender.Dimension(dimension);
-                var def = dimHandler.partFromValue(new TimeStr(inputDefault.val()).toISOString());// * 100;
+                var def = dimHandler.partFromValue(new Date(inputDefault.val()).toISOString());
                 inputDefault.val(def >= 1 ? second : def <= 0 ? first : inputDefault.val());
             }
             intoInput(dimHandlerOrig.valueFromPart(rangeMin), dimHandlerOrig.valueFromPart(rangeMax), dimension['extent'][2]);

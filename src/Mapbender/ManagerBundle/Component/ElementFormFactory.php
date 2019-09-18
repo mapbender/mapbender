@@ -171,24 +171,4 @@ class ElementFormFactory
         }
         return $automaticService; // may also be null
     }
-
-    /**
-     * @param Element $element
-     * @return array
-     */
-    public function getSecurityForm(Element $element)
-    {
-        $formType = $this->formFactory->createBuilder('form', $element, array());
-        $formType->add('acl', 'acl', array(
-            'mapped' => false,
-            'data' => $element,
-            'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View',
-            ),
-        ));
-        return array(
-            'form' => $formType->getForm(),
-        );
-    }
 }

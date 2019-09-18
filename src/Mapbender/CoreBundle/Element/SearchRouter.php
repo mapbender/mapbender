@@ -39,14 +39,6 @@ class SearchRouter extends Element
         return 'mb.core.searchrouter.class.description';
     }
 
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.searchrouter.tag.search',
-            'mb.core.searchrouter.tag.router',
-        );
-    }
-
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';

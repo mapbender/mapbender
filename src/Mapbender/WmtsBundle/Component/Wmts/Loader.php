@@ -55,7 +55,7 @@ class Loader extends SourceLoader
     {
         $url = $origin->getOriginUrl();
         static::validateUrl($url);
-        $url = UrlUtil::addCredentials($url, $origin->getUserName(), $origin->getPassword());
+        $url = UrlUtil::addCredentials($url, $origin->getUsername(), $origin->getPassword());
         return $this->httpTransport->getUrl($url);
     }
 }

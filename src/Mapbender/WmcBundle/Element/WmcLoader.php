@@ -28,14 +28,6 @@ class WmcLoader extends WmcBase
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
-    {
-        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.loader");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

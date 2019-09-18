@@ -502,7 +502,7 @@ class WmsInstance extends SourceInstance
             $this->setFormat($getMapFormats[0]);
         }
         if ($source->getGetFeatureInfo() && $featureInfoFormats = $source->getGetFeatureInfo()->getFormats()) {
-            $this->setInfoFormat($featureInfoFormats[0]);
+            $this->setInfoformat($featureInfoFormats[0]);
         }
         if ($exceptionFormats = $source->getExceptionFormats()) {
             $this->setExceptionformat($exceptionFormats[0]);
@@ -513,7 +513,7 @@ class WmsInstance extends SourceInstance
         $this->setWeight(-1);
 
         $newRootLayer = new WmsInstanceLayer();
-        $newRootLayer->populateFromSource($this, $source->getRootLayer());
+        $newRootLayer->populateFromSource($this, $source->getRootlayer());
     }
 
     /**

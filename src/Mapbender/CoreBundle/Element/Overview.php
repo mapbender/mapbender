@@ -31,16 +31,6 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.overview.tag.overview",
-            "mb.core.overview.tag.map");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

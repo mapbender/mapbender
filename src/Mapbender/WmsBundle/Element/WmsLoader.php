@@ -43,14 +43,6 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array("mb.wms.wmsloader.wms", "mb.wms.wmsloader.loader");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

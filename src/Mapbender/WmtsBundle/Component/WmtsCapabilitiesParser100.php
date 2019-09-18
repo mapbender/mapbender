@@ -261,7 +261,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
                 ->setTitle($this->getValue("./ows:Title/text()", $styleEl))
                 ->setAbstract($this->getValue("./ows:Abstract/text()", $styleEl))
                 ->setIdentifier($this->getValue("./ows:Identifier/text()", $styleEl))
-                ->setIsdefault($this->getValue("./@isDefault", $styleEl));
+                ->setIsDefault($this->getValue("./@isDefault", $styleEl));
             $legendurl = new LegendUrl();
             $legendurl->setFormat($this->getValue("./wmts:LegendURL/@format", $styleEl))
                 ->setHref($this->getValue("./wmts:LegendURL/@xlink:href", $styleEl));

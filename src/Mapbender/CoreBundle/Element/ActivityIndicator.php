@@ -30,16 +30,6 @@ class ActivityIndicator extends Element
     /**
      * @inheritdoc
      */
-    static function getClassTags()
-    {
-        return array(
-            "mb.core.activityindicator.tag.activity",
-            "mb.core.activityindicator.tag.indicator");
-    }
-
-    /**
-     * @inheritdoc
-     */
     static function getDefaultConfiguration()
     {
         return array(

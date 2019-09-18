@@ -4,10 +4,6 @@
     window.Mapbender.Manager.confirmDelete = function($el, deleteUrl, strings, popupContent) {
         var defaultContent = $el && ($('<div/>').text($el.attr('title') + '?').html());
         var deleteUrl_ = deleteUrl || ($el && ($el.attr('data-url') || $el.attr('href')));
-        if (false && !deleteUrl_) {
-            console.error("Could not url of final delete action", $el);
-            throw new Error("Could not url of final delete action");
-        }
         var deferred = $.Deferred();
         var popupOptions = {
             title: Mapbender.trans(strings.title),

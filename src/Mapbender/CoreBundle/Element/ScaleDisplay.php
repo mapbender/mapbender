@@ -30,17 +30,6 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.scaledisplay.tag.scale",
-            "mb.core.scaledisplay.tag.display",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(
