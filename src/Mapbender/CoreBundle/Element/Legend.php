@@ -32,16 +32,6 @@ class Legend extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.legend.tag.layer",
-            "mb.core.legend.tag.legend");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

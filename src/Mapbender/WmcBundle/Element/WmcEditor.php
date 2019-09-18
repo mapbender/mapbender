@@ -38,14 +38,6 @@ class WmcEditor extends WmcBase
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
-    {
-        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.editor");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

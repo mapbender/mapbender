@@ -33,14 +33,6 @@ class DimensionsHandler extends Element implements BoundConfigMutator
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array("mb.wms.dimhandler.dimension", "mb.wms.dimhandler.handler");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

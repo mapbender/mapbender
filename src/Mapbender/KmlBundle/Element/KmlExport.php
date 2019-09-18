@@ -15,14 +15,6 @@ class KmlExport extends Element {
         return "mb.kml.kmlexport.class.description";
     }
 
-    public static function getClassTags() {
-        return array(
-            "mb.kml.kmlexport.tag.kml",
-            "mb.kml.kmlexport.tag.export"
-        );
-    }
-
-
     public function getWidgetName() {
         return 'mapbender.mbKmlExport';
     }

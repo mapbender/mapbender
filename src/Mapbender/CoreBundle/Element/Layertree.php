@@ -30,17 +30,6 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.layertree.tag.layertree",
-            "mb.core.layertree.tag.layer",
-            "mb.core.layertree.tag.tree");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getWidgetName()
     {
         return 'mapbender.mbLayertree';

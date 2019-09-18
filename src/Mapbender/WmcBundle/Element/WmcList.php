@@ -26,14 +26,6 @@ class WmcList extends WmcBase
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
-    {
-        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.list");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

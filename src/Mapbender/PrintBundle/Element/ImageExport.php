@@ -35,18 +35,6 @@ class ImageExport extends Element
     /**
      * @inheritdoc
      */
-    static public function getTags()
-    {
-        return array(
-            "mb.print.imageexport.tag.image",
-            "mb.print.imageexport.tag.export",
-            "mb.print.imageexport.tag.jpeg",
-            "mb.print.imageexport.tag.png");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getWidgetName()
     {
         return 'mapbender.mbImageExport';

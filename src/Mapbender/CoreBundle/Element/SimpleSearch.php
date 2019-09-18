@@ -22,13 +22,6 @@ class SimpleSearch extends Element
         return 'mb.core.simplesearch.class.description';
     }
 
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.search.tag.search',
-        );
-    }
-
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType';

@@ -45,20 +45,6 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.printclient.tag.print",
-            "mb.core.printclient.tag.pdf",
-            "mb.core.printclient.tag.png",
-            "mb.core.printclient.tag.gif",
-            "mb.core.printclient.tag.jpg",
-            "mb.core.printclient.tag.jpeg");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

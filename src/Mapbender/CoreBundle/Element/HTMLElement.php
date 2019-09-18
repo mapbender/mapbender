@@ -26,13 +26,6 @@ class HTMLElement extends Element
         return false;
     }
 
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.htmlelement.tag.html',
-        );
-    }
-
     /**
      * @inheritdoc
      */

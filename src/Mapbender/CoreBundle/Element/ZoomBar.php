@@ -36,19 +36,6 @@ class ZoomBar extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.zoombar.tag.zoom",
-            "mb.core.zoombar.tag.pan",
-            "mb.core.zoombar.tag.control",
-            "mb.core.zoombar.tag.navigation",
-            "mb.core.zoombar.tag.panel");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

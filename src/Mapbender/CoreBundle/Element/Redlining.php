@@ -29,14 +29,6 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    public static function getTags()
-    {
-        return array('mb.core.redlining.tag.redlining', 'mb.core.redlining.tag.geometry');
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getWidgetName()
     {
         return 'mapbender.mbRedlining';

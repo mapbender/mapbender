@@ -32,19 +32,6 @@ class GpsPosition extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.gpsposition.tag.gpsposition",
-            "mb.core.gpsposition.tag.gps",
-            "mb.core.gpsposition.tag.position",
-            "mb.core.gpsposition.tag.button",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

@@ -32,16 +32,6 @@ class SrsSelector extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.srsselector.tag.srs",
-            "mb.core.srsselector.tag.selector");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SrsSelectorAdminType';
