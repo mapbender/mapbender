@@ -18,14 +18,9 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
-use Symfony\Component\Security\Acl\Domain\Acl;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
-use Symfony\Component\Security\Acl\Exception\Exception;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
-use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -322,7 +317,7 @@ class ImportHandler extends ExchangeHandler
      * @param Application $target
      * @param Application $source
      * @throws InvalidDomainObjectException
-     * @throws Exception
+     * @throws \Symfony\Component\Security\Acl\Exception\Exception
      */
     public function copyAcls(Application $target, Application $source)
     {
