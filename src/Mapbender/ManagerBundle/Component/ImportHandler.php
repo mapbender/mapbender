@@ -19,11 +19,9 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
-use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -133,8 +131,6 @@ class ImportHandler extends ExchangeHandler
             $this->em->persist($clonedApp);
             $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
-
-            $acl = $this->createAclForApplication($clonedApp);
 
             return $clonedApp;
         } catch (ORMException $e) {
@@ -304,10 +300,13 @@ class ImportHandler extends ExchangeHandler
      */
     public function copyAcls(Application $target, Application $source)
     {
-        /** @var MutableAclInterface $sourceAcl */
         $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
-        /** @var MutableAclInterface $targetAcl */
-        $targetAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($target));
+        $targetOid = ObjectIdentity::fromDomainObject($target);
+        try {
+            $targetAcl = $this->aclProvider->createAcl($targetOid);
+        } catch (AclAlreadyExistsException $e) {
+            $targetAcl = $this->aclProvider->findAcl($targetOid);
+        }
 
         foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
             /** @var EntryInterface $sourceEntry */
@@ -500,17 +499,6 @@ class ImportHandler extends ExchangeHandler
             }
         }
         return $object;
-    }
-
-    /**
-     * @param Application $app
-     * @return MutableAclInterface
-     */
-    protected function createAclForApplication($app)
-    {
-        $objectIdentityClonedApp = ObjectIdentity::fromDomainObject($app);
-        $acl = $this->aclProvider->createAcl($objectIdentityClonedApp);
-        return $acl;
     }
 
     /**
