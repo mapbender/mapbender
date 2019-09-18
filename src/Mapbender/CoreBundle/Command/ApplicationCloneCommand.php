@@ -34,9 +34,6 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
 
         $importHandler = $this->getApplicationImporter();
         $clonedApp = $importHandler->duplicateApplication($application);
-        if ($application->getSource() !== Application::SOURCE_YAML) {
-            $importHandler->copyAcls($clonedApp, $application);
-        }
         if ($root = $this->getRootUser()) {
             $importHandler->addOwner($application, UserSecurityIdentity::fromAccount($root));
         }

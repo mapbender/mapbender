@@ -132,6 +132,10 @@ class ImportHandler extends ExchangeHandler
             $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
 
+            if ($app->getSource() !== Application::SOURCE_YAML) {
+                $this->copyAcls($clonedApp, $app);
+            }
+
             return $clonedApp;
         } catch (ORMException $e) {
             throw new ImportException("Database error {$e->getMessage()}", 0, $e);
@@ -298,7 +302,7 @@ class ImportHandler extends ExchangeHandler
      * @throws InvalidDomainObjectException
      * @throws \Symfony\Component\Security\Acl\Exception\Exception
      */
-    public function copyAcls(Application $target, Application $source)
+    protected function copyAcls(Application $target, Application $source)
     {
         $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
         $targetOid = ObjectIdentity::fromDomainObject($target);
