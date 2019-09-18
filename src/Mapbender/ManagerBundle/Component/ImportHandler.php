@@ -25,7 +25,6 @@ use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -43,8 +42,6 @@ class ImportHandler extends ExchangeHandler
     protected $aclProvider;
     /** @var AclManager */
     protected $aclManager;
-    /** @var TokenStorage */
-    protected $tokenStorage;
 
     /**
      * @inheritdoc
@@ -54,7 +51,7 @@ class ImportHandler extends ExchangeHandler
                                 ExportHandler $exportHandler,
                                 UploadsManager $uploadsManager,
                                 MutableAclProviderInterface $aclProvider,
-                                AclManager $aclManager, TokenStorage $tokenStorage)
+                                AclManager $aclManager)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
@@ -62,7 +59,6 @@ class ImportHandler extends ExchangeHandler
         $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
         $this->aclManager = $aclManager;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
