@@ -22,7 +22,6 @@
 </head>
 <body class="{% if app.debug %}debug{% endif %}">
 {% block content %}{% endblock %}
-<script src="{{ asset('components/joii/dist/joii.min.js')}}"></script>
 <script src="{{ asset('components/jquery/jquery.min.js')}}"></script>
 <script src="{{ asset('components/jquery-ui/jquery-ui.min.js')}}"></script>
 {% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}

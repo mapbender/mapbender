@@ -19,7 +19,6 @@
         "mapbender/mapbender-icons": "1.x",
 
         "mapbender/vis-ui.js": "~0.0",
-        "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "wheregroup/open-sans": "1.x",
