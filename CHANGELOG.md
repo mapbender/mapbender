@@ -1,3 +1,7 @@
+## dev-release/3.0.7 @ d197eeed8
+- Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
+- When cloning DB applications, also clone access control rules
+
 ## v3.0.8.4
 - Support secured WmsLoader sources in modern browsers
 - Fix button misalignment in vis-ui popups (e.g. Digitizer)
