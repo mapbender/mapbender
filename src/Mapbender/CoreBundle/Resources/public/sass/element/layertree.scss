@@ -1,4 +1,5 @@
 .mb-element-layertree{
+  user-select: none;
   .leave {
     // for absolute menu positioning
     position: relative;
@@ -150,9 +151,6 @@ $layer-slider-bar-height: 5px;
   text-align: right;
   cursor: default;
   @include border-radius($radius);
-  & *{
-    @include noUserSelect();
-  }
   .labelInput {
     display: block;
     position: relative;
