@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
@@ -29,8 +28,6 @@ class ApplicationAssetService
     protected $sourceTypeDirectory;
     /** @var ElementFactory */
     protected $elementFactory;
-    /** @var RouterInterface */
-    protected $router;
     /** @var ContainerInterface */
     protected $dummyContainer;
     /** @var AssetFactory */
@@ -46,7 +43,6 @@ class ApplicationAssetService
                                 ApplicationService $applicationService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
-                                RouterInterface $router,
                                 EngineInterface $templateEngine,
                                 $debug=false,
                                 $strict=false)
@@ -55,7 +51,6 @@ class ApplicationAssetService
         $this->applicationService = $applicationService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->elementFactory = $elementFactory;
-        $this->router = $router;
         $this->templateEngine = $templateEngine;
         $this->debug = $debug;
         $this->strict = $strict;
@@ -86,7 +81,7 @@ class ApplicationAssetService
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent($application, $refs, $type);
+        return $this->compileAssetContent($application->getSlug(), $refs, $type);
     }
 
     public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type, $slug)
@@ -151,9 +146,7 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'css':
-                $sourcePath = $this->getCssAssetSourcePath();
-                $targetPath = $this->getCssAssetTargetPath($slug);
-                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->debug);
+                return $this->compiler->compileCss($refs, $this->debug);
             case 'js':
                 return $this->compiler->compileRaw($refs, $this->debug);
             case 'trans':
@@ -284,18 +277,6 @@ class ApplicationAssetService
     }
 
     /**
-     * @param string $slug
-     * @return string
-     */
-    protected function getCssAssetTargetPath($slug)
-    {
-        return $this->router->generate('mapbender_core_application_assets', array(
-            'slug' => $slug,
-            'type' => 'css',
-        ));
-    }
-
-    /**
      * Returns JavaScript code with final client-side application initialization.
      * This should be the very last bit, following all other JavaScript definitions
      * and initializations.
@@ -321,20 +302,6 @@ class ApplicationAssetService
         /** @var Template $instance */
         $instance = new $templateClassName($this->dummyContainer, $appComp);
         return $instance;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCssAssetSourcePath()
-    {
-        // Calculate the subfolder under the current host that contains the web directory
-        // (actually, the entry script) from the Router's RequestContext.
-        // This is equivalent to calling Request::getBasePath
-        $baseUrl = $this->router->getContext()->getBaseUrl();
-        $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
-        $beforeScript = implode('', array_slice(explode($scriptName, $baseUrl), 0, 1));
-        return rtrim($beforeScript, '/') ?: '.';
     }
 
     /**

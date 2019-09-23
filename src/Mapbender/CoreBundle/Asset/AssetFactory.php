@@ -47,15 +47,13 @@ class AssetFactory
 
     /**
      * @param (StringAsset|string)[] $inputs
-     * @param string $sourcePath for adjusting relative urls in css rewrite filter
-     * @param string $targetPath
      * @param bool $debug to enable file input markers
      * @return string
      * @todo: absorb service ownership into ApplicationAssetService
      */
-    public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
+    public function compileCss($inputs, $debug=false)
     {
-        return $this->cssCompiler->compile($inputs, $sourcePath, $targetPath, $debug);
+        return $this->cssCompiler->compile($inputs, $debug);
     }
 
     /**
