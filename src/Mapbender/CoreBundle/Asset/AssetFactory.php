@@ -41,14 +41,14 @@ class AssetFactory extends AssetFactoryBase
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
-     * @param string[] $publishedBundleNameMap
+     * @param string[] $bundleClassMap
      * @param EngineInterface $templateEngine
      * @param FilterInterface $sassFilter
      * @param FilterInterface $cssRewriteFilter
      */
     public function __construct(FileLocatorInterface $fileLocator,
                                 $webDir,
-                                $publishedBundleNameMap,
+                                $bundleClassMap,
                                 EngineInterface $templateEngine,
                                 FilterInterface $sassFilter,
                                 FilterInterface $cssRewriteFilter)
@@ -56,7 +56,7 @@ class AssetFactory extends AssetFactoryBase
         $this->sassFilter = $sassFilter;
         $this->cssRewriteFilter = $cssRewriteFilter;
         $this->templateEngine = $templateEngine;
-        parent::__construct($fileLocator, $webDir, $publishedBundleNameMap);
+        parent::__construct($fileLocator, $webDir, $bundleClassMap);
     }
 
     /**

@@ -19,13 +19,31 @@ class AssetFactoryBase
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
-     * @param string[] $publishedBundleNameMap
+     * @param string[] $bundleClassMap
      */
-    public function __construct(FileLocatorInterface $fileLocator, $webDir, $publishedBundleNameMap)
+    public function __construct(FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
     {
         $this->fileLocator = $fileLocator;
         $this->webDir = $webDir;
-        $this->publishedBundleNameMap = $publishedBundleNameMap;
+        $this->publishedBundleNameMap = $this->initPublishedBundlePaths($bundleClassMap);
+    }
+
+    /**
+     * Calculates a mapping from published web-relative path containing a bundle's public assets to the bundle
+     * name. Input is a mapping of canonical bundle name to bundle FQCN, as provided by Symfony's standard
+     * kernel.bundles parameter.
+     *
+     * @param string[] $bundleClassMap
+     * @return string[]
+     */
+    protected function initPublishedBundlePaths($bundleClassMap)
+    {
+        $nameMap = array();
+        foreach (array_keys($bundleClassMap) as $bundleName) {
+            $publishedPath = 'bundles/' . strtolower(preg_replace('#Bundle$#', '', $bundleName));
+            $nameMap[$publishedPath] = $bundleName;
+        }
+        return $nameMap;
     }
 
     protected function getDebugHeader($finalPath, $originalRef)
