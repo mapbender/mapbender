@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
+use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
 
 class AssetFactoryBase
@@ -14,8 +15,6 @@ class AssetFactoryBase
     /** @var string[] */
     protected $publishedBundleNameMap;
 
-    protected $migratedRefs = array();
-
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
@@ -26,6 +25,37 @@ class AssetFactoryBase
         $this->fileLocator = $fileLocator;
         $this->webDir = $webDir;
         $this->publishedBundleNameMap = $this->initPublishedBundlePaths($bundleClassMap);
+    }
+
+    /**
+     * Perform simple concatenation of all input assets. Some uniquification will take place.
+     *
+     * @param (FileAsset|StringAsset)[] $inputs
+     * @param bool $debug to enable file input markers
+     * @return string
+     */
+    protected function concatenateContents($inputs, $debug)
+    {
+        $parts = array();
+        $uniqueRefs = array();
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $input->load();
+                $parts[] = $input->getContent();
+            } else {
+                $normalizedReference = $this->normalizeReference($input);
+                if (empty($uniqueRefs[$normalizedReference])) {
+                    $realAssetPath = $this->locateAssetFile($normalizedReference);
+                    if ($debug) {
+                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                    }
+                    $parts[] = file_get_contents($realAssetPath);
+                    $uniqueRefs[$normalizedReference] = true;
+                }
+            }
+        }
+        return implode("\n", $parts);
     }
 
     /**
@@ -62,9 +92,6 @@ class AssetFactoryBase
      */
     protected function locateAssetFile($input)
     {
-        while (!empty($this->migratedRefs[$input])) {
-            $input = $this->migratedRefs[$input];
-        }
         if ($input[0] == '/') {
             $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {

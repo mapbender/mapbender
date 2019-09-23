@@ -1,11 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Asset;
 
-use Assetic\Asset\StringAsset;
-use Assetic\Filter\FilterInterface;
-use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\Templating\EngineInterface;
-
 /**
  * Compiles and merges JavaScript, (S)CSS and translation assets.
  * Registered in container at mapbender.asset_compiler.service
@@ -14,49 +9,27 @@ use Symfony\Component\Templating\EngineInterface;
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  * @package Mapbender\CoreBundle\Asset
  */
-class AssetFactory extends AssetFactoryBase
+class AssetFactory
 {
-    /** @var FilterInterface */
-    protected $sassFilter;
-    /** @var FilterInterface */
-    protected $cssRewriteFilter;
-    /** @var EngineInterface */
-    protected $templateEngine;
+    /** @var CssCompiler */
+    protected $cssCompiler;
+    /** @var JsCompiler */
+    protected $jsCompiler;
+    /** @var TranslationCompiler */
+    protected $translationCompiler;
 
     /**
-     * Mark assets as moved, so refs can be rewritten
-     * This is a ~curated list, currently not intended for configurability.
-     * @var string[]
+     * @param CssCompiler $cssCompiler
+     * @param JsCompiler $jsCompiler
+     * @param TranslationCompiler $translationCompiler
      */
-    protected $migratedRefs = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
-        '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
-        '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
-        '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
-    );
-
-    /**
-     * @param FileLocatorInterface $fileLocator
-     * @param string $webDir
-     * @param string[] $bundleClassMap
-     * @param EngineInterface $templateEngine
-     * @param FilterInterface $sassFilter
-     * @param FilterInterface $cssRewriteFilter
-     */
-    public function __construct(FileLocatorInterface $fileLocator,
-                                $webDir,
-                                $bundleClassMap,
-                                EngineInterface $templateEngine,
-                                FilterInterface $sassFilter,
-                                FilterInterface $cssRewriteFilter)
+    public function __construct(CssCompiler $cssCompiler,
+                                JsCompiler $jsCompiler,
+                                TranslationCompiler $translationCompiler)
     {
-        $this->sassFilter = $sassFilter;
-        $this->cssRewriteFilter = $cssRewriteFilter;
-        $this->templateEngine = $templateEngine;
-        parent::__construct($fileLocator, $webDir, $bundleClassMap);
+        $this->cssCompiler = $cssCompiler;
+        $this->jsCompiler = $jsCompiler;
+        $this->translationCompiler = $translationCompiler;
     }
 
     /**
@@ -65,29 +38,11 @@ class AssetFactory extends AssetFactoryBase
      * @param (FileAsset|StringAsset)[] $inputs
      * @param bool $debug to enable file input markers
      * @return string
+     * @todo: absorb service ownership into ApplicationAssetService
      */
     public function compileRaw($inputs, $debug)
     {
-        $parts = array();
-        $uniqueRefs = array();
-
-        foreach ($inputs as $input) {
-            if ($input instanceof StringAsset) {
-                $input->load();
-                $parts[] = $input->getContent();
-            } else {
-                $normalizedReference = $this->normalizeReference($input);
-                if (empty($uniqueRefs[$normalizedReference])) {
-                    $realAssetPath = $this->locateAssetFile($normalizedReference);
-                    if ($debug) {
-                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
-                    }
-                    $parts[] = file_get_contents($realAssetPath);
-                    $uniqueRefs[$normalizedReference] = true;
-                }
-            }
-        }
-        return implode("\n", $parts);
+        return $this->jsCompiler->compile($inputs, $debug);
     }
 
     /**
@@ -96,62 +51,20 @@ class AssetFactory extends AssetFactoryBase
      * @param string $targetPath
      * @param bool $debug to enable file input markers
      * @return string
+     * @todo: absorb service ownership into ApplicationAssetService
      */
     public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
     {
-        $content = $this->compileRaw($inputs, $debug);
-        $content = $this->squashImports($content);
-
-        $sass = clone $this->sassFilter;
-        $sass->setStyle($debug ? 'nested' : 'compressed');
-        $filters = array(
-            $sass,
-            $this->cssRewriteFilter,
-        );
-
-        $assets = new StringAsset($content, $filters, '/', $sourcePath);
-        $assets->setTargetPath($targetPath);
-        return $assets->dump();
+        return $this->cssCompiler->compile($inputs, $sourcePath, $targetPath, $debug);
     }
 
     /**
      * @param string[] $inputs names of json.twig files
      * @return string JavaScript initialization code
+     * @todo: absorb service ownership into ApplicationAssetService
      */
     public function compileTranslations($inputs)
     {
-        $translations = array();
-        foreach ($inputs as $transAsset) {
-            $renderedTranslations = json_decode($this->templateEngine->render($transAsset), true);
-            $translations = array_merge($translations, $renderedTranslations);
-        }
-        $translationsJson = json_encode($translations, JSON_FORCE_OBJECT);
-        $jsLogic = $this->templateEngine->render($this->getTranslationLogicTemplate());
-        return $jsLogic . "\nMapbender.i18n = {$translationsJson};";
+        return $this->translationCompiler->compile($inputs);
     }
-
-    /**
-     * @return string a twig path
-     */
-    protected function getTranslationLogicTemplate()
-    {
-        return '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
-    }
-
-    /**
-     * @param $content
-     * @return string
-     */
-    protected function squashImports($content)
-    {
-        preg_match_all('/\@import\s*\".*?;/s', $content, $imports, PREG_SET_ORDER);
-        $imports = array_map(function($item) {
-            return $item[0];
-        }, $imports);
-        $imports = array_unique($imports);
-        $content = preg_replace('/\@import\s*\".*?;/s', '', $content);
-
-        return implode($imports, "\n") . "\n" . $content;
-    }
-
 }
