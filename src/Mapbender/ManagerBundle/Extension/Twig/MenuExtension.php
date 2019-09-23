@@ -10,8 +10,10 @@ use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class MenuExtension extends \Twig_Extension
+class MenuExtension extends AbstractExtension
 {
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
@@ -53,7 +55,7 @@ class MenuExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'mapbender_manager_menu_items' => new \Twig_SimpleFunction('mapbender_manager_menu_items', array($this, 'mapbender_manager_menu_items')),
+            'mapbender_manager_menu_items' => new TwigFunction('mapbender_manager_menu_items', array($this, 'mapbender_manager_menu_items')),
         );
     }
 

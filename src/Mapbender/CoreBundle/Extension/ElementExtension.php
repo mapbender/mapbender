@@ -4,11 +4,13 @@ namespace Mapbender\CoreBundle\Extension;
 
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * ElementExtension
  */
-class ElementExtension extends \Twig_Extension
+class ElementExtension extends AbstractExtension
 {
 
     /** @var ElementInventoryService */
@@ -36,7 +38,7 @@ class ElementExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'element_class_title' => new \Twig_SimpleFunction('element_class_title', array($this, 'element_class_title')),
+            'element_class_title' => new TwigFunction('element_class_title', array($this, 'element_class_title')),
         );
     }
 

@@ -4,27 +4,20 @@ namespace Mapbender\CoreBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Twig\Environment;
+use Twig\Error\Error;
 
-/**
- * Class TwigConstraintValidator
- *
- * @package Mapbender\CoreBundle\Validator\Constraints
- */
 class TwigConstraintValidator extends ConstraintValidator
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    /** @var Environment */
+    private $twig;
 
     /**
-     * TwigConstraintValidator constructor.
-     * @param TranslatorInterface $translator
+     * @param Environment $twig
      */
-    public function __construct(TranslatorInterface $translator) {
-        $this->translator = $translator;
+    public function __construct(Environment $twig)
+    {
+        $this->twig = $twig;
     }
 
     /**
@@ -34,13 +27,8 @@ class TwigConstraintValidator extends ConstraintValidator
     public function validate($twigString, Constraint $constraint)
     {
         try {
-            $twig = new \Twig_Environment();
-            $twig->addExtension(
-                new TranslationExtension($this->translator)
-            );
-
-            $twig->parse($twig->tokenize($twigString));
-        } catch (\Twig_Error_Syntax $e) {
+            $this->twig->parse($this->twig->tokenize($twigString));
+        } catch (Error $e) {
             $this->context->addViolation($constraint->message);
             $this->context->addViolation($e->getMessage());
         }
