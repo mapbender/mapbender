@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Tests;
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Mapbender;
 
 /**
  * Class ApplicationTest
@@ -20,8 +21,7 @@ class ApplicationTest extends TestBase
      */
     public function testYamlApplicationStructure()
     {
-        $applications = $this->getCore()->getYamlApplicationEntities();
-        foreach ($applications as $application) {
+        foreach ($this->getYamlApplications() as $application) {
             $this->assertTrue($application instanceof Application);
 
             foreach ($application->getRegionProperties() as $regionProperty) {
@@ -44,9 +44,8 @@ class ApplicationTest extends TestBase
      */
     public function testPublicYamlApplicationAccess()
     {
-        $applications = $this->getCore()->getYamlApplicationEntities();
         $client = $this->getClient();
-        foreach ($applications as $application) {
+        foreach ($this->getYamlApplications() as $application) {
             if ($application->isPublished() && !$application->getYamlRoles()) {
                 $slug = $application->getSlug();
                 $client->request('GET', '/application/' . rawurlencode($slug));
@@ -55,4 +54,16 @@ class ApplicationTest extends TestBase
             }
         }
     }
+
+    /**
+     * @return Application[]
+     */
+    protected function getYamlApplications()
+    {
+        /** @var Mapbender $m */
+        $m = $this->getContainer()->get("mapbender");
+        return $m->getYamlApplicationEntities();
+    }
+
+
 }

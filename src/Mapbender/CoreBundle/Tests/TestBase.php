@@ -67,14 +67,6 @@ class TestBase extends WebTestCase
     }
 
     /**
-     * @return Mapbender
-     */
-    protected function getCore()
-    {
-        return $this->getContainer()->get("mapbender");
-    }
-
-    /**
      * @return null|\Symfony\Component\DependencyInjection\ContainerInterface
      */
     protected function getContainer()

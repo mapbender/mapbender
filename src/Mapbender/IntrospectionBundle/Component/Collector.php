@@ -4,7 +4,6 @@
 namespace Mapbender\IntrospectionBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Mapbender;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -121,15 +120,5 @@ class Collector
     protected function getContainer()
     {
         return $this->container;
-    }
-
-    /**
-     * @return Mapbender
-     */
-    protected function getMapbender()
-    {
-        /** @var Mapbender $mapbenderService */
-        $mapbenderService = $this->getContainer()->get('mapbender');
-        return $mapbenderService;
     }
 }
