@@ -160,7 +160,7 @@ class ApplicationController extends ApplicationControllerBase
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
-                $content = $appComponent->render();
+                $content = $appComponent->getTemplate()->render();
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache();
@@ -169,7 +169,7 @@ class ApplicationController extends ApplicationControllerBase
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($appComponent->render(), 200, $headers);
+            return new Response($appComponent->getTemplate()->render(), 200, $headers);
         }
     }
 

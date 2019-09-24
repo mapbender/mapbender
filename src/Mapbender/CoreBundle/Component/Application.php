@@ -106,23 +106,6 @@ class Application
         return $this->entity->getDescription();
     }
 
-    /*************************************************************************
-     *                                                                       *
-     *                              Frontend stuff                           *
-     *                                                                       *
-     *************************************************************************/
-
-    /**
-     * Render the application
-     *
-     * @return string $html The rendered HTML
-     */
-    public function render()
-    {
-        $template = $this->getTemplate();
-        return $template->render();
-    }
-
     /**
      * @return ConfigService
      */
