@@ -31,7 +31,7 @@ class WelcomeController extends ApplicationControllerBase
      */
     public function listAction(Request $request)
     {
-        $yamlApplications = $this->getMapbender()->getYamlApplicationEntities(false);
+        $yamlApplications = $this->getMapbender()->getYamlApplicationEntities();
         $dbApplications = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application')->findBy(array(), array(
             'title' => 'ASC',
         ));

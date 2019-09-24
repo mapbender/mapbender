@@ -128,20 +128,15 @@ class Mapbender
     }
 
     /**
-     * Get public YAML application entities
+     * Get YAML application entities
      *
-     * @param bool $onlyPublic Only public applications?
      * @return Application[]
      */
-    public function getYamlApplicationEntities($onlyPublic = true)
+    public function getYamlApplicationEntities()
     {
         $applications = array();
         $yamlMapper   = new ApplicationYAMLMapper($this->container);
         foreach ($yamlMapper->getApplications() as $application) {
-            if ($onlyPublic && !$application->isPublished()) {
-                continue;
-            }
-
             $applications[ $application->getSlug() ] = $application;
         }
         return $applications;

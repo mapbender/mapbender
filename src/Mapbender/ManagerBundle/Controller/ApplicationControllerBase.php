@@ -98,7 +98,7 @@ abstract class ApplicationControllerBase extends Controller
             'slug' => $slug,
         ));
         if (!$application && $includeYaml) {
-            $allYamlApps = $this->getMapbender()->getYamlApplicationEntities(false);
+            $allYamlApps = $this->getMapbender()->getYamlApplicationEntities();
             $application = ArrayUtil::getDefault($allYamlApps, $slug, null);
         }
         if (!$application) {

@@ -20,7 +20,7 @@ class ApplicationTest extends TestBase
      */
     public function testYamlApplicationStructure()
     {
-        $applications = $this->getCore()->getYamlApplicationEntities(false);
+        $applications = $this->getCore()->getYamlApplicationEntities();
         foreach ($applications as $application) {
             $this->assertTrue($application instanceof Application);
 
@@ -44,7 +44,7 @@ class ApplicationTest extends TestBase
      */
     public function testPublicYamlApplicationAccess()
     {
-        $applications = $this->getCore()->getYamlApplicationEntities(false);
+        $applications = $this->getCore()->getYamlApplicationEntities();
         $client = $this->getClient();
         foreach ($applications as $application) {
             if ($application->isPublished() && !$application->getYamlRoles()) {

@@ -33,8 +33,10 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     {
         /** @var Mapbender $core */
         $core = $this->container->get("mapbender");
-        foreach ($core->getYamlApplicationEntities(true) as $slug => $application) {
-            $core->importYamlApplication($slug);
+        foreach ($core->getYamlApplicationEntities() as $application) {
+            if ($application->isPublished()) {
+                $core->importYamlApplication($application->getSlug());
+            }
         }
     }
 }

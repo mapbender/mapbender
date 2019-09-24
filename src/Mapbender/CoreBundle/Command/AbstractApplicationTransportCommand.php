@@ -31,7 +31,7 @@ abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
     {
         /** @var Mapbender $m */
         $m = $this->getContainer()->get('mapbender');
-        $apps = $m->getYamlApplicationEntities(false);
+        $apps = $m->getYamlApplicationEntities();
         return ArrayUtil::getDefault($apps, $slug, null);
     }
 
