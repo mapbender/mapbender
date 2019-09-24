@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Produces merged application assets.
@@ -36,8 +35,6 @@ class ApplicationAssetService
     protected $jsCompiler;
     /** @var TranslationCompiler */
     protected $translationCompiler;
-    /** @var EngineInterface */
-    protected $templateEngine;
     /** @var bool */
     protected $debug;
     /** @var bool */
@@ -49,7 +46,6 @@ class ApplicationAssetService
                                 ApplicationService $applicationService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
-                                EngineInterface $templateEngine,
                                 $debug=false,
                                 $strict=false)
     {
@@ -59,7 +55,6 @@ class ApplicationAssetService
         $this->applicationService = $applicationService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->elementFactory = $elementFactory;
-        $this->templateEngine = $templateEngine;
         $this->debug = $debug;
         $this->strict = $strict;
         $this->dummyContainer = new Container();
@@ -92,7 +87,7 @@ class ApplicationAssetService
         return $this->compileAssetContent($application->getSlug(), $refs, $type);
     }
 
-    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type, $slug)
+    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -104,7 +99,7 @@ class ApplicationAssetService
         );
         $references = call_user_func_array('\array_merge', $referenceLists);
         $references = array_unique($this->qualifyAssetReferencesBulk($source, $references, $type));
-        return $this->compileAssetContent($slug, $references, $type);
+        return $this->compileAssetContent(null, $references, $type);
     }
 
     /**
@@ -128,9 +123,6 @@ class ApplicationAssetService
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
         $references = array_merge($references, $extraYamlRefs);
         switch ($type) {
-            case 'js':
-                $references[] = new StringAsset($this->renderAppLoader($application));
-                break;
             case 'css':
                 $customCss = trim($application->getCustomCss());
                 if ($customCss) {
@@ -145,18 +137,18 @@ class ApplicationAssetService
     }
 
     /**
-     * @param string $slug
+     * @param string $configSlug
      * @param string[] $refs
      * @param string $type
      * @return string
      */
-    protected function compileAssetContent($slug, $refs, $type)
+    protected function compileAssetContent($configSlug, $refs, $type)
     {
         switch ($type) {
             case 'css':
                 return $this->cssCompiler->compile($refs, $this->debug);
             case 'js':
-                return $this->jsCompiler->compile($refs, $this->debug);
+                return $this->jsCompiler->compile($refs, $configSlug, $this->debug);
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
                 return $this->translationCompiler->compile($refs);
@@ -282,21 +274,6 @@ class ApplicationAssetService
         $templateComponent = $this->getDummyTemplateComponent($application);
         $refs = $templateComponent->getLateAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
-    }
-
-    /**
-     * Returns JavaScript code with final client-side application initialization.
-     * This should be the very last bit, following all other JavaScript definitions
-     * and initializations.
-     * @param Entity\Application $application
-     * @return string
-     */
-    protected function renderAppLoader(Entity\Application $application)
-    {
-        $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
-        return $this->templateEngine->render($appLoaderTemplate, array(
-            'application' => $application,
-        ));
     }
 
     /**

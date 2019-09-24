@@ -195,6 +195,7 @@
             <argument type="service" id="router" />
         </service>
         <service id="mapbender.asset_compiler.js" class="%mapbender.asset_compiler.js.class%">
+            <argument type="service" id="templating" />
             <argument type="service" id="file_locator" />
             <argument>%kernel.root_dir%/../web</argument>
             <argument>%kernel.bundles%</argument>
@@ -209,7 +210,6 @@
             <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.element_factory.service" />
-            <argument type="service" id="templating" />
             <argument key="debug">%kernel.debug%</argument>
             <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
         </service>

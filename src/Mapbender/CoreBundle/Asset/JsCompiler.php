@@ -3,12 +3,18 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
+use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Templating\EngineInterface;
+
 /**
  * Locates and merges JavaScript assets for applications.
  * Registered in container as mapbender.asset_compiler.js
  */
 class JsCompiler extends AssetFactoryBase
 {
+    /** @var EngineInterface */
+    protected $templateEngine;
+
     /**
      * Mark assets as moved, so refs can be rewritten
      * This is a ~curated list, currently not intended for configurability.
@@ -24,16 +30,27 @@ class JsCompiler extends AssetFactoryBase
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
     );
 
+    public function __construct(EngineInterface $templateEngine, FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
+    {
+        parent::__construct($fileLocator, $webDir, $bundleClassMap);
+        $this->templateEngine = $templateEngine;
+    }
+
     /**
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
      * @param (FileAsset|StringAsset)[] $inputs
+     * @param string|null $configSlug for emission of application initialzation script
      * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compile($inputs, $debug)
+    public function compile($inputs, $configSlug, $debug)
     {
-        return $this->concatenateContents($inputs, $debug);
+        $content = $this->concatenateContents($inputs, $debug);
+        if ($configSlug) {
+            $content .= $this->renderAppLoader($configSlug);
+        }
+        return $content;
     }
 
     /**
@@ -46,5 +63,25 @@ class JsCompiler extends AssetFactoryBase
             $input = $this->migratedRefs[$input];
         }
         return parent::locateAssetFile($input);
+    }
+
+    /**
+     * Returns JavaScript code with final client-side application initialization.
+     * This should be the very last bit, following all other JavaScript definitions
+     * and initializations.
+     * @param string $slug
+     * @return string
+     */
+    protected function renderAppLoader($slug)
+    {
+        $viewParams = array(
+            'slug' => $slug,
+            // fake an application entity (legacy twig)
+            'application' => array(
+                'slug' => $slug,
+            ),
+        );
+        $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
+        return $this->templateEngine->render($appLoaderTemplate, $viewParams);
     }
 }

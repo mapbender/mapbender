@@ -103,7 +103,7 @@ class ApplicationController extends ApplicationControllerBase
         if ($source instanceof ApplicationEntity) {
             $content = $assetService->getAssetContent($source, $type);
         } else {
-            $content = $assetService->getTemplateAssetContent($source, $type, $slug);
+            $content = $assetService->getTemplateAssetContent($source, $type);
         }
 
         if ($isProduction) {
