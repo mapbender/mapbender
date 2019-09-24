@@ -311,8 +311,7 @@ class ElementController extends ApplicationControllerBase
         $em->persist($application);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->set('success',
-            'Your element has been removed.');
+        $this->addFlash('success', 'Your element has been removed.');
 
         return new Response();
     }

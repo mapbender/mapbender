@@ -150,12 +150,9 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function applicationAction(Request $request, $slug)
     {
-        $session      = $this->get("session");
         $appEntity = $this->getApplicationEntity($slug);
         $appComponent = new Application($this->container, $appEntity);
-        // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
         $useCache = $this->isProduction();
-        $session->set("proxyAllowed", true); // @todo: ...why?
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
         );
@@ -220,7 +217,6 @@ class ApplicationController extends ApplicationControllerBase
     public function configurationAction($slug)
     {
         $applicationEntity = $this->getApplicationEntity($slug);
-        $this->get("session")->set("proxyAllowed", true);
         $configService = $this->getConfigService();
         $cacheService = $configService->getCacheService();
         $cacheKeyPath = array('config.json');

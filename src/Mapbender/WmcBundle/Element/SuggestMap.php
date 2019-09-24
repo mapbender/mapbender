@@ -120,9 +120,6 @@ class SuggestMap extends WmcBase
     {
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        if ($request->getSession()->get("proxyAllowed", false) !== true) {
-            throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
-        }
         switch ($action) {
             case 'load':
                 $id = $request->get("_id", null);
