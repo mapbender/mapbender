@@ -88,7 +88,7 @@ class Collector
      */
     protected function getSources()
     {
-        return $this->getEntityRepository('MapbenderWmsBundle:WmsSource')->findAll();
+        return $this->getEntityRepository('MapbenderCoreBundle:Source')->findAll();
     }
 
     /**
@@ -96,7 +96,7 @@ class Collector
      */
     protected function getSourceInstances()
     {
-        return $this->getEntityRepository('MapbenderWmsBundle:WmsInstance')->findAll();
+        return $this->getEntityRepository('MapbenderCoreBundle:SourceInstance')->findAll();
     }
 
     /**
@@ -104,7 +104,7 @@ class Collector
      */
     protected function getApplications()
     {
-        return $this->getMapbender()->getApplicationEntities();
+        return $this->getEntityRepository('MapbenderCoreBundle:Application')->findAll();
     }
 
     /**
