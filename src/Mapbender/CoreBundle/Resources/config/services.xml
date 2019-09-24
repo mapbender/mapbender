@@ -201,6 +201,7 @@
             <argument>%kernel.bundles%</argument>
         </service>
         <service id="mapbender.asset_compiler.translations" class="%mapbender.asset_compiler.translations.class%">
+            <argument type="service" id="translator" />
             <argument type="service" id="templating" />
         </service>
         <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
