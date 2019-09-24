@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,16 +26,9 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer($this);
-        /** @var Application $application */
-        $application = $options['application'];
-        $layersetChoices = array();
-        foreach ($application->getLayersets() as $layerset) {
-            $layersetChoices[$layerset->getTitle()] = $layerset->getId();
-        }
         $builder
-            ->add('layersets', 'choice', array(
-                'choices' => $layersetChoices,
-                'choices_as_values' => true,
+            ->add('layersets', 'app_layerset', array(
+                'application' => $options['application'],
                 'required' => true,
                 'multiple' => true,
                 'expanded' => true,

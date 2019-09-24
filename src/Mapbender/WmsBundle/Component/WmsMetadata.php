@@ -6,11 +6,11 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\WmsBundle\Controller\RepositoryController;
+use Mapbender\CoreBundle\Controller\ApplicationController;
 
 /**
  * Renders frontend meta data for an entire Wms source or an individual layer.
- * @see RepositoryController::metadataAction()
+ * @see ApplicationController::metadataAction()
  * @see WmsInstance::getMetadata()
  *
  * @inheritdoc

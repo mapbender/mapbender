@@ -6,15 +6,8 @@ namespace Mapbender\CoreBundle\Component;
  */
 class Size
 {
-
-    /**
-     * ORM\Column(type="integer", nullable=false)
-     */
     public $width = 0;
 
-    /**
-     * ORM\Column(type="integer", nullable=false)
-     */
     public $height = 0;
 
     /**
@@ -29,9 +22,8 @@ class Size
     }
 
     /**
-     * Sets a width
-     * 
-     * @return Size 
+     * @param int $width
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -40,9 +32,7 @@ class Size
     }
 
     /**
-     * Returns a width
-     * 
-     * @return integer width
+     * @return int
      */
     public function getWidth()
     {
@@ -50,9 +40,8 @@ class Size
     }
 
     /**
-     * Sets a height
-     * 
-     * @return Size 
+     * @param int $height
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -61,26 +50,11 @@ class Size
     }
 
     /**
-     * Returns a height
-     * 
-     * @return integer height
+     * @return int
      */
     public function getHeight()
     {
         return $this->height;
-    }
-
-    /**
-     * Creates a Size from parameters (array("width"=>xx,"height"=>yy))
-     * 
-     * @param array $parameters
-     * @return Size
-     */
-    public static function create($parameters = array())
-    {
-        return new Size(
-            isset($parameters["width"]) ? $parameters["width"] : null,
-            isset($parameters["height"]) ? $parameters["height"] : null);
     }
 
     /**

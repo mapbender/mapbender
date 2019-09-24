@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
-use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Console\Application as CmdApplication;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;

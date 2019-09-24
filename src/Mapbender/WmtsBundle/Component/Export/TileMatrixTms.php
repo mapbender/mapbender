@@ -41,7 +41,6 @@ class TileMatrixTms extends TileMatrix
         $py0 = intval(round(($fy0 - $ty0) * $this->tileHeight));
 
         for ($ty = $ty0; ;) {
-            $tileExtentTop = ($ty + 1) * $unitsPerTile['y'] + $this->extentBottom;
             $tileExtentBottom = $ty * $unitsPerTile['y'] + $this->extentBottom;
             for ($tx = $tx0; ; ++$tx) {
                 $offsetX = $px0 + $this->tileWidth * ($tx - $tx0);

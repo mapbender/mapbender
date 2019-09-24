@@ -308,7 +308,7 @@ class Importer extends RefreshableSourceLoader
                 $instance->setInfoformat($featureInfoFormats[0]);
             }
         } else {
-            $instance->setInfoFormat(null);
+            $instance->setInfoformat(null);
         }
         if ($exceptionFormats = $source->getExceptionFormats()) {
             if (!in_array($instance->getExceptionformat(), $exceptionFormats)) {
