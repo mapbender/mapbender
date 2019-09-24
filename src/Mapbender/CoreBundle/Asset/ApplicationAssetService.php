@@ -30,8 +30,12 @@ class ApplicationAssetService
     protected $elementFactory;
     /** @var ContainerInterface */
     protected $dummyContainer;
-    /** @var AssetFactory */
-    protected $compiler;
+    /** @var CssCompiler */
+    protected $cssCompiler;
+    /** @var JsCompiler */
+    protected $jsCompiler;
+    /** @var TranslationCompiler */
+    protected $translationCompiler;
     /** @var EngineInterface */
     protected $templateEngine;
     /** @var bool */
@@ -39,7 +43,9 @@ class ApplicationAssetService
     /** @var bool */
     protected $strict;
 
-    public function __construct(AssetFactory $compiler,
+    public function __construct(CssCompiler $cssCompiler,
+                                JsCompiler $jsCompiler,
+                                TranslationCompiler $translationCompiler,
                                 ApplicationService $applicationService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
@@ -47,7 +53,9 @@ class ApplicationAssetService
                                 $debug=false,
                                 $strict=false)
     {
-        $this->compiler = $compiler;
+        $this->cssCompiler = $cssCompiler;
+        $this->jsCompiler = $jsCompiler;
+        $this->translationCompiler = $translationCompiler;
         $this->applicationService = $applicationService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->elementFactory = $elementFactory;
@@ -146,12 +154,12 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'css':
-                return $this->compiler->compileCss($refs, $this->debug);
+                return $this->cssCompiler->compile($refs, $this->debug);
             case 'js':
-                return $this->compiler->compileRaw($refs, $this->debug);
+                return $this->jsCompiler->compile($refs, $this->debug);
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
-                return $this->compiler->compileTranslations($refs);
+                return $this->translationCompiler->compile($refs);
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
