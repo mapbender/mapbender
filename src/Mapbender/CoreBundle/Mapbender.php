@@ -93,11 +93,7 @@ class Mapbender
      */
     public function getYamlApplicationEntities()
     {
-        $applications = array();
-        foreach ($this->yamlMapper->getApplications() as $application) {
-            $applications[ $application->getSlug() ] = $application;
-        }
-        return $applications;
+        return $this->yamlMapper->getApplications();
     }
 
     /**
