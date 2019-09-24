@@ -181,15 +181,9 @@ class ApplicationController extends ApplicationControllerBase
      */
     private function getApplicationEntity($slug)
     {
-        /** @var Mapbender $mapbender */
-        $mapbender = $this->get('mapbender');
-        $entity = $mapbender->getApplicationEntity($slug);
-
-        if (!$entity) {
-            throw new NotFoundHttpException('The application can not be found.');
-        }
-        $this->checkApplicationAccess($entity);
-        return $entity;
+        $application = $this->requireApplication($slug, true);
+        $this->checkApplicationAccess($application);
+        return $application;
     }
 
     /**
