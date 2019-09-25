@@ -20,6 +20,8 @@ class TranslationCompiler
     protected $translator;
     /** @var EngineInterface */
     protected $templateEngine;
+    /** @var string[]|null */
+    protected $allMessages;
 
     /**
      * @param TranslatorInterface $translator
@@ -78,16 +80,15 @@ class TranslationCompiler
     protected function translatePattern($input)
     {
         $values = array();
-        $allMessages = null;
         if (preg_match('/\*$/', $input)) {
             $wildcardPrefix = rtrim($input, '*');
             if (!$wildcardPrefix || false !== strpos($wildcardPrefix, '*')) {
                 throw new \RuntimeException("Invalid translation key input " . print_r($input, true));
             }
-            if (!$allMessages) {
-                $allMessages = $this->translator->getCatalogue()->all('messages');
+            if ($this->allMessages === null) {
+                $this->allMessages = $this->translator->getCatalogue()->all('messages');
             }
-            foreach ($allMessages as $translationKey => $message) {
+            foreach ($this->allMessages as $translationKey => $message) {
                 if (0 === strpos($translationKey, $wildcardPrefix)) {
                     $values[$translationKey] = $message;
                 }
