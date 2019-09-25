@@ -255,10 +255,8 @@ class ElementController extends ApplicationControllerBase
             'permissions' => array(
                 1 => 'View',
             ),
-            'action' => $request->getPathInfo(),
         ));
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->beginTransaction();
             try {
@@ -273,10 +271,10 @@ class ElementController extends ApplicationControllerBase
                 $this->addFlash('error', "There was an error trying to change your element's access.");
                 $entityManager->rollback();
                 $entityManager->close();
-                if ($this->container->getParameter('kernel.debug')) {
-                    throw($e);
-                }
             }
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+            ));
         }
         return $this->render('@MapbenderManager/Element/security.html.twig', array(
             'form' => $form->createView(),
