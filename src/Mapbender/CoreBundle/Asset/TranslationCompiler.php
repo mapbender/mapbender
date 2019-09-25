@@ -93,6 +93,9 @@ class TranslationCompiler
                     $values[$translationKey] = $message;
                 }
             }
+            if (!$values) {
+                throw new \LogicException("No matches for translation key prefix " . print_r($input, true));
+            }
         } else {
             $translated = $this->translator->trans($input);
             if ($translated === $input) {
