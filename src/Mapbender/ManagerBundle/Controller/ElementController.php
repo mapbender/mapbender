@@ -249,7 +249,14 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->getSecurityForm($element);
+        $form = $this->createForm('acl', $element, array(
+            'mapped' => false,
+            'create_standard_permissions' => false,
+            'permissions' => array(
+                1 => 'View',
+            ),
+            'action' => $request->getPathInfo(),
+        ));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -258,7 +265,7 @@ class ElementController extends ApplicationControllerBase
                 $aclManager  = $this->getAclManager();
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $aclManager->setObjectACEs($element, $form->get('acl')->get('ace')->getData());
+                $aclManager->setObjectACEs($element, $form->get('ace')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
@@ -448,23 +455,5 @@ class ElementController extends ApplicationControllerBase
         /** @var EntityRepository $repository */
         $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Element');
         return $repository;
-    }
-
-    /**
-     * @param Element $element
-     * @return FormInterface
-     */
-    protected function getSecurityForm(Element $element)
-    {
-        $builder = $this->createFormBuilder($element);
-        $builder->add('acl', 'acl', array(
-            'mapped' => false,
-            'data' => $element,
-            'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View',
-            ),
-        ));
-        return $builder->getForm();
     }
 }
