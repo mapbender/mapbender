@@ -31,7 +31,6 @@ class ButtonAdminType extends AbstractType
             ))
             ->add('target', 'target_element', array(
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
             ->add('click', 'text', array('required' => false))

@@ -35,13 +35,11 @@ class POIAdminType extends AbstractType
             ->add('gps', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\GpsPosition',
                 'application' => $options['application'],
-                'property_path' => '[gps]',
                 'required' => false,
             ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
         ;

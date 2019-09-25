@@ -32,7 +32,6 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
         if ($mapId && $baseSourceInstances = $this->collectBaseSourceInstanceChoices($this->application, $mapId)) {
             $event->getForm()
                 ->add('instancesets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
-                    'property_path' => '[instancesets]',
                     'type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
                     'allow_add' => true,
                     'allow_delete' => true,

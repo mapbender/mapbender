@@ -40,8 +40,8 @@ class LayertreeAdminType extends AbstractType
         $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('type', 'choice', array(
                 'required' => true,
                 'choices' => array(

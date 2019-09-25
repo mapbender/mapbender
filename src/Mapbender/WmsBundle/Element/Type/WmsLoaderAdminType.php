@@ -29,12 +29,11 @@ class WmsLoaderAdminType extends AbstractType
     {
         $builder
             ->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('defaultFormat', 'choice', array(
                 "choices" => array(
                     "image/png" => "image/png",

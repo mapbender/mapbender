@@ -34,12 +34,25 @@ class LayerThemeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('id', 'hidden', array('required' => true, 'property_path' => '[id]'))
-            ->add('title', 'hidden', array('required' => false, 'property_path' => '[title]'))
-            ->add('useTheme', 'checkbox', array('required' => false, 'property_path' => '[useTheme]'))
-            ->add('opened', 'checkbox', array('required' => false, 'property_path' => '[opened]'))
-            ->add('sourceVisibility', 'checkbox', array('required' => false, 'property_path' => '[sourceVisibility]'))
-            ->add('allSelected', 'checkbox', array('required' => false, 'property_path' => '[allSelected]'));
+        $builder
+            ->add('id', 'hidden', array(
+                'required' => true,
+            ))
+            ->add('title', 'hidden', array(
+                'required' => false,
+            ))
+            ->add('useTheme', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('opened', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('sourceVisibility', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('allSelected', 'checkbox', array(
+                'required' => false,
+            ))
+        ;
     }
-
 }

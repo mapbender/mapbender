@@ -45,12 +45,11 @@ class LegendAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('target', 'target_element',
-                array(
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('showSourceTitle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showsourcetitle',

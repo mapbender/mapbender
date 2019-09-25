@@ -39,12 +39,11 @@ class CoordinatesDisplayAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.corrdsdisplay.label', // sic
             ))
-            ->add('target', 'target_element',
-                array(
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('empty', 'text', array('required' => false, "trim" => false))
             ->add('prefix', 'text', array('required' => false, "trim" => false))
             ->add('separator', 'text',
