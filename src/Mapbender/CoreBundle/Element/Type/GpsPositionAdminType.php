@@ -38,7 +38,6 @@ class GpsPositionAdminType extends AbstractType
             ->add('target',  'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
             ->add('icon', new IconClassType(), array('required' => false))

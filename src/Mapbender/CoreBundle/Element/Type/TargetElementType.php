@@ -90,8 +90,7 @@ class TargetElementType extends AbstractType
      */
     public function getChoicesQueryBuilder(Options $options)
     {
-        // strip the square brackets from the property_path to extract the entity attribute name
-        $builderName = preg_replace("/[^\w]/", "", $options['property_path']);
+        $builderName = '_target';
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository($options['class']);
         $qb = $repository->createQueryBuilder($builderName);

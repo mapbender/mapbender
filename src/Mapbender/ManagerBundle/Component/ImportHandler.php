@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Component;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;

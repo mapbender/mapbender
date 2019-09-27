@@ -4,7 +4,10 @@
 namespace Mapbender\CoreBundle\Extension;
 
 
-class SitelinksExtension extends \Twig_Extension
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class SitelinksExtension extends AbstractExtension
 {
     /** @var string[][] */
     protected $linkConfig;
@@ -31,7 +34,7 @@ class SitelinksExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('get_sitelinks', array($this, 'get_sitelinks')),
+            new TwigFunction('get_sitelinks', array($this, 'get_sitelinks')),
         );
     }
 

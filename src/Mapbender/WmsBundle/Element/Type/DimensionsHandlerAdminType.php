@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\WmsBundle\Element\Type\Subscriber\DimensionsHandlerMapTargetSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,7 +43,6 @@ class DimensionsHandlerAdminType extends AbstractType
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
         ;

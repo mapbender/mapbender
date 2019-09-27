@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Mapbender;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -31,8 +30,7 @@ abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
     {
         /** @var Mapbender $m */
         $m = $this->getContainer()->get('mapbender');
-        $apps = $m->getYamlApplicationEntities();
-        return ArrayUtil::getDefault($apps, $slug, null);
+        return $m->getYamlApplication($slug);
     }
 
     /**

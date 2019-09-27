@@ -51,7 +51,6 @@ class TileMatrixWmts extends TileMatrix
         $py0 = intval(round(($ty0 - $fy0) * $this->tileHeight));
 
         for ($ty = $ty0; ;) {
-            $tileExtentTop = $this->extentTop - $ty * $unitsPerTile['y'];
             $tileExtentBottom = $this->extentTop - ($ty + 1) * $unitsPerTile['y'];
             for ($tx = $tx0; ; ++$tx) {
                 $offsetX = $px0 + $this->tileWidth * ($tx - $tx0);

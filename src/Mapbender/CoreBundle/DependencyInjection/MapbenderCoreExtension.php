@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -71,10 +72,10 @@ class MapbenderCoreExtension extends Extension
     }
 
     /**
-     * @param $loader
-     * @param $configs
+     * @param LoaderInterface $loader
+     * @param mixed $configs
      */
-    protected function loadConfigs($loader, $configs)
+    protected function loadConfigs(LoaderInterface $loader, $configs)
     {
         foreach ($configs as $config) {
             $loader->load($config);

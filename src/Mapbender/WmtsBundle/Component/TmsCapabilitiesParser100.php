@@ -68,8 +68,10 @@ class TmsCapabilitiesParser100
                 return null;
             }
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
+                /** @var \DOMAttr $elm */
                 return $elm->value;
             } elseif ($elm->nodeType == XML_TEXT_NODE) {
+                /** @var \DOMText $elm */
                 return $elm->wholeText;
             } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
                 return $elm;
@@ -123,7 +125,7 @@ class TmsCapabilitiesParser100
 
     /**
      * Parses the GetCapabilities document
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return WmtsSource
      */
     public function parse()
     {

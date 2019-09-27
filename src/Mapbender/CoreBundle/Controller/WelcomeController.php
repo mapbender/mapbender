@@ -31,9 +31,15 @@ class WelcomeController extends ApplicationControllerBase
      */
     public function listAction(Request $request)
     {
+        $yamlApplications = $this->getMapbender()->getYamlApplicationEntities();
+        $dbApplications = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application')->findBy(array(), array(
+            'title' => 'ASC',
+        ));
+        /** @var Application[] $allApplications */
+        $allApplications = array_merge($yamlApplications, $dbApplications);
         $allowedApplications = array();
 
-        foreach ($this->getMapbender()->getApplicationEntities() as $application) {
+        foreach ($allApplications as $application) {
             try {
                 $this->checkApplicationAccess($application);
                 $allowedApplications[] = $application;

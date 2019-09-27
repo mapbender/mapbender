@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
-use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Console\Application as CmdApplication;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
@@ -17,14 +16,7 @@ class TestBase extends WebTestCase
 {
     public function setUp()
     {
-        static $kernel = null;
-
-        if ($kernel) {
-            return;
-        }
-
-        $kernel = $this->getContainer()->get("kernel");
-        $isTestEnv = $kernel->getEnvironment() == "test";
+        $isTestEnv = static::$kernel->getEnvironment() == "test";
 
         if ($isTestEnv) {
             $this->runCommand('doctrine:database:drop --force');
@@ -46,12 +38,11 @@ class TestBase extends WebTestCase
     protected function getApplication()
     {
         if (!$this->application) {
-            $this->application = new CmdApplication($this->getClient()->getKernel());
+            $this->application = new CmdApplication(static::$kernel);
             $this->application->setAutoExit(false);
         }
         return $this->application;
     }
-
 
     /**
      * @param $command
@@ -75,18 +66,10 @@ class TestBase extends WebTestCase
     }
 
     /**
-     * @return Mapbender
-     */
-    protected function getCore()
-    {
-        return $this->getContainer()->get("mapbender");
-    }
-
-    /**
      * @return null|\Symfony\Component\DependencyInjection\ContainerInterface
      */
     protected function getContainer()
     {
-        return $this->getClient()->getContainer();
+        return static::$kernel->getContainer();
     }
 }

@@ -6,7 +6,7 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
-use Mapbender\CoreBundle\Mapbender;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -44,7 +44,9 @@ class ElementClassesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $elementNames = $this->getMapbender()->getElements();
+        /** @var ElementInventoryService $inventoryService */
+        $inventoryService = $this->getContainer()->get('mapbender.element_inventory.service');
+        $elementNames = $inventoryService->getActiveInventory();
         $headers = array(
             'Name',
             'Comments',
@@ -262,16 +264,6 @@ class ElementClassesCommand extends ContainerAwareCommand
         } catch (\InvalidArgumentException $e) {
             return false;
         }
-    }
-
-    /**
-     * @return Mapbender
-     */
-    protected function getMapbender()
-    {
-        /** @var Mapbender $mapbenderService */
-        $mapbenderService = $this->getContainer()->get('mapbender');
-        return $mapbenderService;
     }
 
     /**

@@ -249,15 +249,20 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->getSecurityForm($element);
+        $form = $this->createForm('acl', $element, array(
+            'mapped' => false,
+            'create_standard_permissions' => false,
+            'permissions' => array(
+                1 => 'View',
+            ),
+        ));
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->beginTransaction();
             try {
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $this->getAclManager()->setObjectACEs($element, $form->get('acl')->get('ace')->getData());
+                $this->getAclManager()->setObjectACEs($element, $form->get('ace')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
@@ -265,10 +270,10 @@ class ElementController extends ApplicationControllerBase
                 $this->addFlash('error', "There was an error trying to change your element's access.");
                 $entityManager->rollback();
                 $entityManager->close();
-                if ($this->container->getParameter('kernel.debug')) {
-                    throw($e);
-                }
             }
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+            ));
         }
         return $this->render('@MapbenderManager/Element/security.html.twig', array(
             'form' => $form->createView(),
@@ -310,8 +315,7 @@ class ElementController extends ApplicationControllerBase
         $em->persist($application);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->set('success',
-            'Your element has been removed.');
+        $this->addFlash('success', 'Your element has been removed.');
 
         return new Response();
     }
@@ -448,23 +452,5 @@ class ElementController extends ApplicationControllerBase
         /** @var EntityRepository $repository */
         $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Element');
         return $repository;
-    }
-
-    /**
-     * @param Element $element
-     * @return FormInterface
-     */
-    protected function getSecurityForm(Element $element)
-    {
-        $builder = $this->createFormBuilder($element);
-        $builder->add('acl', 'acl', array(
-            'mapped' => false,
-            'data' => $element,
-            'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View',
-            ),
-        ));
-        return $builder->getForm();
     }
 }

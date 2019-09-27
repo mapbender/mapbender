@@ -11,7 +11,6 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Mapbender;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -98,8 +97,7 @@ abstract class ApplicationControllerBase extends Controller
             'slug' => $slug,
         ));
         if (!$application && $includeYaml) {
-            $allYamlApps = $this->getMapbender()->getYamlApplicationEntities();
-            $application = ArrayUtil::getDefault($allYamlApps, $slug, null);
+            $application = $this->getMapbender()->getYamlApplication($slug);
         }
         if (!$application) {
             throw $this->createNotFoundException("No such application");

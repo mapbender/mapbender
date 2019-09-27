@@ -27,11 +27,11 @@
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
         <parameter key="mapbender.strict.asset.bundle_scopes">%mapbender.strict%</parameter>
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
-        <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
+        <parameter key="mapbender.asset_compiler.js.class">Mapbender\CoreBundle\Asset\JsCompiler</parameter>
+        <parameter key="mapbender.asset_compiler.css.class">Mapbender\CoreBundle\Asset\CssCompiler</parameter>
+        <parameter key="mapbender.asset_compiler.translations.class">Mapbender\CoreBundle\Asset\TranslationCompiler</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
-        <!-- populated properly by ProvidePublishedBundleNameMapPass -->
-        <parameter type="collection" key="mapbender.published_bundle_name_map" />
         <parameter key="mapbender.cookieconsent">false</parameter>
         <parameter key="mapbender.uploads_dir">uploads</parameter>
     </parameters>
@@ -57,13 +57,7 @@
         </service>
 
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
-            <argument type="service" id="service_container" />
             <tag name="form.type" alias="app_layerset"/>
-        </service>
-
-        <service id="layerset_instances" class="Mapbender\CoreBundle\Element\Type\LayersetInstancesAdminType">
-            <argument type="service" id="service_container" />
-            <tag name="form.type" alias="layerset_instances"/>
         </service>
 
         <service id="signer" class="%signer.class%">
@@ -180,21 +174,31 @@
         <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
             <argument>%kernel.cache_dir%</argument>
         </service>
-        <service id="mapbender.asset_compiler.service" class="%mapbender.asset_compiler.service.class%">
+        <service id="mapbender.asset_compiler.css" class="%mapbender.asset_compiler.css.class%">
             <argument type="service" id="file_locator" />
             <argument>%kernel.root_dir%/../web</argument>
-            <argument>%mapbender.published_bundle_name_map%</argument>
-            <argument type="service" id="templating" />
+            <argument>%kernel.bundles%</argument>
             <argument type="service" id="mapbender.assetic.filter.sass" />
             <argument type="service" id="assetic.filter.cssrewrite" />
+            <argument type="service" id="router" />
+        </service>
+        <service id="mapbender.asset_compiler.js" class="%mapbender.asset_compiler.js.class%">
+            <argument type="service" id="templating" />
+            <argument type="service" id="file_locator" />
+            <argument>%kernel.root_dir%/../web</argument>
+            <argument>%kernel.bundles%</argument>
+        </service>
+        <service id="mapbender.asset_compiler.translations" class="%mapbender.asset_compiler.translations.class%">
+            <argument type="service" id="translator" />
+            <argument type="service" id="templating" />
         </service>
         <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
-            <argument type="service" id="mapbender.asset_compiler.service" />
+            <argument type="service" id="mapbender.asset_compiler.css" />
+            <argument type="service" id="mapbender.asset_compiler.js" />
+            <argument type="service" id="mapbender.asset_compiler.translations" />
             <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.element_factory.service" />
-            <argument type="service" id="router" />
-            <argument type="service" id="templating" />
             <argument key="debug">%kernel.debug%</argument>
             <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
         </service>

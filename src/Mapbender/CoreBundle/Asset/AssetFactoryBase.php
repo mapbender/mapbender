@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
+use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
 
 class AssetFactoryBase
@@ -14,18 +15,65 @@ class AssetFactoryBase
     /** @var string[] */
     protected $publishedBundleNameMap;
 
-    protected $migratedRefs = array();
-
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
-     * @param string[] $publishedBundleNameMap
+     * @param string[] $bundleClassMap
      */
-    public function __construct(FileLocatorInterface $fileLocator, $webDir, $publishedBundleNameMap)
+    public function __construct(FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
     {
         $this->fileLocator = $fileLocator;
         $this->webDir = $webDir;
-        $this->publishedBundleNameMap = $publishedBundleNameMap;
+        $this->publishedBundleNameMap = $this->initPublishedBundlePaths($bundleClassMap);
+    }
+
+    /**
+     * Perform simple concatenation of all input assets. Some uniquification will take place.
+     *
+     * @param (FileAsset|StringAsset)[] $inputs
+     * @param bool $debug to enable file input markers
+     * @return string
+     */
+    protected function concatenateContents($inputs, $debug)
+    {
+        $parts = array();
+        $uniqueRefs = array();
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $input->load();
+                $parts[] = $input->getContent();
+            } else {
+                $normalizedReference = $this->normalizeReference($input);
+                if (empty($uniqueRefs[$normalizedReference])) {
+                    $realAssetPath = $this->locateAssetFile($normalizedReference);
+                    if ($debug) {
+                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                    }
+                    $parts[] = file_get_contents($realAssetPath);
+                    $uniqueRefs[$normalizedReference] = true;
+                }
+            }
+        }
+        return implode("\n", $parts);
+    }
+
+    /**
+     * Calculates a mapping from published web-relative path containing a bundle's public assets to the bundle
+     * name. Input is a mapping of canonical bundle name to bundle FQCN, as provided by Symfony's standard
+     * kernel.bundles parameter.
+     *
+     * @param string[] $bundleClassMap
+     * @return string[]
+     */
+    protected function initPublishedBundlePaths($bundleClassMap)
+    {
+        $nameMap = array();
+        foreach (array_keys($bundleClassMap) as $bundleName) {
+            $publishedPath = 'bundles/' . strtolower(preg_replace('#Bundle$#', '', $bundleName));
+            $nameMap[$publishedPath] = $bundleName;
+        }
+        return $nameMap;
     }
 
     protected function getDebugHeader($finalPath, $originalRef)
@@ -44,9 +92,6 @@ class AssetFactoryBase
      */
     protected function locateAssetFile($input)
     {
-        while (!empty($this->migratedRefs[$input])) {
-            $input = $this->migratedRefs[$input];
-        }
         if ($input[0] == '/') {
             $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {

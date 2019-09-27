@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Tests;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Mapbender;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Class ApplicationTest
@@ -20,18 +19,10 @@ class ApplicationTest extends TestBase
      * @group unit
      * @group dataIntegrity
      */
-    public function testApplicationComponent()
+    public function testYamlApplicationStructure()
     {
-        $applications = $this->getCore()->getApplicationEntities();
-        foreach ($applications as $application) {
-
+        foreach ($this->getYamlApplications() as $application) {
             $this->assertTrue($application instanceof Application);
-
-            // Check ID if YAML or Databases
-            $this->assertTrue(
-                $application->isDbBased() && $application->getId() > 0
-                || $application->isYamlBased() && !$application->getId()
-            );
 
             foreach ($application->getRegionProperties() as $regionProperty) {
                 $this->assertTrue($regionProperty instanceof RegionProperties);
@@ -51,11 +42,28 @@ class ApplicationTest extends TestBase
     /**
      * @group functional
      */
-    public function testMapbenderUserAppAbility()
+    public function testPublicYamlApplicationAccess()
     {
-        $client   = $this->getClient();
-        $crawler  = $client->request('GET', '/application/mapbender_user');
-        $response = $client->getResponse();
-        $this->assertTrue($response->isSuccessful());
+        $client = $this->getClient();
+        foreach ($this->getYamlApplications() as $application) {
+            if ($application->isPublished() && !$application->getYamlRoles()) {
+                $slug = $application->getSlug();
+                $client->request('GET', '/application/' . rawurlencode($slug));
+                $response = $client->getResponse();
+                $this->assertTrue($response->isSuccessful(), 'Tried accessing application ' . $slug);
+            }
+        }
     }
+
+    /**
+     * @return Application[]
+     */
+    protected function getYamlApplications()
+    {
+        /** @var Mapbender $m */
+        $m = $this->getContainer()->get("mapbender");
+        return $m->getYamlApplicationEntities();
+    }
+
+
 }

@@ -49,7 +49,7 @@ class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
         }
         $output->writeln("Deleted {$countDeleted} print queue item(s)");
         if ($input->getOption('remove-dangling-files')) {
-            $this->removeDanglingFiles();
+            $this->removeDanglingFiles($output);
         }
     }
 }

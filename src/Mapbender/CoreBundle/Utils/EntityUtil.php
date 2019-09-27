@@ -127,41 +127,6 @@ class EntityUtil
     }
 
     /**
-     * @param $ormType
-     * @return int|string
-     * @throws \Exception
-     */
-    public static function getDataType($ormType)
-    {
-        switch ($ormType) {
-            case 'int':
-                return \PDO::PARAM_INT;
-            case 'integer':
-                return \PDO::PARAM_INT;
-            case 'string':
-                return \PDO::PARAM_STR;
-            case 'text':
-                return \PDO::PARAM_STR;
-            case 'boolean':
-                return \PDO::PARAM_BOOL;
-            case 'object':
-                return 'object';
-            case 'array':
-                return 'array';
-            case 'decimal':
-                return 'decimal';
-            case 'date':
-                return 'date';
-            case 'time':
-                return 'time';
-            case 'datetime':
-                return 'datetime';
-            default:
-                throw new \Exception('data type is not supported.');
-        }
-    }
-
-    /**
      * @param                 $fieldName
      * @param ReflectionClass $class
      * @return null|\ReflectionMethod

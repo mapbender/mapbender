@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Simple Search - Just type, select and show result

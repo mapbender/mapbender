@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,13 +28,11 @@ class OverviewAdminType extends AbstractType
             ->add('tooltip', 'text', array('required' => false))
             ->add('layerset', 'app_layerset', array(
                 'application' => $options['application'],
-                'property_path' => '[layerset]',
                 'required' => true,
             ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application'   => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
             ->add('anchor', "choice", array(

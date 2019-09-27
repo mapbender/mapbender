@@ -31,7 +31,6 @@ class WmcListAdminType extends AbstractType
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
             ->add('label', 'checkbox', array(
