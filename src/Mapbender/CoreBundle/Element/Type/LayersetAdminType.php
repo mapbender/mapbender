@@ -31,8 +31,6 @@ class LayersetAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'class' => 'MapbenderCoreBundle:Layerset',
-            'property' => 'title',
             'choices' => function(Options $options) {
                 /** @var Application $application */
                 $application = $options['application'];
