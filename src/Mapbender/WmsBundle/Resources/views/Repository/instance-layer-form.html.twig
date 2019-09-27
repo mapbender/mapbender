@@ -33,11 +33,11 @@
               <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
             </td>
 
-            {% if layer.sublayer|length > 0 %}
-                {% for sublayer in layer.sublayer %}
-                    {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form_layers, 'layer': sublayer, 'level': level + 1 }%}
-                {% endfor %}
-            {% endif %}
         </tr>
+        {% if layer.sublayer|length > 0 %}
+            {% for sublayer in layer.sublayer %}
+                {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form_layers, 'layer': sublayer, 'level': level + 1 }%}
+            {% endfor %}
+        {% endif %}
     {% endif %}
 {% endfor %}
