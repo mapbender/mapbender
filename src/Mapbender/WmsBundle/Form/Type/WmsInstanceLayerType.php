@@ -29,39 +29,48 @@ class WmsInstanceLayerType extends AbstractType
         $builder->addEventSubscriber($subscriber);
         $builder
             ->add('title', 'text', array(
-                    'required' => false,
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
             ))
             ->add('active', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
             ))
-            ->add('selected', 'checkbox',
-                  array(
-                'required' => false))
-            ->add('info', 'checkbox',
-                  array(
+            ->add('selected', 'checkbox', array(
                 'required' => false,
-                'disabled' => true))
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
+            ))
+            ->add('info', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
+            ))
             ->add('toggle', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.toggletoc',
             ))
             ->add('allowselected', 'checkbox', array(
                 'required' => false,
+                'label' => "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc",
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
-                'disabled' => true,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
             ))
             ->add('allowtoggle', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc',
             ))
             ->add('allowreorder', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
             ))
-            ->add('minScale', 'text',
-                  array(
-                'required' => false))
+            ->add('minScale', 'text', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.minscale',
+            ))
             ->add('maxScale', 'text', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.maxsclase',   // sic!
             ))
             ->add('priority', 'hidden', array(
                 'required' => true,
@@ -92,6 +101,12 @@ class WmsInstanceLayerType extends AbstractType
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
+        $view['minScale']->vars['attr'] = array(
+            'placeholder' => $layer->getInheritedMinScale(),
+        );
+        $view['maxScale']->vars['attr'] = array(
+            'placeholder' => $layer->getInheritedMaxScale(),
+        );
         parent::finishView($view, $form, $options);
     }
 }
