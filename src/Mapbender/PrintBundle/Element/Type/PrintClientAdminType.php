@@ -100,8 +100,8 @@ class PrintClientAdminType extends AbstractType
             ->add('replace_pattern', new YAMLConfigurationType(), array(
                 'required' => false,
             ))
-            ->add('templates', 'collection', array(
-                'type' => new PrintClientTemplateAdminType(),
+            ->add('templates', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,

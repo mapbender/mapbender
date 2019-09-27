@@ -28,7 +28,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
             $layersetIds = array_map('strval', ArrayUtil::getDefault($mapConfig, 'layersets', array()));
             $event->getForm()
                 ->add('instancesets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
-                    'type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
+                    'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
                     'allow_add' => true,
                     'allow_delete' => true,
                     'auto_initialize' => false,

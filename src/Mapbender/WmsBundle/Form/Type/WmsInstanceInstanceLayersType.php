@@ -119,20 +119,20 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
             ))
-            ->add('dimensions', 'collection', array(
+            ->add('dimensions', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
-                'type' => new DimensionInstType(),
+                'entry_type' => 'Mapbender\WmsBundle\Form\Type\DimensionInstType',
                 'allow_add' => false,
                 'allow_delete' => false,
             ))
-            ->add('vendorspecifics', 'collection', array(
+            ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
-                'type' => new VendorSpecificType(),
+                'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
                 'allow_add' => true,
                 'allow_delete' => true,
             ))
-            ->add('layers', 'collection', array(
-                'type' => new WmsInstanceLayerType(),
+            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
                 ),
