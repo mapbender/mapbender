@@ -2,9 +2,12 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class WmsInstanceLayerType extends AbstractType
 {
@@ -60,16 +63,35 @@ class WmsInstanceLayerType extends AbstractType
             ->add('maxScale', 'text', array(
                 'required' => false,
             ))
-            ->add('style', 'choice', array(
-                'label' => 'Style',
-                'choices' => array(),
-                'choices_as_values' => true,
-                'required' => false,
-            ))
             ->add('priority', 'hidden', array(
                 'required' => true,
             ))
         ;
     }
 
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var WmsInstanceLayer $layer */
+        $layer = $form->getData();
+        $hasSubLayers = !!$layer->getSublayer()->count();
+
+        $view['title']->vars['attr'] = array(
+            'placeholder' => $layer->getSourceItem()->getTitle(),
+        );
+        $view['toggle']->vars['disabled'] = !$hasSubLayers;
+        $view['allowtoggle']->vars['disabled'] = !$hasSubLayers;
+        if (!$hasSubLayers) {
+            $form['toggle']->setData(false);
+            $form['allowtoggle']->setData(false);
+        }
+
+        $isQueryable = $layer->getSourceItem()->getQueryable();
+        $view['info']->vars['disabled'] = !$isQueryable;
+        $view['allowinfo']->vars['disabled'] = !$isQueryable;
+        if (!$isQueryable) {
+            $form['info']->setData(false);
+            $form['allowinfo']->setData(false);
+        }
+        parent::finishView($view, $form, $options);
+    }
 }
