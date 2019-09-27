@@ -64,22 +64,12 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'disabled' => true,
             ))
-            ->add('toggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'data' => false,
-            ))
             ->add('allowselected', 'checkbox', array(
                 'required' => false,
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
                 'disabled' => true,
-            ))
-            ->add('allowtoggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'data' => false,
             ))
         ;
     }

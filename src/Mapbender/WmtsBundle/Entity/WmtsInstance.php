@@ -81,16 +81,6 @@ class WmtsInstance extends SourceInstance
      */
     protected $allowinfo;
 
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $toggle;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowtoggle;
-
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -288,16 +278,6 @@ class WmtsInstance extends SourceInstance
         return $this->allowinfo;
     }
 
-    public function getToggle()
-    {
-        return $this->toggle;
-    }
-
-    public function getAllowtoggle()
-    {
-        return $this->allowtoggle;
-    }
-
     public function setActive($active)
     {
         $this->active = $active;
@@ -325,18 +305,6 @@ class WmtsInstance extends SourceInstance
     public function setAllowinfo($allowinfo)
     {
         $this->allowinfo = $allowinfo;
-        return $this;
-    }
-
-    public function setToggle($toggle)
-    {
-        $this->toggle = $toggle;
-        return $this;
-    }
-
-    public function setAllowtoggle($allowtoggle)
-    {
-        $this->allowtoggle = $allowtoggle;
         return $this;
     }
 
