@@ -275,21 +275,29 @@ Object.assign(Mapbender.DimensionTime.DateTemplate.prototype, {
     formatDate: function (date) {
         var value = date.toISOString().replace(/Z$/, '');
         if (!this.hmsm[0]) {
+            // strip time portion entirely
             value = value.replace(/T.*$/, '');
         } else if (!this.hmsm[1]) {
-            value = value.replace(/(?<=T\d\d).*$/, '');
+            // strip minutes, seconds and milliseconds
+            value = value.replace(/(T\d\d)(.*)$/, '$1');
         } else if (!this.hmsm[2]) {
-            value = value.replace(/(?<=T\d\d:\d\d).*$/, '');
+            // strip seconds and milliseconds
+            value = value.replace(/(T\d\d:\d\d)(.*)$/, '$1');
         } else if (!this.hmsm[3]) {
-            value = value.replace(/(?<=T\d\d:\d\d:\d\d).*$/, '');
+            // strip milliseconds
+            value = value.replace(/(T\d\d:\d\d:\d\d)(.*)$/, '$1');
         }
         if (!this.ymd[0]) {
+            // strip date portion entirely
             value = value.replace(/^[^T]*/, '');
         } else if (!this.ymd[1]) {
-            value = value.replace(/(?<=\d\d\d\d)[^T]*/, '');
+            // strip month and day, keep time portion
+            value = value.replace(/^(\d\d\d\d)([^T]*)(.*)$/, '$1$3');
         } else if (!this.ymd[2]) {
-            value = value.replace(/(?<=\d\d\d\d-\d\d)[^T]*/, '');
+            // strip day, keep time portion
+            value = value.replace(/^(\d\d\d\d-\d\d)([^T]*)(.*)$/, '$1$3');
         }
+        // if only time portion remains, strip leading T
         return value.replace(/^T/, '');
     }
 });
