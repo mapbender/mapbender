@@ -61,7 +61,6 @@ abstract class RelatedObjectChoiceType extends AbstractType
             'choice_filter' => null,
             'choices_as_values' => true,
             'placeholder' => null,
-            'required' => true,
         ));
 
         $resolver->setAllowedTypes('choice_filter', array('null', 'callable'));

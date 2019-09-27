@@ -16,7 +16,6 @@ class BaseSourceSwitcherAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'element' => null
         ));
     }
 
@@ -33,6 +32,6 @@ class BaseSourceSwitcherAdminType extends AbstractType
                 'required' => false,
             ))
         ;
-        $builder->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber($options['application']));
+        $builder->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber());
     }
 }
