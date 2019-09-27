@@ -20,6 +20,11 @@ class WmsInstanceLayerType extends AbstractType
         return 'wmsinstancelayer';
     }
 
+    public function getParent()
+    {
+        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
+    }
+
     /**
      * @inheritdoc
      */
@@ -28,18 +33,6 @@ class WmsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('title', 'text', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
-            ))
-            ->add('active', 'checkbox', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
-            ))
-            ->add('selected', 'checkbox', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
-            ))
             ->add('info', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
@@ -47,10 +40,6 @@ class WmsInstanceLayerType extends AbstractType
             ->add('toggle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.toggletoc',
-            ))
-            ->add('allowselected', 'checkbox', array(
-                'required' => false,
-                'label' => "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc",
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
@@ -84,9 +73,6 @@ class WmsInstanceLayerType extends AbstractType
         $layer = $form->getData();
         $hasSubLayers = !!$layer->getSublayer()->count();
 
-        $view['title']->vars['attr'] = array(
-            'placeholder' => $layer->getSourceItem()->getTitle(),
-        );
         $view['toggle']->vars['disabled'] = !$hasSubLayers;
         $view['allowtoggle']->vars['disabled'] = !$hasSubLayers;
         if (!$hasSubLayers) {

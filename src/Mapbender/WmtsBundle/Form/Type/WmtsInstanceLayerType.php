@@ -15,6 +15,11 @@ use Symfony\Component\Form\FormView;
 class WmtsInstanceLayerType extends AbstractType
 {
 
+    public function getParent()
+    {
+        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
+    }
+
     /**
      * @inheritdoc
      */
@@ -23,25 +28,12 @@ class WmtsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('title', 'text', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
-            ))
-            ->add('active', 'checkbox', array(
-                'required' => false
-            ))
-            ->add('selected', 'checkbox', array(
-                'required' => false
-            ))
             ->add('info', 'checkbox', array(
                 'required' => false,
             ))
             ->add('toggle', 'checkbox', array(
                 'disabled' => true,
                 'auto_initialize' => false,
-            ))
-            ->add('allowselected', 'checkbox', array(
-                'required' => false,
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
@@ -58,9 +50,6 @@ class WmtsInstanceLayerType extends AbstractType
         /** @var WmtsInstanceLayer $layer */
         $layer = $form->getData();
 
-        $view['title']->vars['attr'] = array(
-            'placeholder' => $layer->getSourceItem()->getTitle(),
-        );
         $isQueryable = !!$layer->getSourceItem()->getInfoformats();
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
@@ -68,7 +57,5 @@ class WmtsInstanceLayerType extends AbstractType
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
-        parent::finishView($view, $form, $options);
     }
-
 }
