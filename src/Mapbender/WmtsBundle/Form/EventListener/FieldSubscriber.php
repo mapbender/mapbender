@@ -22,18 +22,10 @@ class FieldSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SET_DATA => 'preSubmit',
         );
     }
 
     public function preSetData(FormEvent $event)
-    {
-        if ($event->getData()) {
-            $this->reconfigureFields($event->getForm(), $event->getData());
-        }
-    }
-
-    public function preSubmit(FormEvent $event)
     {
         if ($event->getData()) {
             $this->reconfigureFields($event->getForm(), $event->getData());
