@@ -24,7 +24,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
         $application = $event->getForm()->getParent()->getData()->getApplication();
         $mapId = $event->getForm()->get('target')->getData();
         if ($mapId) {
-            $mapConfig = $this->getElementConfiguration($this->application, $mapId);
+            $mapConfig = $this->getElementConfiguration($application, $mapId);
             $layersetIds = array_map('strval', ArrayUtil::getDefault($mapConfig, 'layersets', array()));
             $event->getForm()
                 ->add('instancesets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
