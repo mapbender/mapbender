@@ -36,7 +36,6 @@
  * @property {boolean} configuration.isBaseSource
  * @property {Object} configuration.options
  * @property {boolean} configuration.options.proxy
- * @property {boolean} configuration.options.visible
  * @property {Number} configuration.options.opacity
  * @property {Array.<WmtsLayerConfig>} configuration.layers
  * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
@@ -98,10 +97,10 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         },
         _getNativeLayerOptions: function(matrixSet, layer, srsName) {
             var self = this;
+
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
-                visible: this.configuration.options.visible,
                 label: layer.options.title,
                 url: layer.options.tileUrls,
                 format: layer.options.format,
