@@ -183,8 +183,6 @@ class WmcParser110 extends WmcParser
         $wmsService = $sourceDirectory->getSourceService($wmsinst);
 
         $id = round(microtime(true) * 1000);
-        $queryable = $this->getValue("./@queryable", $layerElm);
-        $wmsinst->setVisible(!(bool) $this->getValue("./@hidden", $layerElm));
         $wmsinst->setInfoformat($infoFormat);
         $formats = array();
         $formatList = $this->xpath->query("./cntxt:FormatList/cntxt:Format", $layerElm);

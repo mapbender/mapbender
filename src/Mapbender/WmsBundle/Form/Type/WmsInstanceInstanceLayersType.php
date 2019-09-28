@@ -80,10 +80,6 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
             ))
-            ->add('visible', 'checkbox', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.visible',
-            ))
             ->add('proxy', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',

@@ -69,7 +69,7 @@
     </General>
     <LayerList>
         {% for source in wmc.state.json.sources %}
-        <Layer queryable="0" hidden="{% if source.configuration.options.visible %}0{% else %}1{% endif %}">
+        <Layer queryable="0" hidden="{% if source.configuration.children[0].state.selected %}0{% else %}1{% endif %}">
             <Server service="OGC:WMS" version="{% if source.configuration.version is defined %}{{ source.configuration.version }}{%else%}1.1.1{%endif%}" title="{% if source.configuration.title is defined %}{{ source.configuration.title }}{%else%}not defined{%endif%}">
                 <OnlineResource xlink:type="simple" xlink:href="{{ source.configuration.options.url }}"/>
             </Server>

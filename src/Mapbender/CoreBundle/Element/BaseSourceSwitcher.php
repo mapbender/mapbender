@@ -216,7 +216,6 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
                         // layer is not controllable through BSS, leave its config alone
                         continue;
                     }
-                    $layerDef['configuration']['options']['visible'] = $setActive;
                     if (!empty($layerDef['configuration']['children'])) {
                         foreach ($layerDef['configuration']['children'] as &$chDef) {
                             $chDef['options']['treeOptions']['selected'] = $setActive;

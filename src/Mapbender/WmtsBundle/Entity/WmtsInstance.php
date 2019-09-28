@@ -31,11 +31,6 @@ class WmtsInstance extends SourceInstance
     protected $layers;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $visible = true;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $opacity = 100;
@@ -129,28 +124,6 @@ class WmtsInstance extends SourceInstance
     public function getLayers()
     {
         return $this->layers;
-    }
-
-    /**
-     * Set visible
-     *
-     * @param boolean $visible
-     * @return WmtsInstance
-     */
-    public function setVisible($visible)
-    {
-        $this->visible = $visible;
-        return $this;
-    }
-
-    /**
-     * Get visible
-     *
-     * @return boolean
-     */
-    public function getVisible()
-    {
-        return $this->visible;
     }
 
     /**
