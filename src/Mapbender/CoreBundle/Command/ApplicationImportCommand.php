@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
@@ -33,8 +34,9 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         try {
             $applications = $importHandler->importApplicationData($importArray);
             if ($root) {
+                $rootSid = UserSecurityIdentity::fromAccount($root);
                 foreach ($applications as $application) {
-                    $importHandler->setDefaultAcls($application, $root);
+                    $importHandler->addOwner($application, $rootSid);
                 }
             } else {
                 $output->writeln("WARNING: root user not found, no owner will be assigned to imported applications", OutputInterface::VERBOSITY_QUIET);

@@ -12,7 +12,6 @@ use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
@@ -103,7 +102,7 @@ class ApplicationController extends ApplicationControllerBase
         if ($source instanceof ApplicationEntity) {
             $content = $assetService->getAssetContent($source, $type);
         } else {
-            $content = $assetService->getTemplateAssetContent($source, $type, $slug);
+            $content = $assetService->getTemplateAssetContent($source, $type);
         }
 
         if ($isProduction) {
@@ -150,12 +149,9 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function applicationAction(Request $request, $slug)
     {
-        $session      = $this->get("session");
         $appEntity = $this->getApplicationEntity($slug);
         $appComponent = new Application($this->container, $appEntity);
-        // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
         $useCache = $this->isProduction();
-        $session->set("proxyAllowed", true); // @todo: ...why?
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
         );
@@ -163,7 +159,7 @@ class ApplicationController extends ApplicationControllerBase
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
-                $content = $appComponent->render();
+                $content = $appComponent->getTemplate()->render();
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache();
@@ -172,7 +168,7 @@ class ApplicationController extends ApplicationControllerBase
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($appComponent->render(), 200, $headers);
+            return new Response($appComponent->getTemplate()->render(), 200, $headers);
         }
     }
 
@@ -184,15 +180,9 @@ class ApplicationController extends ApplicationControllerBase
      */
     private function getApplicationEntity($slug)
     {
-        /** @var Mapbender $mapbender */
-        $mapbender = $this->get('mapbender');
-        $entity = $mapbender->getApplicationEntity($slug);
-
-        if (!$entity) {
-            throw new NotFoundHttpException('The application can not be found.');
-        }
-        $this->checkApplicationAccess($entity);
-        return $entity;
+        $application = $this->requireApplication($slug, true);
+        $this->checkApplicationAccess($application);
+        return $application;
     }
 
     /**
@@ -220,7 +210,6 @@ class ApplicationController extends ApplicationControllerBase
     public function configurationAction($slug)
     {
         $applicationEntity = $this->getApplicationEntity($slug);
-        $this->get("session")->set("proxyAllowed", true);
         $configService = $this->getConfigService();
         $cacheService = $configService->getCacheService();
         $cacheKeyPath = array('config.json');

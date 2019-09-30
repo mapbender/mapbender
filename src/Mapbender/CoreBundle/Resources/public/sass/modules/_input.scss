@@ -20,6 +20,9 @@
 .inputWrapper{
   position: relative;
   display: inline-block;
+  .input {
+      width: 100%;
+  }
 
   .validationMsgBox{
     position: absolute;
@@ -30,13 +33,6 @@
     padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
-
-    @include opacity(1);
-
-    &.hide{
-      @include opacity(0);
-      margin-left: 0px;
-    }
 
     // small arrow left
     &:after, &:before {

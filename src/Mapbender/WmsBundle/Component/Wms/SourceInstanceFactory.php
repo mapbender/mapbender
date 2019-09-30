@@ -65,7 +65,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $instance = $this->createInstance($source);
         $instance->setId($id);
         $instance
-            ->setTItle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))
+            ->setTitle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))
             ->setProxy(!isset($data['proxy']) ? false : $data['proxy'])
             ->setVisible(!isset($data['visible']) ? true : $data['visible'])
             ->setFormat(!isset($data['format']) ? 'image/png' : $data['format'])
@@ -281,5 +281,15 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
             }
         }
         return $layer;
+    }
+
+    public function getFormType(SourceInstance $instance)
+    {
+        return 'Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType';
+    }
+
+    public function getFormTemplate(SourceInstance $instance)
+    {
+        return '@MapbenderWms/Repository/instance.html.twig';
     }
 }

@@ -2,11 +2,12 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -33,17 +34,6 @@ class Map extends Element
     public static function getClassDescription()
     {
         return "mb.core.mapabs.class.description";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.map.tag.map",
-            "mb.core.map.tag.mapquery",
-            "mb.core.map.tag.openlayers");
     }
 
     /**
@@ -323,28 +313,21 @@ class Map extends Element
      */
     protected function getSrsDefinitions(array $srsNames)
     {
+        $titleMap = array_column($srsNames, 'title', 'name');
         $result = array();
-        if (is_array($srsNames) && count($srsNames) > 0) {
-            $names = array();
-            foreach ($srsNames as $srsName) {
-                $names[] = $srsName['name'];
-            }
-            $em    = $this->container->get("doctrine")->getManager();
-            $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
-                    . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-                ->setParameter('name', $names);
-            $srses = $query->getResult();
-            foreach ($srsNames as $srsName) {
-                foreach ($srses as $srs) {
-                    if ($srsName['name'] === $srs->getName()) {
-                        $result[] = array(
-                            "name" => $srs->getName(),
-                            "title" => strlen($srsName["title"]) > 0 ? $srsName["title"] : $srs->getTitle(),
-                            "definition" => $srs->getDefinition());
-                        break;
-                    }
-                }
-            }
+        /** @var EntityManagerInterface $em */
+        $em = $this->container->get("doctrine")->getManager();
+        /** @var SRS[] $srses */
+        $srses = $em->getRepository('MapbenderCoreBundle:SRS')->findBy(array(
+            'name' => array_keys($titleMap),
+        ));
+        foreach ($srses as $srs) {
+            $name = $srs->getName();
+            $result[] = array(
+                "name" => $name,
+                "title" => $titleMap[$name] ?: $srs->getTitle(),
+                "definition" => $srs->getDefinition(),
+            );
         }
         return $result;
     }

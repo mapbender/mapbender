@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Psr\Log\LoggerInterface;
+use Twig\Error\Error;
 
 /**
  * HTMLElement.
@@ -24,13 +25,6 @@ class HTMLElement extends Element
     {
         // no script constructor
         return false;
-    }
-
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.htmlelement.tag.html',
-        );
     }
 
     /**
@@ -84,7 +78,7 @@ class HTMLElement extends Element
 
         try {
             return parent::render();
-        } catch (\Twig_Error $e) {
+        } catch (Error $e) {
             $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
             $logger->warning($message . ", suppressing content", $this->getConfiguration());
             return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";

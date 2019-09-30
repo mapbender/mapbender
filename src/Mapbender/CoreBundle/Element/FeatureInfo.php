@@ -33,18 +33,6 @@ class FeatureInfo extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.featureinfo.tag.feature",
-            "mb.core.featureinfo.tag.featureinfo",
-            "mb.core.featureinfo.tag.info",
-            "mb.core.featureinfo.tag.dialog");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getPublicConfiguration()
     {
         $config = $this->entity->getConfiguration();

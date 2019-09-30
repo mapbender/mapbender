@@ -4,7 +4,6 @@ namespace Mapbender\WmcBundle\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SuggestMap extends WmcBase
@@ -24,14 +23,6 @@ class SuggestMap extends WmcBase
     static public function getClassDescription()
     {
         return "mb.wmc.suggestmap.class.description";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    static public function getClassTags()
-    {
-        return array("mb.wmc.suggestmap.suggest", "mb.wmc.suggestmap.map");
     }
 
     /**
@@ -128,9 +119,6 @@ class SuggestMap extends WmcBase
     {
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        if ($request->getSession()->get("proxyAllowed", false) !== true) {
-            throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
-        }
         switch ($action) {
             case 'load':
                 $id = $request->get("_id", null);

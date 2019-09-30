@@ -29,18 +29,6 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.aboutdialog.tag.help",
-            "mb.core.aboutdialog.tag.info",
-            "mb.core.aboutdialog.tag.about",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

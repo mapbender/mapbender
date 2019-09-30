@@ -25,18 +25,6 @@ class Ruler extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.ruler.tag.line",
-            "mb.core.ruler.tag.area",
-            "mb.core.ruler.tag.measure",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(

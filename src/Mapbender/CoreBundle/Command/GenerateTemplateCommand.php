@@ -93,7 +93,7 @@ EOT
         $output->writeln(sprintf('- Your element %s\Template\%s has been created.', $bundle, $className));
         $output->writeln('- The following files have been created:');
         foreach($files as $k => $v) {
-            $output->writeLn(sprintf('  - %s (%s)', $k, $v));
+            $output->writeln(sprintf('  - %s (%s)', $k, $v));
         }
         $output->writeln('');
         $output->writeln('<comment>Follow up actions</comment>');

@@ -32,6 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -179,11 +182,12 @@ class ApplicationController extends WelcomeController
             $file = $job->getImportFile();
             $em = $this->getEntityManager();
             $em->beginTransaction();
+            $currentUserSid = UserSecurityIdentity::fromToken($this->getUserToken());
             try {
                 $data = $impHandler->parseImportData($file);
                 $applications = $impHandler->importApplicationData($data);
                 foreach ($applications as $app) {
-                    $impHandler->setDefaultAcls($app, $this->getUser());
+                    $impHandler->addOwner($app, $currentUserSid);
                 }
                 $em->commit();
                 return $this->redirectToRoute('mapbender_manager_application_index');
@@ -219,6 +223,8 @@ class ApplicationController extends WelcomeController
         $em->beginTransaction();
         try {
             $clonedApp = $impHandler->duplicateApplication($sourceApplication);
+            $impHandler->addOwner($clonedApp, UserSecurityIdentity::fromToken($this->getUserToken()));
+
             $em->commit();
             if ($this->isGranted('EDIT', $clonedApp)) {
                 // Redirect to edit view of imported application
@@ -369,10 +375,8 @@ class ApplicationController extends WelcomeController
 
         try {
             $em = $this->getEntityManager();
-            $aclProvider = $this->get('security.acl.provider');
-            $oid         = ObjectIdentity::fromDomainObject($application);
             $em->beginTransaction();
-            $aclProvider->deleteAcl($oid);
+            $this->getAclProvider()->deleteAcl(ObjectIdentity::fromDomainObject($application));
             $em->remove($application);
             $em->flush();
             $em->commit();
@@ -388,89 +392,56 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Create a form for a new layerset
+     * Handle layerset creation and title editing
      *
-     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET"})
-     * @param string $slug
-     * @return Response
-     */
-    public function newLayersetAction($slug)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $layerset    = new Layerset();
-        $layerset->setApplication($application);
-
-        $form = $this->createForm(new LayersetType(), $layerset);
-
-        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            "isnew" => true,
-            "application" => $application,
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Create a new layerset from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET"})
-     * @param string $slug
-     * @param string $layersetId
-     * @return Response
-     */
-    public function editLayersetAction($slug, $layersetId)
-    {
-        $application = $this->requireApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $layerset = $this->requireLayerset($layersetId, $application);
-
-        $form = $this->createForm(new LayersetType(), $layerset);
-
-        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            "isnew" => false,
-            "application" => $application,
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Create a new layerset from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/layerset/create", methods={"POST"})
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/save", methods={"POST"})
+     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET", "POST"}, name="mapbender_manager_application_newlayerset")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET", "POST"}, name="mapbender_manager_application_editlayerset")
      * @param Request $request
      * @param string $slug
      * @param string|null $layersetId
      * @return Response
      */
-    public function saveLayersetAction(Request $request, $slug, $layersetId = null)
+    public function editLayersetAction(Request $request, $slug, $layersetId = null)
     {
         $application = $this->requireApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
-
-        $isNew = ($layersetId === null);
-        $em = $this->getEntityManager();
-
-        if ($isNew) {
+        if ($layersetId) {
+            $layerset = $this->requireLayerset($layersetId, $application);
+            $action = $this->generateUrl('mapbender_manager_application_editlayerset', array(
+                'slug' => $slug,
+                'layersetId' => $layerset->getId(),
+            ));
+        } else {
             $layerset = new Layerset();
             $layerset->setApplication($application);
-        } else {
-            $layerset = $this->requireLayerset($layersetId, $application);
+            $action = $this->generateUrl('mapbender_manager_application_newlayerset', array(
+                'slug' => $slug,
+            ));
         }
-        $form = $this->createForm(new LayersetType(), $layerset);
-        $form->submit($request);
-        if ($form->isValid()) {
-            $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->persist($layerset);
-            $em->flush();
-            $this->get("logger")->debug("Layerset saved");
-            $this->addFlash('success', $this->translate('mb.layerset.create.success'));
-        } else {
-            $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+
+        $form = $this->createForm(new LayersetType(), $layerset, array(
+            'action' => $action,
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $em = $this->getEntityManager();
+                $application->setUpdated(new \DateTime('now'));
+                $em->persist($application);
+                $em->persist($layerset);
+                $em->flush();
+                $this->addFlash('success', $this->translate('mb.layerset.create.success'));
+            } else {
+                // @todo: use form error translations directly; also support message for empty title
+                $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+            }
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+            ));
         }
-        return $this->redirectToRoute('mapbender_manager_application_edit', array(
-            'slug' => $slug,
+
+        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
+            'form' => $form->createView(),
         ));
     }
 
@@ -519,7 +490,6 @@ class ApplicationController extends WelcomeController
             $em->persist($application);
             $em->flush();
             $em->commit();
-            $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
             $this->addFlash('success', $this->translate('mb.layerset.remove.success'));
         } else {
             /** @todo: emit 404 status */
@@ -790,5 +760,15 @@ class ApplicationController extends WelcomeController
             }
         }
         return $allowed;
+    }
+
+    /**
+     * @return TokenInterface|null
+     */
+    protected function getUserToken()
+    {
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->get('security.token_storage');
+        return $tokenStorage->getToken();
     }
 }

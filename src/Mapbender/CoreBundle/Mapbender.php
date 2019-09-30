@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle;
 
-use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
@@ -25,15 +24,14 @@ class Mapbender
 {
     /** @var \Doctrine\ORM\EntityManager|\Doctrine\Common\Persistence\ObjectManager */
     protected $manager;
+    /** @var ApplicationYAMLMapper */
+    protected $yamlMapper;
 
     /** @var ContainerInterface */
     private $container;
 
     /** @var string[] */
     private $templates = array();
-
-    /** @var array */
-    private $repositoryManagers = array();
 
     /**
      * Mapbender constructor.
@@ -49,6 +47,7 @@ class Mapbender
         $registry         = $container->get('doctrine');
         $this->manager    = $registry->getManager();
         $this->container  = $container;
+        $this->yamlMapper = new ApplicationYAMLMapper($container);
 
         /** @var MapbenderBundle $bundle */
         foreach ($bundles as $bundle) {
@@ -56,7 +55,6 @@ class Mapbender
                 continue;
             }
             $this->templates          = array_merge($this->templates, $bundle->getTemplates());
-            $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
         }
     }
 
@@ -76,16 +74,6 @@ class Mapbender
     }
 
     /**
-     * Get list of all declared source factories.
-     *
-     * @return array
-     */
-    public function getRepositoryManagers()
-    {
-        return $this->repositoryManagers;
-    }
-
-    /**
      * Get list of names of all declared template classes.
      *
      * Template classes need to be declared in each bundle's main class
@@ -99,84 +87,22 @@ class Mapbender
     }
 
     /**
-     * Get application entities
+     * Get YAML application entities
      *
      * @return Application[]
      */
-    public function getApplicationEntities()
+    public function getYamlApplicationEntities()
     {
-        return array_merge(
-            $this->getYamlApplicationEntities(true),
-            $this->getDatabaseApplicationEntities()
-        );
+        return $this->yamlMapper->getApplications();
     }
 
     /**
-     * Get application entity for given slug
-     *
      * @param string $slug
      * @return Application
      */
-    public function getApplicationEntity($slug)
+    public function getYamlApplication($slug)
     {
-        $registry   = $this->container->get('doctrine');
-        $repository = $registry->getRepository('MapbenderCoreBundle:Application');
-
-        if ($repository instanceof EntityRepository) {
-            /** @var EntityRepository $repository */
-            $entity = $repository->findOneBy(array(
-                'slug' => $slug,
-            ));
-        } else {
-            $entity = null;
-        }
-        /** @var Application|null $entity */
-        if ($entity) {
-            $entity->setSource(Application::SOURCE_DB);
-        } else {
-            $yamlMapper = new ApplicationYAMLMapper($this->container);
-            $entity     = $yamlMapper->getApplication($slug);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * Get public YAML application entities
-     *
-     * @param bool $onlyPublic Only public applications?
-     * @return Application[]
-     */
-    public function getYamlApplicationEntities($onlyPublic = true)
-    {
-        $applications = array();
-        $yamlMapper   = new ApplicationYAMLMapper($this->container);
-        foreach ($yamlMapper->getApplications() as $application) {
-            if ($onlyPublic && !$application->isPublished()) {
-                continue;
-            }
-
-            $applications[ $application->getSlug() ] = $application;
-        }
-        return $applications;
-    }
-
-    /**
-     * Get data base entities
-     *
-     * @return Application[]
-     */
-    public function getDatabaseApplicationEntities()
-    {
-        $repository = $this->manager->getRepository('MapbenderCoreBundle:Application');
-        /** @var Application[] $applications */
-        $applications = $repository->findBy(array(), array(
-            'title' => 'ASC',
-        ));
-        foreach ($applications as $application) {
-            $application->setSource(Application::SOURCE_DB);
-        }
-        return $applications;
+        return $this->yamlMapper->getApplication($slug);
     }
 
     /**
@@ -186,7 +112,7 @@ class Mapbender
      */
     public function importYamlApplication($slug)
     {
-        $application = $this->getApplicationEntity($slug);
+        $application = $this->yamlMapper->getApplication($slug);
         $newSlug = EntityUtil::getUniqueValue($this->manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
         $newTitle = EntityUtil::getUniqueValue($this->manager, get_class($application), 'title', $application->getTitle(), ' ');
         $elements             = array();

@@ -22,11 +22,5 @@ class SearchRouterRouteTransformer implements DataTransformerInterface
         return $data['configuration'] + array(
             'title' => $data['title'],
         );
-        $configuration = array();
-        foreach($data as $key => $value) {
-            $configuration[$key] = $value['configuration'] + array('title' => $value['title']);
-        }
-
-        return $configuration;
     }
 }

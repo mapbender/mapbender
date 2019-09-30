@@ -12,8 +12,10 @@ use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 use Symfony\Component\Security\Acl\Model\AclInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class AclExtension extends \Twig_Extension
+class AclExtension extends AbstractExtension
 {
     /** @var AclProviderInterface */
     protected $provider;
@@ -29,7 +31,7 @@ class AclExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'mapbender_manager_object_aces' => new \Twig_SimpleFunction('mapbender_manager_object_aces', array($this, 'mapbender_manager_object_aces')),
+            'mapbender_manager_object_aces' => new TwigFunction('mapbender_manager_object_aces', array($this, 'mapbender_manager_object_aces')),
         );
     }
 

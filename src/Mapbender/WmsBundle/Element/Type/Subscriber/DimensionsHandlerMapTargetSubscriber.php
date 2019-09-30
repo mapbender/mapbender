@@ -32,7 +32,7 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
         if ($mapId && $dimensions = $this->collectDimensions($this->application, $mapId)) {
             $event->getForm()
                 ->add('dimensionsets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
-                    'type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
+                    'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
                     'allow_add' => true,
                     'allow_delete' => true,
                     'auto_initialize' => false,

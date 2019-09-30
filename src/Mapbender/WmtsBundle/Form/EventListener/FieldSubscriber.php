@@ -22,18 +22,10 @@ class FieldSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SET_DATA => 'preSubmit',
         );
     }
 
     public function preSetData(FormEvent $event)
-    {
-        if ($event->getData()) {
-            $this->reconfigureFields($event->getForm(), $event->getData());
-        }
-    }
-
-    public function preSubmit(FormEvent $event)
     {
         if ($event->getData()) {
             $this->reconfigureFields($event->getForm(), $event->getData());
@@ -45,23 +37,10 @@ class FieldSubscriber implements EventSubscriberInterface
         $form
             ->add('tileMatrixSet', 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerMatrixSetType', array(
                 'instance_layer' => $data,
+                'label' => 'mb.wmts.wmtsloader.repo.instancelayerform.label.layer_matrixsets',
             ))
         ;
 
-        if (count($data->getSourceItem()->getInfoformats())) {
-            $form->remove('info');
-            $form->add('info', 'checkbox', array(
-                'disabled' => false,
-                "required" => false,
-                'auto_initialize' => false,
-            ));
-            $form->remove('allowinfo');
-            $form->add('allowinfo', 'checkbox', array(
-                'disabled' => false,
-                "required" => false,
-                'auto_initialize' => false,
-            ));
-        }
         $arrStyles = $data->getSourceItem()->getStyles();
         $styleOpt = array("" => "");
         foreach ($arrStyles as $style) {
@@ -70,17 +49,6 @@ class FieldSubscriber implements EventSubscriberInterface
         $form->add('style', 'choice', array(
             'label' => 'Style',
             'choices' => $styleOpt,
-            'choices_as_values' => true,
-            "required" => false,
-            'auto_initialize' => false
-        ));
-        $infoFormats = $data->getSourceItem()->getInfoformats();
-        $infoFormatOpt = array();
-        foreach ($infoFormats as $infoFromat) {
-            $infoFormatOpt[$infoFromat] = $infoFromat;
-        }
-        $form->add('infoformat', 'choice', array(
-            'choices' => $infoFormatOpt,
             'choices_as_values' => true,
             "required" => false,
             'auto_initialize' => false

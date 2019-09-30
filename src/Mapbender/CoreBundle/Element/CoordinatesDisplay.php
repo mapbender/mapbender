@@ -33,18 +33,6 @@ class CoordinatesDisplay extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.coordinatesdisplay.tag.coordinates',
-            'mb.core.coordinatesdisplay.tag.display',
-            'mb.core.coordinatesdisplay.tag.mouse',
-            'mb.core.coordinatesdisplay.tag.position');
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\CoordinatesDisplayAdminType';

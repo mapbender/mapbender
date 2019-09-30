@@ -30,17 +30,6 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.scalebar.tag.scale",
-            "mb.core.scalebar.tag.bar",
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

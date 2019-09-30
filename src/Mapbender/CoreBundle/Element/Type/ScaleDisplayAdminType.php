@@ -27,7 +27,6 @@ class ScaleDisplayAdminType extends AbstractType
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
             ->add('scalePrefix', 'text', array(

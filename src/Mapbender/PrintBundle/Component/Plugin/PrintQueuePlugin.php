@@ -278,7 +278,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      */
     protected function getOpenResponse($entity)
     {
-        $fileName = $entity->getFileName();
+        $fileName = $entity->getFilename();
         $mimeType = 'application/pdf';
         $headers = array(
             'Content-Type' => $mimeType,

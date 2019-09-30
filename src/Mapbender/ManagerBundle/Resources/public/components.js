@@ -59,7 +59,7 @@ $(function() {
 
     // init validation feedback --------------------------------------------------------------
     $(document).on("keypress", ".validationInput", function(){
-      $(this).siblings(".validationMsgBox").addClass("hide");
+      $(this).siblings(".validationMsgBox").hide();
     });
 
     var flashboxes = $(".flashBox").addClass("kill");
@@ -237,14 +237,18 @@ $(function() {
     }).each(initPermissionRoot);
 
     // Element security
-    function initElementSecurity(response) {
+    function initElementSecurity(response, url) {
+        var $content = $(response);
+        // submit back to same url (would be automatic outside of popup scope)
+        $content.filter('form#elementSecurity').attr('action', url);
+
         var popup;
         var $initialView, $permissionsTable;
         var isModified = false;
         var popupOptions = {
             title: "Secure element",
             closeOnOutsideClick: true,
-            content: response,
+            content: [$content],
             buttons: [
                 {
                     // @todo: provide distinct label
@@ -252,7 +256,7 @@ $(function() {
                     cssClass: 'button buttonReset hidden left',
                     callback: function() {
                         // reload entire popup
-                        initElementSecurity(response);
+                        initElementSecurity(response, url);
                     }
                 },
                 {
@@ -301,9 +305,6 @@ $(function() {
                     cssClass: 'button buttonOk',
                     callback: function() {
                         $("#elementSecurity", popup.$element).submit();
-                        window.setTimeout(function() {
-                            window.location.reload();
-                        }, 50);
                     }
                 },
                 {
@@ -347,10 +348,11 @@ $(function() {
     }
 
     $(".secureElement").on("click", function() {
+        var url = $(this).attr('data-url');
         $.ajax({
-            url: $(this).attr('data-url')
+            url: url
         }).then(function(response) {
-            initElementSecurity(response);
+            initElementSecurity(response, url);
         });
         return false;
     });

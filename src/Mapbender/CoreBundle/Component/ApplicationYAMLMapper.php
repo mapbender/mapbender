@@ -46,9 +46,8 @@ class ApplicationYAMLMapper
      */
     public function getApplications()
     {
-        $definitions  = $this->container->getParameter('applications');
         $applications = array();
-        foreach ($definitions as $slug => $def) {
+        foreach ($this->getDefinitions() as $slug => $def) {
             $application = $this->getApplication($slug);
             if ($application !== null) {
                 $applications[] = $application;
@@ -64,17 +63,22 @@ class ApplicationYAMLMapper
      * Will return null if no YAML application for the given slug exists.
      *
      * @param string $slug
-     * @return Application
+     * @return Application|null
      */
     public function getApplication($slug)
     {
-
-        $definitions = $this->container->getParameter('applications');
+        $definitions = $this->getDefinitions();
         if (!array_key_exists($slug, $definitions)) {
             return null;
         }
+        $application = $this->createApplication($definitions[$slug]);
+        $application->setId($slug);
+        $application->setSlug($slug);
+        return $application;
+    }
 
-        $definition = $definitions[$slug];
+    protected function createApplication($definition)
+    {
         $timestamp = filemtime($definition['__filename__']);
         unset($definition['__filename__']);
         if (!array_key_exists('title', $definition)) {
@@ -84,8 +88,6 @@ class ApplicationYAMLMapper
         $application = new Application();
         $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
-                ->setSlug($slug)
-                ->setId($slug)
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
@@ -165,5 +167,17 @@ class ApplicationYAMLMapper
         /** @var ElementFactory $service */
         $service = $this->container->get('mapbender.element_factory.service');
         return $service;
+    }
+
+    /**
+     * @return array[]
+     */
+    protected function getDefinitions()
+    {
+        if ($this->container->hasParameter('applications')) {
+            return $this->container->getParameter('applications') ?: array();
+        } else {
+            return array();
+        }
     }
 }

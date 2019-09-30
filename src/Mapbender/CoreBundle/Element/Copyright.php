@@ -33,16 +33,6 @@ class Copyright extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.copyright.tag.copyright',
-            "mb.core.copyright.tag.dialog");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\CopyrightAdminType';

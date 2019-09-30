@@ -22,9 +22,11 @@ class InstanceSetAdminType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired(array(
+            'application',
+        ));
         $resolver->setDefaults(array(
-            'instances' => null,
-            'choices_as_values' => false,
+            'choice_filter' => null,
         ));
     }
 
@@ -33,19 +35,20 @@ class InstanceSetAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', 'text', array(
+        $builder
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
-                'property_path' => '[title]'))
-            ->add('group', 'text', array(
+            ))
+            ->add('group', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
-                'property_path' => '[group]'))
-            ->add('instances', 'choice', array(
-                'choices' => $options['instances'],
-                'choices_as_values' => $options['choices_as_values'],
-                'required' => false,
+            ))
+            ->add('instances', 'Mapbender\CoreBundle\Form\Type\Application\SourceInstanceSelectorType', array(
+                'application' => $options['application'],
+                'choice_filter' => $options['choice_filter'],
                 'multiple' => true,
+                'required' => true,
+                'label_with_layerset_prefix' => false,
             ))
         ;
     }
-
 }

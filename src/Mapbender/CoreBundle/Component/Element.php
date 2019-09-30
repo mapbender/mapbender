@@ -56,9 +56,6 @@ abstract class Element extends MinimalBound
     /** @var string translation subject */
     protected static $description  = "mb.core.element.class.description";
 
-    /** @var string[] translation subject */
-    protected static $tags = array();
-
     /** @var string[] translation subjects */
     protected static $title = "mb.core.element.class.title";
 
@@ -97,16 +94,6 @@ abstract class Element extends MinimalBound
     public static function getClassDescription()
     {
         return static::$description;
-    }
-
-    /**
-     * Returns the element class tags, which have absolutely no effect on anything.
-     *
-     * @return array
-     */
-    public static function getClassTags()
-    {
-        return static::$tags;
     }
 
     /**

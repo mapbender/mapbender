@@ -242,7 +242,9 @@ class OdgParser
      */
     public function detectStyleNode($xPath, $parentNode)
     {
+        /** @var \DOMElement|null $textParagraph */
         $textParagraph = $xPath->query("draw:text-box/text:p", $parentNode)->item(0);
+        /** @var \DOMElement|null $textNode */
         $textNode      = $xPath->query("draw:text-box/text:p/text:span", $parentNode)->item(0);
         if ($textNode) {
             $styleAttribute = $textNode->getAttribute('text:style-name');

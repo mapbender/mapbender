@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -320,7 +319,7 @@ class Application
     /**
      * Get elements
      *
-     * @return Element[]|Collection
+     * @return Element[]|Collection|ArrayCollection
      */
     public function getElements()
     {
@@ -482,28 +481,6 @@ class Application
     public function getCustomCss()
     {
         return $this->custom_css;
-    }
-
-    /**
-     * Get elements matching $criteria.
-     *
-     * @param Criteria $criteria
-     * @param Collection|null $collection containing Element entities; null to use own elements collection
-     * @return Collection filtered by $criteria, by default sorted by region, weight
-     */
-    public function filterElementCollection(Criteria $criteria, Collection $collection=null)
-    {
-        if (null === $collection) {
-            $collection = $this->getElements();
-        }
-        $criteria = clone $criteria;
-        if (!$criteria->getOrderings()) {
-            $criteria->orderBy(array(
-                'region' => Criteria::ASC,
-                'weight' => Criteria::ASC,
-            ));
-        }
-        return $collection->matching($criteria);
     }
 
     /**

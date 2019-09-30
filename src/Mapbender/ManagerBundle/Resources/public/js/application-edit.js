@@ -218,7 +218,7 @@ $(function() {
                         label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
                         cssClass: 'button',
                         callback: function() {
-                            $("#layersetForm").submit();
+                            $('form', this.$element).submit();
                         }
                     },
                     {
@@ -291,27 +291,22 @@ $(function() {
     var screenShot = applicationForm.find('.screenshot_img');
     var screenShotCell = applicationForm.find('div.cell_edit');
     var screenShotImg = screenShotCell.find('img');
-    var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
         var $box = $('.validationMsgBox', fileGroup);
         if (!$box.length) {
-            $box = $('<span>').addClass('validationMsgBox smalltext');
+            $box = $('<span/>').addClass('validationMsgBox');
             fileInput.after($box);
         }
         $box.text(message || '');
-        $box.toggleClass('hidden', !message);
+        $box.toggle(!!message);
     }
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var minWidth = applicationForm.find('#application_screenshotWidth').val();
     var minHeight = applicationForm.find('#application_screenshotHeight').val();
 
-    fileInput.on('mouseover', function() {
-        uploadButton.addClass('hover');
-    }).on('mouseout', function() {
-        uploadButton.removeClass('hover');
-    }).on('change', function(e) {
+    fileInput.on('change', function(e) {
         setUploadFilename(e);
 
         var file = this.files;
@@ -319,7 +314,7 @@ $(function() {
         var img = new Image();
         var src = "";
         var validationMessage;
-        
+
         img.onload = function() {
             if (img.width >= minWidth && img.height >= minHeight) {
                 setFileError(null);
@@ -354,15 +349,15 @@ $(function() {
             }
         }
     });
-   
+
     var setUploadFilename = function(e){
         var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
         var displayFilename = fileName || Mapbender.trans('mb.manager.admin.application.upload.label');
         $('.upload_label').text(displayFilename);
     };
-    
+
     var deleteScreenShotButtonInit = function() {
-           
+
         var deleteButton = screenShot.find('.delete');
         screenShot.hover(function() {
             deleteButton.toggleClass('hidden', $(this).hasClass('default'));
@@ -379,9 +374,9 @@ $(function() {
         });
         return deleteButton;
     };
-    
+
     deleteScreenShotButtonInit();
-    
+
     $(document).ready(function() {
         $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
             var self = this;

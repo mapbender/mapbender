@@ -35,6 +35,19 @@ class TypeDirectoryService implements SourceInstanceFactory
     protected $loaders = array();
 
     /**
+     * Return a mapping of type codes => displayable type labels
+     * @return string[]
+     */
+    public function getTypeLabels()
+    {
+        $labelMap = array();
+        foreach ($this->configServices as $configService) {
+            $labelMap[$configService->getTypeCode()] = $configService->getTypeLabel();
+        }
+        return $labelMap;
+    }
+
+    /**
      * Get the appropriate service to deal with the given SourceInstance child class.
      *
      * To extend the list of available source instance handling services, @see getSourceServices
@@ -187,5 +200,15 @@ class TypeDirectoryService implements SourceInstanceFactory
             }
         }
         return $refs;
+    }
+
+    public function getFormType(SourceInstance $instance)
+    {
+        return $this->getInstanceFactory($instance->getSource())->getFormType($instance);
+    }
+
+    public function getFormTemplate(SourceInstance $instance)
+    {
+        return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
     }
 }

@@ -14,8 +14,6 @@ use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Produces merged application assets.
@@ -29,34 +27,34 @@ class ApplicationAssetService
     protected $sourceTypeDirectory;
     /** @var ElementFactory */
     protected $elementFactory;
-    /** @var RouterInterface */
-    protected $router;
     /** @var ContainerInterface */
     protected $dummyContainer;
-    /** @var AssetFactory */
-    protected $compiler;
-    /** @var EngineInterface */
-    protected $templateEngine;
+    /** @var CssCompiler */
+    protected $cssCompiler;
+    /** @var JsCompiler */
+    protected $jsCompiler;
+    /** @var TranslationCompiler */
+    protected $translationCompiler;
     /** @var bool */
     protected $debug;
     /** @var bool */
     protected $strict;
 
-    public function __construct(AssetFactory $compiler,
+    public function __construct(CssCompiler $cssCompiler,
+                                JsCompiler $jsCompiler,
+                                TranslationCompiler $translationCompiler,
                                 ApplicationService $applicationService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
-                                RouterInterface $router,
-                                EngineInterface $templateEngine,
                                 $debug=false,
                                 $strict=false)
     {
-        $this->compiler = $compiler;
+        $this->cssCompiler = $cssCompiler;
+        $this->jsCompiler = $jsCompiler;
+        $this->translationCompiler = $translationCompiler;
         $this->applicationService = $applicationService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->elementFactory = $elementFactory;
-        $this->router = $router;
-        $this->templateEngine = $templateEngine;
         $this->debug = $debug;
         $this->strict = $strict;
         $this->dummyContainer = new Container();
@@ -86,10 +84,10 @@ class ApplicationAssetService
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent($application, $refs, $type);
+        return $this->compileAssetContent($application->getSlug(), $refs, $type);
     }
 
-    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type, $slug)
+    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -101,7 +99,7 @@ class ApplicationAssetService
         );
         $references = call_user_func_array('\array_merge', $referenceLists);
         $references = array_unique($this->qualifyAssetReferencesBulk($source, $references, $type));
-        return $this->compileAssetContent($slug, $references, $type);
+        return $this->compileAssetContent(null, $references, $type);
     }
 
     /**
@@ -125,9 +123,6 @@ class ApplicationAssetService
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
         $references = array_merge($references, $extraYamlRefs);
         switch ($type) {
-            case 'js':
-                $references[] = new StringAsset($this->renderAppLoader($application));
-                break;
             case 'css':
                 $customCss = trim($application->getCustomCss());
                 if ($customCss) {
@@ -142,23 +137,21 @@ class ApplicationAssetService
     }
 
     /**
-     * @param string $slug
+     * @param string $configSlug
      * @param string[] $refs
      * @param string $type
      * @return string
      */
-    protected function compileAssetContent($slug, $refs, $type)
+    protected function compileAssetContent($configSlug, $refs, $type)
     {
         switch ($type) {
             case 'css':
-                $sourcePath = $this->getCssAssetSourcePath();
-                $targetPath = $this->getCssAssetTargetPath($slug);
-                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->debug);
+                return $this->cssCompiler->compile($refs, $this->debug);
             case 'js':
-                return $this->compiler->compileRaw($refs, $this->debug);
+                return $this->jsCompiler->compile($refs, $configSlug, $this->debug);
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
-                return $this->compiler->compileTranslations($refs);
+                return $this->translationCompiler->compile($refs);
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
@@ -317,33 +310,6 @@ class ApplicationAssetService
     }
 
     /**
-     * @param string $slug
-     * @return string
-     */
-    protected function getCssAssetTargetPath($slug)
-    {
-        return $this->router->generate('mapbender_core_application_assets', array(
-            'slug' => $slug,
-            'type' => 'css',
-        ));
-    }
-
-    /**
-     * Returns JavaScript code with final client-side application initialization.
-     * This should be the very last bit, following all other JavaScript definitions
-     * and initializations.
-     * @param Entity\Application $application
-     * @return string
-     */
-    protected function renderAppLoader(Entity\Application $application)
-    {
-        $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
-        return $this->templateEngine->render($appLoaderTemplate, array(
-            'application' => $application,
-        ));
-    }
-
-    /**
      * @param Entity\Application $application
      * @return Template
      */
@@ -354,20 +320,6 @@ class ApplicationAssetService
         /** @var Template $instance */
         $instance = new $templateClassName($this->dummyContainer, $appComp);
         return $instance;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCssAssetSourcePath()
-    {
-        // Calculate the subfolder under the current host that contains the web directory
-        // (actually, the entry script) from the Router's RequestContext.
-        // This is equivalent to calling Request::getBasePath
-        $baseUrl = $this->router->getContext()->getBaseUrl();
-        $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
-        $beforeScript = implode('', array_slice(explode($scriptName, $baseUrl), 0, 1));
-        return rtrim($beforeScript, '/') ?: '.';
     }
 
     /**

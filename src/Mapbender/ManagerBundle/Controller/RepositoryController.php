@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle\Controller;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Mapbender;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
@@ -69,47 +68,41 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * @ManagerRoute("/new", methods={"GET"})
-     * @ManagerRoute("/new/{managertype}", methods={"POST"}, name="mapbender_manager_repository_new_submit")
+     * @ManagerRoute("/new/{sourceType}", methods={"POST"}, name="mapbender_manager_repository_new_submit")
      * @param Request $request
-     * @param string|null $managertype
+     * @param string|null $sourceType
      * @return Response
      */
-    public function newAction(Request $request, $managertype = null)
+    public function newAction(Request $request, $sourceType = null)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $managers = $this->getRepositoryManagers();
+        $sourceTypeLabels = $this->getTypeDirectory()->getTypeLabels();
         /** @var FormInterface[] $forms */
         $forms = array();
-        foreach ($managers as $type => $manager) {
-            $formAction = $this->generateUrl('mapbender_manager_repository_new_submit', array('managertype' => $type), UrlGeneratorInterface::RELATIVE_PATH);
+        foreach ($sourceTypeLabels as $type => $sourceTypeLabel) {
+            $formAction = $this->generateUrl('mapbender_manager_repository_new_submit', array('sourceType' => $type), UrlGeneratorInterface::RELATIVE_PATH);
             $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
                 'action' => $formAction,
             ));
             $forms[$type] = $form;
         }
 
-        if ($managertype) {
-            if (!array_key_exists($managertype, $forms)) {
+        if ($sourceType) {
+            if (!array_key_exists($sourceType, $forms)) {
                 throw new BadRequestHttpException();
             }
-            $form = $forms[$managertype];
+            $form = $forms[$sourceType];
             $form->handleRequest($request);
         } else {
             $form = null;
         }
-        $loadError = null;
         if ($form && $form->isSubmitted() && $form->isValid()) {
             $directory = $this->getTypeDirectory();
             try {
-                $loader = $directory->getSourceLoaderByType($managertype);
+                $loader = $directory->getSourceLoaderByType($sourceType);
                 $importerResponse = $loader->evaluateServer($form->getData(), false);
-            } catch (\Exception $e) {
-                $importerResponse = null;
-                $loadError = $e;
-            }
-            if (!$loadError) {
                 $source = $importerResponse->getSource();
 
                 $this->setAliasForDuplicate($source);
@@ -126,24 +119,24 @@ class RepositoryController extends ApplicationControllerBase
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
+            } catch (\Exception $e) {
+                $importerResponse = null;
+                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
             }
         }
 
         $formViews = array();
         foreach ($forms as $type => $form) {
-            if (!$managertype) {
-                $managertype = $type;
-            }
-            if ($loadError && $type === $managertype) {
-                $form->addError(new FormError($this->getTranslator()->trans($loadError->getMessage())));
+            if (!$sourceType) {
+                $sourceType = $type;
             }
             $formViews[$type] = $form->createView();
         }
 
         return $this->render('@MapbenderManager/Repository/new.html.twig', array(
-            'managers' => $managers,
+            'sourceTypes' => $sourceTypeLabels,
             'forms' => $formViews,
-            'activetype' => $managertype,
+            'activetype' => $sourceType,
         ));
     }
 
@@ -298,29 +291,48 @@ class RepositoryController extends ApplicationControllerBase
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
+     * @param Request $request
      * @param string $slug
      * @param string $instanceId
      * @return Response
      */
-    public function instanceAction($slug, $instanceId)
+    public function instanceAction(Request $request, $slug, $instanceId)
     {
-        /** @var SourceInstance|null $sourceInst */
-        $sourceInst = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
+        $em = $this->getDoctrine()->getManager();
+        /** @var SourceInstance|null $instance */
+        $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
 
-        if (null === $sourceInst) {
+        if (null === $instance) {
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+        $factory = $this->getTypeDirectory()->getInstanceFactory($instance->getSource());
+        $form = $this->createForm($factory->getFormType($instance), $instance);
 
-        $managers = $this->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getSource()->getManagertype()];
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($instance);
+            $layerSet = $instance->getLayerset();
+            if ($layerSet) {
+                $application = $layerSet->getApplication();
+                if ($application) {
+                    $application->setUpdated(new \DateTime('now'));
+                    $em->persist($application);
+                }
+            }
+            $em->flush();
 
-        return $this->forward($manager['bundle'] . ":" . "Repository:instance", array(
+            $this->addFlash('success', 'Your instance has been updated.');
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                "slug" => $slug,
+            ));
+        }
+
+        return $this->render($factory->getFormTemplate($instance), array(
+            "form" => $form->createView(),
             "slug" => $slug,
-            "instanceId" => $sourceInst->getId(),
+            "instance" => $instance,
         ));
     }
 
@@ -409,16 +421,6 @@ class RepositoryController extends ApplicationControllerBase
                 ),
             ),
         ));
-    }
-
-    /**
-     * @return array[]
-     */
-    protected function getRepositoryManagers()
-    {
-        /** @var Mapbender $service */
-        $service = $this->get('mapbender');
-        return $service->getRepositoryManagers();
     }
 
     /**

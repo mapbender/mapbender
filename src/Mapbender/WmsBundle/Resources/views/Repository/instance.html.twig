@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
 
 {% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ instance.source.title }}{% endblock %}
 
@@ -8,68 +8,52 @@
 {% endblock %}
 
 {% block js %}
-  <script type="text/javascript" src="{{ asset('components/joii/dist/joii.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
   {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/backend/instance-dimension.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
-<div class="instanceContainer">
-  <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
+{% block form_main1 %}
+  {{ parent() }}
+  {{ form_row(form.format) }}
+  {{ form_row(form.infoformat) }}
+  {{ form_row(form.exceptionformat) }}
+  {{ form_row(form.buffer) }}
+  {{ form_row(form.ratio) }}
+{% endblock form_main1 %}
 
-    <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
-    </div>
-
-    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-    <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK" title='{{ instance.source.originUrl }}'>{{ instance.source.originUrl | slice(0, 35) }}...</a>
-    <div class="clear"></div>
-
-    <div class="row">
-      <div class="col-md-6 col-xs-12">
-        {{ form_row(form.title) }}
-        {{ form_row(form.format) }}
-        {{ form_row(form.infoformat) }}
-        {{ form_row(form.exceptionformat) }}
-        {{ form_row(form.opacity) }}
-        {{ form_row(form.buffer) }}
-        {{ form_row(form.ratio) }}
-      </div>
-      <div class="col-md-6 col-xs-12">
-        <div class="extendedGroup">
-            {% if form.dimensions is not null and form.dimensions | length > 0 %}
-              <div class="blockgroup">
-                <!-- todo: the header should be part of the "dimensions" input widget -->
-                <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-                <div id="dimension-content" class="on-off-content hidden">
-                    {% for dim in form.dimensions %}
-                        {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
-                    {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-          <div class="blockgroup">
-            <!-- todo: the header should be part of the "vendorspecifics" input widget -->
-            <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
-            <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
-                {{ form_widget(form.vendorspecifics) }}
-            </div>
+{% block form_main2 %}
+  <div class="extendedGroup">
+      {% if form.dimensions is not null and form.dimensions | length > 0 %}
+        <div class="blockgroup">
+          <!-- todo: the header should be part of the "dimensions" input widget -->
+          <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
+          <div id="dimension-content" class="on-off-content hidden">
+              {% for dim in form.dimensions %}
+                  {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
+              {% endfor %}
           </div>
         </div>
-        <div class="checkboxGroup">
-          {{ form_row(form.basesource) }}
-          {{ form_row(form.proxy) }}
-          {{ form_row(form.transparency) }}
-          {{ form_row(form.tiled) }}
-        {% if form.layerOrder is defined %}
-          {{ form_row(form.layerOrder) }}
-        {% endif %}
-      </div>
+      {% endif %}
+    <div class="blockgroup">
+      <!-- todo: the header should be part of the "vendorspecifics" input widget -->
+      <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
+      <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
+          {{ form_widget(form.vendorspecifics) }}
       </div>
     </div>
+  </div>
+  <div>
+    {{ parent() }}
+    {{ form_row(form.transparency) }}
+    {{ form_row(form.tiled) }}
+  {% if form.layerOrder is defined %}
+    {{ form_row(form.layerOrder) }}
+  {% endif %}
+  </div>
+{% endblock form_main2 %}
+
+{% block form_layers %}
     {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
@@ -116,13 +100,4 @@
         </tr>
       </tbody>
     </table>
-
-    <div class="button-group">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
-    </div>
-
-    {{ form_row(form._token) }}
-  </form>
-</div>
-{% endblock %}
+{% endblock form_layers %}

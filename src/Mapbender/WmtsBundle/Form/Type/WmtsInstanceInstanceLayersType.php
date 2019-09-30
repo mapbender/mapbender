@@ -40,8 +40,8 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 ),
                 'required' => true,
             ))
-            ->add('layers', 'collection', array(
-                'type' => new WmtsInstanceLayerType(),
+            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'entry_type' => 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
                 ),
@@ -60,22 +60,12 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'disabled' => true,
             ))
-            ->add('toggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'data' => false,
-            ))
             ->add('allowselected', 'checkbox', array(
                 'required' => false,
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
                 'disabled' => true,
-            ))
-            ->add('allowtoggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'data' => false,
             ))
         ;
     }

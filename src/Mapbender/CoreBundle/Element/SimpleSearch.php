@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Simple Search - Just type, select and show result
@@ -20,13 +19,6 @@ class SimpleSearch extends Element
     public static function getClassDescription()
     {
         return 'mb.core.simplesearch.class.description';
-    }
-
-    public static function getClassTags()
-    {
-        return array(
-            'mb.core.search.tag.search',
-        );
     }
 
     public static function getType()

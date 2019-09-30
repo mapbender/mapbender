@@ -7,10 +7,8 @@ namespace Mapbender\CoreBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Component\UserHelperService;
-use FOM\UserBundle\Security\UserHelper;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractUserCommand extends ContainerAwareCommand
 {
@@ -47,17 +45,12 @@ abstract class AbstractUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @return UserHelperService|UserHelper
+     * @return UserHelperService
      */
     protected function getUserHelper()
     {
-        /** @var UserHelperService|null $helperService */
-        $helperService = $this->getContainer()->get('fom.user_helper.service', ContainerInterface::NULL_ON_INVALID_REFERENCE);
-        if ($helperService) {
-            return $helperService;
-        } else {
-            // Old FOM < v3.1.1
-            return new UserHelper($this->getContainer());
-        }
+        /** @var UserHelperService $helperService */
+        $helperService = $this->getContainer()->get('fom.user_helper.service');
+        return $helperService;
     }
 }

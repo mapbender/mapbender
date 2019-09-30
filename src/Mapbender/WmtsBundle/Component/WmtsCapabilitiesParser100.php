@@ -40,7 +40,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the GetCapabilities document
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return WmtsSource
      */
     public function parse()
     {
@@ -88,7 +88,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the ServiceIdentification section of the GetCapabilities document
-     * @param \Mapbender\WmtsBundle\Entity\WmtsSource $wmts the WmtsSource
+     * @param WmtsSource $wmts
      * @param \DOMElement $contextElm the element to use as context for the ServiceIdentification section
      */
     private function parseServiceIdentification(WmtsSource $wmts, \DOMElement $contextElm)
@@ -110,7 +110,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the ServiceProvider section of the GetCapabilities document
-     * @param \Mapbender\WmtsBundle\Entity\WmtsSource $wmts the WmtsSource
+     * @param WmtsSource $wmts
      * @param \DOMElement $contextElm the element to use as context for the ServiceProvider section.
      */
     private function parseServiceProvider(WmtsSource $wmts, \DOMElement $contextElm)
@@ -155,7 +155,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the Capabilities Request section of the GetCapabilities document
-     * @param \Mapbender\WmtsBundle\Entity\WmtsSource $wmts the WmtsSource
+     * @param WmtsSource $wmts
      * @param \DOMElement $contextElm the element to use as context for the
      * Capabilities Request section
      */
@@ -184,12 +184,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
         $ri       = new RequestInformation();
-        $tempList = $this->xpath->query("./wmts:Format", $contextElm);
-        if ($tempList !== null) {
-            foreach ($tempList as $item) {
-                $ri->addFormat($this->getValue("./text()", $item));
-            }
-        }
         $ri->setHttpGetRestful(
             $this->getValue(
                 "./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href",
@@ -261,7 +255,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
                 ->setTitle($this->getValue("./ows:Title/text()", $styleEl))
                 ->setAbstract($this->getValue("./ows:Abstract/text()", $styleEl))
                 ->setIdentifier($this->getValue("./ows:Identifier/text()", $styleEl))
-                ->setIsdefault($this->getValue("./@isDefault", $styleEl));
+                ->setIsDefault($this->getValue("./@isDefault", $styleEl));
             $legendurl = new LegendUrl();
             $legendurl->setFormat($this->getValue("./wmts:LegendURL/@format", $styleEl))
                 ->setHref($this->getValue("./wmts:LegendURL/@xlink:href", $styleEl));
@@ -282,7 +276,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
                 ->setDefault($this->getValue("./wmts:Default/text()", $dimEl))
                 ->setIdentifier($this->getValue("./ows:Identifier/text()", $dimEl))
                 ->setOum($this->getValue("./ows:UOM/text()", $dimEl))
-                ->setUnitSymbol($this->getValue("./wmts:UnitSymbol/text()", $dimEl));
+                ->setUnitsSymbol($this->getValue("./wmts:UnitSymbol/text()", $dimEl));
             $valuesElms = $this->xpath->query("./wmts:Value", $dimEl);
             foreach ($valuesElms as $valueElm) {
                 $dim->addValue($this->getValue("./text()", $valueElm));

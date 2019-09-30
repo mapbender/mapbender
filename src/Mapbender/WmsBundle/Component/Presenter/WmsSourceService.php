@@ -6,6 +6,7 @@ namespace Mapbender\WmsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -38,6 +39,16 @@ class WmsSourceService extends SourceService
         parent::__construct($urlProcessor);
         $this->tokenStorage = $tokenStorage;
         $this->defaultLayerOrder = $defaultLayerOrder;
+    }
+
+    public function getTypeCode()
+    {
+        return strtolower(Source::TYPE_WMS);
+    }
+
+    public function getTypeLabel()
+    {
+        return 'OGC WMS';
     }
 
     public function getInnerConfiguration(SourceInstance $sourceInstance)

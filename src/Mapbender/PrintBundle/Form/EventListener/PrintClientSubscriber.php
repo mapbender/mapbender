@@ -19,7 +19,8 @@ class PrintClientSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SUBMIT => 'preBind');
+            FormEvents::PRE_SUBMIT => 'preBind',
+        );
     }
 
     /**
@@ -40,11 +41,10 @@ class PrintClientSubscriber implements EventSubscriberInterface
         }
 
         if (key_exists("quality_levels", $data)) {
-            $form->add('quality_levels', 'collection', array(
-                'property_path' => '[quality_levels]',
+            $form->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'auto_initialize' => false,
                 'required' => false,
-                'type' => new PrintClientQualityAdminType(),
+                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
             ));
         }
     }
@@ -68,11 +68,10 @@ class PrintClientSubscriber implements EventSubscriberInterface
         }
 
         if (array_key_exists("quality_levels", $data)) {
-            $form->add('quality_levels', 'collection', array(
-                'property_path' => '[quality_levels]',
+            $form->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'auto_initialize' => false,
                 'required' => false,
-                'type' => new PrintClientQualityAdminType(),
+                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
             ));
         }
     }

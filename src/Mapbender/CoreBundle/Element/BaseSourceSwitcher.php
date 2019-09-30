@@ -33,18 +33,6 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.basesourceswitcher.tag.base",
-            "mb.core.basesourceswitcher.tag.source",
-            "mb.core.basesourceswitcher.tag.switcher"
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

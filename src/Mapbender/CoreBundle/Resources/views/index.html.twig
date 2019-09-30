@@ -16,14 +16,12 @@
         }
     </script>
     {% endblock %}
-    {##}
     <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
     <link rel="shortcut icon" href="{% block favicon %}{{ asset('favicon.png') }}{% endblock %}" />
     {% block css %}{% endblock %}
 </head>
 <body class="{% if app.debug %}debug{% endif %}">
 {% block content %}{% endblock %}
-<script src="{{ asset('components/joii/dist/joii.min.js')}}"></script>
 <script src="{{ asset('components/jquery/jquery.min.js')}}"></script>
 <script src="{{ asset('components/jquery-ui/jquery-ui.min.js')}}"></script>
 {% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}

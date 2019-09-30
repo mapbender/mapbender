@@ -2,10 +2,8 @@
 
 
 namespace Mapbender\CoreBundle\Component\Cache\Backend;
-use Mapbender\BaseKernel;
 use Mapbender\CoreBundle\Component\Exception\CacheMiss;
 use Mapbender\CoreBundle\Component\Exception\NotCachable;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Cache backend using the file system.

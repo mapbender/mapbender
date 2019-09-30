@@ -194,7 +194,7 @@ class Importer extends RefreshableSourceLoader
             $addParams['SERVICE'] = 'WMS';
         }
         $url = UrlUtil::validateUrl($url, $addParams);
-        $url = UrlUtil::addCredentials($url, $serviceOrigin->getUserName(), $serviceOrigin->getPassword(), false);
+        $url = UrlUtil::addCredentials($url, $serviceOrigin->getUsername(), $serviceOrigin->getPassword(), false);
         return $this->httpTransport->getUrl($url);
     }
 
@@ -307,7 +307,7 @@ class Importer extends RefreshableSourceLoader
                 $instance->setInfoformat($featureInfoFormats[0]);
             }
         } else {
-            $instance->setInfoFormat(null);
+            $instance->setInfoformat(null);
         }
         if ($exceptionFormats = $source->getExceptionFormats()) {
             if (!in_array($instance->getExceptionformat(), $exceptionFormats)) {

@@ -120,17 +120,6 @@
 
             widget.callback ? widget.callback.call() : widget.callback = null;
         },
-        _isVisible: function() {
-            if (this.options.type === 'dialog') {// visible for dialog
-                if (this.state && this.state === 'opened') {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else { // TODO visible for element ?
-                return true;
-            }
-        },
         /**
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.

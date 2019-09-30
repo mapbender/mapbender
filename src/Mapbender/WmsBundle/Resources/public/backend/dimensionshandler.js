@@ -1,14 +1,10 @@
-var dimHandler = null;
 $(function () {
     var collectionSelector = '#form_configuration_dimensionsets .collectionItem';
     var selectSelector = 'select[data-name="group"]';
-    dimHandler = {
+    var dimHandler = {
         updateExtents: function ($item, extent, default_) {
             var text = extent && ([extent.join('/'), default_].join(' - ')) || '';
             $('input[data-name="extentDisplay"]', $item).val(text);
-        },
-        getInputValues: function($item) {
-            return JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
         },
         setVals: function ($item, dimension, extent) {
             var gopts;
@@ -24,41 +20,32 @@ $(function () {
                 this.updateExtents($item, null, null);
             }
         },
-        merge: function (dimension, $select) {
-            var $selectedOptions = $('option:selected', $select);
-            var dim = dimension;
-            for (var i = 0; i < $selectedOptions.length; ++i) {
-                var optionConfig = JSON.parse($($selectedOptions.get(i)).attr('data-config'));
-                var dimConfig = _.assign({}, optionConfig);
-                var nextDim = Mapbender.Dimension(dimConfig);
-                if (!dim) {
-                    dim = nextDim;
+        getDimension: function($item) {
+            var dimensionOptions = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
+            var dimension = Mapbender.Dimension(dimensionOptions);
+            var $selected = $(selectSelector + ' option:selected', $item);
+            for (var i = 0; i < $selected.length; ++i) {
+                dimensionOptions = JSON.parse($($selected.get(i)).attr('data-config'));
+                var nextDim = Mapbender.Dimension(dimensionOptions);
+                if (!dimension) {
+                    dimension = nextDim;
                 } else if (nextDim) {
-                    dim = dim.innerJoin(nextDim) || dim;
+                    var merged = dimension.innerJoin(nextDim);
+                    dimension = merged || dimension;
                 }
             }
-            return dim;
-        },
-        initItem: function($item) {
-            var values = this.getInputValues($item);
-            var dim = Mapbender.Dimension(values);
-            $item.data('dimension-instance', dim);
+            return dimension;
         },
         initSlider: function ($item) {
             var self = this;
             var $slider = $('.mb-slider', $item);
-            var $select = $(selectSelector, $item);
-            var dimension = $item.data('dimension-instance');
-            if ($select.val() && $select.val().length > 0) {
-                dimension = this.merge(dimension, $select);
-                $item.data('dimension-instance', dimension);
-                this.setVals($item, dimension);
-            }
+            var dimension = this.getDimension($item);
+            this.setVals($item, dimension);
+
             if (dimension) {
                 var gopts = dimension.getOptions();
-                var extentStepNum = dimension.getStepsNum();
-                var sliderValues = [extentStepNum * dimension.partFromValue(gopts.extent[0]), extentStepNum * dimension.partFromValue(gopts.extent[1])];
-                var sliderRange = [extentStepNum * dimension.partFromValue(gopts.origextent[0]), extentStepNum * dimension.partFromValue(gopts.origextent[1])];
+                var sliderValues = [dimension.getStep(gopts.extent[0]), dimension.getStep(gopts.extent[1])];
+                var sliderRange = [dimension.getStep(gopts.origextent[0]), dimension.getStep(gopts.origextent[1])];
                 $slider.slider({
                     range: true,
                     min: sliderRange[0],
@@ -66,7 +53,7 @@ $(function () {
                     steps: 1,
                     values: sliderValues,
                     slide: function (event, ui) {
-                        var extent = [dimension.valueFromPart(ui.values[0] / extentStepNum), dimension.valueFromPart(ui.values[1] / extentStepNum), gopts.origextent[2]];
+                        var extent = [dimension.valueFromStep(ui.values[0]), dimension.valueFromStep(ui.values[1]), gopts.origextent[2]];
                         dimension.setDefault(dimension.getInRange(extent[0], extent[1], dimension.getDefault()));
                         self.setVals($item, dimension, extent);
                     }
@@ -116,12 +103,9 @@ $(function () {
         }
         var $new = $('.collectionItem', $collection).last();    // :)
         $('select[data-name="group"]', $new).trigger('change');
-        dimHandler.initSlider($new);
-        updateCollection();
     });
     $(collectionSelector).each(function(ix, item) {
         var $item = $(item);
-        dimHandler.initItem($item);
         dimHandler.initSlider($item);
     });
 });

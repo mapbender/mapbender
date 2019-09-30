@@ -1,10 +1,10 @@
 <?php
+    
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
@@ -18,11 +18,11 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
-use Symfony\Component\Security\Acl\Model\MutableAclInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Yaml\Yaml;
 
@@ -39,25 +39,25 @@ class ImportHandler extends ExchangeHandler
     protected $uploadsManager;
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
-    /** @var AclManager */
-    protected $aclManager;
 
     /**
-     * @inheritdoc
+     * @param EntityManagerInterface $entityManager
+     * @param ElementFactory $elementFactory
+     * @param ExportHandler $exportHandler
+     * @param UploadsManager $uploadsManager
+     * @param MutableAclProviderInterface $aclProvider
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 ElementFactory $elementFactory,
                                 ExportHandler $exportHandler,
                                 UploadsManager $uploadsManager,
-                                MutableAclProviderInterface $aclProvider,
-                                AclManager $aclManager)
+                                MutableAclProviderInterface $aclProvider)
     {
         parent::__construct($entityManager);
         $this->elementFactory = $elementFactory;
         $this->exportHandler = $exportHandler;
         $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
-        $this->aclManager = $aclManager;
     }
 
     /**
@@ -126,6 +126,10 @@ class ImportHandler extends ExchangeHandler
             $this->em->persist($clonedApp);
             $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
+
+            if ($app->getSource() !== Application::SOURCE_YAML) {
+                $this->copyAcls($clonedApp, $app);
+            }
 
             return $clonedApp;
         } catch (ORMException $e) {
@@ -288,46 +292,25 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param Application $application
-     * @param mixed $currentUser
-     */
-    public function setDefaultAcls(Application $application, $currentUser)
-    {
-        $aces = array(
-            array(
-                'sid' => UserSecurityIdentity::fromAccount($currentUser),
-                'mask' => MaskBuilder::MASK_OWNER
-            ),
-        );
-        $this->aclManager->setObjectACL($application, $aces, 'object');
-    }
-
-    /**
      * @param Application $target
      * @param Application $source
-     * @param $currentUser
      * @throws InvalidDomainObjectException
      * @throws \Symfony\Component\Security\Acl\Exception\Exception
      */
-    public function copyAcls(Application $target, Application $source, $currentUser)
+    protected function copyAcls(Application $target, Application $source)
     {
-        $this->setDefaultAcls($target, $currentUser);
         $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
-        /** @var MutableAclInterface $targetAcl */
-        $targetAcl = $this->aclManager->getACL($target);
-        $currentUserIdentity = UserSecurityIdentity::fromAccount($currentUser);
+        $targetOid = ObjectIdentity::fromDomainObject($target);
+        try {
+            $targetAcl = $this->aclProvider->createAcl($targetOid);
+        } catch (AclAlreadyExistsException $e) {
+            $targetAcl = $this->aclProvider->findAcl($targetOid);
+        }
 
-        // Quirky old behavior: current user has just been given MASK_OWNER, so access for that user
-        // is as complete as it can get. We only copy aces for other user identities. Any other
-        // entries for the current user are ignored and not copied over.
-        // We also only copy the identity + mask portions of the Aces, nothing else.
-        // @todo: Figure out if this really is the desired behaviour going forward.
         foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
             /** @var EntryInterface $sourceEntry */
             $entryIdentity = $sourceEntry->getSecurityIdentity();
-            if (!$currentUserIdentity->equals($entryIdentity)) {
-                $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
-            }
+            $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
         }
         $this->aclProvider->updateAcl($targetAcl);
     }
@@ -515,5 +498,21 @@ class ImportHandler extends ExchangeHandler
             }
         }
         return $object;
+    }
+
+    /**
+     * @param Application $application
+     * @param SecurityIdentityInterface $sid
+     */
+    public function addOwner(Application $application, SecurityIdentityInterface $sid)
+    {
+        $oid = ObjectIdentity::fromDomainObject($application);
+        try {
+            $acl = $this->aclProvider->createAcl($oid);
+        } catch (AclAlreadyExistsException $e) {
+            $acl = $this->aclProvider->findAcl($oid);
+        }
+        $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
+        $this->aclProvider->updateAcl($acl);
     }
 }

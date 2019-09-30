@@ -34,14 +34,6 @@ class Button extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array("mb.core.button.tag.button");
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(

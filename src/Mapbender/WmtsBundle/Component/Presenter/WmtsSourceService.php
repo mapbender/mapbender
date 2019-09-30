@@ -7,6 +7,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
@@ -15,6 +16,16 @@ use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 class WmtsSourceService extends SourceService
 {
+
+    public function getTypeCode()
+    {
+        return strtolower(Source::TYPE_WMTS);
+    }
+
+    public function getTypeLabel()
+    {
+        return 'OGC WMTS / TMS';
+    }
 
     /**
      * @param SourceInstance $sourceInstance
@@ -61,8 +72,6 @@ class WmtsSourceService extends SourceService
         $rootInst->setActive($sourceInstance->getActive())
             ->setAllowinfo($sourceInstance->getAllowinfo())
             ->setInfo($sourceInstance->getInfo())
-            ->setAllowtoggle($sourceInstance->getAllowtoggle())
-            ->setToggle($sourceInstance->getToggle())
         ;
         return $this->getSingleLayerConfig($rootInst);
     }
@@ -163,11 +172,11 @@ class WmtsSourceService extends SourceService
         return array(
             "info" => $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
-            "toggle" => $instanceLayer->getToggle(),
+            "toggle" => false,
             "allow" => array(
                 "info" => $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
-                "toggle" => $instanceLayer->getAllowtoggle(),
+                "toggle" => false,
                 "reorder" => null,
             ),
         );

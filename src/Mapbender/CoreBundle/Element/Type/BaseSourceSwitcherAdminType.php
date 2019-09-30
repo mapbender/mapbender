@@ -16,7 +16,6 @@ class BaseSourceSwitcherAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'element' => null
         ));
     }
 
@@ -30,10 +29,9 @@ class BaseSourceSwitcherAdminType extends AbstractType
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'property_path' => '[target]',
                 'required' => false,
             ))
         ;
-        $builder->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber($options['application']));
+        $builder->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber());
     }
 }

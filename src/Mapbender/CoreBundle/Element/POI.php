@@ -30,18 +30,6 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.poi.tag.poi",
-            "mb.core.poi.tag.point",
-            "mb.core.poi.tag.interest"
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\POIAdminType';

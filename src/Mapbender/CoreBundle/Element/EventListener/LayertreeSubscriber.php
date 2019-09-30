@@ -54,11 +54,11 @@ class LayertreeSubscriber implements EventSubscriberInterface
         $data["themes"] = $themesAll;
         $event->setData($data);
         if ($themesData) {
-            $form->add('themes', 'collection', array(
+            $form->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'label' => 'mb.core.admin.layertree.label.themes',
                 'data' => $themesData,
                 'required' => false,
-                'type' => new LayerThemeType(),
+                'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
                 'auto_initialize' => false,
                 'label_attr' => array(
                     'class' => 'left',
