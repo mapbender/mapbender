@@ -36,42 +36,7 @@ class FieldSubscriber implements EventSubscriberInterface
         if (null === $data) {
             return;
         }
-        $form->remove('title');
-        $form->add('title', 'text', array(
-            'required' => false,
-            'attr' => array(
-                'placeholder' => $data->getSourceItem()->getTitle(),
-            ),
-        ));
-        $hasSubLayers = !!$data->getSublayer()->count();
 
-        $form->remove('toggle');
-        $form->add('toggle', 'checkbox', array(
-            'disabled' => !$hasSubLayers,
-            'required' => false,
-            'auto_initialize' => false,
-        ));
-        $form->remove('allowtoggle');
-        $form->add('allowtoggle', 'checkbox', array(
-            'disabled' => !$hasSubLayers,
-            'required' => false,
-            'auto_initialize' => false,
-        ));
-
-        if ($data->getSourceItem()->getQueryable() === true) {
-            $form->remove('info');
-            $form->add('info', 'checkbox', array(
-                'disabled' => false,
-                'required' => false,
-                'auto_initialize' => false,
-            ));
-            $form->remove('allowinfo');
-            $form->add('allowinfo', 'checkbox', array(
-                'disabled' => false,
-                'required' => false,
-                'auto_initialize' => false,
-            ));
-        }
         $arrStyles = $data->getSourceItem()->getStyles(true);
         $styleOpt = array(" " => "");
         foreach ($arrStyles as $style) {
@@ -81,13 +46,12 @@ class FieldSubscriber implements EventSubscriberInterface
         }
 
         $form->remove('style');
-        $form->add('style', 'choice', array(
-            'label' => 'Style',
-            'choices' => $styleOpt,
-            'choices_as_values' => true,
-            "required" => false,
-            'auto_initialize' => false,
-        ));
+        $form
+            ->add('style', 'Mapbender\CoreBundle\Form\Type\InstanceLayerStyleChoiceType', array(
+                'label' => 'Style',
+                'layer' => $event->getData(),
+                'required' => false,
+            ))
+        ;
     }
-
 }

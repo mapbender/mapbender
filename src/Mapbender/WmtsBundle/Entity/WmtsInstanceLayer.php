@@ -192,28 +192,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get toggle
-     *
-     * @return boolean $toggle
-     */
-    public function getToggle()
-    {
-        return $this->toggle;
-    }
-
-    /**
-     * Set toggle
-     *
-     * @param string $toggle
-     * @return $this
-     */
-    public function setToggle($toggle)
-    {
-        $this->toggle = $toggle;
-        return $this;
-    }
-
-    /**
      * Set allowinfo
      *
      * @param boolean $allowinfo
@@ -233,28 +211,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     public function getAllowinfo()
     {
         return $this->allowinfo;
-    }
-
-    /**
-     * Get allowtoggle
-     *
-     * @return boolean $allowtoggle
-     */
-    public function getAllowtoggle()
-    {
-        return $this->allowtoggle;
-    }
-
-    /**
-     * Set allowtoggle
-     *
-     * @param boolean $allowtoggle
-     * @return $this
-     */
-    public function setAllowtoggle($allowtoggle)
-    {
-        $this->allowtoggle = $allowtoggle;
-        return $this;
     }
 
     /**

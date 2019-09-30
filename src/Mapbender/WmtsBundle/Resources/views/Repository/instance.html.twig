@@ -9,32 +9,26 @@
           <th></th>
           <th>{{ form.title.vars.label | trans}}</th>
           <th class="matrixSet">{{"mb.wmts.wmtsloader.repo.instance.label.tilemartixset"|trans}}</th>
-          <th>{{ "mb.wmts.wmtsloader.repo.instance.label.style"|trans}}</th>
           <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.active"|trans}}</th>
           <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
           <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.toggle"|trans}}</th>
           <th></th>
         </tr>
         <tr>
-          <th colspan="5"></th>
+          <th colspan="4"></th>
           <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th></th>
         </tr>
         <tr id="instanceTableCheckHead">
-          <th colspan="4"></th>
+          <th colspan="3"></th>
           <th class="checkboxColumn"><span id="checkActive" class="iconCheckbox"></span></th>
           <th class="checkboxColumn odd"><span id="checkSelectAllow" class="iconCheckbox"></span></th>
           <th class="checkboxColumn odd"><span id="checkSelectOn" class="iconCheckbox"></span></th>
           <th class="checkboxColumn"><span id="checkInfoAllow" class="iconCheckbox"></span></th>
           <th class="checkboxColumn"><span id="checkInfoOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkToggleAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkToggleOn" class="iconCheckbox"></span></th>
           <th></th>
         </tr>
       </thead>
@@ -42,14 +36,12 @@
         <tr class="item level0">
             <td class="level0 itemType"><span class="itemType iconFolderActive hover-highlight-effect"></span></td>
             <td class="titleColumn" title="{{ form.roottitle.vars.label | trans }}">{{ form_widget(form.roottitle) }}</td>
-            <td colspan="2"></td>
+            <td colspan="1"></td>
             <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form.active) }}</td>
             <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form.allowselected) }}</td>
             <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form.selected) }}</td>
             <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.allowinfo) }}</td>
             <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.info) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc"|trans }}">{{ form_widget(form.allowtoggle) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.toggletoc"|trans }}">{{ form_widget(form.toggle) }}</td>
             <td class="moreColumn"></td>
         </tr>
         {% for form in form.layers %}

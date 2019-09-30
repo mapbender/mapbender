@@ -10,19 +10,19 @@
     {% if form_layer.vars.value.id == layer.id %}
         <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}">
             <td class="level{{ level }} itemType"><span class="itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></span></td>
-            <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
+            <td class="titleColumn" title="{{ form_layer.title.vars.label | trans }}">{{ form_widget(form_layer.title) }}</td>
 
-            <td class="minScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.minscale"|trans }}">{{ form_widget(form_layer.minScale, {'attr': {'placeholder': form_layer.vars.value.getInheritedMinScale()}}) }}</td>
-            <td class="maxScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.maxsclase"|trans }}">{{ form_widget(form_layer.maxScale, {'attr': {'placeholder': form_layer.vars.value.getInheritedMaxScale()}}) }}</td>
+            <td class="minScaleColumn" title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
+            <td class="maxScaleColumn" title="{{ form_layer.maxScale.vars.label | trans }}">{{ form_widget(form_layer.maxScale) }}</td>
 
-            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form_layer.active) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form_layer.allowselected) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form_layer.selected) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form_layer.allowinfo) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form_layer.info) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc"|trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.toggletoc"|trans }}">{{ form_widget(form_layer.toggle) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkRecorderAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc"|trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ form_layer.active.vars.label | trans }}">{{ form_widget(form_layer.active) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ form_layer.allowselected.vars.label | trans }}">{{ form_widget(form_layer.allowselected) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ form_layer.selected.vars.label | trans }}">{{ form_widget(form_layer.selected) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ form_layer.allowinfo.vars.label | trans }}">{{ form_widget(form_layer.allowinfo) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ form_layer.info.vars.label | trans }}">{{ form_widget(form_layer.info) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkToggleAllow" title="{{ form_layer.allowtoggle.vars.label | trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ form_layer.toggle.vars.label | trans }}">{{ form_widget(form_layer.toggle) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkRecorderAllow" title="{{ form_layer.allowreorder.vars.label | trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
             <td class="moreColumn">
               <div class="infoMsgBox hidden">
                 <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
@@ -33,11 +33,11 @@
               <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
             </td>
 
-            {% if layer.sublayer|length > 0 %}
-                {% for sublayer in layer.sublayer %}
-                    {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form_layers, 'layer': sublayer, 'level': level + 1 }%}
-                {% endfor %}
-            {% endif %}
         </tr>
+        {% if layer.sublayer|length > 0 %}
+            {% for sublayer in layer.sublayer %}
+                {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form_layers, 'layer': sublayer, 'level': level + 1 }%}
+            {% endfor %}
+        {% endif %}
     {% endif %}
 {% endfor %}

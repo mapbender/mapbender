@@ -37,8 +37,8 @@ class SearchRouterAdminType extends AbstractType
             ))
             ->add('width', 'integer', array('required' => true))
             ->add('height', 'integer', array('required' => true))
-            ->add('routes', 'collection', array(
-                'type' => new SearchRouterRouteAdminType(),
+            ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'entry_type' => 'Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,

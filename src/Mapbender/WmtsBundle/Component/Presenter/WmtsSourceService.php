@@ -73,8 +73,6 @@ class WmtsSourceService extends SourceService
         $rootInst->setActive($sourceInstance->getActive())
             ->setAllowinfo($sourceInstance->getAllowinfo())
             ->setInfo($sourceInstance->getInfo())
-            ->setAllowtoggle($sourceInstance->getAllowtoggle())
-            ->setToggle($sourceInstance->getToggle())
         ;
         return $this->getSingleLayerConfig($rootInst);
     }
@@ -175,11 +173,11 @@ class WmtsSourceService extends SourceService
         return array(
             "info" => $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
-            "toggle" => $instanceLayer->getToggle(),
+            "toggle" => false,
             "allow" => array(
                 "info" => $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
-                "toggle" => $instanceLayer->getAllowtoggle(),
+                "toggle" => false,
                 "reorder" => null,
             ),
         );
