@@ -46,7 +46,7 @@ window.Mapbender.WmsSource = (function() {
             var opts = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
-                visibility: this.configuration.options.visible,
+                visibility: rootLayer.options.treeOptions.selected,
                 singleTile: !this.configuration.options.tiled,
                 noMagic: true,
                 minScale: rootLayer.minScale,

@@ -67,7 +67,6 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $instance
             ->setTitle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))
             ->setProxy(!isset($data['proxy']) ? false : $data['proxy'])
-            ->setVisible(!isset($data['visible']) ? true : $data['visible'])
             ->setFormat(!isset($data['format']) ? 'image/png' : $data['format'])
             ->setInfoformat(!isset($data['info_format']) ? 'text/html' : $data['info_format'])
             ->setTransparency(!isset($data['transparent']) ? true : $data['transparent'])
