@@ -58,11 +58,6 @@ class WmsInstance extends SourceInstance
     protected $transparency = true;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $visible = true;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $opacity = 100;
@@ -305,27 +300,6 @@ class WmsInstance extends SourceInstance
     public function getTransparency()
     {
         return $this->transparency;
-    }
-
-    /**
-     * @param boolean $visible
-     * @return WmsInstance
-     * @deprecated no function, use root layer setSelected
-     */
-    public function setVisible($visible)
-    {
-        return $this;
-    }
-
-    /**
-     * Get visible
-     *
-     * @return boolean
-     * @deprecated
-     */
-    public function getVisible()
-    {
-        return true;
     }
 
     /**

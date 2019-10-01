@@ -109,6 +109,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         _getNativeLayerBaseOptions: function(layer, srsName) {
             var matrixSet = layer.getMatrixSet();
             var self = this;
+
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
