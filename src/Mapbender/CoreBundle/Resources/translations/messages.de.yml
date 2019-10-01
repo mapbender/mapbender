@@ -264,15 +264,13 @@ mb:
         dialog: Dialog
     map:
       class:
-        title: 'Karte (map)'
+        title: 'Karte'
+        description: 'Hauptkarte basiernd auf OpenLayers'
       tag:
         map: Karte
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
-    mapabs:
-      class:
-        description: 'Die Karte basiert auf MapQuery/OpenLayers'
     scalebar:
       class:
         title: Maßstabsleiste

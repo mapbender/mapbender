@@ -264,14 +264,12 @@ mb:
     map:
       class:
         title: Map
+        description: 'OpenLayers based map'
       tag:
         map: map
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS properties for %srslist% are not found'
-    mapabs:
-      class:
-        description: 'MapQuery/OpenLayers based map'
     scalebar:
       class:
         title: 'Scale bar'

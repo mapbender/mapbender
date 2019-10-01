@@ -33,7 +33,7 @@ class Map extends Element
      */
     public static function getClassDescription()
     {
-        return "mb.core.mapabs.class.description";
+        return "mb.core.map.class.description";
     }
 
     /**

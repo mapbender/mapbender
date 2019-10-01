@@ -263,14 +263,12 @@ mb:
     map:
       class:
         title: Carte
+        description: 'Carte basée sur OpenLayers'
       tag:
         map: map
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'Les propriétés du SRS pour %srslist% sont introuvables'
-    mapabs:
-      class:
-        description: 'Carte basée sur MapQuery/OpenLayers'
     scalebar:
       class:
         title: 'Barre d''échelle'

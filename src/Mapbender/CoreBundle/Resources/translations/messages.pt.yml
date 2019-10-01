@@ -263,14 +263,12 @@ mb:
     map:
       class:
         title: Mapa
+        description: 'O mapa baseia em OpenLayers'
       tag:
         map: Mapa
         mapquery: Mapquery
         openlayers: OpenLayers
       srsnotfound: 'Não encontrou características de SRS para %srslist%.'
-    mapabs:
-      class:
-        description: 'O mapa baseia em MapQuery/OpenLayers'
     scalebar:
       class:
         title: 'Barra de escala'
