@@ -385,6 +385,10 @@ mb:
       exception: 'Exception: %exception%'
       statuscode: 'Code de statut HTTP'
 
+# Login exceptions
+"Bad credentials.": 'Le mot de passe ou le nom d''utilisateur est invalide'
+
+### ???????
 Search: __Search
 FeatureInfo: 'Données caractéristiques'
 Services: Services

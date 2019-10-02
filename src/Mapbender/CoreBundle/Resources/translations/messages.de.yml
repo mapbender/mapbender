@@ -389,3 +389,10 @@ mb:
       datails: 'Die Karte kann nicht angezeigt werden.'
       exception: 'Ausnahmefehler: %exception%'
       statuscode: 'HTTP Statuscode'
+
+# Login exceptions
+"Bad credentials.": Authentifizierung fehlgeschlagen.
+"User account is locked.": Benutzerkonto ist gesperrt.
+"User account is disabled.": Benutzerkonto ist deaktiviert.
+"User account has expired.": Benutzerkonto ist abgelaufen.
+"User credentials have expired.": Anmeldedaten sind abgelaufen.
