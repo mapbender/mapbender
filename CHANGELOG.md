@@ -1,6 +1,14 @@
-## dev-release/3.0.7 @ 643a5835a
+## dev-release/3.0.7 @ a56242c39
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
+- Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- Allow privileged users to access non-published Yaml-based applications
+- Replace Chrome-specific regex usage in time dimension initialization with unspecific equivalents
 - When cloning DB applications, also clone access control rules
+- Remove form fields related to inactive, unimplemented WMTS featureinfo
+- Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
+- Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+- Support accessing non-published Yaml-based application in clone and export cli commands
+- Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
 - Dropped legacy joii library
 
 ## v3.0.8.4
