@@ -263,14 +263,12 @@ mb:
     map:
       class:
         title: Карта
+        description: 'OpenLayers карта'
       tag:
         map: карта
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS свойства для  %srslist% не найдены'
-    mapabs:
-      class:
-        description: 'MapQuery/OpenLayers карта'
     scalebar:
       class:
         title: 'Масштабная линейка'

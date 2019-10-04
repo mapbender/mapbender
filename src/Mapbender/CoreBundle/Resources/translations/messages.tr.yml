@@ -263,14 +263,12 @@ mb:
     map:
       class:
         title: 'Harita'
+        description: 'OpenLayers altlıkları olan harita'
       tag:
         map: 'Harita'
         mapquery: 'MapQuery'
         openlayers: 'OpenLayers'
       srsnotfound: '%Srslist% için SRS özellikleri bulunamadı'
-    mapabs:
-      class:
-        description: 'MapQuery/OpenLayers altlıkları olan harita'
     scalebar:
       class:
         title: 'Ölçek çubuğu'
