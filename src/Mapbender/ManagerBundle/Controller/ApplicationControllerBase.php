@@ -42,7 +42,7 @@ abstract class ApplicationControllerBase extends Controller
             $aclTarget = $application;
         }
         if (!$application->isPublished()) {
-            $this->denyAccessUnlessGranted('EDIT', $aclTarget, 'This application is not published at the moment');
+            $this->denyAccessUnlessGranted('EDIT', $aclTarget);
         }
         if ($application->isYamlBased() && $application->getYamlRoles()) {
             foreach ($application->getYamlRoles() as $role) {
@@ -51,7 +51,7 @@ abstract class ApplicationControllerBase extends Controller
                 }
             }
         }
-        $this->denyAccessUnlessGranted('VIEW', $aclTarget, 'You are not granted view permissions for this application.');
+        $this->denyAccessUnlessGranted('VIEW', $aclTarget);
     }
 
     /**

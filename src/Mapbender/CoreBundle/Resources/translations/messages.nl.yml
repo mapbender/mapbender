@@ -262,14 +262,12 @@ mb:
     map:
       class:
         title: Kaart
+        description: 'OpenLayers-gebaseerde kaart'
       tag:
         map: kaart
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS-eigenschappen voor %srslist% niet gevonden'
-    mapabs:
-      class:
-        description: 'MapQuery/OpenLayers-gebaseerde kaart'
     scalebar:
       class:
         title: 'Kaartschaal Balk'
