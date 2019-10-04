@@ -2,6 +2,8 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * Mapbender Zoombar
@@ -12,7 +14,7 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element
+class ZoomBar extends Element implements ConfigMigrationInterface
 {
 
     public static $merge_configurations = false;
@@ -76,10 +78,10 @@ class ZoomBar extends Element
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
-    public function getPublicConfiguration()
+    public static function updateEntityConfig(Entity\Element $entity)
     {
-        $defaults = $this->getDefaultConfiguration();
-        $config = $this->entity->getConfiguration();
+        $defaults = static::getDefaultConfiguration();
+        $config = $entity->getConfiguration();
         // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
         // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
         if (empty($config['stepSize'])) {
@@ -105,7 +107,7 @@ class ZoomBar extends Element
         }
         unset($config['stepsize']);
         unset($config['stepbypixel']);
-        return $config;
+        $entity->setConfiguration($config);
     }
 
     /**
