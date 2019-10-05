@@ -58,7 +58,7 @@ class ElementFactory extends BaseElementFactory
             } else {
                 $appComponent = $this->applicationComponentDummy;
             }
-            $instance = $this->instantiateComponent($entity->getClass(), $entity, $appComponent);
+            $instance = $this->instantiateComponent($entity, $appComponent);
             $this->components[$entityObjectId] = $instance;
         }
         return $this->components[$entityObjectId];
@@ -95,22 +95,23 @@ class ElementFactory extends BaseElementFactory
     protected function getComponentDummy($className)
     {
         if (!array_key_exists($className, $this->componentDummies)) {
-            $dummy = $this->instantiateComponent($className, new Entity\Element(), $this->applicationComponentDummy);
+            $element = new Entity\Element();
+            $element->setClass($className);
+            $dummy = $this->instantiateComponent($element, $this->applicationComponentDummy);
             $this->componentDummies[$className] = $dummy;
         }
         return $this->componentDummies[$className];
     }
 
     /**
-     * @param $className
      * @param Entity\Element $entity
      * @param Application $appComponent
      * @return Element
      * @throws Component\Exception\ElementErrorException
      */
-    protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
+    protected function instantiateComponent(Entity\Element $entity, Application $appComponent)
     {
-        $finalClassName = $this->inventoryService->getAdjustedElementClassName($className);
+        $finalClassName = $this->inventoryService->getAdjustedElementClassName($entity->getClass());
         $entity->setClass($finalClassName);
         // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
         // Exceptions via Symfony.

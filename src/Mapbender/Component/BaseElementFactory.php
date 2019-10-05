@@ -19,6 +19,10 @@ class BaseElementFactory
 
     public function migrateElementConfiguration(Element $element)
     {
+        if (!$element->getClass()) {
+            throw new \LogicException("Empty component class name on element");
+        }
+
         $componentClassName = $this->inventoryService->getAdjustedElementClassName($element->getClass());
         if (is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var \Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $componentClassName */
