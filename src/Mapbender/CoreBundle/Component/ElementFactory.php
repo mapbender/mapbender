@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Factory service providing preinitialized Element entities and Element components.
  * Instance registered at mapbender.element_factory.service
  */
-class ElementFactory
+class ElementFactory extends BaseElementFactory
 {
     /** @var Element[] */
     protected $componentDummies = array();
@@ -28,11 +29,15 @@ class ElementFactory
     protected $appComponents = array();
 
     /**
+     * @param ElementInventoryService $inventoryService
      * @param TranslatorInterface $translator
      * @param ContainerInterface $container only used for passing on to Element/Application component constructors
      */
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container)
+    public function __construct(ElementInventoryService $inventoryService,
+                                TranslatorInterface $translator,
+                                ContainerInterface $container)
     {
+        parent::__construct($inventoryService);
         $this->translator = $translator;
         $this->container = $container;
         $this->applicationComponentDummy = $this->appComponentFromEntity(new Entity\Application());
@@ -105,9 +110,8 @@ class ElementFactory
      */
     protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
     {
-        /** @var ElementInventoryService $inventoryService */
-        $inventoryService = $this->container->get('mapbender.element_inventory.service');
-        $finalClassName = $inventoryService->getAdjustedElementClassName($className);
+        $finalClassName = $this->inventoryService->getAdjustedElementClassName($className);
+        $entity->setClass($finalClassName);
         // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
         // Exceptions via Symfony.
         try {
@@ -117,9 +121,7 @@ class ElementFactory
         } catch (\Exception $e) {
             throw new Component\Exception\UndefinedElementClassException($finalClassName, $e);
         }
-        if (is_a($finalClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            $finalClassName::updateEntityConfig($entity);
-        }
+        $this->migrateElementConfiguration($entity);
         $instance = new $finalClassName($appComponent, $this->container, $entity);
         if (!$instance instanceof Component\Element) {
             throw new Component\Exception\InvalidElementClassException($finalClassName);
