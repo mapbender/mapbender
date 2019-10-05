@@ -341,31 +341,6 @@ abstract class Element extends MinimalBound
     }
 
     /**
-     * Get lowercase element name from full class namespace
-     *
-     * @param string $class
-     * @return string
-     */
-    protected static function getElementName($class)
-    {
-        $namespaceParts = explode('\\', $class);
-
-        return strtolower(array_pop($namespaceParts));
-    }
-
-    /**
-     * Changes a element entity configuration while exporting.
-     *
-     * @param array $formConfiguration element entity configuration
-     * @param array $entityConfiguration element entity configuration
-     * @return array a configuration
-     */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        return $formConfiguration;
-    }
-
-    /**
      * Changes a element entity configuration while importing.
      *
      * @param array $configuration element entity configuration
@@ -475,18 +450,6 @@ abstract class Element extends MinimalBound
         $bareClassName = implode('', array_slice($clsInfo, -1));
         // convention: AdminType class name is the same as the element class name suffixed with AdminType
         return implode('\\', $namespaceParts) . '\\' . $bareClassName . 'AdminType';
-    }
-
-    /**
-     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
-     * inheriting from the abstract Element.
-     *
-     * @return string fully qualified class name
-     * @deprecated use ClassUtil::getBaseClass directly
-     */
-    protected static function getNonAbstractBaseClassName()
-    {
-        return ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
     }
 
     /**
