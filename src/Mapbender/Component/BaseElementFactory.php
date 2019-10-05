@@ -18,6 +18,13 @@ class BaseElementFactory
         $this->inventoryService = $inventoryService;
     }
 
+    /**
+     * Updates legacy values in Element's $configuration attribute (YAML applications, old database installs) to
+     * current standards.
+     * Also updates legacy $class values.
+     *
+     * @param Element $element
+     */
     public function migrateElementConfiguration(Element $element)
     {
         if (!$element->getClass()) {
@@ -37,7 +44,12 @@ class BaseElementFactory
 
         if (is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var \Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $componentClassName */
-            $componentClassName::updateEntityConfig($element);
+            // Avoid trying to migrate unconfigured elements further
+            // This allows updateEntityConfig implementations to skip past a bunch of array_key_exists and similar
+            // checks, which would otherwise be necessary on newly created and dummy entities
+            if ($element->getConfiguration()) {
+                $componentClassName::updateEntityConfig($element);
+            }
         }
     }
 }
