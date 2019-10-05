@@ -63,13 +63,13 @@ class ElementFormFactory extends BaseElementFactory
             ->add('class', 'hidden')
             ->add('region', 'hidden')
         ;
+        $this->migrateElementConfiguration($element);
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array('application' => $element->getApplication());
         if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
             $options['element'] = $element;
         }
-        $this->migrateElementConfiguration($element);
 
         if ($configurationType === null) {
             $configurationType = $this->getFallbackConfigurationFormType($element);
