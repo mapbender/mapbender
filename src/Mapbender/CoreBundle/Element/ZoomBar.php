@@ -107,7 +107,21 @@ class ZoomBar extends Element implements ConfigMigrationInterface
         }
         unset($config['stepsize']);
         unset($config['stepbypixel']);
+        $config['components'] = static::filterComponentList($entity, $config['components']);
         $entity->setConfiguration($config);
+    }
+
+    /**
+     * @param Entity\Element $entity
+     * @param string[] $componentList
+     * @return string[]
+     */
+    protected static function filterComponentList(Entity\Element $entity, $componentList)
+    {
+        if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
+            $componentList[] = 'zoom_in_out';
+        }
+        return $componentList;
     }
 
     /**
@@ -116,10 +130,6 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     public function render()
     {
         $configuration = $this->getConfiguration();
-        if (in_array("zoom_slider", $configuration['components'])
-            && !in_array("zoom_in_out", $configuration['components'])) {
-            $configuration['components'][] = "zoom_in_out";
-        }
         return $this->container->get('templating')->render($this->getFrontendTemplatePath(),  array(
             'id' => $this->getId(),
             "title" => $this->getTitle(),
