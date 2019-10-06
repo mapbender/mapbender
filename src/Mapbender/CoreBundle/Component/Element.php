@@ -37,13 +37,6 @@ abstract class Element extends MinimalBound
      */
     public static $ext_api = true;
 
-    /**
-     * Merge Configurations. The merge_configurations defines, if the default
-     * configuration array and the configuration array should be merged
-     * @var boolean merge configurations
-     */
-    public static $merge_configurations = true;
-
     /** @var Application Application component */
     protected $application;
 
@@ -314,11 +307,12 @@ abstract class Element extends MinimalBound
     }
 
     /**
-     *  Merges the default configuration array and the configuration array
+     * Rewrite of array_replace_recursive with implicit null filter
+     * @deprecated remove on master branch; use the appropriate array functions directly
      *
-     * @param array $default the default configuration of an element
-     * @param array $main the configuration of an element
-     * @return array the result configuration
+     * @param array $default replacement target
+     * @param array $main replacements
+     * @return array
      */
     public static function mergeArrays($default, $main)
     {

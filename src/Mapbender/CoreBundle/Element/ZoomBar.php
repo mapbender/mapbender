@@ -17,8 +17,6 @@ use Mapbender\CoreBundle\Entity;
 class ZoomBar extends Element implements ConfigMigrationInterface
 {
 
-    public static $merge_configurations = false;
-
     /**
      * @inheritdoc
      */

@@ -24,8 +24,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class PrintClient extends Element
 {
 
-    public static $merge_configurations = false;
-
     /**
      * @inheritdoc
      */
