@@ -34,7 +34,6 @@ class ScaleBar extends Element
     {
         return array(
             'title' => 'Scale Bar',
-            'tooltip' => 'Scale Bar',
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',

@@ -35,7 +35,6 @@ class Overview extends Element
     {
         return array(
             'title' => 'Overview',
-            'tooltip' => "Overview",
             'layerset' => null,
             'target' => null,
             'width' => 200,

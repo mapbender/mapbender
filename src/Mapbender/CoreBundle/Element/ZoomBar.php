@@ -56,7 +56,6 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => null,
             'target' => null,
             'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
             'anchor' => 'left-top',

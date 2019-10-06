@@ -57,7 +57,6 @@ class Sketch extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            "tooltip" => "Sketch",
             "target" => null,
             "defaultType" => null,
             "types" => null,

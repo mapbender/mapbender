@@ -59,7 +59,6 @@ class CoordinatesDisplay extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'coordinates display',
             'anchor' => 'right-bottom',
             'label' => false,
             'numDigits' => 2,
