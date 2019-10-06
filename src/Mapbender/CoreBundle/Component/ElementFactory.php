@@ -90,6 +90,39 @@ class ElementFactory extends BaseElementFactory
     }
 
     /**
+     * (Re)Configure an element entity based on array-style configuration. Used in Yaml-defined applications.
+     *
+     * @param Entity\Element $element
+     * @param mixed[] $configuration
+     * @param string|null $title
+     */
+    public function configureElement(Entity\Element $element, $configuration, $title=null)
+    {
+        $element->setConfiguration($configuration);
+        $elComp = $this->componentFromEntity($element);
+
+        if (!$title) {
+            $title = $elComp->getTitle();
+        }
+        // Do not use original $configuration array. Configuration may already have been modified once implicitly.
+        /** @see ConfigMigrationInterface */
+        $defaults = $elComp->getDefaultConfiguration();
+        $configInitial = $element->getConfiguration();
+        $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
+            return $v !== null;
+        }));
+        // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
+        foreach (array_keys($configInitial) as $key) {
+            if (!array_key_exists($key, $mergedConfig)) {
+                assert($configInitial[$key] === null);
+                $mergedConfig[$key] = null;
+            }
+        }
+        $element->setConfiguration($mergedConfig);
+        $element->setTitle($title);
+    }
+
+    /**
      * @param string $className
      * @return Element
      */

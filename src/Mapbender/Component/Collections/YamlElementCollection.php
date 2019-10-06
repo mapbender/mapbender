@@ -6,7 +6,6 @@ namespace Mapbender\Component\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
@@ -72,29 +71,8 @@ class YamlElementCollection extends AbstractLazyCollection
         unset($configuration['title']);
         try {
             $element = $this->factory->newEntity($className, $region);
-            $element->setConfiguration($configuration);
             $element->setId($id);
-            $elComp = $this->factory->componentFromEntity($element);
-
-            if (!$title) {
-                $title = $elComp->getTitle();
-            }
-            // Do not use original $configuration array. Configuration may already have been modified once implicitly.
-            /** @see ConfigMigrationInterface */
-            $defaults = $elComp->getDefaultConfiguration();
-            $configInitial = $element->getConfiguration();
-            $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
-                return $v !== null;
-            }));
-            // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
-            foreach (array_keys($configInitial) as $key) {
-                if (!array_key_exists($key, $mergedConfig)) {
-                    assert($configInitial[$key] === null);
-                    $mergedConfig[$key] = null;
-                }
-            }
-            $element->setConfiguration($mergedConfig);
-            $element->setTitle($title);
+            $this->factory->configureElement($element, $configuration, $title);
             return $element;
         } catch (ElementErrorException $e) {
             $this->logger->warning("Your YAML application contains an invalid Element {$className}: {$e->getMessage()}");
