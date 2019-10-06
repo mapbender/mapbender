@@ -38,7 +38,7 @@ class BaseElementFactory
                 throw new UndefinedElementClassException($componentClassName);
             }
         } catch (\Exception $e) {
-            throw new UndefinedElementClassException($componentClassName, $e);
+            throw new UndefinedElementClassException($componentClassName, null, $e);
         }
         $element->setClass($componentClassName);
 
