@@ -1,11 +1,13 @@
-## dev-release/3.0.7 @ a56242c39
+## dev-release/3.0.7 @ 05dfcd32b
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
 - Replace Chrome-specific regex usage in time dimension initialization with unspecific equivalents
+- Fix alignment of ZoomBar zoom level icons
 - When cloning DB applications, also clone access control rules
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
+- Remove unused tooltip Element configuration (ZoomBar, ScaleDisplay, ScaleBar, Overview, FeatureInfo, CoordinatesDisplay, Legend, Sketch)
 - Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
