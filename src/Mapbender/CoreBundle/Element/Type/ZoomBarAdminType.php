@@ -28,6 +28,7 @@ class ZoomBarAdminType extends AbstractType
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
+                    "Rotation" => "rotation",
                     "Pan" => "pan",
                     "History" => "history",
                     "Zoom box" => "zoom_box",

@@ -5,14 +5,21 @@
           <span class="iconMove"></span>
       </div>
     {% endif %}
-  {% if 'pan' in configuration.components %}
-  <div class="pan">
+{%- if 'rotation' in configuration.components -%}
+      <div class="rotation">
+        <span class="rotate-left hover-highlight-effect" data-degrees="-45"><i class="fa fa-level-down fa-flip-horizontal"></i></span>
+        <span class="reset-rotation hover-highlight-effect" data-rotation-bias="-45"><i class="fa fa-location-arrow default-rotate-left-45"></i></span>
+        <span class="rotate-right hover-highlight-effect" data-degrees="45"><i class="fa fa-level-down"></i></span>
+      </div>
+{%- endif -%}
+  {%- if 'pan' in configuration.components -%}
+  <div><div class="pan">
     <span class="panUp iconTop" title="{{ "mb.core.zoombar.panup" | trans }}"></span>
     <span class="panRight iconRight" title="{{ "mb.core.zoombar.panright" | trans }}"></span>
     <span class="panDown iconDown" title="{{ "mb.core.zoombar.pandown" | trans }}"></span>
     <span class="panLeft iconLeft" title="{{ "mb.core.zoombar.panleft" | trans }}"></span>
-  </div>
-  {% endif %}
+  </div></div>
+  {%- endif -%}
   <ul class="toolPane">
     {% if 'history' in configuration.components %}
       <li class="history">

@@ -28,7 +28,8 @@
   /**
   * Map navigation buttons
   */
-  .pan{
+  .pan {
+    display: inline-block;  // for centering against (even wider) rotation blob
     height: 49px;
     width: 49px;
     position:relative;
@@ -95,5 +96,32 @@
       margin-bottom: -1px;
     }
   }
-  
+
+  .rotation {
+    @include frontendContainerStyle();
+    color: fade-out($lightFontColor, .3);
+    margin-bottom: $space / 2;
+    display: flex;
+    flex-direction: row;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    padding: 4px;
+    text-align: justify;
+    line-height: 54px;
+    .reset-rotation {
+      flex: 1 1 auto;
+      text-align: center;
+      display: inline-block;
+      font-size: 179%;
+    }
+    .rotate-left, .rotate-right {
+      flex: 0 0 auto;
+      position: relative;
+      top: -10px;
+    }
+    .default-rotate-left-45 {
+      transform: rotate(-45deg);
+    }
+  }
 }

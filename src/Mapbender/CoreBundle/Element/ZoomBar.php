@@ -55,7 +55,7 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     {
         return array(
             'target' => null,
-            'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
+            'components' => array("rotation", "pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
             'anchor' => 'left-top',
             'stepSize' => 50,
             'stepByPixel' => false,
@@ -118,7 +118,18 @@ class ZoomBar extends Element implements ConfigMigrationInterface
         if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
             $componentList[] = 'zoom_in_out';
         }
+        $componentList = array_values(array_diff($componentList, static::getComponentBlacklist($entity)));
         return $componentList;
+    }
+
+    protected static function getComponentBlacklist(Entity\Element $entity)
+    {
+        $blackList = array();
+        $application = $entity->getApplication();
+        if ($application && $application->getMapEngineCode() === Entity\Application::MAP_ENGINE_OL2) {
+            $blackList[] = 'rotation';
+        }
+        return $blackList;
     }
 
     /**

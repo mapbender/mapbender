@@ -44,6 +44,7 @@ $.widget("mapbender.mbZoomBar", {
                 }
             });
         }
+        this._initRotation();
         this._trigger('ready');
     },
 
@@ -75,7 +76,45 @@ $.widget("mapbender.mbZoomBar", {
             self.mbMap.getModel().setZoomLevel(zoomLevel, true);
         });
     },
+    _initRotation: function() {
+        var $rotationElement = $('.rotation', this.element);
+        if (!$rotationElement.length) {
+            return;
+        }
+        var engineCode = Mapbender.mapEngine.code;
+        var engineSupportsRotation = engineCode === 'ol4';
+        var deg2rad = function(x) {
+            return x * Math.PI / 180;
+        };
+        var rad2deg = function(x) {
+            return x * 180 / Math.PI;
+        };
+        if (!engineSupportsRotation) {
+            throw new Error("Rotation is only supported on ol4 engine, not on current engine " + engineCode);
+        }
+        var olMap = this.mbMap.getModel().olMap;
+        $('[data-degrees]', $rotationElement).on('click', function() {
+            var increment = parseInt($(this).attr('data-degrees'));
+            var view = olMap.getView();
+            var rotationCurrentRadians = view.getRotation();
+            var rotationNewRadians = rotationCurrentRadians + deg2rad(increment);
+            view.animate({rotation: rotationNewRadians, duration: 400});
+        });
+        var $resetElement = $('.reset-rotation', $rotationElement);
+        var rotationBias = parseInt($resetElement.attr('data-rotation-bias') || '0');
 
+        $('.reset-rotation', $rotationElement).on('click', function() {
+            var view = olMap.getView();
+            view.animate({rotation: 0, duration: 400});
+        });
+        olMap.getView().on('change:rotation', function(e) {
+            var view = e.target;
+            var degrees = rad2deg(view.getRotation()) + rotationBias;
+            $('i',$resetElement).css({
+                transform: 'rotate(' + degrees + 'deg)'
+            });
+        });
+    },
     _setupZoomButtons: function() {
         var self = this;
         var model = this.mbMap.getModel();
