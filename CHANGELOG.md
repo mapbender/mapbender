@@ -1,9 +1,10 @@
-## dev-release/3.0.7 @ 05dfcd32b
+## dev-release/3.0.7 @ 4d61891ef
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
 - Replace Chrome-specific regex usage in time dimension initialization with unspecific equivalents
 - Fix alignment of ZoomBar zoom level icons
+- Replace ZoomBar history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - When cloning DB applications, also clone access control rules
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
