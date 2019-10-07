@@ -2,6 +2,8 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * Mapbender Zoombar
@@ -12,10 +14,8 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element
+class ZoomBar extends Element implements ConfigMigrationInterface
 {
-
-    public static $merge_configurations = false;
 
     /**
      * @inheritdoc
@@ -54,7 +54,6 @@ class ZoomBar extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => null,
             'target' => null,
             'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
             'anchor' => 'left-top',
@@ -76,10 +75,10 @@ class ZoomBar extends Element
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
-    public function getPublicConfiguration()
+    public static function updateEntityConfig(Entity\Element $entity)
     {
-        $defaults = $this->getDefaultConfiguration();
-        $config = $this->entity->getConfiguration();
+        $defaults = static::getDefaultConfiguration();
+        $config = $entity->getConfiguration();
         // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
         // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
         if (empty($config['stepSize'])) {
@@ -105,7 +104,21 @@ class ZoomBar extends Element
         }
         unset($config['stepsize']);
         unset($config['stepbypixel']);
-        return $config;
+        $config['components'] = static::filterComponentList($entity, $config['components']);
+        $entity->setConfiguration($config);
+    }
+
+    /**
+     * @param Entity\Element $entity
+     * @param string[] $componentList
+     * @return string[]
+     */
+    protected static function filterComponentList(Entity\Element $entity, $componentList)
+    {
+        if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
+            $componentList[] = 'zoom_in_out';
+        }
+        return $componentList;
     }
 
     /**
@@ -114,10 +127,6 @@ class ZoomBar extends Element
     public function render()
     {
         $configuration = $this->getConfiguration();
-        if (in_array("zoom_slider", $configuration['components'])
-            && !in_array("zoom_in_out", $configuration['components'])) {
-            $configuration['components'][] = "zoom_in_out";
-        }
         return $this->container->get('templating')->render($this->getFrontendTemplatePath(),  array(
             'id' => $this->getId(),
             "title" => $this->getTitle(),

@@ -34,7 +34,6 @@ class ScaleDisplay extends Element
     {
         return array(
             'title' => 'Scale Display',
-            'tooltip' => 'Scale Display',
             'target' => null,
             'unitPrefix' => false,
             'scalePrefix' => 'Scale = ',

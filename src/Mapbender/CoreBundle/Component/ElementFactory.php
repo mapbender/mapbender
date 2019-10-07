@@ -3,8 +3,10 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Component\Exception\InvalidElementClassException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -12,7 +14,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Factory service providing preinitialized Element entities and Element components.
  * Instance registered at mapbender.element_factory.service
  */
-class ElementFactory
+class ElementFactory extends BaseElementFactory
 {
     /** @var Element[] */
     protected $componentDummies = array();
@@ -28,11 +30,15 @@ class ElementFactory
     protected $appComponents = array();
 
     /**
+     * @param ElementInventoryService $inventoryService
      * @param TranslatorInterface $translator
      * @param ContainerInterface $container only used for passing on to Element/Application component constructors
      */
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container)
+    public function __construct(ElementInventoryService $inventoryService,
+                                TranslatorInterface $translator,
+                                ContainerInterface $container)
     {
+        parent::__construct($inventoryService);
         $this->translator = $translator;
         $this->container = $container;
         $this->applicationComponentDummy = $this->appComponentFromEntity(new Entity\Application());
@@ -53,7 +59,7 @@ class ElementFactory
             } else {
                 $appComponent = $this->applicationComponentDummy;
             }
-            $instance = $this->instantiateComponent($entity->getClass(), $entity, $appComponent);
+            $instance = $this->instantiateComponent($entity, $appComponent);
             $this->components[$entityObjectId] = $instance;
         }
         return $this->components[$entityObjectId];
@@ -84,45 +90,61 @@ class ElementFactory
     }
 
     /**
+     * (Re)Configure an element entity based on array-style configuration. Used in Yaml-defined applications.
+     *
+     * @param Entity\Element $element
+     * @param mixed[] $configuration
+     * @param string|null $title
+     */
+    public function configureElement(Entity\Element $element, $configuration)
+    {
+        $element->setConfiguration($configuration);
+        $elComp = $this->componentFromEntity($element);
+        // Do not use original $configuration array. Configuration may already have been modified once implicitly.
+        /** @see ConfigMigrationInterface */
+        $defaults = $elComp->getDefaultConfiguration();
+        $configInitial = $element->getConfiguration();
+        $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
+            return $v !== null;
+        }));
+        // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
+        foreach (array_keys($configInitial) as $key) {
+            if (!array_key_exists($key, $mergedConfig)) {
+                assert($configInitial[$key] === null);
+                $mergedConfig[$key] = null;
+            }
+        }
+        $element->setConfiguration($mergedConfig);
+    }
+
+    /**
      * @param string $className
      * @return Element
      */
     protected function getComponentDummy($className)
     {
         if (!array_key_exists($className, $this->componentDummies)) {
-            $dummy = $this->instantiateComponent($className, new Entity\Element(), $this->applicationComponentDummy);
+            $element = new Entity\Element();
+            $element->setClass($className);
+            $dummy = $this->instantiateComponent($element, $this->applicationComponentDummy);
             $this->componentDummies[$className] = $dummy;
         }
         return $this->componentDummies[$className];
     }
 
     /**
-     * @param $className
      * @param Entity\Element $entity
      * @param Application $appComponent
      * @return Element
      * @throws Component\Exception\ElementErrorException
      */
-    protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
+    protected function instantiateComponent(Entity\Element $entity, Application $appComponent)
     {
-        /** @var ElementInventoryService $inventoryService */
-        $inventoryService = $this->container->get('mapbender.element_inventory.service');
-        $finalClassName = $inventoryService->getAdjustedElementClassName($className);
-        // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
-        // Exceptions via Symfony.
-        try {
-            if (!class_exists($finalClassName, true)) {
-                throw new Component\Exception\UndefinedElementClassException($finalClassName);
-            }
-        } catch (\Exception $e) {
-            throw new Component\Exception\UndefinedElementClassException($finalClassName, $e);
-        }
-        if (is_a($finalClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            $finalClassName::updateEntityConfig($entity);
-        }
-        $instance = new $finalClassName($appComponent, $this->container, $entity);
+        $this->migrateElementConfiguration($entity);
+        $componentClassName = $entity->getClass();
+        $instance = new $componentClassName($appComponent, $this->container, $entity);
         if (!$instance instanceof Component\Element) {
-            throw new Component\Exception\InvalidElementClassException($finalClassName);
+            throw new InvalidElementClassException($componentClassName);
         }
         // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
         return $instance;

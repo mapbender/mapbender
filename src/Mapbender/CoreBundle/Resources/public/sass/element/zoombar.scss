@@ -1,12 +1,13 @@
 .mb-element-zoombar{
-  width: 49px;  // for .pan item positioning
-  text-align: center; // support .toolPane automatic centering
+  text-align: center; // support automatic centering of children
 
   .pan, .toolPane {
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
   }
-
+  .pan, .toolPane, .move-icon-wrap {
+    margin-bottom: $space / 2;
+  }
   .pan > span {
     &:hover {
       color: $lightFontColor;
@@ -29,7 +30,7 @@
   */
   .pan{
     height: 49px;
-    width: 100%;
+    width: 49px;
     position:relative;
     @include border-radius(50%,50%);
 
@@ -53,8 +54,7 @@
   * Map tools
   */
   .toolPane{
-    display: inline-block;
-    margin-top: $space/2;
+    display: inline-block; // for automatic width and centering
     padding:5px;
     @include border-radius($radius);
 

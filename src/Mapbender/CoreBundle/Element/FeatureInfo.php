@@ -55,7 +55,6 @@ class FeatureInfo extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'Feature Info Dialog',
             'type' => 'dialog',
             "autoActivate" => false,
             "deactivateOnClose" => true,
