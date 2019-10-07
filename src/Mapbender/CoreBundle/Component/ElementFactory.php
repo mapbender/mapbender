@@ -96,14 +96,10 @@ class ElementFactory extends BaseElementFactory
      * @param mixed[] $configuration
      * @param string|null $title
      */
-    public function configureElement(Entity\Element $element, $configuration, $title=null)
+    public function configureElement(Entity\Element $element, $configuration)
     {
         $element->setConfiguration($configuration);
         $elComp = $this->componentFromEntity($element);
-
-        if (!$title) {
-            $title = $elComp->getTitle();
-        }
         // Do not use original $configuration array. Configuration may already have been modified once implicitly.
         /** @see ConfigMigrationInterface */
         $defaults = $elComp->getDefaultConfiguration();
@@ -119,7 +115,6 @@ class ElementFactory extends BaseElementFactory
             }
         }
         $element->setConfiguration($mergedConfig);
-        $element->setTitle($title);
     }
 
     /**

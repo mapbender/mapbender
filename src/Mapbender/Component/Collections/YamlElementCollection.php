@@ -72,7 +72,10 @@ class YamlElementCollection extends AbstractLazyCollection
         try {
             $element = $this->factory->newEntity($className, $region);
             $element->setId($id);
-            $this->factory->configureElement($element, $configuration, $title);
+            $this->factory->configureElement($element, $configuration);
+            if ($title) {
+                $element->setTitle($title);
+            }
             return $element;
         } catch (ElementErrorException $e) {
             $this->logger->warning("Your YAML application contains an invalid Element {$className}: {$e->getMessage()}");
