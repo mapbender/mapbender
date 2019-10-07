@@ -126,8 +126,17 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     {
         $blackList = array();
         $application = $entity->getApplication();
-        if ($application && $application->getMapEngineCode() === Entity\Application::MAP_ENGINE_OL2) {
-            $blackList[] = 'rotation';
+        if ($application) {
+            switch ($application->getMapEngineCode()) {
+                case Entity\Application::MAP_ENGINE_OL2:
+                    $blackList[] = 'rotation';
+                    break;
+                case Entity\Application::MAP_ENGINE_OL4:
+                    $blackList[] = 'history';
+                    break;
+                default:
+                    throw new \RuntimeException("Unsupported map engine " . print_r($application->getMapEngineCode(), true));
+            }
         }
         return $blackList;
     }
