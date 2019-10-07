@@ -25,7 +25,6 @@ class OverviewAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
             ->add('layerset', 'app_layerset', array(
                 'application' => $options['application'],
                 'required' => true,

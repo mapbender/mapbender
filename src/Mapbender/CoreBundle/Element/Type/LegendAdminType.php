@@ -23,7 +23,7 @@ class LegendAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
+        $builder
             ->add('elementType', 'choice',
                 array(
                 'required' => true,

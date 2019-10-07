@@ -83,12 +83,7 @@ class ElementController extends ApplicationControllerBase
         $application = $this->requireApplication($slug);
         $class       = $request->get('class'); // Get class for element
 
-        if (!class_exists($class)) {
-            throw new \RuntimeException('An Element class "' . $class
-                . '" does not exist.');
-        }
-
-        $region               = $request->get('region');
+        $region = $request->query->get('region');
         $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
         $formInfo = $formFactory->getConfigurationForm($element);

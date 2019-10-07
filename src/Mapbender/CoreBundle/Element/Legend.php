@@ -56,7 +56,6 @@ class Legend extends Element implements ConfigMigrationInterface
             "target" => null,
             "elementType" => null,
             "autoOpen" => true,
-            "tooltip" => "Legend",
             "showSourceTitle" => true,
             "showLayerTitle" => true,
             "showGroupedLayerTitle" => true,

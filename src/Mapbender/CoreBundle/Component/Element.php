@@ -37,13 +37,6 @@ abstract class Element extends MinimalBound
      */
     public static $ext_api = true;
 
-    /**
-     * Merge Configurations. The merge_configurations defines, if the default
-     * configuration array and the configuration array should be merged
-     * @var boolean merge configurations
-     */
-    public static $merge_configurations = true;
-
     /** @var Application Application component */
     protected $application;
 
@@ -314,11 +307,12 @@ abstract class Element extends MinimalBound
     }
 
     /**
-     *  Merges the default configuration array and the configuration array
+     * Rewrite of array_replace_recursive with implicit null filter
+     * @deprecated remove on master branch; use the appropriate array functions directly
      *
-     * @param array $default the default configuration of an element
-     * @param array $main the configuration of an element
-     * @return array the result configuration
+     * @param array $default replacement target
+     * @param array $main replacements
+     * @return array
      */
     public static function mergeArrays($default, $main)
     {
@@ -338,31 +332,6 @@ abstract class Element extends MinimalBound
             }
         }
         return $result;
-    }
-
-    /**
-     * Get lowercase element name from full class namespace
-     *
-     * @param string $class
-     * @return string
-     */
-    protected static function getElementName($class)
-    {
-        $namespaceParts = explode('\\', $class);
-
-        return strtolower(array_pop($namespaceParts));
-    }
-
-    /**
-     * Changes a element entity configuration while exporting.
-     *
-     * @param array $formConfiguration element entity configuration
-     * @param array $entityConfiguration element entity configuration
-     * @return array a configuration
-     */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        return $formConfiguration;
     }
 
     /**
@@ -475,18 +444,6 @@ abstract class Element extends MinimalBound
         $bareClassName = implode('', array_slice($clsInfo, -1));
         // convention: AdminType class name is the same as the element class name suffixed with AdminType
         return implode('\\', $namespaceParts) . '\\' . $bareClassName . 'AdminType';
-    }
-
-    /**
-     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
-     * inheriting from the abstract Element.
-     *
-     * @return string fully qualified class name
-     * @deprecated use ClassUtil::getBaseClass directly
-     */
-    protected static function getNonAbstractBaseClassName()
-    {
-        return ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
     }
 
     /**

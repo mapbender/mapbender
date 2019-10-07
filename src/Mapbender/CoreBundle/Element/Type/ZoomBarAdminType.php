@@ -24,7 +24,6 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder
-            ->add('tooltip', 'text', array('required' => false))
             ->add('components', 'choice', array(
                 'required' => true,
                 'multiple' => true,

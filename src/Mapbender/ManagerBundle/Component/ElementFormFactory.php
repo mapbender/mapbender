@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
+use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -17,12 +18,10 @@ use Symfony\Component\Form\FormTypeInterface;
  *
  * Default instance in container as mapbender.manager.element_form_factory.service
  */
-class ElementFormFactory
+class ElementFormFactory extends BaseElementFactory
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
-    /** @var ElementInventoryService */
-    protected $inventoryService;
     /** @var ContainerInterface */
     protected $container;
     /** @var bool */
@@ -38,8 +37,8 @@ class ElementFormFactory
                                 ElementInventoryService $inventoryService,
                                 ContainerInterface $container, $strict = false)
     {
+        parent::__construct($inventoryService);
         $this->formFactory = $formFactory;
-        $this->inventoryService = $inventoryService;
         $this->container = $container;
         $this->setStrict($strict);
     }
@@ -63,18 +62,17 @@ class ElementFormFactory
             ->add('class', 'hidden')
             ->add('region', 'hidden')
         ;
+        $this->migrateElementConfiguration($element);
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array('application' => $element->getApplication());
-        $componentClassName = $this->getComponentClass($element);
-        if (is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            $componentClassName::updateEntityConfig($element);
-        }
+
         if ($configurationType === null) {
             $configurationType = $this->getFallbackConfigurationFormType($element);
             unset($options['application']);
             $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
         } else {
+            $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
         }
 

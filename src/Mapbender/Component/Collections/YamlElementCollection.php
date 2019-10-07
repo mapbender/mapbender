@@ -71,20 +71,11 @@ class YamlElementCollection extends AbstractLazyCollection
         unset($configuration['title']);
         try {
             $element = $this->factory->newEntity($className, $region);
-            $element->setConfiguration($configuration);
             $element->setId($id);
-            $elComp = $this->factory->componentFromEntity($element);
-            if (!$title) {
-                $title = $elComp->getTitle();
+            $this->factory->configureElement($element, $configuration);
+            if ($title) {
+                $element->setTitle($title);
             }
-            if ($elComp::$merge_configurations) {
-                // Configuration may already have been modified once implicitly
-                /** @see ConfigMigrationInterface */
-                $configBefore = $element->getConfiguration();
-                $configAfter = $elComp->mergeArrays($elComp->getDefaultConfiguration(), $configBefore);
-                $element->setConfiguration($configAfter);
-            }
-            $element->setTitle($title);
             return $element;
         } catch (ElementErrorException $e) {
             $this->logger->warning("Your YAML application contains an invalid Element {$className}: {$e->getMessage()}");
