@@ -47,7 +47,7 @@
 
 // frontend
 @mixin frontendContainerStyle(){
-  color:$lightFontColor;
+  color: $toolBarFontColor;
   background-color:rgba(0,0,0,0.8);
 }
 @mixin smartphones(){

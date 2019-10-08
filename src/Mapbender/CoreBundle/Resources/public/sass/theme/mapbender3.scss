@@ -24,9 +24,9 @@
 .toolBar {
   @include frontendContainerStyle();
   .toolBarItem {
-    color: fade-out($lightFontColor, .3);
+    color: fade-out($toolBarFontColor, .3);
     &:hover {
-      color: $lightFontColor;
+      color: inherit;
     }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
