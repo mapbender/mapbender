@@ -87,6 +87,17 @@
   }
 
   .rotation {
+    svg {
+      height: 2.5em;
+      width: auto;
+      // we only have one icon :)
+    }
+    .rotate-cw {
+      transform: scaleY(-1);
+    }
+    .rotate-ccw {
+      transform: scale(-1, -1);
+    }
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
     margin-bottom: $space / 2;
@@ -104,10 +115,10 @@
       display: inline-block;
       font-size: 179%;
     }
-    .rotate-left, .rotate-right {
+    .rotate-cw, .rotate-ccw {
       flex: 0 0 auto;
       position: relative;
-      top: -10px;
+      bottom: 0.6em;
     }
     .default-rotate-left-45 {
       transform: rotate(-45deg);
