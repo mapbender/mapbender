@@ -142,7 +142,7 @@ $pageWidth: $contentPaneWidth + $navWidth;
 .leftPane{
   width:$navWidth;
 
-  > .navigation {
+  .navigation {
     background-color: darken($contentColor, 1%);
     color: $middleFontColor;
     box-shadow: -1em 0 2em inset darken($contentColor, 10%);
@@ -158,10 +158,11 @@ $pageWidth: $contentPaneWidth + $navWidth;
         &:hover, &:focus {
           background-color: #E0DDDD;
           color: #000;
-          @include transition(all 0.3s linear);
         }
+        @include transition(all 0.3s linear);
       }
     }
+    .navLevel2, .navLevel3{margin-left:$space/2;}
   }
   .logo {
     max-width: 100%;
@@ -176,7 +177,7 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
-.navLevel2, .navLevel3{margin-left:$space/2;}
+
 .navItem{
   a {
     &:before{margin-right:5px;}
