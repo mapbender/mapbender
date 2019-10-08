@@ -24,6 +24,29 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
+.navigation {
+  color: $middleFontColor;
+  .navItem {
+    > a {
+      display: block;
+      @include transition(all 0.3s linear);
+      // separate text from built-in icon
+      &:before{margin-right:5px;}
+    }
+    &:hover, &:focus {
+      color: darken($middleFontColor, 12%);
+    }
+    &.activeItem {
+      color: darken($middleFontColor, 24%);
+      &:hover, &:focus {
+        color: darken($middleFontColor, 36%);
+      }
+    }
+  }
+}
+
+
+
 // ------------------------------------------------------------------------ PAGE
 .page{
   top:-$bannerHeight;
@@ -144,22 +167,17 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
   .navigation {
     background-color: darken($contentColor, 1%);
-    color: $middleFontColor;
     box-shadow: -1em 0 2em inset darken($contentColor, 10%);
     border-left:solid 1px $thirdColor;
     border-bottom:solid 1px $thirdColor;
     border-bottom-left-radius: $containerBorderRadius;
     padding: 10px;
     .navItem {
-
       > a {
-        display: block;
         padding: 2px 10px;
         &:hover, &:focus {
           background-color: #E0DDDD;
-          color: #000;
         }
-        @include transition(all 0.3s linear);
       }
     }
     .navLevel2, .navLevel3{margin-left:$space/2;}
@@ -179,9 +197,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
 
 .navItem{
-  a {
-    &:before{margin-right:5px;}
-  }
   &.activeItem {
     & > a{color: $ciColor;}
   }
