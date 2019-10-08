@@ -2,11 +2,13 @@
 @import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
+@import "modules/checkbox";
 @import "modules/dropdown";
 
 .olControlZoom {
   display: none;
 }
+
 
 /* ---------------------------------------------------------------- VARIABLES */
 
@@ -91,18 +93,6 @@ fieldset{
 
   &:before{margin-right:5px;}
   &:hover, &.activeLink, &:active{color:$ciColor;};
-}
-/* ----------------------------------------------------------------- CHECKBOX */
-.checkWrapper{
-  cursor:pointer;
-  width:$fontSize;
-  &.checkboxDisabled{@include opacity(0.4);}
-}
-.checkbox{
-  @include pos(-9999px,'','',0);
-  height: 100%;
-  width: 100%;
-  @include opacity(0);
 }
 /* ----------------------------------------------------------------- DROPDOWN */
 .dropdown {
