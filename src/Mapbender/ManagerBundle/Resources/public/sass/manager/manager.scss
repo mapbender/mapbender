@@ -64,7 +64,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
   position:relative;
   a {
-    text-decoration: none;
     &:hover{
       color: $darkFontColor;
     }
