@@ -40,10 +40,9 @@
     &:hover{background-color:darken($buttonCriticalFirstColor, 5%);}
   }
 }
-.linkButton{
-  @extend .buttonCore;
-  color:$middleFontColor;
-
+.linkButton {
+  @extend .smallText;
+  user-select: none;
   &:before{margin-right:5px;}
   &:hover, &.activeLink, &:active{color:$ciColor;};
 }
