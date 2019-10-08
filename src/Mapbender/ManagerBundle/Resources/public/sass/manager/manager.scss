@@ -141,7 +141,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
 // ------------------------------------------------------------------- PAGE LEFT
 .leftPane{
   width:$navWidth;
-  @include absolute(0 '' '' 0);
 
   > .navigation {
     background-color: darken($contentColor, 1%);
@@ -162,14 +161,17 @@ $pageWidth: $contentPaneWidth + $navWidth;
       }
     }
   }
-  .logo{
+  .logo {
+    max-width: 100%;
     max-height:120px;
-    @include absolute($space '' '' ($space + $space/2));
   }
-}
-.logoContainer{
-  position:relative;
-  height:$bannerHeight;
+  .logoContainer{
+    padding-top: $space;
+    height:$bannerHeight;
+  }
+  .logoContainer, >.navigation {
+    padding-left: $space / 2;
+  }
 }
 
 .navLevel1{
