@@ -20,7 +20,6 @@
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
-.logoContainer{background-image:url($headPatternUrl);}
 .toolBar {
   @include frontendContainerStyle();
   .toolBarItem {

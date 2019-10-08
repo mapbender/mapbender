@@ -10,3 +10,14 @@
   }
 }
 
+.toolBar.top .toolBarItem.logoContainer {
+  position: unset;
+  z-index: unset;
+  background: unset;
+  margin: unset;
+  display: unset;
+  padding: 0; // use padding pixels for more of the logo
+}
+.logo {
+  max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
+}

@@ -73,6 +73,6 @@ class Fullscreen extends Template
 
     public function getTwigTemplate()
     {
-        return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+        return 'MapbenderCoreBundle:Template:anwendertreffen.html.twig';
     }
 }
