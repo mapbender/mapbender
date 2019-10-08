@@ -104,8 +104,8 @@
                     return ol.coordinate.format(coordinate, template, numDigits);
                 },
                 projection: model.getCurrentProjectionCode(),
-                className: 'custom-mouse-position',
-                target: $(this.element).attr('id'),
+                className: 'inline',
+                target: $('.display-area', this.element).get(0),
                 undefinedHTML: $('<span/>').text(this.options.empty).html()
             };
             if (this.control) {
