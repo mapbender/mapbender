@@ -37,6 +37,9 @@ $pageWidth: $contentPaneWidth + $navWidth;
       color: darken($middleFontColor, 12%);
     }
     &.activeItem {
+      > a:before {
+        color: $ciColor;
+      }
       color: darken($middleFontColor, 24%);
       &:hover, &:focus {
         color: darken($middleFontColor, 36%);
@@ -195,12 +198,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
-
-.navItem{
-  &.activeItem {
-    & > a{color: $ciColor;}
-  }
-}
 
 .rightPane {
   width: $contentPaneWidth;
