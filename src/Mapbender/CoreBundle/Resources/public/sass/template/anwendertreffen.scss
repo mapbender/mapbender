@@ -1,0 +1,10 @@
+.toolBar {
+  color: #222;
+  &.top {
+    background: linear-gradient(0deg, rgba(255,255,255,0.65), rgba(255,255,255,0.45));
+  }
+  &.bottom {
+    background: linear-gradient(0deg, rgba(255,255,255,0.45), rgba(255,255,255,0.65));
+  }
+}
+

@@ -47,6 +47,7 @@ class Fullscreen extends Template
             case 'css':
                 return array(
                     '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/template/anwendertreffen.scss',
                 );
             case 'js':
                 return array(
