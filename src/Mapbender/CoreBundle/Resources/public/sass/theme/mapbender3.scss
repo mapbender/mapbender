@@ -37,8 +37,8 @@
     }
   }
   .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: $contentColor;
-    color:$firstColor;
+    background-color: fade-out($toolBarFontColor, .3);
+    color: #eee;
   }
 
   &.top {
