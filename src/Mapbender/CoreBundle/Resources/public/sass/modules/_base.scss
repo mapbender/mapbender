@@ -19,6 +19,12 @@ html, body{
                       url($imageBasePath + '/body.png'));
 }
 ul, ol{list-style:none;}
-hr, h1, h2, h3, ul, ol, li{margin:0;padding:0px;}
-a{text-decoration:none;}
-p{margin:0px;}
+hr, h1, h2, h3, ul, ol, li{margin:0;padding:0;}
+a {
+  text-decoration:none;
+  // undo bootstrap's default blue text color on all <a> elements
+  &, &:hover, &:visited, &:focus {
+    color:inherit;
+  }
+}
+p{margin:0;}
