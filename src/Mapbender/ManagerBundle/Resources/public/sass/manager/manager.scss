@@ -144,11 +144,13 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
   > .navigation {
     background-color: darken($contentColor, 1%);
+    color: $middleFontColor;
     box-shadow: -1em 0 2em inset darken($contentColor, 10%);
+    border-left:solid 1px $thirdColor;
+    border-bottom:solid 1px $thirdColor;
     border-bottom-left-radius: $containerBorderRadius;
     padding: 10px;
     .navItem {
-      display: block;
 
       > a {
         display: block;
@@ -174,25 +176,10 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
-.navLevel1{
-  padding:$space/2 $space;
-  background-color:$contentColor;
-  border-left:solid 1px $thirdColor;
-  border-bottom:solid 1px $thirdColor;
-}
 .navLevel2, .navLevel3{margin-left:$space/2;}
 .navItem{
   a {
     &:before{margin-right:5px;}
-
-    font:{
-      family: $fontFamily;
-      size: $fontSize - 2;
-    }
-    color:$middleFontColor;
-    padding:($space/4) ($space/2);
-
-    &:hover{color:$darkFontColor;}
   }
   &.activeItem {
     & > a{color: $ciColor;}
