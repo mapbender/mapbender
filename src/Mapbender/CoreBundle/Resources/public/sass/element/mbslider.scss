@@ -1,14 +1,9 @@
 
-$fontFamily: "Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif !default;
-
 /* UI Mapbender slider */
 .mb-slider.ui-slider{
-    font-family: $fontFamily;
-    font-size: $fontSize;
     position: relative;
     border: 1px solid $ciColor;
     height: 12px;
-    border-radius: 0px !important;
     > .ui-slider-range{
        position: absolute;
        display: block;
@@ -25,14 +20,9 @@ $fontFamily: "Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif !d
        background-color: lighten($ciColor, 40%);
        top: -5px;
        margin-left: -6px;
-       border-radius: 0px !important;
     }
     > .ui-slider-handle.ui-state-hover,.ui-slider-handle.ui-state-activ,.ui-slider-handle.ui-state-focus{
       border-color: $ciColor;
       background-color: $ciColor;
     }
-/*    > .ui-slider-handle.ui-state-focus{
-      border-color: $ciColor;
-      background-color: lighten($ciColor, 40%);
-    }*/
 }
