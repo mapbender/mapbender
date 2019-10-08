@@ -1,3 +1,11 @@
+{# HACK mode on: define rotation icons as inlined svgs #}
+{% block quarter_circle_arrow_svg %}
+<svg viewBox="0 40 70 200"><g fill="white"><path
+     d="M67.41,62.55L58.02,53c-26.94,26.47-41.77,61.84-41.77,99.6c0,11.12,1.58,27.16,5.94,40.14
+        c-5.66,3.35-10.12,5.99-11,6.51c-2.06,1.22-4.12,2.43-6.26,3.7c17.87,12.64,35.65,25.22,53.62,37.94
+        c-2.49-21.85-4.96-43.47-7.45-65.25c-2.02,1.2-9.28,5.49-17.07,10.1c-2.74-9.4-4.39-21.59-4.39-33.13
+        C29.64,118.46,43.05,86.48,67.41,62.55z"/></g></svg>
+{% endblock %}
 {% spaceless %}
 <div id="{{ id }}" class="mb-element mb-element-zoombar {{configuration.anchor}}">
     {% if configuration.draggable is defined and configuration.draggable %}
@@ -7,9 +15,9 @@
     {% endif %}
 {%- if 'rotation' in configuration.components -%}
       <div class="rotation">
-        <span class="rotate-left hover-highlight-effect" data-degrees="-45"><i class="fa fa-level-down fa-flip-horizontal"></i></span>
+        <span class="rotate-cw hover-highlight-effect" data-degrees="45">{{ block('quarter_circle_arrow_svg') }}</span>
         <span class="reset-rotation hover-highlight-effect" data-rotation-bias="-45"><i class="fa fa-location-arrow default-rotate-left-45"></i></span>
-        <span class="rotate-right hover-highlight-effect" data-degrees="45"><i class="fa fa-level-down"></i></span>
+        <span class="rotate-ccw hover-highlight-effect" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
       </div>
 {%- endif -%}
   {%- if 'pan' in configuration.components -%}
