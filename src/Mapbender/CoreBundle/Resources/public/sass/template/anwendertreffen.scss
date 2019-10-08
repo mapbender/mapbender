@@ -1,11 +1,11 @@
 .toolBar {
   color: #222;
   &.top {
-    background: linear-gradient(0deg, rgba(255,255,255,0.65), rgba(255,255,255,0.45));
+    background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
   &.bottom {
-    background: linear-gradient(0deg, rgba(255,255,255,0.45), rgba(255,255,255,0.65));
+    background: linear-gradient(0deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
 }
