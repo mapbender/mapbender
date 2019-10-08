@@ -150,7 +150,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
     }
     .iconDown {
       padding-right: $space;
-      font-family: $fontFamily;
       &:before {
         @include absolute('' 0 '' '');
       }

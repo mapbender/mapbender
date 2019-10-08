@@ -1,5 +1,4 @@
 .buttonCore{
-  font-family: $fontFamily;
   @extend .smallText;
   @include noUserSelect();
 
