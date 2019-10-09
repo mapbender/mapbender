@@ -21,3 +21,46 @@
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
+.sidePane.left {
+  float: none;
+}
+.map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  .map-overlay-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    div.toolBar {
+      flex: 0;
+    }
+    div.sidePane {
+      position: initial;
+      flex: 1;
+    }
+  }
+}
+
+.toolBar {
+  &, &.top, &.bottom {
+    position: initial;
+  }
+}
+.sidePane {
+  display: initial;
+  width: initial;
+  max-width: 450px;
+  position: initial;
+  z-index: unset;
+  &:after {
+    clear: both;
+  }
+  .sideContent {
+    position: unset;
+  }
+}

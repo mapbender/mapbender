@@ -2,51 +2,47 @@
 
 {% block frontend_content %}
   {% set sidePaneClosed = region_props.sidepane.properties.closed|default(false) %}
-  <div id="templateWrapper" class="templateWrapper {% if sidePaneClosed == false %}sidePaneOpened{% endif %}">
-    <ul id="toolbar" class="toolBar itemsRight top">
-          <li class="toolBarItem logoContainer">
-            {% block logo %}
-              <img class="logo" src="{{ asset(fom.server_logo) }}"/>
-            {% endblock %}
-          </li>
-        {% for element in application.elements('toolbar') %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-    </ul>
+  <div id="templateWrapper" class="templateWrapper">
+    <div id="content" class="contentPane">
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'application': application, 'region': 'content' }%}
+    </div>
+    <div class="map-overlay">
+      <div class="map-overlay-column sidePaneOpened">
+        <div class="toolBar top">
+          <ul id="toolbar" class="itemsRight">
+                <li class="toolBarItem logoContainer">
+                  {% block logo %}
+                    <img class="logo" src="{{ asset(fom.server_logo) }}"/>
+                  {% endblock %}
+                </li>
+              {% for element in application.elements('toolbar') %}
+                <li class="toolBarItem">{{ element.render() | raw }}</li>
+              {% endfor %}
+          </ul>
+        </div>
+        {% if application.elements['sidepane'] is defined %}
+          {% set properties = region_props['sidepane'].properties|default({}) %}
 
-    {# Right sidepane definition #}
-    {% set name = 'sidepane' %}
-    {% if application.elements[name] is defined %}
-      {% set region = application.elements[name] %}
-      {% set properties = region_props[name].properties|default({}) %}
-      {% set align = properties.align|default('left') %}
-      {% set isRegionClosed = properties.closed|default('false') %}
+        <div class="sidePane left" data-closed="{{ properties.closed | default('false') }}"
+                {# {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}#}
+          >
+          <ul class="sidePaneTabs">
+            <li class="sidePaneTabItem toggleSideBar"></li>
+          </ul>
+          <div class="sideContent">
 
-      <div id="{{ name }}"
-           data-closed="{{ isRegionClosed }}"
-           class="clear sidePane {{ align }}"
-        {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}
-      >
-        <ul class="sidePaneTabs">
-          <li class="sidePaneTabItem toggleSideBar"></li>
-        </ul>
-        <div class="sideContent">
-          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': name } %}
+            {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'application': application, 'region': 'sidepane' } %}
+          </div>
+        </div>
+        {% endif %}{# sidepane #}
+        <div class="toolBar bottom">
+          <ul class="itemsRight">
+          {% for element in application.elements('footer')%}
+            <li class="toolBarItem">{{ element.render() | raw }}</li>
+          {% endfor %}
+          </ul>
         </div>
       </div>
-    {% endif %}
-
-    <div id="content" class="contentPane">
-      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
-
-    {% if application.elements.footer is defined %}
-    <ul id="footer" class="toolBar itemsRight bottom">
-        {% for element in application.elements('footer')%}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
   </div>
-
 {% endblock %}
