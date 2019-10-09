@@ -46,7 +46,6 @@ $topPaneHeight: 70px;
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar{
   z-index:4;
-  label, span{font-family: $fontFamily;}
   &.top{@include pos($topPaneHeight,0,'',0);}
   &.bottom{@include absolute('' 0 0 0);}
 }
