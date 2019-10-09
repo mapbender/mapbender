@@ -2,9 +2,9 @@
   @extend .smallText;
   @include noUserSelect();
 
-  // this sucks -.- thank u mozilla for this awesome bug!
-  // -> line-height behaviour differs from other browsers.
-  //    font-size and the *non* font sans-serif fix it in all ff.
+  // Workaround for vintage Firefox <=29 (circa 2014) line-height mishandling on form buttons
+  // and misc other form elements.
+  // see https://bugzilla.mozilla.org/show_bug.cgi?id=697451
   @-moz-document url-prefix(){
     .buttonCore{font: ($fontSize - 2) sans-serif;}
   }
