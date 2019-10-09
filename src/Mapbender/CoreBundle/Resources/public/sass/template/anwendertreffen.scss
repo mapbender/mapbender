@@ -65,4 +65,12 @@
   .sideContent {
     position: unset;
   }
+  background: linear-gradient(0deg, rgba(33, 33, 33, 0.85), rgba(33, 33, 33, 0.95));
+  color: #fff;
+  // Make Legend and maybe other images visible against inverted background
+  img {
+    background: rgba(192, 192, 192, 0.85);
+    padding: $radius;
+    border-radius: $radius;
+  }
 }
