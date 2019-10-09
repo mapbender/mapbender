@@ -58,11 +58,19 @@
       flex: 0;
     }
     div.sidePane {
-      position: initial;
       flex: 1;
     }
-    div.toolBar, div.sidePane {
+    div.toolBar {
       position: initial;
+    }
+    div.sidePane {
+      // undo position: absolute completely
+      // We need relative though for sliding in / out (is done with left: -350px + transition)
+      position: relative;
+      top: unset;
+      bottom: unset;
+      left: unset;
+      right: unset;
     }
     > * {
       pointer-events: initial;
@@ -81,7 +89,19 @@
     clear: both;
   }
   .sideContent {
+    display: inline-block;
     position: unset;
+  }
+  .toggleSideBar {
+    position: absolute;
+    left: 350px;
+    top: 0;
+    font-size: 1.5rem;
+    display: inline-block;
+    background: #777;
+    padding: 5px;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
   }
   background: linear-gradient(0deg, rgba(33, 33, 33, 0.85), rgba(33, 33, 33, 0.95));
   color: #fff;
@@ -91,4 +111,8 @@
     padding: $radius;
     border-radius: $radius;
   }
+}
+
+html .layer-menu .layer-slider-bar .layer-slider-handle {
+  background: #777;
 }
