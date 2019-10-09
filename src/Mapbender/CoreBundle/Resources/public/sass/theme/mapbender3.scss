@@ -80,11 +80,11 @@
   &.bottom {
     border-top:solid 1px darken($contentColor, 20%);
   }
-  &.itemsRight{
+  .itemsRight{
     text-align:right;
     .toolBarItem{padding-left:$space/4;}
   }
-  &.itemsCenter{
+  .itemsCenter{
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
