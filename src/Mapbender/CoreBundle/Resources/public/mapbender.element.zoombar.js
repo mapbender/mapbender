@@ -107,12 +107,17 @@ $.widget("mapbender.mbZoomBar", {
             var view = olMap.getView();
             view.animate({rotation: 0, duration: 400});
         });
-        olMap.getView().on('change:rotation', function(e) {
-            var view = e.target;
-            var degrees = rad2deg(view.getRotation()) + rotationBias;
+        var displayRotation = function(e) {
+            var degrees = rad2deg(e.target.getRotation()) + rotationBias;
             $('i',$resetElement).css({
                 transform: 'rotate(' + degrees + 'deg)'
             });
+        };
+
+        olMap.getView().on('change:rotation', displayRotation);
+        olMap.on('change:view', function(e) {
+            displayRotation({target: olMap.getView()});
+            e.target.getView().on('change:rotation', displayRotation);
         });
     },
     _setupZoomButtons: function() {
