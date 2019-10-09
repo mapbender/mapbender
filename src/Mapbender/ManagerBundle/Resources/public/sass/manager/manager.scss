@@ -100,7 +100,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
 }
 
 
-
 // -------------------------------------------------------------------- PAGE TOP
 .head{
   position: relative;
@@ -261,6 +260,9 @@ ul.dropdownList{
 }
 
 .contentPane {
+  .title, .subTitle {
+    color: $ciColor;
+  }
   > .content {
     min-height: 600px;
     position: relative;

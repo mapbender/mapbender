@@ -13,13 +13,10 @@
   @extend .biggerText;
 }
 .title{
-  font-weight:normal;
-  color:$darkFontColor;
   @extend .bigText;
 }
 .subTitle{
-  font-size:$fontSize;
-  color:$ciColor;
+  font-size: 1rem;
 }
 .labelInput, .labelText, .labelCheck{
   @extend .smallText;
@@ -35,13 +32,7 @@
     color:$errorColor;
   }
 }
-.labelCheck{
-  color:$middleFontColor;
-  margin-left:$space/4;
-}
-.labelText{color:$ciColor;}
 .description{
-  color:$middleFontColor;
   font-style:italic;
   @extend .smallText;
 }
