@@ -30,7 +30,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   .map-overlay-column {
     display: flex;
@@ -43,20 +43,22 @@
       position: initial;
       flex: 1;
     }
+    div.toolBar, div.sidePane {
+      position: initial;
+    }
+    > * {
+      pointer-events: initial;
+    }
   }
 }
 
-.toolBar {
-  &, &.top, &.bottom {
-    position: initial;
-  }
+.map-overlay, .map-overlay-column {
+  pointer-events: none;
 }
+
 .sidePane {
-  display: initial;
   width: initial;
   max-width: 450px;
-  position: initial;
-  z-index: unset;
   &:after {
     clear: both;
   }
