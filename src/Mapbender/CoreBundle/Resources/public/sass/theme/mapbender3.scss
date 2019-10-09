@@ -16,10 +16,6 @@
 @import "modules/digitizing_tool_set";
 
 /* ------------------------------------------------------------- MISC */
-.mb-hiddenCheckbox{
-  position: absolute;
-  @include opacity(0);
-}
 .olControlZoom {
   display: none;
 }

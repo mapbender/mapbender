@@ -81,15 +81,6 @@
     text-decoration: none;
   }
 
-  .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
-  .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
-  .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
-    cursor: text;
-  }
-  .ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
-    cursor: pointer;
-  }
-
   // from jquery-ui themes/base/base.css
   .ui-helper-clearfix:before,
   .ui-helper-clearfix:after {

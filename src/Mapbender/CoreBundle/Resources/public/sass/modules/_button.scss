@@ -43,5 +43,5 @@
 .linkButton {
   @extend .smallText;
   user-select: none;
-  &:hover, &.activeLink, &:active{color:$ciColor;};
+  &:hover, &:active{color:$ciColor;};
 }
