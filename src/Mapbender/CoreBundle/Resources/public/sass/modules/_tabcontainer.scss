@@ -83,16 +83,24 @@
   width: 100%;
     
   .accordion{
+    user-select: none;
     display: table-row;
+    cursor: pointer;
+    @extend .buttonColors;
+    /* background-color: $buttonFirstColor; */
+    border-radius: $radius;
+    border: 3px dashed;
     >div{
+      background-color: inherit;
+      padding-left: 0.5em;
       display: table-cell;
-      @extend .button;
+//      background: #777;
+//      color: #fff;
+      border: 1px solid #444;
     }
     &.active{
-      cursor:default;
       background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
-      >div{background-color:darken($buttonFirstColor, 10%);}          
     }
   }
   .container-accordion{
