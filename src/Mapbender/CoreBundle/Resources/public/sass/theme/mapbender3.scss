@@ -16,10 +16,6 @@
 @import "modules/digitizing_tool_set";
 
 /* ------------------------------------------------------------- MISC */
-.mb-hiddenCheckbox{
-  position: absolute;
-  @include opacity(0);
-}
 .olControlZoom {
   display: none;
 }
@@ -34,6 +30,12 @@
       color: $lightFontColor;
     }
     @include border-radius($radius);
+    // spacing between icon and label for buttons and similar elements
+    [class^="icon"], [class*=" icon"] {
+      &:before {
+        margin-right: 0.4rem;
+      }
+    }
   }
   .toolBarItemActive, .toolBarItemActive:hover {
     background-color: $contentColor;
@@ -54,7 +56,6 @@
     border-bottom:solid 1px darken($contentColor, 20%);
   }
   &.bottom {
-    [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
     padding:$space/4 $space/2 $space/4 $space/2;
     margin-bottom: 0;
     .toolBarItem{
@@ -74,9 +75,6 @@
       bottom:0px;
       margin-bottom: $inputHeight;
     }
-  }
-  .toolBarItem{
-    display:inline;
   }
   &.itemsRight{
     text-align:right;
