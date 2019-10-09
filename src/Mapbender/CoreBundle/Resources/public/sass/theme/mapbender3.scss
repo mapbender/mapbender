@@ -52,7 +52,7 @@
         margin-bottom: 0;
       }
     }
-    border-bottom:solid 1px darken($contentColor, 20%);
+
   }
   &.bottom {
     padding:$space/4 $space/2 $space/4 $space/2;
@@ -74,6 +74,12 @@
       bottom:0px;
       margin-bottom: $inputHeight;
     }
+  }
+  &.top {
+    border-bottom:solid 1px darken($contentColor, 20%);
+  }
+  &.bottom {
+    border-top:solid 1px darken($contentColor, 20%);
   }
   &.itemsRight{
     text-align:right;
