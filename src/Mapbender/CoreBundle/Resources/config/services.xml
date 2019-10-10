@@ -208,6 +208,7 @@
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.event_listener" event="postConnect" />
+            <tag name="kernel.event_listener" event="console.command" />
         </service>
     </services>
 </container>
