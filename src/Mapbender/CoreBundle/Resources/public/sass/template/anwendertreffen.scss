@@ -27,9 +27,21 @@
     font-size: 1.2rem;
   }
 }
+.toolBar.top {
+  .toolBarItem {
+    border-radius: 2 * $radius;
+    &.logoContainer {
+      border-radius: 0;
+    }
+  }
+  .toolBarItem + .toolBarItem {
+    margin-left: 1.5em;
+  }
+}
+
 
 .toolBar.top .toolBarItem.logoContainer {
-  position: unset;
+    position: unset;
   z-index: unset;
   background: unset;
   margin: unset;
@@ -121,8 +133,8 @@ html .accordionContainer .accordion {
   color: #ddd;
   font-size: 1.6rem;
   line-height: 1.5;
+  border-color: #444;
   &.active {
-    background-color: #888;
     color: #fff;
     &:hover {
       background-color: #888;
@@ -130,6 +142,13 @@ html .accordionContainer .accordion {
   }
   &:hover {
     background-color: #888;
+  }
+  &.active, &:hover, &.active:hover {
+    background-color: #888;
+  }
+  > div {
+    border-radius: 2 * $radius;
+    border-width: 2px;
   }
 }
 

@@ -89,14 +89,15 @@
     @extend .buttonColors;
     /* background-color: $buttonFirstColor; */
     border-radius: $radius;
-    border: 3px dashed;
+    border-width: 3px;
+    border-style: solid;
     >div{
       background-color: inherit;
       padding-left: 0.5em;
       display: table-cell;
-//      background: #777;
-//      color: #fff;
-      border: 1px solid #444;
+      border-style: solid;
+      border-color: inherit;
+      border-width: 1px;
     }
     &.active{
       background-color:darken($buttonFirstColor, 10%);
