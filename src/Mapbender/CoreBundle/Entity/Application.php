@@ -75,6 +75,12 @@ class Application
     protected $template;
 
     /**
+     * @ORM\Column(type="string", length=15, nullable=false)
+     * @var string|null
+     */
+    protected $map_engine_code = self::MAP_ENGINE_OL2;
+
+    /**
      * @var RegionProperties[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
      * @ORM\OrderBy({"id" = "asc"})
@@ -133,6 +139,7 @@ class Application
         $this->elements         = new ArrayCollection();
         $this->layersets        = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
+        $this->map_engine_code = self::MAP_ENGINE_OL2;
     }
 
     /**
@@ -604,12 +611,17 @@ class Application
      */
     public function getMapEngineCode()
     {
-        // HACK: return constant
-        /**
-         * @todo: provide db column + expose in form
-         */
-        return self::MAP_ENGINE_OL4;    // :-)
-        return self::MAP_ENGINE_OL2;
+        return $this->map_engine_code;
+    }
+
+    /**
+     * @param string $mapEngineCode
+     * @return $this
+     */
+    public function setMapEngineCode($mapEngineCode)
+    {
+        $this->map_engine_code = $mapEngineCode;
+        return $this;
     }
 
     /**

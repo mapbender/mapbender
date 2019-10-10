@@ -145,6 +145,9 @@ mb:
           title: 'URL Title'
         description: Description
         template: Template
+        map_engine_code: Map engine
+        map_engine_code.ol2: OpenLayers 2
+        map_engine_code.ol4: OpenLayers 4
       applications: Applications
     source:
       serviceurl: 'Service URL'
