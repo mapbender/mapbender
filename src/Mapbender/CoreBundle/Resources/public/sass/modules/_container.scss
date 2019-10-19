@@ -24,8 +24,9 @@
   .buttonGroup{
     float: right;
     font-size: 20px;
-    line-height: 20px;
-    :last-child:before {
+    line-height: 1;
+    // undo built-in margin on a.icon...:before
+    a:before {
       margin: 0;
     }
   }

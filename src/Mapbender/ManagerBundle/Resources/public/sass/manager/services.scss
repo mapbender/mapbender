@@ -191,15 +191,7 @@ fieldset.box {
         line-height: $inputHeight;
         float: none;
         width: 1em;
-        &:before {
-          margin: 0;
-        }
       }
-    }
-  }
-  thead .checkboxColumn {
-    span:before {
-      margin: 0;
     }
   }
   .level0 .itemType{margin-left:4px;}

@@ -83,11 +83,6 @@
   .col2{
     margin-left: $col1Width;
   }
-  .iconAppDefault{
-    &:before {
-      margin: 0;
-    }
-  }
 }
 .mapbender-popup {
   // modal mapbender popups only appear in the backend, aka manager application
@@ -255,6 +250,10 @@
     // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
     padding-right: $space / 2;
     text-align: right;
+    a:before {
+      // undo built-in margin on a.icon...:before
+      margin: 0;
+    }
   }
   .iconColumn, .idColumn {
     white-space: nowrap;

@@ -268,14 +268,7 @@ fieldset{
     @include absolute('' 0 0 0);
   }
   .iconBig {
-    font-size: 30px;
     color: $ciColor;
-    padding: 0;
-    margin: 0;
-    &:before{
-      position: static;
-      margin: 0;
-    }
   }
   > .toolBarItem{
     &:hover {
