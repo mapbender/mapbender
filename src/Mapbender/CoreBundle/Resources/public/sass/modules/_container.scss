@@ -29,6 +29,10 @@
     a:before {
       margin: 0;
     }
+    white-space: nowrap;
+    > * + * {
+      margin-left: .2em;
+    }
   }
   .description{
     margin-top:$space/2;

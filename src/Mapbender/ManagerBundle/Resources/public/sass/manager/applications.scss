@@ -249,7 +249,14 @@
   .iconColumn {
     // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
     padding-right: $space / 2;
+    // neat alignment for "Layouts" table (differing number of icons in cells)
     text-align: right;
+    // .iconColumn contents mix div / a / span elements, but they should all
+    // size and align the same way
+    > * {
+      display: inline-block;
+      min-width: 1.2em;
+    }
     a:before {
       // undo built-in margin on a.icon...:before
       margin: 0;
