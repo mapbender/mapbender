@@ -5,20 +5,15 @@
 .listFilterBoxes{
   .filterItem{
     position:relative;
-    background-color: $contentColor;
     margin-bottom:$space;
   }
   .col1{
     text-align:center;
     color:$lightFontColor;
-    padding:$space/4;
-    line-height:$lineHeight - 6;
     background-color:$firstColor;
-    @include absolute(0 '' 0 0);
-    .iconBig,.icon{
-        color: $lightFontColor;
-        cursor: default;
-    }
+    position: absolute;
+    left: 0;
+    top: 0;
   }
   .col2{padding:$space/2;}
   .buttonGroup{

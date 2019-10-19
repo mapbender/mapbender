@@ -2,10 +2,19 @@
 .listFilterServiceBoxes{
   $col1Width: 60px;
 
-  .col1{width:$col1Width;}
+  .col1 {
+    width: $col1Width;
+    padding: $space/4;
+    // stretch all the way to bottom of list item
+    bottom: 0;
+    .icon {
+        // undo built-in cursor: pointer on .icon*
+        cursor: default;
+    }
+  }
   .col2{
     margin-left: $col1Width;
-    min-height: $fontSize*7;
+    min-height: 6em;
   }
 }
 

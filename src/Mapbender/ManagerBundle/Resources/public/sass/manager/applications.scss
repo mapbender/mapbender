@@ -59,24 +59,20 @@
   }
   .col1{
     width:$col1Width;
-    padding: 0;
-    display:table;
+    line-height: $height;
+    max-height: $height;
     text-align: center;
     font-size: 70px;
     color: lighten($darkFontColor, 10%);
 
     div.cell {
-      display: table-cell;
-      vertical-align:middle;
-      height: 120px;
-      width: 120px;
-
-      img{
-         max-height: 100%;
-         max-width: 100%;
-         display: block;
-         margin: 0 auto;
-      }
+      max-height: inherit;
+    }
+    img {
+      max-height: inherit;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
     }
   }
 
