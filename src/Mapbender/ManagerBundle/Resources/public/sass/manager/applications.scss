@@ -54,9 +54,6 @@
   $col1Width: 120px;
   $height:120px;
 
-  .filterItem, .col2 {
-    min-height:$height;
-  }
   .col1{
     width:$col1Width;
     line-height: $height;
@@ -74,10 +71,6 @@
       display: block;
       margin: 0 auto;
     }
-  }
-
-  .col2{
-    margin-left: $col1Width;
   }
 }
 .mapbender-popup {

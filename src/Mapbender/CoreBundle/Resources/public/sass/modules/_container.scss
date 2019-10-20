@@ -3,19 +3,21 @@
   background-color: $contentColor;
 }
 .listFilterBoxes{
-  .filterItem{
-    position:relative;
-    margin-bottom:$space;
+  li {
+    margin-bottom: $space;
+    display: flex;
+    flex-direction: row;
   }
-  .col1{
+  .col1 {
+    flex: 0 0 auto;  // no growth
     text-align:center;
     color:$lightFontColor;
     background-color:$firstColor;
-    position: absolute;
-    left: 0;
-    top: 0;
   }
-  .col2{padding:$space/2;}
+  .col2 {
+    padding:$space/2;
+    flex: 1 1 auto;  // fit available space
+  }
   .buttonGroup{
     float: right;
     font-size: 20px;
