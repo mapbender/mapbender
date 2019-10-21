@@ -9,10 +9,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-/**
- * Class DatabaseUpgradeCommand
- *
- */
 class DatabaseUpgradeCommand extends ContainerAwareCommand {
 
     protected function configure() {

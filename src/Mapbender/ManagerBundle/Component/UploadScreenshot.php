@@ -4,10 +4,6 @@ namespace Mapbender\ManagerBundle\Component;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\HttpFoundation\File\File;
 
-/**
- * Class UploadScreenshot
- *
- */
 class UploadScreenshot
 {
     const MAX_WIDTH  = 200;

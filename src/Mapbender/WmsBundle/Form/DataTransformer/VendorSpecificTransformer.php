@@ -7,8 +7,6 @@ use Mapbender\WmsBundle\Component\VendorSpecific;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
- * Class ObjectIdTransformer transforms a value between different representations
- * 
  * @author Paul Schmidt
  */
 class VendorSpecificTransformer implements DataTransformerInterface

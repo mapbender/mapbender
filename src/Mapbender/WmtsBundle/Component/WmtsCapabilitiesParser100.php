@@ -13,7 +13,6 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 /**
- * Class that Parses WMTS 1.1.0 GetCapabilies Document
  * @package Mapbender
  * @author Paul Schmidt
  */
@@ -92,7 +91,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     /**
      * Parses the ServiceIdentification section of the GetCapabilities document
      * @param WmtsSource $wmts
-     * @param \DOMElement $contextElm the element to use as context for the ServiceIdentification section
+     * @param \DOMElement $contextElm
      */
     private function parseServiceIdentification(WmtsSource $wmts, \DOMElement $contextElm)
     {
@@ -114,7 +113,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     /**
      * Parses the ServiceProvider section of the GetCapabilities document
      * @param WmtsSource $wmts
-     * @param \DOMElement $contextElm the element to use as context for the ServiceProvider section.
+     * @param \DOMElement $contextElm
      */
     private function parseServiceProvider(WmtsSource $wmts, \DOMElement $contextElm)
     {
@@ -159,8 +158,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     /**
      * Parses the Capabilities Request section of the GetCapabilities document
      * @param WmtsSource $wmts
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Capabilities Request section
+     * @param \DOMElement $contextElm
      */
     private function parseCapabilityRequest(WmtsSource $wmts, \DOMElement $contextElm)
     {
@@ -183,8 +181,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     /**
      * Parses the Operation Request Information section of the GetCapabilities
      * document.
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Operation Request Information section
+     * @param \DOMElement $contextElm
      * @return RequestInformation
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)

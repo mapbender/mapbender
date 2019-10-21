@@ -8,9 +8,6 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Class SecurityContext
- *
- * @package   FOM\UserBundle\Component
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @author    Mohamed Tahrioui <mohamed.tahrioui@wheregroup.com>
  * @copyright 2015 by WhereGroup GmbH & Co. KG

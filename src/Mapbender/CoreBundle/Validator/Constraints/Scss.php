@@ -5,8 +5,6 @@ namespace Mapbender\CoreBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class ContainsAlphanumeric
- *
  * @package Mapbender\CoreBundle\Validator\Constraints
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  * @Annotation

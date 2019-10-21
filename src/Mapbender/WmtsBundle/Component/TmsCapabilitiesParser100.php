@@ -14,9 +14,6 @@ use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 
 /**
- * Class that Parses WMTS GetCapabilies Document
- * Parses WMTS GetCapabilities documents
- *
  * @author Paul Schmidt
  */
 class TmsCapabilitiesParser100
@@ -160,8 +157,7 @@ class TmsCapabilitiesParser100
      * Parses the Service section of the GetCapabilities document
      *
      * @param WmtsSource $wmts
-     * @param \DOMElement $cntxt the element to use as context for
-     * the Service section
+     * @param \DOMElement $cntxt
      */
     private function parseService(WmtsSource $wmts, \DOMElement $cntxt)
     {

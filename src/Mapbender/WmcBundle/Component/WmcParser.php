@@ -8,7 +8,6 @@ use Mapbender\WmcBundle\Component\Exception\WmcException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class that Parses WMC Document
  * Parses WMC documents
  *
  * @author Karim Malhas
