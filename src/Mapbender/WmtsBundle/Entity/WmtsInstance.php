@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtsinstance")
- * ORM\DiscriminatorMap({"mb_wmts_wmtssourceinstance" = "WmtsSourceInstance"})
  */
 class WmtsInstance extends SourceInstance
 {

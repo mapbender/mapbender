@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A WmtsSource entity presents an OGC WMTS.
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtssource")
- * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
 class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
 {

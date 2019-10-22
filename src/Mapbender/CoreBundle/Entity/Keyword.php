@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
  * @ORM\Table(name="mb_core_keyword")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discriminator", type="string")
- * ORM\DiscriminatorMap({"mb_core_keyword" = "Keyword"})
  */
 abstract class Keyword
 {

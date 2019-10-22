@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  * @ORM\Table(name="mb_core_source")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
- * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  * @ORM\HasLifecycleCallbacks()
  */
 abstract class Source implements MutableHttpOriginInterface

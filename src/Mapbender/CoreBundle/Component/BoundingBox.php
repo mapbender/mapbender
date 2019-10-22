@@ -10,32 +10,26 @@ class BoundingBox
 {
     /**
      * @var string srs Spatial reference system
-     *
-     * ORM\Column(type="string", nullable=false)
      */
     public $srs;
 
     /**
      * @var float minx Minimum X of the Bounding Box
-     * ORM\Column(type="float", nullable=false)
      */
     public $minx;
 
     /**
      * @var float miny Minimum Y of the Bounding Box
-     * ORM\Column(type="float", nullable=false)
      */
     public $miny;
 
     /**
      * @var float maxx Maximum X of the Bounding Box
-     * ORM\Column(type="float", nullable=false)
      */
     public $maxx;
 
     /**
      * @var float maxy Maximum Y of the Bounding Box
-     * ORM\Column(type="float", nullable=false)
      */
     public $maxy;
 

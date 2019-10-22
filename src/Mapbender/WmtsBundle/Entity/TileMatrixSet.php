@@ -13,7 +13,6 @@ use Mapbender\WmtsBundle\Component\TileMatrix;
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_tilematrixset")
- * ORM\DiscriminatorMap({"mb_wmts_tilematrixset" = "TileMatrixSet"})
  */
 class TileMatrixSet implements MutableUrlTarget
 {

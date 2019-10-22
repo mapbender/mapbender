@@ -15,7 +15,6 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstance")
- * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
 class WmsInstance extends SourceInstance
 {
