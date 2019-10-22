@@ -7,9 +7,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
-/**
- * FieldSubscriber class
- */
 class FieldSubscriber implements EventSubscriberInterface
 {
     /**

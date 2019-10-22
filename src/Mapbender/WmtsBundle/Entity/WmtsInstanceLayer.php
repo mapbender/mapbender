@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
- * WmtsInstanceLayer class
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity

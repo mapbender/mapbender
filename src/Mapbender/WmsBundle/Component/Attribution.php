@@ -3,8 +3,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Attribution class.
- *
  * @author Paul Schmidt
  */
 class Attribution

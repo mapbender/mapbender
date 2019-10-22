@@ -7,9 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
 
-/**
- * WmsInstanceInstanceLayersType class
- */
 class WmsInstanceInstanceLayersType extends AbstractType
 {
     /** @var bool */

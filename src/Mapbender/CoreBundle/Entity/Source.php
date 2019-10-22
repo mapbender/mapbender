@@ -222,7 +222,7 @@ abstract class Source implements MutableHttpOriginInterface
     /**
      * Returns a source type
      *
-     * @return String type
+     * @return string
      */
     public function getType()
     {
@@ -248,7 +248,7 @@ abstract class Source implements MutableHttpOriginInterface
     /**
      * Returns a manager type
      *
-     * @return String a manager type
+     * @return String
      */
     public function getManagertype()
     {

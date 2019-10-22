@@ -8,9 +8,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\WmsBundle\Component\VendorSpecific as VS;
 
-/**
- * VendorSpecificInstType class
- */
 class VendorSpecificType extends AbstractType
 {
 

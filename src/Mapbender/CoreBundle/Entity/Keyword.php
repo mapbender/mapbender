@@ -5,8 +5,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 
 /**
- * Source entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
@@ -68,9 +66,7 @@ abstract class Keyword
     }
 
     /**
-     * Returns a Source as String
-     *
-     * @return String Source as String
+     * @return string
      */
     public function __toString()
     {

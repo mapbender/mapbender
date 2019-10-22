@@ -4,8 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Layerset configuration entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
@@ -41,8 +39,7 @@ class SRS
     protected $definition;
 
     /**
-     * Gets the id
-     * @return integer the id
+     * @return integer
      */
     public function getId()
     {
@@ -50,9 +47,8 @@ class SRS
     }
 
     /**
-     * Sets the id
-     * @param  integer $id
-     * @return \Mapbender\CoreBundle\Entity\SRS
+     * @param integer $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -62,8 +58,7 @@ class SRS
     }
 
     /**
-     * Gets the name
-     * @return string the name
+     * @return string
      */
     public function getName()
     {
@@ -71,9 +66,8 @@ class SRS
     }
 
     /**
-     * Sets the srs name
      * @param string $name
-     * @return \Mapbender\CoreBundle\Entity\SRS
+     * @return $this
      */
     public function setName($name)
     {
@@ -83,7 +77,6 @@ class SRS
     }
 
     /**
-     * Gets the title
      * @return string the srs title
      */
     public function getTitle()
@@ -92,9 +85,8 @@ class SRS
     }
 
     /**
-     * Sets the srs title
      * @param string $title
-     * @return \Mapbender\CoreBundle\Entity\SRS
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -115,7 +107,7 @@ class SRS
     /**
      * Sets the srs definition
      * @param string $definition
-     * @return \Mapbender\CoreBundle\Entity\SRS
+     * @return $this
      */
     public function setDefinition($definition)
     {
