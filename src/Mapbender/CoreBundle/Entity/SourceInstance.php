@@ -104,16 +104,6 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns a manager type
-     *
-     * @return String a manager type
-     */
-    public function getManagertype()
-    {
-        return $this->source->getManagertype();
-    }
-
-    /**
      * Sets a weight
      *
      * @param integer $weight

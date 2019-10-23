@@ -148,12 +148,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
         return $this->instances;
     }
 
-    public function getManagertype()
-    {
-        // single controller for WMTS + TMS
-        return strtolower(Source::TYPE_WMTS);
-    }
-
     public function getTypeLabel()
     {
         if (!$this->type) {

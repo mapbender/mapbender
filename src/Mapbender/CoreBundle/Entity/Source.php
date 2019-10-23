@@ -246,16 +246,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * Returns a manager type
-     *
-     * @return String
-     */
-    public function getManagertype()
-    {
-        return strtolower($this->getType());
-    }
-
-    /**
      * @return string
      */
     abstract public function getViewTemplate();
