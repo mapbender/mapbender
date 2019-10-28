@@ -37,11 +37,11 @@
             <td class="level0 itemType"><span class="itemType iconFolderActive hover-highlight-effect"></span></td>
             <td class="titleColumn" title="{{ form.roottitle.vars.label | trans }}">{{ form_widget(form.roottitle) }}</td>
             <td colspan="1"></td>
-            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form.active) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form.allowselected) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form.selected) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.allowinfo) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.info) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form.layers.vars.prototype.active) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form.layers.vars.prototype.allowselected) }}</td>
+            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form.layers.vars.prototype.selected) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.layers.vars.prototype.allowinfo) }}</td>
+            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.layers.vars.prototype.info) }}</td>
             <td class="moreColumn"></td>
         </tr>
         {% for form in form.layers %}

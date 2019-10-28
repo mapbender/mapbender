@@ -50,28 +50,6 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'required' => true,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
             ))
-            ->add('active', 'checkbox', array(
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('selected', 'checkbox', array(
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('info', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'mapped' => false,
-            ))
-            ->add('allowselected', 'checkbox', array(
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('allowinfo', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-                'mapped' => false,
-            ))
         ;
     }
 }
