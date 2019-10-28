@@ -50,5 +50,8 @@ class SourceInstanceItemType extends AbstractType
                 'placeholder' => $layer->getSourceItem()->getTitle(),
             );
         }
+        $view['active']->vars['checkbox_group'] = 'checkActive';
+        $view['selected']->vars['checkbox_group'] = 'checkSelectOn';
+        $view['allowselected']->vars['checkbox_group'] = 'checkSelectAllow';
     }
 }

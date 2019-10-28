@@ -53,5 +53,7 @@ class WmtsInstanceLayerType extends AbstractType
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
+        $view['info']->vars['checkbox_group'] = 'checkInfoOn';
+        $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
     }
 }

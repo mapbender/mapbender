@@ -100,6 +100,10 @@ class WmsInstanceLayerType extends AbstractType
                 'placeholder' => $layer->getInheritedMaxScale(),
             );
         }
-        parent::finishView($view, $form, $options);
+        $view['info']->vars['checkbox_group'] = 'checkInfoOn';
+        $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
+        $view['toggle']->vars['checkbox_group'] = 'checkToggleOn';
+        $view['allowtoggle']->vars['checkbox_group'] = 'checkToggleAllow';
+        $view['allowreorder']->vars['checkbox_group'] = 'checkRecorderAllow';   // sic (value from templates)
     }
 }
