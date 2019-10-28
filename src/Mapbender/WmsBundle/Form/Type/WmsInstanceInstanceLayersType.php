@@ -124,7 +124,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
             ))
-            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',

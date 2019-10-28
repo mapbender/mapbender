@@ -39,10 +39,14 @@ class WmtsInstanceLayerType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var WmtsInstanceLayer $layer */
+        // NOTE: collection prototype view does not have data
+        /** @var WmtsInstanceLayer|null $layer */
         $layer = $form->getData();
-
-        $isQueryable = !!$layer->getSourceItem()->getInfoformats();
+        if ($layer) {
+            $isQueryable = !!$layer->getSourceItem()->getInfoformats();
+        } else {
+            $isQueryable = false;
+        }
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
         if (!$isQueryable) {

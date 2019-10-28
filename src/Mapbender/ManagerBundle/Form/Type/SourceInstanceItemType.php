@@ -41,11 +41,14 @@ class SourceInstanceItemType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var SourceInstanceItem $layer */
+        // NOTE: collection prototype view does not have data
+        /** @var SourceInstanceItem|null $layer */
         $layer = $form->getData();
 
-        $view['title']->vars['attr'] = array(
-            'placeholder' => $layer->getSourceItem()->getTitle(),
-        );
+        if ($layer) {
+            $view['title']->vars['attr'] = array(
+                'placeholder' => $layer->getSourceItem()->getTitle(),
+            );
+        }
     }
 }

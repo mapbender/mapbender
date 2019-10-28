@@ -40,7 +40,7 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 ),
                 'required' => true,
             ))
-            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
