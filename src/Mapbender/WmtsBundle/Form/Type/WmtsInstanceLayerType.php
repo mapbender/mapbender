@@ -30,9 +30,11 @@ class WmtsInstanceLayerType extends AbstractType
         $builder
             ->add('info', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
             ))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
             ))
         ;
     }

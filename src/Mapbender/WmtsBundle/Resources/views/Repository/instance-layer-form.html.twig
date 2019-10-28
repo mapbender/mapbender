@@ -5,8 +5,8 @@
     <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ form.active.vars.label | trans }}">{{ form_widget(form.active) }}</td>
     <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ form.allowselected.vars.label | trans }}">{{ form_widget(form.allowselected) }}</td>
     <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ form.selected.vars.label | trans }}">{{ form_widget(form.selected) }}</td>
-    <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.allowinfo) }}</td>
-    <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.info) }}</td>
+    <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ form.allowinfo.vars.label | trans }}">{{ form_widget(form.allowinfo) }}</td>
+    <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ form.info.vars.label | trans }}">{{ form_widget(form.info) }}</td>
     <td class="moreColumn">
       <div class="infoMsgBox hidden">
         <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}">{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>
