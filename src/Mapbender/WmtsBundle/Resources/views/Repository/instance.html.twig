@@ -5,6 +5,7 @@
 {% block form_layers %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
+      {% set _proto = form.layers.vars.prototype %}
         <tr>
           <th></th>
           <th>{{ form.title.vars.label | trans}}</th>
@@ -24,11 +25,11 @@
         </tr>
         <tr id="instanceTableCheckHead">
           <th colspan="3"></th>
-          <th class="checkboxColumn"><span id="checkActive" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoOn" class="iconCheckbox"></span></th>
+          {{ form_row(_proto.active, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.selected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowinfo, {'tagName': 'th'}) }}
+          {{ form_row(_proto.info, {'tagName': 'th'}) }}
           <th></th>
         </tr>
       </thead>

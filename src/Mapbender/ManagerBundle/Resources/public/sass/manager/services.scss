@@ -159,6 +159,10 @@ fieldset.box {
 .instanceTable{
   margin-top:$space;
   margin-bottom:$space;
+  .checkWrapper.left {
+    /** @todo: remove float from checkbox_widget block globally */
+    float: none;
+  }
 
   .checkboxColumn{text-align:center;}
   .odd{background-color:darken($contentColor, 6%);}

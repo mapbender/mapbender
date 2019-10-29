@@ -3,9 +3,10 @@
 {% block checkbox_row %}
     {% if form.parent and form.parent.parent and 'source_instance_layer_collection' in form.parent.parent.vars.block_prefixes %}
     {% set _columnClass = ('checkboxColumn ' ~ (form.vars.columnClass | default(''))) | trim %}
-    <td class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
+    {% set _tagName = tagName | default('td') %}
+    <{{ _tagName }} class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
       {{- block('checkbox_widget') -}}
-    </td>
+    </{{ _tagName }}>
     {% else %}
         {{- block('form_row') }}
     {% endif %}
