@@ -28,6 +28,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
         return 'wmsinstanceinstancelayers';
     }
 
+    public function getBlockPrefix()
+    {
+        return 'source_instance';
+    }
+
     /**
      * @inheritdoc
      */

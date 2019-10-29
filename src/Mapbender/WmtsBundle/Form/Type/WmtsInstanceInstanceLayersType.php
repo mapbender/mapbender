@@ -8,6 +8,11 @@ use Symfony\Component\Validator\Constraints;
 
 class WmtsInstanceInstanceLayersType extends AbstractType
 {
+    public function getBlockPrefix()
+    {
+        return 'source_instance';
+    }
+
     /**
      * @inheritdoc
      */
@@ -45,6 +50,7 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 'options' => array(
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
                 ),
+                'block_name' => 'layers_table',
             ))
         ;
     }

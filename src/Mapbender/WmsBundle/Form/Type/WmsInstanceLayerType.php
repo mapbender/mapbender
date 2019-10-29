@@ -105,5 +105,8 @@ class WmsInstanceLayerType extends AbstractType
         $view['toggle']->vars['checkbox_group'] = 'checkToggleOn';
         $view['allowtoggle']->vars['checkbox_group'] = 'checkToggleAllow';
         $view['allowreorder']->vars['checkbox_group'] = 'checkRecorderAllow';   // sic (value from templates)
+
+        $view['allowtoggle']->vars['columnClass'] = 'odd';
+        $view['toggle']->vars['columnClass'] = 'odd';
     }
 }

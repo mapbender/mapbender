@@ -52,6 +52,8 @@ class SourceInstanceItemType extends AbstractType
         }
         $view['active']->vars['checkbox_group'] = 'checkActive';
         $view['selected']->vars['checkbox_group'] = 'checkSelectOn';
+        $view['selected']->vars['columnClass'] = 'odd';
         $view['allowselected']->vars['checkbox_group'] = 'checkSelectAllow';
+        $view['allowselected']->vars['columnClass'] = 'odd';
     }
 }

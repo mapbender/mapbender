@@ -14,15 +14,14 @@
 
             <td class="minScaleColumn" title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
             <td class="maxScaleColumn" title="{{ form_layer.maxScale.vars.label | trans }}">{{ form_widget(form_layer.maxScale) }}</td>
-
-            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ form_layer.active.vars.label | trans }}">{{ form_widget(form_layer.active) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ form_layer.allowselected.vars.label | trans }}">{{ form_widget(form_layer.allowselected) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ form_layer.selected.vars.label | trans }}">{{ form_widget(form_layer.selected) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ form_layer.allowinfo.vars.label | trans }}">{{ form_widget(form_layer.allowinfo) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ form_layer.info.vars.label | trans }}">{{ form_widget(form_layer.info) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleAllow" title="{{ form_layer.allowtoggle.vars.label | trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkToggleOn" title="{{ form_layer.toggle.vars.label | trans }}">{{ form_widget(form_layer.toggle) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkRecorderAllow" title="{{ form_layer.allowreorder.vars.label | trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
+            {{ form_row(form_layer.active) }}
+            {{ form_row(form_layer.allowselected) }}
+            {{ form_row(form_layer.selected) }}
+            {{ form_row(form_layer.allowinfo) }}
+            {{ form_row(form_layer.info) }}
+            {{ form_row(form_layer.allowtoggle) }}
+            {{ form_row(form_layer.toggle) }}
+            {{ form_row(form_layer.allowreorder) }}
             <td class="moreColumn">
               <div class="infoMsgBox hidden">
                 <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
