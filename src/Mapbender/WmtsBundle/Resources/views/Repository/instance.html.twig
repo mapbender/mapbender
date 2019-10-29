@@ -33,17 +33,6 @@
         </tr>
       </thead>
       <tbody id="instanceTableCheckBody">
-        <tr class="item level0">
-            <td class="level0 itemType"><span class="itemType iconFolderActive hover-highlight-effect"></span></td>
-            <td class="titleColumn" title="{{ form.roottitle.vars.label | trans }}">{{ form_widget(form.roottitle) }}</td>
-            <td colspan="1"></td>
-            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ form.layers.vars.prototype.active.vars.label|trans }}">{{ form_widget(form.layers.vars.prototype.active) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ form.layers.vars.prototype.allowselected.vars.label | trans }}">{{ form_widget(form.layers.vars.prototype.allowselected) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ form.layers.vars.prototype.selected.vars.label | trans }}">{{ form_widget(form.layers.vars.prototype.selected) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ form.layers.vars.prototype.allowinfo.vars.label | trans }}">{{ form_widget(form.layers.vars.prototype.allowinfo) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ form.layers.vars.prototype.info.vars.label | trans }}">{{ form_widget(form.layers.vars.prototype.info) }}</td>
-            <td class="moreColumn"></td>
-        </tr>
         {% for form in form.layers %}
         {% include "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig"  with {'form': form }%}
         {% endfor %}

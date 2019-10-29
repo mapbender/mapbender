@@ -43,11 +43,6 @@ class WmtsInstance extends SourceInstance
     protected $dimensions;
 
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $roottitle;
-
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -184,17 +179,6 @@ class WmtsInstance extends SourceInstance
     public function removeLayer(WmtsInstanceLayer $layers)
     {
         $this->layers->removeElement($layers);
-    }
-
-    public function getRoottitle()
-    {
-        return $this->roottitle;
-    }
-
-    public function setRoottitle($roottitle)
-    {
-        $this->roottitle = $roottitle;
-        return $this;
     }
 
     /**

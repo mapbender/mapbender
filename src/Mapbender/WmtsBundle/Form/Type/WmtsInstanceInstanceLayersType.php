@@ -46,10 +46,6 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
                 ),
             ))
-            ->add('roottitle', 'text', array(
-                'required' => true,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
-            ))
         ;
     }
 }
