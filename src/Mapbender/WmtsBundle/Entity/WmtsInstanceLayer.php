@@ -60,16 +60,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     protected $allowinfo;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $toggle;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowtoggle;
-
-    /**
      * @ORM\Column(type="string", nullable=true)
      */
     protected $style = "";
