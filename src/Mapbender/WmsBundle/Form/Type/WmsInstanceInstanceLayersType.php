@@ -7,9 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
 
-/**
- * WmsInstanceInstanceLayersType class
- */
 class WmsInstanceInstanceLayersType extends AbstractType
 {
     /** @var bool */
@@ -29,6 +26,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
     public function getName()
     {
         return 'wmsinstanceinstancelayers';
+    }
+
+    public function getBlockPrefix()
+    {
+        return 'source_instance';
     }
 
     /**
@@ -127,7 +129,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
             ))
-            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',

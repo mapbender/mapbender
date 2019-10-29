@@ -3,30 +3,32 @@
   background-color: $contentColor;
 }
 .listFilterBoxes{
-  .filterItem{
-    position:relative;
-    background-color: $contentColor;
-    margin-bottom:$space;
+  li {
+    margin-bottom: $space;
+    display: flex;
+    flex-direction: row;
   }
-  .col1{
+  .col1 {
+    flex: 0 0 auto;  // no growth
     text-align:center;
     color:$lightFontColor;
-    padding:$space/4;
-    line-height:$lineHeight - 6;
     background-color:$firstColor;
-    @include absolute(0 '' 0 0);
-    .iconBig,.icon{
-        color: $lightFontColor;
-        cursor: default;
-    }
   }
-  .col2{padding:$space/2;}
+  .col2 {
+    padding:$space/2;
+    flex: 1 1 auto;  // fit available space
+  }
   .buttonGroup{
     float: right;
     font-size: 20px;
-    line-height: 20px;
-    :last-child:before {
+    line-height: 1;
+    // undo built-in margin on a.icon...:before
+    a:before {
       margin: 0;
+    }
+    white-space: nowrap;
+    > * + * {
+      margin-left: .2em;
     }
   }
   .description{

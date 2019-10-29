@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
- * WmtsInstanceLayer class
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
@@ -60,16 +58,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowinfo;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $toggle;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowtoggle;
 
     /**
      * @ORM\Column(type="string", nullable=true)

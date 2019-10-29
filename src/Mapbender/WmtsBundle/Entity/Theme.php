@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_theme")
- * ORM\DiscriminatorMap({"mb_wmts_theme" = "Theme"})
  */
 class Theme
 {

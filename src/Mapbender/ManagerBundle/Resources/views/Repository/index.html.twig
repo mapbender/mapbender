@@ -20,11 +20,6 @@
         <div class="col1">
           <span class="smallerText">{{ source.id }}</span><br>
           <span class="smallerText">{{ source.type }}</span><br>
-            {% if source.valid == true %}
-                <span class="iconStarO icon" title="{{"mb.manager.admin.source.valid"|trans}}"></span><br>
-            {% elseif source.valid is not null %}
-                <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span><br>
-            {% endif %}
         </div>
         <div class="col2 box">
             <div class="buttonGroup">

@@ -8,6 +8,11 @@ use Symfony\Component\Validator\Constraints;
 
 class WmtsInstanceInstanceLayersType extends AbstractType
 {
+    public function getBlockPrefix()
+    {
+        return 'source_instance';
+    }
+
     /**
      * @inheritdoc
      */
@@ -40,32 +45,12 @@ class WmtsInstanceInstanceLayersType extends AbstractType
                 ),
                 'required' => true,
             ))
-            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerType',
                 'options' => array(
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
                 ),
-            ))
-            ->add('roottitle', 'text', array(
-                'required' => true,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
-            ))
-            ->add('active', 'checkbox', array(
-                'required' => false,
-            ))
-            ->add('selected', 'checkbox', array(
-                'required' => false,
-            ))
-            ->add('info', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
-            ))
-            ->add('allowselected', 'checkbox', array(
-                'required' => false,
-            ))
-            ->add('allowinfo', 'checkbox', array(
-                'required' => false,
-                'disabled' => true,
+                'block_name' => 'layers_table',
             ))
         ;
     }

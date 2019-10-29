@@ -8,9 +8,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
-/**
- * DimensionSubscriber class
- */
 class DimensionSubscriber implements EventSubscriberInterface
 {
 

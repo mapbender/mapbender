@@ -5,8 +5,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Source entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
@@ -87,7 +85,7 @@ class Contact
      * Set person
      *
      * @param  string  $person
-     * @return Contact
+     * @return $this
      */
     public function setPerson($person)
     {
@@ -110,7 +108,7 @@ class Contact
      * Set position
      *
      * @param  string  $position
-     * @return Contact
+     * @return $this
      */
     public function setPosition($position)
     {
@@ -133,7 +131,7 @@ class Contact
      * Set organization
      *
      * @param  string  $organization
-     * @return Contact
+     * @return $this
      */
     public function setOrganization($organization)
     {
@@ -156,7 +154,7 @@ class Contact
      * Set voiceTelephone
      *
      * @param  string  $voiceTelephone
-     * @return Contact
+     * @return $this
      */
     public function setVoiceTelephone($voiceTelephone)
     {
@@ -179,7 +177,7 @@ class Contact
      * Set facsimileTelephone
      *
      * @param  string  $facsimileTelephone
-     * @return Contact
+     * @return $this
      */
     public function setFacsimileTelephone($facsimileTelephone)
     {
@@ -202,7 +200,7 @@ class Contact
      * Set electronicMailAddress
      *
      * @param  string  $electronicMailAddress
-     * @return Contact
+     * @return $this
      */
     public function setElectronicMailAddress($electronicMailAddress)
     {
@@ -225,7 +223,7 @@ class Contact
      * Set address
      *
      * @param  string  $address
-     * @return Contact
+     * @return $this
      */
     public function setAddress($address)
     {
@@ -248,7 +246,7 @@ class Contact
      * Set addressType
      *
      * @param  string  $addressType
-     * @return Contact
+     * @return $this
      */
     public function setAddressType($addressType)
     {
@@ -271,7 +269,7 @@ class Contact
      * Set addressCity
      *
      * @param  string  $addressCity
-     * @return Contact
+     * @return $this
      */
     public function setAddressCity($addressCity)
     {
@@ -294,7 +292,7 @@ class Contact
      * Set addressStateOrProvince
      *
      * @param  string  $addressStateOrProvince
-     * @return Contact
+     * @return $this
      */
     public function setAddressStateOrProvince($addressStateOrProvince)
     {
@@ -317,7 +315,7 @@ class Contact
      * Set addressPostCode
      *
      * @param  string  $addressPostCode
-     * @return Contact
+     * @return $this
      */
     public function setAddressPostCode($addressPostCode)
     {
@@ -340,7 +338,7 @@ class Contact
      * Set addressCountry
      *
      * @param  string  $addressCountry
-     * @return Contact
+     * @return $this
      */
     public function setAddressCountry($addressCountry)
     {

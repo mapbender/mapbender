@@ -66,14 +66,10 @@ class WmtsSourceService extends SourceService
         $rootSource = new WmtsLayerSource();
         $rootSource->setSource($sourceInstance->getSource());
         $rootInst = new WmtsInstanceLayer();
-        $rootInst->setTitle($sourceInstance->getRoottitle());
+        $rootInst->setTitle($sourceInstance->getTitle());
         $rootInst->setSourceItem($rootSource);
         $rootInst->setId($sourceInstance->getId() . "-fake-root");
         $rootInst->setSourceInstance($sourceInstance);
-        $rootInst->setActive($sourceInstance->getActive())
-            ->setAllowinfo($sourceInstance->getAllowinfo())
-            ->setInfo($sourceInstance->getInfo())
-        ;
         return $this->getSingleLayerConfig($rootInst);
     }
 

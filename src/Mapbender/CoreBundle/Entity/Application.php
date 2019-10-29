@@ -124,9 +124,6 @@ class Application
      */
     protected $publicOptions = array();
 
-    /**
-     * Application constructor.
-     */
     public function __construct()
     {
         $this->elements         = new ArrayCollection();
@@ -135,8 +132,6 @@ class Application
     }
 
     /**
-     * Get entity source type
-     *
      * @param int $source
      * @return $this
      */
@@ -148,8 +143,6 @@ class Application
     }
 
     /**
-     * Get type
-     *
      * @return string
      */
     public function getSource()
@@ -158,10 +151,8 @@ class Application
     }
 
     /**
-     * Set id
-     *
      * @param $id
-     * @return Application
+     * @return $this
      */
     public function setId($id)
     {
@@ -170,8 +161,6 @@ class Application
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -276,7 +265,6 @@ class Application
      *
      * @param ArrayCollection $regionProperties
      * @return $this
-     * @internal param array $template
      */
     public function setRegionProperties(ArrayCollection $regionProperties)
     {
@@ -296,8 +284,6 @@ class Application
     }
 
     /**
-     * Get region properties
-     *
      * @param RegionProperties $regionProperties
      */
     public function addRegionProperties(RegionProperties $regionProperties)

@@ -54,38 +54,22 @@
   $col1Width: 120px;
   $height:120px;
 
-  .filterItem, .col2 {
-    min-height:$height;
-  }
   .col1{
     width:$col1Width;
-    padding: 0;
-    display:table;
+    line-height: $height;
+    max-height: $height;
     text-align: center;
     font-size: 70px;
     color: lighten($darkFontColor, 10%);
 
     div.cell {
-      display: table-cell;
-      vertical-align:middle;
-      height: 120px;
-      width: 120px;
-
-      img{
-         max-height: 100%;
-         max-width: 100%;
-         display: block;
-         margin: 0 auto;
-      }
+      max-height: inherit;
     }
-  }
-
-  .col2{
-    margin-left: $col1Width;
-  }
-  .iconAppDefault{
-    &:before {
-      margin: 0;
+    img {
+      max-height: inherit;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
     }
   }
 }
@@ -254,7 +238,18 @@
   .iconColumn {
     // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
     padding-right: $space / 2;
+    // neat alignment for "Layouts" table (differing number of icons in cells)
     text-align: right;
+    // .iconColumn contents mix div / a / span elements, but they should all
+    // size and align the same way
+    > * {
+      display: inline-block;
+      min-width: 1.2em;
+    }
+    a:before {
+      // undo built-in margin on a.icon...:before
+      margin: 0;
+    }
   }
   .iconColumn, .idColumn {
     white-space: nowrap;

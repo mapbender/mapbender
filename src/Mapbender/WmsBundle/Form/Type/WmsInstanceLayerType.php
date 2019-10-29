@@ -69,9 +69,10 @@ class WmsInstanceLayerType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var WmsInstanceLayer $layer */
+        // NOTE: collection prototype view does not have data
+        /** @var WmsInstanceLayer|null $layer */
         $layer = $form->getData();
-        $hasSubLayers = !!$layer->getSublayer()->count();
+        $hasSubLayers = $layer && $layer->getSublayer()->count();
 
         $view['toggle']->vars['disabled'] = !$hasSubLayers;
         $view['allowtoggle']->vars['disabled'] = !$hasSubLayers;
@@ -80,19 +81,32 @@ class WmsInstanceLayerType extends AbstractType
             $form['allowtoggle']->setData(false);
         }
 
-        $isQueryable = $layer->getSourceItem()->getQueryable();
+        if ($layer) {
+            $isQueryable = $layer->getSourceItem()->getQueryable();
+        } else {
+            $isQueryable = false;
+        }
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
         if (!$isQueryable) {
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
-        $view['minScale']->vars['attr'] = array(
-            'placeholder' => $layer->getInheritedMinScale(),
-        );
-        $view['maxScale']->vars['attr'] = array(
-            'placeholder' => $layer->getInheritedMaxScale(),
-        );
-        parent::finishView($view, $form, $options);
+        if ($layer) {
+            $view['minScale']->vars['attr'] = array(
+                'placeholder' => $layer->getInheritedMinScale(),
+            );
+            $view['maxScale']->vars['attr'] = array(
+                'placeholder' => $layer->getInheritedMaxScale(),
+            );
+        }
+        $view['info']->vars['checkbox_group'] = 'checkInfoOn';
+        $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
+        $view['toggle']->vars['checkbox_group'] = 'checkToggleOn';
+        $view['allowtoggle']->vars['checkbox_group'] = 'checkToggleAllow';
+        $view['allowreorder']->vars['checkbox_group'] = 'checkRecorderAllow';   // sic (value from templates)
+
+        $view['allowtoggle']->vars['columnClass'] = 'odd';
+        $view['toggle']->vars['columnClass'] = 'odd';
     }
 }

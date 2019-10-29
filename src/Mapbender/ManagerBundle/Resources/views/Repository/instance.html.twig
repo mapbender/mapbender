@@ -1,4 +1,16 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% form_theme form _self %}
+{% block checkbox_row %}
+    {% if form.parent and form.parent.parent and 'source_instance_layer_collection' in form.parent.parent.vars.block_prefixes %}
+    {% set _columnClass = ('checkboxColumn ' ~ (form.vars.columnClass | default(''))) | trim %}
+    {% set _tagName = tagName | default('td') %}
+    <{{ _tagName }} class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
+      {{- block('checkbox_widget') -}}
+    </{{ _tagName }}>
+    {% else %}
+        {{- block('form_row') }}
+    {% endif %}
+{% endblock checkbox_row %}
 
 {% block js %}
   {{parent()}}

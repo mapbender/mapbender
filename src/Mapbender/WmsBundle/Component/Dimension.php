@@ -3,13 +3,10 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Dimension class.
- *
  * @author Paul Schmidt
  */
 class Dimension
 {
-
     const NAME_TIME = 'time';
     const NAME_ELEVATION = 'elevation';
     const NAME_PREFIX = 'dim_';

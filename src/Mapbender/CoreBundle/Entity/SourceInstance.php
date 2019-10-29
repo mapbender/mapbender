@@ -12,7 +12,6 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @ORM\Table(name="mb_core_sourceinstance")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
- * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
 abstract class SourceInstance
 {
@@ -102,16 +101,6 @@ abstract class SourceInstance
     public function getType()
     {
         return $this->source->getType();
-    }
-
-    /**
-     * Returns a manager type
-     *
-     * @return String a manager type
-     */
-    public function getManagertype()
-    {
-        return $this->source->getManagertype();
     }
 
     /**

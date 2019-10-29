@@ -2,8 +2,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 /**
- * Job class
- *
  * @author Paul Schmidt
  */
 abstract class ExchangeJob

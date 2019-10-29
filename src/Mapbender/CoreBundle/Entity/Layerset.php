@@ -142,7 +142,7 @@ class Layerset
      * Set instances
      *
      * @param Collection $instances Collection of the SourceInstances
-     * @return Layerset
+     * @return $this
      */
     public function setInstances($instances)
     {

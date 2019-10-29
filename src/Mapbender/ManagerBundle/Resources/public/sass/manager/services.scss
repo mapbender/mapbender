@@ -2,10 +2,14 @@
 .listFilterServiceBoxes{
   $col1Width: 60px;
 
-  .col1{width:$col1Width;}
-  .col2{
-    margin-left: $col1Width;
-    min-height: $fontSize*7;
+  .col1 {
+    width: $col1Width;
+    padding: $space/4;
+
+    .icon {
+        // undo built-in cursor: pointer on .icon*
+        cursor: default;
+    }
   }
 }
 
@@ -155,6 +159,10 @@ fieldset.box {
 .instanceTable{
   margin-top:$space;
   margin-bottom:$space;
+  .checkWrapper.left {
+    /** @todo: remove float from checkbox_widget block globally */
+    float: none;
+  }
 
   .checkboxColumn{text-align:center;}
   .odd{background-color:darken($contentColor, 6%);}
@@ -191,15 +199,7 @@ fieldset.box {
         line-height: $inputHeight;
         float: none;
         width: 1em;
-        &:before {
-          margin: 0;
-        }
       }
-    }
-  }
-  thead .checkboxColumn {
-    span:before {
-      margin: 0;
     }
   }
   .level0 .itemType{margin-left:4px;}

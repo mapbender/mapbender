@@ -5,9 +5,6 @@ use Mapbender\CoreBundle\Component\Exception\ProxySignatureEmptyException;
 use Mapbender\CoreBundle\Component\Exception\ProxySignatureException;
 use Mapbender\CoreBundle\Component\Exception\ProxySignatureInvalidException;
 
-/**
- * Class Signer
- */
 class Signer
 {
     /** @var string */

@@ -8,7 +8,6 @@ use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\Exception\WmtsException;
 
 /**
- * Class that Parses WMTS GetCapabilies Document
  * Parses WMTS GetCapabilities documents
  *
  * @author Paul Schmidt

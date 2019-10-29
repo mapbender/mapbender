@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Class ContainsAlphanumericValidator
- *
  * @package Mapbender\CoreBundle\Validator\Constraints
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  */

@@ -19,7 +19,6 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $instance = new WmtsInstance();
         $instance->setSource($source);
         $instance->setTitle($source->getTitle());
-        $instance->setRoottitle($source->getTitle());
 
         foreach ($source->getLayers() as $layer) {
             $instLayer = $this->createInstanceLayer($layer);
