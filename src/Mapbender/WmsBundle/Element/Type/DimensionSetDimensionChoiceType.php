@@ -13,7 +13,7 @@ class DimensionSetDimensionChoiceType extends AbstractType
 {
     public function getParent()
     {
-        return 'choice';
+        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
     public function configureOptions(OptionsResolver $resolver)
