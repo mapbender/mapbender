@@ -6,10 +6,10 @@
         <parameter key="mapbender.manager.element_form_factory.service.class">Mapbender\ManagerBundle\Component\ElementFormFactory</parameter>
         <parameter key="mapbender.strict.element_api.form_type">%mapbender.strict.element_api%</parameter>
         <!-- populated by compiler passes -->
-        <parameter type="collection" key="mapbender.manager.menu.items" />
+        <parameter type="collection"/><!-- menu items -->
         <!-- popuplated by RegisterLegacyMenuRoutesPass -->
-        <parameter type="collection" key="mapbender.manager.menu.legacy_bundles" />
-        <parameter type="collection" key="mapbender.manager.menu.route_prefix_blacklist" />
+        <parameter type="collection"/><!-- legacy bundles -->
+        <parameter type="collection"/><!-- route prefix blacklist -->
     </parameters>
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">

@@ -61,7 +61,7 @@
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
-            <argument type="collection" key="layerRenderers">
+            <argument type="collection"><!-- layer renderers -->
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
                 <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
@@ -91,7 +91,7 @@
             <argument type="service" id="mapbender.imageexport.renderer.markers" />
         </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
-            <argument type="collection" key="layerRenderers">
+            <argument type="collection"><!-- layer renderers -->
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
                 <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
