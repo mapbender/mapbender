@@ -43,7 +43,7 @@ class DimensionSetAdminType extends AbstractType
                     'data-name' => 'title',
                 ),
             ))
-            ->add('group', new DimensionSetDimensionChoiceType(), array(
+            ->add('group', 'Mapbender\WmsBundle\Element\Type\DimensionSetDimensionChoiceType', array(
                 'required' => true,
                 'multiple' => true,
                 'mapped' => true,

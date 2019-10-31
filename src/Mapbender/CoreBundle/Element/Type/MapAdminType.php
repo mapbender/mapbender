@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\CoreBundle\Form\Type\ExtentType;
 
 class MapAdminType extends AbstractType implements DataTransformerInterface
 {
@@ -58,11 +57,11 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('extent_max', new ExtentType(), array(
+            ->add('extent_max', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.max_extent',
                 'property_path' => '[extents][max]',
             ))
-            ->add('extent_start', new ExtentType(), array(
+            ->add('extent_start', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.start_extent',
                 'property_path' => '[extents][start]',
             ))

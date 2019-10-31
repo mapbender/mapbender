@@ -90,14 +90,14 @@ class PrintClientAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
             ))
-            ->add('optional_fields', new YAMLConfigurationType(), array(
+            ->add('optional_fields', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
             ))
             ->add('required_fields_first', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.required_fields_first',
             ))
-            ->add('replace_pattern', new YAMLConfigurationType(), array(
+            ->add('replace_pattern', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
             ))
             ->add('templates', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(

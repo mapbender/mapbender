@@ -26,7 +26,9 @@ class ButtonAdminType extends AbstractType
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('icon', new IconClassType(), array('required' => false))
+            ->add('icon', 'Mapbender\CoreBundle\Element\Type\IconClassType', array(
+                'required' => false,
+            ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.button.show_label',

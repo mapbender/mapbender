@@ -42,7 +42,9 @@ class GpsPositionAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('icon', new IconClassType(), array('required' => false))
+            ->add('icon', 'Mapbender\CoreBundle\Element\Type\IconClassType', array(
+                'required' => false,
+            ))
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

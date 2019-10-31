@@ -28,7 +28,7 @@ class LegendUrlType extends AbstractType
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('onlineResource', new OnlineResourceType(), array(
+            ->add('onlineResource', 'Mapbender\WmsBundle\Form\Type\OnlineResourceType', array(
                 'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource',
             ))
         ;
