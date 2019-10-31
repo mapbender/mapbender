@@ -16,7 +16,7 @@
             <argument type="service" id="form.factory" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="service_container" />
-            <argument key="strict">%mapbender.strict.element_api.form_type%</argument>
+            <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>

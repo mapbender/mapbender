@@ -152,13 +152,13 @@
         </service>
         <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
             <argument type="service" id="mapbender.element_inventory.service" />
-            <argument key="translator" type="service" id="translator" />
+            <argument type="service" id="translator" />
             <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
-            <argument key="fileSystem" type="service" id="filesystem" />
-            <argument key="absoluteWebPath">%kernel.root_dir%/../web</argument>
-            <argument key="relativePath">%mapbender.uploads_dir%</argument>
+            <argument type="service" id="filesystem" />
+            <argument>%kernel.root_dir%/../web</argument>
+            <argument>%mapbender.uploads_dir%</argument>
         </service>
         <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
             <argument type="service" id="security.acl.provider" />
@@ -206,8 +206,8 @@
             <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.element_factory.service" />
-            <argument key="debug">%kernel.debug%</argument>
-            <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
+            <argument>%kernel.debug%</argument>
+            <argument>%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
