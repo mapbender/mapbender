@@ -39,6 +39,9 @@ class MapbenderCoreBundle extends MapbenderBundle
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
 
+        // @todo: remove legacy form theme bridging
+        //        TBD: either rely on correct starter config (and do nothing here)
+        //             or SET theme here, discarding starter config
         $formThemeOldLocation = 'FOMCoreBundle:Form:fields.html.twig';
         $formThemeNewLocation = 'MapbenderCoreBundle:form:fields.html.twig';
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));

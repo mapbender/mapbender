@@ -61,7 +61,7 @@
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
-            <argument type="collection" key="layerRenderers">
+            <argument type="collection"><!-- layer renderers -->
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
                 <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
@@ -91,7 +91,7 @@
             <argument type="service" id="mapbender.imageexport.renderer.markers" />
         </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
-            <argument type="collection" key="layerRenderers">
+            <argument type="collection"><!-- layer renderers -->
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
                 <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
@@ -122,7 +122,7 @@
             <argument type="service" id="service_container" />
             <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
                        'featureTypeParam'. That key must be retained. The value may be changed of course. -->
-            <argument key="featureTypeParamName">%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
+            <argument>%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
         </service>
         <service id="mapbender.print.plugin.queue" class="%mapbender.print.plugin.queue.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
@@ -133,7 +133,7 @@
             <argument>%mapbender.print.queue.load_path%</argument>
         </service>
         <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
-            <argument key="queuable">%mapbender.print.queueable%</argument>
+            <argument>%mapbender.print.queueable%</argument>
         </service>
     </services>
 </container>

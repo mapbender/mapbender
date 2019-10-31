@@ -22,9 +22,14 @@ class LayersetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $builder->add("id", "hidden", array("required" => false))
-                ->add("title", "text", array(
-                    'max_length' => 128));
+        $builder
+            ->add("id", "hidden", array("required" => false))
+            ->add("title", "text", array(
+                'attr' => array(
+                    'maxlength' => 128,
+                ),
+            ))
+        ;
     }
 
 }
