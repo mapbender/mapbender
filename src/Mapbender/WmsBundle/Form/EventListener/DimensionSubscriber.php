@@ -46,28 +46,32 @@ class DimensionSubscriber implements EventSubscriberInterface
         $form
             ->add('type', 'hidden', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ))
             ->add('name', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ))
             ->add('units', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'units',
+                    'readonly' => 'readonly',
                 ),
             ))
             ->add('unitSymbol', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'unitSymbol',
+                    'readonly' => 'readonly',
                 ),
             ))
             ->add('multipleValues', 'checkbox', array(
@@ -126,8 +130,10 @@ class DimensionSubscriber implements EventSubscriberInterface
         if ($data->getType() === DimensionInst::TYPE_INTERVAL) {
             $form->add('default', 'text', array(
                 'auto_initialize' => false,
-                'read_only' => false,
                 'required' => false,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ));
         }
     }
