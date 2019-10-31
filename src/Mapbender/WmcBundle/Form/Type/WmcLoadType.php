@@ -20,7 +20,7 @@ class WmcLoadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('xml', 'file', array('required' => true));
+        $builder->add('xml', 'Symfony\Component\Form\Extension\Core\Type\FileType');
     }
 
 }

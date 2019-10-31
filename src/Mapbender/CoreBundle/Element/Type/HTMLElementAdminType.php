@@ -26,8 +26,9 @@ class HTMLElementAdminType extends AbstractType
             ->add('content', 'html', [
                 'required' => false,
             ])
-            ->add('classes', 'text', [
+            ->add('classes', 'Symfony\Component\Form\Extension\Core\Type\TextType', [
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 }

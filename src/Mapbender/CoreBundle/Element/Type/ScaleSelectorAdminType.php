@@ -23,8 +23,10 @@ class ScaleSelectorAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
-            ->add('label', 'checkbox', array(
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.scaleselector.show_label',
             ))

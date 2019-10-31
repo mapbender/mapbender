@@ -23,8 +23,11 @@ class FeatureInfoAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('type', 'choice', array(
+        $builder
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     'Dialog' => 'dialog',
@@ -32,7 +35,7 @@ class FeatureInfoAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('displayType', 'choice', array(
+            ->add('displayType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     'Tabs' => 'tabs',
@@ -40,20 +43,20 @@ class FeatureInfoAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('autoActivate', 'checkbox', array(
+            ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.autoopen',
             ))
-            ->add('printResult', 'checkbox', array('required' => false))
-            ->add('deactivateOnClose', 'checkbox', array(
+            ->add('printResult', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
+            ->add('deactivateOnClose', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.deactivateonclose',
             ))
-            ->add('showOriginal', 'checkbox', array(
+            ->add('showOriginal', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.showoriginal',
             ))
-            ->add('onlyValid', 'checkbox', array(
+            ->add('onlyValid', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
             ))
@@ -62,9 +65,13 @@ class FeatureInfoAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('width', 'integer', array('required' => true))
-            ->add('height', 'integer', array('required' => true))
-            ->add('maxCount', 'integer', array(
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => true,
+            ))
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => true,
+            ))
+            ->add('maxCount', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => false,
                 'attr' => array(
                     'placeholder' => 100,

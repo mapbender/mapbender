@@ -28,13 +28,15 @@ class SuggestMapAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('receiver', 'choice', array(
+            ->add('receiver', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'multiple' => true,
                 'required' => true,
                 'choices' => array(

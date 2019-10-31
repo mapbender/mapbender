@@ -22,10 +22,10 @@ class LegendUrlType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('width', 'text', array(
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('height', 'text', array(
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
             ->add('onlineResource', new OnlineResourceType(), array(

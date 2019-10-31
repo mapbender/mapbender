@@ -28,16 +28,18 @@ class WmcEditorAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('width', 'integer', array(
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => false,
             ))
-            ->add('height', 'integer', array(
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => false,
             ))
         ;

@@ -43,7 +43,7 @@ class FieldSubscriber implements EventSubscriberInterface
         foreach ($arrStyles as $style) {
             $styleOpt[$style->getTitle()] = $style->getIdentifier();
         }
-        $form->add('style', 'choice', array(
+        $form->add('style', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'label' => 'Style',
             'choices' => $styleOpt,
             'choices_as_values' => true,

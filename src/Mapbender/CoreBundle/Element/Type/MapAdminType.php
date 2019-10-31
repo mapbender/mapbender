@@ -37,17 +37,17 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     'data-sortable' => 'choiceExpandedSortable',
                 ),
             ))
-            ->add('dpi', 'number', array(
+            ->add('dpi', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'label' => 'DPI',
             ))
-            ->add('tileSize', 'number', array(
+            ->add('tileSize', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => false,
                 'label' => 'Tile size',
             ))
-            ->add('srs', 'text', array(
+            ->add('srs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'SRS',
             ))
-            ->add('units', 'choice', array(
+            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'label' => 'Map units',
                 'choices' => array(
                     'Degrees' => 'degrees',
@@ -66,11 +66,11 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'label' => 'mb.manager.admin.map.start_extent',
                 'property_path' => '[extents][start]',
             ))
-            ->add('scales', 'text', array(
+            ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Scales (csv)',
                 'required' => true,
             ))
-            ->add('otherSrs', 'text', array(
+            ->add('otherSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Other SRS',
                 'required' => false,
             ))

@@ -20,7 +20,7 @@ class WmcDeleteType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('id', 'hidden');
+        $builder->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
     }
 
 }

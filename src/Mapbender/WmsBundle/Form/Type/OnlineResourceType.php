@@ -32,12 +32,14 @@ class OnlineResourceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('format', 'text',
-                      array(
-                    'required' => false,))
-                ->add('href', 'text',
-                      array(
-                    'required' => false,));
+        $builder
+            ->add('format', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                    'required' => false,
+            ))
+            ->add('href', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+        ;
     }
 
 }

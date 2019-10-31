@@ -22,13 +22,16 @@ class RulerAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
+        $builder
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('type', 'choice',
+            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
                 'required' => true,
                 'choices' => array(
@@ -37,11 +40,11 @@ class RulerAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('immediate', 'checkbox',
-                array(
-                    'required' => false,
-                    'label' => 'Immediate'
-                ));
+            ->add('immediate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'Immediate',
+            ))
+        ;
     }
 
 }

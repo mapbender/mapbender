@@ -37,7 +37,7 @@ class DimensionSetAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
                 'attr' => array(
                     'data-name' => 'title',
@@ -52,7 +52,7 @@ class DimensionSetAdminType extends AbstractType
                     'data-name' => 'group',
                 ),
             ))
-            ->add('dimension', 'hidden', array(
+            ->add('dimension', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
                 'mapped' => true,
                 'attr' => array(

@@ -28,12 +28,12 @@ class ScaleDisplayAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('scalePrefix', 'text', array(
+            ->add('scalePrefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,
             ))
-            ->add('unitPrefix', 'checkbox', array('required' => false))
-            ->add('anchor', "choice", array(
+            ->add('unitPrefix', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
                     'left-top' => 'left-top',

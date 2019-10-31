@@ -59,9 +59,9 @@ class ElementFormFactory extends BaseElementFactory
         // Create base form shared by all elements
         $formType = $this->formFactory->createBuilder('form', $element, array());
         $formType
-            ->add('title', 'text')
-            ->add('class', 'hidden')
-            ->add('region', 'hidden')
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+            ->add('class', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
+            ->add('region', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
         ;
         $this->migrateElementConfiguration($element);
         $configurationType = $this->getConfigurationFormType($element);

@@ -42,7 +42,7 @@ class LayertreeAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('type', 'choice', array(
+            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     'Element' => 'element',
@@ -50,31 +50,31 @@ class LayertreeAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('autoOpen', 'checkbox', array(
+            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.autoopen',
             ))
-            ->add('useTheme', 'checkbox', array(
+            ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.usetheme',
             ))
-            ->add('showBaseSource', 'checkbox', array(
+            ->add('showBaseSource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.showbasesources',
             ))
-            ->add('showHeader', 'checkbox', array(
+            ->add('showHeader', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.showheader',
             ))
-            ->add('hideInfo', 'checkbox', array(
+            ->add('hideInfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
             ))
-            ->add('hideNotToggleable', 'checkbox', array(
+            ->add('hideNotToggleable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hidenottoggleable',
             ))
-            ->add('hideSelect', 'checkbox', array(
+            ->add('hideSelect', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideselect',
             ))

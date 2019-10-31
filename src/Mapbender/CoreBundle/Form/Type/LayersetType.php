@@ -23,8 +23,10 @@ class LayersetType extends AbstractType
     {
 
         $builder
-            ->add("id", "hidden", array("required" => false))
-            ->add("title", "text", array(
+            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+                'required' => false,
+            ))
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'attr' => array(
                     'maxlength' => 128,
                 ),

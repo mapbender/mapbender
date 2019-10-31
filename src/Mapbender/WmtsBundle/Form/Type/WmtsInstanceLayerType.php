@@ -28,11 +28,11 @@ class WmtsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('info', 'checkbox', array(
+            ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
             ))
-            ->add('allowinfo', 'checkbox', array(
+            ->add('allowinfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
             ))

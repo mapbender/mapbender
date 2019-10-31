@@ -37,7 +37,7 @@ class ExportJobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('application', 'entity', array(
+            ->add('application', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
                 'label' => 'form.manager.admin.application.export.application',
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'property' => 'title',
@@ -45,7 +45,7 @@ class ExportJobType extends AbstractType
                 'choices' => $options['application'],
                 'required' => true,
             ))
-            ->add('format', 'choice',
+            ->add('format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
                 'required' => true,
                 'choices' => array(

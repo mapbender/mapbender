@@ -11,9 +11,15 @@ class PrintClientQualityAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // @todo: add missing field labels
         $builder
-            ->add('dpi', 'text', array('required' => false))
-            ->add('label', 'text', array('required' => false))
+            // @todo: should be a number
+            ->add('dpi', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
         ;
     }
 

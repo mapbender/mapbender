@@ -24,7 +24,7 @@ class LegendAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('elementType', 'choice',
+            ->add('elementType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
                 'required' => true,
                 'choices' => array(
@@ -33,11 +33,11 @@ class LegendAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('autoOpen', 'checkbox', array(
+            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
             ))
-            ->add('displayType', 'choice',
+            ->add('displayType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
                 'required' => true,
                 'choices' => array(
@@ -50,15 +50,15 @@ class LegendAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('showSourceTitle', 'checkbox', array(
+            ->add('showSourceTitle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showsourcetitle',
             ))
-            ->add('showLayerTitle', 'checkbox', array(
+            ->add('showLayerTitle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showlayertitle',
             ))
-            ->add('showGroupedLayerTitle', 'checkbox', array(
+            ->add('showGroupedLayerTitle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showgroupedlayertitle',
             ))

@@ -42,7 +42,7 @@ class PrintClientAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('type', 'choice', array(
+            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     'Dialog' => 'dialog',
@@ -50,15 +50,15 @@ class PrintClientAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('scales', 'text', array(
+            ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('file_prefix', 'text', array(
+            ->add('file_prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
         ;
         if ($this->queueable) {
-            $builder->add('renderMode', 'choice', array(
+            $builder->add('renderMode', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
@@ -67,7 +67,7 @@ class PrintClientAdminType extends AbstractType
                 'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
-            $builder->add('queueAccess', 'choice', array(
+            $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
@@ -78,22 +78,22 @@ class PrintClientAdminType extends AbstractType
             ));
         }
         $builder
-            ->add('rotatable', 'checkbox', array(
+            ->add('rotatable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.rotatable',
             ))
-            ->add('legend', 'checkbox', array(
+            ->add('legend', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend',
             ))
-            ->add('legend_default_behaviour', 'checkbox', array(
+            ->add('legend_default_behaviour', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
             ))
             ->add('optional_fields', new YAMLConfigurationType(), array(
                 'required' => false,
             ))
-            ->add('required_fields_first', 'checkbox', array(
+            ->add('required_fields_first', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.required_fields_first',
             ))

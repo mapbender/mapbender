@@ -33,35 +33,35 @@ class WmsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('info', 'checkbox', array(
+            ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
             ))
-            ->add('toggle', 'checkbox', array(
+            ->add('toggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.toggletoc',
             ))
-            ->add('allowinfo', 'checkbox', array(
+            ->add('allowinfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
             ))
-            ->add('allowtoggle', 'checkbox', array(
+            ->add('allowtoggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc',
             ))
-            ->add('allowreorder', 'checkbox', array(
+            ->add('allowreorder', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
             ))
-            ->add('minScale', 'text', array(
+            ->add('minScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.minscale',
             ))
-            ->add('maxScale', 'text', array(
+            ->add('maxScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.maxsclase',   // sic!
             ))
-            ->add('priority', 'hidden', array(
+            ->add('priority', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
             ))
         ;

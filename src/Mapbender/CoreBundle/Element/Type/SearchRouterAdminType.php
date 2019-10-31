@@ -28,15 +28,17 @@ class SearchRouterAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('dialog', 'checkbox', array(
+            ->add('dialog', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                // @todo: fix legacy config errors anywhere else, but not on the form level
                 'property_path' => '[asDialog]',
             ))
-            ->add('timeout', 'integer', array(
+            ->add('timeout', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'label' => 'Timeout factor',
+                // @todo: fix legacy config errors anywhere else, but not on the form level
                 'property_path' => '[timeoutFactor]',
             ))
-            ->add('width', 'integer', array('required' => true))
-            ->add('height', 'integer', array('required' => true))
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'entry_type' => 'Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType',
                 'allow_add' => true,

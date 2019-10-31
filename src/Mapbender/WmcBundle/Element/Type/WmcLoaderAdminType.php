@@ -27,13 +27,15 @@ class WmcLoaderAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('keepSources', 'choice', array(
+            ->add('keepSources', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => false,
                 'choices' => array(
                     "no" => "no",
@@ -42,7 +44,7 @@ class WmcLoaderAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('components', 'choice', array(
+            ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'multiple' => true,
                 'required' => true,
                 'choices' => array(
@@ -53,7 +55,7 @@ class WmcLoaderAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('keepExtent', 'checkbox', array(
+            ->add('keepExtent', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wmc.admin.wmcloader.keep_extent',
             ))

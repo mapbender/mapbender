@@ -31,13 +31,15 @@ class SketchAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('defaultType', 'choice', array(
+            // @todo: redundant, remove
+            ->add('defaultType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 "required" => true,
                 'choices_as_values' => true,
                 "choices" => $types,
             ))
-            ->add('types', 'choice',
-                array("required" => true,
+            // @todo: redundant, remove
+            ->add('types', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'required' => true,
                 "choices" => $types,
                 'choices_as_values' => true,
                 "multiple" => true,

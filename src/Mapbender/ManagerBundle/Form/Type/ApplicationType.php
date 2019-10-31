@@ -32,7 +32,7 @@ class ApplicationType extends AbstractType
     {
         if (!$options['data']->getId()) {
             // allow template choice only for new Application
-            $builder->add('template', 'choice', array(
+            $builder->add('template', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => array_flip($options['available_templates']),
                 'choices_as_values' => true,
                 'label' => 'mb.manager.admin.application.template',
@@ -42,21 +42,21 @@ class ApplicationType extends AbstractType
             ));
         }
         $builder
-            ->add('title', 'text', array(
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'mb.manager.admin.application.title',
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
                     . 'title bar and in lists.',
                 ),
             ))
-            ->add('slug', 'text', array(
+            ->add('slug', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'mb.manager.admin.application.url.title',
                 'attr' => array(
                     'title' => 'The URL title (slug) is based on the title and used in the '
                     . 'application URL.',
                 ),
             ))
-            ->add('description', 'textarea', array(
+            ->add('description', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.application.description',
                 'attr' => array(
@@ -64,7 +64,7 @@ class ApplicationType extends AbstractType
                 ),
             ))
 
-            ->add('screenshotFile', 'file', array(
+            ->add('screenshotFile', 'Symfony\Component\Form\Extension\Core\Type\FileType', array(
                 'label' => 'Screenshot',
                 'mapped' => false,
                 'required' => false,
@@ -80,25 +80,25 @@ class ApplicationType extends AbstractType
                     )),
                 ),
             ))
-            ->add('removeScreenShot', 'hidden',array(
+            ->add('removeScreenShot', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
             ))
-            ->add('maxFileSize', 'hidden',array(
+            ->add('maxFileSize', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
                 'data' => $options['maxFileSize'],
             ))
-            ->add('screenshotWidth', 'hidden',array(
+            ->add('screenshotWidth', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
                 'data' => $options['screenshotWidth'],
             ))
-            ->add('screenshotHeight', 'hidden',array(
+            ->add('screenshotHeight', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
                 'data' => $options['screenshotHeight'],
             ))
-            ->add('custom_css', 'textarea', array(
+            ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))
-            ->add('published', 'checkbox',
+            ->add('published', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType',
                 array(
                 'required' => false,
                 'label' => 'mb.manager.admin.application.security.public',

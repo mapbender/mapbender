@@ -24,6 +24,7 @@ class OverviewAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // @todo: add missing field labels
         $builder
             ->add('layerset', 'app_layerset', array(
                 'application' => $options['application'],
@@ -34,7 +35,7 @@ class OverviewAdminType extends AbstractType
                 'application'   => $options['application'],
                 'required' => false,
             ))
-            ->add('anchor', "choice", array(
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices"  => array(
                     'left-top'     => 'left-top',
@@ -44,16 +45,18 @@ class OverviewAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('maximized', 'checkbox', array(
+            ->add('maximized', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.overview.maximize',
             ))
-            ->add('fixed', 'checkbox', array(
+            ->add('fixed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.overview.fix',
             ))
-            ->add('width', 'text', array('required' => true))
-            ->add('height', 'text', array('required' => true))
+            // @todo: this should be a positive integer
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+            // @todo: this should be a positive integer
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType')
         ;
     }
 

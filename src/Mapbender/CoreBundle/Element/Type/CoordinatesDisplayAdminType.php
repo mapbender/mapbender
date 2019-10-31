@@ -23,8 +23,7 @@ class CoordinatesDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('anchor', "choice",
-                array(
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
                     'left-top' => 'left-top',
@@ -34,8 +33,10 @@ class CoordinatesDisplayAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('numDigits', 'integer', array('required' => true))
-            ->add('label', 'checkbox', array(
+            ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => true,
+            ))
+            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.corrdsdisplay.label', // sic
             ))
@@ -44,10 +45,18 @@ class CoordinatesDisplayAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('empty', 'text', array('required' => false, "trim" => false))
-            ->add('prefix', 'text', array('required' => false, "trim" => false))
-            ->add('separator', 'text',
-                array('required' => false, "trim" => false))
+            ->add('empty', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'trim' => false,
+            ))
+            ->add('prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'trim' => false,
+            ))
+            ->add('separator', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'trim' => false,
+            ))
         ;
     }
 
