@@ -122,7 +122,7 @@
             <argument type="service" id="service_container" />
             <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
                        'featureTypeParam'. That key must be retained. The value may be changed of course. -->
-            <argument key="featureTypeParamName">%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
+            <argument>%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
         </service>
         <service id="mapbender.print.plugin.queue" class="%mapbender.print.plugin.queue.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
