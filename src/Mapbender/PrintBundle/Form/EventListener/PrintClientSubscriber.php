@@ -5,11 +5,7 @@ namespace Mapbender\PrintBundle\Form\EventListener;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
-use Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType;
 
-/**
- * 
- */
 class PrintClientSubscriber implements EventSubscriberInterface
 {
     /**

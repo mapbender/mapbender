@@ -2,7 +2,6 @@
 namespace Mapbender\KmlBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class KmlExport extends Element {

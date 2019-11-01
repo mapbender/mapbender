@@ -5,7 +5,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 
 class PrintClientAdminType extends AbstractType
 {
