@@ -4,7 +4,6 @@ namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Entity\Wmc;
-use Mapbender\WmcBundle\Form\Type\WmcLoadType;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Symfony\Component\Form\Form;
@@ -184,7 +183,7 @@ class WmcLoader extends WmcBase
         if (in_array("wmcxmlloader", $config['components'])) {
             $wmc = new Wmc();
             /** @var Form $form */
-            $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
+            $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcLoadType', $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
                          array(
@@ -268,7 +267,7 @@ class WmcLoader extends WmcBase
             $request = $this->container->get('request_stack')->getCurrentRequest();
             $wmc = Wmc::create();
             /** @var Form $form */
-            $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
+            $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcLoadType', $wmc);
             $form->submit($request);
             if ($form->isValid()) {
                 if ($wmc->getXml() !== null) {

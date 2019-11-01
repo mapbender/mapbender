@@ -12,7 +12,6 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
@@ -20,9 +19,6 @@ use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
-use Mapbender\ManagerBundle\Form\Type\ApplicationType;
-use Mapbender\ManagerBundle\Form\Type\ExportJobType;
-use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
@@ -130,7 +126,7 @@ class ApplicationController extends WelcomeController
     {
         $expHandler = $this->getApplicationExporter();
         $job = new ExportJob();
-        $form = $this->createForm(new ExportJobType(), $job, array(
+        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ExportJobType', $job, array(
             'application' => $this->getExportableApplications(),
         ));
         $form->handleRequest($request);
@@ -175,7 +171,7 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('CREATE', $applicationOid);
         $impHandler = $this->getApplicationImporter();
         $job = new ImportJob();
-        $form = $this->createForm(new ImportJobType(), $job);
+        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ImportJobType', $job);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -419,7 +415,7 @@ class ApplicationController extends WelcomeController
             ));
         }
 
-        $form = $this->createForm(new LayersetType(), $layerset, array(
+        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset, array(
             'action' => $action,
         ));
         $form->handleRequest($request);
@@ -635,7 +631,7 @@ class ApplicationController extends WelcomeController
         }
         asort($availableTemplates);
 
-        return $this->createForm(new ApplicationType(), $application, array(
+        return $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application, array(
             'available_templates'  => $availableTemplates,
             'maxFileSize'          => 2097152,
             'screenshotWidth'      => 200,

@@ -5,8 +5,6 @@ namespace Mapbender\WmcBundle\Element;
 use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
-use Mapbender\WmcBundle\Form\Type\WmcDeleteType;
-use Mapbender\WmcBundle\Form\Type\WmcType;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Symfony\Component\Form\Form;
@@ -198,7 +196,7 @@ class WmcEditor extends WmcBase
             $wmc = Wmc::create($state);
         }
         /** @var Form $form */
-        $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+        $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcType', $wmc);
         $template = 'MapbenderWmcBundle:Wmc:wmceditor-form.html.twig';
         $html = $this->container->get('templating')->render($template, array(
             'form' => $form->createView(),
@@ -262,7 +260,7 @@ class WmcEditor extends WmcBase
         $wmchandler = $this->wmcHandlerFactory();
         $wmc = Wmc::create();
         /** @var Form $form */
-        $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+        $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcType', $wmc);
         if ($request->getMethod() === 'POST') {
             $form->submit($request);
             if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
@@ -272,7 +270,7 @@ class WmcEditor extends WmcBase
                         ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                         ->find($wmc->getId());
                     /** @var Form $form */
-                    $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+                    $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcType', $wmc);
                     $form->submit($request);
                     if (!$form->isValid()) {
                         return new JsonResponse(array(
@@ -342,7 +340,7 @@ class WmcEditor extends WmcBase
             $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, false);
             /** @var Form $form */
-            $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
+            $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcDeleteType', $wmc);
             $template = 'MapbenderWmcBundle:Wmc:deletewmc.html.twig';
             $html = $this->container->get('templating')->render($template, array(
                 'application' => $this->getEntity()->getApplication(),
@@ -366,7 +364,7 @@ class WmcEditor extends WmcBase
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
         /** @var Form $form */
-        $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
+        $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcDeleteType', $wmc);
         if ($request->getMethod() === 'POST') {
             $form->submit($request);
             if ($form->isValid()) {

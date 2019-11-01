@@ -3,8 +3,6 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\SQLSearchEngine;
-use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
-use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -204,7 +202,7 @@ class SearchRouter extends Element
         $formFactory   = $this->container->get('form.factory');
         $form          = $formFactory->createNamed(
             'search_routes',
-            new SearchRouterSelectType(),
+            'Mapbender\CoreBundle\Element\Type\SearchRouterSelectType',
             null,
             array('routes' => $configuration['routes'])
         );
@@ -220,7 +218,7 @@ class SearchRouter extends Element
     {
         /** @var FormFactoryInterface $factory */
         $factory = $this->container->get('form.factory');
-        return $factory->createNamed($categoryId, new SearchRouterFormType(), null, array(
+        return $factory->createNamed($categoryId, 'Mapbender\CoreBundle\Element\Type\SearchRouterFormType', null, array(
             'fields' => $categoryConfig,
         ));
     }

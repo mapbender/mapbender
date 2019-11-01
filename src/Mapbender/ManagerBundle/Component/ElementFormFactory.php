@@ -8,7 +8,6 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -137,7 +136,7 @@ class ElementFormFactory extends BaseElementFactory
 
     public function getFallbackConfigurationFormType(Element $element)
     {
-        return new YAMLConfigurationType();
+        return 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType';
     }
 
     /**
