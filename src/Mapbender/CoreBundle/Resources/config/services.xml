@@ -111,7 +111,7 @@
         </service>
 
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.assetic.filter.sass" />
             <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
         </service>
 

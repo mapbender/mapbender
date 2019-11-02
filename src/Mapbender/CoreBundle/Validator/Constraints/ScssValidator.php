@@ -2,9 +2,8 @@
 
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
-use Eslider\Filter\ScssFilter;
+use Assetic\Filter\FilterInterface;
 use Eslider\ScssAsset;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -14,16 +13,14 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ScssValidator extends ConstraintValidator
 {
-    protected $container;
+    protected $filter;
 
     /**
-     * ContainsAlphanumericValidator constructor.
-     *
-     * @param ContainerInterface $container
+     * @param FilterInterface $filter
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(FilterInterface $filter)
     {
-        $this->container = $container;
+        $this->filter = $filter;
     }
 
     /**
@@ -39,9 +36,7 @@ class ScssValidator extends ConstraintValidator
         }
 
         try {
-            /** @var ScssFilter $sassFilter */
-            $sassFilter = $this->container->get("mapbender.assetic.filter.sass");
-            $sassFilter->filterLoad(new ScssAsset($value));
+            $this->filter->filterLoad(new ScssAsset($value));
         } catch (\Exception $e) {
             $matches = null;
             preg_match("/Error Output:\\s+stdin:(\\d+):\\s*(.+?)\\s+Input:/s", $e->getMessage(), $matches);
