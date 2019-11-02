@@ -31,11 +31,6 @@ class PrintClientSubscriber implements EventSubscriberInterface
         if (null === $data) {
             return;
         }
-        if (key_exists("scales", $data) && is_string($data["scales"])) {
-            $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
-            $event->setData($data);
-        }
-
         if (key_exists("quality_levels", $data)) {
             $form->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'auto_initialize' => false,
@@ -56,11 +51,6 @@ class PrintClientSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         if (null === $data) {
             return;
-        }
-
-        if (key_exists("scales", $data) && is_array($data["scales"])) {
-            $data["scales"] = implode(",", $data["scales"]);
-            $event->setData($data);
         }
 
         if (array_key_exists("quality_levels", $data)) {
