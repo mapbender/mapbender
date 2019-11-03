@@ -82,7 +82,7 @@ $(function() {
                         label: Mapbender.trans(strings.save || 'mb.manager.components.popup.edit_element.btn.ok'),
                         cssClass: 'button',
                         callback: function() {
-                            elementFormSubmit();
+                            elementFormSubmit(this.$element, formUrl);
                         }
                     },
                     {
@@ -95,10 +95,10 @@ $(function() {
                 ])
             });
             popup.$element.on('change', function() {
-                $('#elementForm', popup.$element).data('dirty', true);
+                $('form', popup.$element).data('dirty', true);
             });
             popup.$element.on('close', function(event, token) {
-                if (true === $('#elementForm', popup.$element).data('dirty')) {
+                if ($('form', popup.$element).data('dirty')) {
                     if (!confirm('Ignore Changes?')) {
                         token.cancel = true;
                     }
@@ -164,10 +164,10 @@ $(function() {
         return false;
     });
 
-    function elementFormSubmit() {
-        var $form = $("#elementForm"),
+    function elementFormSubmit(scope, submitUrl) {
+        var $form = $('form', scope),
             data = $form.serialize(),
-            url = $form.attr('action'),
+            url = submitUrl || $form.attr('action'),
             self = this;
 
         $.ajax({
@@ -179,7 +179,7 @@ $(function() {
             },
             success: function(data) {
                 if (data.length > 0) {
-                    $form.parent().html( data );
+                    $form.parent().html(data);
                 } else {
                     $form.data('dirty', false);
                     self.close();

@@ -86,13 +86,7 @@ class ElementController extends ApplicationControllerBase
 
         $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element, array(
-            'action' => $this->generateUrl('mapbender_manager_element_new', array(
-                'slug' => $slug,
-                'class' => $class,
-                'region' => $region,
-            )),
-        ));
+        $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -137,12 +131,7 @@ class ElementController extends ApplicationControllerBase
                 . $id . '" does not exist.');
         }
         $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element, array(
-            'action' => $this->generateUrl('mapbender_manager_element_edit', array(
-                'slug' => $slug,
-                'id' => $id,
-            )),
-        ));
+        $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
