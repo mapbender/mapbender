@@ -19,21 +19,22 @@ class ApplicationYAMLMapper
 {
     /** @var LoggerInterface  */
     protected $logger;
-    /**
-     * The service container
-     * @var ContainerInterface
-     */
-    private $container;
+    /** @var TypeDirectoryService */
+    protected $sourceTypeDirectory;
+    /** @var ElementFactory */
+    protected $elementFactory;
+    /** @var array[] */
+    protected $definitions;
 
     /**
-     * ApplicationYAMLMapper constructor.
-     *
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
-        $this->logger = $this->container->get("logger");
+        $this->elementFactory = $container->get('mapbender.element_factory.service');
+        $this->sourceTypeDirectory = $container->get('mapbender.source.typedirectory.service');
+        $this->definitions = $container->getParameter('applications');
+        $this->logger = $container->get('logger');
     }
 
     /**
@@ -44,7 +45,7 @@ class ApplicationYAMLMapper
     public function getApplications()
     {
         $applications = array();
-        foreach ($this->getDefinitions() as $slug => $def) {
+        foreach ($this->definitions as $slug => $def) {
             $application = $this->getApplication($slug);
             if ($application !== null) {
                 $applications[] = $application;
@@ -64,11 +65,10 @@ class ApplicationYAMLMapper
      */
     public function getApplication($slug)
     {
-        $definitions = $this->getDefinitions();
-        if (!array_key_exists($slug, $definitions)) {
+        if (!array_key_exists($slug, $this->definitions)) {
             return null;
         }
-        $application = $this->createApplication($definitions[$slug]);
+        $application = $this->createApplication($this->definitions[$slug]);
         $application->setId($slug);
         $application->setSlug($slug);
         return $application;
@@ -117,7 +117,7 @@ class ApplicationYAMLMapper
             }
         }
         if (!empty($definition['elements'])) {
-            $collection = new YamlElementCollection($this->getElementFactory(), $application, $definition['elements'], $this->logger);
+            $collection = new YamlElementCollection($this->elementFactory, $application, $definition['elements'], $this->logger);
             $application->setElements($collection);
         }
 
@@ -149,28 +149,8 @@ class ApplicationYAMLMapper
             ->setId($layersetId)
             ->setTitle(strval($layersetId))
         ;
-        /** @var TypeDirectoryService $typeDirectory */
-        $typeDirectory = $this->container->get('mapbender.source.typedirectory.service');
-        $instanceCollection = new YamlSourceInstanceCollection($typeDirectory, $layerset, $layersetDefinition);
+        $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $layersetDefinition);
         $layerset->setInstances($instanceCollection);
         return $layerset;
-    }
-
-    /**
-     * @return ElementFactory
-     */
-    protected function getElementFactory()
-    {
-        /** @var ElementFactory $service */
-        $service = $this->container->get('mapbender.element_factory.service');
-        return $service;
-    }
-
-    /**
-     * @return array[]
-     */
-    protected function getDefinitions()
-    {
-        return $this->container->getParameter('applications');
     }
 }
