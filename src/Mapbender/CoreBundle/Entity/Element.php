@@ -79,14 +79,7 @@ class Element
     }
 
     /**
-     * Set id. DANGER
-     *
-     * Set the entity id. DO NOT USE THIS unless you know what you're doing.
-     * Probably the only place where this should be used is in the
-     * ApplicationYAMLMapper class. Maybe this could be done using a proxy
-     * class instead?
-     *
-     * @param $id
+     * @param mixed $id (integer, might be a string in Yaml-defined applications)
      * @return $this
      */
     public function setId($id)
