@@ -3,12 +3,13 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\Component\Collections\YamlSourceInstanceCollection;
+use Mapbender\Component\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Converts array-style application definitions to Application entities.
@@ -31,14 +32,19 @@ class ApplicationYAMLMapper
     protected $definitions;
 
     /**
-     * @param ContainerInterface $container
+     * @param array[] $definitions
+     * @param ElementFactory $elementFactory
+     * @param SourceInstanceFactory $sourceInstanceFactory
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($definitions,
+                                ElementFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
+                                LoggerInterface $logger = null)
     {
-        $this->elementFactory = $container->get('mapbender.element_factory.service');
-        $this->sourceTypeDirectory = $container->get('mapbender.source.typedirectory.service');
-        $this->definitions = $container->getParameter('applications');
-        $this->logger = $container->get('logger');
+        $this->definitions = $definitions;
+        $this->elementFactory = $elementFactory;
+        $this->sourceTypeDirectory = $sourceInstanceFactory;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
