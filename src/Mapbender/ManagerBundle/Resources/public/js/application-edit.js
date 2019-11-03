@@ -179,9 +179,12 @@ $(function() {
             },
             success: function(data) {
                 if (data.length > 0) {
-                    $form.parent().html(data);
+                    var dirty = $form.data('dirty');
+                    var body = $form.parent();
+                    body.html(data);
+                    $form = $('form', body);
+                    $form.data('dirty', dirty);
                 } else {
-                    $form.data('dirty', false);
                     self.close();
                     window.location.reload();
                 }
