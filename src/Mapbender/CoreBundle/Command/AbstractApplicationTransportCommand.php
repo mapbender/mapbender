@@ -7,8 +7,8 @@ namespace Mapbender\CoreBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -28,9 +28,9 @@ abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
      */
     protected function getYamlApplication($slug)
     {
-        /** @var Mapbender $m */
-        $m = $this->getContainer()->get('mapbender');
-        return $m->getYamlApplication($slug);
+        /** @var ApplicationYAMLMapper $repository */
+        $repository = $this->getContainer()->get('mapbender.application.yaml_entity_repository');
+        return $repository->getApplication($slug);
     }
 
     /**
