@@ -80,12 +80,8 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     protected function addApplications($container, $applications)
     {
         if ($applications) {
-            if ($container->hasParameter('applications')) {
-                $applicationCollection = $container->getParameter('applications');
-                $applicationCollection = array_replace($applicationCollection, $applications);
-            } else {
-                $applicationCollection = $applications;
-            }
+            $applicationCollection = $container->getParameter('applications');
+            $applicationCollection = array_replace($applicationCollection, $applications);
             $container->setParameter('applications', $applicationCollection);
         }
     }

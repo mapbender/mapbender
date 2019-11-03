@@ -11,10 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * YAML mapper for applications
- *
- * This class is responsible for mapping application definitions given in the
- * YAML configuration to Application configuration entities.
+ * Converts array-style application definitions to Application entities.
  *
  * @author Christian Wygoda
  */
@@ -174,10 +171,6 @@ class ApplicationYAMLMapper
      */
     protected function getDefinitions()
     {
-        if ($this->container->hasParameter('applications')) {
-            return $this->container->getParameter('applications') ?: array();
-        } else {
-            return array();
-        }
+        return $this->container->getParameter('applications');
     }
 }
