@@ -125,8 +125,6 @@ class Mapbender
         $application->setSlug($newSlug);
         $application->setTitle($newTitle);
         $application->setSource(Application::SOURCE_DB);
-        $application->setPublished(true);
-        $application->setUpdated(new \DateTime('now'));
 
         /** @var UploadsManager $ulm */
         $ulm = $this->container->get('mapbender.uploads_manager.service');
@@ -139,13 +137,6 @@ class Mapbender
          */
         $this->manager->persist($application);
 
-        /**
-         * Save region properties
-         */
-        foreach ($application->getRegionProperties() as $prop) {
-            $prop->setApplication($application);
-            $this->manager->persist($prop);
-        }
         /**
          * Save elements
          */
