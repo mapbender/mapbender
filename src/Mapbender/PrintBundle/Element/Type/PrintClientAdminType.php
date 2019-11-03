@@ -5,7 +5,6 @@ use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
 
 class PrintClientAdminType extends AbstractType
 {
@@ -35,7 +34,6 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventSubscriber(new PrintClientSubscriber());
         $builder
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -79,6 +77,11 @@ class PrintClientAdminType extends AbstractType
             ));
         }
         $builder
+            ->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'auto_initialize' => false,
+                'required' => false,
+                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
+            ))
             ->add('rotatable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.rotatable',
