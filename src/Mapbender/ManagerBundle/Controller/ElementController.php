@@ -86,13 +86,12 @@ class ElementController extends ApplicationControllerBase
 
         $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
-        $action = $this->generateUrl('mapbender_manager_element_new', array(
-            'slug' => $slug,
-            'class' => $class,
-            'region' => $region,
-        ));
         $formInfo = $formFactory->getConfigurationForm($element, array(
-            'action' => $action,
+            'action' => $this->generateUrl('mapbender_manager_element_new', array(
+                'slug' => $slug,
+                'class' => $class,
+                'region' => $region,
+            )),
         ));
         /** @var FormInterface $form */
         $form = $formInfo['form'];
@@ -118,7 +117,6 @@ class ElementController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
             'form' => $form->createView(),
             'theme' => $formInfo['theme'],
-            'formAction' => $action,
         ));
     }
 
@@ -139,7 +137,12 @@ class ElementController extends ApplicationControllerBase
                 . $id . '" does not exist.');
         }
         $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
+        $formInfo = $formFactory->getConfigurationForm($element, array(
+            'action' => $this->generateUrl('mapbender_manager_element_edit', array(
+                'slug' => $slug,
+                'id' => $id,
+            )),
+        ));
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -158,10 +161,6 @@ class ElementController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
             'form' => $form->createView(),
             'theme' => $formInfo['theme'],
-            'formAction' => $this->generateUrl('mapbender_manager_element_edit', array(
-                'slug' => $slug,
-                'id' => $id,
-            )),
         ));
     }
 
