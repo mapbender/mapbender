@@ -50,13 +50,13 @@ class ElementFormFactory extends BaseElementFactory
 
     /**
      * @param Element $element
+     * @param mixed[] $options forwarded to form builder
      * @return array
      */
-    public function getConfigurationForm($element)
+    public function getConfigurationForm($element, $options = array())
     {
-
         // Create base form shared by all elements
-        $formType = $this->formFactory->createBuilder('form', $element, array());
+        $formType = $this->formFactory->createBuilder('form', $element, $options);
         $formType
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
             ->add('class', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
