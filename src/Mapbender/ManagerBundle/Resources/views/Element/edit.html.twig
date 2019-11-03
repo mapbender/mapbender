@@ -7,8 +7,6 @@
         {% block form_fields_common %}
             {# fields shared by all Element forms #}
             {{ form_row(form._token) }}
-            {{ form_row(form.class) }}
-            {{ form_row(form.region) }}
         {% endblock %}
         {% block form_fields_dynamic %}
             {# fields added by the Element's custom form type #}

@@ -59,8 +59,6 @@ class ElementFormFactory extends BaseElementFactory
         $formType = $this->formFactory->createBuilder('form', $element, $options);
         $formType
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-            ->add('class', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
-            ->add('region', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
         ;
         $this->migrateElementConfiguration($element);
         $configurationType = $this->getConfigurationFormType($element);
