@@ -624,15 +624,7 @@ class ApplicationController extends WelcomeController
      */
     private function createApplicationForm(Application $application)
     {
-        $availableTemplates = array();
-
-        foreach ($this->getMapbender()->getTemplates() as $templateClassName) {
-            $availableTemplates[$templateClassName] = $templateClassName::getTitle();
-        }
-        asort($availableTemplates);
-
         return $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application, array(
-            'available_templates'  => $availableTemplates,
             'maxFileSize'          => 2097152,
             'screenshotWidth'      => 200,
             'screenshotHeight'     => 200,

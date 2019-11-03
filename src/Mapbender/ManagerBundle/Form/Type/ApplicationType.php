@@ -20,7 +20,6 @@ class ApplicationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'available_templates' => array(),
             'maxFileSize' => 0,
             'screenshotHeight' => 0,
             'screenshotWidth' => 0,
@@ -32,9 +31,7 @@ class ApplicationType extends AbstractType
     {
         if (!$options['data']->getId()) {
             // allow template choice only for new Application
-            $builder->add('template', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'choices' => array_flip($options['available_templates']),
-                'choices_as_values' => true,
+            $builder->add('template', 'Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType', array(
                 'label' => 'mb.manager.admin.application.template',
                 'label_attr' => array(
                     'title' => 'The HTML template used for this application.',
