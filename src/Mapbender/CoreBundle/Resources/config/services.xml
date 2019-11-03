@@ -16,6 +16,7 @@
         <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
+        <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
@@ -39,6 +40,9 @@
 
     <services>
         <service id="mapbender" class="Mapbender\CoreBundle\Mapbender">
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.application.yaml_entity_repository" class="%mapbender.application.yaml_entity_repository.class%" lazy="true">
             <argument type="service" id="service_container" />
         </service>
 

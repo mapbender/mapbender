@@ -13,6 +13,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Converts array-style application definitions to Application entities.
  *
+ * Service instance registered as mapbender.application.yaml_entity_repository
+ * @todo: implement object repository interface
+ * @todo: split factory from repository
+ *
  * @author Christian Wygoda
  */
 class ApplicationYAMLMapper

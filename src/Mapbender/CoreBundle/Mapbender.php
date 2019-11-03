@@ -47,7 +47,7 @@ class Mapbender
         $registry         = $container->get('doctrine');
         $this->manager    = $registry->getManager();
         $this->container  = $container;
-        $this->yamlMapper = new ApplicationYAMLMapper($container);
+        $this->yamlMapper = $container->get('mapbender.application.yaml_entity_repository');
 
         /** @var MapbenderBundle $bundle */
         foreach ($bundles as $bundle) {
