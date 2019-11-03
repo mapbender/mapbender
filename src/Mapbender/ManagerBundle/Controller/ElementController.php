@@ -73,7 +73,7 @@ class ElementController extends ApplicationControllerBase
     /**
      * Shows form for creating new element
      *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"GET"})
+     * @ManagerRoute("/application/{slug}/element/new", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
@@ -81,49 +81,29 @@ class ElementController extends ApplicationControllerBase
     public function newAction(Request $request, $slug)
     {
         $application = $this->requireApplication($slug);
-        $class       = $request->get('class'); // Get class for element
-
+        $class = $request->query->get('class');
         $region = $request->query->get('region');
+
         $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
-        /** @var FormInterface $form */
-        $form = $formInfo['form'];
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-            'form' => $form->createView(),
-            'theme' => $formInfo['theme'],
-            'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
-                'slug' => $slug,
-            )),
+        $action = $this->generateUrl('mapbender_manager_element_new', array(
+            'slug' => $slug,
+            'class' => $class,
+            'region' => $region,
         ));
-    }
-
-    /**
-     * Create a new element from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function createAction(Request $request, $slug)
-    {
-        $application = $this->requireApplication($slug);
-
-        $data = $request->get('form');
-        $element = $this->getFactory()->newEntity($data['class'], $data['region'], $application);
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
-
+        $formInfo = $formFactory->getConfigurationForm($element, array(
+            'action' => $action,
+        ));
         /** @var FormInterface $form */
         $form = $formInfo['form'];
-        $form->submit($request);
-
-        if ($form->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // calculate weight (append at end of region)
             $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
             $regionSiblings = $application->getElements()->matching($sameRegionCriteria);
             $newWeight = $regionSiblings->count();
             $element->setWeight($newWeight);
+
             $application = $element->getApplication();
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getEntityManager();
@@ -133,15 +113,13 @@ class ElementController extends ApplicationControllerBase
             $this->addFlash('success', 'Your element has been saved.');
 
             return new Response('', 201);
-        } else {
-            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-                'form' => $form->createView(),
-                'theme' => $formInfo['theme'],
-                'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
-                    'slug' => $slug,
-                )),
-            ));
         }
+
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+            'form' => $form->createView(),
+            'theme' => $formInfo['theme'],
+            'formAction' => $action,
+        ));
     }
 
     /**
