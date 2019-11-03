@@ -14,10 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegionPropertiesType extends AbstractType
 {
-
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'region_properties';
+        return 'application_region_properties';
     }
 
     public function getParent()
