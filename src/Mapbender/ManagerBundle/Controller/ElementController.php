@@ -145,12 +145,13 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET"})
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET", "POST"})
+     * @param Request $request
      * @param string $slug
      * @param string $id
      * @return Response
      */
-    public function editAction($slug, $id)
+    public function editAction(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -163,42 +164,9 @@ class ElementController extends ApplicationControllerBase
         $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
+        $form->handleRequest($request);
 
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-            'form' => $form->createView(),
-            'theme' => $formInfo['theme'],
-            'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
-                'slug' => $slug,
-                'id' => $id,
-            )),
-        ));
-    }
-
-    /**
-     * Updates element by POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" }, methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @return Response
-     */
-    public function updateAction(Request $request, $slug, $id)
-    {
-        /** @var Element $element */
-        $element = $this->getRepository()->find($id);
-
-        if (!$element) {
-            throw $this->createNotFoundException('The element with the id "'
-                . $id . '" does not exist.');
-        }
-        $formService = $this->getFormFactory();
-        $formInfo = $formService->getConfigurationForm($element);
-        /** @var FormInterface $form */
-        $form = $formInfo['form'];
-        $form->submit($request);
-
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getEntityManager();
             $application = $element->getApplication();
             $em->persist($application->setUpdated(new \DateTime('now')));
@@ -208,16 +176,15 @@ class ElementController extends ApplicationControllerBase
             $this->addFlash('success', 'Your element has been saved.');
 
             return new Response('', 205);
-        } else {
-            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-                'form' => $form->createView(),
-                'theme' => $formInfo['theme'],
-                'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
-                    'slug' => $slug,
-                    'id' => $id,
-                )),
-            ));
         }
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+            'form' => $form->createView(),
+            'theme' => $formInfo['theme'],
+            'formAction' => $this->generateUrl('mapbender_manager_element_edit', array(
+                'slug' => $slug,
+                'id' => $id,
+            )),
+        ));
     }
 
     /**
