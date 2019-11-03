@@ -22,7 +22,6 @@
         <service id="drupal_user_provider" class="Mapbender\DrupalIntegrationBundle\Security\User\DrupalUserProvider"></service>
 
         <service id="security.access.uid1.voter" class="Mapbender\DrupalIntegrationBundle\Security\Authorization\Voter\Uid1Voter">
-            <argument type="service" id="service_container" strict="false" />
             <tag name="security.voter" />
         </service>
     </services>

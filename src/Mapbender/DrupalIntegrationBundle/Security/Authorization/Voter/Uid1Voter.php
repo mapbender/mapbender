@@ -2,7 +2,6 @@
 
 namespace Mapbender\DrupalIntegrationBundle\Security\Authorization\Voter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -15,11 +14,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class Uid1Voter implements VoterInterface
 {
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function supportsAttribute($attribute)
     {
         return true;
