@@ -177,7 +177,7 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->createForm('acl', $element, array(
+        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
             'mapped' => false,
             'create_standard_permissions' => false,
             'permissions' => array(
