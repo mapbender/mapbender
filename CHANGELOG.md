@@ -1,17 +1,27 @@
-## dev-release/3.0.7 @ 4d61891ef
+## dev-release/3.0.7 @ 36923b381
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
-- Replace Chrome-specific regex usage in time dimension initialization with unspecific equivalents
-- Fix alignment of ZoomBar zoom level icons
 - Replace ZoomBar history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
+- Fix alignment of ZoomBar zoom level icons
+- Fix broken map scales configuration if loaded config contains non-contiguous array
+- Fix internal server error when submitting PrintClient configuration form with invalid values
+- Fix display of wide-format custom logos in backend sidepane and login areas
+- Disable sqlite foreign keys when running doctrine:schema:update command for safety
 - When cloning DB applications, also clone access control rules
+- Support accessing non-published Yaml-based application in clone and export cli commands
+- Supply validation error messages (line + snippet) for yaml-type form fields
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
+- Remove confusing WMTS instance form fields for unpersisted values
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
 - Remove unused tooltip Element configuration (ZoomBar, ScaleDisplay, ScaleBar, Overview, FeatureInfo, CoordinatesDisplay, Legend, Sketch)
+- Remove schema validation status display icons from backend Source listing (schema validation is always off since 3.0.8)
 - Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
-- Support accessing non-published Yaml-based application in clone and export cli commands
+- Maintain backend element form confirmation on close behaviour after submitting once with validation errors
+- [CSS] `.linkButton` and all `<a>` elements now inherit font color
+- [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
 - Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
+- Resolve misc form type, service configuration and other incompatibilities with Symfony 3
 - Dropped legacy joii library
 
 ## v3.0.8.4
