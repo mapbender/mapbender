@@ -60,7 +60,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         $applications = array();
 
         foreach ($finder as $file) {
-            $fileData = Yaml::parse($file->getRealPath());
+            $fileData = Yaml::parse(file_get_contents($file->getRealPath()));
             if (!empty($fileData['parameters']['applications'])) {
                 foreach ($fileData['parameters']['applications'] as $slug => $appDefinition) {
                     $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
