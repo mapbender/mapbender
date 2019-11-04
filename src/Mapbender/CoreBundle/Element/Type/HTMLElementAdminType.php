@@ -23,7 +23,7 @@ class HTMLElementAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content', 'html', [
+            ->add('content', 'Mapbender\CoreBundle\Form\Type\HtmlFormType', [
                 'required' => false,
             ])
             ->add('classes', 'Symfony\Component\Form\Extension\Core\Type\TextType', [
