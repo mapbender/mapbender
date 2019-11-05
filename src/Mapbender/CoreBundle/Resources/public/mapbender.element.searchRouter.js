@@ -167,6 +167,11 @@
                     form.hide();
                 }
                 form.get(0).reset();
+                
+                // standard JS method reset() does not reset the mapbender's custom dropdown, it must be done manually
+                form.find('.dropdownValue').each(function(){
+                    $(this).text($(this).prev('.hiddenDropdown').find('option:first').text());
+                });
             });
 
             $('.search-results', this.element).empty();
