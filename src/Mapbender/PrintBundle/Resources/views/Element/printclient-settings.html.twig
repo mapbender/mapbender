@@ -53,7 +53,7 @@
 
     {% if configuration.rotatable is defined and configuration.rotatable == 1 %}
         <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
-        <input class="input" type="text" name="rotation" value="0"/>
+        <input class="input" type="number" name="rotation" value="0"/>
  {% else %}
 <input class="input" type="text" name="rotation" value="0" style="display: none"/>
     {% endif %}

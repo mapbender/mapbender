@@ -40,9 +40,18 @@
             $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="rotation"]', this.$form)
-                .on('keyup', $.proxy(this._updateGeometry, this));
+                .on("keyup", function () {
+                    this._updateGeometry(false);
+                }.bind(this));
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
+
+            $("input", this.$form).keypress(function (e) {
+                if (e.which === 13) {
+                   e.preventDefault();
+                   this._print();
+                }
+            }.bind(this));
 
             this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
             if (this.options.type === 'element') {
@@ -61,7 +70,7 @@
                         self._deactivateSelection();
                     }
                 });
-                $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.$form).on('click', this._print.bind(this));
             } else {
                 // popup comes with its own buttons
                 $('.printSubmit', this.$form).remove();
@@ -511,6 +520,7 @@
         _onSubmit: function(evt) {
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
+
         },
         _onTemplateChange: function() {
             var self = this;
