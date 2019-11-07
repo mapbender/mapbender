@@ -95,6 +95,11 @@
             'closeOnOutsideClick',
             'scrollable', 'resizable'
         ];
+        var unusedOptions = _.difference(Object.keys(options), Object.keys(this.defaults), staticOptions);
+        if (unusedOptions.length) {
+            console.warn("Ignoring unknown options", unusedOptions);
+        }
+
         // use the options mechanism to set up most of the things
         $.each(this.options, function(key, value) {
             // Skip options which already have been used or have to be used late
