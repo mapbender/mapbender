@@ -73,7 +73,6 @@ $(function() {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
-                closeOnOutsideClick: false,
                 destroyOnClose: true,
                 cssClass: "elementPopup",
                 content: response,
@@ -116,7 +115,6 @@ $(function() {
                 title: Mapbender.trans(title),
                 subTitle: ' - ' + regionName,
                 modal: true,
-                closeOnOutsideClick: true,
                 destroyOnClose: true,
                 content: response,
                 cssClass: "elementPopup",
@@ -213,9 +211,8 @@ $(function() {
         $.ajax({url: self.attr("href")}).then(function(html) {
             new popupCls({
                 title: Mapbender.trans(popupTitle),
-                closeOnOutsideClick: true,
-                destroyOnClose: true,
                 content: [html],
+                destroyOnClose: true,
                 buttons: [
                     {
                         label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
@@ -262,7 +259,6 @@ $(function() {
         new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + layersetTitle,
-            closeOnOutsideClick: true,
             cssClass: 'new-instance-select',
             content: [
                 $.ajax({url: self.attr("href")})

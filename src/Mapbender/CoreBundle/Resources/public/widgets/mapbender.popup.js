@@ -57,20 +57,11 @@
             delete this.options['closeOnPopupCloseClick'];
         }
 
-        options.closeButton = !!(options.closeButton || options.closeOnPopupCloseClick);
-
         // Create DOM element
         this.$element = $(this.options.template)
             .attr('id', 'mbpopup-' + counter++);
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
-            if (this.options.closeOnOutsideClick) {
-                this.$modalWrap.on('click', function(evt) {
-                    if (!$(evt.target).closest(self.$element).length) {
-                        self.close();
-                    }
-                });
-            }
         }
         $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
         if (this.options.scrollable) {
@@ -166,7 +157,6 @@
             autoOpen: true,
             closeOnESC: true,
             detachOnClose: true,
-            closeOnOutsideClick: false,
             destroyOnClose: false,
             modal: true,
 

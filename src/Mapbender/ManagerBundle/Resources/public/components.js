@@ -192,7 +192,6 @@ $(function() {
             }).then(function(response) {
                 var popup = new Mapbender.Popup({
                     title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
-                    closeOnOutsideClick: true,
                     content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
@@ -247,7 +246,6 @@ $(function() {
         var isModified = false;
         var popupOptions = {
             title: "Secure element",
-            closeOnOutsideClick: true,
             content: [$content],
             buttons: [
                 {
