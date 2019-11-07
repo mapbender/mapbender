@@ -72,7 +72,6 @@
                 });
             }
         }
-        this.$element.toggleClass('noCloseButton', !this.options.closeButton);
         $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
         if (this.options.scrollable) {
             $('.popup-body', this.$element).addClass('popupScroll');

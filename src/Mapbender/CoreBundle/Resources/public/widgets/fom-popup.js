@@ -172,11 +172,6 @@
                     if(undefined === value) {
                         return this.options[key];
                     }
-                    if(value) {
-                        popup.removeClass('noCloseButton');
-                    } else {
-                        popup.addClass('noCloseButton');
-                    }
                 break;
 
                 // Some simple setter/getter options
