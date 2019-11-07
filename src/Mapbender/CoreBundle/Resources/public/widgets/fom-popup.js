@@ -152,8 +152,6 @@
         },
 
         option: function(key, value) {
-            var popup = $('.popup', this.$element.get(0));
-
             switch(key) {
                 case 'header':
                     if(undefined === value) {
