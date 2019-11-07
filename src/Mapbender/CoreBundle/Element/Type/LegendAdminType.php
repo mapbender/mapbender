@@ -45,7 +45,7 @@ class LegendAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,

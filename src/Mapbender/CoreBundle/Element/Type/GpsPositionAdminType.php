@@ -37,7 +37,7 @@ class GpsPositionAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
             ))
-            ->add('target',  'target_element', array(
+            ->add('target',  'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,

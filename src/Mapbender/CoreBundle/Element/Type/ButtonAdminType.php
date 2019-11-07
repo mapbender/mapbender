@@ -33,7 +33,7 @@ class ButtonAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.button.show_label',
             ))
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'application' => $options['application'],
                 'required' => false,
             ))

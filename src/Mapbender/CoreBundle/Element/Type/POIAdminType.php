@@ -34,12 +34,12 @@ class POIAdminType extends AbstractType
             ->add('body', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
             ))
-            ->add('gps', 'target_element', array(
+            ->add('gps', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\GpsPosition',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,

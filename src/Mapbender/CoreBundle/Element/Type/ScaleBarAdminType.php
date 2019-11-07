@@ -24,7 +24,7 @@ class ScaleBarAdminType extends AbstractType
     {
         // @todo: add missing field labels
         $builder
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
