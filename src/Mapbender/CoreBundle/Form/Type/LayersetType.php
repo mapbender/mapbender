@@ -11,14 +11,6 @@ class LayersetType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'layerset';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
