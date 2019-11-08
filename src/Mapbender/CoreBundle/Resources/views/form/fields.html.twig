@@ -221,7 +221,7 @@
 {% endblock checkbox_widget %}
 
 {% block radio_widget %}
-  {%- if 'region_properties' in form.parent.vars['block_prefixes'] -%}
+  {%- if 'application_region_properties' in form.parent.vars['block_prefixes'] -%}
     {%- set _iconClass = 'iconRadio' ~ (value | default('')) %}
     <span class="radioWrapper {{ _iconClass }}{% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" data-icon="{{ _iconClass }}" title="{{ form.vars.label | trans }}">
       {%- set attr = attr | merge({'class' : attr.class | default('') ~  ' hidden' | trim }) -%}
@@ -232,14 +232,14 @@
   {%- endif -%}
 {% endblock radio_widget %}
 
-{% block region_properties_widget %}
+{% block application_region_properties_widget %}
   <div {{ block('widget_container_attributes') }}>
     {%- for choice in form -%}
       {# do not invoke form_label, label is placed into a title attribute tooltip #}
       {{- form_widget(choice, {'block_name': 'region_properties_choice_value'}) -}}
     {%- endfor -%}
   </div>
-{% endblock region_properties_widget %}
+{% endblock application_region_properties_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}
@@ -516,7 +516,7 @@
 
 {% block widget_attributes %}
   {% spaceless %}
-    id="{{ id }}" name="{{ full_name }}" {% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}
+    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}
     {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
   {% endspaceless %}
 {% endblock widget_attributes %}

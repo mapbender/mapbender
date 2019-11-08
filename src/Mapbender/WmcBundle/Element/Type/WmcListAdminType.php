@@ -27,13 +27,15 @@ class WmcListAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element', array(
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('label', 'checkbox', array(
+            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wmc.admin.wmclist.label',
             ))

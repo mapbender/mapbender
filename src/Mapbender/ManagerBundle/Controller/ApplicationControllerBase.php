@@ -7,6 +7,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\AclManager;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -97,7 +98,7 @@ abstract class ApplicationControllerBase extends Controller
             'slug' => $slug,
         ));
         if (!$application && $includeYaml) {
-            $application = $this->getMapbender()->getYamlApplication($slug);
+            $application = $this->getYamlRepository()->getApplication($slug);
         }
         if (!$application) {
             throw $this->createNotFoundException("No such application");
@@ -173,6 +174,16 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var Mapbender $service */
         $service = $this->get('mapbender');
+        return $service;
+    }
+
+    /**
+     * @return ApplicationYAMLMapper
+     */
+    protected function getYamlRepository()
+    {
+        /** @var ApplicationYAMLMapper $service */
+        $service = $this->get('mapbender.application.yaml_entity_repository');
         return $service;
     }
 }

@@ -24,12 +24,12 @@ class RedliningAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('display_type', 'choice', array(
+            ->add('display_type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     'Dialog' => 'dialog',
@@ -37,15 +37,15 @@ class RedliningAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('auto_activate', 'checkbox', array(
+            ->add('auto_activate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.redlining.label.auto_activate',
             ))
-            ->add('deactivate_on_close', 'checkbox', array(
+            ->add('deactivate_on_close', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.redlining.label.deactivate_on_close',
             ))
-            ->add('geometrytypes', 'choice', array(
+            ->add('geometrytypes', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(

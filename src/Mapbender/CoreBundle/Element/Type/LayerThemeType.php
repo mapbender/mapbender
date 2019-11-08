@@ -35,22 +35,18 @@ class LayerThemeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'hidden', array(
-                'required' => true,
-            ))
-            ->add('title', 'hidden', array(
+            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
+            ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
-            ->add('useTheme', 'checkbox', array(
+            ->add('opened', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
-            ->add('opened', 'checkbox', array(
+            ->add('sourceVisibility', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
-            ->add('sourceVisibility', 'checkbox', array(
-                'required' => false,
-            ))
-            ->add('allSelected', 'checkbox', array(
+            ->add('allSelected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
         ;

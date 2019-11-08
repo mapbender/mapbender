@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Element\EventListener;
 
-use Mapbender\CoreBundle\Element\Type\LayerThemeType;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

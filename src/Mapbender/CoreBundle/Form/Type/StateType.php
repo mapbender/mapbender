@@ -31,10 +31,14 @@ class StateType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add("id", "hidden", array("required" => false))
-                ->add("slug", "hidden", array("required" => true))
-                ->add("json", "hidden", array("required" => true))
-                ->add("title", "text", array("required" => true));
+        $builder
+            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+                'required' => false,
+            ))
+            ->add('slug', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
+            ->add('json', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+        ;
     }
 }
 

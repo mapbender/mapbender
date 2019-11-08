@@ -26,8 +26,12 @@
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
-        <service id="region_properties" class="Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType">
-            <tag name="form.type" />
+        <service id="mapbender.form_toype.application_region_properties" class="Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType">
+            <tag name="form.type" alias="application_region_properties" />
+        </service>
+        <service id="mabender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
+            <tag name="form.type" alias="application_template_choice" />
+            <argument>%kernel.bundles%</argument>
         </service>
     </services>
 </container>

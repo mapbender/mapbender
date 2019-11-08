@@ -3,62 +3,46 @@
 namespace Mapbender\ManagerBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Parser;
 
 /**
- * YAML <-> Array data transformer
+ * YAML data transformer
  *
  * @author Christian Wygoda
  */
 class YAMLDataTransformer implements DataTransformerInterface
 {
-    protected $indentLevel;
+    protected $levelsBeforeInline;
 
-    public function __construct($indentLevel = 10)
+    public function __construct($levelsBeforeInline = 10)
     {
-        $this->indentLevel = $indentLevel;
+        $this->levelsBeforeInline = $levelsBeforeInline;
     }
 
     /**
-     * Transforms array to YAML
+     * Encodes value to Yaml string representation
      *
-     * @param array $array
+     * @param mixed $value
      * @return string
      */
-    public function transform($array)
+    public function transform($value)
     {
         $dumper = new Dumper();
         $dumper->setIndentation(2);
-
-        try {
-            $yaml = $dumper->dump($array, $this->indentLevel, 0, true);
-        } catch (DumpException $e) {
-            throw new TransformationFailedException();
-        }
-
-        return $yaml;
+        return $dumper->dump($value, $this->levelsBeforeInline, 0, true);
     }
 
     /**
-     * Transforms YAML to array
+     * Decodes YAML to native type
      *
-     * @param string $yaml
-     * @return array
+     * @param string $value
+     * @return mixed
      */
-    public function reverseTransform($yaml)
+    public function reverseTransform($value)
     {
         $parser = new Parser();
-
-        try {
-            $array = $parser->parse($yaml);
-        } catch(ParseException $e) {
-            throw new TransformationFailedException();
-        }
-
-        return $array;
+        return $parser->parse($value, true);
     }
 }
 

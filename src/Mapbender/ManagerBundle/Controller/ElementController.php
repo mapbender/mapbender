@@ -73,7 +73,7 @@ class ElementController extends ApplicationControllerBase
     /**
      * Shows form for creating new element
      *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"GET"})
+     * @ManagerRoute("/application/{slug}/element/new", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
@@ -81,49 +81,22 @@ class ElementController extends ApplicationControllerBase
     public function newAction(Request $request, $slug)
     {
         $application = $this->requireApplication($slug);
-        $class       = $request->get('class'); // Get class for element
-
+        $class = $request->query->get('class');
         $region = $request->query->get('region');
+
         $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
         $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-            'form' => $form->createView(),
-            'theme' => $formInfo['theme'],
-            'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
-                'slug' => $slug,
-            )),
-        ));
-    }
-
-    /**
-     * Create a new element from POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function createAction(Request $request, $slug)
-    {
-        $application = $this->requireApplication($slug);
-
-        $data = $request->get('form');
-        $element = $this->getFactory()->newEntity($data['class'], $data['region'], $application);
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
-
-        /** @var FormInterface $form */
-        $form = $formInfo['form'];
-        $form->submit($request);
-
-        if ($form->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // calculate weight (append at end of region)
             $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
             $regionSiblings = $application->getElements()->matching($sameRegionCriteria);
             $newWeight = $regionSiblings->count();
             $element->setWeight($newWeight);
+
             $application = $element->getApplication();
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getEntityManager();
@@ -133,24 +106,22 @@ class ElementController extends ApplicationControllerBase
             $this->addFlash('success', 'Your element has been saved.');
 
             return new Response('', 201);
-        } else {
-            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-                'form' => $form->createView(),
-                'theme' => $formInfo['theme'],
-                'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
-                    'slug' => $slug,
-                )),
-            ));
         }
+
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+            'form' => $form->createView(),
+            'theme' => $formInfo['theme'],
+        ));
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET"})
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET", "POST"})
+     * @param Request $request
      * @param string $slug
      * @param string $id
      * @return Response
      */
-    public function editAction($slug, $id)
+    public function editAction(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -163,42 +134,9 @@ class ElementController extends ApplicationControllerBase
         $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
+        $form->handleRequest($request);
 
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-            'form' => $form->createView(),
-            'theme' => $formInfo['theme'],
-            'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
-                'slug' => $slug,
-                'id' => $id,
-            )),
-        ));
-    }
-
-    /**
-     * Updates element by POSTed data
-     *
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" }, methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @return Response
-     */
-    public function updateAction(Request $request, $slug, $id)
-    {
-        /** @var Element $element */
-        $element = $this->getRepository()->find($id);
-
-        if (!$element) {
-            throw $this->createNotFoundException('The element with the id "'
-                . $id . '" does not exist.');
-        }
-        $formService = $this->getFormFactory();
-        $formInfo = $formService->getConfigurationForm($element);
-        /** @var FormInterface $form */
-        $form = $formInfo['form'];
-        $form->submit($request);
-
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getEntityManager();
             $application = $element->getApplication();
             $em->persist($application->setUpdated(new \DateTime('now')));
@@ -208,16 +146,11 @@ class ElementController extends ApplicationControllerBase
             $this->addFlash('success', 'Your element has been saved.');
 
             return new Response('', 205);
-        } else {
-            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
-                'form' => $form->createView(),
-                'theme' => $formInfo['theme'],
-                'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
-                    'slug' => $slug,
-                    'id' => $id,
-                )),
-            ));
         }
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+            'form' => $form->createView(),
+            'theme' => $formInfo['theme'],
+        ));
     }
 
     /**
@@ -244,7 +177,7 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->createForm('acl', $element, array(
+        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
             'mapped' => false,
             'create_standard_permissions' => false,
             'permissions' => array(

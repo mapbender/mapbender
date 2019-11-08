@@ -27,7 +27,7 @@ class DimensionInstType extends AbstractType
         $builder->addEventSubscriber($subscriber);
         $transformer = new DimensionTransformer();
         $builder->addModelTransformer($transformer);
-        $builder->add('active', 'checkbox', array(
+        $builder->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
             'required' => true,
             'label' => 'active',
         ));

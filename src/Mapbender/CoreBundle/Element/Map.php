@@ -239,7 +239,7 @@ class Map extends Element
     {
         $conf = $this->getConfiguration();
         if ($conf['scales']) {
-            $conf['scales'] = array_map('intval', $conf['scales']);
+            $conf['scales'] = array_values(array_map('intval', $conf['scales']));
         }
         return $conf;
     }

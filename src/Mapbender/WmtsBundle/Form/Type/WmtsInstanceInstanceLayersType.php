@@ -19,15 +19,15 @@ class WmtsInstanceInstanceLayersType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.title',
             ))
-            ->add('basesource', 'checkbox', array(
+            ->add('basesource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
             ))
-            ->add('proxy', 'checkbox', array(
+            ->add('proxy', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
             ))
@@ -47,10 +47,9 @@ class WmtsInstanceInstanceLayersType extends AbstractType
             ))
             ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerType',
-                'options' => array(
+                'entry_options' => array(
                     'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
                 ),
-                'block_name' => 'layers_table',
             ))
         ;
     }

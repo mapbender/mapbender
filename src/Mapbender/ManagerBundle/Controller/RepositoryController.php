@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
-use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\Form\FormError;
@@ -83,7 +82,7 @@ class RepositoryController extends ApplicationControllerBase
         $forms = array();
         foreach ($sourceTypeLabels as $type => $sourceTypeLabel) {
             $formAction = $this->generateUrl('mapbender_manager_repository_new_submit', array('sourceType' => $type), UrlGeneratorInterface::RELATIVE_PATH);
-            $form = $this->createForm(new HttpSourceOriginType(), new HttpOriginModel(), array(
+            $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', new HttpOriginModel(), array(
                 'action' => $formAction,
             ));
             $forms[$type] = $form;
@@ -260,7 +259,7 @@ class RepositoryController extends ApplicationControllerBase
         $loader = $this->getTypeDirectory()->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
-        $form = $this->createForm(new HttpSourceOriginType(), $formModel);
+        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

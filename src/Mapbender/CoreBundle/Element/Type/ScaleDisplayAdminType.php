@@ -23,17 +23,17 @@ class ScaleDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('scalePrefix', 'text', array(
+            ->add('scalePrefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,
             ))
-            ->add('unitPrefix', 'checkbox', array('required' => false))
-            ->add('anchor', "choice", array(
+            ->add('unitPrefix', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
                     'left-top' => 'left-top',

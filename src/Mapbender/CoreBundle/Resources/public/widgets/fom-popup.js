@@ -152,8 +152,6 @@
         },
 
         option: function(key, value) {
-            var popup = $('.popup', this.$element.get(0));
-
             switch(key) {
                 case 'header':
                     if(undefined === value) {
@@ -171,11 +169,6 @@
                 case 'closeButton':
                     if(undefined === value) {
                         return this.options[key];
-                    }
-                    if(value) {
-                        popup.removeClass('noCloseButton');
-                    } else {
-                        popup.addClass('noCloseButton');
                     }
                 break;
 

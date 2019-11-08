@@ -3,6 +3,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
+        <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
@@ -15,6 +16,7 @@
         <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
+        <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
@@ -40,7 +42,12 @@
         <service id="mapbender" class="Mapbender\CoreBundle\Mapbender">
             <argument type="service" id="service_container" />
         </service>
-
+        <service id="mapbender.application.yaml_entity_repository" class="%mapbender.application.yaml_entity_repository.class%" lazy="true">
+            <argument>%applications%</argument>
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.element_inventory.service" />
@@ -105,7 +112,7 @@
         </service>
 
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.asset_compiler.css" />
             <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
         </service>
 

@@ -34,7 +34,7 @@ class ImportJobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('importFile', 'file', array('required' => true))
+            ->add('importFile', 'Symfony\Component\Form\Extension\Core\Type\FileType')
         ;
     }
 

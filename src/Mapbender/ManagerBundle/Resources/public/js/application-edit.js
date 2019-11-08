@@ -73,8 +73,6 @@ $(function() {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
-                closeOnOutsideClick: false,
-                destroyOnClose: true,
                 cssClass: "elementPopup",
                 content: response,
                 buttons: (extraButtons || []).slice().concat([
@@ -82,7 +80,7 @@ $(function() {
                         label: Mapbender.trans(strings.save || 'mb.manager.components.popup.edit_element.btn.ok'),
                         cssClass: 'button',
                         callback: function() {
-                            elementFormSubmit();
+                            elementFormSubmit(this.$element, formUrl);
                         }
                     },
                     {
@@ -95,10 +93,10 @@ $(function() {
                 ])
             });
             popup.$element.on('change', function() {
-                $('#elementForm', popup.$element).data('dirty', true);
+                $('form', popup.$element).data('dirty', true);
             });
             popup.$element.on('close', function(event, token) {
-                if (true === $('#elementForm', popup.$element).data('dirty')) {
+                if ($('form', popup.$element).data('dirty')) {
                     if (!confirm('Ignore Changes?')) {
                         token.cancel = true;
                     }
@@ -116,8 +114,6 @@ $(function() {
                 title: Mapbender.trans(title),
                 subTitle: ' - ' + regionName,
                 modal: true,
-                closeOnOutsideClick: true,
-                destroyOnClose: true,
                 content: response,
                 cssClass: "elementPopup",
                 buttons: [
@@ -164,10 +160,10 @@ $(function() {
         return false;
     });
 
-    function elementFormSubmit() {
-        var $form = $("#elementForm"),
+    function elementFormSubmit(scope, submitUrl) {
+        var $form = $('form', scope),
             data = $form.serialize(),
-            url = $form.attr('action'),
+            url = submitUrl || $form.attr('action'),
             self = this;
 
         $.ajax({
@@ -179,9 +175,12 @@ $(function() {
             },
             success: function(data) {
                 if (data.length > 0) {
-                    $form.parent().html( data );
+                    var dirty = $form.data('dirty');
+                    var body = $form.parent();
+                    body.html(data);
+                    $form = $('form', body);
+                    $form.data('dirty', dirty);
                 } else {
-                    $form.data('dirty', false);
                     self.close();
                     window.location.reload();
                 }
@@ -210,8 +209,6 @@ $(function() {
         $.ajax({url: self.attr("href")}).then(function(html) {
             new popupCls({
                 title: Mapbender.trans(popupTitle),
-                closeOnOutsideClick: true,
-                destroyOnClose: true,
                 content: [html],
                 buttons: [
                     {
@@ -259,7 +256,6 @@ $(function() {
         new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + layersetTitle,
-            closeOnOutsideClick: true,
             cssClass: 'new-instance-select',
             content: [
                 $.ajax({url: self.attr("href")})
