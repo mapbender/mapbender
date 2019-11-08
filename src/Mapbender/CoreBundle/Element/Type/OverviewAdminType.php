@@ -25,7 +25,7 @@ class OverviewAdminType extends AbstractType
     {
         // @todo: add missing field labels
         $builder
-            ->add('layerset', 'app_layerset', array(
+            ->add('layerset', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
                 'required' => true,
             ))

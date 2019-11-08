@@ -26,7 +26,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     {
         $builder->addModelTransformer($this);
         $builder
-            ->add('layersets', 'app_layerset', array(
+            ->add('layersets', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
                 'required' => true,
                 'multiple' => true,
