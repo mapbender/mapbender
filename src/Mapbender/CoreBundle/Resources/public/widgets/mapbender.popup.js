@@ -63,7 +63,6 @@
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
         }
-        $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
         if (this.options.scrollable) {
             $('.popup-body', this.$element).addClass('popupScroll');
         } else {
@@ -87,41 +86,59 @@
         this.addButtons(this.options.buttons || []);
 
         var staticOptions = [
-            'template', 'autoOpen', 'modal',
+            'template', 'modal',
             'header', 'closeButton',
             'buttons',
             'content',
             'destroyOnClose', 'detachOnClose',
-            'closeOnOutsideClick',
-            'scrollable', 'resizable'
+            'closeOnOutsideClick', 'closeOnESC',
+            'scrollable', 'resizable', 'draggable'
         ];
-        var unusedOptions = _.difference(Object.keys(options), Object.keys(this.defaults), staticOptions);
-        if (unusedOptions.length) {
-            console.warn("Ignoring unknown options", unusedOptions);
-        }
-
-        // use the options mechanism to set up most of the things
-        $.each(this.options, function(key, value) {
-            // Skip options which already have been used or have to be used late
-            if (key !== 'autoOpen' && -1 === staticOptions.indexOf(key)) {
-                self.option(key, value);
-            }
-        });
+        var unusedOptions = {};
         if (this.options.content) {
             this.setContent(this.options.content);
             delete(this.options.content);
         }
 
-        // focused on popup click
-        self.$element.on("click", $.proxy(self.focus, self));
+        _.difference(Object.keys(this.options), staticOptions).forEach(function(optionName) {
+            var value = self.options[optionName];
+            switch(optionName) {
+                case 'title':
+                    self.title(value);
+                    break;
+                case 'subTitle':
+                case 'subtitle':    // special snowflake misspelling
+                    self.subtitle(value);
+                    break;
+                case 'cssClass':
+                    self.cssClass(value);
+                    break;
+                case 'height':
+                    self.height(value);
+                    break;
+                case 'width':
+                    self.width(value);
+                    break;
+                default:
+                    unusedOptions[optionName] = value;
+                    break;
+            }
+        });
 
-        // Open if required
-        if(this.options.autoOpen) {
-            this.open();
+        if (Object.keys(unusedOptions).length) {
+            console.warn("Ignoring unknown options", unusedOptions);
         }
+
+        // focused on popup click
+        this.$element.on("click", $.proxy(this.focus, this));
+        (this.$modalWrap || $(document)).on('keyup', this.handleKeyUp.bind(this));
+        this.open();
     };
 
     Popup.prototype = {
+        kartoffel: function() {
+            return currentModal_;
+        },
         // Reference to the created popup
         $element: null,
 
@@ -151,22 +168,18 @@
                 '  </div>'
                 ].join("\n"),
 
-            // Is popup draggable (showHeader must be true)
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
 
-            header: true,
             closeButton: true,
 
-            autoOpen: true,
             closeOnESC: true,
             detachOnClose: true,
             destroyOnClose: false,
             modal: true,
 
             scrollable: true,
-            // Width, if not set, use custom CSS for cssClass
             width: null,
             // Height, if not set, use custom CSS for cssClass
             height: null,
@@ -189,7 +202,6 @@
                 }
             }
         },
-
         option: function(key, value) {
             switch(key) {
                 default:
@@ -206,26 +218,16 @@
         },
 
         /**
-         * Open the popup, optionally giving new content.
-         * This will insert the popup into the container.
-         *
-         * @param {*} [content]  New content, if any
+         * Open the popup.
          */
-        open: function(content) {
+        open: function() {
             if (this.options.modal) {
                 if (currentModal_ && this !== currentModal_) {
                     currentModal_.close();
                 }
                 currentModal_ = this;
             }
-            var self = this;
 
-            if (content) {
-                this.setContent(content);
-            }
-
-            // why?
-            this.$element.trigger('open');  // why?
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
                     this.$modalWrap.prepend(this.$element);
@@ -234,27 +236,21 @@
                     this.$element.appendTo(this.$container);
                 }
             }
-            // why?
-            window.setTimeout(function() {
-                self.focus();
-                self.$element.trigger('openend');   // why?
-            }, 100);
+            if (this.options.draggable) {
+                var containment = (this.options.modal && this.$modalWrap) || $('body');
+                this.$element.draggable({
+                    handle: $('.popupHead', this.$element),
+                    containment: containment
+                });
+            }
+            this.focus();
         },
 
         /**
-         * Focus the popup.
-         * This will show popup on top.
-         *
-         * @fires "focus"
+         * Raise popup z index to top.
          */
-        focus: function (event) {
-            if (this.$element) {
-                this.$element.css("z-index",++currentZindex);
-                if (!event) {
-                    // Only trigger event this method was called programmatically.
-                    this.$element.trigger('focus'); // why?
-                }
-            }
+        focus: function () {
+            this.$element.css("z-index",++currentZindex);
         },
 
         /**
@@ -329,94 +325,28 @@
                 }
                 buttonset = buttonset.add(button);
             });
-            $('.popupButtons', this.$element.get(0)).append(buttonset);
+            $('.popupButtons', this.$element).append(buttonset);
         },
 
         /**
-         * Set or get title
-         * @param  {string} title, null unsets, undefined gets
-         * @return {string}
+         * Update title html
+         * @param {string} title
          */
         title: function(title) {
-            var titleNode = $('.popupTitle', this.$element.get(0));
-
-            if(undefined === title) {
-                return this.options.title;
-            }
-
-            if(null === title) {
-                titleNode.empty().addClass("hidden");
-            } else {
-                titleNode.html(title);
-            }
-            this.options.title = title;
+            $('.popupTitle', this.$element).html(title || '');
         },
-
         /**
-         * Set or get subtitle
-         * @param  {string} subtitle, null unsets, undefined gets
-         * @return {string}
+         * Update subtitle text
+         * @param {string} subtitle
          */
         subtitle: function(subtitle) {
-            var subtitleNode = $('.popupSubTitle', this.$element.get(0));
-
-            if(undefined === subtitle) {
-                return this.options.subtitle;
-            }
-
-            if(null === subtitle) {
-                subtitleNode.empty();
-            } else {
-                subtitleNode.text(subtitle);
-            }
-            this.options.subtitle = subtitle;
+            $('.popupSubTitle', this.$element).text(subtitle || '');
         },
-
-        /**
-         * Set or get closeOnESC
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnESC: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnESC;
+        handleKeyUp: function(event) {
+            if (this.options.closeOnESC && event.keyCode === 27) {
+                this.close();
             }
-
-            if(state) {
-                var that = this;
-                $(document).on("keyup", function(e){
-                  if(e.keyCode == 27) that.close();
-                });
-            }
-
-            this.options.closeOnESC = state;
         },
-
-        /**
-         * Set or get draggable
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        draggable: function(state) {
-            var widget = this;
-            var options = widget.options;
-            var element = widget.$element;
-
-            if(!state) {
-                return options.draggable;
-            }
-
-            element.on('openend', function() {
-                var $body = $("body");
-                $(element).draggable({
-                    handle:      $('.popupHead', element),
-                    containment: $body
-                });
-            });
-
-            options.draggable = state;
-        },
-
         /**
          * Contents may be:
          *   - simple string
@@ -455,52 +385,16 @@
 
             var contentItem = $('<div class="contentItem"/>');
 
-            var elementPrototype = typeof HTMLElement !== "undefined"
-                                   ? HTMLElement : Element;
-
-            if(typeof content === 'string') {
-                // parse into HTM first
-                contentItem.append($('<p>', {
-                    'html': content,
-                    'class': 'clear'
-                }));
-            } else if(content instanceof elementPrototype) {
+            if (typeof content.then === 'function') {
+                // xhr promise
+                console.warn("Deprecated xhr passed as content. Wait for response before opening popups or adding content");
+                content.then(function(response) {
+                    contentItem.append(response);
+                }, function() {
+                    contentItem.empty().append('<p class="error">Ajax error</p>');
+                });
+            } else {
                 contentItem.append(content);
-            } else if(content instanceof $) {
-                contentItem.append(content);
-            } else if(undefined !== content.readyState) {
-                // Ajax can be finished or not
-                if(4 === content.readyState) {
-                    // If finished, insert result or failure notice
-                    if(200 == content.status) {
-                        contentItem.append(content.responseText);
-                    } else {
-                        contentItem
-                            .addClass('ajax ajaxFailed')
-                            .html('Ajax failed.');
-                    }
-                } else {
-                    // If not finished, insert placeholder and wait until
-                    // request has returned
-                    contentItem
-                        .addClass('ajax ajaxWaiting')
-                        .html('Loading...');
-                    content
-                        .done(function(responseText, state, jqXHR) {
-                            contentItem
-                                .empty()
-                                .append(responseText)
-                                .removeClass('ajaxWaiting');
-
-                        })
-                        .fail(function(jqXHR, state, message) {
-                            contentItem
-                            .empty()
-                            .append(message)
-                            .removeClass('ajaxWaiting')
-                            .addClass('ajaxFailed');
-                        });
-                }
             }
             contentContainer.append(contentItem);
         },
