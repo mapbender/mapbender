@@ -131,7 +131,7 @@
 
         // focused on popup click
         this.$element.on("click", $.proxy(this.focus, this));
-        (this.$modalWrap || $(document)).on('keyup', this.handleKeyUp.bind(this));
+        $(document).on('keyup', this.handleKeyUp.bind(this));
         this.open();
     };
 
