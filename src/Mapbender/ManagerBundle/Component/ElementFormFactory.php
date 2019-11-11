@@ -56,7 +56,7 @@ class ElementFormFactory extends BaseElementFactory
     public function getConfigurationForm($element, $options = array())
     {
         // Create base form shared by all elements
-        $formType = $this->formFactory->createBuilder('form', $element, $options);
+        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
         ;
