@@ -72,9 +72,9 @@ class TargetElementType extends AbstractType
             'application' => null,
             'element_class' => null,
             'class' => 'MapbenderCoreBundle:Element',
-            'property' => 'title',
-            'empty_value' => 'Choose an option',
-            'empty_data' => '',
+            'choice_label' => 'title',
+            // @todo: provide placeholder translations
+            'placeholder' => 'Choose an option',
             // Symfony does not recognize array-style callables
             'query_builder' => function(Options $options) use ($type) {
                 return $type->getChoicesQueryBuilder($options);
