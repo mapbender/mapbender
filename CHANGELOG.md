@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 36923b381
+## dev-release/3.0.7 @ d1c5df3e7
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
@@ -18,11 +18,14 @@
 - Remove schema validation status display icons from backend Source listing (schema validation is always off since 3.0.8)
 - Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
 - Maintain backend element form confirmation on close behaviour after submitting once with validation errors
+- Disable undesirable close on outside click / mouse drag in misc backend modal popups
 - [CSS] `.linkButton` and all `<a>` elements now inherit font color
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
 - Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
 - Resolve misc form type, service configuration and other incompatibilities with Symfony 3
-- Dropped legacy joii library
+- Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0
+- Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
+- Dropped legacy joii library dependency
 
 ## v3.0.8.4
 - Support secured WmsLoader sources in modern browsers
