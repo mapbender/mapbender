@@ -82,7 +82,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ))
             ->add('ratio', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => false,
-                'precision' => 2,
+                'scale' => 2,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.ratio',
             ))
             ->add('buffer', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
