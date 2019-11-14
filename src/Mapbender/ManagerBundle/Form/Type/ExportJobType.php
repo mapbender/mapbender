@@ -40,7 +40,7 @@ class ExportJobType extends AbstractType
             ->add('application', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
                 'label' => 'form.manager.admin.application.export.application',
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
-                'property' => 'title',
+                'choice_label' => 'title',
                 'multiple' => false,
                 'choices' => $options['application'],
                 'required' => true,
