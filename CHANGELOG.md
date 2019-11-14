@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ d1c5df3e7
+## dev-release/3.0.7 @ 39dc70035
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
@@ -6,6 +6,8 @@
 - Fix alignment of ZoomBar zoom level icons
 - Fix broken map scales configuration if loaded config contains non-contiguous array
 - Fix internal server error when submitting PrintClient configuration form with invalid values
+- Fix invalid export data format for WMS legend and metadata url sub-objects
+- Fix errors on import of previously broken export formats
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
 - When cloning DB applications, also clone access control rules
