@@ -37,7 +37,7 @@ class ScssValidator extends ConstraintValidator
             $this->compiler->compile(array($asset), true);
         } catch (\Exception $e) {
             $matches = null;
-            preg_match("/Error Output:\\s+stdin:(\\d+):\\s*(.+?)\\s+Input:/s", $e->getMessage(), $matches);
+            preg_match("/Error Output:.*?:(\\d+):\\s*(.+?)\\s+Input:/sm", $e->getMessage(), $matches);
             $line         = $matches[1];
             $errorMessage = $matches[2];
             if ($errorMessage == 'invalid property name') {
