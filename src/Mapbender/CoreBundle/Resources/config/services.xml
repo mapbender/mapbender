@@ -36,6 +36,9 @@
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
         <parameter key="mapbender.uploads_dir">uploads</parameter>
+        <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
+             try setting /usr/bin/sassc -->
+        <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
     </parameters>
 
     <services>
