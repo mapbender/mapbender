@@ -5,7 +5,6 @@ namespace Mapbender\WmsBundle\Form\Type;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
 
 class WmsInstanceInstanceLayersType extends AbstractType
 {
@@ -20,17 +19,17 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $this->exposeLayerOrder = $exposeLayerOrder;
     }
 
+    public function getParent()
+    {
+        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
+    }
+
     /**
      * @inheritdoc
      */
     public function getName()
     {
         return 'wmsinstanceinstancelayers';
-    }
-
-    public function getBlockPrefix()
-    {
-        return 'source_instance';
     }
 
     /**
@@ -58,9 +57,6 @@ class WmsInstanceInstanceLayersType extends AbstractType
         }
 
         $builder
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
-            ))
             ->add('format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $getMapFormatChoices,
                 'choices_as_values' => true,
@@ -75,30 +71,6 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'choices' => $exceptionFormatChoices,
                 'choices_as_values' => true,
                 'required' => false,
-            ))
-        ;
-        $builder
-            ->add('basesource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
-            ))
-            ->add('proxy', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
-            ))
-            ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
-                'attr' => array(
-                    'min' => 0,
-                    'max' => 100,
-                    'step' => 10,
-                ),
-                'constraints' => array(
-                    new Constraints\Range(array(
-                        'min' => 0,
-                        'max' => 100,
-                    )),
-                ),
-                'required' => true,
             ))
             ->add('transparency', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
