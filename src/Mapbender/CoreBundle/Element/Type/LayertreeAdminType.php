@@ -78,8 +78,7 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideselect',
             ))
-            // see LayerTreeMenuType.php
-            ->add('menu', 'layertree_menu', array(
+            ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
                 'required' => false,
             ))
         ;
