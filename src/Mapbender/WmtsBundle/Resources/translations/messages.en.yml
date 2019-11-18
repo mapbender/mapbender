@@ -1,10 +1,3 @@
-# Loco yaml export: Symfony YAML object
-# Project: messages.en.xlf conversion
-# Release: Working copy
-# Locale: en, English
-# Exported by: Unregistered user
-# Exported at: Fri, 25 May 2018 11:59:55 +0200
-
 mb:
   wmts:
     wmtsloader:
