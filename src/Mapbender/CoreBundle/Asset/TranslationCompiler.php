@@ -12,7 +12,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Compiles application translations for frontend consumption.
  * Output is the initializer for the global Mapbender.i18n JavaScript object.
  *
- * Registered in container as mapbender.asset_compiler.translations
+ * Default implementation for service mapbender.asset_compiler.translations
+ * @since v3.0.8.5-beta1
  */
 class TranslationCompiler
 {

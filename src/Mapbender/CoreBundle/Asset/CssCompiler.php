@@ -11,7 +11,9 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Locates, merges and compiles (S)CSS assets for applications.
- * Registered in container as mapbender.asset_compiler.css
+ *
+ * Default implementation for service mapbender.asset_compiler.css
+ * @since v3.0.8.5-beta1
  */
 class CssCompiler extends AssetFactoryBase
 {

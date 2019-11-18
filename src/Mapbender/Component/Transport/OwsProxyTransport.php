@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Default implementation for service id mapbender.http_transport.service
+ * @since v3.0.8-beta1
  */
 class OwsProxyTransport implements HttpTransportInterface
 {

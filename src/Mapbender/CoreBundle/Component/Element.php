@@ -216,6 +216,7 @@ abstract class Element extends MinimalBound
      *
      * @param Request $request
      * @return Response
+     * @since v3.0.8-beta1
      */
     public function handleHttpRequest(Request $request)
     {
