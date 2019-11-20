@@ -110,6 +110,7 @@ class MapbenderCoreExtension extends Extension
     protected function getXmlConfigs()
     {
         return [
+            'security.xml',
             'services.xml',
         ];
     }
