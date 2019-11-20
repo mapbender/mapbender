@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4.30",
-        "symfony/symfony": "^2.3",
+        "symfony/symfony": "^2.4|^3",
         "symfony/security-acl": "~2.8 || ~3.0",
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
@@ -26,7 +26,7 @@
         "wheregroup/open-sans": "1.x",
 
         "mapbender/fom": "~3.1.2 || ^3.2.1",
-        "mapbender/owsproxy": "^3.0.6.2@dev",
+        "mapbender/owsproxy": "^3.0.6.2",
 
         "mapbender/mapquery": "1.x"
     },

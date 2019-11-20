@@ -206,6 +206,12 @@ class ExportHandler extends ExchangeHandler
     public function normalizeObject(AbstractObjectHelper $classInfo, $object)
     {
         $values = $classInfo->extractProperties($object, null);
+        foreach ($values as $key => $value) {
+            // also handle nested non-Entity objects
+            if (is_object($value)) {
+                $values[$key] = $this->normalizeObject(ObjectHelper::getInstance($value), $value);
+            }
+        }
         return $this->createInstanceIdent($object, $values);
     }
 

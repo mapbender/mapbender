@@ -6,6 +6,11 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
 
+/**
+ * Common base class for JsCompiler and CssCompiler
+ *
+ * @since v3.0.7.7
+ */
 class AssetFactoryBase
 {
     /** @var string */

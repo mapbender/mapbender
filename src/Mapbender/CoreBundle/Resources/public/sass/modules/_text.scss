@@ -39,7 +39,11 @@
   color:$middleFontColor;
   margin-left:$space/4;
 }
-.labelText{color:$ciColor;}
+/** a.labelText appears in certain FOM templates (User listing). Must respecify rule to defeat global a { color:inherit } */
+.labelText, a.labelText {
+  color: $ciColor;
+}
+
 .description{
   color:$middleFontColor;
   font-style:italic;

@@ -35,15 +35,6 @@ class LayerTreeMenuType extends AbstractType
         ));
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'layertree_menu';
-    }
-
     /**
      * @return null|string|\Symfony\Component\Form\FormTypeInterface
      */
