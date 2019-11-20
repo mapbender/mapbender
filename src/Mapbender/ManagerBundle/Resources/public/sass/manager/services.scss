@@ -106,6 +106,7 @@ fieldset.box {
       overflow: hidden;
       text-overflow: ellipsis;
       vertical-align: middle;
+      white-space: nowrap;
   }
 
   .extendedGroup {
