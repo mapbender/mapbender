@@ -1,15 +1,22 @@
 {% macro requestinformation(requestinformation, title) %}
-  <div class="labelText">{{ title }} GET:</div>
-  <div class="metaText">{{ requestinformation.httpGet }}</div>
-  <div class="clearContainer"></div>
-
-  <div class="labelText">{{ title }} POST:</div>
-  <div class="metaText">{{ requestinformation.httpPost }}</div>
-  <div class="clearContainer"></div>
-
-  <div class="labelText">{{title}} {{ "mb.wms.wmsloader.repo.macros.label.formats" | trans }}:</div>
-  {% for format in requestinformation.formats %}
-    <div class="metaText metaFormats">{{ format }}</div>
-  {% endfor %}
-  <div class="clearContainer"></div>
+  <div class="labelText">{{ title }}:</div>
+  <ul class="list">
+    <li>
+      <span class="labelText">GET:</span>
+      <span class="metaText">{{ requestinformation.httpGet }}</span>
+    </li>
+    <li>
+      <span class="labelText">POST:</span>
+      <span class="metaText">{{ requestinformation.httpPost }}</span>
+    </li>
+    {% if requestinformation.formats %}
+    <li>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.macros.label.formats" | trans }}:</span>
+      {% for format in requestinformation.formats %}
+        <div class="metaText">{{ format }}</div>
+      {% endfor %}
+    </li>
+    {% endif %}
+    <li class="clearContainer"></li>
+  </ul>
 {% endmacro %}
