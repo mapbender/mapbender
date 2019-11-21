@@ -1,5 +1,4 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
-{% import "MapbenderWmtsBundle:Repository:macros.html.twig" as view %}
 
 {% block manager_content %}
 
@@ -25,20 +24,7 @@
     {% endif %}
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.version" | trans }}:</div>
-    <div class="metaText">{{ source.version }}</div>
-    <div class="clearContainer"></div>
-    <ul>
-      {% if source.getCapabilities is not empty %}
-      {{ view.requestinformation(source.getCapabilities, "GetCapabilities") }}
-      {% endif %}
-      {% if source.getTile is not empty %}
-      {{ view.requestinformation(source.getTile, "GetMap") }}
-      {% endif %}
-      {% if source.getFeatureinfo is not empty %}
-      {{ view.requestinformation(source.getFeatureinfo, "GetFeatureinfo") }}
-      {% endif %}
-    </ul>
+    {% include 'MapbenderWmtsBundle:Repository:source/view-details.html.twig' %}
   </div>
   <div id="containerLayers" class="container serviceContainer serviceServiceContainer">
     {% for layer in source.layers %}

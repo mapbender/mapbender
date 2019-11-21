@@ -1,0 +1,24 @@
+{# @todo: transient restructuring template; should later be baked into an extended 'details_content' block in a WMS source view extending from a proper base template #}
+{% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
+{% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation %}
+{% if source.getCapabilities is not empty %}
+{{ requestinformation(source.getCapabilities, "GetCapabilities") }}
+{% endif %}
+{% if source.getMap is not empty %}
+{{ requestinformation(source.getMap, "GetMap") }}
+{% endif %}
+{% if source.getFeatureinfo is not empty %}
+{{ requestinformation(source.getFeatureinfo, "GetFeatureinfo") }}
+{% endif %}
+{% if source.getLegendGraphic is not empty %}
+{{ requestinformation(source.getLegendGraphic, "GetLegendGraphic") }}
+{% endif %}
+{% if source.describeLayer is not empty %}
+{{ requestinformation(source.describeLayer, "DescribeLayer") }}
+{% endif %}
+{% if source.getStyles is not empty %}
+{{ requestinformation(source.getStyles, "GetStyles") }}
+{% endif %}
+{% if source.putStyles is not empty %}
+{{ requestinformation(source.putStyles, "PutStyles") }}
+{% endif %}

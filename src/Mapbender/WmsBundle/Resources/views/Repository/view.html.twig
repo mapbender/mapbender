@@ -1,5 +1,4 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
-{% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
 
 {% block manager_content %}
 
@@ -21,37 +20,7 @@
     {% endif %}
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.version" | trans }}:</div>
-    <div class="metaText">{{ source.version }}</div>
-    <div class="clearContainer"></div>
-
-    {% if source.getCapabilities is not empty %}
-    {{ requestinformation(source.getCapabilities, "GetCapabilities") }}
-    {% endif %}
-
-    {% if source.getMap is not empty %}
-    {{ requestinformation(source.getMap, "GetMap") }}
-    {% endif %}
-
-    {% if source.getFeatureinfo is not empty %}
-    {{ requestinformation(source.getFeatureinfo, "GetFeatureinfo") }}
-    {% endif %}
-
-    {% if source.getLegendGraphic is not empty %}
-    {{ requestinformation(source.getLegendGraphic, "GetLegendGraphic") }}
-    {% endif %}
-
-    {% if source.describeLayer is not empty %}
-    {{ requestinformation(source.describeLayer, "DescribeLayer") }}
-    {% endif %}
-
-    {% if source.getStyles is not empty %}
-    {{ requestinformation(source.getStyles, "GetStyles") }}
-    {% endif %}
-
-    {% if source.putStyles is not empty %}
-    {{ requestinformation(source.putStyles, "PutStyles") }}
-    {% endif %}
+    {% include 'MapbenderWmsBundle:Repository:source/view-details.html.twig' %}
   </div>
   <div id="containerLayers" class="container serviceContainer serviceServiceContainer">
     {% if source.version == '1.1.1' %}
