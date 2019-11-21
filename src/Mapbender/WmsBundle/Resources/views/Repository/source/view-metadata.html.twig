@@ -1,0 +1,7 @@
+{# @todo: transient restructuring template; should later be baked into an extended 'metadata_content' block in a WMS source view extending from a proper base template #}
+{% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
+<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.onlineresource" | trans }}:</div><div class="metaText">{{ source.onlineResource }}</div>
+<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.exceptionformats" | trans }}:</div>
+<div class="metaText">{{ source.exceptionFormats | join(', ') }}</div>
+<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</div><div class="metaText">{{ source.fees }}</div>
+<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ source.accessConstraints }}</div>

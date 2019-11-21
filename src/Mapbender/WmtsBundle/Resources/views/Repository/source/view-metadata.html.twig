@@ -1,0 +1,5 @@
+{# @todo: transient restructuring template; should later be baked into an extended 'metadata_content' block in a WMTS source view extending from a proper base template #}
+{% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
+<div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidername" | trans }}:</div><div class="metaText">{{ source.serviceProviderName }}</div>
+<div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidersite" | trans }}:</div><div class="metaText">{{ source.serviceProviderSite }}</div>
+<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ source.accessConstraints }}</div>

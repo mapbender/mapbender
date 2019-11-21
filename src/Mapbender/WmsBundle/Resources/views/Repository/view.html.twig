@@ -13,15 +13,7 @@
     <li id="tabLayers" class="tab">{{"mb.wms.wmsloader.repo.view.label.layers" | trans }}</li>
   </ul>
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ source.title }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.version" | trans }}:</div><div class="metaText">{{ source.version }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.originurl" | trans }}:</div><div class="metaText metaUrl">{{ source.originUrl }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.abstract" | trans }}:</div><div class="metaText">{{ source.description }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.onlineresource" | trans }}:</div><div class="metaText">{{ source.onlineResource }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.exceptionformats" | trans }}:</div>
-    <div class="metaText">{{ source.exceptionFormats | join(', ') }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</div><div class="metaText">{{ source.fees }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ source.accessConstraints }}</div>
+    {% include 'MapbenderWmsBundle:Repository:source/view-metadata.html.twig' %}
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
     {% if source.contact %}

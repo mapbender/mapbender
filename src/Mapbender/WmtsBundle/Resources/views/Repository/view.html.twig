@@ -17,13 +17,7 @@
     {% endif %}
   </ul>
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ source.title }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.version" | trans }}:</div><div class="metaText">{{ source.version }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.originurl" | trans }}:</div><div class="metaText metaUrl">{{ source.originUrl }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.abstract" | trans }}:</div><div class="metaText">{{ source.description }}</div>
-    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidername" | trans }}:</div><div class="metaText">{{ source.serviceProviderName }}</div>
-    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidersite" | trans }}:</div><div class="metaText">{{ source.serviceProviderSite }}</div>
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ source.accessConstraints }}</div>
+    {% include 'MapbenderWmtsBundle:Repository:source/view-metadata.html.twig' %}
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
     {% if source.contact %}
