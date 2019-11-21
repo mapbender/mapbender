@@ -27,53 +27,7 @@
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
     {% if source.contact %}
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.person" | trans }}:</div>
-    <div class="metaText">{{ source.contact.person }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.organization" | trans }}:</div>
-    <div class="metaText">{{ source.contact.organization }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</div>
-    <div class="metaText">{{ source.contact.position }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</div>
-    <div class="metaText">{{ source.contact.voiceTelephone }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</div>
-    <div class="metaText">{{ source.contact.facsimileTelephone }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</div>
-    <div class="metaText">{{ source.contact.electronicMailAddress }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</div>
-    <div class="metaText">{{ source.contact.address }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</div>
-    <div class="metaText">{{ source.contact.addressType }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</div>
-    <div class="metaText">{{ source.contact.addressCity }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.state" | trans }}:</div>
-    <div class="metaText">{{ source.contact.addressStateOrProvince }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.postcode" | trans }}:</div>
-    <div class="metaText">{{ source.contact.addressPostcode }}</div>
-    <div class="clearContainer"></div>
-
-    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.country" | trans }}:</div>
-    <div class="metaText">{{ source.contact.addressCountry }}</div>
-    <div class="clearContainer"></div>
+      {% include 'MapbenderManagerBundle:Repository:source/view-contact.html.twig' with {'contact' : source.contact} %}
     {% endif %}
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
