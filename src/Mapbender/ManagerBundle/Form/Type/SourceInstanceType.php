@@ -33,7 +33,6 @@ class SourceInstanceType extends AbstractType
                 'attr' => array(
                     'min' => 0,
                     'max' => 100,
-                    'step' => 10,
                 ),
                 'constraints' => array(
                     new Constraints\Range(array(
@@ -41,7 +40,7 @@ class SourceInstanceType extends AbstractType
                         'max' => 100,
                     )),
                 ),
-                'required' => true,
+                'required' => false,
             ))
         ;
     }
