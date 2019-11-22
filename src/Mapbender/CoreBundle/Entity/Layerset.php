@@ -162,6 +162,20 @@ class Layerset
     }
 
     /**
+     * Read-only informative pseudo-relation
+     *
+     * @param Source $source
+     * @return ArrayCollection|Collection
+     */
+    public function getInstancesOf(Source $source)
+    {
+        return $this->instances->filter(function ($instance) use ($source) {
+            /** @var SourceInstance $instance */
+            return $instance->getSource() === $source;
+        });
+    }
+
+    /**
      * @return string Layerset ID
      */
     public function __toString()

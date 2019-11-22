@@ -356,6 +356,41 @@ class Application
     }
 
     /**
+     * Read-only informative pseudo-relation
+     *
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getSourceInstances()
+    {
+        // @todo: figure out if there's an appropriate ORM annotation that can do this without
+        //        writing code
+        $instances = new ArrayCollection();
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances() as $instance) {
+                $instances->add($instance);
+            }
+        }
+        return $instances;
+    }
+
+    /**
+     * Read-only informative pseudo-relation
+     *
+     * @param Source $source to filter by specific Source
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getInstancesOfSource(Source $source)
+    {
+        $instances = new ArrayCollection();
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstancesOf($source) as $instance) {
+                $instances->add($instance);
+            }
+        }
+        return $instances;
+    }
+
+    /**
      * Set screen shot
      *
      * @param string $screenshot
