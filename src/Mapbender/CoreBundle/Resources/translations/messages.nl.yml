@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Ok
+      add: Voeg toe
+      back: Terug
+      cancel: Annuleren
+      close: Sluit
+      delete: Verwijderen
+      edit: Wijzigen
+      print: Printen
+      refresh: Bijwerken
+      remove: Verwijderen
+      save: Bewaar
+      search: Zoek
     featureinfo:
       error:
         nolayer: 'Object-informatie laag bestaat niet.'

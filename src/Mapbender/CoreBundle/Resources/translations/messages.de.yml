@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Ok
+      add: Hinzufügen
+      back: Zurück
+      cancel: Abbrechen
+      close: Schließen
+      delete: Löschen
+      edit: Bearbeiten
+      print: Drucken
+      refresh: Aktualisieren
+      remove: Entfernen
+      save: Speichern
+      search: Suchen
     featureinfo:
       error:
         nolayer: 'Informationsebene existiert nicht.'

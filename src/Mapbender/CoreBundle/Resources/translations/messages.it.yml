@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Ok    # appropriate?
+      add: Aggiungi
+      back: Torna
+      cancel: Cancella
+      close: Chiudi
+      delete: Elimina
+      edit: Modifica
+      print: Stampa
+      refresh: Aggiorna
+      remove: Elimina
+      save: Salva
+      search: Cerca
     featureinfo:
       error:
         nolayer: 'Nessuna informazione per le feature nel layer'

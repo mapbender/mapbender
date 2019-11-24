@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Ok    # appropriate?
+      add: Ajouter
+      back: Retour
+      cancel: Annuler
+      close: Fermer
+      delete: Supprimer
+      edit: Modifier
+      print: Imprimer
+      refresh: Mettre à jour
+      remove: Supprimer
+      save: Sauvegarder
+      search: Rechercher
     featureinfo:
       error:
         nolayer: 'Impossible d''identifier l''objet.'

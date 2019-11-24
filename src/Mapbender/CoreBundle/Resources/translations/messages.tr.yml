@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Oldu
+      add: Ekle
+      back: Geri git
+      cancel: Vazgeç
+      close: Kapat
+      delete: Sil
+      edit: Düzenle
+      ok: Yazdır
+      refresh: Güncelle
+      remove: Kaldır
+      save: Kaydet
+      search: Ara
     featureinfo:
       error:
         nolayer: 'Detay bilgisi katmanı bulunamadı.'

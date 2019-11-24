@@ -1,5 +1,18 @@
 mb:
   core:
+    actions:
+      accept: Ok    # appropriate?
+      add: Adicionar
+      back: Voltar
+      cancel: Cancelar
+      close: Fechar
+      delete: Remover
+      edit: Editar
+      print: Imprimir
+      refresh: Atualizar
+      remove: Remover
+      save: Guardar
+      search: Procurar
     featureinfo:
       error:
         nolayer: 'Camada de informação não existe.'
