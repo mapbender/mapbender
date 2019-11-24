@@ -8,6 +8,7 @@
   <ul class="tabs">
   {% block tab_headers %}
       <li id="tabMetaData" class="tab active">{{"mb.wms.wmsloader.repo.view.label.metadata" | trans }}</li>
+      <li id="tabApplications" class="tab">{{ "mb.manager.managerbundle.applications" |trans }}</li>
       <li id="tabContact" class="tab">{{"mb.wms.wmsloader.repo.view.label.contact" | trans }}</li>
       <li id="tabService" class="tab">{{"mb.wms.wmsloader.repo.view.label.details" | trans }}</li>
       <li id="tabLayers" class="tab">{{"mb.wms.wmsloader.repo.view.label.layers" | trans }}</li>
@@ -22,6 +23,13 @@
                 {% endblock metadata_content %}
             </div>
         {% endblock tab_container_metadata %}
+        {% block tab_container_applications %}
+            <div id="containerApplications" class="container serviceContainer">
+                {% block applications_content %}
+                    {% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' %}
+                {% endblock applications_content %}
+            </div>
+        {% endblock tab_container_applications %}
         {% block tab_container_contact %}
             <div id="containerContact" class="container serviceContainer serviceContactContainer">
                 {% if false %}{# define block without immediately rendering it#}
