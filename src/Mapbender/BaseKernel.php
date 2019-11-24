@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender;
 
-use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterLegacyMenuRoutesPass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -140,7 +139,6 @@ abstract class BaseKernel extends Kernel
     protected function buildContainer()
     {
         $container = parent::buildContainer();
-        $container->addCompilerPass(new RebuildElementInventoryPass($this));
         $container->addCompilerPass(new RegisterLegacyMenuRoutesPass($this));
 
         return $container;
