@@ -212,7 +212,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     protected function formatAssetRefStatus($element)
     {
         $explicitRefPattern = '^(/|\.\./|(@[\w]+Bundle/)|([\w]+Bundle:))';
-        $assetRefs = $element->getAssets();
+        $assetRefs = $element->getAssets() ?: array(array());   // for array_merge safety with empty input
         $implicitRefs = array();
         foreach (call_user_func_array('array_merge', $assetRefs) as $ref) {
             if (!preg_match("#{$explicitRefPattern}#", $ref)) {
