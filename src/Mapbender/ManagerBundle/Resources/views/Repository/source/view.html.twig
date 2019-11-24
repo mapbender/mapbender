@@ -1,7 +1,7 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 {% block manager_content %}
 
-<a class="button right" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">Back</a>
+<a class="button right" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">{{ 'mb.core.actions.back' | trans }}</a>
 
 <div id="serviceTabContainer" class="tabContainer">
   {# @todo: commonly used labels should NOT be in WmsBundle and shoult NOT associate with 'wmsloader' #}
