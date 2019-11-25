@@ -242,24 +242,27 @@ fieldset{
   background-color: $ciColor4;
   z-index:10;
   height: 100%;
-  @include opacity(0);
+  min-height: 100%;
+  opacity: 0;
   @include absolute(100% 0 0 0);
   @include transition(all .3s ease-in-out);
   @include transform(translateY(0));
+  padding: $space $space 0 $space;
   .contentTitle{
+    margin-top: 0;
     color: $ciColor3;
-    margin: $space $space 0 $space;
-    padding-bottom: $space;
     border-bottom: solid 5px $ciColor;
   }
+  // @todo: it's called .active
   &[data-state="opened"]{
-    @include opacity(1);
+    opacity: 1;
     @include transform(translateY(-100%));
   }
 }
 .mobileContent{
+  height: 100%;
+  min-height: 100%;
   overflow:auto;
-  @include absolute($space*4 $space $space $space);
   -webkit-overflow-scrolling: touch;
   overflow-y: scroll;
 }
@@ -267,8 +270,9 @@ fieldset{
   font-style: normal;
   font-size: 28px;
   color: darken($ciColor2, 20%);
+  // @todo: DO NOT extend from icon classes. Put icons into the markup.
   @extend .iconCancel;
-  @include absolute($space $space '' '');
+  float: right;
 }
 /* ------------------------------------------------------------------ CONTENT */
 .templateWrapper{
@@ -305,11 +309,14 @@ fieldset{
     height: auto;
     width: auto\9; /* ie8 */
   }
+  // @todo: [template BC break] the application title is an h1, not a paragraph
   p.app-title {
     font-size:$fontSize*2;
     line-height:$fontSize*2;
     text-align:center;
   }
+  // @todo: remove, not in template. Looks ~like a close button positioning attempt, but a little off.
+  // Custom templates that add splash screen content should also add all required css rules themselves
   i{
     color: $ciColor3;
     font-size: 2em;
