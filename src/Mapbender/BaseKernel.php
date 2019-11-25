@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender;
 
-use Mapbender\ManagerBundle\Component\Menu\RegisterLegacyMenuRoutesPass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -134,13 +133,5 @@ abstract class BaseKernel extends Kernel
         // intersect instances with deduped keys => instances of same class gone, order preserved
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
-    }
-
-    protected function buildContainer()
-    {
-        $container = parent::buildContainer();
-        $container->addCompilerPass(new RegisterLegacyMenuRoutesPass($this));
-
-        return $container;
     }
 }

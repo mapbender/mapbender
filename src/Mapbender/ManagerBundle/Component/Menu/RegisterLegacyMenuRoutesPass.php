@@ -1,36 +1,30 @@
-<?php /** @noinspection PhpMissingParentConstructorInspection */
+<?php
 
 
 namespace Mapbender\ManagerBundle\Component\Menu;
 
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\IdentityTranslator;
 
 /**
  * @deprecated remove in v3.1
  */
-class RegisterLegacyMenuRoutesPass extends RegisterMenuRoutesPass
+class RegisterLegacyMenuRoutesPass implements CompilerPassInterface
 {
-    /** @var KernelInterface */
-    protected $kernel;
-
-    public function __construct(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
-    }
-
     public function process(ContainerBuilder $container)
     {
         $legacyBundleKey = 'mapbender.manager.menu.legacy_bundles';
         $legacyBundleNames = $container->getParameter($legacyBundleKey);
         $dummyContainer = new Container();
         $dummyContainer->set('translator', new IdentityTranslator());
-        foreach ($this->kernel->getBundles() as $bundle) {
-            if ($bundle instanceof ManagerBundle) {
+        foreach ($container->getParameter('kernel.bundles') as $bundleFqcn) {
+            if (\is_a($bundleFqcn, 'Mapbender\ManagerBundle\Component\ManagerBundle', true)) {
+                /** @var ManagerBundle $bundle */
+                $bundle = new $bundleFqcn();
                 $bundle->setContainer($dummyContainer);
                 $menuDefinition = $bundle->getManagerControllers();
                 if ($menuDefinition) {
