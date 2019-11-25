@@ -261,7 +261,6 @@ class ApplicationController extends ApplicationControllerBase
         if (!$metadata) {
             throw new NotFoundHttpException();
         }
-        $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
         $template = $metadata->getTemplate();
         $content = $this->renderView($template, $metadata->getData($instance, $layerId));
