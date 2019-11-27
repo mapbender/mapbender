@@ -13,8 +13,6 @@ mb:
       success: ~
       failure:
         general: ~
-        already.removed: ~
-        remove.directory: ~
   layerset:
     create:
       success: ~

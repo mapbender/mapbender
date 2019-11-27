@@ -13,8 +13,6 @@ mb:
       success: 'Uygulama silindi.'
       failure:
         general: 'Uygulama silinemiyor.'
-        already.removed:  'Uygulama bulunamadı.'
-        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.'
   layerset:
     create:
       success: 'Katman oluşturuldu.'

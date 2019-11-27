@@ -13,8 +13,6 @@ mb:
       success: Ihre Anwendung wurde gelöscht.
       failure:
         general: Ihre Anwendung konnte nicht gelöscht werden.
-        already.removed: Ihre Anwendung wurde bereits gelöscht.
-        remove.directory: Ihre Anwendung wurde gelöscht, aber das Anwendungsverzeichnis konnte nicht entfernt werden.
   layerset:
     create:
       success: Ihr Layerset wurde erstellt.

@@ -8,15 +8,11 @@ mb:
       success: 'La tua applicazione è stata salvata.'
       failure:
         general: 'Si è verificato un errore durante il tentativo di salvataggio dell''applicazione.'
-        create.directory:
-          'La tua applicazione è stata aggiornata ma non è possibile creare le directory dell''applicazione.'
+        create.directory: La tua applicazione è stata aggiornata ma non è possibile creare le directory dell'applicazione.
     remove:
       success: 'L''applicazione è stata eliminata.'
       failure:
         general: 'La tua applicazione non può essere cancellata.'
-        already.removed: 'La tua applicazione è stata già cancellata.'
-        remove.directory:
-          'La tua applicazione è stata cancellata ma le directory dell''applicazione non possono essere rimosse.'
   layerset:
     create:
       success: 'Il tuo layerset di livelli è stato creato.'

@@ -8,15 +8,11 @@ mb:
       success: Your application has been saved.
       failure:
         general: There was an error trying to save your application.
-        create.directory: |
-          Your application has been updated but the application's directories can not be created.
+        create.directory: Your application has been updated but the application's directories can not be created.
     remove:
       success: Your application has been deleted.
       failure:
         general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
-        remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
   layerset:
     create:
       success: Your layerset has been created.

@@ -13,8 +13,6 @@ mb:
       success: Приложение удалено.
       failure:
         general: Невозможно удалить приложение.
-        already.removed:  Приложение уже удалено.
-        remove.directory: Не возможно создать директорию приложения.
   layerset:
     create:
       success: Набор слоев создан.
