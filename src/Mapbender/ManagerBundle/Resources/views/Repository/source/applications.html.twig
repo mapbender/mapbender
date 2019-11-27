@@ -1,6 +1,6 @@
 {% set _applications = source.getApplications() %}
 {% set _count = _applications | length %}
-<p>Diese Quelle ist in {{ _count }} Applikationen eingebunden.</p>
+<p>{{ 'mb.manager.admin.source.embedded_in_applications' | transchoice(_count) }}{{ _count ? ':' : '.' }}</p>
 <ul class="no-reset">
 {% for application in _applications %}
     {% set _app_instances = application.getInstancesOfSource(source) %}

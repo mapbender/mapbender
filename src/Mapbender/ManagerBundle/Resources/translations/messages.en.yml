@@ -42,6 +42,7 @@ mb:
           ok: 'Source OK'
           toupdate: 'Source not current anymore'
           unreachable: 'Source unreachable'
+        embedded_in_applications: '{0} This source is not assigned to any application|{1} This source is assigned to one application|]1,Inf[ This source is assigned to %count% applications'
       map:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
