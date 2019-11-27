@@ -3,6 +3,7 @@ namespace Mapbender;
 
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex;
 
 /**
  * Mapbender base kernel that ensures all bundles required for barebones operation are registered.
@@ -133,5 +134,13 @@ abstract class BaseKernel extends Kernel
         // intersect instances with deduped keys => instances of same class gone, order preserved
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
+    }
+
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+        PassIndex::autoRegisterAll($container);
+
+        return $container;
     }
 }
