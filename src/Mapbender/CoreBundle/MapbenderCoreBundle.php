@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\AutodetectSasscBinaryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
@@ -39,6 +40,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         }
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
+        $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
 
         // @todo: remove legacy form theme bridging
         //        TBD: either rely on correct starter config (and do nothing here)

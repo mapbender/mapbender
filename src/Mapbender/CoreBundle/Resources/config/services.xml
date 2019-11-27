@@ -5,7 +5,7 @@
     <parameters>
         <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
-        <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
+        <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.form_type.element.layertree.menu.class">Mapbender\CoreBundle\Element\Type\LayerTreeMenuType</parameter>
@@ -36,6 +36,9 @@
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
         <parameter key="mapbender.uploads_dir">uploads</parameter>
+        <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
+             try setting /usr/bin/sassc -->
+        <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
     </parameters>
 
     <services>
@@ -82,7 +85,7 @@
         <service id="mapbender.assetic.filter.sass" class="%assetic.filter.scss.class%">
             <tag name="assetic.filter" alias="sass" />
 
-            <argument>null</argument>
+            <argument>%mapbender.asset.sassc_binary_path%</argument>
             <call method="setTimeout">
                 <argument>%assetic.filter.sass.timeout%</argument>
             </call>
