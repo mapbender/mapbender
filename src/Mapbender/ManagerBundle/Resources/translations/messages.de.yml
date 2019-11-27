@@ -29,7 +29,7 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     admin:
-      sources: Datenquelle
+      sources: Datenquellen
       source:
         add: 'Datenquelle hinzufügen'
         show_metadata: 'Metadaten anzeigen'

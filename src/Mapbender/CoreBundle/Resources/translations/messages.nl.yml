@@ -13,6 +13,10 @@ mb:
       remove: Verwijderen
       save: Bewaar
       search: Zoek
+    terms:
+      source:
+        singular: Bron
+        plural: Bronnen
     featureinfo:
       error:
         nolayer: 'Object-informatie laag bestaat niet.'

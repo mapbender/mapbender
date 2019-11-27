@@ -13,6 +13,10 @@ mb:
       remove: Remover
       save: Guardar
       search: Procurar
+    terms:
+      source:
+        singular: Origem de dados
+        plural: Origens de dados
     featureinfo:
       error:
         nolayer: 'Camada de informação não existe.'

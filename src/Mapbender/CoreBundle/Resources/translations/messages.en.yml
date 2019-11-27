@@ -13,6 +13,10 @@ mb:
       remove: Remove
       save: Save
       search: Search
+    terms:
+      source:
+        singular: Source
+        plural: Sources
     featureinfo:
       error:
         nolayer: 'No feature info layer exists.'

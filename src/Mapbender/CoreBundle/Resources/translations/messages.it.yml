@@ -13,6 +13,10 @@ mb:
       remove: Elimina
       save: Salva
       search: Cerca
+  terms:
+    source:
+      singular: Risorsa
+      plural: Risorse
     featureinfo:
       error:
         nolayer: 'Nessuna informazione per le feature nel layer'

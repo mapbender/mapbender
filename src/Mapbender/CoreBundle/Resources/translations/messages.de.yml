@@ -13,6 +13,10 @@ mb:
       remove: Entfernen
       save: Speichern
       search: Suchen
+    terms:
+      source:
+        singular: Datenquelle
+        plural: Datenquellen
     featureinfo:
       error:
         nolayer: 'Informationsebene existiert nicht.'

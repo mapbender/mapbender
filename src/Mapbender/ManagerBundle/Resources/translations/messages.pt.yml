@@ -29,7 +29,7 @@ mb:
         success: ~
   manager:
     admin:
-      sources: 'Origem de dados'
+      sources: Origens de dados
       source:
         add: 'Adicionar origem de dados'
         show_metadata: 'Mostrar metadados'
