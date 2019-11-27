@@ -59,11 +59,11 @@
         <div class="contentPane">
           <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
           <div class="content">
-            <h1 class="contentTitle">{{ title|trans }}</h1>
-
+          {% block heading %}
+          <h1 class="contentTitle">{{ title | default('') | trans }}</h1>
+          {% endblock %}
             {% block manager_content %}{% endblock %}
           </div>
-           
         </div>
       </div>
     </div>
