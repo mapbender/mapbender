@@ -1,6 +1,5 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
-
-{% block title %}{{ form.vars.value.type }} {{ 'mb.wmts.wmtsloader.repo.instance.title.instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
+{% set title = form.vars.value.type ~ ' ' ~ ('mb.wmts.wmtsloader.repo.instance.title.instance' | trans) ~ ' ' ~ instance.source.id ~ '/'~ instance.id ~ ' - ' ~ instance.source.title  %}
 
 {% block form_layers %}
     <table id="instanceTable" class="table instanceTable">
