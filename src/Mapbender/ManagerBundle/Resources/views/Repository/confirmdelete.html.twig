@@ -1,3 +1,4 @@
+{% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' %}
 <form method="POST" action="{{ path( "mapbender_manager_repository_delete",{"sourceId": source.id}) }}" >
     <input type="hidden" name="sourceId" value="{{source.id}}"  />
 </form>
