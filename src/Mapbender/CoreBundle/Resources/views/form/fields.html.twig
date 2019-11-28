@@ -223,7 +223,8 @@
 {% block radio_widget %}
   {%- if 'application_region_properties' in form.parent.vars['block_prefixes'] -%}
     {%- set _iconClass = form.parent.vars.iconMap[value] -%}
-    <span class="radioWrapper {{ _iconClass }}{% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ form.vars.label | trans }}">
+    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ form.vars.label | trans }}">
+      <i class="{{ _iconClass }}"></i>
       {%- set attr = attr | merge({'class' : attr.class | default('') ~  ' hidden' | trim }) -%}
       {{ block('div_radio_widget') }}
     </span>

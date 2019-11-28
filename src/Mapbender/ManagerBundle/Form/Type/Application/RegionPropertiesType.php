@@ -83,9 +83,9 @@ class RegionPropertiesType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['iconMap'] = array(
-            '' => 'iconCheckbox',
-            'tabs' => 'iconTabActive',
-            'accordion' => 'iconBars',
+            '' => 'fa fa-square-o', // @todo Fontawesome 5: far fa-square; or find some other icon
+            'tabs' => 'fa fas fa-folder',
+            'accordion' => 'fa fas fa-bars',
         );
     }
 }
