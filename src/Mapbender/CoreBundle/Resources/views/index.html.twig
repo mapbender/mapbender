@@ -6,13 +6,12 @@
     <title>{% block title %}{{ pagetitle | default(title | default(fom.server_name)) }}{% endblock %}</title>
     <meta name="description" content="Mapbender 3" />
     {% block mobilejs %}
-    <script language="JavaScript">
+    <script type="text/javascript">
         if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         && !(/Firefox/i.test(navigator.userAgent))
         ) {
             {%- set scaleFactor = scaleFactor|default('0.7') -%}
-            {%- set density = density|default('240dpi') -%}
-            document.write('<meta name="viewport" content="width=device-width; initial-scale={{ scaleFactor }}; maximum-scale={{ scaleFactor }}; minimum-scale={{ scaleFactor }}; user-scalable=no; target-densityDpi={{ density }}"/>');
+            document.write('<meta name="viewport" content="width=device-width; initial-scale={{ scaleFactor }}; maximum-scale={{ scaleFactor }}; minimum-scale={{ scaleFactor }}; user-scalable=no;"/>');
         }
     </script>
     {% endblock %}
