@@ -10,9 +10,9 @@
         if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
         && !(/Firefox/i.test(navigator.userAgent))
         ) {
-            var scaleFactor = {{ scaleFactor|default('0.7') }};
-            var density = "{{ density|default('240dpi') }}";
-            document.write('<meta name="viewport" content="width=device-width; initial-scale='+scaleFactor+'; maximum-scale='+scaleFactor+'; minimum-scale='+scaleFactor+' user-scalable=no;target-densityDpi='+density+'"/>');
+            {%- set scaleFactor = scaleFactor|default('0.7') -%}
+            {%- set density = density|default('240dpi') -%}
+            document.write('<meta name="viewport" content="width=device-width; initial-scale={{ scaleFactor }}; maximum-scale={{ scaleFactor }}; minimum-scale={{ scaleFactor }}; user-scalable=no; target-densityDpi={{ density }}"/>');
         }
     </script>
     {% endblock %}
