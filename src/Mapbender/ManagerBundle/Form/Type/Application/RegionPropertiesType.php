@@ -8,6 +8,8 @@ use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -76,5 +78,14 @@ class RegionPropertiesType extends AbstractType
             }
         }
         return null;
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['iconMap'] = array(
+            '' => 'iconCheckbox',
+            'tabs' => 'iconTabActive',
+            'accordion' => 'iconBars',
+        );
     }
 }
