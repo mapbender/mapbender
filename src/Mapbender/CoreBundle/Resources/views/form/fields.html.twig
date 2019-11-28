@@ -19,7 +19,7 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="messageBox error">
+        <div class="alert alert-danger">
             <ul>
             {% for error in errors %}
                 <li>{{ error.message }}</li>
