@@ -132,26 +132,21 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 .accountBar {
-  display: inline-block;
   color: $middleFontColor;
-  cursor: pointer;
+  #accountOpen {
+    cursor: pointer;
+  }
   padding: ($space/4) ($space/2) ($space/4) ($space/2);
   background-color: $contentColor;
   border-bottom-left-radius: $containerBorderRadius;
   border-bottom-right-radius: $containerBorderRadius;
   > .accountMenu {
-    height: 20px;
+    height: 21px; // root line height (not available as variable)
     overflow: hidden;
     @include transition(all 0.2s ease-in-out);
 
     &.opened {
-      height: 65px;
-    }
-    .iconDown {
-      padding-right: $space;
-      &:before {
-        @include absolute('' 0 '' '');
-      }
+      height: 63px;
     }
   }
 }

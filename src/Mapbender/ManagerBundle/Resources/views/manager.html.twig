@@ -31,12 +31,14 @@
                   <div class="accountBar">
                     {% if app.user != "" %}
                       <ul id="accountMenu" class="accountMenu">
-                          <li id="accountOpen" class="iconDown smallText">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}<span class="openedIcon"></span></li>
-                          {% if app.user.password != "" %} <li><a class="linkButton iconSettings" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">{{ "fom.core.manager.you_account"|trans }}</a></li>{% endif %}
-                          <li><a class="linkButton iconSignOut" href="{{ path('mapbender_core_login_logout') }}">{{ "fom.core.manager.btn.logout"|trans }}</a></li>
+                          <li id="accountOpen">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}&nbsp;<span class="iconDown"></span></li>
+                          {%- if app.user.password -%}
+                              <li><a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}"><span class="iconSettings"></span>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a></li>
+                          {%- endif -%}
+                          <li><a href="{{ path('mapbender_core_login_logout') }}"><span class="iconSignOut"></span>&nbsp;{{ "fom.core.manager.btn.logout"|trans }}</a></li>
                       </ul>
                     {% else %}
-                      <a class="linkButton iconSignIn" href="{{ path('mapbender_core_login_login') }}">{{ "fom.core.manager.btn.login"|trans}}</a>
+                      <a href="{{ path('mapbender_core_login_login') }}"><span class="iconSignIn"></span>&nbsp;{{ "fom.core.manager.btn.login"|trans}}</a>
                     {% endif %}
                   </div>
               </div>
