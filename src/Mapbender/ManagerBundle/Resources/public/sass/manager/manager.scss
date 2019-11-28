@@ -24,8 +24,11 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
-.navigation {
+.navigation, .accountBar {
   color: $middleFontColor;
+}
+
+.navigation {
   .navItem {
     > a {
       display: block;
@@ -132,7 +135,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 .accountBar {
-  color: $middleFontColor;
   #accountOpen {
     cursor: pointer;
   }
