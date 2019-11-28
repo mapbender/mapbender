@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{{ pagetitle | default(title | default(fom.server_name)) }}{% endblock %}</title>
     <meta name="description" content="Mapbender 3" />
     {% block mobilejs %}
     <script language="JavaScript">
