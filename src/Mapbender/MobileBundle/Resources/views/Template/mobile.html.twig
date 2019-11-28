@@ -1,33 +1,9 @@
-{% set scaleFactor = 1 %}
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
-
-{% block title %}{{ fom.server_name }} - {{ application.title }}{% endblock %}
-
-{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
-
-{% block css %}
-  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}"/>
-{% endblock %}
-
-{% block trans %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
-{% endblock %}
-
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
-{% endblock %}
-
 {% block mobilejs %}
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <script type="text/javascript">
-        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            var scaleFactor = {{ scaleFactor|default('0.7') }};
-            document.write('<meta name="viewport" content="width=device-width, minimal-ui, initial-scale=' + scaleFactor + ', maximum-scale=' + scaleFactor + ', minimum-scale=' + scaleFactor + ', user-scalable=no;"/>');
-        }
-    </script>
+    {%- set scaleFactor = 1 -%}
+    {{ parent() }}
 {% endblock %}
 
 {% block frontend_content %}
