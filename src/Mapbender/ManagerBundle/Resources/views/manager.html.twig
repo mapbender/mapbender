@@ -1,7 +1,5 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
-{% set title %}{% block title %}{{ title|default('') }}{% endblock %}{% endset %}
-
 {% block css %}
   <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
 {% endblock %}
@@ -62,7 +60,7 @@
           <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
           <div class="content">
           {% block heading %}
-          <h1 class="contentTitle">{{ title | default('') | trans }}</h1>
+          <h1 class="contentTitle">{{ block('title') }}</h1>
           {% endblock %}
             {% block manager_content %}{% endblock %}
           </div>
