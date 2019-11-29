@@ -23,13 +23,4 @@
       <div class="clearContainer"></div>
     {{ form_end(form) }}
   </div>
-  <script type="text/javascript">
-    if(top != window) {
-      top.location.href = location.href;
-      top.location.reload();
-    }
-    var Mapbender = Mapbender || {};
-    Mapbender.configuration = {elements:{}};
-  </script>
-    {% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}
 {% endblock %}
