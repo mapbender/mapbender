@@ -7,7 +7,7 @@
     <meta name="description" content="Mapbender 3" />
 {% block mobilejs %}
     {%- set scaleFactor = scaleFactor|default('0.7') -%}
-    <meta name="viewport" content="width=device-width, initial-scale={{ scaleFactor }}, maximum-scale={{ scaleFactor }}, minimum-scale={{ scaleFactor }}, user-scalable=no"/>'
+    <meta name="viewport" content="width=device-width, initial-scale={{ scaleFactor }}, maximum-scale={{ scaleFactor }}, minimum-scale={{ scaleFactor }}, user-scalable=no"/>
 {% endblock %}
     <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
     <link rel="shortcut icon" href="{% block favicon %}{{ asset('favicon.png') }}{% endblock %}" />
