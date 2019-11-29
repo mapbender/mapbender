@@ -42,6 +42,7 @@ mb:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
           unreachable: 'Die Datenquelle ist nicht erreichbar'
+        embedded_in_applications: '{0} Diese Datenquelle ist in keiner Applikation eingebunden|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Datenquelle ist in %count% Applikationen eingebunden'
       map:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
