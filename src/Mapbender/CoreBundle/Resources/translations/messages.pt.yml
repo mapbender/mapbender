@@ -17,6 +17,9 @@ mb:
       source:
         singular: Origem de dados
         plural: Origens de dados
+      layerset:
+        singular: Conjunto de camadas
+        plural: Conjuntos de camadas
     featureinfo:
       error:
         nolayer: 'Camada de informação não existe.'

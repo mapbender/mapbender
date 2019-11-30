@@ -17,6 +17,9 @@ mb:
       source:
         singular: Fuente
         plural: Fuentes
+      layerset:
+        singular: Conjunto de capas
+        plural: Conjuntos de capas
     featureinfo:
       error:
         nolayer: 'No existe feature info de la capa.'

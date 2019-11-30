@@ -17,6 +17,9 @@ mb:
       source:
         singular: Bron
         plural: Bronnen
+      layerset:
+        singular: Lagenset
+        plural: Lagensets
     featureinfo:
       error:
         nolayer: 'Object-informatie laag bestaat niet.'

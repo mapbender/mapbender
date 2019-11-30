@@ -17,6 +17,9 @@ mb:
       source:
         singular: Source
         plural: Sources
+      layerset:
+        singular: Layer set
+        plural: Layer sets
     featureinfo:
       error:
         nolayer: 'No feature info layer exists.'

@@ -13,6 +13,13 @@ mb:
       remove: Supprimer
       save: Sauvegarder
       search: Rechercher
+    terms:
+      source:
+        singular: Source
+        plural: Sources
+      layerset:
+        singular: Ensemble de couches
+        plural: Ensembles de couches
     featureinfo:
       error:
         nolayer: 'Impossible d''identifier l''objet.'

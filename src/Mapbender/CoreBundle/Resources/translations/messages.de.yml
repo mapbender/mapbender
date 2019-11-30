@@ -17,6 +17,9 @@ mb:
       source:
         singular: Datenquelle
         plural: Datenquellen
+      layerset:
+        singular: Layerset
+        plural: Layersets
     featureinfo:
       error:
         nolayer: 'Informationsebene existiert nicht.'

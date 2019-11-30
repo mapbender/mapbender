@@ -13,6 +13,13 @@ mb:
       remove: Удалить
       save: Сохранить
       search: Поиск
+    terms:
+      source:
+        singular: Источник
+        plural: Источники
+      layerset:
+        singular: Слой  # @todo: this is simply "layer"
+        plural: Слои
     featureinfo:
       error:
         nolayer: 'Не существует функция инфо-слой.'

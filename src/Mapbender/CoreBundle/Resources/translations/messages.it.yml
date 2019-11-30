@@ -17,6 +17,9 @@ mb:
     source:
       singular: Risorsa
       plural: Risorse
+    layerset:
+      singular: ~   # @todo
+      plural: ~     # @todo
     featureinfo:
       error:
         nolayer: 'Nessuna informazione per le feature nel layer'
