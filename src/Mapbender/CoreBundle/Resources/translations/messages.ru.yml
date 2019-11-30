@@ -1,25 +1,25 @@
 mb:
+  actions:
+    accept: Оке́й
+    add: Добавить
+    back: Назад
+    cancel: Отменить
+    close: Закрыть
+    delete: Удалить
+    edit: Редактировать
+    print: Печать
+    refresh: Обновить
+    remove: Удалить
+    save: Сохранить
+    search: Поиск
+  terms:
+    source:
+      singular: Источник
+      plural: Источники
+    layerset:
+      singular: Слой  # @todo: this is simply "layer"
+      plural: Слои
   core:
-    actions:
-      accept: Оке́й
-      add: Добавить
-      back: Назад
-      cancel: Отменить
-      close: Закрыть
-      delete: Удалить
-      edit: Редактировать
-      print: Печать
-      refresh: Обновить
-      remove: Удалить
-      save: Сохранить
-      search: Поиск
-    terms:
-      source:
-        singular: Источник
-        plural: Источники
-      layerset:
-        singular: Слой  # @todo: this is simply "layer"
-        plural: Слои
     featureinfo:
       error:
         nolayer: 'Не существует функция инфо-слой.'

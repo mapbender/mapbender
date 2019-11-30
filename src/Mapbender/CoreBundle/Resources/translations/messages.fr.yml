@@ -1,25 +1,25 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Ajouter
+    back: Retour
+    cancel: Annuler
+    close: Fermer
+    delete: Supprimer
+    edit: Modifier
+    print: Imprimer
+    refresh: Mettre à jour
+    remove: Supprimer
+    save: Sauvegarder
+    search: Rechercher
+  terms:
+    source:
+      singular: Source
+      plural: Sources
+    layerset:
+      singular: Ensemble de couches
+      plural: Ensembles de couches
   core:
-    actions:
-      accept: Ok    # appropriate?
-      add: Ajouter
-      back: Retour
-      cancel: Annuler
-      close: Fermer
-      delete: Supprimer
-      edit: Modifier
-      print: Imprimer
-      refresh: Mettre à jour
-      remove: Supprimer
-      save: Sauvegarder
-      search: Rechercher
-    terms:
-      source:
-        singular: Source
-        plural: Sources
-      layerset:
-        singular: Ensemble de couches
-        plural: Ensembles de couches
     featureinfo:
       error:
         nolayer: 'Impossible d''identifier l''objet.'

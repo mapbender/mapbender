@@ -1,25 +1,25 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Adicionar
+    back: Voltar
+    cancel: Cancelar
+    close: Fechar
+    delete: Remover
+    edit: Editar
+    print: Imprimir
+    refresh: Atualizar
+    remove: Remover
+    save: Guardar
+    search: Procurar
+  terms:
+    source:
+      singular: Origem de dados
+      plural: Origens de dados
+    layerset:
+      singular: Conjunto de camadas
+      plural: Conjuntos de camadas
   core:
-    actions:
-      accept: Ok    # appropriate?
-      add: Adicionar
-      back: Voltar
-      cancel: Cancelar
-      close: Fechar
-      delete: Remover
-      edit: Editar
-      print: Imprimir
-      refresh: Atualizar
-      remove: Remover
-      save: Guardar
-      search: Procurar
-    terms:
-      source:
-        singular: Origem de dados
-        plural: Origens de dados
-      layerset:
-        singular: Conjunto de camadas
-        plural: Conjuntos de camadas
     featureinfo:
       error:
         nolayer: 'Camada de informação não existe.'

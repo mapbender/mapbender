@@ -1,25 +1,25 @@
 mb:
+  actions:
+    accept: Ok
+    add: Add
+    back: Back
+    cancel: Cancel
+    close: Close
+    delete: Delete
+    edit: Edit
+    print: Print
+    refresh: Refresh
+    remove: Remove
+    save: Save
+    search: Search
+  terms:
+    source:
+      singular: Source
+      plural: Sources
+    layerset:
+      singular: Layer set
+      plural: Layer sets
   core:
-    actions:
-      accept: Ok
-      add: Add
-      back: Back
-      cancel: Cancel
-      close: Close
-      delete: Delete
-      edit: Edit
-      print: Print
-      refresh: Refresh
-      remove: Remove
-      save: Save
-      search: Search
-    terms:
-      source:
-        singular: Source
-        plural: Sources
-      layerset:
-        singular: Layer set
-        plural: Layer sets
     featureinfo:
       error:
         nolayer: 'No feature info layer exists.'

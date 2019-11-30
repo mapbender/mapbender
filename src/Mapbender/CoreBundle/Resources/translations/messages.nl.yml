@@ -1,25 +1,25 @@
 mb:
+  actions:
+    accept: Ok
+    add: Voeg toe
+    back: Terug
+    cancel: Annuleren
+    close: Sluit
+    delete: Verwijderen
+    edit: Wijzigen
+    print: Printen
+    refresh: Bijwerken
+    remove: Verwijderen
+    save: Bewaar
+    search: Zoek
+  terms:
+    source:
+      singular: Bron
+      plural: Bronnen
+    layerset:
+      singular: Lagenset
+      plural: Lagensets
   core:
-    actions:
-      accept: Ok
-      add: Voeg toe
-      back: Terug
-      cancel: Annuleren
-      close: Sluit
-      delete: Verwijderen
-      edit: Wijzigen
-      print: Printen
-      refresh: Bijwerken
-      remove: Verwijderen
-      save: Bewaar
-      search: Zoek
-    terms:
-      source:
-        singular: Bron
-        plural: Bronnen
-      layerset:
-        singular: Lagenset
-        plural: Lagensets
     featureinfo:
       error:
         nolayer: 'Object-informatie laag bestaat niet.'
