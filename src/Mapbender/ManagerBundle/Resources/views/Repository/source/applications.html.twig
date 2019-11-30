@@ -1,7 +1,7 @@
 {% set _applications = source.getApplications() %}
 {% set _count = _applications | length %}
 <p>{{ 'mb.manager.admin.source.embedded_in_applications' | transchoice(_count) }}{{ _count ? ':' : '.' }}</p>
-<ul class="no-reset">
+<ul class="list-default">
 {% for application in _applications %}
     {% set _app_instances = application.getInstancesOfSource(source) %}
     <li>{%- set _linkToApp = is_granted('EDIT', application) -%}
@@ -12,7 +12,7 @@
         {%- if _linkToApp -%}
         </a>
         {%- endif -%}
-        <ul class="no-reset">
+        <ul class="list-default">
         {%- for instance in _app_instances -%}
         <li>{%- if _linkToApp -%}
             <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : instance.id}) }}">

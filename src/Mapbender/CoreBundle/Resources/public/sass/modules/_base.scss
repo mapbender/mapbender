@@ -27,15 +27,15 @@ ul, ol {
   list-style: none;
   margin: 0;
   padding: 0;
-  // @todo: this should be the default eventually (without requiring .no-reset class)
-  &.no-reset {
+  // @todo: this should be the default eventually (without requiring .list-default class)
+  &.list-default {
    padding-left: 2.5em;
   }
 }
-ul.no-reset {
+ul.list-default {
   list-style-type: disc;
 }
-ol.no-reset {
+ol.list-default {
   list-style-type: decimal;
 }
 hr {
