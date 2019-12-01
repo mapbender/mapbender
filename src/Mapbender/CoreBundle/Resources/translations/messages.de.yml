@@ -13,12 +13,18 @@ mb:
     save: Speichern
     search: Suchen
   terms:
+    application:
+      singular: Anwendung
+      plural: Anwendungen
     source:
       singular: Datenquelle
       plural: Datenquellen
     layerset:
       singular: Layerset
       plural: Layersets
+  states:
+    active: aktiv
+    inactive: inaktiv
   core:
     featureinfo:
       error:

@@ -13,12 +13,18 @@ mb:
     save: Guardar
     search: Procurar
   terms:
+    application:
+      singular: Aplicação
+      plural: Aplicações
     source:
       singular: Origem de dados
       plural: Origens de dados
     layerset:
       singular: Conjunto de camadas
       plural: Conjuntos de camadas
+  states:
+    active: ativa # m.; f.: ativo
+    inactive: inativa # m.; f.: inativo
   core:
     featureinfo:
       error:

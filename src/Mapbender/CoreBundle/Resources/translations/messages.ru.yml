@@ -13,12 +13,18 @@ mb:
     save: Сохранить
     search: Поиск
   terms:
+    application:
+      singular: Приложение
+      plural: Приложения
     source:
       singular: Источник
       plural: Источники
     layerset:
       singular: Слой  # @todo: this is simply "layer"
       plural: Слои
+  states:
+    active: активный
+    inactive: неактивный
   core:
     featureinfo:
       error:

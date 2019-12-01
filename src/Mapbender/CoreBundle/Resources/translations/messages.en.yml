@@ -13,12 +13,18 @@ mb:
     save: Save
     search: Search
   terms:
+    application:
+      singular: Application
+      plural: Applications
     source:
       singular: Source
       plural: Sources
     layerset:
       singular: Layer set
       plural: Layer sets
+  states:
+    active: active
+    inactive: inactive
   core:
     featureinfo:
       error:

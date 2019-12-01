@@ -13,12 +13,18 @@ mb:
     save: Bewaar
     search: Zoek
   terms:
+    application:
+      singular: Applicatie
+      plural: Applicaties
     source:
       singular: Bron
       plural: Bronnen
     layerset:
       singular: Lagenset
       plural: Lagensets
+  states:
+    active: actief
+    inactive: inactief
   core:
     featureinfo:
       error:

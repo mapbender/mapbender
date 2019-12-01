@@ -13,12 +13,18 @@ mb:
     save: Guardar
     search: Buscar
   terms:
+    application:
+      singular: Aplicación
+      plural: Aplicaciónes
     source:
       singular: Fuente
       plural: Fuentes
     layerset:
       singular: Conjunto de capas
       plural: Conjuntos de capas
+  states:
+    active: activo # m.; f.: activa
+    inactive: inactivo # m.; f.: inactiva
   core:
     featureinfo:
       error:

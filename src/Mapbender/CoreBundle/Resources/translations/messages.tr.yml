@@ -13,12 +13,18 @@ mb:
     save: Kaydet
     search: Ara
   terms:
+    application:
+      singular: Uygulama
+      plural: Uygulamalar
     source:
       singluar: Kaynak
       plural: Kaynaklar
     layerset:
       singular: Katman
       plural: Katmanlar
+  states:
+    active: aktif
+    inactive: etkisiz
   core:
     featureinfo:
       error:

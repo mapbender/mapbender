@@ -13,12 +13,18 @@ mb:
     save: Salva
     search: Cerca
   terms:
+    application:
+      singular: Applicazione
+      plural: Applicazioni
     source:
       singular: Risorsa
       plural: Risorse
     layerset:
       singular: ~   # @todo
       plural: ~     # @todo
+  states:
+    active: attivo     # m.; f.: attiva
+    inactive: inattivo # m.; f.: inatttiva
   core:
     featureinfo:
       error:
