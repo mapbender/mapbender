@@ -68,7 +68,6 @@ mb:
         source: 'Filtre'
         layerset: 'Filtre'
         application: 'Filtre'
-        element: 'Filtre'
       overview:
         maximize: Aggrandir
         fix: Fixer

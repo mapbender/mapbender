@@ -68,7 +68,6 @@ mb:
         source: 'Filtro origem de dados'
         layerset: 'Filtro de conjunto de camadas'
         application: Filtro
-        element: 'Filtro elemento'
       overview:
         maximize: Maximizar
         fix: Fixar

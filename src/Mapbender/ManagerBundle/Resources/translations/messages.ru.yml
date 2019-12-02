@@ -68,7 +68,6 @@ mb:
         source: 'Фильтр источников'
         layerset: 'Фильтровать слои'
         application: 'Фильтр приложений'
-        element: 'Фильтр элемент'
       overview:
         maximize: Максимизировать
         fix: Закрепить

@@ -69,7 +69,6 @@ mb:
         source: 'Filter'
         layerset: 'Filter'
         application: Filter
-        element: Filter         
       overview:
         maximize: Maximieren
         fix: Fixieren

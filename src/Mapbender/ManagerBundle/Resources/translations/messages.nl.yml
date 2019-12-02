@@ -68,7 +68,6 @@ mb:
         source: 'Filter bron'
         layerset: 'Filter lagenset'
         application: 'Filter applicatie'
-        element: 'Filter element'
       overview:
         maximize: Maximaliseer
         fix: Repareer

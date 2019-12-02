@@ -68,7 +68,6 @@ mb:
         source: 'Filtrar fuente'
         layerset: 'Filtrar conjunto de capas'
         application: 'Filtrar aplicación'
-        element: 'Filtrar Elemento'
       overview:
         maximize: Maximizar
         fix: Corregir

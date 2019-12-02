@@ -68,7 +68,6 @@ mb:
         source: 'Filtra risorsa'
         layerset: 'Filtra layerset'
         application: 'Filtra applicazioni'
-        element: 'Filtra elemento'        
       overview:
         maximize: Massimizza
         fix: Fissa
