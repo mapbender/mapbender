@@ -64,10 +64,6 @@ mb:
           '': 'Nenhum elemento existe'
       zoombar:
         draggable: Deslocar
-      filter:
-        source: 'Filtro origem de dados'
-        layerset: 'Filtro de conjunto de camadas'
-        application: Filtro
       overview:
         maximize: Maximizar
         fix: Fixar

@@ -64,10 +64,6 @@ mb:
           '': 'Nessun elemento aggiunto'
       zoombar:
         draggable: Trascinabile
-      filter:
-        source: 'Filtra risorsa'
-        layerset: 'Filtra layerset'
-        application: 'Filtra applicazioni'
       overview:
         maximize: Massimizza
         fix: Fissa

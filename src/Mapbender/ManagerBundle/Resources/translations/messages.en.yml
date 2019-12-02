@@ -65,10 +65,6 @@ mb:
           '': 'No element added'
       zoombar:
         draggable: Draggable
-      filter:
-        source: 'Filter source'
-        layerset: 'Filter layerset'
-        application: 'Filter application'
       overview:
         maximize: Maximize
         fix: Fix

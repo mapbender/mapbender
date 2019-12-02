@@ -64,10 +64,6 @@ mb:
           '': 'Geen element toegevoegd'
       zoombar:
         draggable: Versleepbaar
-      filter:
-        source: 'Filter bron'
-        layerset: 'Filter lagenset'
-        application: 'Filter applicatie'
       overview:
         maximize: Maximaliseer
         fix: Repareer

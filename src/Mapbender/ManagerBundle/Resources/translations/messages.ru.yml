@@ -64,10 +64,6 @@ mb:
           '': 'Элемент не добавлен'
       zoombar:
         draggable: Перетаскиваемый
-      filter:
-        source: 'Фильтр источников'
-        layerset: 'Фильтровать слои'
-        application: 'Фильтр приложений'
       overview:
         maximize: Максимизировать
         fix: Закрепить

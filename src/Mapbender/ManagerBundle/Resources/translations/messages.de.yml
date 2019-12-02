@@ -65,10 +65,6 @@ mb:
           '': 'Kein Element vorhanden'
       zoombar:
         draggable: Verschiebbar
-      filter:
-        source: 'Filter'
-        layerset: 'Filter'
-        application: Filter
       overview:
         maximize: Maximieren
         fix: Fixieren

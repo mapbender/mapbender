@@ -64,10 +64,6 @@ mb:
           '': 'Öğe eklenmedi'
       zoombar:
         draggable: 'Sürüklenebilir'
-      filter:
-        source: 'Kaynak filtrele'
-        layerset: 'Katman filtrele'
-        application: 'Uygulama filtrele'
       overview:
         maximize: 'Maksimuma çıkarma'
         fix: 'Sabit'

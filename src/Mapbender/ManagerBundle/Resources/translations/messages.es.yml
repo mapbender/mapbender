@@ -64,10 +64,6 @@ mb:
           '': 'No añadido elemento'
       zoombar:
         draggable: Mobible
-      filter:
-        source: 'Filtrar fuente'
-        layerset: 'Filtrar conjunto de capas'
-        application: 'Filtrar aplicación'
       overview:
         maximize: Maximizar
         fix: Corregir

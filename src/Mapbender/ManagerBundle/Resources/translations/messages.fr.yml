@@ -64,10 +64,6 @@ mb:
           '': 'Aucun élément ajouté'
       zoombar:
         draggable: Déplaçable
-      filter:
-        source: 'Filtre'
-        layerset: 'Filtre'
-        application: 'Filtre'
       overview:
         maximize: Aggrandir
         fix: Fixer
