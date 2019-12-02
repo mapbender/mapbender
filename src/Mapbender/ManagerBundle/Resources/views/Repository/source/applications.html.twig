@@ -18,6 +18,7 @@
             <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : instance.id}) }}">
             {%- endif -%}
                 {{ instance.title | default('#' ~ instance.id) }}
+                ({{ "mb.terms.layerset.singular" | trans }} {{ instance.layerset.title | default(instance.layerset.id) }})
             {%- if _linkToApp -%}
                 </a>
             {%- endif -%}
