@@ -7,6 +7,7 @@ mb:
     close: Sluit
     delete: Verwijderen
     edit: Wijzigen
+    filter: Filtreren
     print: Printen
     refresh: Bijwerken
     remove: Verwijderen

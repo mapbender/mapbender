@@ -7,7 +7,8 @@ mb:
     close: Kapat
     delete: Sil
     edit: Düzenle
-    ok: Yazdır
+    filter: Filtrele
+    print: Yazdır
     refresh: Güncelle
     remove: Kaldır
     save: Kaydet

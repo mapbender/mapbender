@@ -7,6 +7,7 @@ mb:
     close: Cerrar
     delete: Borrar
     edit: Editar
+    filter: Filtrar
     print: Imprimir
     refresh: Actualizar
     remove: Remover
