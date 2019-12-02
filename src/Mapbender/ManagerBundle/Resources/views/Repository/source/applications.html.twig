@@ -8,7 +8,8 @@
         {%- if _linkToApp -%}
         <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}">
         {%- endif -%}
-            {{ application.title }}
+            {{- application.title -}}
+            {%- if not application.published -%}&nbsp;<span class="badge">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
         {%- if _linkToApp -%}
         </a>
         {%- endif -%}
@@ -19,6 +20,7 @@
             {%- endif -%}
                 {{ instance.title | default('#' ~ instance.id) }}
                 ({{ "mb.terms.layerset.singular" | trans }} {{ instance.layerset.title | default(instance.layerset.id) }})
+                {%- if not instance.enabled -%}&nbsp;<span class="badge">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
             {%- if _linkToApp -%}
                 </a>
             {%- endif -%}
