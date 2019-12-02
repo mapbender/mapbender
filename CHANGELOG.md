@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 43e401c2b
+## dev-release/3.0.7 @ d49e4d239
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Allow privileged users to access non-published Yaml-based applications
@@ -11,8 +11,11 @@
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
 - Fix untranslated "Back" button in backend source views
+- Fix encoding errors of backend headings containing HTML-escapable characters
 - SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - When cloning DB applications, also clone access control rules
+- Show affected applications and instances in source deletion confirmation popup
+- Show dependent applications and instances in source view (as a new "Applications" tab)
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
@@ -25,10 +28,12 @@
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups
 - [CSS] `.linkButton` and all `<a>` elements now inherit font color
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
-- [CSS] Allow default-styled lists via .no-reset class, document Bootstrap conflicts
+- [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts
 - [CSS] switch to root-relative units for all header elements and font-size classes
-- Add `translation:get` command
-- Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations
+- Replace custom backend message boxes with standard Boostrap `.alert`
+- Replace some custom backend-only icon constructs with forward-compatible FontAwesome default markup
+- Add `translation:get` command (optional MapbenderIntrospectionBundle, inactive by default)
+- Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations (optional MapbenderIntrospectionBundle, inactive by default)
 - Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
 - Resolve misc form type, service configuration and other incompatibilities with Symfony 3
 - Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0
