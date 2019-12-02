@@ -244,9 +244,3 @@ mb:
           format_error: 'Bu format desteklenmiyor!'
           resolution:
             error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: 'Uygulama'

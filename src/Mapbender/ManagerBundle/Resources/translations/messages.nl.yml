@@ -250,9 +250,3 @@ mb:
           format_error: 'Dit formaat wordt niet ondersteund!'
           resolution:
             error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applicaties

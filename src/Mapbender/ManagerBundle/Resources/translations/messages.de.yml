@@ -251,9 +251,3 @@ mb:
           format_error: 'Nicht unterstütztes Format'
           resolution:
             error: 'Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Anwendungen

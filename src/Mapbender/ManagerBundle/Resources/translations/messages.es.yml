@@ -250,9 +250,3 @@ mb:
           format_error: 'Este formato no esta soportado'
           resolution:
             error: 'Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Aplicaciones

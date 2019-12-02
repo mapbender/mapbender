@@ -250,9 +250,3 @@ mb:
           format_error: 'Questo formato non è supportato!'
           resolution:
             error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applicazioni

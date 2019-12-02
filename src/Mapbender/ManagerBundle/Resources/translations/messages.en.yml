@@ -251,9 +251,3 @@ mb:
           format_error: 'This format is not supported!'
           resolution:
             error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applications
