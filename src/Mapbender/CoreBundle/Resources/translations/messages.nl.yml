@@ -189,7 +189,7 @@ mb:
           ok: Sluiten
     gpsposition:
       error:
-        notsupported: 'Sorry, geo-locatie wordt niet ondersteund door deze browser.'
+        notsupported: Geo-locatie wordt niet ondersteund door deze browser.
         nosignal: Het is niet mogelijk uw geo-locatie te bepalen.
       class:
         title: 'GPS Positie'

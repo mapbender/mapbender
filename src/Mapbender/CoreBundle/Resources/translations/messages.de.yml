@@ -191,7 +191,7 @@ mb:
           ok: Schließen
     gpsposition:
       error:
-        notsupported: 'Entschuldigung! Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.'
+        notsupported: Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.
         nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
       class:
         title: GPS-Position

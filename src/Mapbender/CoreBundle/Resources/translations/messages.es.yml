@@ -190,7 +190,7 @@ mb:
           ok: Close
     gpsposition:
       error:
-        notsupported: 'Lo siento, pero los servicios de geolocalización no son soportados por su navegador.'
+        notsupported: Los servicios de geolocalización no son soportados por su navegador.
         nosignal: Actualmente no es posible localizar su posición.
       class:
         title: 'Posición GPS'

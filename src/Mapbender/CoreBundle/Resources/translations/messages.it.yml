@@ -190,7 +190,7 @@ mb:
           ok: Chiudi
     gpsposition:
       error:
-        notsupported: 'Sono spiacente, ma il servizio di geolocazione non è supportato dal tuo browser.'
+        notsupported: Il servizio di geolocazione non è supportato dal tuo browser.
         nosignal: 'Attualmente non è possibile localizzare la tua posizione.'
       class:
         title: 'Posizione GPS'
