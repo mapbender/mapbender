@@ -135,7 +135,7 @@ $(function() {
             ;
         });
         // if table was previously empty, reveal it and hide placeholder text
-        $permissionsTable.removeClass('hidePermissions');
+        $permissionsTable.removeClass('hidden');
         $('#permissionsDescription', $permissionsTable.parent()).addClass('hidden');
     }
     function filterSidContent(response, $permissionsTable) {
