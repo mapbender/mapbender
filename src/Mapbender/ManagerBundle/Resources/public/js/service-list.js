@@ -8,10 +8,8 @@ $(function() {
             var stringMap = {
                 // @todo: bring your own translation string
                 title: "mb.manager.components.popup.delete_element.title",
-                // @todo: bring your own translation string
-                cancel: "mb.manager.components.popup.delete_element.btn.cancel",
-                // @todo: bring your own translation string
-                confirm: "mb.manager.components.popup.delete_element.btn.ok"
+                confirm: "mb.actions.delete",
+                cancel: "mb.actions.cancel"
             };
             Mapbender.Manager.confirmDelete($el, url, stringMap, response);
         });

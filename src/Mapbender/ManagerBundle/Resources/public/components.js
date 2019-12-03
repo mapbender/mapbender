@@ -195,7 +195,7 @@ $(function() {
                     content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
-                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
+                            label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'button',
                             callback: function() {
                                 appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
@@ -203,7 +203,7 @@ $(function() {
                             }
                         },
                         {
-                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.cancel'),
+                            label: Mapbender.trans('mb.actions.cancel'),
                             cssClass: 'button buttonCancel critical',
                             callback: function() {
                                 this.close();
@@ -227,8 +227,8 @@ $(function() {
         var labels = {
             // @todo: bring your own translation string
             title: "mb.manager.components.popup.delete_element.title",
-            cancel: "mb.manager.components.popup.delete_element.btn.cancel",
-            confirm: "mb.manager.components.popup.delete_element.btn.ok"
+            confirm: "mb.actions.delete",
+            cancel: "mb.actions.cancel"
         };
         Mapbender.Manager.confirmDelete(null, null, labels, content).then(function() {
             $row.remove();
@@ -250,7 +250,7 @@ $(function() {
             buttons: [
                 {
                     // @todo: provide distinct label
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
+                    label: Mapbender.trans('mb.actions.back'),
                     cssClass: 'button buttonReset hidden left',
                     callback: function() {
                         // reload entire popup
@@ -258,7 +258,7 @@ $(function() {
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),
+                    label: Mapbender.trans('mb.actions.back'),
                     cssClass: 'button buttonBack hidden left',
                     callback: function() {
                         $('.contentItem', popup.$element).not($initialView).remove();
@@ -270,7 +270,7 @@ $(function() {
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'),
+                    label: Mapbender.trans('mb.actions.remove'),
                     cssClass: 'button buttonRemove hidden',
                     callback: function(evt) {
                         var $button = $(evt.currentTarget);
@@ -285,7 +285,7 @@ $(function() {
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'),
+                    label: Mapbender.trans('mb.actions.add'),
                     cssClass: 'button buttonAdd hidden',
                     callback: function() {
                         $(".contentItem:first", popup.$element).removeClass('hidden');
@@ -299,14 +299,14 @@ $(function() {
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.ok'),
+                    label: Mapbender.trans('mb.actions.save'),
                     cssClass: 'button buttonOk',
                     callback: function() {
                         $("#elementSecurity", popup.$element).submit();
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.cancel'),
+                    label: Mapbender.trans('mb.actions.cancel'),
                     cssClass: 'button buttonCancel critical',
                     callback: function() {
                         this.close();
