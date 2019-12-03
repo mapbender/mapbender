@@ -216,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Application cannot be imported.'
-      acl:
-        failed: 'Acls cannot be imported.'
-      source:
-        failed: 'Sources cannot be imported.'
   core:
     admin:
       button:

@@ -215,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
-      acl:
-        failed: 'Toegangs-restricties (ACLs) kunnen niet geimporteerd'
-      source:
-        failed: 'Bronnen kunnen niet geimporteerd'
   core:
     admin:
       button:

@@ -215,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Приложение не может быть импортировано.'
-      acl:
-        failed: 'ACL не импортируются.'
-      source:
-        failed: 'Источник не может быть импортирован.'
   core:
     admin:
       button:

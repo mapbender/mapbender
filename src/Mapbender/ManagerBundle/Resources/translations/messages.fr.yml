@@ -216,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Impossible d''importer l''application.'
-      acl:
-        failed: 'Impossible d''importer le ou les ACL(s).'
-      source:
-        failed: 'Impossible d''importer les sources.'
   core:
     admin:
       button:

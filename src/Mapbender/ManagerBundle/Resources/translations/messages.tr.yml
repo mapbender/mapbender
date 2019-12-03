@@ -209,10 +209,6 @@ mb:
     import:
       application:
         failed: 'Uygulama içeri aktarıllamıyor (Import).'
-      acl:
-        failed: 'Erişim kontrol listesi içeri aktarıllamıyor (Import).'
-      source:
-        failed: 'Kaynaklar içeri aktarıllamıyor (Import).'
   core:
     admin:
       button:
