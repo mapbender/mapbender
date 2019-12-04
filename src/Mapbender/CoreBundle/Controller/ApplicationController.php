@@ -62,7 +62,7 @@ class ApplicationController extends ApplicationControllerBase
     public function assetsAction(Request $request, $slug, $type)
     {
         $isProduction = $this->isProduction();
-        $cacheFile        = $this->getCachedAssetPath($slug, $type);
+        $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
             if (!$source) {
                 throw new NotFoundHttpException('The application can not be found.');
@@ -145,7 +145,7 @@ class ApplicationController extends ApplicationControllerBase
         );
         if ($useCache) {
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-            $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
+            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $appComponent->getTemplate()->render();
@@ -339,11 +339,12 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
+     * @param Request $request
      * @param string $slug
      * @param string $type
      * @return string
      */
-    protected function getCachedAssetPath($slug, $type)
+    protected function getCachedAssetPath(Request $request, $slug, $type)
     {
         $localeDependent = array(
             'html',
@@ -359,9 +360,6 @@ class ApplicationController extends ApplicationControllerBase
             'css',
         );
         if (in_array($type, $baseUrlDependent)) {
-            // @todo: pass in Request from controller action (also useful for locale)
-            /** @var Request $request */
-            $request = $this->container->get('request_stack')->getCurrentRequest();
             // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
             $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
             $extension = "{$baseUrlHash}.{$extension}";
