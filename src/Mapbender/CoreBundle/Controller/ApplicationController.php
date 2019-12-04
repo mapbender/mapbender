@@ -354,6 +354,18 @@ class ApplicationController extends ApplicationControllerBase
         } else {
             $extension = $type;
         }
+        $baseUrlDependent = array(
+            'html',
+            'css',
+        );
+        if (in_array($type, $baseUrlDependent)) {
+            // @todo: pass in Request from controller action (also useful for locale)
+            /** @var Request $request */
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
+            $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
+            $extension = "{$baseUrlHash}.{$extension}";
+        }
         return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$extension}";
     }
 
