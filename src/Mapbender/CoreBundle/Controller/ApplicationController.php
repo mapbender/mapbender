@@ -67,35 +67,23 @@ class ApplicationController extends ApplicationControllerBase
             if (!$source) {
                 throw new NotFoundHttpException('The application can not be found.');
             }
-            $isAppDbBased = false;
-        } else {
-            $source = $this->getApplicationEntity($slug);
-            $isAppDbBased = $source->getSource() === ApplicationEntity::SOURCE_DB;
-        }
-        if (!$isAppDbBased) {
+            // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
         } else {
+            $source = $this->getApplicationEntity($slug);
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
-
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
         );
 
         $useCached = $isProduction && file_exists($cacheFile);
-        if ($useCached) {
-            $cacheUpdateTs = filectime($cacheFile);
-            // Always reuse cache entry for YAML applications
-            // Check the update timestamp only for DB applications,
-            $useCached = !$isAppDbBased || ($appModificationTs < $cacheUpdateTs);
-
-            if ($useCached) {
-                $response = new BinaryFileResponse($cacheFile, 200, $headers);
-                // allow file timestamp to be read again correctly for 'Last-Modified' header
-                clearstatcache();
-                $response->isNotModified($request);
-                return $response;
-            }
+        if ($useCached && $appModificationTs < filectime($cacheFile)) {
+            $response = new BinaryFileResponse($cacheFile, 200, $headers);
+            // allow file timestamp to be read again correctly for 'Last-Modified' header
+            clearstatcache();
+            $response->isNotModified($request);
+            return $response;
         }
         /** @var ApplicationAssetService $assetService */
         $assetService = $this->container->get('mapbender.application_asset.service');
