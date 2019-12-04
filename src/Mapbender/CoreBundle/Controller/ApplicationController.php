@@ -345,7 +345,16 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function getCachedAssetPath($slug, $type)
     {
-        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$type}";
+        $localeDependent = array(
+            'html',
+            'trans',
+        );
+        if (in_array($type, $localeDependent)) {
+            $extension = $this->getTranslator()->getLocale() . ".{$type}";
+        } else {
+            $extension = $type;
+        }
+        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$extension}";
     }
 
     /**
