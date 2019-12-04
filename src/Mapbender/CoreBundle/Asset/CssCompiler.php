@@ -91,7 +91,16 @@ class CssCompiler extends AssetFactoryBase
         $baseUrl = $this->router->getContext()->getBaseUrl();
         $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         $beforeScript = implode('', array_slice(explode($scriptName, $baseUrl), 0, 1));
-        return rtrim($beforeScript, '/') ?: '.';
+        $withScript = rtrim($beforeScript, '/') . '/' . $scriptName;
+        if ($baseUrl && $scriptName && 0 !== strpos($baseUrl, $withScript)) {
+            // Context base url explicitly includes the name of the executed entry script.
+            // => Use as is.
+            return $withScript;
+        } else {
+            // Context base url DOES NOT include the name of the executed entry script.
+            // => return stripped base url, but also provide safe minimal fallback path '.'
+            return rtrim($beforeScript, '/') ?: '.';
+        }
     }
 
     /**

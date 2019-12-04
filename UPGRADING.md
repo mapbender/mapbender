@@ -1,3 +1,17 @@
+## 3.0.8.5 (WIP)
+### Relative urls in CSS depending on entry script
+Relative URLs in generated application css now always use the correct base path, independent of the presence of the
+entry script name (`app.php`, `app_dev.php` or nothing) in the url. Previously, relative urls would commonly contain one `../` too many.
+
+If your Mapbender installation responds to a root url (`http://hostname/app.php` or just `http://hostname/`), this change will have no apparent effect.
+
+If your Mapbender installation responds to a subdirectory url (`http://hostname/mapbender/`), you will have noticed differences
+between invocations with `/app.php` and without.
+
+If you have deployed workarounds for the now resolved relative CSS url generation Mapbender deficiency, such as reconfiguring your
+web directory path with an additional dummy directory, the fix will most likely conflict with that workaround.  
+You should reevaluate the generated CSS after clearing cache. Most likely, removing workarounds will resolve any issues you may encounter.
+
 ## 3.0.8
 #### Package conflicts
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
