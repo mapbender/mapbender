@@ -156,6 +156,7 @@ class ApplicationController extends ApplicationControllerBase
             'Content-Type' => 'text/html; charset=UTF-8',
         );
         if ($useCache) {
+            // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
@@ -330,7 +331,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function getGrantedTunnelEndpoint($instanceId, $applicationSlug)
     {
-        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+        /** @var SourceInstance|null $instance */
         $instance = $this->getDoctrine()
             ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
@@ -350,8 +351,8 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param $slug
-     * @param $type
+     * @param string $slug
+     * @param string $type
      * @return string
      */
     protected function getCachedAssetPath($slug, $type)
