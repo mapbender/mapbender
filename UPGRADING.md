@@ -26,6 +26,9 @@ is hidden, to allow modern form markup to contain visible checkboxes.
 For maximum forward compatibility, do not generate legacy form markup (`labelInput`, `labelCheck`, `inputWrapper` explicity. Use a form type
 and use `{{ form_widget(form) }}` or `{{ form_row(form.single_field) }}` in twig templates whenever possible.
 
+Note that issues with checkbox markup generated via `form_row` have been resolved since 3.0.8-RC1. The form theme generates
+the correct (legacy) markup for all basic form types. Manual form markup construction in custom twig is no longer necessary.
+
 ## 3.0.8
 #### Package conflicts
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
