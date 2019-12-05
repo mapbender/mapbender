@@ -12,6 +12,20 @@ If you have deployed workarounds for the now resolved relative CSS url generatio
 web directory path with an additional dummy directory, the fix will most likely conflict with that workaround.  
 You should reevaluate the generated CSS after clearing cache. Most likely, removing workarounds will resolve any issues you may encounter.
 
+### CSS hidden aliases
+Mapbender is moving towards resolving conflicts with standard Bootstrap form markup and is already dropping some
+conflicting CSS rules. If your template contains markup that should initially be invisilbe, whenever possible,
+use the class `hidden` instead of certain legacy alternatives. _Do_ _not_ rely on CSS classes `mbHiddenCheckbox` and `hiddenDropdown`
+to hide HTML elements. Use `hidden` if you notice markup is rendered visibly. Even though Bootstrap 4 will drop
+the `hidden` CSS declaration, Mapbender will continue providing it for the foreseeable future.
+
+Class `mbHiddenCheckbox` no longer exists. Class `checkbox` is no longer globally hidden. Instead, `.checkWrapper > input[type="checkbox"]`
+is hidden, to allow modern form markup to contain visible checkboxes.
+
+#### Rendering form markup
+For maximum forward compatibility, do not generate legacy form markup (`labelInput`, `labelCheck`, `inputWrapper` explicity. Use a form type
+and use `{{ form_widget(form) }}` or `{{ form_row(form.single_field) }}` in twig templates whenever possible.
+
 ## 3.0.8
 #### Package conflicts
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
