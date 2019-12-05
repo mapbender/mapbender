@@ -5,19 +5,10 @@ namespace Mapbender\CoreBundle\Component\Security\Voter;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class YamlApplicationVoter extends BaseApplicationVoter
 {
-    /** @var AccessDecisionManagerInterface */
-    protected $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager)
-    {
-        $this->accessDecisionManager = $accessDecisionManager;
-    }
-
     protected function supports($attribute, $subject)
     {
         // only vote for VIEW on Yaml-defined Application instances
@@ -93,5 +84,11 @@ class YamlApplicationVoter extends BaseApplicationVoter
         return array_unique(array_merge(parent::getSupportedAttributes($subject), array(
             'VIEW',
         )));
+    }
+
+    protected function voteOnClone(Application $application, TokenInterface $token)
+    {
+        // Require edit grant on Application OID (no object ACLs assignable to Yaml-defined Apps, OID not discoverable)
+        return parent::voteOnClone($application, $token) && $this->getOidGrant('EDIT', $token);
     }
 }
