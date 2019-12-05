@@ -6,10 +6,9 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class YamlApplicationVoter extends Voter
+class YamlApplicationVoter extends BaseApplicationVoter
 {
     /** @var AccessDecisionManagerInterface */
     protected $accessDecisionManager;
@@ -22,7 +21,8 @@ class YamlApplicationVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // only vote for VIEW on Yaml-defined Application instances
-        return $attribute === 'VIEW' && is_object($subject) && ($subject instanceof Application) && $subject->getSource() === Application::SOURCE_YAML;
+        /** @var mixed|Application $subject */
+        return parent::supports($attribute, $subject) && $subject->getSource() === Application::SOURCE_YAML;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -35,7 +35,7 @@ class YamlApplicationVoter extends Voter
                     return $this->voteViewUnpublished($subject, $token);
                 }
             default:
-                throw new \LogicException("Unsupported grant attribute " . print_r($attribute, true));
+                return parent::voteOnAttribute($attribute, $subject, $token);
         }
     }
 
@@ -86,5 +86,12 @@ class YamlApplicationVoter extends Voter
     {
         // @todo: get this (unpersistable) information out of the entity, into a separate container parameter map
         return $application->getYamlRoles() ?: array();
+    }
+
+    protected function getSupportedAttributes(Application $subject)
+    {
+        return array_unique(array_merge(parent::getSupportedAttributes($subject), array(
+            'VIEW',
+        )));
     }
 }

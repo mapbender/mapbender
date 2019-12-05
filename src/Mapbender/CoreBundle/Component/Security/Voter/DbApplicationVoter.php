@@ -7,9 +7,8 @@ namespace Mapbender\CoreBundle\Component\Security\Voter;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class DbApplicationVoter extends Voter
+class DbApplicationVoter extends BaseApplicationVoter
 {
     /** @var AccessDecisionManagerInterface */
     protected $accessDecisionManager;
@@ -22,7 +21,9 @@ class DbApplicationVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // only vote on database / persistable Application instances
-        return $attribute === 'VIEW' && is_object($subject) && ($subject instanceof Application) && $subject->getSource() !== Application::SOURCE_YAML && !$subject->isPublished();
+        // Abstain on published Application (Symfony default ACL handles all of that by itself)
+        /** @var mixed|Application $subject */
+        return parent::supports($attribute, $subject) && $subject->getSource() !== Application::SOURCE_YAML && !$subject->isPublished();
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -31,8 +32,15 @@ class DbApplicationVoter extends Voter
             case 'VIEW':
                 return $this->voteViewUnpublished($subject, $token);
             default:
-                throw new \LogicException("Unsupported grant attribute " . print_r($attribute, true));
+                return parent::voteOnAttribute($attribute, $subject, $token);
         }
+    }
+
+    protected function getSupportedAttributes(Application $subject)
+    {
+        return array_unique(array_merge(parent::getSupportedAttributes($subject), array(
+            'VIEW',
+        )));
     }
 
     /**
