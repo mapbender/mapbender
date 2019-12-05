@@ -25,6 +25,10 @@ class YamlApplicationVoter extends BaseApplicationVoter
                 } else {
                     return $this->voteViewUnpublished($subject, $token);
                 }
+            case 'EDIT':
+            case 'DELETE':
+                // deny access to impossible actions
+                return false;
             default:
                 return parent::voteOnAttribute($attribute, $subject, $token);
         }
@@ -83,6 +87,8 @@ class YamlApplicationVoter extends BaseApplicationVoter
     {
         return array_unique(array_merge(parent::getSupportedAttributes($subject), array(
             'VIEW',
+            'EDIT',
+            'DELETE',
         )));
     }
 
