@@ -1,6 +1,8 @@
-## dev-release/3.0.7 @ 8c8c707de
+## dev-release/3.0.7 @ 25c02dab4
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- Fix invalid relative urls in cached css when switching base url (e.g. url with "app.php" vs without script name)
+- Fix invalid relative urls in generated application css when running Mapbender in a "subdirectory url" (see UPGRADING.md for potential conflicts with old workarounds)
 - Allow privileged users to access non-published Yaml-based applications
 - Replace ZoomBar history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - Fix missing WMS data when querying a layer with name "0"
