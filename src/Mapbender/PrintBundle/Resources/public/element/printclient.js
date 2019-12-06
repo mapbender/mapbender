@@ -61,7 +61,9 @@
                         self._deactivateSelection();
                     }
                 });
-                $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.$form).on('click', function() {
+                    self.$form.submit();
+                });
             } else {
                 // popup comes with its own buttons
                 $('.printSubmit', this.$form).remove();
@@ -97,7 +99,7 @@
                                         label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                         cssClass: 'button right',
                                         callback: function(){
-                                            self._print();
+                                            self.$form.submit();
                                         }
                                     }
                             }
@@ -495,18 +497,28 @@
             }
             return jobData;
         },
+        /**
+         * @private
+         * @deprecated extend _collectJobData if you need more stuff sent to the server
+         * @deprecated extend _onSubmit if you need to check further preconditions before
+         *     form is sent
+         */
         _print: function() {
+            this.$form.submit();
+        },
+        _onSubmit: function(evt) {
+            // add job data to hidden form fields
             var jobData = this._collectJobData();
             if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-                return;
+                // prevent further handling
+                return false;
             }
-
-            this._submitJob(jobData);
-        },
-        _onSubmit: function(evt) {
+            this._injectJobData(jobData);
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
+            // let the browser do the rest
+            return true;
         },
         _onTemplateChange: function() {
             var self = this;
