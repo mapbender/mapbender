@@ -1,17 +1,31 @@
 .italic{font-style:italic;}
-.smallerText{font-size:$fontSize - 4;}
-.smallText{font-size:$fontSize - 2;}
-.bigText{font-size: $fontSize + 2;}
-.biggerText{font-size: $fontSize + 8;}
-.contentTitle{
-  font-weight:normal;
-  font-style:italic;
-  margin-bottom:$space;
-  padding-bottom:$space/2;
-  border-bottom:dashed 1px darken(#fff, 30%);
-
-  @extend .biggerText;
+// NOTE: Bootstrap 3 uses inacessible less variables @font-size-h1 etc, which are static (pixel units)
+//       we should use rem, so font-size: $fontSize on <body> is respected
+// .h1 CLASS is for Bootstrap integration
+h1, .h1, .biggerText {
+  font-size: 2rem;
 }
+h2, .h2 {
+  font-size: 1.65rem;
+}
+h3, .h3 {
+  font-size: 1.48rem;
+}
+h4, .h4, .bigText {
+  font-size: 1.35rem;
+}
+.smallText {
+  font-size: .85rem;
+}
+.smallerText {
+  font-size: .7rem;
+}
+
+.contentTitle{
+  padding-bottom: 0.375em;
+  border-bottom:dashed 1px darken(#fff, 30%);
+}
+
 .title{
   font-weight:normal;
   color:$darkFontColor;

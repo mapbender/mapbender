@@ -13,8 +13,6 @@ mb:
       success: Приложение удалено.
       failure:
         general: Невозможно удалить приложение.
-        already.removed:  Приложение уже удалено.
-        remove.directory: Не возможно создать директорию приложения.
   layerset:
     create:
       success: Набор слоев создан.
@@ -66,11 +64,6 @@ mb:
           '': 'Элемент не добавлен'
       zoombar:
         draggable: Перетаскиваемый
-      filter:
-        source: 'Фильтр источников'
-        layerset: 'Фильтровать слои'
-        application: 'Фильтр приложений'
-        element: 'Фильтр элемент'
       overview:
         maximize: Максимизировать
         fix: Закрепить
@@ -222,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Приложение не может быть импортировано.'
-      acl:
-        failed: 'ACL не импортируются.'
-      source:
-        failed: 'Источник не может быть импортирован.'
   core:
     admin:
       button:
@@ -253,9 +242,3 @@ mb:
           format_error: 'Этот формат не поддерживается!'
           resolution:
             error: 'Минимально возможное изображение должно быть равно или больше чем %screenshotHeight% х %screenshotWidth% пикселей. Загруженное Вами соответствует размеру в %uploadWidth% х %uploadHeighth%.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Приложения

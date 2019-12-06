@@ -1,14 +1,10 @@
 {% extends "MapbenderCoreBundle:Login:box.html.twig" %}
-{% block css %}
-  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'mb3-login', 'type': 'css'}) }}"/>
-  <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
-{% endblock %}
 
 {% block title %}{{ 'fom.user.login.login.title' | trans}}{% endblock %}
 
 {% block box_content %}
   <div class="loginBox login">
-    <h2 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h2>
+    <h1 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h1>
       {{ form_start(form) }}
       {{ form_widget(form) }}
 
@@ -23,13 +19,4 @@
       <div class="clearContainer"></div>
     {{ form_end(form) }}
   </div>
-  <script type="text/javascript">
-    if(top != window) {
-      top.location.href = location.href;
-      top.location.reload();
-    }
-    var Mapbender = Mapbender || {};
-    Mapbender.configuration = {elements:{}};
-  </script>
-    {% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}
 {% endblock %}

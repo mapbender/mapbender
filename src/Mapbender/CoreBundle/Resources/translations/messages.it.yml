@@ -1,4 +1,31 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Aggiungi
+    back: Torna
+    cancel: Cancella
+    close: Chiudi
+    delete: Elimina
+    edit: Modifica
+    filter: Filtrare
+    print: Stampa
+    refresh: Aggiorna
+    remove: Elimina
+    save: Salva
+    search: Cerca
+  terms:
+    application:
+      singular: Applicazione
+      plural: Applicazioni
+    source:
+      singular: Risorsa
+      plural: Risorse
+    layerset:
+      singular: ~   # @todo
+      plural: ~     # @todo
+  states:
+    active: attivo     # m.; f.: attiva
+    inactive: inattivo # m.; f.: inatttiva
   core:
     featureinfo:
       error:
@@ -163,7 +190,7 @@ mb:
           ok: Chiudi
     gpsposition:
       error:
-        notsupported: 'Sono spiacente, ma il servizio di geolocazione non è supportato dal tuo browser.'
+        notsupported: Il servizio di geolocazione non è supportato dal tuo browser.
         nosignal: 'Attualmente non è possibile localizzare la tua posizione.'
       class:
         title: 'Posizione GPS'

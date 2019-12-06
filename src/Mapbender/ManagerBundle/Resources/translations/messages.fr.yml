@@ -1,4 +1,3 @@
-
 mb:
   application:
     create:
@@ -9,15 +8,11 @@ mb:
       success: L'application a été sauvegardée.
       failure:
         general: une erreur est survenue lors de la sauvegarde de l'application.
-        create.directory: |
-          L'application a été mise à jour mais mais les dossiers de l'application ne peuvent pas être créés.
+        create.directory: L'application a été mise à jour mais mais les dossiers de l'application ne peuvent pas être créés.
     remove:
       success: 'L''application a été supprimée.'
       failure:
         general: 'L''application ne peut pas être supprimée'
-        already.removed:  L'application est déjà supprimée
-        remove.directory: |
-          L'application a été supprimée mais les dossiers ne peuvent pas être supprimés.
   layerset:
     create:
       success: L'ensemble de couches a été créée.
@@ -69,11 +64,6 @@ mb:
           '': 'Aucun élément ajouté'
       zoombar:
         draggable: Déplaçable
-      filter:
-        source: 'Filtre'
-        layerset: 'Filtre'
-        application: 'Filtre'
-        element: 'Filtre'
       overview:
         maximize: Aggrandir
         fix: Fixer
@@ -226,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Impossible d''importer l''application.'
-      acl:
-        failed: 'Impossible d''importer le ou les ACL(s).'
-      source:
-        failed: 'Impossible d''importer les sources.'
   core:
     admin:
       button:
@@ -257,9 +243,3 @@ mb:
           format_error: 'Ce format n''est pas supporté!'
           resolution:
             error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applications

@@ -1,16 +1,24 @@
-## dev-release/3.0.7 @ 39dc70035
+## dev-release/3.0.7 @ 25c02dab4
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- Fix invalid relative urls in cached css when switching base url (e.g. url with "app.php" vs without script name)
+- Fix invalid relative urls in generated application css when running Mapbender in a "subdirectory url" (see UPGRADING.md for potential conflicts with old workarounds)
 - Allow privileged users to access non-published Yaml-based applications
 - Replace ZoomBar history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
+- Fix missing WMS data when querying a layer with name "0"
 - Fix alignment of ZoomBar zoom level icons
 - Fix broken map scales configuration if loaded config contains non-contiguous array
 - Fix internal server error when submitting PrintClient configuration form with invalid values
-- Fix invalid export data format for WMS legend and metadata url sub-objects
-- Fix errors on import of previously broken export formats
+- Fix invalid application export data format for WMS legend and metadata url sub-objects
+- Fix errors on import of previously broken application export formats
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
+- Fix untranslated "Back" button in backend source views
+- Fix encoding errors of backend headings containing HTML-escapable characters
+- SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - When cloning DB applications, also clone access control rules
+- Show affected applications and instances in source deletion confirmation popup
+- Show dependent applications and instances in source view (as a new "Applications" tab)
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
@@ -21,8 +29,17 @@
 - Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
 - Maintain backend element form confirmation on close behaviour after submitting once with validation errors
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups
-- [CSS] `.linkButton` and all `<a>` elements now inherit font color
+- [CSS] `.linkButton` and all `<a>` elements now inherit font color by default
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
+- [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts
+- [CSS] switch to root-relative units for all header elements and font-size classes
+- [CSS] `table` elements in popups and sidepanes now have full width by default, globally
+- [CSS] [Potential break] For increased compatibility with Bootstrap form markup `.checkbox` is no longer styled as invisible globally; instead, `input[type="checkbox"]` inside a `.checkWrapper` is hidden
+- Replace custom backend message boxes with standard Boostrap `.alert`
+- Replace some custom backend-only icon constructs with forward-compatible FontAwesome markup
+- Improve wording consistency of common backend button / interaction labels (save vs update, delete, back etc)
+- Add `translation:get` command (optional MapbenderIntrospectionBundle, inactive by default)
+- Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations (optional MapbenderIntrospectionBundle, inactive by default)
 - Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
 - Resolve misc form type, service configuration and other incompatibilities with Symfony 3
 - Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0

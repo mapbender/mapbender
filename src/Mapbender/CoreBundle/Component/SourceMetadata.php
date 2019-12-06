@@ -4,7 +4,8 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
- * Class SourceMetadata prepares and renders an OGC Service metadata
+ * Collects template variables for source instance views
+ * @deprecated this entire thing should be implemented purely in twig
  *
  * @author Paul Schmidt
  */
@@ -60,121 +61,20 @@ abstract class SourceMetadata
     public static $CONTAINER_NONE = 'none';
 
     /**
-     * Metadata contenttype - as html site
-     * @var integer
-     */
-    public static $CONTENTTYPE_HTML = 'html';
-    
-    /**
-     * Metadata contenttype - as html element
-     * @var integer
-     */
-    public static $CONTENTTYPE_ELEMENT = 'element';
-
-    /**
-     * Use common metadata
-     * @var boolean
-     */
-    protected $useCommon = true;
-
-    /**
-     * Use contact metadata
-     * @var boolean
-     */
-    protected $useContact = true;
-
-    /**
-     * Use terms of use metadata
-     * @var boolean
-     */
-    protected $useUseConditions = true;
-
-    /**
-     * Use items metadata
-     * @var boolean
-     */
-    protected $useItems = true;
-
-    /**
-     * Use extended metadata if exists.
-     * @var boolean
-     */
-    protected $useExtended = true;
-
-    /**
      * Container type (s. CONTAINER_TABS, CONTAINER_ACCORDION, CONTAINER_NONE)
      * @var string
      */
-    protected $container;
+    protected $container = 'accordion';
     
     /**
-     * Contenttype (s. CONTENTTYPE_HTML, CONTENTTYPE_ELEMENT)
-     * @var string
-     */
-    protected $contenttype;
-
-    /**
-     * Metadata
      * @var array
+     * @deprecated
      */
     protected $data;
 
-    /**
-     * SourceMetadata constructor.
-     *
-     * @param string|null $container String from SourceMetadata::$CONTAINER_*
-     * @param string|null $contentType
-     */
-    public function __construct($container = null, $contentType = null)
+    public function __construct()
     {
-        $this->setContainer($container);
-        $this->setContenttype($contentType);
         $this->resetData();
-    }
-
-    /**
-     * Returns useCommon.
-     * @return boolean
-     */
-    protected function getUseCommon()
-    {
-        return $this->useCommon;
-    }
-
-    /**
-     * Returns useContact.
-     * @return boolean
-     */
-    protected function getUseContact()
-    {
-        return $this->useContact;
-    }
-
-    /**
-     * Returns useUseConditions.
-     * @return boolean
-     */
-    protected function getUseUseConditions()
-    {
-        return $this->useUseConditions;
-    }
-
-    /**
-     * Returns useItems.
-     * @return boolean
-     */
-    protected function getUseItems()
-    {
-        return $this->useItems;
-    }
-
-    /**
-     * Returns useExtended.
-     * @return boolean
-     */
-    protected function getUseExtended()
-    {
-        return $this->useExtended;
     }
 
     /**
@@ -186,70 +86,6 @@ abstract class SourceMetadata
         return $this->container;
     }
     
-    /**
-     * Returns contenttype
-     * @return string
-     */
-    public function getContenttype()
-    {
-        return $this->contenttype;
-    }
-
-    /**
-     * Sets useCommon
-     * @param boolean $useCommon
-     * @return $this
-     */
-    protected function setUseCommon($useCommon)
-    {
-        $this->useCommon = $useCommon;
-        return $this;
-    }
-
-    /**
-     * Sets useContact
-     * @param boolean $useContact
-     * @return $this
-     */
-    protected function setUseContact($useContact)
-    {
-        $this->useContact = $useContact;
-        return $this;
-    }
-
-    /**
-     * Sets useUseConditions
-     * @param boolean $useUseConditions
-     * @return $this
-     */
-    protected function setUseUseConditions($useUseConditions)
-    {
-        $this->useUseConditions = $useUseConditions;
-        return $this;
-    }
-
-    /**
-     * Sets useItems
-     * @param boolean $useItems
-     * @return $this
-     */
-    protected function setUseItems($useItems)
-    {
-        $this->useItems = $useItems;
-        return $this;
-    }
-
-    /**
-     * Sets useExtended
-     * @param boolean $useExtended
-     * @return $this
-     */
-    protected function setUseExtended($useExtended)
-    {
-        $this->useExtended = $useExtended;
-        return $this;
-    }
-
     /**
      * Sets container
      * @param string|null $container null for none
@@ -274,28 +110,6 @@ abstract class SourceMetadata
     }
 
     /**
-     * Sets a contenttype
-     * @param string|null $contenttype null for default ('element')
-     * @return $this
-     */
-    public function setContenttype($contenttype)
-    {
-        if ($contenttype === null) {
-            $contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
-        }
-        switch ($contenttype) {
-            case SourceMetadata::$CONTENTTYPE_ELEMENT:
-            case SourceMetadata::$CONTENTTYPE_HTML:
-                $this->contenttype = $contenttype;
-                break;
-            default:
-                throw new \RuntimeException("Invalid contenttype argument " . print_r($contenttype, true));
-        }
-        $this->data["contenttype"] = $this->contenttype;
-        return $this;
-    }
-
-    /**
      * Resets the metadata data.
      */
     protected function resetData()
@@ -303,7 +117,6 @@ abstract class SourceMetadata
         $this->data = array(
             "container" => $this->container,
             "sections" => array(),
-            'contenttype' => $this->contenttype
         );
     }
 
@@ -312,13 +125,46 @@ abstract class SourceMetadata
      *
      * @param string $sectionName
      * @param array  $items
+     * @deprecated use formatSection and do the appending yourself
      */
     protected function addMetadataSection($sectionName, array $items)
     {
-        $this->data['sections'][] = array(
-            "title" => $sectionName,
-            "items" => $items
+        $this->data['sections'][] = $this->formatSection($sectionName, $items);
+    }
+
+    /**
+     * Reformat section data for (legacy) template expectations, where each 'item' entry is
+     * itself an array, with a single value mapped to a single key.
+     * The key is prefixed with a constant translation key prefix AND the section title (!), then piped
+     * through trans for a label. The value is displayed directly.
+     *
+     * @todo: [template BC break] drop label translation key prefixing, it makes translation usage searches impossible
+     * @todo: [template BC break] drop item array nesting. This serves no purpose. PHP preserves array order, always.
+     *
+     * @param $title
+     * @param $items
+     * @return array
+     */
+    protected function formatSection($title, $items)
+    {
+        $data = array(
+            'title' => $title,
+            'items' => array(),
         );
+        foreach ($items as $key => $item) {
+            if (is_array($item)) {
+                if (!is_numeric($key)) {
+                    throw new \InvalidArgumentException("Cannot have a string key on an array-style item");
+                }
+                $data['items'][] = $item;
+            } else {
+                if (is_numeric($key)) {
+                    throw new \InvalidArgumentException("Cannot have a numeric key on a scalar-style item");
+                }
+                $data['items'][] = array($key => $item);
+            }
+        }
+        return $data;
     }
 
     /**

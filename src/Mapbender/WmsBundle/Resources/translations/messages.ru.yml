@@ -11,10 +11,6 @@ mb:
           cancel: Отменить
           load: Загрузить
       error:
-        url: 'WMSLoader: возможности WMS не загружен! Capabilities URL, не является действительным.'
-        service: 'WMSLoader: служба% сервис% не поддерживается!'
-        operation: 'WMSLoader: WMS Операция %работа% не поддерживается!'
-        version: 'WMSLoader:WMS версия %version% не поддерживаются!'
         load: 'WMSLoader: WMS Capabilities не загружен!'
       repo:
         macros:

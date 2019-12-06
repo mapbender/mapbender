@@ -10,14 +10,6 @@ class WmcType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmc';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

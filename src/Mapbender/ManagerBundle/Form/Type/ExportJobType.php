@@ -16,14 +16,6 @@ class ExportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'exportjob';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -38,7 +30,7 @@ class ExportJobType extends AbstractType
     {
         $builder
             ->add('application', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
-                'label' => 'form.manager.admin.application.export.application',
+                'label' => 'mb.terms.application.singular',
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'choice_label' => 'title',
                 'multiple' => false,

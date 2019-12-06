@@ -1,6 +1,5 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
-
-{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ instance.source.title }}{% endblock %}
+{% set title = ('mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans) ~ ' ' ~ instance.source.id ~ '/'~ instance.id ~ ' - ' ~ instance.source.title  %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('components/jquery-ui/themes/base/jquery-ui.min.css') }}" type="text/javascript" />

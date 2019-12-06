@@ -34,7 +34,7 @@
                   <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }}"
                        title="{{"mb.manager.admin.element.show_hide"|trans}} {{element.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input class="checkbox"
+                    <input
                            data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
                            data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
                   </div>

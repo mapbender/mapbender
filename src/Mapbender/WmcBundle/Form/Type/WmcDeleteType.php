@@ -10,14 +10,6 @@ class WmcDeleteType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmc';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');

@@ -63,10 +63,6 @@ fieldset.box {
   .list{
     border-left:dashed 1px darken(#fff, 20%);
     margin-bottom:$space/2;
-    &.closed{
-      & > li{display:none;}
-      & > .openCloseTitle{display:block;}
-    }
     li{margin-left:$space;}
 
     // no margin for labeltext lists ...
@@ -76,21 +72,24 @@ fieldset.box {
       .metaText{margin-left:0;}
     }
   }
+  .list.closed {
+    li.openCloseTitle~li {
+      display: none;
+    }
+  }
   .labelText{
     width:$labeText;
     margin-right:$space/2;
   }
-  .openCloseTitle{
+  li.openCloseTitle {
     cursor:pointer;
-    display: inline-block;
-    margin-left:-10px !important;
-    padding-left:5px;
-    height:17px;
-    font-style:italic;
+    margin-left: -5px;  // push ~halfway on top of the border-left
     &:before {
-      font-style: normal;
+      margin-right: .5em;
     }
-    &.iconSmall:before{margin-right:$space/2;}
+    &~li {
+      margin-left: 1em;
+    }
   }
   .metaText{
     display: block;
@@ -106,6 +105,7 @@ fieldset.box {
       overflow: hidden;
       text-overflow: ellipsis;
       vertical-align: middle;
+      white-space: nowrap;
   }
 
   .extendedGroup {

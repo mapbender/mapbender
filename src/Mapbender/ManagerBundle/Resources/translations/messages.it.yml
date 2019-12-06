@@ -8,15 +8,11 @@ mb:
       success: 'La tua applicazione è stata salvata.'
       failure:
         general: 'Si è verificato un errore durante il tentativo di salvataggio dell''applicazione.'
-        create.directory:
-          'La tua applicazione è stata aggiornata ma non è possibile creare le directory dell''applicazione.'
+        create.directory: La tua applicazione è stata aggiornata ma non è possibile creare le directory dell'applicazione.
     remove:
       success: 'L''applicazione è stata eliminata.'
       failure:
         general: 'La tua applicazione non può essere cancellata.'
-        already.removed: 'La tua applicazione è stata già cancellata.'
-        remove.directory:
-          'La tua applicazione è stata cancellata ma le directory dell''applicazione non possono essere rimosse.'
   layerset:
     create:
       success: 'Il tuo layerset di livelli è stato creato.'
@@ -68,11 +64,6 @@ mb:
           '': 'Nessun elemento aggiunto'
       zoombar:
         draggable: Trascinabile
-      filter:
-        source: 'Filtra risorsa'
-        layerset: 'Filtra layerset'
-        application: 'Filtra applicazioni'
-        element: 'Filtra elemento'        
       overview:
         maximize: Massimizza
         fix: Fissa
@@ -224,10 +215,6 @@ mb:
     import:
       application:
         failed: 'L''applicazione non può essere importata.'
-      acl:
-        failed: 'Acls non può essere importato.'
-      source:
-        failed: 'Risorse non possono essere importate.'
   core:
     admin:
       button:
@@ -255,9 +242,3 @@ mb:
           format_error: 'Questo formato non è supportato!'
           resolution:
             error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applicazioni

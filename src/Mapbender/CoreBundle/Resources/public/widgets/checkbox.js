@@ -23,8 +23,7 @@ var initCheckbox = function(){
 };
 $(function(){
     var toggleCheckBox = function(){
-        var me = $(this);
-        var checkbox = me.find(".checkbox");
+        var checkbox = $('> input[type="checkbox"]', this);
         if (!checkbox.prop('disabled')) {
             checkbox.prop('checked', !checkbox.prop('checked'));
             initCheckbox.call(checkbox);
@@ -33,8 +32,6 @@ $(function(){
             initCheckbox.call(checkbox);
         }
     };
-    $('.checkWrapper > .checkbox').each(function(){
-        initCheckbox.call(this);
-    });
+    $('.checkWrapper > input[type="checkbox"]').each(initCheckbox);
     $(document).on("click", ".checkWrapper", toggleCheckBox);
 });

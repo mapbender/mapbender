@@ -9,9 +9,10 @@ use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 
 /**
+ * Collects template variables from a WmsInstance for MapbenderCoreBundle::metadata.html.twig
  * Renders frontend meta data for an entire Wms source or an individual layer.
+ * @deprecated this entire thing should be implemented purely in twig
  * @see ApplicationController::metadataAction()
- * @see WmsInstance::getMetadata()
  *
  * @inheritdoc
  * @author Paul Schmidt
@@ -33,53 +34,55 @@ class WmsMetadata extends SourceMetadata
     {
         /** @var WmsInstance $instance */
         $src = $instance->getSource();
-        if ($this->getUseCommon()) {
-            $source_items = array();
-            $source_items[] = array("title" => $this->formatAlternatives($src->getTitle(), $instance->getTitle()));
-            $source_items[] = array("name" => strval($src->getName()));
-            $source_items[] = array("version" => strval($src->getVersion()));
-            $source_items[] = array("originUrl" => strval($src->getOriginUrl()));
-            $source_items[] = array("description" => strval($src->getDescription()));
-            $source_items[] = array("onlineResource" => strval($src->getOnlineResource()));
-            $source_items[] = array("exceptionFormats" => implode(",", $src->getExceptionFormats()));
-            $this->addMetadataSection(SourceMetadata::$SECTION_COMMON, $source_items);
-        }
-        if ($this->getUseUseConditions()) {
-            $tou_items = array();
-            $tou_items[] = array("fees" => strval($src->getFees()));
-            $tou_items[] = array("accessconstraints" => strval($src->getAccessConstraints()));
-            $this->addMetadataSection(SourceMetadata::$SECTION_USECONDITIONS, $tou_items);
-        }
-        # add source contact metadata
-        if (($contact = $src->getContact()) && $this->getUseContact()) {
-            $contact_items = array();
-            $contact_items[] = array("person" => strval($contact->getPerson()));
-            $contact_items[] = array("position" => strval($contact->getPosition()));
-            $contact_items[] = array("organization" => strval($contact->getOrganization()));
-            $contact_items[] = array("voiceTelephone" => strval($contact->getVoiceTelephone()));
-            $contact_items[] = array("facsimileTelephone" => strval($contact->getFacsimileTelephone()));
-            $contact_items[] = array("electronicMailAddress" => strval($contact->getElectronicMailAddress()));
-            $contact_items[] = array("address" => strval($contact->getAddress()));
-            $contact_items[] = array("addressType" => strval($contact->getAddressType()));
-            $contact_items[] = array("addressCity" => strval($contact->getAddressCity()));
-            $contact_items[] = array("addressStateOrProvince" => strval($contact->getAddressStateOrProvince()));
-            $contact_items[] = array("addressPostCode" => strval($contact->getAddressPostCode()));
-            $contact_items[] = array("addressCountry" => strval($contact->getAddressCountry()));
-            $this->addMetadataSection(SourceMetadata::$SECTION_CONTACT, $contact_items);
+        $sectionData = array();
+        $sectionData[] = $this->formatSection(static::$SECTION_COMMON, array(
+            'title' => $this->formatAlternatives($src->getTitle(), $instance->getTitle()),
+            'name' => strval($src->getName()),
+            'version' => strval($src->getVersion()),
+            'originUrl' => strval($src->getOriginUrl()),
+            'description' => strval($src->getDescription()),
+            'onlineResource' => strval($src->getOnlineResource()),
+            'exceptionFormats' => implode(",", $src->getExceptionFormats()),
+        ));
+
+        $sectionData[] = $this->formatSection(static::$SECTION_USECONDITIONS, array(
+            'fees' => strval($src->getFees()),
+            'accessconstraints' => strval($src->getAccessConstraints()),
+        ));
+
+        if (($contact = $src->getContact())) {
+            $sectionData[] = $this->formatSection(static::$SECTION_CONTACT, array(
+                'person' => strval($contact->getPerson()),
+                'position' => strval($contact->getPosition()),
+                'organization' => strval($contact->getOrganization()),
+                'voiceTelephone' => strval($contact->getVoiceTelephone()),
+                'facsimileTelephone' => strval($contact->getFacsimileTelephone()),
+                'electronicMailAddress' => strval($contact->getElectronicMailAddress()),
+                'address' => strval($contact->getAddress()),
+                'addressType' => strval($contact->getAddressType()),
+                'addressCity' => strval($contact->getAddressCity()),
+                'addressStateOrProvince' => strval($contact->getAddressStateOrProvince()),
+                'addressPostCode' => strval($contact->getAddressPostCode()),
+                'addressCountry' => strval($contact->getAddressCountry()),
+            ));
         }
 
         # add items metadata
-        if ($this->getUseItems() && $itemId) {
+        if ($itemId) {
             foreach ($instance->getLayers() as $layer) {
                 if (strval($layer->getId()) === strval($itemId)) {
                     $layerItems = $this->prepareLayers($layer);
-                    $this->addMetadataSection(SourceMetadata::$SECTION_ITEMS, $layerItems);
+                    $sectionData[] = $this->formatSection(static::$SECTION_ITEMS, $layerItems);
                     break;
                 }
             }
         }
         return array(
-            'metadata' => $this->data,
+            'metadata' => array(
+                'sections' => $sectionData,
+                'container' => $this->container ?: static::$CONTAINER_ACCORDION,
+                'contenttype' => 'element',     // for legacy template compatiblity only
+            ),
             'prefix' => 'mb.wms.metadata.section.',
         );
     }

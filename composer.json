@@ -16,7 +16,6 @@
 
         "setasign/fpdi-fpdf": "1.6.*",
 
-        "eslider/sasscb":  "3.1.x",
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
@@ -24,6 +23,9 @@
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "wheregroup/open-sans": "1.x",
+        "wheregroup/doctrine-dbal-shims": "^1",
+        "wheregroup/assetic-filter-sassc": "^0.0.1",
+        "wheregroup/sassc-binaries": "^0.0.1",
 
         "mapbender/fom": "~3.1.2 || ^3.2.1",
         "mapbender/owsproxy": "^3.0.6.2",

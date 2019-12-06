@@ -25,7 +25,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * * branding.project_name      (override in parameters.yml; defaults to %mapbender.branding.name% if empty)
  * * branding.project_version   (override in parameters.yml; defaults to %mapbender.version% if empty)
  * * branding.logo              (override in parameters.yml; defaults to %mapbender.branding.logo% if empty)
- * * branding.favicon           (web-relative path; defaults to favicon.ico)
  *
  * Most frontend areas should display project branding to support customization.
  *

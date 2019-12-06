@@ -8,14 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class StateType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'state';
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

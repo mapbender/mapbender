@@ -2,10 +2,12 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\AutodetectSasscBinaryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -38,6 +40,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         }
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
+        $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
 
         // @todo: remove legacy form theme bridging
         //        TBD: either rely on correct starter config (and do nothing here)
@@ -46,6 +49,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         $formThemeNewLocation = 'MapbenderCoreBundle:form:fields.html.twig';
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
+        $container->addCompilerPass(new RebuildElementInventoryPass());
     }
 
     /**

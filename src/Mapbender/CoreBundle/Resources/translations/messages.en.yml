@@ -1,4 +1,31 @@
 mb:
+  actions:
+    accept: Ok
+    add: Add
+    back: Back
+    cancel: Cancel
+    close: Close
+    delete: Delete
+    edit: Edit
+    filter: Filter
+    print: Print
+    refresh: Refresh
+    remove: Remove
+    save: Save
+    search: Search
+  terms:
+    application:
+      singular: Application
+      plural: Applications
+    source:
+      singular: Source
+      plural: Sources
+    layerset:
+      singular: Layer set
+      plural: Layer sets
+  states:
+    active: active
+    inactive: inactive
   core:
     featureinfo:
       error:
@@ -164,7 +191,7 @@ mb:
           ok: Close
     gpsposition:
       error:
-        notsupported: I'm sorry, but geolocation services are not supported by your browser.
+        notsupported: Geolocation services are not supported by your browser.
         nosignal: Currently it's not possible to locate your position.
       class:
         title: 'GPS Position'

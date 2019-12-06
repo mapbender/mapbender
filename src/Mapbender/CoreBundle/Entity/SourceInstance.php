@@ -212,6 +212,8 @@ abstract class SourceInstance
     /**
      *
      * @return SourceMetadata|null
+     * @deprecated metadata rendering is doable and should be done purely in twig
+     * @see \Mapbender\CoreBundle\Controller\ApplicationController::metadataAction()
      */
     abstract public function getMetadata();
 

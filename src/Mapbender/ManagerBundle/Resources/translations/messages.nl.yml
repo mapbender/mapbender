@@ -8,15 +8,11 @@ mb:
       success: Uw applicatie is bewaard.
       failure:
         general: Fout bij bewaren applicatie.
-        create.directory: |
-          Uw applicatie is bijgewerkt maar de mappen van de applicatie konden niet worden aangemaakt.
+        create.directory: Uw applicatie is bijgewerkt maar de mappen van de applicatie konden niet worden aangemaakt.
     remove:
       success: Uw applicatie is verwijderd.
       failure:
         general: Uw applicatie kon niet verwijderd worden.
-        already.removed:  Uw applicatie was reeds verwijderd.
-        remove.directory: |
-          Uw applicatie is verwijderd maar de mappen van de applicatie konden niet verwijderd worden.
   layerset:
     create:
       success: Uw lagenset is aangemaakt.
@@ -68,11 +64,6 @@ mb:
           '': 'Geen element toegevoegd'
       zoombar:
         draggable: Versleepbaar
-      filter:
-        source: 'Filter bron'
-        layerset: 'Filter lagenset'
-        application: 'Filter applicatie'
-        element: 'Filter element'
       overview:
         maximize: Maximaliseer
         fix: Repareer
@@ -224,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
-      acl:
-        failed: 'Toegangs-restricties (ACLs) kunnen niet geimporteerd'
-      source:
-        failed: 'Bronnen kunnen niet geimporteerd'
   core:
     admin:
       button:
@@ -255,9 +242,3 @@ mb:
           format_error: 'Dit formaat wordt niet ondersteund!'
           resolution:
             error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applicaties

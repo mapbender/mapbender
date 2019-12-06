@@ -7,15 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class LegendUrlType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'legendurl';
-    }
-
     /**
      * @inheritdoc
      */

@@ -458,6 +458,8 @@ class WmsInstance extends SourceInstance
 
     /**
      * @return WmsMetadata
+     * @deprecated metadata rendering is doable and should be done purely in twig
+     * @see \Mapbender\CoreBundle\Controller\ApplicationController::metadataAction()
      */
     public function getMetadata()
     {

@@ -124,17 +124,20 @@ span.iconBig {
 .iconThumbsDown:before{content:"\f088"; font-family: FontAwesome;}
 .iconGroup:before{content:"\f0c0"; font-family: FontAwesome;}
 .iconUser:before{content:"\f007"; font-family: FontAwesome;}
-.iconSettings:before{content:"\f0ad"; font-family: FontAwesome;}
-.iconSignOut:before{content:"\f08b"; font-family: FontAwesome;}
-.iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
 .iconMore:before{content:"\f141"; font-family: FontAwesome;}
 .iconCopy:before{content:"\f0c5"; font-family: FontAwesome;}
 .iconKey:before{content:"\f084"; font-family: FontAwesome;}
-.iconTab:before{content:"\f114"; font-family: FontAwesome;}
-.iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
 .iconReset:before{content:"\f021"; font-family: FontAwesome;}
 .iconPlay:before{content: "\f04b"; font-family: FontAwesome;}
 .iconStop:before{content: "\f04d"; font-family: FontAwesome;}
+
+/** unused legacy backend stuff */
+/** @todo: remove, mark custom template bc break */
+.iconSettings:before{content:"\f0ad"; font-family: FontAwesome;}
+.iconSignOut:before{content:"\f08b"; font-family: FontAwesome;}
+.iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
+.iconTab:before{content:"\f114"; font-family: FontAwesome;}
+.iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
 
 @import url("components/mapbender-icons/style.css");
 [class^="icon-"]:before, [class*=" icon-"]:before {
