@@ -507,6 +507,10 @@
             this.$form.submit();
         },
         _onSubmit: function(evt) {
+            if (!this.selectionActive) {
+                // prevent submit without selection (sidepane mode has separate button to start selecting)
+                return false;
+            }
             // add job data to hidden form fields
             var jobData = this._collectJobData();
             if (!jobData.layers.length) {
