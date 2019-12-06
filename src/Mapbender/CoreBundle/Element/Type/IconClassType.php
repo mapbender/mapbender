@@ -6,11 +6,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IconClassType extends AbstractType
 {
-    public function getName()
-    {
-        return 'iconclass';
-    }
-
     public function getParent()
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';

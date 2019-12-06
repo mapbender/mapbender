@@ -16,14 +16,6 @@ class ExportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'exportjob';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

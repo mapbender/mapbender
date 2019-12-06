@@ -10,14 +10,6 @@ class WmcStateType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmcstate';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('state', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(

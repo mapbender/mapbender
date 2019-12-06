@@ -32,7 +32,7 @@
         <!-- servicy form type for wms instances; required to inject other services / params -->
         <service id="mapbender.sourceinstance.wms.form" class="Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType">
             <argument>%mapbender.preview.layer_order.wms%</argument>
-            <tag name="form.type" alias="wmsinstanceinstancelayers"/>
+            <tag name="form.type" />
         </service>
     </services>
 </container>

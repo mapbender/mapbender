@@ -13,14 +13,6 @@ class DimensionInstType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return "dimension";
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $subscriber = new DimensionSubscriber();

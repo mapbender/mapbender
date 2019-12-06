@@ -14,14 +14,6 @@ class VendorSpecificType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return "vendorspecific";
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
