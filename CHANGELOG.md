@@ -1,5 +1,6 @@
-## dev-release/3.0.7 @ 00b6e5fe2
+## dev-release/3.0.7 @ 454345992
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
+- Fix unreliable / broken initial map srs configurations depending on database response order
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Fix invalid relative urls in cached css when switching base url (e.g. url with "app.php" vs without script name)
 - Fix invalid relative urls in generated application css when running Mapbender in a "subdirectory url" (see UPGRADING.md for potential conflicts with old workarounds)
@@ -13,8 +14,13 @@
 - Fix errors on import of previously broken application export formats
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
+- Fix missing .dropdownValue visual update on "changed" event
+- Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
 - Fix untranslated "Back" button in backend source views
 - Fix encoding errors of backend headings containing HTML-escapable characters
+- [PrintClient] fix missing data if form is submitted by pressing Enter key
+- [PrintClient] prevent form submit in sidepane if selection rectangle is inactive
+- [PrintClient] Fix selection rectangle recentering on change of scale dropdown or rotation field
 - SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - When cloning DB applications, also clone access control rules
 - Show affected applications and instances in source deletion confirmation popup
