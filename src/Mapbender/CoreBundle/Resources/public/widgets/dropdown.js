@@ -92,6 +92,9 @@ $(function () {
     $('.dropdown').each(function () {
         initDropdown.call(this);
     });
+    $(document).on('change', '.dropdown > select.hiddenDropdown', function() {
+        updateValueDisplay($(this).parent('.dropdown'));
+    });
     window.initDropdown = initDropdown;
     $(document).on("click", ".dropdown", toggleList);
     $(document).on('mousewheel scroll DOMMouseScroll', '.dropdownList', function(e) {
