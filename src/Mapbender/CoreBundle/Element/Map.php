@@ -299,35 +299,44 @@ class Map extends Element
             );
         }
         $result = $this->getSrsDefinitions($allsrs);
-        if (count($result) > 0) {
+        if (count($result) > 0) {   // @todo: an incomplete result set should already be an error; not just a completely empty one
             return array("data" => $result);
         } else {
+            // @todo: use HTTP status codes, not 'error' subkeys in a 200 OK response :\
             return array("error" => $this->trans("mb.core.map.srsnotfound", array('%srslist%', $srsList)));
         }
     }
 
     /**
      * Returns proj4js srs definitions from srs names
-     * @param array $srsNames srs names (array with "EPSG" codes)
-     * @return array proj4js srs definitions
+     * @param array[] $srsSpecs arrays with 'name' and 'title' keys
+     * @return string[][] each entry with keys 'name' (code), 'title' (display label) and 'definition' (proj4 compatible)
      */
-    protected function getSrsDefinitions(array $srsNames)
+    protected function getSrsDefinitions(array $srsSpecs)
     {
-        $titleMap = array_column($srsNames, 'title', 'name');
-        $result = array();
+        $titleMap = array_column($srsSpecs, 'title', 'name');
         /** @var EntityManagerInterface $em */
         $em = $this->container->get("doctrine")->getManager();
         /** @var SRS[] $srses */
         $srses = $em->getRepository('MapbenderCoreBundle:SRS')->findBy(array(
             'name' => array_keys($titleMap),
         ));
+        /** @var SRS[] $rowMap */
+        $rowMap = array();
         foreach ($srses as $srs) {
-            $name = $srs->getName();
-            $result[] = array(
-                "name" => $name,
-                "title" => $titleMap[$name] ?: $srs->getTitle(),
-                "definition" => $srs->getDefinition(),
-            );
+            $rowMap[$srs->getName()] = $srs;
+        }
+        $result = array();
+        // Database response may return in random order. Produce results maintaining order of input $srsSpecs.
+        foreach (array_keys($titleMap) as $srsName) {
+            if (!empty($rowMap[$srsName])) {
+                $result[] = array(
+                    'name' => $rowMap[$srsName]->getName(),
+                    'title' => $titleMap[$srsName] ?: $rowMap[$srsName]->getTitle(),
+                    'definition' => $rowMap[$srsName]->getDefinition(),
+                );
+            }
+            // @todo: unsupporteded SRS should be an error
         }
         return $result;
     }
