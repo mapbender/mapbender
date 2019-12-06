@@ -37,10 +37,12 @@
                 this._initJobList($jobList);
             }
 
-            $('select[name="scale_select"]', this.$form)
-                .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="rotation"]', this.$form)
-                .on('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="scale_select"]', this.$form).on('change', function() {
+                self._updateGeometry();
+            });
+            $('input[name="rotation"]', this.$form).on('keyup', function() {
+                self._updateGeometry();
+            });
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
@@ -119,9 +121,9 @@
                 self.selectionActive = true;
                 control.activate();
                 if (reset) {
-                    self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
+                    self._setScale();
                 } else {
-                    self._updateGeometry(false);
+                    self._updateGeometry();
                 }
                 $('.printSubmit', self.$form).removeClass('hidden');
             });
@@ -233,7 +235,7 @@
             this.control.unsetFeature();
 
             var center;
-            if (reset) {
+            if (reset || !this.feature) {
                 center = this.map.map.olMap.getCenter();
             } else {
                 center = this.feature.geometry.getBounds().getCenterLonLat();
