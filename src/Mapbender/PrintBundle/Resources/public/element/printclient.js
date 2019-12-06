@@ -171,9 +171,8 @@
         },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
-            var styledSelect = select.parent().find(".dropdownValue.iconDown");
             var scales = this.options.scales;
-            var currentScale = Math.round(this.map.map.olMap.getScale());
+            var currentScale = Math.round(this.map.getModel().getCurrentScale());
             var selectValue;
 
             $.each(scales, function(idx, scale) {
@@ -193,10 +192,7 @@
                 selectValue = scales[scales.length-1];
             }
 
-            select.val(selectValue);
-            styledSelect.html('1:'+selectValue);
-
-            this._updateGeometry(true);
+            select.val(selectValue).trigger('change');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             // adjust for geodesic pixel aspect ratio so
