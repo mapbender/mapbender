@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 25c02dab4
+## dev-release/3.0.7 @ 00b6e5fe2
 - Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - Fix invalid relative urls in cached css when switching base url (e.g. url with "app.php" vs without script name)
@@ -19,6 +19,7 @@
 - When cloning DB applications, also clone access control rules
 - Show affected applications and instances in source deletion confirmation popup
 - Show dependent applications and instances in source view (as a new "Applications" tab)
+- Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
