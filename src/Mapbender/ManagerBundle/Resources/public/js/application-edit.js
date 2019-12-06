@@ -376,7 +376,7 @@ $(function() {
     deleteScreenShotButtonInit();
 
     $(document).ready(function() {
-        $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
+        $('.application-component-table tbody .iconColumn input[type="checkbox"][data-url]').each(function() {
             var self = this;
             initCheckbox.call(this);
             $(self).on("change", function() {
