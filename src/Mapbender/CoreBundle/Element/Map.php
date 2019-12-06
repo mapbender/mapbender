@@ -90,25 +90,35 @@ class Map extends Element
             "name" => $mainSrsParts[0],
             "title" => (count($mainSrsParts) > 1) ? trim($mainSrsParts[1]) : '',
         );
+        $allSrsNames[] = $allSrs[0]['name'];
 
-        if (isset($configuration["otherSrs"])) {
+        if (!empty($configuration["otherSrs"])) {
+            $otherSrs = array();
             if (is_array($configuration["otherSrs"])) {
-                $otherSrs = $configuration["otherSrs"];
+                $otherSrsConfigs = $configuration["otherSrs"];
             } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
-                $otherSrs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
+                $otherSrsConfigs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
             } else {
-                $otherSrs = array();
+                // @todo: this should be an error
+                $otherSrsConfigs = array();
             }
-            foreach ($otherSrs as $srs) {
+            foreach ($otherSrsConfigs as $srs) {
                 $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
-                $allSrs[] = array(
-                    "name" => $otherSrsParts[0],
-                    "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
-                );
+                // @todo: non-unique srses should be an error
+                if (!\in_array($otherSrsParts[0], $allSrsNames)) {
+                    $otherSrs[] = array(
+                        "name" => $otherSrsParts[0],
+                        "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
+                    );
+                    $allSrsNames[] = $otherSrsParts;
+                }
             }
+            // Sort (already unique) entries via array_unique, the only sensible sorting method in PHP (no reference semantics).
+            // @todo: there should be no sorting at all
+            $allSrs = array_merge($allSrs, array_unique($otherSrs, SORT_REGULAR));
         }
-        $configured = array_values(array_unique($allSrs, SORT_REGULAR));
-        return $this->getSrsDefinitions($configured);
+        $allSrs = array_unique($allSrs, SORT_REGULAR);
+        return $this->getSrsDefinitions($allSrs);
     }
 
     /**
