@@ -1,7 +1,6 @@
 
 .mb-element-redlining{
   $buttonFirstColor:#5fa229;
-  .button{margin-left:0px;}
   .button.active{background-color:darken($buttonFirstColor, 5%);}
   .text-wrapper{
     margin-top:5px;
@@ -10,9 +9,7 @@
   }
   .geometry-table{
     margin-top:5px;
-    width: 100%;
     border: 1px solid $secondColor;
-    color: $firstColor;
     tr {
       display:table-row;
       border: 1px solid $secondColor;

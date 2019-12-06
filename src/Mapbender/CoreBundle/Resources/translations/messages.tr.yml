@@ -1,18 +1,32 @@
 mb:
+  actions:
+    accept: Oldu
+    add: Ekle
+    back: Geri git
+    cancel: Vazgeç
+    close: Kapat
+    delete: Sil
+    edit: Düzenle
+    filter: Filtrele
+    print: Yazdır
+    refresh: Güncelle
+    remove: Kaldır
+    save: Kaydet
+    search: Ara
+  terms:
+    application:
+      singular: Uygulama
+      plural: Uygulamalar
+    source:
+      singluar: Kaynak
+      plural: Kaynaklar
+    layerset:
+      singular: Katman
+      plural: Katmanlar
+  states:
+    active: aktif
+    inactive: etkisiz
   core:
-    actions:
-      accept: Oldu
-      add: Ekle
-      back: Geri git
-      cancel: Vazgeç
-      close: Kapat
-      delete: Sil
-      edit: Düzenle
-      ok: Yazdır
-      refresh: Güncelle
-      remove: Kaldır
-      save: Kaydet
-      search: Ara
     featureinfo:
       error:
         nolayer: 'Detay bilgisi katmanı bulunamadı.'

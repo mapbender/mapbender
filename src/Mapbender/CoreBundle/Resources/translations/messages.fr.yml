@@ -1,18 +1,32 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Ajouter
+    back: Retour
+    cancel: Annuler
+    close: Fermer
+    delete: Supprimer
+    edit: Modifier
+    filter: Filtrer
+    print: Imprimer
+    refresh: Mettre à jour
+    remove: Supprimer
+    save: Sauvegarder
+    search: Rechercher
+  terms:
+    application:
+      singular: Application
+      plural: Applications
+    source:
+      singular: Source
+      plural: Sources
+    layerset:
+      singular: Ensemble de couches
+      plural: Ensembles de couches
+  states:
+    active: actif      # m.; f.: active
+    inactive: inactif   # m.; f.: inactive
   core:
-    actions:
-      accept: Ok    # appropriate?
-      add: Ajouter
-      back: Retour
-      cancel: Annuler
-      close: Fermer
-      delete: Supprimer
-      edit: Modifier
-      print: Imprimer
-      refresh: Mettre à jour
-      remove: Supprimer
-      save: Sauvegarder
-      search: Rechercher
     featureinfo:
       error:
         nolayer: 'Impossible d''identifier l''objet.'

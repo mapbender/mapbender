@@ -38,6 +38,8 @@
   }
 }
 .messageBox{
+  /** @deprecated; use bootstrap alert.alert-info or alert.alert-danger as appropriate */
+  /** @todo: remove, mark custom template BC break */
   padding:$space/2;
   margin-bottom:$space;
 

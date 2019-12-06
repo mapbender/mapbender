@@ -11,10 +11,6 @@ mb:
           cancel: Cancelar
           load: Carregar
       error:
-        url: 'Carregar WMS: Não pode carregar o documento de WMS! URL de Capabilities é inválido.'
-        service: 'Carregar WMS: o serviço %service% não é suportado!'
-        operation: 'Carregar WMS: a operação de WMS %operation% não é suportado!'
-        version: 'Carregar WMS: a versão de WMS %version% não é suportado!'
         load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
       repo:
         macros:

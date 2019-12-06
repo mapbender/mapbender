@@ -175,8 +175,10 @@
 
   textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
-  .messageBox {
-    margin: 23px 0 0 1em;
+  .alert-info, /** @deprecated: */.messageBox.hint {
+    // instruction box
+    margin-left: 1em;
+    margin-top: 21px;   // HACK: calculated root line-height (no variable)
   }
 }
 
@@ -300,7 +302,4 @@
       opacity: .6;
     }
   }
-  .iconRadio {@extend .iconCheckbox}
-  .iconRadiotabs {@extend .iconTabActive}
-  .iconRadioaccordion {@extend .iconBars}
 }

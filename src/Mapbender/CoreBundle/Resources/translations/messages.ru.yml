@@ -1,18 +1,32 @@
 mb:
+  actions:
+    accept: Оке́й
+    add: Добавить
+    back: Назад
+    cancel: Отменить
+    close: Закрыть
+    delete: Удалить
+    edit: Редактировать
+    filter: Фильтровать
+    print: Печать
+    refresh: Обновить
+    remove: Удалить
+    save: Сохранить
+    search: Поиск
+  terms:
+    application:
+      singular: Приложение
+      plural: Приложения
+    source:
+      singular: Источник
+      plural: Источники
+    layerset:
+      singular: Слой  # @todo: this is simply "layer"
+      plural: Слои
+  states:
+    active: активный
+    inactive: неактивный
   core:
-    actions:
-      accept: Оке́й
-      add: Добавить
-      back: Назад
-      cancel: Отменить
-      close: Закрыть
-      delete: Удалить
-      edit: Редактировать
-      print: Печать
-      refresh: Обновить
-      remove: Удалить
-      save: Сохранить
-      search: Поиск
     featureinfo:
       error:
         nolayer: 'Не существует функция инфо-слой.'
@@ -176,7 +190,7 @@ mb:
           ok: Закрыть
     gpsposition:
       error:
-        notsupported: 'Извините, но геолокационные сервисы не поддерживаются вашим браузером.'
+        notsupported: 'Геолокационные сервисы не поддерживаются вашим браузером.'
         nosignal: Невозможно определить ваше местоположение.
       class:
         title: GPS-положение

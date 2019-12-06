@@ -24,8 +24,11 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
-.navigation {
+.navigation, .accountBar {
   color: $middleFontColor;
+}
+
+.navigation {
   .navItem {
     > a {
       display: block;
@@ -132,26 +135,20 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 .accountBar {
-  display: inline-block;
-  color: $middleFontColor;
-  cursor: pointer;
+  #accountOpen {
+    cursor: pointer;
+  }
   padding: ($space/4) ($space/2) ($space/4) ($space/2);
   background-color: $contentColor;
   border-bottom-left-radius: $containerBorderRadius;
   border-bottom-right-radius: $containerBorderRadius;
   > .accountMenu {
-    height: 20px;
+    height: 21px; // root line height (not available as variable)
     overflow: hidden;
     @include transition(all 0.2s ease-in-out);
 
     &.opened {
-      height: 65px;
-    }
-    .iconDown {
-      padding-right: $space;
-      &:before {
-        @include absolute('' 0 '' '');
-      }
+      height: 63px;
     }
   }
 }
@@ -352,4 +349,68 @@ label[for^="inputFilter"] {
   // Link is outside of element permission markup, but want to display as an ~overlay top right
   position: relative;
   top: 30px;
+}
+
+.permissionsTable{
+  tr{
+    border-bottom: solid 1px darken($contentColor, 10%);
+    &.new{
+      .labelInput, .iconGroup, .iconUser{color:green;}
+      background-color: #f0ffed;
+    }
+  }
+  th, td {
+    padding:5px 0;
+  }
+  td{
+    .labelInput{width:150px;}
+    .input{display:none;}
+    .iconGroup:before, .iconUser:before{
+      display: inline-block;
+      text-align: center;
+      width: 1.5em;
+    }
+  }
+  .listFilterInput{
+    margin-bottom: 0;
+  }
+  .tagbox {
+    font-size: 85%;
+    cursor: pointer;
+    width: auto;
+    text-align: center;
+    padding: 3px .5em;
+    margin: 0 .25em;
+    @include noUserSelect;
+    @include border-radius($radius);
+    &.multi {
+      background-color:#c1c1c1;
+    }
+
+    &.active {
+      color:white;
+      &.view {
+        background-color: #8DCA35;
+      }
+      &.edit, &.delete, &.create {
+        background-color: #FFAB00;
+      }
+      &.operator, &.master, &.owner {
+        background-color: #FF702A;
+      }
+    }
+    input {
+      display: none;
+    }
+  }
+}
+
+.tableGroupsAndUsers{
+  border:{
+    top:solid 3px $firstColor;
+    left:solid 1px $thirdColor;
+    right:solid 1px $thirdColor;
+    bottom:solid 1px $thirdColor;
+  }
+  @include border-bottom-radius($radius);
 }

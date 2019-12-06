@@ -64,11 +64,6 @@ mb:
           '': 'Aucun élément ajouté'
       zoombar:
         draggable: Déplaçable
-      filter:
-        source: 'Filtre'
-        layerset: 'Filtre'
-        application: 'Filtre'
-        element: 'Filtre'
       overview:
         maximize: Aggrandir
         fix: Fixer
@@ -221,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Impossible d''importer l''application.'
-      acl:
-        failed: 'Impossible d''importer le ou les ACL(s).'
-      source:
-        failed: 'Impossible d''importer les sources.'
   core:
     admin:
       button:
@@ -252,9 +243,3 @@ mb:
           format_error: 'Ce format n''est pas supporté!'
           resolution:
             error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applications

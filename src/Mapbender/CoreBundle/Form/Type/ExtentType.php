@@ -7,11 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ExtentType extends AbstractType
 {
-    public function getName()
-    {
-        return 'extent';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

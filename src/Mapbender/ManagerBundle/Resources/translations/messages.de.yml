@@ -65,11 +65,6 @@ mb:
           '': 'Kein Element vorhanden'
       zoombar:
         draggable: Verschiebbar
-      filter:
-        source: 'Filter'
-        layerset: 'Filter'
-        application: Filter
-        element: Filter         
       overview:
         maximize: Maximieren
         fix: Fixieren
@@ -221,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'
-      acl:
-        failed: 'Acls können nicht importiert werden.'
-      source:
-        failed: 'Quelle kann nicht importiert werden.'
   core:
     admin:
       button:
@@ -252,9 +243,3 @@ mb:
           format_error: 'Nicht unterstütztes Format'
           resolution:
             error: 'Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Anwendungen

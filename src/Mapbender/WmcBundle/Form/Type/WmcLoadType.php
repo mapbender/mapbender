@@ -6,15 +6,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class WmcLoadType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'wmcload';
-    }
-
     /**
      * @inheritdoc
      */

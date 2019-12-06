@@ -24,6 +24,8 @@ class TranslationCompiler
     /** @var string[]|null */
     protected $allMessages;
 
+    protected $treatTemplatesAsOptional = true;
+
     /**
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
@@ -71,7 +73,16 @@ class TranslationCompiler
      */
     protected function extractFromTemplate($template)
     {
-        return json_decode($this->templateEngine->render($template), true);
+        try {
+            $rendered = $this->templateEngine->render($template);
+        } catch (\InvalidArgumentException $e) {
+            if ($this->treatTemplatesAsOptional) {
+                return array();
+            } else {
+                throw $e;
+            }
+        }
+        return json_decode($rendered, true);
     }
 
     /**

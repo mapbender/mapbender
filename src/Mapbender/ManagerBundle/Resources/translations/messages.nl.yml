@@ -64,11 +64,6 @@ mb:
           '': 'Geen element toegevoegd'
       zoombar:
         draggable: Versleepbaar
-      filter:
-        source: 'Filter bron'
-        layerset: 'Filter lagenset'
-        application: 'Filter applicatie'
-        element: 'Filter element'
       overview:
         maximize: Maximaliseer
         fix: Repareer
@@ -220,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
-      acl:
-        failed: 'Toegangs-restricties (ACLs) kunnen niet geimporteerd'
-      source:
-        failed: 'Bronnen kunnen niet geimporteerd'
   core:
     admin:
       button:
@@ -251,9 +242,3 @@ mb:
           format_error: 'Dit formaat wordt niet ondersteund!'
           resolution:
             error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applicaties

@@ -1,22 +1,32 @@
 mb:
+  actions:
+    accept: Ok
+    add: Hinzufügen
+    back: Zurück
+    cancel: Abbrechen
+    close: Schließen
+    delete: Löschen
+    edit: Bearbeiten
+    filter: Filtern
+    print: Drucken
+    refresh: Aktualisieren
+    remove: Entfernen
+    save: Speichern
+    search: Suchen
+  terms:
+    application:
+      singular: Anwendung
+      plural: Anwendungen
+    source:
+      singular: Datenquelle
+      plural: Datenquellen
+    layerset:
+      singular: Layerset
+      plural: Layersets
+  states:
+    active: aktiv
+    inactive: inaktiv
   core:
-    actions:
-      accept: Ok
-      add: Hinzufügen
-      back: Zurück
-      cancel: Abbrechen
-      close: Schließen
-      delete: Löschen
-      edit: Bearbeiten
-      print: Drucken
-      refresh: Aktualisieren
-      remove: Entfernen
-      save: Speichern
-      search: Suchen
-    terms:
-      source:
-        singular: Datenquelle
-        plural: Datenquellen
     featureinfo:
       error:
         nolayer: 'Informationsebene existiert nicht.'
@@ -181,7 +191,7 @@ mb:
           ok: Schließen
     gpsposition:
       error:
-        notsupported: 'Entschuldigung! Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.'
+        notsupported: Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.
         nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
       class:
         title: GPS-Position

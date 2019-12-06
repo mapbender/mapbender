@@ -8,7 +8,7 @@
 {% endblock %}
 {% block layers_content %}
   {% if source.version == '1.1.1' %}
-    <div class="messageBox hint">{{ 'mb.wms.wmsloader.repo.view.message.cautionscalehint'|trans }}</div>
+    <p class="alert alert-info">{{ 'mb.wms.wmsloader.repo.view.message.cautionscalehint'|trans }}</p>
   {% endif %}
   {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': source.rootlayer, 'itemLevel': 1 }%}
 {% endblock layers_content %}

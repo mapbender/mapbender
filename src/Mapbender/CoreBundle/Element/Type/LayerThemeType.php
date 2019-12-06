@@ -9,11 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LayerThemeType extends AbstractType
 {
 
-    public function getName()
-    {
-        return 'theme';
-    }
-
     /**
      * @inheritdoc
      */

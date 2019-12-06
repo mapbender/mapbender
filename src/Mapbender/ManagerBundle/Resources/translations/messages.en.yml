@@ -65,11 +65,6 @@ mb:
           '': 'No element added'
       zoombar:
         draggable: Draggable
-      filter:
-        source: 'Filter source'
-        layerset: 'Filter layerset'
-        application: 'Filter application'
-        element: Filter        
       overview:
         maximize: Maximize
         fix: Fix
@@ -221,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Application cannot be imported.'
-      acl:
-        failed: 'Acls cannot be imported.'
-      source:
-        failed: 'Sources cannot be imported.'
   core:
     admin:
       button:
@@ -252,9 +243,3 @@ mb:
           format_error: 'This format is not supported!'
           resolution:
             error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applications

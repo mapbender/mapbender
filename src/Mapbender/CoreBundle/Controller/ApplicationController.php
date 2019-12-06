@@ -62,40 +62,28 @@ class ApplicationController extends ApplicationControllerBase
     public function assetsAction(Request $request, $slug, $type)
     {
         $isProduction = $this->isProduction();
-        $cacheFile        = $this->getCachedAssetPath($slug, $type);
+        $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
             if (!$source) {
                 throw new NotFoundHttpException('The application can not be found.');
             }
-            $isAppDbBased = false;
-        } else {
-            $source = $this->getApplicationEntity($slug);
-            $isAppDbBased = $source->getSource() === ApplicationEntity::SOURCE_DB;
-        }
-        if (!$isAppDbBased) {
+            // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
         } else {
+            $source = $this->getApplicationEntity($slug);
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
-
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
         );
 
         $useCached = $isProduction && file_exists($cacheFile);
-        if ($useCached) {
-            $cacheUpdateTs = filectime($cacheFile);
-            // Always reuse cache entry for YAML applications
-            // Check the update timestamp only for DB applications,
-            $useCached = !$isAppDbBased || ($appModificationTs < $cacheUpdateTs);
-
-            if ($useCached) {
-                $response = new BinaryFileResponse($cacheFile, 200, $headers);
-                // allow file timestamp to be read again correctly for 'Last-Modified' header
-                clearstatcache();
-                $response->isNotModified($request);
-                return $response;
-            }
+        if ($useCached && $appModificationTs < filectime($cacheFile)) {
+            $response = new BinaryFileResponse($cacheFile, 200, $headers);
+            // allow file timestamp to be read again correctly for 'Last-Modified' header
+            clearstatcache();
+            $response->isNotModified($request);
+            return $response;
         }
         /** @var ApplicationAssetService $assetService */
         $assetService = $this->container->get('mapbender.application_asset.service');
@@ -156,7 +144,8 @@ class ApplicationController extends ApplicationControllerBase
             'Content-Type' => 'text/html; charset=UTF-8',
         );
         if ($useCache) {
-            $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
+            // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
+            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $appComponent->getTemplate()->render();
@@ -330,7 +319,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function getGrantedTunnelEndpoint($instanceId, $applicationSlug)
     {
-        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+        /** @var SourceInstance|null $instance */
         $instance = $this->getDoctrine()
             ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
@@ -350,13 +339,32 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param $slug
-     * @param $type
+     * @param Request $request
+     * @param string $slug
+     * @param string $type
      * @return string
      */
-    protected function getCachedAssetPath($slug, $type)
+    protected function getCachedAssetPath(Request $request, $slug, $type)
     {
-        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$type}";
+        $localeDependent = array(
+            'html',
+            'trans',
+        );
+        if (in_array($type, $localeDependent)) {
+            $extension = $this->getTranslator()->getLocale() . ".{$type}";
+        } else {
+            $extension = $type;
+        }
+        $baseUrlDependent = array(
+            'html',
+            'css',
+        );
+        if (in_array($type, $baseUrlDependent)) {
+            // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
+            $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
+            $extension = "{$baseUrlHash}.{$extension}";
+        }
+        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$extension}";
     }
 
     /**

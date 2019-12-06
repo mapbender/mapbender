@@ -27,14 +27,6 @@ class WmsInstanceInstanceLayersType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'wmsinstanceinstancelayers';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var WmsInstance $wmsinstance */

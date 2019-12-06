@@ -11,10 +11,6 @@ mb:
           cancel: Cancella
           load: Carica
       error:
-        url: 'WMSLoader: le WMS capabilities non possono essere caricate! L''URL delle capabilities non è valido.'
-        service: 'WMSLoader: il servizio %service% non è supportato!'
-        operation: 'WMSLoader: l''Operazione WMS %operation% non è supportata!'
-        version: 'WMSLoader: la versione del WMS %version% non è supportata!'
         load: 'WMSLoader: le WMS capabilities non possono essere caricate!'
       repo:
         macros:

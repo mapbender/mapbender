@@ -15,14 +15,6 @@ class ImportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'importjob';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array());

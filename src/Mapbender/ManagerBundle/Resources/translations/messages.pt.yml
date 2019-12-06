@@ -64,11 +64,6 @@ mb:
           '': 'Nenhum elemento existe'
       zoombar:
         draggable: Deslocar
-      filter:
-        source: 'Filtro origem de dados'
-        layerset: 'Filtro de conjunto de camadas'
-        application: Filtro
-        element: 'Filtro elemento'
       overview:
         maximize: Maximizar
         fix: Fixar
@@ -220,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Não pode importar aplicação'
-      acl:
-        failed: 'Não pode importar Acls'
-      source:
-        failed: 'Não pode importar origem'
   core:
     admin:
       button:
@@ -251,9 +242,3 @@ mb:
           format_error: 'Formato não suportado.'
           resolution:
             error: 'O ficheiro precisa de %screenshotHeight% x %screenshotWidth% pixel ou mais. O seu ficheiro tem %uploadWidth% x %uploadHeighth% pixel. '
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Aplicações

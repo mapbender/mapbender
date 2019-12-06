@@ -155,7 +155,7 @@ class WmsSourceService extends SourceService
             "id" => strval($instanceLayer->getId()),
             "origId" => strval($instanceLayer->getId()),
             "priority" => $instanceLayer->getPriority(),
-            "name" => $sourceItem->getName() ?: '',
+            "name" => strval($sourceItem->getName()),
             "title" => $instanceLayer->getTitle() ?: $sourceItem->getTitle(),
             "queryable" => $instanceLayer->getInfo(),
             "style" => $instanceLayer->getStyle(),

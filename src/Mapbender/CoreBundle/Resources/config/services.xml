@@ -138,11 +138,6 @@
             <argument type="service" id="logger" />
         </service>
 
-        <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
-        <service id="mapbender.form_type.element.layertree.menuChoices" class="%mapbender.form_type.element.layertree.menu.class%">
-            <argument>true</argument>
-            <tag name="form.type" alias="layertree_menu" />
-        </service>
         <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
