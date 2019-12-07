@@ -47,7 +47,6 @@ class Map extends Element
             'dpi' => 90.714, // DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
-            'units' => 'degrees',
             'tileSize' => 512,
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
