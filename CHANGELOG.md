@@ -44,6 +44,7 @@
 - Remove confusing WMTS instance form fields for unpersisted values
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
+- Remove inconsequential Map Element configuration field `units` (units are auto-determined by CRS)
 - Remove unused tooltip Element configuration (ZoomBar, ScaleDisplay, ScaleBar, Overview, FeatureInfo, CoordinatesDisplay, Legend, Sketch)
 - Remove schema validation status display icons from backend Source listing (schema validation has been disabled since 3.0.8)
 ### New / extended functionality
