@@ -11,13 +11,14 @@ class YamlApplicationVoter extends BaseApplicationVoter
 {
     protected function supports($attribute, $subject)
     {
-        // only vote for VIEW on Yaml-defined Application instances
+        // only vote on Yaml-defined Application instances
         /** @var mixed|Application $subject */
         return parent::supports($attribute, $subject) && $subject->getSource() === Application::SOURCE_YAML;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        /** @var Application $subject */
         switch ($attribute) {
             case 'VIEW':
                 if ($subject->isPublished()) {
