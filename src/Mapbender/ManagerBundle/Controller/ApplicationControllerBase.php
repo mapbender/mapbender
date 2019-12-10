@@ -28,31 +28,12 @@ abstract class ApplicationControllerBase extends Controller
      *
      * @param Application $application
      * @throws AccessDeniedException
+     * @deprecated use ->isGranted / ->denyAccessUnlessGranted('VIEW', $application) directly
+     *       Custom grant logic now resides in voters in namespace Mapbender\CoreBundle\Security\Voters
      */
     protected function checkApplicationAccess(Application $application)
     {
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if ($application->isYamlBased()) {
-            if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles() ?: array())) {
-                // skip all other grants checks and pass
-                return;
-            }
-            // Yaml applications have no ACLs. Need to perform grants check based on class-type OID
-            $aclTarget = $oid;
-        } else {
-            $aclTarget = $application;
-        }
-        if (!$application->isPublished()) {
-            $this->denyAccessUnlessGranted('EDIT', $aclTarget);
-        }
-        if ($application->isYamlBased() && $application->getYamlRoles()) {
-            foreach ($application->getYamlRoles() as $role) {
-                if ($this->isGranted($role)) {
-                    return;
-                }
-            }
-        }
-        $this->denyAccessUnlessGranted('VIEW', $aclTarget);
+        $this->denyAccessUnlessGranted('VIEW', $application);
     }
 
     /**

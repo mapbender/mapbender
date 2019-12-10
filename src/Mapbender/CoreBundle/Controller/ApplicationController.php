@@ -169,7 +169,7 @@ class ApplicationController extends ApplicationControllerBase
     private function getApplicationEntity($slug)
     {
         $application = $this->requireApplication($slug, true);
-        $this->checkApplicationAccess($application);
+        $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
     }
 
