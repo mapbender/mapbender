@@ -48,8 +48,8 @@ class YamlApplicationVoter extends BaseApplicationVoter
         if ($token instanceof AnonymousToken) {
             return $subject->isPublished() || in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles);
         }
-        foreach ($token->getRoles() as $tokenRole) {
-            if (in_array($tokenRole->getRole(), $appRoles)) {
+        foreach ($this->getRoleNamesFromToken($token) as $tokenRoleName) {
+            if (in_array($tokenRoleName, $appRoles)) {
                 return true;
             }
         }
