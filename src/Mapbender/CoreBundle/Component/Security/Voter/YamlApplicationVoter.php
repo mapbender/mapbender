@@ -62,12 +62,18 @@ class YamlApplicationVoter extends BaseApplicationVoter
         if ($token instanceof AnonymousToken) {
             return in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles);
         }
-
-        foreach ($this->getRoleNamesFromToken($token) as $tokenRoleName) {
-            if (in_array($tokenRoleName, $appRoles)) {
+        $allowedRoles = $this->getRoleNamesFromToken($token);
+        if (!!\array_intersect($allowedRoles, $appRoles)) {
+            return true;
+        }
+        foreach (array_diff($appRoles, $allowedRoles) as $grantingRole) {
+            // use access decision manager to resolve / utilize standard role inflections
+            // like e.g. any logged-in user => ROLE_USER and IS_AUTHENTICATED_ANONYMOUSLY
+            if ($this->accessDecisionManager->decide($token, array($grantingRole))) {
                 return true;
             }
         }
+
         // Legacy quirks mode: forward to EDIT grant on OID (=user has grant to EDIT all Applications globally)
         $aclTarget = ObjectIdentity::fromDomainObject($subject);
         return $this->accessDecisionManager->decide($token, array('EDIT'), $aclTarget);
