@@ -12,11 +12,6 @@ use Symfony\Component\Validator\Constraints;
 class ApplicationType extends AbstractType
 {
 
-    public function getName()
-    {
-        return 'application';
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
