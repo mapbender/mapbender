@@ -44,16 +44,9 @@ class YamlApplicationVoter extends BaseApplicationVoter
      */
     protected function voteViewPublished(Application $subject, TokenInterface $token)
     {
-        $appRoles = $this->getApplicationRoles($subject);
-        if ($token instanceof AnonymousToken) {
-            return $subject->isPublished() || in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles);
-        }
-        foreach ($this->getRoleNamesFromToken($token) as $tokenRoleName) {
-            if (in_array($tokenRoleName, $appRoles)) {
-                return true;
-            }
-        }
-        return false;
+        // Published Yaml applications are visible to all. See ApplicationYAMLMapper injecting IS_AUTHENTICATED_ANONYMOUSLY
+        // into roles if published = true.
+        return true;
     }
 
     /**
@@ -65,8 +58,17 @@ class YamlApplicationVoter extends BaseApplicationVoter
      */
     protected function voteViewUnpublished(Application $subject, TokenInterface $token)
     {
-        // Legacy quirks mode: forward to (nonsensical for static files) EDIT grant on OID (=user has grant to EDIT all Applications globally)
-        // @todo: EDIT on statically defined applications should logically always deny
+        $appRoles = $this->getApplicationRoles($subject);
+        if ($token instanceof AnonymousToken) {
+            return in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles);
+        }
+
+        foreach ($this->getRoleNamesFromToken($token) as $tokenRoleName) {
+            if (in_array($tokenRoleName, $appRoles)) {
+                return true;
+            }
+        }
+        // Legacy quirks mode: forward to EDIT grant on OID (=user has grant to EDIT all Applications globally)
         $aclTarget = ObjectIdentity::fromDomainObject($subject);
         return $this->accessDecisionManager->decide($token, array('EDIT'), $aclTarget);
     }
