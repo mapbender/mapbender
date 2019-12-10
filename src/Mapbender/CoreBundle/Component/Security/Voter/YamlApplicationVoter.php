@@ -3,8 +3,6 @@
 namespace Mapbender\CoreBundle\Component\Security\Voter;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class YamlApplicationVoter extends BaseApplicationVoter
@@ -59,11 +57,16 @@ class YamlApplicationVoter extends BaseApplicationVoter
     protected function voteViewUnpublished(Application $subject, TokenInterface $token)
     {
         $appRoles = $this->getApplicationRoles($subject);
-        if ($token instanceof AnonymousToken) {
-            return in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles);
+        if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $appRoles)) {
+            return true;
         }
         $allowedRoles = $this->getRoleNamesFromToken($token);
         if (!!\array_intersect($allowedRoles, $appRoles)) {
+            return true;
+        }
+        // NOTE: Acl-assigned EDIT grant automatically implies VIEW grant
+        /** @see \Symfony\Component\Security\Acl\Permission\BasicPermissionMap::__construct */
+        if ($this->getOidGrant('VIEW', $token)) {
             return true;
         }
         foreach (array_diff($appRoles, $allowedRoles) as $grantingRole) {
@@ -73,10 +76,7 @@ class YamlApplicationVoter extends BaseApplicationVoter
                 return true;
             }
         }
-
-        // Legacy quirks mode: forward to EDIT grant on OID (=user has grant to EDIT all Applications globally)
-        $aclTarget = ObjectIdentity::fromDomainObject($subject);
-        return $this->accessDecisionManager->decide($token, array('EDIT'), $aclTarget);
+        return false;
     }
 
     /**
