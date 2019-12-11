@@ -304,12 +304,13 @@ class RepositoryController extends ApplicationControllerBase
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
+     * @ManagerRoute("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
      * @param Request $request
      * @param string $slug
      * @param string $instanceId
      * @return Response
      */
-    public function instanceAction(Request $request, $slug, $instanceId)
+    public function instanceAction(Request $request, $instanceId, $slug=null)
     {
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
