@@ -315,8 +315,7 @@ class RepositoryController extends ApplicationControllerBase
 
         return $this->render($factory->getFormTemplate($instance), array(
             "form" => $form->createView(),
-            "slug" => $slug,
-            "instance" => $instance,        // @todo: remove this. Instance is already bound to form
+            "instance" => $form->getData(),
         ));
     }
 
