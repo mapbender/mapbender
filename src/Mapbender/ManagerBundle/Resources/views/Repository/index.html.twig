@@ -24,10 +24,10 @@
         <div class="col2 box">
             <div class="buttonGroup">
               <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-              {% if source.id in reloadableIds and (is_granted('EDIT', oid) or is_granted('EDIT', source)) %}
+              {% if source.id in reloadableIds %}
               <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
               {% endif %}
-              {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
+              {% if is_granted('DELETE', oid) %}
                  <span class="iconRemove hover-highlight-effect"
                   title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                   data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"

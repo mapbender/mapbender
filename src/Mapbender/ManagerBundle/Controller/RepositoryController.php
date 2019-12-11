@@ -48,16 +48,21 @@ class RepositoryController extends ApplicationControllerBase
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $oid);
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
-        /** @var Source[] $allSources */
-        $allSources = $repository->findBy(array(), array('id' => 'ASC'));
+        /** @var Source[] $sources */
+        $sources = $repository->findBy(array(), array('id' => 'ASC'));
 
-        $sources = array();
         $reloadableIds = array();
-        $typeDirectory = $this->getTypeDirectory();
-        foreach ($allSources as $source) {
-            $sources[] = $source;
-            if ($typeDirectory->getRefreshSupport($source)) {
-                $reloadableIds[] = $source->getId();
+        // NOTE: direct object grants checks do not work because Symfony ACL cannot currently infer from e.g. concrete
+        // WmsSource to global grants assigned on abstract base class Source
+        // THE ONLY directly assigned grant on a concrete Source is 'OWNER' on newly loaded sources, assigned to the
+        // User that added the source to the system, but not editable in any way.
+        // => On listings ALWAYS check grants on oids for sources, nothing else works as expected
+        if ($this->isGranted('EDIT', $oid)) {
+            $typeDirectory = $this->getTypeDirectory();
+            foreach ($sources as $source) {
+                if ($typeDirectory->getRefreshSupport($source)) {
+                    $reloadableIds[] = $source->getId();
+                }
             }
         }
 
