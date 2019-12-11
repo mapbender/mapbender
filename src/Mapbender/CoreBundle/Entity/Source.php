@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
@@ -79,30 +78,6 @@ abstract class Source implements MutableHttpOriginInterface
      * @return ArrayCollection|SourceInstance[]
      */
     abstract public function getInstances();
-
-    /**
-     * Read-only informative pseudo-relation
-     *
-     * @return ArrayCollection|Application[]
-     */
-    public function getApplications()
-    {
-        $uniqueApplications = new ArrayCollection();
-        $applicationIds = array();
-        foreach ($this->getInstances() as $instance) {
-            /** @var SourceInstance $instance */
-            $application = $instance->getLayerset()->getApplication();
-            $applicationId = $application->getId();
-            if (empty($applicationIds[$applicationId])) {
-                $uniqueApplications->add($application);
-                $applicationIds[$applicationId] = $applicationId;
-            }
-        }
-        return $uniqueApplications->matching(Criteria::create()->orderBy(array(
-            'title' => Criteria::ASC,
-            'id' => Criteria::ASC,
-        )));
-    }
 
     /**
      * @return ArrayCollection|SourceItem[]
