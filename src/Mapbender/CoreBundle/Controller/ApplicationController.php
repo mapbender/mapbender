@@ -227,7 +227,6 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @todo: param sourceId is required => it should be part of the route
      * @todo: param layerName is required => it should be part of the route
-     * @todo: param slug is ignored; it should either go away, or be used to restrict possible instances to the Application's instances
      */
     public function metadataAction(Request $request, $slug)
     {
