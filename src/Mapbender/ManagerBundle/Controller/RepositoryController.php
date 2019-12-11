@@ -3,6 +3,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -206,14 +207,20 @@ class RepositoryController extends ApplicationControllerBase
 
         // update modification timestamp on affected applications
         $dtNow = new \DateTime('now');
-        $instances = $source->getInstances();
-        $iDesc = array();
-        foreach ($instances as $instance) {
-            $iDesc[] = get_class($instance) . "#{$instance->getId()}";
-            $layerset = $instance->getLayerset();
-            $application = $layerset->getApplication();
-            $em->persist($application);
-            $application->setUpdated($dtNow);
+        $affectedInstanceIds = array();
+        foreach ($source->getInstances() as $instance) {
+            $affectedInstanceIds[] = $instance->getId();
+        }
+        /** @ŧodo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedApplications) */
+        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
+            /** @var Application $application*/
+            foreach ($application->getSourceInstances() as $instance) {
+                if (\in_array($instance->getId(), $affectedInstanceIds)) {
+                    $em->persist($application);
+                    $application->setUpdated($dtNow);
+                    break;
+                }
+            }
         }
         $em->remove($source);
         $em->flush();
