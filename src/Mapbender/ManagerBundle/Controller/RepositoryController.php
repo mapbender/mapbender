@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -205,23 +206,7 @@ class RepositoryController extends ApplicationControllerBase
         $oid         = ObjectIdentity::fromDomainObject($source);
         $aclProvider->deleteAcl($oid);
 
-        // update modification timestamp on affected applications
-        $dtNow = new \DateTime('now');
-        $affectedInstanceIds = array();
-        foreach ($source->getInstances() as $instance) {
-            $affectedInstanceIds[] = $instance->getId();
-        }
-        /** @ŧodo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedApplications) */
-        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
-            /** @var Application $application*/
-            foreach ($application->getSourceInstances() as $instance) {
-                if (\in_array($instance->getId(), $affectedInstanceIds)) {
-                    $em->persist($application);
-                    $application->setUpdated($dtNow);
-                    break;
-                }
-            }
-        }
+        $this->updateRelatedApplicationsBySource($em, $source);
         $em->remove($source);
         $em->flush();
         $em->commit();
@@ -304,12 +289,15 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceAction(Request $request, $slug, $instanceId)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-
-        if (null === $instance) {
-            throw $this->createNotFoundException('Instance does not exist');
+        /** @var Application|null $application */
+        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$instance || ($application && !$application->getSourceInstances()->contains($instance))) {
+            throw $this->createNotFoundException();
         }
 
         $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
@@ -319,14 +307,7 @@ class RepositoryController extends ApplicationControllerBase
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($instance);
-            $layerSet = $instance->getLayerset();
-            if ($layerSet) {
-                $application = $layerSet->getApplication();
-                if ($application) {
-                    $application->setUpdated(new \DateTime('now'));
-                    $em->persist($application);
-                }
-            }
+            $this->updateRelatedApplicationsBySourceInstance($em, $instance);
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
@@ -338,7 +319,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render($factory->getFormTemplate($instance), array(
             "form" => $form->createView(),
             "slug" => $slug,
-            "instance" => $instance,
+            "instance" => $instance,        // @todo: remove this. Instance is already bound to form
         ));
     }
 
@@ -406,10 +387,13 @@ class RepositoryController extends ApplicationControllerBase
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $sourceInstance */
         $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-        if (!$sourceInstance) {
+        /** @var Application|null $application */
+        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$sourceInstance || ($application && !$application->getSourceInstances()->contains($sourceInstance))) {
             throw $this->createNotFoundException();
         }
-        $application = $sourceInstance->getLayerset()->getApplication();
         $wasEnabled = $sourceInstance->getEnabled();
         $newEnabled = $request->get('enabled') === 'true';
         $sourceInstance->setEnabled($newEnabled);
@@ -465,5 +449,41 @@ class RepositoryController extends ApplicationControllerBase
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);
+    }
+
+    protected function updateRelatedApplicationsBySource(EntityManagerInterface $em, Source $source)
+    {
+        $dtNow = new \DateTime('now');
+        $affectedInstanceIds = array();
+        foreach ($source->getInstances() as $instance) {
+            $affectedInstanceIds[] = $instance->getId();
+        }
+        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
+        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
+            /** @var Application $application*/
+            foreach ($application->getSourceInstances() as $instance) {
+                if (\in_array($instance->getId(), $affectedInstanceIds)) {
+                    $em->persist($application);
+                    $application->setUpdated($dtNow);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected function updateRelatedApplicationsBySourceInstance(EntityManagerInterface $em, SourceInstance $instance)
+    {
+        $dtNow = new \DateTime('now');
+        // @todo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedApplications)
+        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
+            /** @var Application $application*/
+            foreach ($application->getSourceInstances() as $applicationInstance) {
+                if ($applicationInstance->getId() == $instance->getId()) {
+                    $em->persist($application);
+                    $application->setUpdated($dtNow);
+                    break;
+                }
+            }
+        }
     }
 }
