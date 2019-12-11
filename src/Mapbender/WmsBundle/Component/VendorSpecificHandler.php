@@ -55,10 +55,11 @@ class VendorSpecificHandler
     }
 
     /**
-     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is
-     * a keyword for an method.
+     * Removes '$'-signs from given $value
+     *
      * @param string $value a string value
      * @return boolean true if a value is dynamic.
+     * @deprecated no more invocations; @todo remove on master branch
      */
     public function stripDynamic($value)
     {
@@ -205,7 +206,7 @@ class VendorSpecificHandler
         // them into a single string, comma-separated.
         // NOTE that this is different from a TYPE_VS_GROUP, where the property extracted from the group entities can be
         // configured freely.
-        if (is_array($attributeValue) || $attributeValue instanceof Collection) {
+        if (is_array($attributeValue) || (is_object($attributeValue) && ($attributeValue instanceof \Traversable))) {
             $groupIds = array();
             foreach ($attributeValue as $item) {
                 if ($item instanceof Group) {
