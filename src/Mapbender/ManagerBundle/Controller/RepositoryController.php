@@ -311,9 +311,6 @@ class RepositoryController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
-                "slug" => $slug,
-            ));
         }
 
         return $this->render($factory->getFormTemplate($instance), array(
