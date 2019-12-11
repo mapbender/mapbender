@@ -1,8 +1,7 @@
-{% set _applications = source.getApplications() %}
-{% set _count = _applications | length %}
+{% set _count = applications | length %}
 <p>{{ 'mb.manager.admin.source.embedded_in_applications' | transchoice(_count) }}{{ _count ? ':' : '.' }}</p>
 <ul class="list-default">
-{% for application in _applications %}
+{% for application in applications %}
     {% set _app_instances = application.getInstancesOfSource(source) %}
     <li>{%- set _linkToApp = is_granted('EDIT', application) -%}
         {%- if _linkToApp -%}
