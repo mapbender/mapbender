@@ -235,14 +235,16 @@ class ApplicationController extends ApplicationControllerBase
         if (!strlen($sourceId)) {
             throw new BadRequestHttpException();
         }
-        $instance = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        if (!$instance) {
+        // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
+        // @todo: give Yaml applications a proper object repository and make this work
+        $application = $this->requireApplication($slug);
+        $instance = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        if (!$instance || !$application) {
             throw new NotFoundHttpException();
         }
         /** @var SourceInstance $instance */
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+            $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
         $layerId = $request->query->get('layerId', null);

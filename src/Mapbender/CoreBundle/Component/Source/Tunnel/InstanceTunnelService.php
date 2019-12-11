@@ -152,6 +152,7 @@ class InstanceTunnelService
     public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
     {
         $sourceInstance = $instanceLayer->getSourceInstance();
+        // @todo reusable source instances: work around "missing" layerset => instance ownership
         $application = $sourceInstance->getLayerset()->getApplication();
         return $this->router->generate($this->legendTunnelRouteName, array(
             'slug' => $application->getSlug(),

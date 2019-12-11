@@ -292,7 +292,9 @@ class WmsSourceService extends SourceService
     {
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
-        if ($legendUrl) {
+        // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
+        // @todo: implement legend url generation for reusable instances
+        if ($legendUrl && $instanceLayer->getSourceInstance()->getLayerset()) {
             if ($this->useTunnel($instanceLayer->getSourceInstance())) {
                 // request via tunnel, see ApplicationController::instanceTunnelLegendAction
                 $tunnelService = $this->urlProcessor->getTunnelService();
