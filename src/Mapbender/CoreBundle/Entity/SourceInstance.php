@@ -30,8 +30,9 @@ abstract class SourceInstance
     protected $title;
 
     /**
+     * @var Layerset|null
      * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $layerset;
 
@@ -127,21 +128,17 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets the layerset
-     *
-     * @param  Layerset       $layerset Layerset
+     * @param Layerset|null $layerset
      * @return $this
      */
-    public function setLayerset(Layerset $layerset)
+    public function setLayerset(Layerset $layerset=null)
     {
         $this->layerset = $layerset;
-
         return $this;
     }
 
     /**
-     * Returns the layerset
-     * @return Layerset
+     * @return Layerset|null
      */
     public function getLayerset()
     {
