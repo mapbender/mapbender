@@ -50,11 +50,23 @@ class Layerset
     protected $instances;
 
     /**
+     * Reusable source instances: separate relation (via join table) to instances NOT owned by this Layerset
+     * @var SourceInstance[]|ArrayCollection
+     * @ORM\ManyToMany(targetEntity="SourceInstance", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\JoinTable(name="mb_core_layersets_sourceinstances",
+     *      joinColumns={@ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="instance_id", referencedColumnName="id", onDelete="CASCADE")}
+     *     )
+     */
+    protected $unownedInstances;
+
+    /**
      * Layerset constructor.
      */
     public function __construct()
     {
         $this->instances = new ArrayCollection();
+        $this->unownedInstances = new ArrayCollection();
     }
 
     /**
@@ -154,10 +166,18 @@ class Layerset
     /**
      * Get instances
      *
+     * @param bool $includeUnowned NOTE: cannot be true by default to avoid erroneous doctrine behaviour
      * @return \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]|Collection
      */
-    public function getInstances()
+    public function getInstances($includeUnowned = false)
     {
+        if ($includeUnowned) {
+            // @todo reusable source instances: find common weight sorting strategy for owned vs unowned instances
+            $owned = $this->instances->getValues();
+            $unowned = $this->getUnownedInstances()->getValues();
+            $combinedInstances = new ArrayCollection(array_merge($owned, $unowned));
+            return $combinedInstances;
+        }
         return $this->instances;
     }
 
@@ -173,6 +193,27 @@ class Layerset
             /** @var SourceInstance $instance */
             return $instance->getSource() === $source;
         });
+    }
+
+    /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getUnownedInstances()
+    {
+        return $this->unownedInstances;
+    }
+
+    public function addUnownedInstance(SourceInstance $instance)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Instance with assigned layerset cannot be added as unowned");
+        }
+        $this->unownedInstances->add($instance);
+    }
+
+    public function removeUnownedInstance(SourceInstance $instance)
+    {
+        $this->unownedInstances->removeElement($instance);
     }
 
     /**

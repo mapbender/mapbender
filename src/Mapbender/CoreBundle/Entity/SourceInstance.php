@@ -9,7 +9,7 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @author Karim Malhas
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository")
  * @ORM\Table(name="mb_core_sourceinstance")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
