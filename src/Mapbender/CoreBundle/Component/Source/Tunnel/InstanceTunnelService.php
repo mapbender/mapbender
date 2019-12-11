@@ -75,6 +75,7 @@ class InstanceTunnelService
      *
      * @param SourceInstance $instance
      * @return Endpoint
+     * @todo: needs application binding for reusable source instances
      */
     public function getEndpoint(SourceInstance $instance)
     {
@@ -90,6 +91,7 @@ class InstanceTunnelService
      *
      * @param SourceInstance $instance
      * @return Endpoint
+     * @todo: needs application binding for reusable source instances
      */
     public function makeEndpoint(SourceInstance $instance)
     {
