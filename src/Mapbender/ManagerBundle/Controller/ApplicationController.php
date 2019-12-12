@@ -524,7 +524,23 @@ class ApplicationController extends WelcomeController
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $allowed_sources,
+            'reusable_instances' => $this->getReusableInstances(),
         ));
+    }
+
+    /**
+     * @return SourceInstance[]
+     */
+    protected function getReusableInstances()
+    {
+        $repository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:SourceInstance');
+        $criteria = array(
+            'layerset' => null,
+        );
+        $order = array(
+            'title' => Criteria::ASC,
+        );
+        return $repository->findBy($criteria, $order);
     }
 
     /**
@@ -611,6 +627,33 @@ class ApplicationController extends WelcomeController
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $slug,
             "instanceId" => $newInstance->getId(),
+        ));
+    }
+
+    /**
+     * @ManagerRoute("/instance/{instance}/attach/{layerset}")
+     * @param Request $request
+     * @param Layerset $layerset
+     * @param SourceInstance $instance
+     * @return Response
+     */
+    public function attachreusableinstanceAction(Request $request, Layerset $layerset, SourceInstance $instance)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Keine zentral verwaltete Instanz");
+        }
+        $em = $this->getEntityManager();
+        $application = $layerset->getApplication();
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        $layerset->getUnownedInstances()->add($instance);
+        $em->persist($layerset);
+        // sanity
+        $instance->setLayerset(null);
+        $em->flush();
+        $this->addFlash('success', 'Die zentral verwaltete Instanz wurde der Applikation zugewiesen');
+        return $this->redirectToRoute("mapbender_manager_application_edit", array(
+            "slug" => $application->getSlug(),
         ));
     }
 
