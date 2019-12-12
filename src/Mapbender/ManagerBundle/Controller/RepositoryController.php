@@ -305,21 +305,25 @@ class RepositoryController extends ApplicationControllerBase
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      * @ManagerRoute("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
+     * @ManagerRoute("/instance/{instanceId}/application/{application}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
      * @param Request $request
-     * @param string $slug
+     * @param string|null $slug
      * @param string $instanceId
+     * @param Application|null $application
      * @return Response
      */
-    public function instanceAction(Request $request, $instanceId, $slug=null)
+    public function instanceAction(Request $request, $instanceId, $slug=null, Application $application=null)
     {
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-        /** @var Application|null $application */
-        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if (!$instance || ($application && !$application->getSourceInstances()->contains($instance))) {
+        if (!$application) {
+            /** @var Application|null $application */
+            $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+                'slug' => $slug,
+            ));
+        }
+        if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
         }
 
@@ -343,6 +347,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render($factory->getFormTemplate($instance), array(
             "form" => $form->createView(),
             "instance" => $form->getData(),
+            'application' => $application,
         ));
     }
 
