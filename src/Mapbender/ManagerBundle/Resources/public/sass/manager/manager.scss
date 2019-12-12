@@ -51,6 +51,17 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
+div.contentTitle {
+  // remove h1 margin, put it on the containing div instead
+  margin-bottom: 2rem;
+  > h1 {
+    margin: 0;
+  }
+  // @todo: allow regular paragraph text flow ... everywhere?
+  > p {
+    margin: 0.5em 0;
+  }
+}
 
 
 // ------------------------------------------------------------------------ PAGE
