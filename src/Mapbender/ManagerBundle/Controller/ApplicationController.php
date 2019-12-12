@@ -540,7 +540,18 @@ class ApplicationController extends WelcomeController
         $order = array(
             'title' => Criteria::ASC,
         );
-        return $repository->findBy($criteria, $order);
+        $valid = array();
+        // OOPS!
+        foreach ($repository->findBy($criteria, $order) as $instance) {
+            if ($instance instanceof \Mapbender\WmsBundle\Entity\WmsInstance) {
+                if ($instance->getRootlayer()) {
+                    $valid[] = $instance;
+                }
+            } else {
+                $valid[] = $instance;
+            }
+        }
+        return $valid;
     }
 
     /**
