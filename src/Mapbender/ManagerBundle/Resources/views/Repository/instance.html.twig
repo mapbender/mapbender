@@ -29,7 +29,7 @@
         <div class="clear">
             <div class="pull-right">
                 {%- if _is_reusable_instance -%}
-                <a class="btn btn-sm btn-info" href="#">Private Instanz in dieser Anwendung erzeugen</a>
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}">Private Instanz in dieser Anwendung erzeugen</a>
                 {%- else -%}
                 <a class="btn btn-sm btn-info" href="#">Zu geteilter Instanz umwandeln</a>
                 {%- endif -%}
@@ -48,8 +48,8 @@
           <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.actions.save"|trans}}" />
         {% if app.request.attributes.get('slug') %}
           <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
-        {% elseif application is defined %}
-            <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% elseif layerset is defined %}
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% endif %}
         </div>
         <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
@@ -80,8 +80,8 @@
       <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
         {% if app.request.attributes.get('slug') %}
           <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
-        {% elseif application is defined %}
-            <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% elseif layerset is defined %}
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% endif %}
     </div>
     {{ form_row(form._token) }}

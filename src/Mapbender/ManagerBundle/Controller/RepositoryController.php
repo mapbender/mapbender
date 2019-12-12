@@ -302,29 +302,38 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
+     * @todo: move to application controller
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      * @ManagerRoute("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
-     * @ManagerRoute("/instance/{instanceId}/application/{application}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
+     * @ManagerRoute("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
      * @param Request $request
      * @param string|null $slug
      * @param string $instanceId
-     * @param Application|null $application
+     * @param Layerset|null $layerset
      * @return Response
      */
-    public function instanceAction(Request $request, $instanceId, $slug=null, Application $application=null)
+    public function instanceAction(Request $request, $instanceId, $slug=null, Layerset $layerset=null)
     {
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-        if (!$application) {
+        if (!$layerset) {
             /** @var Application|null $application */
             $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
                 'slug' => $slug,
             ));
+        } else {
+            $application = $layerset->getApplication();
         }
         if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
+        }
+        if (!$layerset) {
+            $layerset = $application->getLayersets()->filter(function($layerset) use ($instance) {
+                /** @var Layerset $layerset */
+                return $layerset->getInstances(true)->contains($instance);
+            })->first();
         }
 
         $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
@@ -342,12 +351,13 @@ class RepositoryController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
+            return $this->redirectToRoute($request->attributes->get('_route'), $request->attributes->get('_route_params'));
         }
 
         return $this->render($factory->getFormTemplate($instance), array(
             "form" => $form->createView(),
             "instance" => $form->getData(),
-            'application' => $application,
+            'layerset' => $layerset,
         ));
     }
 
