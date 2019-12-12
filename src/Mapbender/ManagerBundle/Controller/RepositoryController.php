@@ -306,7 +306,7 @@ class RepositoryController extends ApplicationControllerBase
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      * @ManagerRoute("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
-     * @ManagerRoute("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
+     * @ManagerRoute("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance_scoped", requirements={"instanceId"="\d+"})
      * @param Request $request
      * @param string|null $slug
      * @param string $instanceId
@@ -319,17 +319,21 @@ class RepositoryController extends ApplicationControllerBase
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
         if (!$layerset) {
-            /** @var Application|null $application */
-            $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
-                'slug' => $slug,
-            ));
+            if ($slug) {
+                $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+                    'slug' => $slug,
+                ));
+            } else {
+                $application = null;
+            }
         } else {
             $application = $layerset->getApplication();
         }
+        /** @var Application|null $application */
         if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
         }
-        if (!$layerset) {
+        if (!$layerset && $application) {
             $layerset = $application->getLayersets()->filter(function($layerset) use ($instance) {
                 /** @var Layerset $layerset */
                 return $layerset->getInstances(true)->contains($instance);
@@ -358,6 +362,37 @@ class RepositoryController extends ApplicationControllerBase
             "form" => $form->createView(),
             "instance" => $form->getData(),
             'layerset' => $layerset,
+        ));
+    }
+
+    /**
+     * @ManagerRoute("/instance/{instance}/publicize")
+     * @param Request $request
+     * @param SourceInstance $instance
+     * @return Response
+     */
+    public function promotetosharedinstanceAction(Request $request, SourceInstance $instance)
+    {
+        if (!$instance->getLayerset()) {
+            throw new \LogicException("Instance is already shared");
+        }
+        $em = $this->getEntityManager();
+        $em->detach($instance);
+        $oldLayerset = $instance->getLayerset();
+        $em->detach($oldLayerset);
+        $instance->setLayerset(null);
+        $instanceCopy = $this->cloneInstance($em, $instance);
+        $em->detach($instanceCopy);
+        $em->persist($instanceCopy);
+        $em->persist($instanceCopy->getSource());
+        foreach ($instanceCopy->getLayers() as $instanceLayer) {
+            $em->detach($instanceLayer);
+            $em->persist($instanceLayer);
+        }
+        $em->flush();
+        $this->addFlash('success', "Die Instanz steht nun als zentral verwaltete Instanz zur Verfügung");
+        return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
+            'instanceId' => $instanceCopy->getId(),
         ));
     }
 

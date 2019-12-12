@@ -3,7 +3,6 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
@@ -15,7 +14,6 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
-use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\ImportHandler;
@@ -536,7 +534,7 @@ class ApplicationController extends WelcomeController
      * @param Layerset $layerset
      * @return Response
      */
-    public function sharedInstanceCopyAction(Request $request, SourceInstance $instance, Layerset $layerset)
+    public function sharedinstancecopyAction(Request $request, SourceInstance $instance, Layerset $layerset)
     {
         if ($instance->getLayerset()) {
             throw new \LogicException("Instance is already owned by a Layerset");
@@ -565,38 +563,6 @@ class ApplicationController extends WelcomeController
             "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
         ));
-    }
-
-    /**
-     * @todo: this belongs in a repository class
-     * @param EntityManagerInterface $em
-     * @param SourceInstance $instance
-     * @return SourceInstance
-     */
-    protected function cloneInstance(EntityManagerInterface $em, SourceInstance $instance)
-    {
-        // HACK: use export / import machinery to clone all related objects
-        /** @var ExportHandler $exporter */
-        $exporter = $this->container->get('mapbender.application_exporter.service');
-        /** @var ImportHandler $importer */
-        $importer = $this->container->get('mapbender.application_importer.service');
-
-        $originalSource = $instance->getSource();
-        $exportCollection = new ExportDataPool();
-        $exporter->handleObject($exportCollection, $instance);
-        $ident = array(
-            'id' => $instance->getId(),
-        );
-        /** @var SourceInstance $clonedInstance */
-        $clonedInstance = $importer->dehydrateExportObject($exportCollection, get_class($instance), $ident);
-        $clonedInstance->setId(null);
-        $clonedInstance->setSource($originalSource);
-        foreach ($clonedInstance->getLayers() as $clonedLayer) {
-            $clonedLayer->setSourceInstance($clonedInstance);
-            $clonedLayer->getSourceItem()->setSource($originalSource);
-        }
-        $originalSource->getInstances()->add($clonedInstance);
-        return $clonedInstance;
     }
 
     /**

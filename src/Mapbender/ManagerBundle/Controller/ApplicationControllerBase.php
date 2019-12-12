@@ -11,7 +11,11 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
+use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
+use Mapbender\ManagerBundle\Component\ExportHandler;
+use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -185,5 +189,37 @@ abstract class ApplicationControllerBase extends Controller
         /** @var ApplicationYAMLMapper $service */
         $service = $this->get('mapbender.application.yaml_entity_repository');
         return $service;
+    }
+
+    /**
+     * @todo: this belongs in a repository class
+     * @param EntityManagerInterface $em
+     * @param SourceInstance $instance
+     * @return SourceInstance
+     */
+    protected function cloneInstance(EntityManagerInterface $em, SourceInstance $instance)
+    {
+        // HACK: use export / import machinery to clone all related objects
+        /** @var ExportHandler $exporter */
+        $exporter = $this->container->get('mapbender.application_exporter.service');
+        /** @var ImportHandler $importer */
+        $importer = $this->container->get('mapbender.application_importer.service');
+
+        $originalSource = $instance->getSource();
+        $exportCollection = new ExportDataPool();
+        $exporter->handleObject($exportCollection, $instance);
+        $ident = array(
+            'id' => $instance->getId(),
+        );
+        /** @var SourceInstance $clonedInstance */
+        $clonedInstance = $importer->dehydrateExportObject($exportCollection, get_class($instance), $ident);
+        $clonedInstance->setId(null);
+        $clonedInstance->setSource($originalSource);
+        foreach ($clonedInstance->getLayers() as $clonedLayer) {
+            $clonedLayer->setSourceInstance($clonedInstance);
+            $clonedLayer->getSourceItem()->setSource($originalSource);
+        }
+        $originalSource->getInstances()->add($clonedInstance);
+        return $clonedInstance;
     }
 }
