@@ -1,5 +1,7 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
-{% set title = ('mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans) ~ ' ' ~ instance.source.id ~ '/'~ instance.id ~ ' - ' ~ instance.source.title  %}
+{%- set _h1_text = instance.source.title -%}
+{%- set _h1_subtext = ('mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
+{%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('components/jquery-ui/themes/base/jquery-ui.min.css') }}" type="text/javascript" />

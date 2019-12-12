@@ -18,7 +18,10 @@
 {% endblock %}
 
 {% block heading %}
-    <h1 class="contentTitle"><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ title | default('') }}</h1>
+    <div class="contentTitle">
+        <h1><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ _h1_text | default(title) }}<div class="clear"></div></h1>
+        <p>{{ _h1_subtext }}</p>
+    </div>
 {% endblock heading %}
 
 {% block manager_content %}
