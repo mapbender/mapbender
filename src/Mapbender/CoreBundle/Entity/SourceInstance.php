@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
@@ -24,7 +25,7 @@ abstract class SourceInstance
     protected $id;
 
     /**
-     * @var string $title The source title
+     * @var string $title
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
@@ -202,9 +203,14 @@ abstract class SourceInstance
     /**
      * Returns source
      *
-     * @return \Mapbender\WmsBundle\Entity\WmsSource|Source
+     * @return Source
      */
     abstract public function getSource();
+
+    /**
+     * @return SourceInstanceItem[]|Collection
+     */
+    abstract public function getLayers();
 
     /**
      *

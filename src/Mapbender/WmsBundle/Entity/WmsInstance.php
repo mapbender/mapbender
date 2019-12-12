@@ -25,7 +25,8 @@ class WmsInstance extends SourceInstance
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "refresh", "remove"})
+     * @var WmsInstanceLayer[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove", "refresh"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
@@ -167,9 +168,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Get layers
-     *
-     * @return \Mapbender\WmsBundle\Entity\WmsInstanceLayer[]|ArrayCollection
+     * @return WmsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
     {

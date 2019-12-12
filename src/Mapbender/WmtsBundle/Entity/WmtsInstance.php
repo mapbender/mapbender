@@ -84,8 +84,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Get layers
-     *
      * @return WmtsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
