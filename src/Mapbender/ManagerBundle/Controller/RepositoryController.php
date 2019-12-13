@@ -381,8 +381,9 @@ class RepositoryController extends ApplicationControllerBase
         $oldLayerset = $instance->getLayerset();
         $em->detach($oldLayerset);
         $instance->setLayerset(null);
-        $instanceCopy = $this->cloneInstance($em, $instance);
+        $instanceCopy = $this->cloneInstance($instance);
         $em->detach($instanceCopy);
+        $instanceCopy->setId(null);
         $em->persist($instanceCopy);
         $em->persist($instanceCopy->getSource());
         foreach ($instanceCopy->getLayers() as $instanceLayer) {

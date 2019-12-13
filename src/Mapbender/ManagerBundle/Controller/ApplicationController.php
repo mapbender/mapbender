@@ -524,34 +524,8 @@ class ApplicationController extends WelcomeController
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $allowed_sources,
-            'reusable_instances' => $this->getReusableInstances(),
+            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(),
         ));
-    }
-
-    /**
-     * @return SourceInstance[]
-     */
-    protected function getReusableInstances()
-    {
-        $repository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:SourceInstance');
-        $criteria = array(
-            'layerset' => null,
-        );
-        $order = array(
-            'title' => Criteria::ASC,
-        );
-        $valid = array();
-        // OOPS!
-        foreach ($repository->findBy($criteria, $order) as $instance) {
-            if ($instance instanceof \Mapbender\WmsBundle\Entity\WmsInstance) {
-                if ($instance->getRootlayer()) {
-                    $valid[] = $instance;
-                }
-            } else {
-                $valid[] = $instance;
-            }
-        }
-        return $valid;
     }
 
     /**
@@ -570,8 +544,7 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
         $em = $this->getEntityManager();
         $em->detach($instance);
-        # $instanceCopy = clone $instance;
-        $instanceCopy = $this->cloneInstance($em, $instance);
+        $instanceCopy = $this->cloneInstance($instance);
         $em->detach($instanceCopy);
         $em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);

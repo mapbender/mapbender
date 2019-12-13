@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
@@ -192,13 +193,16 @@ abstract class ApplicationControllerBase extends Controller
     }
 
     /**
-     * @todo: this belongs in a repository class
-     * @param EntityManagerInterface $em
+     * @todo: this belongs in a repository class; service injection into
+     *        repositories requires at least Symfony 3.3!
+     * @todo: implement __clone on instance entity (without the detach / persist interactions)
+     *        to eliminate service dependencies for cloning
      * @param SourceInstance $instance
      * @return SourceInstance
      */
-    protected function cloneInstance(EntityManagerInterface $em, SourceInstance $instance)
+    protected function cloneInstance(SourceInstance $instance)
     {
+        # $instanceCopy = clone $instance;
         // HACK: use export / import machinery to clone all related objects
         /** @var ExportHandler $exporter */
         $exporter = $this->container->get('mapbender.application_exporter.service');
@@ -216,10 +220,19 @@ abstract class ApplicationControllerBase extends Controller
         $clonedInstance->setId(null);
         $clonedInstance->setSource($originalSource);
         foreach ($clonedInstance->getLayers() as $clonedLayer) {
+            $clonedLayer->setId(null);
             $clonedLayer->setSourceInstance($clonedInstance);
             $clonedLayer->getSourceItem()->setSource($originalSource);
         }
         $originalSource->getInstances()->add($clonedInstance);
         return $clonedInstance;
+    }
+
+    /**
+     * @return SourceInstanceRepository
+     */
+    protected function getSourceInstanceRepository()
+    {
+        return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\SourceInstance');
     }
 }
