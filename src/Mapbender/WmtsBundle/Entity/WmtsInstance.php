@@ -49,6 +49,22 @@ class WmtsInstance extends SourceInstance
         $this->dimensions = array();
     }
 
+    public function __clone()
+    {
+        if ($this->id) {
+            $originalLayers = $this->getLayers()->getValues();
+            $this->setId(null);
+            $clonedLayers = array();
+            foreach ($originalLayers as $layer) {
+                /** @var WmtsInstanceLayer $layer */
+                $layerClone = clone $layer;
+                $layerClone->setSourceInstance($this);
+                $clonedLayers[] = $layerClone;
+            }
+            $this->setLayers(new ArrayCollection($clonedLayers));
+        }
+    }
+
     /**
      * Returns dimensions
      *

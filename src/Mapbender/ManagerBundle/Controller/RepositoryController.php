@@ -377,19 +377,9 @@ class RepositoryController extends ApplicationControllerBase
             throw new \LogicException("Instance is already shared");
         }
         $em = $this->getEntityManager();
-        $em->detach($instance);
-        $oldLayerset = $instance->getLayerset();
-        $em->detach($oldLayerset);
-        $instance->setLayerset(null);
-        $instanceCopy = $this->cloneInstance($instance);
-        $em->detach($instanceCopy);
-        $instanceCopy->setId(null);
+        $instanceCopy = clone $instance;
+        $instanceCopy->setLayerset(null);
         $em->persist($instanceCopy);
-        $em->persist($instanceCopy->getSource());
-        foreach ($instanceCopy->getLayers() as $instanceLayer) {
-            $em->detach($instanceLayer);
-            $em->persist($instanceLayer);
-        }
         $em->flush();
         $this->addFlash('success', "Die Instanz steht nun als zentral verwaltete Instanz zur Verfügung");
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(

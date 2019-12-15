@@ -202,6 +202,8 @@ abstract class ApplicationControllerBase extends Controller
      */
     protected function cloneInstance(SourceInstance $instance)
     {
+        $instanceCopy = clone $instance;
+        return $instanceCopy;
         # $instanceCopy = clone $instance;
         // HACK: use export / import machinery to clone all related objects
         /** @var ExportHandler $exporter */
@@ -215,6 +217,8 @@ abstract class ApplicationControllerBase extends Controller
         $ident = array(
             'id' => $instance->getId(),
         );
+        die(var_export($exportCollection->getAllGroupedByClassName(), true));
+
         /** @var SourceInstance $clonedInstance */
         $clonedInstance = $importer->dehydrateExportObject($exportCollection, get_class($instance), $ident);
         $clonedInstance->setId(null);

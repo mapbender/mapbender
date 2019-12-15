@@ -543,20 +543,13 @@ class ApplicationController extends WelcomeController
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $application);
         $em = $this->getEntityManager();
-        $em->detach($instance);
-        $instanceCopy = $this->cloneInstance($instance);
-        $em->detach($instanceCopy);
+        $instanceCopy = clone $instance;
         $em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
         $layerset->addInstance($instanceCopy);
-        $em->persist($instanceCopy->getSource());
         $em->persist($layerset);
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
-        foreach ($instanceCopy->getLayers() as $instanceLayer) {
-            $em->detach($instanceLayer);
-            $em->persist($instanceLayer);
-        }
         $em->flush();
         $this->addFlash('success', 'Eine nun wieder private Kopie der geteilten Instanz wurde der Applikation hinzugefügt');
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
