@@ -72,9 +72,7 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set layers
-     *
-     * @param array $layers
+     * @param WmtsInstanceLayer[]|ArrayCollection $layers
      * @return $this
      */
     public function setLayers($layers)
@@ -95,7 +93,7 @@ class WmtsInstance extends SourceInstance
      * Set opacity
      *
      * @param integer $opacity
-     * @return WmtsInstance
+     * @return $this
      */
     public function setOpacity($opacity)
     {
@@ -117,7 +115,7 @@ class WmtsInstance extends SourceInstance
      * Set proxy
      *
      * @param boolean $proxy
-     * @return WmtsInstance
+     * @return $this
      */
     public function setProxy($proxy)
     {
@@ -170,13 +168,11 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Remove layers
-     *
-     * @param WmtsInstanceLayer $layers
+     * @param WmtsInstanceLayer $layer
      */
-    public function removeLayer(WmtsInstanceLayer $layers)
+    public function removeLayer(WmtsInstanceLayer $layer)
     {
-        $this->layers->removeElement($layers);
+        $this->layers->removeElement($layer);
     }
 
     /**
