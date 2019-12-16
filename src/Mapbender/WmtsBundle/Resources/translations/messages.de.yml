@@ -37,8 +37,6 @@ mb:
             abstract: Abstract
             layerrefs: Layerrefs
         instance:
-          title:
-            instance: Instanz
           label:
             tilemartixset: TileMartixSet
             style: Style

@@ -22,8 +22,6 @@ mb:
             abstract: Abstract
             layerrefs: Layerrefs
         instance:
-          title:
-            instance: Instance
           label:
             tilemartixset: Tilemartixset
             style: Style

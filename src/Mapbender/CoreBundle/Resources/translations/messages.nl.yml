@@ -23,6 +23,11 @@ mb:
     layerset:
       singular: Lagenset
       plural: Lagensets
+    sourceinstance:
+      singular: Istantie
+      plural: Instanties
+      typed:
+        singular: '%type% instantie'
   states:
     active: actief
     inactive: inactief

@@ -1,4 +1,8 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
+{%- set _h1_text = instance.source.title -%}
+{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': instance.source.type})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
+{%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
+
 {% form_theme form _self %}
 {% block checkbox_row %}
     {% if form.parent and form.parent.parent and 'source_instance_layer_collection' in form.parent.parent.vars.block_prefixes %}

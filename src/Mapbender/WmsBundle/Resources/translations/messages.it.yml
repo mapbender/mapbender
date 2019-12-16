@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Attenzione: i calcoli per la scala sono soggetti a una limitata risoluzione in WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'istanza WMS'
           btn:
             save: Salva
             cancel: Cancella

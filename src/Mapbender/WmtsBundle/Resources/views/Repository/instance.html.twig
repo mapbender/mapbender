@@ -1,7 +1,4 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
-{%- set _h1_text = instance.source.title -%}
-{%- set _h1_subtext = form.vars.value.type ~ ' ' ~ ('mb.wmts.wmtsloader.repo.instance.title.instance' | trans) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
-{%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
 
 {% block form_layers %}
     <table id="instanceTable" class="table instanceTable">

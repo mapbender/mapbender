@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
         instance:
-          title:
-            wmsinstance: 'WMS Instância'
           btn:
             save: Guardar
             cancel: Cancelar
