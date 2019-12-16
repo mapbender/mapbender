@@ -1,3 +1,5 @@
+/* Backend styles include used by main backend and login */
+
 @import "modules/base";
 @import "modules/text";
 @import "modules/layout";
@@ -72,10 +74,6 @@ div.contentTitle {
 }
 .popupContainer,
 .page{
-  // Other .inputWrapper rule later doesn't catch popups and list filters
-  input.input {
-    background: #fff;
-  }
   position:relative;
   a {
     &:hover{
@@ -302,7 +300,6 @@ ul.dropdownList{
         input[type="email"],
         input[type="text"]{
           width: 100%;
-          background: #fff;
         }
       }
       select[multiple="multiple"]{
