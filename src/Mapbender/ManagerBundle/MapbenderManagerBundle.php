@@ -44,6 +44,9 @@ class MapbenderManagerBundle extends ManagerBundle
             ->addChildren(array(
                 MenuItem::create('mb.manager.managerbundle.add_source', 'mapbender_manager_repository_new')
                     ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'CREATE'),
+                MenuItem::create('mb.terms.sourceinstance.reusable.plural', 'mapbender_manager_sourceinstance_listreusable')
+                    /** @todo: more specific grants requirements? */
+                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
             ))
         ;
 
