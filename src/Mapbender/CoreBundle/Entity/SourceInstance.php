@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  */
-abstract class SourceInstance
+abstract class SourceInstance extends SourceInstanceAssignment
 {
     /**
      * @var integer $id
@@ -29,24 +29,6 @@ abstract class SourceInstance
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
-
-    /**
-     * @var Layerset|null
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $layerset;
-
-    /**
-     * @var integer $weight The sorting weight for display
-     * @ORM\Column(type="integer")
-     */
-    protected $weight;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $enabled = true;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -106,29 +88,6 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets a weight
-     *
-     * @param integer $weight
-     * @return $this
-     */
-    public function setWeight($weight)
-    {
-        $this->weight = $weight;
-
-        return $this;
-    }
-
-    /**
-     * Returns a weight
-     *
-     * @return integer
-     */
-    public function getWeight()
-    {
-        return $this->weight;
-    }
-
-    /**
      * @param Layerset|null $layerset
      * @return $this
      */
@@ -144,29 +103,6 @@ abstract class SourceInstance
     public function getLayerset()
     {
         return $this->layerset;
-    }
-
-    /**
-     * Sets an enabled
-     *
-     * @param  integer        $enabled
-     * @return SourceInstance SourceInstance
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * Returns an enabled
-     *
-     * @return integer
-     */
-    public function getEnabled()
-    {
-        return $this->enabled;
     }
 
     /**
