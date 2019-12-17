@@ -41,6 +41,12 @@ abstract class SourceInstance extends SourceInstanceAssignment
      */
     protected $source;
 
+
+    final public function getInstance()
+    {
+        return $this;
+    }
+
     /**
      * @return integer
      */

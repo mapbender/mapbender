@@ -30,6 +30,11 @@ abstract class SourceInstanceAssignment implements WeightSortedCollectionMember
     protected $enabled = true;
 
     /**
+     * @return SourceInstance
+     */
+    abstract public function getInstance();
+
+    /**
      * Sets a weight
      *
      * @param integer $weight

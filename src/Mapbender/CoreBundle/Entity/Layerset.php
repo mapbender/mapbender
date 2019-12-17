@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -50,15 +51,13 @@ class Layerset
     protected $instances;
 
     /**
-     * Reusable source instances: separate relation (via join table) to instances NOT owned by this Layerset
-     * @var SourceInstance[]|ArrayCollection
-     * @ORM\ManyToMany(targetEntity="SourceInstance", cascade={"remove"}, orphanRemoval=true)
-     * @ORM\JoinTable(name="mb_core_layersets_sourceinstances",
-     *      joinColumns={@ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="instance_id", referencedColumnName="id", onDelete="CASCADE")}
-     *     )
+     * Reusable source instance assignments
+     * Relation to actual SourceInstance goes via separate assignment entity that stores sorting weight and enabled state
+     * @var ReusableSourceInstanceAssignment[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="layerset", cascade={"remove", "persist"})
+     * @ORM\OrderBy({"weight"="ASC"})
      */
-    protected $unownedInstances;
+    protected $reusableInstanceAssignments;
 
     /**
      * Layerset constructor.
@@ -66,7 +65,7 @@ class Layerset
     public function __construct()
     {
         $this->instances = new ArrayCollection();
-        $this->unownedInstances = new ArrayCollection();
+        $this->reusableInstanceAssignments = new ArrayCollection();
     }
 
     /**
@@ -164,6 +163,14 @@ class Layerset
     }
 
     /**
+     * @return ReusableSourceInstanceAssignment[]|ArrayCollection
+     */
+    public function getReusableInstanceAssignments()
+    {
+        return $this->reusableInstanceAssignments;
+    }
+
+    /**
      * Get instances
      *
      * @param bool $includeUnowned NOTE: cannot be true by default to avoid erroneous doctrine behaviour
@@ -172,13 +179,39 @@ class Layerset
     public function getInstances($includeUnowned = false)
     {
         if ($includeUnowned) {
-            // @todo reusable source instances: find common weight sorting strategy for owned vs unowned instances
-            $owned = $this->instances->getValues();
-            $unowned = $this->getUnownedInstances()->getValues();
-            $combinedInstances = new ArrayCollection(array_merge($owned, $unowned));
-            return $combinedInstances;
+            return $this->getCombinedInstances();
+        } else {
+            return $this->instances;
         }
-        return $this->instances;
+    }
+
+    /**
+     * Get BOTH owned instances and assigned reusable instances in
+     * a single collection.
+     *
+     * @return SourceInstance[]|ArrayCollection
+     */
+    public function getCombinedInstances()
+    {
+        return $this->getCombinedInstanceAssignments()->map(function ($assignment) {
+            /** @var SourceInstanceAssignment $assignment */
+            return $assignment->getInstance();
+        });
+    }
+
+    /**
+     * Returns a list of source instance assignments, both directly owned and reusable.
+     *
+     * @return SourceInstanceAssignment[]|ArrayCollection
+     */
+    public function getCombinedInstanceAssignments()
+    {
+        $owned = $this->instances->getValues();
+        $unowned = $this->getReusableInstanceAssignments()->getValues();
+        $combined = new ArrayCollection(array_merge($owned, $unowned));
+        return $combined->matching(Criteria::create()->orderBy(array(
+            'weight' => Criteria::ASC
+        )));
     }
 
     /**
@@ -198,22 +231,12 @@ class Layerset
     /**
      * @return ArrayCollection|SourceInstance[]
      */
-    public function getUnownedInstances()
+    public function getAssignedReusableInstances()
     {
-        return $this->unownedInstances;
-    }
-
-    public function addUnownedInstance(SourceInstance $instance)
-    {
-        if ($instance->getLayerset()) {
-            throw new \LogicException("Instance with assigned layerset cannot be added as unowned");
-        }
-        $this->unownedInstances->add($instance);
-    }
-
-    public function removeUnownedInstance(SourceInstance $instance)
-    {
-        $this->unownedInstances->removeElement($instance);
+        return $this->getReusableInstanceAssignments()->map(function($assignment) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getInstance();
+        });
     }
 
     /**

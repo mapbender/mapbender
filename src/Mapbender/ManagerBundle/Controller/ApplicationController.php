@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -621,9 +622,15 @@ class ApplicationController extends WelcomeController
         }
         $em = $this->getEntityManager();
         $application = $layerset->getApplication();
+        $assignment = new ReusableSourceInstanceAssignment();
+        $assignment->setLayerset($layerset);
+        $assignment->setInstance($instance);
+        $assignment->setWeight(-1);
+        // @todo: sort full collection bound + reusable instances by weight
+        $layerset->getReusableInstanceAssignments()->add($assignment);
+        $em->persist($assignment);
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
-        $layerset->getUnownedInstances()->add($instance);
         $em->persist($layerset);
         // sanity
         $instance->setLayerset(null);

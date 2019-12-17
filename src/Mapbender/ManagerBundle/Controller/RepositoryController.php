@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -411,23 +412,37 @@ class RepositoryController extends ApplicationControllerBase
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
-        if (intval($newWeight) === $instance->getWeight() && $layersetId === $targetLayersetId) {
+        $layerset = $this->requireLayerset($layersetId);
+        $assignments = $layerset->getCombinedInstanceAssignments();
+        if ($assignments->contains($instance)) {
+            $sortTarget = $instance;
+        } else {
+            $sortTarget = $assignments->filter(function($assignment) use ($instance) {
+                /** @var SourceInstanceAssignment $assignment */
+                return $instance === $assignment->getInstance();
+            })->first();
+            if (!$sortTarget) {
+                throw new \LogicException("Instance not assigned to layerset");
+            }
+        }
+
+        if (intval($newWeight) === $sortTarget->getWeight() && $layersetId === $targetLayersetId) {
             return new JsonResponse(array(
                 'error' => '',      // why?
                 'result' => 'ok',   // why?
             ));
         }
 
-        $layerset = $this->requireLayerset($layersetId);
         if ($layersetId === $targetLayersetId) {
-            WeightSortedCollectionUtil::updateSingleWeight($layerset->getInstances(), $instance, $newWeight);
+            WeightSortedCollectionUtil::updateSingleWeight($assignments, $sortTarget, $newWeight);
         } else {
             $targetLayerset = $this->requireLayerset($targetLayersetId);
-            $targetCollection = $targetLayerset->getInstances();
-            WeightSortedCollectionUtil::moveBetweenCollections($targetCollection, $layerset->getInstances(), $instance, $newWeight);
-            $instance->setLayerset($targetLayerset);
+            $targetAssignments = $targetLayerset->getCombinedInstanceAssignments();
+            WeightSortedCollectionUtil::moveBetweenCollections($targetAssignments, $assignments, $sortTarget, $newWeight);
+            $sortTarget->setLayerset($targetLayerset);
             $em->persist($targetLayerset);
         }
+        $em->persist($sortTarget);
         $em->persist($layerset);
         $em->flush();
 
