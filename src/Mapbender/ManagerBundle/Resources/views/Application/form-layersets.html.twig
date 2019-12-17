@@ -28,8 +28,11 @@
             {%- with {
               'instance': assignment.instance,
               '_is_reusable': not assignment.instance.layerset,
-              '_sort_url': path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': assignment.instance.id})
               } -%}{%- with {
+              '_sort_url': _is_reusable
+                  ? path('mapbender_manager_repository_assignmentweight', {'layerset': layerset, 'assignmentId': assignment.id})
+                  : path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': assignment.instance.id})
+              ,
               '_edit_url': _is_reusable
                   ? path("mapbender_manager_repository_unowned_instance_scoped", {"instanceId": instance.id, "layerset": layerset })
                   : path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})
@@ -52,7 +55,7 @@
                   <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }}"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input data-url="{{ _toggle_url }}" {# really? data-id="{{ instance.id }}" #} type="checkbox" {% if assignment.enabled %} checked="checked" {% endif %}>
+                    <input data-url="{{ _toggle_url }}" type="checkbox" {% if assignment.enabled %} checked="checked" {% endif %}>
                   </div>
                   <a href="{{ _edit_url  }}" class="iconEdit hover-highlight-effect editInstance" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"></a>
                   {%- if _delete_url -%}
