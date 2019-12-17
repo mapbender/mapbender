@@ -8,6 +8,7 @@ use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -451,6 +452,31 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * @todo: move to application controller
      *
+     * @param Request $request
+     * @param Layerset $layerset
+     * @param SourceInstanceAssignment $assignment
+     * @return Response
+     */
+    protected function toggleInstanceEnabledCommon(Request $request, Layerset $layerset, SourceInstanceAssignment $assignment)
+    {
+        if (!$layerset->getApplication()) {
+            throw $this->createNotFoundException();
+        }
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
+        $em = $this->getEntityManager();
+        $newEnabled = $request->get('enabled') === 'true';
+        $assignment->setEnabled($newEnabled);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($assignment);
+        $em->flush();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @todo: move to application controller
+     *
      * @ManagerRoute("/application/layerset/{layerset}/instance-enable/{instanceId}", methods={"POST"})
      * @param Request $request
      * @param Layerset $layerset
@@ -459,28 +485,32 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceEnabledAction(Request $request, Layerset $layerset, $instanceId)
     {
-        if (!$layerset->getApplication()) {
-            throw $this->createNotFoundException();
-        }
-        $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
         $em = $this->getEntityManager();
-        if (!$layerset || !$layerset->getApplication()) {
-            throw $this->createNotFoundException();
-        }
-
         /** @var SourceInstance|null $sourceInstance */
         $sourceInstance = $em->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$sourceInstance || !$layerset->getInstances()->contains($sourceInstance)) {
             throw $this->createNotFoundException();
         }
-        $newEnabled = $request->get('enabled') === 'true';
-        $sourceInstance->setEnabled($newEnabled);
-        $application->setUpdated(new \DateTime('now'));
-        $em->persist($application);
-        $em->persist($sourceInstance);
-        $em->flush();
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return $this->toggleInstanceEnabledCommon($request, $layerset, $sourceInstance);
+    }
+
+    /**
+     * @todo: move to application controller
+     *
+     * @ManagerRoute("/application/reusable-instance-enable/{assignmentId}", methods={"POST"})
+     * @param Request $request
+     * @param string $assignmentId
+     * @return Response
+     */
+    public function instanceassignmentenabledAction(Request $request, $assignmentId)
+    {
+        /** @var ReusableSourceInstanceAssignment|null $assignment */
+        $assignment = $this->getEntityManager()->getRepository('Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment')->find($assignmentId);
+        if (!$assignment || !$assignment->getLayerset()) {
+            throw $this->createNotFoundException();
+        }
+        $layerset = $assignment->getLayerset();
+        return $this->toggleInstanceEnabledCommon($request, $layerset, $assignment);
     }
 
     /**
