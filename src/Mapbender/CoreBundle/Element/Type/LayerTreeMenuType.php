@@ -11,7 +11,7 @@ class LayerTreeMenuType extends AbstractType
 {
     protected $exposedChoices = array();
 
-    public function __construct($legacyDummy)
+    public function __construct($legacyDummy = null)
     {
         $this->exposedChoices = array(
             "Remove layer" => "layerremove",
@@ -21,7 +21,6 @@ class LayerTreeMenuType extends AbstractType
             "Dimension" => "dimension",
         );
     }
-
 
     /**
      * @inheritdoc
