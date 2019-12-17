@@ -17,15 +17,11 @@ interface ContainingKeyword
     public function getId();
 
     /**
-     * Sets keywords
-     *
-     * @param ArrayCollection $keywords collections of keywords
+     * @param ArrayCollection $keywords
      */
     public function setKeywords(ArrayCollection $keywords);
 
     /**
-     * Returns keywords.
-     *
      * @return ArrayCollection|Keyword[]
      */
     public function getKeywords();

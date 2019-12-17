@@ -528,8 +528,8 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @internal
-     * @param WmsInstance $instance source
-     * @param WmsLayerSource $layerSource also the source, purpose unknown
+     * @param WmsInstance $instance
+     * @param WmsLayerSource $layerSource
      * @param int $priority
      */
     public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, $priority = 0)

@@ -78,9 +78,8 @@ class Theme
     }
 
     /**
-     * Sets a wmts source
-     * @param \Mapbender\WmtsBundle\Entity\WmtsSource $wmtssource
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @param WmtsSource $wmtssource
+     * @return Theme
      */
     public function setSource(WmtsSource $wmtssource)
     {
@@ -89,8 +88,7 @@ class Theme
     }
 
     /**
-     * Gets a wmts source
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return Theme
      */
     public function getSource()
     {
@@ -107,9 +105,8 @@ class Theme
     }
 
     /**
-     * Set identifier
      * @param string $identifier
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function setIdentifier($identifier)
     {
@@ -127,9 +124,8 @@ class Theme
     }
 
     /**
-     * Set title
      * @param string $title
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -149,7 +145,7 @@ class Theme
     /**
      * Set abstract
      * @param string $abstract
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function setAbstract($abstract)
     {
@@ -158,8 +154,7 @@ class Theme
     }
 
     /**
-     * Get layerref
-     * @return array layerrefs
+     * @return array
      */
     public function getLayerRefs()
     {
@@ -167,9 +162,8 @@ class Theme
     }
 
     /**
-     * Set layerrefs
      * @param array $layerrefs
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function setLayerRefs($layerrefs)
     {
@@ -178,9 +172,8 @@ class Theme
     }
 
     /**
-     * Add layerref
      * @param string $layerref
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function addLayerRef($layerref)
     {
@@ -189,9 +182,8 @@ class Theme
     }
 
     /**
-     * Set parent.
-     * @param \Mapbender\WmtsBundle\Entity\Theme $parent
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @param Theme|null $parent
+     * @return $this
      */
     public function setParent(Theme $parent = NULL)
     {
@@ -200,8 +192,7 @@ class Theme
     }
 
     /**
-     * Get parent
-     * @return \Mapbender\WmtsBundle\Entity\Theme|null
+     * @return Theme|null
      */
     public function getParent()
     {
@@ -209,9 +200,8 @@ class Theme
     }
 
     /**
-     * Set themes
      * @param ArrayCollection $themes
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function setThemes(ArrayCollection $themes)
     {
@@ -220,9 +210,8 @@ class Theme
     }
 
     /**
-     * Add a theme
      * @param Theme $theme
-     * @return \Mapbender\WmtsBundle\Entity\Theme
+     * @return $this
      */
     public function addTheme($theme)
     {
@@ -231,8 +220,7 @@ class Theme
     }
 
     /**
-     * Get themes
-     * @return ArrayCollection
+     * @return Theme[]|ArrayCollection
      */
     public function getThemes()
     {

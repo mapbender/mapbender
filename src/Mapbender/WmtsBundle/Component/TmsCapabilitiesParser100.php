@@ -105,6 +105,7 @@ class TmsCapabilitiesParser100
     /**
      * Gets a capabilities parser
      *
+     * @param mixed[] $proxy_config
      * @param \DOMDocument $doc the GetCapabilities document
      * @return static
      * @throws NotSupportedVersionException if a service version is not supported

@@ -55,8 +55,8 @@ class ApplicationController extends ApplicationControllerBase
      *
      * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
      * @param Request $request
-     * @param string $slug Application slug name
-     * @param string $type Asset type
+     * @param string $slug of Application
+     * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
     public function assetsAction(Request $request, $slug, $type)

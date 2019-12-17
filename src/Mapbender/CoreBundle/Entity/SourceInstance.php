@@ -54,8 +54,7 @@ abstract class SourceInstance
     protected $basesource = false;
 
     /**
-     *
-     * @var Source a source
+     * @var Source
      */
     protected $source;
 
