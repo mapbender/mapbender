@@ -370,10 +370,7 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
         if (intval($newWeight) === $instance->getWeight() && $layersetId === $targetLayersetId) {
-            return new JsonResponse(array(
-                'error' => '',      // why?
-                'result' => 'ok',   // why?
-            ));
+            return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
         }
 
         $layerset = $this->requireLayerset($layersetId);
@@ -389,10 +386,7 @@ class RepositoryController extends ApplicationControllerBase
         $em->persist($layerset);
         $em->flush();
 
-        return new JsonResponse(array(
-            'error' => '',      // why?
-            'result' => 'ok',   // why?
-        ));
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
     /**
@@ -423,16 +417,7 @@ class RepositoryController extends ApplicationControllerBase
         $em->persist($application);
         $em->persist($sourceInstance);
         $em->flush();
-        return new JsonResponse(array(
-            'success' => array(         // why?
-                "id" => $sourceInstance->getId(), // why?
-                "type" => "instance",   // why?
-                "enabled" => array(
-                    'before' => $wasEnabled,
-                    'after' => $newEnabled,
-                ),
-            ),
-        ));
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
