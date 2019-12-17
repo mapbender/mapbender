@@ -393,23 +393,22 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * @todo: move to application controller
      *
-     * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}", methods={"POST"})
+     * @ManagerRoute("/application/layerset/{layerset}/instance-enable/{instanceId}", methods={"POST"})
      * @param Request $request
-     * @param string $slug
-     * @param string $layersetId
+     * @param Layerset $layerset
      * @param string $instanceId
      * @return Response
      */
-    public function instanceEnabledAction(Request $request, $slug, $layersetId, $instanceId)
+    public function instanceEnabledAction(Request $request, Layerset $layerset, $instanceId)
     {
+        if (!$layerset->getApplication()) {
+            throw $this->createNotFoundException();
+        }
+        $application = $layerset->getApplication();
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $sourceInstance */
-        $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-        /** @var Application|null $application */
-        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if (!$sourceInstance || ($application && !$application->getSourceInstances()->contains($sourceInstance))) {
+        $sourceInstance = $em->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        if (!$sourceInstance || !$layerset->getInstances()->contains($sourceInstance)) {
             throw $this->createNotFoundException();
         }
         $newEnabled = $request->get('enabled') === 'true';
