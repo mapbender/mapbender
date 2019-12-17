@@ -465,6 +465,10 @@ class RepositoryController extends ApplicationControllerBase
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
         $em = $this->getEntityManager();
+        if (!$layerset || !$layerset->getApplication()) {
+            throw $this->createNotFoundException();
+        }
+
         /** @var SourceInstance|null $sourceInstance */
         $sourceInstance = $em->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$sourceInstance || !$layerset->getInstances()->contains($sourceInstance)) {
