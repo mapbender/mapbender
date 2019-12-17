@@ -386,14 +386,6 @@ $(function() {
                     data: {
                         'id': $(self).attr('data-id'),
                         'enabled': $(self).is(":checked")
-                    },
-                    success: function(data) {
-                        if (data.success) {
-                            if (data.success.enabled.after !== $(self).is(":checked"))
-                                alert("Cannot be changed!");
-                        } else if (data.error) {
-                            alert(data.error);
-                        }
                     }
                 });
             });
