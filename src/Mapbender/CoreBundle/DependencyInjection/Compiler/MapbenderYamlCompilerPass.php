@@ -34,7 +34,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * @param ContainerBuilder $container Container
+     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {

@@ -499,8 +499,8 @@ class ApplicationController extends WelcomeController
     /**
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list", methods={"GET"})
      *
-     * @param string  $slug Application slug
-     * @param int     $layersetId Layer set ID
+     * @param string $slug of Application
+     * @param int $layersetId
      * @return Response
      */
     public function listSourcesAction($slug, $layersetId)
@@ -564,9 +564,9 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add", methods={"GET"})
      *
      * @param Request $request
-     * @param string  $slug Application slug
-     * @param int     $layersetId Layer set ID
-     * @param int     $sourceId Layer set source ID
+     * @param string $slug of Application
+     * @param int $layersetId
+     * @param int $sourceId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)

@@ -78,7 +78,7 @@ abstract class SourceInstanceItem
     }
 
     /**
-     * @param SourceItem $sourceItem the source item
+     * @param SourceItem $sourceItem
      * @return $this
      */
     public function setSourceItem(SourceItem $sourceItem)

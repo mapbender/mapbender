@@ -152,7 +152,7 @@ class Layerset
     /**
      * Set instances
      *
-     * @param Collection $instances Collection of the SourceInstances
+     * @param Collection $instances
      * @return $this
      */
     public function setInstances($instances)
@@ -174,7 +174,7 @@ class Layerset
      * Get instances
      *
      * @param bool $includeUnowned NOTE: cannot be true by default to avoid erroneous doctrine behaviour
-     * @return \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]|Collection
+     * @return SourceInstance[]|Collection
      */
     public function getInstances($includeUnowned = false)
     {

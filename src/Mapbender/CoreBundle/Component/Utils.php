@@ -27,7 +27,7 @@ class Utils
     /**
      * Generats an URL from base url and GET parameters
      *
-     * @param string $baseUrl A base URL
+     * @param string $baseUrl
      * @param string $parameters GET Parameters as array or as string
      * @return string
      */
