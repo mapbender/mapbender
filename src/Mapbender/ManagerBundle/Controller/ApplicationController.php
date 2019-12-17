@@ -24,6 +24,7 @@ use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -678,6 +679,39 @@ class ApplicationController extends WelcomeController
         $em->flush();
         $this->addFlash('success', 'Your source instance has been deleted');
         return new Response();  // ???
+    }
+
+    /**
+     * Remove a reusable source instance assigment
+     *
+     * @ManagerRoute("/layerset/{layerset}/instance-assignment/{assignmentId}/detach", methods={"POST"})
+     * @param Layerset $layerset
+     * @param string $assignmentId
+     * @return Response
+     */
+    public function detachinstanceAction(Layerset $layerset, $assignmentId)
+    {
+        $application = $layerset->getApplication();
+        $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getId() == $assignmentId;
+        })->first();
+        if (!$assignment || !$application) {
+            throw $this->createNotFoundException();
+        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $layerset->getReusableInstanceAssignments()->removeElement($assignment);
+        $em->remove($assignment);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($layerset);
+        $em->flush();
+        $this->addFlash('success', 'Your reusable source instance assignment has been deleted');
+        $params = array(
+            'slug' => $application->getSlug(),
+        );
+        return $this->redirectToRoute('mapbender_manager_application_edit', $params, Response::HTTP_SEE_OTHER);
     }
 
     /**

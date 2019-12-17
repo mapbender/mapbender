@@ -35,7 +35,7 @@
                   : path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})
                   ,
               '_delete_url': _is_reusable
-                  ? null
+                  ? path("mapbender_manager_application_detachinstance", {'layerset': layerset, 'assignmentId': assignment.id})
                   : path("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id})
               ,
               '_toggle_url': _is_reusable
