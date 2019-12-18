@@ -50,6 +50,9 @@ you will not be impacted at all.
 
 If these packages are not installed correctly, all Application and backend CSS compilation will fail (completely unstyled HTML pages).
 
+The `wheregroup/doctrine-dbal-shims` dependency is highly recommended, but functionally optional. If not installed, you will continue to experience errors when attempting to `doctrine:schema:update` on
+PostgreSQL 10 connections, as before.
+
 #### Dropped dependencies
 The legacy Joii library is no longer required nor provided by Mapbender and will not be reintroduced.
 If you expect Joii usages in custom JavaScript code, you will have to readd the dependency on the project level:
