@@ -55,8 +55,8 @@ class ApplicationController extends ApplicationControllerBase
      *
      * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
      * @param Request $request
-     * @param string $slug Application slug name
-     * @param string $type Asset type
+     * @param string $slug of Application
+     * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
     public function assetsAction(Request $request, $slug, $type)
@@ -227,7 +227,6 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @todo: param sourceId is required => it should be part of the route
      * @todo: param layerName is required => it should be part of the route
-     * @todo: param slug is ignored; it should either go away, or be used to restrict possible instances to the Application's instances
      */
     public function metadataAction(Request $request, $slug)
     {
@@ -235,14 +234,16 @@ class ApplicationController extends ApplicationControllerBase
         if (!strlen($sourceId)) {
             throw new BadRequestHttpException();
         }
-        $instance = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        if (!$instance) {
+        // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
+        // @todo: give Yaml applications a proper object repository and make this work
+        $application = $this->requireApplication($slug);
+        $instance = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        if (!$instance || !$application) {
             throw new NotFoundHttpException();
         }
         /** @var SourceInstance $instance */
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+            $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
         $layerId = $request->query->get('layerId', null);

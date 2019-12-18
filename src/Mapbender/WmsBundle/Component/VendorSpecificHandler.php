@@ -23,22 +23,43 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class VendorSpecificHandler
 {
     /**
-     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is
-     * a keyword for an method.
-     * @param string $value a string value
+     * Scans the given $input string for a dynamic part. A "dynamic part" is an alphabetic character
+     * sequence enclosed by a pair of '$' characters. This part is later substituted with (most
+     * commonly) a user or group specific value.
+     *
+     * The first "dynamic part", if found, is returned INCLUDING the surrounding '$' characters.
+     *
+     * @param string $input
+     * @return string|null
+     */
+    public function findDynamicValuePortion($input)
+    {
+        $matches = array();
+        if (\preg_match('#\$[a-z]+\$#i', $input, $matches)) {
+            return $matches[0];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Checks if a value contains dynamic parts. A "dynamic part" is an alphabetic character sequence
+     * enclosed by a pair of '$' characters.
+     *
+     * @param string $value
      * @return boolean true if a value is dynamic.
      */
     public function isValueDynamic($value)
     {
-        $length = strlen($value);
-        return $length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1;
+        return !!$this->findDynamicValuePortion($value);
     }
 
     /**
-     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is
-     * a keyword for an method.
+     * Removes '$'-signs from given $value
+     *
      * @param string $value a string value
      * @return boolean true if a value is dynamic.
+     * @deprecated no more invocations; @todo remove on master branch
      */
     public function stripDynamic($value)
     {
@@ -150,19 +171,27 @@ class VendorSpecificHandler
     public function getVendorSpecificValue(VendorSpecific $vs, $object)
     {
         $value = $vs->getDefault();
-        if ($this->isValueDynamic($value) && $vs->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE) {
-            return $this->extractDynamicReference($vs, $object, trim($value, '$'));
-        } else {
-            return $value ?: null;
+        if ($vs->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE) {
+            while ($dynamicPart = $this->findDynamicValuePortion($value)) {
+                $substitution = $this->extractDynamicReference($vs, $object, trim($dynamicPart, '$'));
+                $value = \str_replace($dynamicPart, $substitution, $value);
+            }
         }
+        return $value ?: null;
     }
 
+    /**
+     * @param VendorSpecific $vs
+     * @param object $object
+     * @param string $attributeName
+     * @return string|null
+     */
     protected function extractDynamicReference(VendorSpecific $vs, $object, $attributeName)
     {
         if (!$object || !is_object($object)) {
             return null;
         }
-        if ($vs->getVstype() === VendorSpecific::TYPE_VS_GROUP && !$object instanceof Group) {
+        if ($vs->getVstype() === VendorSpecific::TYPE_VS_GROUP && !($object instanceof Group)) {
             $values = array();
             if ($object instanceof \FOM\UserBundle\Entity\User) {
                 $groups = $object->getGroups();
@@ -177,7 +206,7 @@ class VendorSpecificHandler
         // them into a single string, comma-separated.
         // NOTE that this is different from a TYPE_VS_GROUP, where the property extracted from the group entities can be
         // configured freely.
-        if (is_array($attributeValue) || $attributeValue instanceof Collection) {
+        if (is_array($attributeValue) || (is_object($attributeValue) && ($attributeValue instanceof \Traversable))) {
             $groupIds = array();
             foreach ($attributeValue as $item) {
                 if ($item instanceof Group) {

@@ -18,13 +18,13 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 class WmtsInstanceLayer extends SourceInstanceItem
 {
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"persist", "refresh"})
      * @ORM\JoinColumn(name="wmtsinstance", referencedColumnName="id")
      */
     protected $sourceInstance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"persist", "refresh"})
      * @ORM\JoinColumn(name="wmtslayersource", referencedColumnName="id")
      */
     protected $sourceItem;

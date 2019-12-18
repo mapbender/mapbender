@@ -22,9 +22,32 @@ $(function () {
             }
         });
     }
+    function updateValueDisplay(wrapper) {
+        var $select = $('select', wrapper).first();
+        var $valueDisplay = $('>.dropdownValue', wrapper);
+        var $option = $('option:selected', $select).first();
+        $valueDisplay.text($option.text());
+    }
+    function installFormEvents(form) {
+        form.addEventListener('reset', function() {
+            $('.dropdown > .dropdownValue', form).each(function() {
+                var $wrapper = $(this).parent('.dropdown');
+                if ($('select', $wrapper).length) {
+                    fixOptions($wrapper);
+                    updateValueDisplay($wrapper);
+                }
+            });
+        });
+    }
+
     function initDropdown() {
         fixOptions(this);
         var $select = $('select', this);
+        var $form = $select.closest('form');
+        if ($form.length && !$form.data('mb-dropdown-events-installed')) {
+            installFormEvents($form.get(0));
+            $form.data('mb-dropdown-events-installed', true);
+        }
 
         var dropdownList = $(".dropdownList", this);
         if (dropdownList.children().length === 0) {
@@ -36,7 +59,7 @@ $(function () {
                 dropdownList.append(node);
             });
         }
-        $(".dropdownValue", this).text($('option:selected', $select).text());
+        updateValueDisplay(this);
     }
     // init dropdown list --------------------------------------------------------------------
 
@@ -68,6 +91,9 @@ $(function () {
     }
     $('.dropdown').each(function () {
         initDropdown.call(this);
+    });
+    $(document).on('change', '.dropdown > select.hiddenDropdown', function() {
+        updateValueDisplay($(this).parent('.dropdown'));
     });
     window.initDropdown = initDropdown;
     $(document).on("click", ".dropdown", toggleList);

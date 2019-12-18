@@ -373,7 +373,13 @@
     {% if label_attr.class is not defined or not (' labelCheck ' in (' '~label_attr.class~' ') or ' labelInput ' in (' '~label_attr.class~' ')) %}
       {% set label_attr = label_attr|merge({'class': ((label_attr.class | default('')) ~ ' ' ~_labelClass)|trim}) %}
     {% endif %}
-    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
+    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+    {%- with { '_labeltext': label|trans({}, translation_domain)} -%}
+    {%- with { '_labeltextucfirst':  (_labeltext | slice(0, 1) | capitalize) ~ (_labeltext | slice(1) )} -%}
+    {{ _labeltextucfirst }}
+    {%- endwith -%}
+    {%- endwith -%}
+    {%- if required -%}<span class="required">*</span>{%- endif -%}</label>
   {% endspaceless %}
 {% endblock form_label %}
 

@@ -253,7 +253,7 @@ class Element
     /**
      * Get application
      *
-     * @return \Mapbender\CoreBundle\Entity\Application
+     * @return Application
      */
     public function getApplication()
     {

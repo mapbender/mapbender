@@ -50,7 +50,7 @@ class ArrayUtil
      * @deprecated THIS MODIFIES THE ARRAY BY WRITING THE KEY INTO THE KEY NOT THE VALUE YOU HAVE BEEN WARNED
      * @internal
      *
-     * @param array $arr array
+     * @param array $arr
      * @param string $key array key to check for existens
      * @param null  $value default value if key doesn't exists
      * @return mixed new value

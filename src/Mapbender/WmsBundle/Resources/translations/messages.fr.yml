@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
-          title:
-            wmsinstance: 'Instance WMS'
           btn:
             save: Sauvegarder
             cancel: Annuler

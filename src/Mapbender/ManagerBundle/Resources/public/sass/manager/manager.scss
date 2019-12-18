@@ -1,3 +1,5 @@
+/* Backend styles include used by main backend and login */
+
 @import "modules/base";
 @import "modules/text";
 @import "modules/layout";
@@ -51,6 +53,17 @@ $pageWidth: $contentPaneWidth + $navWidth;
   }
 }
 
+div.contentTitle {
+  // remove h1 margin, put it on the containing div instead
+  margin-bottom: 2rem;
+  > h1 {
+    margin: 0;
+  }
+  // @todo: allow regular paragraph text flow ... everywhere?
+  > p {
+    margin: 0.5em 0;
+  }
+}
 
 
 // ------------------------------------------------------------------------ PAGE
@@ -61,10 +74,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
 }
 .popupContainer,
 .page{
-  // Other .inputWrapper rule later doesn't catch popups and list filters
-  input.input {
-    background: #fff;
-  }
   position:relative;
   a {
     &:hover{
@@ -291,7 +300,6 @@ ul.dropdownList{
         input[type="email"],
         input[type="text"]{
           width: 100%;
-          background: #fff;
         }
       }
       select[multiple="multiple"]{

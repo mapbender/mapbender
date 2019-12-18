@@ -47,8 +47,8 @@ class Application
     protected $entity;
 
     /**
-     * @param ContainerInterface $container The container
-     * @param Entity             $entity    The configuration entity
+     * @param ContainerInterface $container
+     * @param Entity $entity
      */
     public function __construct(ContainerInterface $container, Entity $entity)
     {
@@ -184,7 +184,7 @@ class Application
      * NOTE: this has nothing to with applications. Some legacy usages passed in an application
      * slug as a second argument, but it was only ever evaluated as a boolean.
      *
-     * @param ContainerInterface $container Container
+     * @param ContainerInterface $container
      * @param bool               $webRelative
      * @return string the path to uploads dir or null.
      * @deprecated use the uploads_manager service
@@ -207,8 +207,8 @@ class Application
     /**
      * Returns the web-relative path to the application's uploads directory.
      *
-     * @param ContainerInterface $container Container
-     * @param string             $slug      application's slug
+     * @param ContainerInterface $container
+     * @param string $slug of Application
      * @return boolean true if the application's directory already existed or has just been successfully created
      * @deprecated use the uploads_manager service
      */
@@ -226,7 +226,7 @@ class Application
     /**
      * Returns an url to application's public directory.
      *
-     * @param ContainerInterface $container Container
+     * @param ContainerInterface $container
      * @param string             $slug      application's slug
      * @return string a url to wmc directory or to file with "$filename"
      */
@@ -238,7 +238,7 @@ class Application
     /**
      * Returns an url to public "uploads" directory.
      *
-     * @param ContainerInterface $container Container
+     * @param ContainerInterface $container
      * @return string an url to public "uploads" directory
      */
     public static function getUploadsUrl($container)
@@ -250,7 +250,7 @@ class Application
     /**
      * Returns a base url.
      *
-     * @param ContainerInterface $container Container
+     * @param ContainerInterface $container
      * @return string a base url
      */
     public static function getBaseUrl($container)

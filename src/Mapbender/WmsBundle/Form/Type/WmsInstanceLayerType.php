@@ -68,23 +68,23 @@ class WmsInstanceLayerType extends AbstractType
 
         $view['toggle']->vars['disabled'] = !$hasSubLayers;
         $view['allowtoggle']->vars['disabled'] = !$hasSubLayers;
-        if (!$hasSubLayers) {
+        if (!$hasSubLayers && !$form->isSubmitted()) {
             $form['toggle']->setData(false);
             $form['allowtoggle']->setData(false);
         }
 
-        if ($layer) {
+        if ($layer && $layer->getSourceItem()) {
             $isQueryable = $layer->getSourceItem()->getQueryable();
         } else {
             $isQueryable = false;
         }
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
-        if (!$isQueryable) {
+        if (!$isQueryable && !$form->isSubmitted()) {
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
-        if ($layer) {
+        if ($layer && $layer->getSourceItem()) {
             $view['minScale']->vars['attr'] = array(
                 'placeholder' => $layer->getInheritedMinScale(),
             );

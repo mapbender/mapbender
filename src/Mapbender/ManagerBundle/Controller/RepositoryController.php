@@ -1,8 +1,13 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -43,16 +48,21 @@ class RepositoryController extends ApplicationControllerBase
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $oid);
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
-        /** @var Source[] $allSources */
-        $allSources = $repository->findBy(array(), array('id' => 'ASC'));
+        /** @var Source[] $sources */
+        $sources = $repository->findBy(array(), array('id' => 'ASC'));
 
-        $sources = array();
         $reloadableIds = array();
-        $typeDirectory = $this->getTypeDirectory();
-        foreach ($allSources as $source) {
-            $sources[] = $source;
-            if ($typeDirectory->getRefreshSupport($source)) {
-                $reloadableIds[] = $source->getId();
+        // NOTE: direct object grants checks do not work because Symfony ACL cannot currently infer from e.g. concrete
+        // WmsSource to global grants assigned on abstract base class Source
+        // THE ONLY directly assigned grant on a concrete Source is 'OWNER' on newly loaded sources, assigned to the
+        // User that added the source to the system, but not editable in any way.
+        // => On listings ALWAYS check grants on oids for sources, nothing else works as expected
+        if ($this->isGranted('EDIT', $oid)) {
+            $typeDirectory = $this->getTypeDirectory();
+            foreach ($sources as $source) {
+                if ($typeDirectory->getRefreshSupport($source)) {
+                    $reloadableIds[] = $source->getId();
+                }
             }
         }
 
@@ -146,8 +156,9 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function viewAction($sourceId)
     {
+        $em = $this->getEntityManager();
         /** @var Source|null $source */
-        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
             throw $this->createNotFoundException();
         }
@@ -158,6 +169,10 @@ class RepositoryController extends ApplicationControllerBase
         }
         return $this->render($source->getViewTemplate(), array(
             'source' => $source,
+            'applications' => $this->getApplicationsRelatedToSource($em, $source, array(
+                'title' => Criteria::ASC,
+                'id' => Criteria::ASC,
+            )),
             'title' => $source->getType() . ' ' . $source->getTitle(),
             'wms' => $source,   // HACK: source name in legacy templates
             'wmts' => $source,  // HACK: source name in legacy templates
@@ -195,6 +210,10 @@ class RepositoryController extends ApplicationControllerBase
         if ($request->getMethod() === Request::METHOD_GET) {
             return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
                 'source' => $source,
+                'applications' => $this->getApplicationsRelatedToSource($em, $source, array(
+                    'title' => Criteria::ASC,
+                    'id' => Criteria::ASC,
+                )),
             ));
         }
         // capture ACL and entity updates in a single transaction
@@ -204,17 +223,12 @@ class RepositoryController extends ApplicationControllerBase
         $oid         = ObjectIdentity::fromDomainObject($source);
         $aclProvider->deleteAcl($oid);
 
-        // update modification timestamp on affected applications
         $dtNow = new \DateTime('now');
-        $instances = $source->getInstances();
-        $iDesc = array();
-        foreach ($instances as $instance) {
-            $iDesc[] = get_class($instance) . "#{$instance->getId()}";
-            $layerset = $instance->getLayerset();
-            $application = $layerset->getApplication();
-            $em->persist($application);
-            $application->setUpdated($dtNow);
+        foreach ($this->getApplicationsRelatedToSource($em, $source) as $affectedApplication) {
+            $em->persist($affectedApplication);
+            $affectedApplication->setUpdated($dtNow);
         }
+
         $em->remove($source);
         $em->flush();
         $em->commit();
@@ -297,12 +311,15 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceAction(Request $request, $slug, $instanceId)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-
-        if (null === $instance) {
-            throw $this->createNotFoundException('Instance does not exist');
+        /** @var Application|null $application */
+        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$instance || ($application && !$application->getSourceInstances()->contains($instance))) {
+            throw $this->createNotFoundException();
         }
 
         $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
@@ -312,30 +329,24 @@ class RepositoryController extends ApplicationControllerBase
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($instance);
-            $layerSet = $instance->getLayerset();
-            if ($layerSet) {
-                $application = $layerSet->getApplication();
-                if ($application) {
-                    $application->setUpdated(new \DateTime('now'));
-                    $em->persist($application);
-                }
+            $dtNow = new \DateTime('now');
+            foreach ($this->getApplicationsRelatedToSourceInstance($em, $instance) as $affectedApplication) {
+                $em->persist($affectedApplication);
+                $affectedApplication->setUpdated($dtNow);
             }
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
-                "slug" => $slug,
-            ));
         }
 
         return $this->render($factory->getFormTemplate($instance), array(
             "form" => $form->createView(),
-            "slug" => $slug,
-            "instance" => $instance,
+            "instance" => $form->getData(),
         ));
     }
 
     /**
+     * @todo: move to application controller
      *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
      * @param Request $request
@@ -360,10 +371,7 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
         if (intval($newWeight) === $instance->getWeight() && $layersetId === $targetLayersetId) {
-            return new JsonResponse(array(
-                'error' => '',      // why?
-                'result' => 'ok',   // why?
-            ));
+            return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
         }
 
         $layerset = $this->requireLayerset($layersetId);
@@ -379,47 +387,38 @@ class RepositoryController extends ApplicationControllerBase
         $em->persist($layerset);
         $em->flush();
 
-        return new JsonResponse(array(
-            'error' => '',      // why?
-            'result' => 'ok',   // why?
-        ));
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
     /**
+     * @todo: move to application controller
      *
-     * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}", methods={"POST"})
+     * @ManagerRoute("/application/layerset/{layerset}/instance-enable/{instanceId}", methods={"POST"})
      * @param Request $request
-     * @param string $slug
-     * @param string $layersetId
+     * @param Layerset $layerset
      * @param string $instanceId
      * @return Response
      */
-    public function instanceEnabledAction(Request $request, $slug, $layersetId, $instanceId)
+    public function instanceEnabledAction(Request $request, Layerset $layerset, $instanceId)
     {
-        $em = $this->getEntityManager();
-        /** @var SourceInstance|null $sourceInstance */
-        $sourceInstance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
-        if (!$sourceInstance) {
+        if (!$layerset->getApplication()) {
             throw $this->createNotFoundException();
         }
-        $application = $sourceInstance->getLayerset()->getApplication();
-        $wasEnabled = $sourceInstance->getEnabled();
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
+        $em = $this->getEntityManager();
+        /** @var SourceInstance|null $sourceInstance */
+        $sourceInstance = $em->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        if (!$sourceInstance || !$layerset->getInstances()->contains($sourceInstance)) {
+            throw $this->createNotFoundException();
+        }
         $newEnabled = $request->get('enabled') === 'true';
         $sourceInstance->setEnabled($newEnabled);
         $application->setUpdated(new \DateTime('now'));
         $em->persist($application);
         $em->persist($sourceInstance);
         $em->flush();
-        return new JsonResponse(array(
-            'success' => array(         // why?
-                "id" => $sourceInstance->getId(), // why?
-                "type" => "instance",   // why?
-                "enabled" => array(
-                    'before' => $wasEnabled,
-                    'after' => $newEnabled,
-                ),
-            ),
-        ));
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -458,5 +457,80 @@ class RepositoryController extends ApplicationControllerBase
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);
+    }
+
+    protected function getLayersetsRelatedToSource(EntityManagerInterface $em, Source $source)
+    {
+        $layersets = array();
+        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedLayersets)
+        foreach ($em->getRepository('MapbenderCoreBundle:Layerset')->findAll() as $layerset) {
+            /** @var Layerset $layerset*/
+            if ($layerset->getInstancesOf($source)->count()) {
+                $layersets[] = $layerset;
+            }
+        }
+        return $layersets;
+    }
+
+    protected function getLayersetsRelatedToSourceInstance(EntityManagerInterface $em, SourceInstance $instance)
+    {
+        $layersets = array();
+        // @todo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedLayersets)
+        foreach ($em->getRepository('MapbenderCoreBundle:Layerset')->findAll() as $layerset) {
+            /** @var Layerset $layerset*/
+            if ($layerset->getInstances()->contains($instance)) {
+                $layersets[] = $layerset;
+            }
+        }
+        return $layersets;
+    }
+
+    /**
+     * @param EntityManagerInterface $em
+     * @param Source $source
+     * @param array|null $order
+     * @return Application[]
+     */
+    protected function getApplicationsRelatedToSource(EntityManagerInterface $em, Source $source, $order = null)
+    {
+        $applications = array();
+        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
+        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
+            /** @var Application $application*/
+            foreach ($application->getSourceInstances() as $instance) {
+                if ($instance->getSource()->getId() == $source->getId()) {
+                    $applications[] = $application;
+                    break;
+                }
+            }
+        }
+        if ($order) {
+            $applications = new ArrayCollection($applications);
+            $applications = $applications->matching(Criteria::create()->orderBy($order))->getValues();
+        }
+        return $applications;
+    }
+
+    /**
+     * @param EntityManagerInterface $em
+     * @param SourceInstance $instance
+     * @param array|null $order
+     * @return Application[]
+     */
+    protected function getApplicationsRelatedToSourceInstance(EntityManagerInterface $em, SourceInstance $instance, $order = null)
+    {
+        $applications = array();
+        // @todo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedApplications)
+        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
+            /** @var Application $application*/
+            if ($application->getSourceInstances()->contains($instance)) {
+                $applications[] = $application;
+            }
+        }
+        if ($order) {
+            $applications = new ArrayCollection($applications);
+            $applications = $applications->matching(Criteria::create()->orderBy($order))->getValues();
+        }
+        return $applications;
     }
 }

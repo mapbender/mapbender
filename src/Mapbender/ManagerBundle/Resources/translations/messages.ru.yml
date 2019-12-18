@@ -98,7 +98,7 @@ mb:
         security:
           title: Безопасность
           add_users_groups: 'Добавить пользователей и группы'
-          public: активированы
+          public: публичный доступ
         save: Сохранить
         cancel: Отменить
         view_this: 'Показать приложение'

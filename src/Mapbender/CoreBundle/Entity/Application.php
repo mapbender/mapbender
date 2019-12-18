@@ -390,6 +390,14 @@ class Application
         return $instances;
     }
 
+    public function getLayersetsWithInstancesOf(Source $source)
+    {
+        return $this->getLayersets()->filter(function($layerset) use ($source) {
+            /** @var Layerset $layerset */
+            return !!$layerset->getInstancesOf($source)->count();
+        });
+    }
+
     /**
      * Set screen shot
      *

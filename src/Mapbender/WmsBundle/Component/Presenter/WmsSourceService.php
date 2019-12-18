@@ -292,7 +292,9 @@ class WmsSourceService extends SourceService
     {
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
-        if ($legendUrl) {
+        // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
+        // @todo: implement legend url generation for reusable instances
+        if ($legendUrl && $instanceLayer->getSourceInstance()->getLayerset()) {
             if ($this->useTunnel($instanceLayer->getSourceInstance())) {
                 // request via tunnel, see ApplicationController::instanceTunnelLegendAction
                 $tunnelService = $this->urlProcessor->getTunnelService();
@@ -338,6 +340,7 @@ class WmsSourceService extends SourceService
     public function useTunnel(SourceInstance $sourceInstance)
     {
         if ($sourceInstance->getLayerset()) {
+            // @todo: reusable source instances: use a proper detection method for wmsloader; this logic is conflicting with Instances that are no longer owned by a single Layerset
             /** @var WmsInstance $sourceInstance */
             $vsHandler = new VendorSpecificHandler();
             return (!!$sourceInstance->getSource()->getUsername()) || $vsHandler->hasHiddenParams($sourceInstance);
@@ -357,6 +360,7 @@ class WmsSourceService extends SourceService
             return false;
         } else {
             if ($sourceInstance->getSource()->getUsername() && !$sourceInstance->getLayerset()) {
+                // @todo: reusable source instances: use a proper detection method for wmsloader; this logic is conflicting with Instances that are no longer owned by a single Layerset
                 // WmsLoader special: proxify url with embedded credentials to bypass browser
                 // filtering of basic auth in img tags.
                 // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication

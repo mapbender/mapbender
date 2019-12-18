@@ -51,6 +51,11 @@ class TargetElementType extends AbstractType
      */
     public function getName()
     {
+        // NOTE: alias is no longer used inside Mapbender, but is maintained
+        //       for compatibility with a multitude of custom project elements.
+        //       To minimize issues on planned / future Symfony upgrades, newly written
+        //       code should use the FQCN, instead of the alias name, to reference
+        //       this type,
         return 'target_element';
     }
 

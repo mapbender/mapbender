@@ -376,7 +376,7 @@ $(function() {
     deleteScreenShotButtonInit();
 
     $(document).ready(function() {
-        $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
+        $('.application-component-table tbody .iconColumn input[type="checkbox"][data-url]').each(function() {
             var self = this;
             initCheckbox.call(this);
             $(self).on("change", function() {
@@ -386,14 +386,6 @@ $(function() {
                     data: {
                         'id': $(self).attr('data-id'),
                         'enabled': $(self).is(":checked")
-                    },
-                    success: function(data) {
-                        if (data.success) {
-                            if (data.success.enabled.after !== $(self).is(":checked"))
-                                alert("Cannot be changed!");
-                        } else if (data.error) {
-                            alert(data.error);
-                        }
                     }
                 });
             });

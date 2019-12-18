@@ -47,7 +47,6 @@ class Map extends Element
             'dpi' => 90.714, // DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
-            'units' => 'degrees',
             'tileSize' => 512,
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
@@ -90,25 +89,35 @@ class Map extends Element
             "name" => $mainSrsParts[0],
             "title" => (count($mainSrsParts) > 1) ? trim($mainSrsParts[1]) : '',
         );
+        $allSrsNames[] = $allSrs[0]['name'];
 
-        if (isset($configuration["otherSrs"])) {
+        if (!empty($configuration["otherSrs"])) {
+            $otherSrs = array();
             if (is_array($configuration["otherSrs"])) {
-                $otherSrs = $configuration["otherSrs"];
+                $otherSrsConfigs = $configuration["otherSrs"];
             } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
-                $otherSrs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
+                $otherSrsConfigs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
             } else {
-                $otherSrs = array();
+                // @todo: this should be an error
+                $otherSrsConfigs = array();
             }
-            foreach ($otherSrs as $srs) {
+            foreach ($otherSrsConfigs as $srs) {
                 $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
-                $allSrs[] = array(
-                    "name" => $otherSrsParts[0],
-                    "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
-                );
+                // @todo: non-unique srses should be an error
+                if (!\in_array($otherSrsParts[0], $allSrsNames)) {
+                    $otherSrs[] = array(
+                        "name" => $otherSrsParts[0],
+                        "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
+                    );
+                    $allSrsNames[] = $otherSrsParts;
+                }
             }
+            // Sort (already unique) entries via array_unique, the only sensible sorting method in PHP (no reference semantics).
+            // @todo: there should be no sorting at all
+            $allSrs = array_merge($allSrs, array_unique($otherSrs, SORT_REGULAR));
         }
-        $configured = array_values(array_unique($allSrs, SORT_REGULAR));
-        return $this->getSrsDefinitions($configured);
+        $allSrs = array_unique($allSrs, SORT_REGULAR);
+        return $this->getSrsDefinitions($allSrs);
     }
 
     /**
@@ -299,35 +308,44 @@ class Map extends Element
             );
         }
         $result = $this->getSrsDefinitions($allsrs);
-        if (count($result) > 0) {
+        if (count($result) > 0) {   // @todo: an incomplete result set should already be an error; not just a completely empty one
             return array("data" => $result);
         } else {
+            // @todo: use HTTP status codes, not 'error' subkeys in a 200 OK response :\
             return array("error" => $this->trans("mb.core.map.srsnotfound", array('%srslist%', $srsList)));
         }
     }
 
     /**
      * Returns proj4js srs definitions from srs names
-     * @param array $srsNames srs names (array with "EPSG" codes)
-     * @return array proj4js srs definitions
+     * @param array[] $srsSpecs arrays with 'name' and 'title' keys
+     * @return string[][] each entry with keys 'name' (code), 'title' (display label) and 'definition' (proj4 compatible)
      */
-    protected function getSrsDefinitions(array $srsNames)
+    protected function getSrsDefinitions(array $srsSpecs)
     {
-        $titleMap = array_column($srsNames, 'title', 'name');
-        $result = array();
+        $titleMap = array_column($srsSpecs, 'title', 'name');
         /** @var EntityManagerInterface $em */
         $em = $this->container->get("doctrine")->getManager();
         /** @var SRS[] $srses */
         $srses = $em->getRepository('MapbenderCoreBundle:SRS')->findBy(array(
             'name' => array_keys($titleMap),
         ));
+        /** @var SRS[] $rowMap */
+        $rowMap = array();
         foreach ($srses as $srs) {
-            $name = $srs->getName();
-            $result[] = array(
-                "name" => $name,
-                "title" => $titleMap[$name] ?: $srs->getTitle(),
-                "definition" => $srs->getDefinition(),
-            );
+            $rowMap[$srs->getName()] = $srs;
+        }
+        $result = array();
+        // Database response may return in random order. Produce results maintaining order of input $srsSpecs.
+        foreach (array_keys($titleMap) as $srsName) {
+            if (!empty($rowMap[$srsName])) {
+                $result[] = array(
+                    'name' => $rowMap[$srsName]->getName(),
+                    'title' => $titleMap[$srsName] ?: $rowMap[$srsName]->getTitle(),
+                    'definition' => $rowMap[$srsName]->getDefinition(),
+                );
+            }
+            // @todo: unsupporteded SRS should be an error
         }
         return $result;
     }
