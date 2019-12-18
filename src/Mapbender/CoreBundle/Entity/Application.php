@@ -358,15 +358,16 @@ class Application
     /**
      * Read-only informative pseudo-relation
      *
+     * @param bool $includeUnowned
      * @return ArrayCollection|SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances($includeUnowned = false)
     {
         // @todo: figure out if there's an appropriate ORM annotation that can do this without
         //        writing code
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances($includeUnowned) as $instance) {
                 $instances->add($instance);
             }
         }

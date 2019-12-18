@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -23,6 +24,7 @@ use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -496,7 +498,6 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list", methods={"GET"})
      *
      * @param string $slug of Application
@@ -525,6 +526,37 @@ class ApplicationController extends WelcomeController
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $allowed_sources,
+            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(),
+        ));
+    }
+
+    /**
+     * @ManagerRoute("/instance/{instance}/copy-into-layerset/{layerset}", methods={"GET"})
+     * @param Request $request
+     * @param SourceInstance $instance
+     * @param Layerset $layerset
+     * @return Response
+     */
+    public function sharedinstancecopyAction(Request $request, SourceInstance $instance, Layerset $layerset)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Instance is already owned by a Layerset");
+        }
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $instanceCopy = clone $instance;
+        $em->persist($instanceCopy);
+        $instanceCopy->setLayerset($layerset);
+        $layerset->addInstance($instanceCopy);
+        $em->persist($layerset);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        $em->flush();
+        $this->addFlash('success', 'Eine nun wieder private Kopie der geteilten Instanz wurde der Applikation hinzugefügt');
+        return $this->redirectToRoute('mapbender_manager_repository_instance', array(
+            "slug" => $application->getSlug(),
+            "instanceId" => $instanceCopy->getId(),
         ));
     }
 
@@ -578,6 +610,39 @@ class ApplicationController extends WelcomeController
     }
 
     /**
+     * @ManagerRoute("/instance/{instance}/attach/{layerset}")
+     * @param Request $request
+     * @param Layerset $layerset
+     * @param SourceInstance $instance
+     * @return Response
+     */
+    public function attachreusableinstanceAction(Request $request, Layerset $layerset, SourceInstance $instance)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Keine zentral verwaltete Instanz");
+        }
+        $em = $this->getEntityManager();
+        $application = $layerset->getApplication();
+        $assignment = new ReusableSourceInstanceAssignment();
+        $assignment->setLayerset($layerset);
+        $assignment->setInstance($instance);
+        $assignment->setWeight(-1);
+        // @todo: sort full collection bound + reusable instances by weight
+        $layerset->getReusableInstanceAssignments()->add($assignment);
+        $em->persist($assignment);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($layerset);
+        // sanity
+        $instance->setLayerset(null);
+        $em->flush();
+        $this->addFlash('success', 'Die zentral verwaltete Instanz wurde der Applikation zugewiesen');
+        return $this->redirectToRoute("mapbender_manager_application_edit", array(
+            "slug" => $application->getSlug(),
+        ));
+    }
+
+    /**
      * Delete a source instance from a layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete", methods={"POST"})
      *
@@ -614,6 +679,39 @@ class ApplicationController extends WelcomeController
         $em->flush();
         $this->addFlash('success', 'Your source instance has been deleted');
         return new Response();  // ???
+    }
+
+    /**
+     * Remove a reusable source instance assigment
+     *
+     * @ManagerRoute("/layerset/{layerset}/instance-assignment/{assignmentId}/detach", methods={"POST"})
+     * @param Layerset $layerset
+     * @param string $assignmentId
+     * @return Response
+     */
+    public function detachinstanceAction(Layerset $layerset, $assignmentId)
+    {
+        $application = $layerset->getApplication();
+        $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getId() == $assignmentId;
+        })->first();
+        if (!$assignment || !$application) {
+            throw $this->createNotFoundException();
+        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $layerset->getReusableInstanceAssignments()->removeElement($assignment);
+        $em->remove($assignment);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($layerset);
+        $em->flush();
+        $this->addFlash('success', 'Your reusable source instance assignment has been deleted');
+        $params = array(
+            'slug' => $application->getSlug(),
+        );
+        return $this->redirectToRoute('mapbender_manager_application_edit', $params, Response::HTTP_SEE_OTHER);
     }
 
     /**

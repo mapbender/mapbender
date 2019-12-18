@@ -15,6 +15,7 @@ use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -427,6 +428,20 @@ class ImportHandler extends ExchangeHandler
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param ExportDataPool $exportPool
+     * @param $targetClassName
+     * @param array $targetIdent
+     * @return object|null
+     */
+    public function dehydrateExportObject(ExportDataPool $exportPool, $targetClassName, array $targetIdent)
+    {
+        $entityPool = new EntityPool();
+        $importState = new ImportState($this->em, $exportPool->getAllGroupedByClassName(), $entityPool);
+        $this->handleData($importState, $importState->getEntityData($targetClassName, $targetIdent));
+        return $entityPool->get($targetClassName, $targetIdent);
     }
 
     /**

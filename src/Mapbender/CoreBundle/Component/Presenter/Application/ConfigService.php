@@ -205,7 +205,7 @@ class ConfigService
     {
         $isYamlApp = $entity->getApplication()->isYamlBased();
         $activeInstances = array();
-        foreach ($entity->getInstances() as $instance) {
+        foreach ($entity->getInstances(true) as $instance) {
             if ($isYamlApp || $instance->getEnabled()) {
                 $activeInstances[] = $instance;
             }

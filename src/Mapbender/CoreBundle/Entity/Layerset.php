@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -50,11 +51,21 @@ class Layerset
     protected $instances;
 
     /**
+     * Reusable source instance assignments
+     * Relation to actual SourceInstance goes via separate assignment entity that stores sorting weight and enabled state
+     * @var ReusableSourceInstanceAssignment[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="layerset", cascade={"remove", "persist"})
+     * @ORM\OrderBy({"weight"="ASC"})
+     */
+    protected $reusableInstanceAssignments;
+
+    /**
      * Layerset constructor.
      */
     public function __construct()
     {
         $this->instances = new ArrayCollection();
+        $this->reusableInstanceAssignments = new ArrayCollection();
     }
 
     /**
@@ -152,13 +163,55 @@ class Layerset
     }
 
     /**
+     * @return ReusableSourceInstanceAssignment[]|ArrayCollection
+     */
+    public function getReusableInstanceAssignments()
+    {
+        return $this->reusableInstanceAssignments;
+    }
+
+    /**
      * Get instances
      *
+     * @param bool $includeUnowned NOTE: cannot be true by default to avoid erroneous doctrine behaviour
      * @return SourceInstance[]|Collection
      */
-    public function getInstances()
+    public function getInstances($includeUnowned = false)
     {
-        return $this->instances;
+        if ($includeUnowned) {
+            return $this->getCombinedInstances();
+        } else {
+            return $this->instances;
+        }
+    }
+
+    /**
+     * Get BOTH owned instances and assigned reusable instances in
+     * a single collection.
+     *
+     * @return SourceInstance[]|ArrayCollection
+     */
+    public function getCombinedInstances()
+    {
+        return $this->getCombinedInstanceAssignments()->map(function ($assignment) {
+            /** @var SourceInstanceAssignment $assignment */
+            return $assignment->getInstance();
+        });
+    }
+
+    /**
+     * Returns a list of source instance assignments, both directly owned and reusable.
+     *
+     * @return SourceInstanceAssignment[]|ArrayCollection
+     */
+    public function getCombinedInstanceAssignments()
+    {
+        $owned = $this->instances->getValues();
+        $unowned = $this->getReusableInstanceAssignments()->getValues();
+        $combined = new ArrayCollection(array_merge($owned, $unowned));
+        return $combined->matching(Criteria::create()->orderBy(array(
+            'weight' => Criteria::ASC
+        )));
     }
 
     /**
@@ -172,6 +225,17 @@ class Layerset
         return $this->instances->filter(function ($instance) use ($source) {
             /** @var SourceInstance $instance */
             return $instance->getSource() === $source;
+        });
+    }
+
+    /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getAssignedReusableInstances()
+    {
+        return $this->getReusableInstanceAssignments()->map(function($assignment) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getInstance();
         });
     }
 

@@ -49,19 +49,15 @@ $(function() {
 
     $("table.layersetTable tbody").sortable({
         connectWith: "table.layersetTable tbody",
-        items: "tr:not(.header)",
+        items: "tr.sourceinst[data-href]",
         distance: 20,
         stop: function(event, ui) {
-            $(ui.item).parent().find("tr").each(function(idx, elm) {
-                if ($(elm).attr("data-id") === $(ui.item).attr("data-id")) {
-                    $.ajax({
-                        url: $(ui.item).attr("data-href"),
-                        type: "POST",
-                        data: {
-                            number: idx,
-                            new_layersetId: $(elm).closest('table').attr("data-id")
-                        }
-                    });
+            $.ajax({
+                url: $(ui.item).attr("data-href"),
+                type: "POST",
+                data: {
+                    number: ui.item.index(),
+                    new_layersetId: ui.item.closest('table.layersetTable[data-id]').attr("data-id")
                 }
             });
         }

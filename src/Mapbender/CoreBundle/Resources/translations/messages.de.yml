@@ -28,6 +28,12 @@ mb:
       plural: Instanzen
       typed:
         singular: '%type%-Instanz'
+      reusable:
+        singular: Freie Instanz
+        plural: Freie Instanzen
+      bound:
+        singular: Private Instanz
+        plural: Private Instanzen
   states:
     active: aktiv
     inactive: inaktiv
