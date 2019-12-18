@@ -1,4 +1,4 @@
-## 3.0.8.5 (WIP)
+## 3.0.8.5-RC1
 ### Relative urls in CSS depending on entry script
 Relative URLs in generated application css now always use the correct base path, independent of the presence of the
 entry script name (`app.php`, `app_dev.php` or nothing) in the url. Previously, relative urls would commonly contain one `../` too many.

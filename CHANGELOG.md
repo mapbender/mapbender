@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 454345992
+## v3.0.8.5-RC1
 ### Regression fixes
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
 ### Other functional fixes
