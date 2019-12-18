@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle;
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
-use Mapbender\ManagerBundle\Component\Menu\RegisterLegacyMenuRoutesPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\Config\FileLocator;
@@ -22,7 +21,6 @@ class MapbenderManagerBundle extends ManagerBundle
         $loader->load('services.xml');
 
         $this->addMenu($container);
-        $container->addCompilerPass(new RegisterLegacyMenuRoutesPass());
     }
 
     protected function addMenu(ContainerBuilder $container)
