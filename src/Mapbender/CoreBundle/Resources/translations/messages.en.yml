@@ -28,6 +28,12 @@ mb:
       plural: Instances
       typed:
         singular: '%type% instance'
+      reusable:
+        singular: Shared instance
+        plural: Shared instances
+      bound:
+        singular: Bound instance
+        plural: Bound instances
   states:
     active: active
     inactive: inactive

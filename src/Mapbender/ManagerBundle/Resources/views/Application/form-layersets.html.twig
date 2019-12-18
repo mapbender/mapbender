@@ -44,13 +44,17 @@
               '_toggle_url': _is_reusable
                   ? path("mapbender_manager_repository_instanceassignmentenabled", {"assignmentId": assignment.id})
                   : path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': assignment.instance.id})
-              ,
-              '_row_style' : _is_reusable ? 'color: #f0f;' : null
             } -%}
-              <tr class="sourceinst"{% if _row_style %} style="{{ _row_style }}"{% endif %} data-id="{{ instance.id }}" data-href="{{ _sort_url }}">
+              <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}">
                 <td class="idColumn description" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
                 <td class="titleColumn description">{{ instance.title }} ({{ instance.source.title }})</td>
-                <td class="typeColumn description">{{ instance.source.type }}</td>
+                <td class="typeColumn description text-nowrap"
+                  {%- if _is_reusable %}
+                    title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fa fas fa-wifi" ></i>
+                  {%- else -%}
+                     title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fa fas fa-anchor"></i>
+                  {%- endif -%}
+                  &nbsp;{{ instance.source.type }}</td>
                 <td class="iconColumn">
                   <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }}"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
