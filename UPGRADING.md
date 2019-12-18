@@ -38,6 +38,18 @@ Note that issues with checkbox markup generated via `form_row` have been resolve
 the correct (legacy) markup for all basic form types. Manual form markup construction in custom twig is no longer necessary and will
 on the contrary impede future form theme switches.
 
+#### Dropped dependencies
+The legacy Joii library is no longer required nor provided by Mapbender and will not be reintroduced.
+If you expect Joii usages in custom JavaScript code, you will have to readd the dependency on the project level:
+```sh
+bin/composer require 'wheregroup/joii:^3'
+```
+You will also have to add the script dependency to your Template class.
+
+To find remaining Joii usages in your project, search for `=\s*Class\s*\(` (regex, case sensitive) in Javascript files.
+
+To permanently get your project code away from Joii, you should use [standard ES5 JavaScript classes](https://dev.to/_hridaysharma/understanding-classes-es5-and-prototypal-inheritance-in-javascript-n8d).
+
 ## 3.0.8
 #### Package conflicts
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
