@@ -98,7 +98,7 @@ mb:
         security:
           title: 'Güvenlik'
           add_users_groups: 'Kullanıcı ve Grup ekle'
-          public: 'Aktif'
+          public: Kamu erişim
         save: 'Kaydet'
         cancel: 'Vazgeç'
         view_this: 'Bu uygulamayı görüntüle'
