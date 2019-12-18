@@ -10,9 +10,6 @@
     // keep constant size to prevent visual "jump" on icon glyph change and neatly
     // align icons across rows
     text-align:center;
-    &:before {
-      margin: 0;
-    }
     flex: 0 0 1em;
     -ms-flex: 0 0 1em;
     // pre-flex
@@ -97,7 +94,6 @@
       .layer-menu-btn{
         margin-left: 4px;
         &:before{
-          margin: 0;
           content: '\f0c9';
           font-family: 'FontAwesome';
         }

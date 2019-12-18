@@ -13,7 +13,6 @@ use Mapbender\WmtsBundle\Component\TileMatrix;
  * @author Paul Schmidt
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_tilematrixset")
- * ORM\DiscriminatorMap({"mb_wmts_tilematrixset" = "TileMatrixSet"})
  */
 class TileMatrixSet implements MutableUrlTarget
 {
@@ -77,7 +76,7 @@ class TileMatrixSet implements MutableUrlTarget
 
     /**
      *
-     * @return TileMatrixSet
+     * @return WmtsSource
      */
     public function getSource()
     {
@@ -105,9 +104,8 @@ class TileMatrixSet implements MutableUrlTarget
     }
     
     /**
-     * Set supportedCrs
      * @param string $supportedCrs
-     * @return \Mapbender\WmtsBundle\Entity\TileMatrixSet
+     * @return $this
      */
     public function setSupportedCrs($supportedCrs)
     {
@@ -115,8 +113,7 @@ class TileMatrixSet implements MutableUrlTarget
         return $this;
     }
 
-        /**
-     * Get title
+    /**
      * @return string
      */
     public function getTitle()
@@ -125,7 +122,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Set title
      * @param string $value
      */
     public function setTitle($value)
@@ -134,7 +130,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Get abstract
      * @return string
      */
     public function getAbstract()
@@ -143,7 +138,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Set abstract
      * @param string $value
      */
     public function setAbstract($value)
@@ -152,7 +146,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Get identifier
      * @return string
      */
     public function getIdentifier()
@@ -179,8 +172,7 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Set tilematrices
-     * @param array $tilematrices
+     * @param TileMatrix[] $tilematrices
      */
     public function setTilematrices($tilematrices)
     {
@@ -188,7 +180,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Add a tilematrix
      * @param TileMatrix $tilematrix
      */
     public function addTilematrix(TileMatrix $tilematrix)
@@ -197,9 +188,8 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Returns a TileMatrixSet as String
-     *
-     * @return String TileMatrixSet as String
+     * Returns the id, stringified.
+     * @return string
      */
     public function __toString()
     {

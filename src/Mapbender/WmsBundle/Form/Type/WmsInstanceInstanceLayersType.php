@@ -5,11 +5,7 @@ namespace Mapbender\WmsBundle\Form\Type;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
 
-/**
- * WmsInstanceInstanceLayersType class
- */
 class WmsInstanceInstanceLayersType extends AbstractType
 {
     /** @var bool */
@@ -23,12 +19,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $this->exposeLayerOrder = $exposeLayerOrder;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getName()
+    public function getParent()
     {
-        return 'wmsinstanceinstancelayers';
+        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
     }
 
     /**
@@ -56,62 +49,35 @@ class WmsInstanceInstanceLayersType extends AbstractType
         }
 
         $builder
-            ->add('title', 'text', array(
-                'required' => true,
-            ))
-            ->add('format', 'choice', array(
+            ->add('format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $getMapFormatChoices,
                 'choices_as_values' => true,
                 'required' => true,
             ))
-            ->add('infoformat', 'choice', array(
+            ->add('infoformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $featureInfoFormatChoices,
                 'choices_as_values' => true,
                 'required' => false,
             ))
-            ->add('exceptionformat', 'choice', array(
+            ->add('exceptionformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $exceptionFormatChoices,
                 'choices_as_values' => true,
                 'required' => false,
             ))
-        ;
-        $builder
-            ->add('basesource', 'checkbox', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
-            ))
-            ->add('proxy', 'checkbox', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
-            ))
-            ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
-                'attr' => array(
-                    'min' => 0,
-                    'max' => 100,
-                    'step' => 10,
-                ),
-                'constraints' => array(
-                    new Constraints\Range(array(
-                        'min' => 0,
-                        'max' => 100,
-                    )),
-                ),
-                'required' => true,
-            ))
-            ->add('transparency', 'checkbox', array(
+            ->add('transparency', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.transparency',
             ))
-            ->add('tiled', 'checkbox', array(
+            ->add('tiled', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.tiled',
             ))
-            ->add('ratio', 'number', array(
+            ->add('ratio', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => false,
-                'precision' => 2,
+                'scale' => 2,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.ratio',
             ))
-            ->add('buffer', 'integer', array(
+            ->add('buffer', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
             ))
@@ -127,9 +93,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
             ))
-            ->add('layers', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
-                'options' => array(
+                'entry_options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
                 ),
             ))
@@ -141,7 +107,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 $translationKey = "mb.wms.wmsloader.repo.instance.label.layerOrder.$validChoice";
                 $layerOrderChoices[$translationKey] = $validChoice;
             }
-            $builder->add('layerOrder', 'choice', array(
+            $builder->add('layerOrder', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $layerOrderChoices,
                 'choices_as_values' => true,
                 'required' => true,

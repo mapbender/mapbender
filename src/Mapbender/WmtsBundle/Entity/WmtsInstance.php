@@ -7,13 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
- * WmtsInstance class
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtsinstance")
- * ORM\DiscriminatorMap({"mb_wmts_wmtssourceinstance" = "WmtsSourceInstance"})
  */
 class WmtsInstance extends SourceInstance
 {
@@ -46,36 +43,6 @@ class WmtsInstance extends SourceInstance
     protected $dimensions;
 
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $roottitle;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $active = true;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowselected = true;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $selected = true;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $info;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowinfo;
-
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -105,9 +72,7 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set layers
-     *
-     * @param array $layers
+     * @param WmtsInstanceLayer[]|ArrayCollection $layers
      * @return $this
      */
     public function setLayers($layers)
@@ -117,8 +82,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Get layers
-     *
      * @return WmtsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
@@ -130,7 +93,7 @@ class WmtsInstance extends SourceInstance
      * Set opacity
      *
      * @param integer $opacity
-     * @return WmtsInstance
+     * @return $this
      */
     public function setOpacity($opacity)
     {
@@ -152,7 +115,7 @@ class WmtsInstance extends SourceInstance
      * Set proxy
      *
      * @param boolean $proxy
-     * @return WmtsInstance
+     * @return $this
      */
     public function setProxy($proxy)
     {
@@ -205,80 +168,11 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Remove layers
-     *
-     * @param WmtsInstanceLayer $layers
+     * @param WmtsInstanceLayer $layer
      */
-    public function removeLayer(WmtsInstanceLayer $layers)
+    public function removeLayer(WmtsInstanceLayer $layer)
     {
-        $this->layers->removeElement($layers);
-    }
-
-    public function getRoottitle()
-    {
-        return $this->roottitle;
-    }
-
-    public function setRoottitle($roottitle)
-    {
-        $this->roottitle = $roottitle;
-        return $this;
-    }
-
-
-    public function getActive()
-    {
-        return $this->active;
-    }
-
-    public function getAllowselected()
-    {
-        return $this->allowselected;
-    }
-
-    public function getSelected()
-    {
-        return $this->selected;
-    }
-
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    public function getAllowinfo()
-    {
-        return $this->allowinfo;
-    }
-
-    public function setActive($active)
-    {
-        $this->active = $active;
-        return $this;
-    }
-
-    public function setAllowselected($allowselected)
-    {
-        $this->allowselected = $allowselected;
-        return $this;
-    }
-
-    public function setSelected($selected)
-    {
-        $this->selected = $selected;
-        return $this;
-    }
-
-    public function setInfo($info)
-    {
-        $this->info = $info;
-        return $this;
-    }
-
-    public function setAllowinfo($allowinfo)
-    {
-        $this->allowinfo = $allowinfo;
-        return $this;
+        $this->layers->removeElement($layer);
     }
 
     /**

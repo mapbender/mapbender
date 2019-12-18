@@ -62,15 +62,6 @@
     padding:0 20px;
   }
 }
-.fom-popup {
-  .popupContent, .popupSubContent {
-    &+.popupContent, &+.popupSubcontent {
-      margin-top: $space;
-    }
-  }
-  .popupSubContent{width: 100%; height: 100%;}
-}
-
 .popup {
   &.ui-resizable {
     min-width: 300px;

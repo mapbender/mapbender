@@ -13,8 +13,6 @@ mb:
       success: ~
       failure:
         general: ~
-        already.removed: ~
-        remove.directory: ~
   layerset:
     create:
       success: ~
@@ -66,11 +64,6 @@ mb:
           '': 'No añadido elemento'
       zoombar:
         draggable: Mobible
-      filter:
-        source: 'Filtrar fuente'
-        layerset: 'Filtrar conjunto de capas'
-        application: 'Filtrar aplicación'
-        element: 'Filtrar Elemento'
       overview:
         maximize: Maximizar
         fix: Corregir
@@ -105,7 +98,7 @@ mb:
         security:
           title: Seguridad
           add_users_groups: 'Add users and groups'
-          public: activated
+          public: Acceso público
         save: Guardar
         cancel: Cancelar
         view_this: 'Ver esta aplicación'
@@ -222,10 +215,6 @@ mb:
     import:
       application:
         failed: 'La aplicación no puede ser importada.'
-      acl:
-        failed: 'Acls no pueden ser importadas.'
-      source:
-        failed: 'Las fuentes no pueden ser importadas.'
   core:
     admin:
       button:
@@ -253,9 +242,3 @@ mb:
           format_error: 'Este formato no esta soportado'
           resolution:
             error: 'Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Aplicaciones

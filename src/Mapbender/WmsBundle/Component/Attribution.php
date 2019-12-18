@@ -3,25 +3,17 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Attribution class.
- *
  * @author Paul Schmidt
  */
 class Attribution
 {
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
+    /** @var string|null */
     public $title;
 
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
+    /** @var string|null */
     public $onlineResource;
 
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
+    /** @var LegendUrl|null */
     public $logoUrl;
 
     /**
@@ -65,7 +57,7 @@ class Attribution
     /**
      * Get logoUrl
      *
-     * @return string
+     * @return LegendUrl|null
      */
     public function getLogoUrl()
     {

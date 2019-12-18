@@ -1,4 +1,36 @@
 mb:
+  actions:
+    accept: Оке́й
+    add: Добавить
+    back: Назад
+    cancel: Отменить
+    close: Закрыть
+    delete: Удалить
+    edit: Редактировать
+    filter: Фильтровать
+    print: Печать
+    refresh: Обновить
+    remove: Удалить
+    save: Сохранить
+    search: Поиск
+  terms:
+    application:
+      singular: Приложение
+      plural: Приложения
+    source:
+      singular: Источник
+      plural: Источники
+    layerset:
+      singular: Слой  # @todo: this is simply "layer"
+      plural: Слои
+    sourceinstance:
+      singular: Экземпляр
+      plural: Экземпля́ры
+      typed:
+        singular: '%type% экземпляр'
+  states:
+    active: активный
+    inactive: неактивный
   core:
     featureinfo:
       error:
@@ -163,7 +195,7 @@ mb:
           ok: Закрыть
     gpsposition:
       error:
-        notsupported: 'Извините, но геолокационные сервисы не поддерживаются вашим браузером.'
+        notsupported: 'Геолокационные сервисы не поддерживаются вашим браузером.'
         nosignal: Невозможно определить ваше местоположение.
       class:
         title: GPS-положение

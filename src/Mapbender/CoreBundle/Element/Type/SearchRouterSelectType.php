@@ -26,7 +26,7 @@ class SearchRouterSelectType extends AbstractType
             $routes[$conf['title']] = $name;
         }
 
-        $builder->add('route', 'choice', array(
+        $builder->add('route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'choices'  => $routes,
             'choices_as_values' => true,
             'mapped'   => false,

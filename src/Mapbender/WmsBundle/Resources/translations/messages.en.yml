@@ -11,11 +11,7 @@ mb:
           cancel: Cancel
           load: Load
       error:
-        url: 'WMSLoader: WMS capabilities can''t be loaded! The capabilities url is not valid.'
-        service: 'WMSLoader: the service %service% is not supported!'
-        operation: 'WMSLoader: the WMS Operation %operation% is not supported!'
-        version: 'WMSLoader: the WMS version %version% is not supported!'
-        load: 'WMSLoader: wms capabilities can''t be loaded!'
+        load: "WMSLoader: wms capabilities can't be loaded!"
       repo:
         macros:
           label:
@@ -53,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'WMS instance'
           btn:
             save: Save
             cancel: Cancel

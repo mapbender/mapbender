@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
- * WmtsInstanceLayer class
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
@@ -20,13 +18,13 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 class WmtsInstanceLayer extends SourceInstanceItem
 {
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"persist", "refresh"})
      * @ORM\JoinColumn(name="wmtsinstance", referencedColumnName="id")
      */
     protected $sourceInstance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"persist", "refresh"})
      * @ORM\JoinColumn(name="wmtslayersource", referencedColumnName="id")
      */
     protected $sourceItem;
@@ -60,16 +58,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowinfo;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $toggle;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowtoggle;
 
     /**
      * @ORM\Column(type="string", nullable=true)

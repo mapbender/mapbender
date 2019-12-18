@@ -6,8 +6,6 @@ use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
- * Class ObjectIdTransformer transforms a value between different representations
- * 
  * @author Paul Schmidt
  */
 class DimensionTransformer implements DataTransformerInterface

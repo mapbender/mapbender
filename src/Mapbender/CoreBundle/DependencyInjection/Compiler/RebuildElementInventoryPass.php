@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Initializes the combined inventory of all Mapbender Elements advertised by all active
@@ -21,14 +20,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class RebuildElementInventoryPass implements CompilerPassInterface
 {
-    /** @var KernelInterface */
-    protected $kernel;
-
-    public function __construct(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
-    }
-
     public function process(ContainerBuilder $container)
     {
         $allElementClasses = $this->collectElementClassNames($container);
@@ -39,12 +30,16 @@ class RebuildElementInventoryPass implements CompilerPassInterface
     protected function collectElementClassNames(ContainerBuilder $container)
     {
         $classNameLists = array();
-        foreach ($this->kernel->getBundles() as $bundle) {
-            if ($bundle instanceof MapbenderBundle) {
+        foreach ($container->getParameter('kernel.bundles') as $bundleFqcn) {
+            if (\is_a($bundleFqcn, 'Mapbender\CoreBundle\Component\MapbenderBundle', true)) {
+                /** @var MapbenderBundle $bundle */
+                $bundle = new $bundleFqcn();
                 // Bundle may not have a container at this stage but may need it for
                 // configuration access (e.g. see MapbenderWmsBundle)
                 $bundle->setContainer($container);
                 $classNameLists[] = $bundle->getElements() ?: array();
+            } else {
+                $bundle = null;
             }
         }
         if ($classNameLists) {

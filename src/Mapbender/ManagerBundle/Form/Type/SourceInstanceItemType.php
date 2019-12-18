@@ -41,11 +41,19 @@ class SourceInstanceItemType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var SourceInstanceItem $layer */
+        // NOTE: collection prototype view does not have data
+        /** @var SourceInstanceItem|null $layer */
         $layer = $form->getData();
 
-        $view['title']->vars['attr'] = array(
-            'placeholder' => $layer->getSourceItem()->getTitle(),
-        );
+        if ($layer && $layer->getSourceItem()) {
+            $view['title']->vars['attr'] += array(
+                'placeholder' => $layer->getSourceItem()->getTitle(),
+            );
+        }
+        $view['active']->vars['checkbox_group'] = 'checkActive';
+        $view['selected']->vars['checkbox_group'] = 'checkSelectOn';
+        $view['selected']->vars['columnClass'] = 'odd';
+        $view['allowselected']->vars['checkbox_group'] = 'checkSelectAllow';
+        $view['allowselected']->vars['columnClass'] = 'odd';
     }
 }

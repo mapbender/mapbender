@@ -1,13 +1,17 @@
 $(function() {
     $('#listFilterServices').on('click', '.iconRemove[data-url]', function() {
         var $el = $(this);
-        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
-            // @todo: bring your own translation string
-            title: "mb.manager.components.popup.delete_element.title",
-            // @todo: bring your own translation string
-            cancel: "mb.manager.components.popup.delete_element.btn.cancel",
-            // @todo: bring your own translation string
-            confirm: "mb.manager.components.popup.delete_element.btn.ok"
+        var url = $el.attr('data-url');
+        $.ajax(url, {
+            method: 'GET'
+        }).then(function(response) {
+            var stringMap = {
+                // @todo: bring your own translation string
+                title: "mb.manager.components.popup.delete_element.title",
+                confirm: "mb.actions.delete",
+                cancel: "mb.actions.cancel"
+            };
+            Mapbender.Manager.confirmDelete($el, url, stringMap, response);
         });
         return false;
     });

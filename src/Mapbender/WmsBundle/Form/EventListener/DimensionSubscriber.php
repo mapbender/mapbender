@@ -8,9 +8,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
-/**
- * DimensionSubscriber class
- */
 class DimensionSubscriber implements EventSubscriberInterface
 {
 
@@ -47,45 +44,49 @@ class DimensionSubscriber implements EventSubscriberInterface
     protected function addFields($form, $data)
     {
         $form
-            ->add('type', 'hidden', array(
+            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ))
-            ->add('name', 'text', array(
+            ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ))
-            ->add('units', 'text', array(
+            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'units',
+                    'readonly' => 'readonly',
                 ),
             ))
-            ->add('unitSymbol', 'text', array(
+            ->add('unitSymbol', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'auto_initialize' => false,
-                'read_only' => true,
                 'required' => false,
                 'attr' => array(
                     'data-name' => 'unitSymbol',
+                    'readonly' => 'readonly',
                 ),
             ))
-            ->add('multipleValues', 'checkbox', array(
+            ->add('multipleValues', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'multiple',
                 'disabled' => true,
                 'required' => false,
             ))
-            ->add('nearestValue', 'checkbox', array(
+            ->add('nearestValue', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'nearest',
                 'disabled' => true,
                 'required' => false,
             ))
-            ->add('current', 'checkbox', array(
+            ->add('current', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'current',
                 'disabled' => true,
@@ -99,7 +100,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                 $extentArray = $data->getData($data->getExtent());
                 $origExtentArray = $data->getData($data->getOrigextent());
                 $choices = array_combine($origExtentArray, $origExtentArray);
-                $form->add('extentEdit', 'choice', array(
+                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                     'data' => $extentArray,
                     'mapped' => false,
                     'choices' => $choices,
@@ -109,7 +110,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                     'multiple' => true,
                     'required' => true,
                 ));
-                $form->add('default', 'choice', array(
+                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                     'choices' => $choices,
                     'choices_as_values' => true,
                     'auto_initialize' => false,
@@ -117,7 +118,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                 break;
             case DimensionInst::TYPE_SINGLE:
             case DimensionInst::TYPE_INTERVAL:
-                $form->add('extentEdit', 'text', array(
+                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                     'label' => 'Extent',
                     'required' => true,
                     'auto_initialize' => false,
@@ -127,10 +128,12 @@ class DimensionSubscriber implements EventSubscriberInterface
                 break;
         }
         if ($data->getType() === DimensionInst::TYPE_INTERVAL) {
-            $form->add('default', 'text', array(
+            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'auto_initialize' => false,
-                'read_only' => false,
                 'required' => false,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
             ));
         }
     }
@@ -142,7 +145,7 @@ class DimensionSubscriber implements EventSubscriberInterface
     protected function addExtentFields($form, $data)
     {
         $form
-            ->add('extent', 'hidden', array(
+            ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
                 'auto_initialize' => false,
                 'attr' => array(
@@ -150,7 +153,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                     'data-name' => 'extent',
                 ),
             ))
-            ->add('origextent', 'hidden', array(
+            ->add('origextent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
                 'auto_initialize' => false,
                 'mapped' => false,
@@ -163,7 +166,7 @@ class DimensionSubscriber implements EventSubscriberInterface
 
         $dimJs = $data->getConfiguration();
         $form
-            ->add('json', 'hidden', array(
+            ->add('json', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
                 'data' => json_encode($dimJs),
                 'auto_initialize' => false,

@@ -13,8 +13,6 @@ use Symfony\Component\Yaml\Yaml;
 
 
 /**
- * Class JobCommand
- *
  * @package   Mapbender\PrintBundle\Component
  * @author    Rolf Neuberger <rolf.neuberger@wheregroup.com>
  * @copyright 2017 by WhereGroup GmbH & Co. KG

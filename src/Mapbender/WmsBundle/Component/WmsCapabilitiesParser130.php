@@ -37,7 +37,7 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     /**
      * Parses the GetCapabilities document
      *
-     * @return \Mapbender\WmsBundle\Entity\WmsSource
+     * @return WmsSource
      */
     public function parse()
     {
@@ -68,9 +68,8 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     /**
      * Parses the Service section of the GetCapabilities document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
-     * @param \DOMElement $cntxt the element to use as context for
-     * the Service section
+     * @param WmsSource $wms
+     * @param \DOMElement $cntxt
      */
     private function parseService(WmsSource $wms, \DOMElement $cntxt)
     {
@@ -142,9 +141,8 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     /**
      * Parses the Capabilities Request section of the GetCapabilities document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Capabilities Request section
+     * @param WmsSource $wms
+     * @param \DOMElement $contextElm
      */
     private function parseCapabilityRequest(WmsSource $wms, \DOMElement $contextElm)
     {
@@ -179,8 +177,7 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
      * Parses the Operation Request Information section of the GetCapabilities
      * document
      *
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Operation Request Information section
+     * @param \DOMElement $contextElm
      * @return RequestInformation
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)
@@ -205,9 +202,8 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
      * Parses the Capability Exception section of the GetCapabilities
      * document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Capability Exception section
+     * @param WmsSource $wms
+     * @param \DOMElement $contextElm
      */
     private function parseCapabilityException(WmsSource $wms, \DOMElement $contextElm)
     {
@@ -223,9 +219,8 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
      * Parses the UserDefinedSymbolization section of the GetCapabilities
      * document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
-     * @param \DOMElement $contextElm the element to use as context for the
-     * UserDefinedSymbolization section
+     * @param WmsSource $wms
+     * @param \DOMElement $contextElm
      */
     private function parseUserDefinedSymbolization(WmsSource $wms, \DOMElement $contextElm)
     {
@@ -242,11 +237,10 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     /**
      * Parses the Layer section of the GetCapabilities document
      *
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wms the WmsSource
-     * @param \Mapbender\WmsBundle\Entity\WmsLayerSource $wmslayer the WmsLayerSource
-     * @param \DOMElement $contextElm the element to use as context for the
-     * Layer section
-     * @return \Mapbender\WmsBundle\Entity\WmsLayerSource the created layer
+     * @param WmsSource $wms
+     * @param WmsLayerSource $wmslayer
+     * @param \DOMElement $contextElm
+     * @return WmsLayerSource the created layer
      */
     private function parseLayer(WmsSource $wms, WmsLayerSource $wmslayer, \DOMElement $contextElm)
     {

@@ -5,15 +5,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 
 /**
- * Source entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_core_keyword")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discriminator", type="string")
- * ORM\DiscriminatorMap({"mb_core_keyword" = "Keyword"})
  */
 abstract class Keyword
 {
@@ -69,9 +66,7 @@ abstract class Keyword
     }
 
     /**
-     * Returns a Source as String
-     *
-     * @return String Source as String
+     * @return string
      */
     public function __toString()
     {

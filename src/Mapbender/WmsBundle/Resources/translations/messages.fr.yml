@@ -11,11 +11,7 @@ mb:
           cancel: Annuler
           load: Charger
       error:
-        url: 'WMSLoader: Impossible de charger les ''WMS capabilities''! L''URL est invalide.'
-        service: 'WMSLoader: Le service %service% n''est pas supporté!'
-        operation: 'WMSLoader: L''opération %operation% n''est pas supportée!'
-        version: 'WMSLoader: La version %version% du service WMS n''est pas supportée!'
-        load: 'WMSLoader: ''Impossible de chrager les WMS capabilities''!'
+        load: "WMSLoader: Impossible de chrager les WMS capabilities!"
       repo:
         macros:
           label:
@@ -53,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
-          title:
-            wmsinstance: 'Instance WMS'
           btn:
             save: Sauvegarder
             cancel: Annuler

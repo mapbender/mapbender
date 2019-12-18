@@ -1,4 +1,36 @@
 mb:
+  actions:
+    accept: Oldu
+    add: Ekle
+    back: Geri git
+    cancel: Vazgeç
+    close: Kapat
+    delete: Sil
+    edit: Düzenle
+    filter: Filtrele
+    print: Yazdır
+    refresh: Güncelle
+    remove: Kaldır
+    save: Kaydet
+    search: Ara
+  terms:
+    application:
+      singular: Uygulama
+      plural: Uygulamalar
+    source:
+      singluar: Kaynak
+      plural: Kaynaklar
+    layerset:
+      singular: Katman
+      plural: Katmanlar
+    sourceinstance:
+      singular: ~ # @todo
+      plural: ~ # @todo
+      typed:
+        singular: ~ # @todo (embed %type% placeholder)
+  states:
+    active: aktif
+    inactive: etkisiz
   core:
     featureinfo:
       error:

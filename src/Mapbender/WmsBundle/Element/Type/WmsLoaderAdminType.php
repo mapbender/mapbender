@@ -28,13 +28,15 @@ class WmsLoaderAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element', array(
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('defaultFormat', 'choice', array(
+            ->add('defaultFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 "choices" => array(
                     "image/png" => "image/png",
                     "image/gif" => "image/gif",
@@ -42,7 +44,7 @@ class WmsLoaderAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('defaultInfoFormat', 'choice', array(
+            ->add('defaultInfoFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 "choices" => array(
                     "text/html" => "text/html",
                     "text/xml" => "text/xml",
@@ -50,15 +52,15 @@ class WmsLoaderAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('autoOpen', 'checkbox', array(
+            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.admin.label.autoopen',
             ))
-            ->add('splitLayers', 'checkbox', array(
+            ->add('splitLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.admin.label.splitlayers',
             ))
-            ->add('useDeclarative', 'checkbox', array(
+            ->add('useDeclarative', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.admin.label.declarative',
             ))

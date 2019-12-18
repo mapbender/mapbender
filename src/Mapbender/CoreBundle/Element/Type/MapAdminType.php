@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\CoreBundle\Form\Type\ExtentType;
 
 class MapAdminType extends AbstractType implements DataTransformerInterface
 {
@@ -27,7 +26,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     {
         $builder->addModelTransformer($this);
         $builder
-            ->add('layersets', 'app_layerset', array(
+            ->add('layersets', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
                 'required' => true,
                 'multiple' => true,
@@ -37,40 +36,29 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     'data-sortable' => 'choiceExpandedSortable',
                 ),
             ))
-            ->add('dpi', 'number', array(
+            ->add('dpi', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'label' => 'DPI',
             ))
-            ->add('tileSize', 'number', array(
+            ->add('tileSize', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => false,
                 'label' => 'Tile size',
             ))
-            ->add('srs', 'text', array(
+            ->add('srs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'SRS',
             ))
-            ->add('units', 'choice', array(
-                'label' => 'Map units',
-                'choices' => array(
-                    'Degrees' => 'degrees',
-                    'Meters' => 'm',
-                    'Feet' => 'ft',
-                    'Miles' => 'mi',
-                    'Inches' => 'inches',
-                ),
-                'choices_as_values' => true,
-            ))
-            ->add('extent_max', new ExtentType(), array(
+            ->add('extent_max', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.max_extent',
                 'property_path' => '[extents][max]',
             ))
-            ->add('extent_start', new ExtentType(), array(
+            ->add('extent_start', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.start_extent',
                 'property_path' => '[extents][start]',
             ))
-            ->add('scales', 'text', array(
+            ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Scales (csv)',
                 'required' => true,
             ))
-            ->add('otherSrs', 'text', array(
+            ->add('otherSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Other SRS',
                 'required' => false,
             ))

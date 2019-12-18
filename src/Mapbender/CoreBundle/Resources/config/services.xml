@@ -3,11 +3,11 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
+        <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
-        <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
+        <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
-        <parameter key="mapbender.form_type.element.layertree.menu.class">Mapbender\CoreBundle\Element\Type\LayerTreeMenuType</parameter>
         <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
@@ -15,6 +15,7 @@
         <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
+        <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
@@ -34,13 +35,21 @@
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
         <parameter key="mapbender.uploads_dir">uploads</parameter>
+        <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
+             try setting /usr/bin/sassc -->
+        <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
     </parameters>
 
     <services>
         <service id="mapbender" class="Mapbender\CoreBundle\Mapbender">
             <argument type="service" id="service_container" />
         </service>
-
+        <service id="mapbender.application.yaml_entity_repository" class="%mapbender.application.yaml_entity_repository.class%" lazy="true">
+            <argument>%applications%</argument>
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.element_inventory.service" />
@@ -75,7 +84,7 @@
         <service id="mapbender.assetic.filter.sass" class="%assetic.filter.scss.class%">
             <tag name="assetic.filter" alias="sass" />
 
-            <argument>null</argument>
+            <argument>%mapbender.asset.sassc_binary_path%</argument>
             <call method="setTimeout">
                 <argument>%assetic.filter.sass.timeout%</argument>
             </call>
@@ -105,7 +114,7 @@
         </service>
 
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.asset_compiler.css" />
             <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
         </service>
 
@@ -122,11 +131,6 @@
             <argument type="service" id="logger" />
         </service>
 
-        <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
-        <service id="mapbender.form_type.element.layertree.menuChoices" class="%mapbender.form_type.element.layertree.menu.class%">
-            <argument>true</argument>
-            <tag name="form.type" alias="layertree_menu" />
-        </service>
         <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
@@ -146,13 +150,13 @@
         </service>
         <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
             <argument type="service" id="mapbender.element_inventory.service" />
-            <argument key="translator" type="service" id="translator" />
+            <argument type="service" id="translator" />
             <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
-            <argument key="fileSystem" type="service" id="filesystem" />
-            <argument key="absoluteWebPath">%kernel.root_dir%/../web</argument>
-            <argument key="relativePath">%mapbender.uploads_dir%</argument>
+            <argument type="service" id="filesystem" />
+            <argument>%kernel.root_dir%/../web</argument>
+            <argument>%mapbender.uploads_dir%</argument>
         </service>
         <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
             <argument type="service" id="security.acl.provider" />
@@ -200,8 +204,8 @@
             <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.element_factory.service" />
-            <argument key="debug">%kernel.debug%</argument>
-            <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
+            <argument>%kernel.debug%</argument>
+            <argument>%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->

@@ -28,26 +28,34 @@ class WmtsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('info', 'checkbox', array(
+            ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
             ))
-            ->add('allowinfo', 'checkbox', array(
+            ->add('allowinfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
             ))
         ;
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var WmtsInstanceLayer $layer */
+        // NOTE: collection prototype view does not have data
+        /** @var WmtsInstanceLayer|null $layer */
         $layer = $form->getData();
-
-        $isQueryable = !!$layer->getSourceItem()->getInfoformats();
+        if ($layer) {
+            $isQueryable = !!$layer->getSourceItem()->getInfoformats();
+        } else {
+            $isQueryable = false;
+        }
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
         if (!$isQueryable) {
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
+        $view['info']->vars['checkbox_group'] = 'checkInfoOn';
+        $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
     }
 }

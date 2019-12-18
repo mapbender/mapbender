@@ -11,10 +11,6 @@ mb:
           cancel: Annuleren
           load: Laad
       error:
-        url: 'WMSLoader: WMS capabilities kunnen niet geladen worden! De capabilities url is niet valide.'
-        service: 'WMSLoader: De service %service% wordt niet ondersteund!'
-        operation: 'WMSLoader: de WMS Operatie %operation% wordt niet ondersteund!'
-        version: 'WMSLoader: de WMS versie %version% wordt niet ondersteund!'
         load: 'WMSLoader: WMS capabilities kan niet geladen worden!'
       repo:
         macros:
@@ -53,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Pas op: Schaal berekeningen zijn onderworpen aan gelimiteerde Schaal-Hint resolutie in WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'WMS instantie'
           btn:
             save: Bewaar
             cancel: Annuleren

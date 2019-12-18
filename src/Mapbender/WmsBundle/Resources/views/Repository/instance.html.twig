@@ -1,7 +1,5 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ instance.source.title }}{% endblock %}
-
 {% block css %}
     <link rel="stylesheet" href="{{ asset('components/jquery-ui/themes/base/jquery-ui.min.css') }}" type="text/javascript" />
   {{parent()}}
@@ -57,6 +55,7 @@
     {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
+      {% set _proto = form.layers.vars.prototype %}
         <tr>
           <th></th>
           <th>{{"mb.wms.wmsloader.repo.instance.label.title"|trans}}</th>
@@ -82,14 +81,14 @@
         </tr>
         <tr id="instanceTableCheckHead">
           <th colspan="4"></th>
-          <th class="checkboxColumn"><span id="checkActive" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkToggleAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkToggleOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkRecorderAllow" class="iconCheckbox"></span></th>
+          {{ form_row(_proto.active, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.selected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowinfo, {'tagName': 'th'}) }}
+          {{ form_row(_proto.info, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowtoggle, {'tagName': 'th'}) }}
+          {{ form_row(_proto.toggle, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowreorder, {'tagName': 'th'}) }}
           <th></th>
         </tr>
       </thead>

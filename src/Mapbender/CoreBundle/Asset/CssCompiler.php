@@ -11,7 +11,9 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Locates, merges and compiles (S)CSS assets for applications.
- * Registered in container as mapbender.asset_compiler.css
+ *
+ * Default implementation for service mapbender.asset_compiler.css
+ * @since v3.0.8.5-beta1
  */
 class CssCompiler extends AssetFactoryBase
 {
@@ -48,6 +50,12 @@ class CssCompiler extends AssetFactoryBase
     public function compile($inputs, $debug=false)
     {
         $content = $this->concatenateContents($inputs, $debug);
+        // Quite damaging hack for special snowflake mobile template
+        // Pulls imports in front of everything else, including variable (re)definitions
+        // This makes it impossible to @import modules accessing variable definitions after
+        // redefining those variables.
+        // @todo: make mobile template scss work with and without squashing, then disable squashing
+        //        alternatively nuke mobile template completely (Mapbender 3.1?)
         $content = $this->squashImports($content);
 
         $sass = clone $this->sassFilter;
@@ -89,7 +97,16 @@ class CssCompiler extends AssetFactoryBase
         $baseUrl = $this->router->getContext()->getBaseUrl();
         $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         $beforeScript = implode('', array_slice(explode($scriptName, $baseUrl), 0, 1));
-        return rtrim($beforeScript, '/') ?: '.';
+        $withScript = rtrim($beforeScript, '/') . '/' . $scriptName;
+        if ($baseUrl && $scriptName && 0 !== strpos($baseUrl, $withScript)) {
+            // Context base url explicitly includes the name of the executed entry script.
+            // => Use as is.
+            return $withScript;
+        } else {
+            // Context base url DOES NOT include the name of the executed entry script.
+            // => return stripped base url, but also provide safe minimal fallback path '.'
+            return rtrim($beforeScript, '/') ?: '.';
+        }
     }
 
     /**

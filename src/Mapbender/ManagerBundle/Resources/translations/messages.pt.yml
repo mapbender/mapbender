@@ -13,8 +13,6 @@ mb:
       success: ~
       failure:
         general: ~
-        already.removed: ~
-        remove.directory: ~
   layerset:
     create:
       success: ~
@@ -29,7 +27,7 @@ mb:
         success: ~
   manager:
     admin:
-      sources: 'Origem de dados'
+      sources: Origens de dados
       source:
         add: 'Adicionar origem de dados'
         show_metadata: 'Mostrar metadados'
@@ -66,11 +64,6 @@ mb:
           '': 'Nenhum elemento existe'
       zoombar:
         draggable: Deslocar
-      filter:
-        source: 'Filtro origem de dados'
-        layerset: 'Filtro de conjunto de camadas'
-        application: Filtro
-        element: 'Filtro elemento'
       overview:
         maximize: Maximizar
         fix: Fixar
@@ -105,7 +98,7 @@ mb:
         security:
           title: Segurança
           add_users_groups: 'Adicionar usuários e grupos'
-          public: Ativado
+          public: acesso público
         save: Guardar
         cancel: Cancelar
         view_this: 'Mostrar aplicação'
@@ -222,10 +215,6 @@ mb:
     import:
       application:
         failed: 'Não pode importar aplicação'
-      acl:
-        failed: 'Não pode importar Acls'
-      source:
-        failed: 'Não pode importar origem'
   core:
     admin:
       button:
@@ -253,9 +242,3 @@ mb:
           format_error: 'Formato não suportado.'
           resolution:
             error: 'O ficheiro precisa de %screenshotHeight% x %screenshotWidth% pixel ou mais. O seu ficheiro tem %uploadWidth% x %uploadHeighth% pixel. '
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Aplicações

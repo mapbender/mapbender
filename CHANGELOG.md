@@ -1,18 +1,83 @@
-## dev-release/3.0.7 @ 4d61891ef
-- Fix missing owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
-- Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
-- Allow privileged users to access non-published Yaml-based applications
-- Replace Chrome-specific regex usage in time dimension initialization with unspecific equivalents
-- Fix alignment of ZoomBar zoom level icons
-- Replace ZoomBar history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
+## v3.0.8.5-RC1
+### Regression fixes
+- Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
+### Other functional fixes
+- Disable sqlite foreign keys when running doctrine:schema:update command for safety
+- Fix unreliable / broken initial map srs configurations depending on database response order
+- Fix PostgreSQL 10 incompatibilities when running `doctrine:schema:update` et al
+- Fix invalid relative urls in cached css when switching base url (e.g. url with "app.php" vs without script name)
+- Fix invalid relative urls in generated application css when running Mapbender in a "subdirectory url" (see UPGRADING.md for potential conflicts with old workarounds)
+- Fix broken map scales configuration if loaded config contains non-contiguous array
+- Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
+- Fix nonfunctional CSS minification in `prod` environment ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
+- Add missing grants check for instance enable toggle / instance reordering actions (requires `EDIT` on containing Application)
+- Resolve misc form type, service configuration and other incompatibilities with Symfony 3
+- [PrintClient] fix missing data if form is submitted by pressing Enter key
+- [PrintClient] prevent form submit in sidepane if selection rectangle is inactive
+- [PrintClient] Fix selection rectangle recentering on change of scale dropdown or rotation field
+- [Backend] Fix internal server error when submitting PrintClient configuration form with invalid values
+- [Backend] Fix invalid application export data format for WMS legend and metadata url sub-objects
+- [Backend] Fix errors on import of previously broken application export formats
+- [Backend] SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
+- [Backend] Maintain backend element form confirmation on close behaviour after submitting once with validation errors
+- [Framework] Fix missing .dropdownValue visual update on "changed" event
+- [Framework] Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
+### New / extended functionality
+- Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
+- Show dependent applications and instances in source view (as a new "Applications" tab)
+- Show affected applications and instances in source deletion confirmation popup
 - When cloning DB applications, also clone access control rules
+- Automatically assign owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
+- Allow privileged users to access non-published Yaml-based applications
+- Support accessing non-published Yaml-based application in clone and export cli commands
+- [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+### Visual fixes and changes - frontend
+- Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- [ZoomBar] replace history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
+- [ZoomBar] fix horizontal alignment of zoom level icons
+### Visual fixes and changes - login and backend
+- Fix display of wide-format custom logos in backend sidepane and login areas
+- Fix encoding errors of backend headings containing HTML-escapable characters
+- Split instance editing `<h1>` to improve presentation of instances with very long titles
+- Fix untranslated "Back" button in backend source views
+- Supply validation error messages (line + snippet) for yaml-type form fields
+- Disable undesirable close on outside click / mouse drag in misc backend modal popups (e.g. Layerset title editing)
+- Replace custom backend message boxes with standard Boostrap `.alert`
+- Replace some custom backend-only icon constructs with forward-compatible FontAwesome markup
+- Improve wording consistency of common backend button / interaction labels (save vs update, delete, back etc)
+- Remove confusing WMTS instance form fields for unpersisted values
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
+- Remove inconsequential Map Element configuration field `units` (units are auto-determined by CRS)
 - Remove unused tooltip Element configuration (ZoomBar, ScaleDisplay, ScaleBar, Overview, FeatureInfo, CoordinatesDisplay, Legend, Sketch)
-- Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+- Remove schema validation status display icons from backend Source listing (schema validation has been disabled since 3.0.8)
+### New / extended functionality
+- Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
+- Show dependent applications and instances in source view (as a new "Applications" tab)
+- Show affected applications and instances in source deletion confirmation popup
+- When cloning DB applications, also clone access control rules
+- Automatically assign owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
+- Support viewing Yaml-based applications with `published: false` for users with appropriate privileges (root user, global Application view grant, or passing Yaml-Application-specific role check)
 - Support accessing non-published Yaml-based application in clone and export cli commands
-- Fix twig 2.x incompatibility in TwigConstraintValidator (applied HTML Element content field); clean up various twig deprecations
-- Dropped legacy joii library
+- [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+### Package dependency changes
+*NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
+- Dropped legacy joii library dependency
+- Replaced `eslider/sasscb` dependency with two new dependencies ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
+- Added `
+- Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
+- Moved owsproxy dependency back to stable / tagged version releases
+### Other changes
+- [CSS] `.linkButton` and all `<a>` elements now inherit font color by default
+- [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
+- [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts
+- [CSS] switch to root-relative units for all header elements and font-size classes
+- [CSS] `table` elements in popups and sidepanes now have full width by default, globally
+- [CSS] [Potential break] Resolve conflicts with Bootstrap checkbox markup. Elements with class `.checkbox` are no longer globally hidden. See UPGRADING.md for guidance.
+- [CSS] Extract new SASS variables `$inputBackgroundColor` and `$inputForegroundColor` for targetted customization of form field background / text color
+- Add `translation:get` command (optional MapbenderIntrospectionBundle, inactive by default)
+- Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations (optional MapbenderIntrospectionBundle, inactive by default)
+- Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0
 
 ## v3.0.8.4
 - Support secured WmsLoader sources in modern browsers

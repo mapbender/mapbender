@@ -268,7 +268,7 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * @param EntityPool $entityPool
-     * @param \Mapbender\CoreBundle\Entity\Application $app
+     * @param Application $app
      */
     protected function updateElementConfiguration(EntityPool $entityPool, Application $app)
     {
@@ -434,7 +434,7 @@ class ImportHandler extends ExchangeHandler
      * @param EntityHelper $entityInfo
      * @param array $data
      * @return object|null
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     protected function handleEntity(ImportState $state, EntityHelper $entityInfo, array $data)
     {
@@ -483,7 +483,7 @@ class ImportHandler extends ExchangeHandler
      * @param AbstractObjectHelper $classInfo
      * @param array $data
      * @return object
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     protected function handleClass(ImportState $state, AbstractObjectHelper $classInfo, array $data)
     {
@@ -491,6 +491,14 @@ class ImportHandler extends ExchangeHandler
         $object = new $className();
         foreach ($classInfo->getSetters(array_keys($data)) as $propertyName => $setter) {
             if ($data[$propertyName] !== null) {
+                // support hack for older exports without support for nested non-entity objects
+                if (empty($data[$propertyName][static::KEY_CLASS])) {
+                    if ($subObjectClassName = $this->getLegacyExportMissingSubobjectClassName($className, $setter->getName())) {
+                        $data[$propertyName][static::KEY_CLASS] = array(
+                            $subObjectClassName,
+                        );
+                    }
+                }
                 $value = $this->handleData($state, $data[$propertyName]);
                 if (!is_array($value) || count($value)) {
                     $setter->invoke($object, $value);
@@ -514,5 +522,34 @@ class ImportHandler extends ExchangeHandler
         }
         $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
         $this->aclProvider->updateAcl($acl);
+    }
+
+    /**
+     * Check for class names of nested non-entity objects where legacy export
+     * didn't emit the correct class signature.
+     *
+     * @param string $className
+     * @param string $setterName
+     * @return string|null
+     */
+    protected function getLegacyExportMissingSubobjectClassName($className, $setterName)
+    {
+        switch ($setterName) {
+            case 'setLegendUrl':
+                if (\is_a($className, 'Mapbender\WmsBundle\Component\Style', true)) {
+                    return 'Mapbender\WmsBundle\Component\LegendUrl';
+                }
+                break;
+            case 'setOnlineResource':
+                if (\is_a($className, 'Mapbender\WmsBundle\Component\LegendUrl', true) ||
+                    \is_a($className, 'Mapbender\WmsBundle\Component\MetadataUrl', true)) {
+                    return 'Mapbender\WmsBundle\Component\OnlineResource';
+                }
+                break;
+            default:
+                // nothing
+                break;
+        }
+        return null;
     }
 }

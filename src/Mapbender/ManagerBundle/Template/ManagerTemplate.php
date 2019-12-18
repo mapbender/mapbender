@@ -27,6 +27,7 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                 );
             case 'trans':
                 return array(
+                    'mb.actions.*',
                     '@MapbenderManagerBundle/Resources/views/translations.json.twig',
                 );
             default:

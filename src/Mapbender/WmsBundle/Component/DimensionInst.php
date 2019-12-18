@@ -3,8 +3,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Identifier class.
- *
  * @author Paul Schmidt
  */
 class DimensionInst extends Dimension

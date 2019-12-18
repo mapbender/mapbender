@@ -13,8 +13,6 @@ mb:
       success: Ihre Anwendung wurde gelöscht.
       failure:
         general: Ihre Anwendung konnte nicht gelöscht werden.
-        already.removed: Ihre Anwendung wurde bereits gelöscht.
-        remove.directory: Ihre Anwendung wurde gelöscht, aber das Anwendungsverzeichnis konnte nicht entfernt werden.
   layerset:
     create:
       success: Ihr Layerset wurde erstellt.
@@ -29,7 +27,7 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     admin:
-      sources: Datenquelle
+      sources: Datenquellen
       source:
         add: 'Datenquelle hinzufügen'
         show_metadata: 'Metadaten anzeigen'
@@ -44,6 +42,7 @@ mb:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
           unreachable: 'Die Datenquelle ist nicht erreichbar'
+        embedded_in_applications: '{0} Diese Datenquelle ist in keiner Applikation eingebunden|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Datenquelle ist in %count% Applikationen eingebunden'
       map:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
@@ -66,11 +65,6 @@ mb:
           '': 'Kein Element vorhanden'
       zoombar:
         draggable: Verschiebbar
-      filter:
-        source: 'Filter'
-        layerset: 'Filter'
-        application: Filter
-        element: Filter         
       overview:
         maximize: Maximieren
         fix: Fixieren
@@ -105,7 +99,7 @@ mb:
         security:
           title: Sicherheit
           add_users_groups: 'Benutzer/Gruppen hinzufügen'
-          public: aktiviert
+          public: öffentlicher Zugriff
         save: Speichern
         cancel: Abbrechen
         view_this: 'Anwendung anzeigen'
@@ -222,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'
-      acl:
-        failed: 'Acls können nicht importiert werden.'
-      source:
-        failed: 'Quelle kann nicht importiert werden.'
   core:
     admin:
       button:
@@ -253,9 +243,3 @@ mb:
           format_error: 'Nicht unterstütztes Format'
           resolution:
             error: 'Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Anwendungen

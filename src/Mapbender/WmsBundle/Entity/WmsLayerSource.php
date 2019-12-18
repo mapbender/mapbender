@@ -621,7 +621,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Get attribution
      *
-     * @return Object
+     * @return Attribution|null
      */
     public function getAttribution()
     {

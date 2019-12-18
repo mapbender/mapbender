@@ -36,7 +36,7 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
                     'allow_add' => true,
                     'allow_delete' => true,
                     'auto_initialize' => false,
-                    'options' => array(
+                    'entry_options' => array(
                         'dimensions' => $dimensions,
                     ),
                 ))

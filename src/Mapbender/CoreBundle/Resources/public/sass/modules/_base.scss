@@ -18,8 +18,38 @@ html, body{
                                       rgba(255,255,255,0)) fixed,
                       url($imageBasePath + '/body.png'));
 }
-ul, ol{list-style:none;}
-hr, h1, h2, h3, ul, ol, li{margin:0;padding:0;}
+// @todo: Resolve conflicts of these extra list and heading rules with Bootstrap and
+//        general expectations. Should adopt Bootstrap convention to display lists with
+//        bullets / numbers and indents by default. Only lists that explicitly DO NOT want
+//        indents / bullets should have class list-unstyled to remove them.
+// @see https://getbootstrap.com/docs/3.4/css/#type-lists (same in Bootstrap 4)
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  // @todo: this should be the default eventually (without requiring .list-default class)
+  &.list-default {
+   padding-left: 2.5em;
+  }
+}
+ul.list-default {
+  list-style-type: disc;
+}
+ol.list-default {
+  list-style-type: decimal;
+}
+hr {
+  margin:0;
+  padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 1em;
+  &:first-child {
+    margin-top: 0;
+  }
+  padding: 0;
+}
+
 a {
   text-decoration:none;
   // undo bootstrap's default blue text color on all <a> elements
@@ -28,3 +58,9 @@ a {
   }
 }
 p{margin:0;}
+
+.popup, .sideContent {
+  table {
+    width: 100%;
+  }
+}

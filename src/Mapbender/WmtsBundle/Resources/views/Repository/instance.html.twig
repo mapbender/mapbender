@@ -1,10 +1,9 @@
 {% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
 
-{% block title %}{{ form.vars.value.type }} {{ 'mb.wmts.wmtsloader.repo.instance.title.instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
-
 {% block form_layers %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
+      {% set _proto = form.layers.vars.prototype %}
         <tr>
           <th></th>
           <th>{{ form.title.vars.label | trans}}</th>
@@ -24,26 +23,15 @@
         </tr>
         <tr id="instanceTableCheckHead">
           <th colspan="3"></th>
-          <th class="checkboxColumn"><span id="checkActive" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="checkSelectOn" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoAllow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="checkInfoOn" class="iconCheckbox"></span></th>
+          {{ form_row(_proto.active, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.selected, {'tagName': 'th'}) }}
+          {{ form_row(_proto.allowinfo, {'tagName': 'th'}) }}
+          {{ form_row(_proto.info, {'tagName': 'th'}) }}
           <th></th>
         </tr>
       </thead>
       <tbody id="instanceTableCheckBody">
-        <tr class="item level0">
-            <td class="level0 itemType"><span class="itemType iconFolderActive hover-highlight-effect"></span></td>
-            <td class="titleColumn" title="{{ form.roottitle.vars.label | trans }}">{{ form_widget(form.roottitle) }}</td>
-            <td colspan="1"></td>
-            <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form.active) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form.allowselected) }}</td>
-            <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form.selected) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.allowinfo) }}</td>
-            <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.info) }}</td>
-            <td class="moreColumn"></td>
-        </tr>
         {% for form in form.layers %}
         {% include "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig"  with {'form': form }%}
         {% endfor %}

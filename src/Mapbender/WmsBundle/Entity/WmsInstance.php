@@ -15,7 +15,6 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstance")
- * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
 class WmsInstance extends SourceInstance
 {
@@ -26,7 +25,8 @@ class WmsInstance extends SourceInstance
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "refresh", "remove"})
+     * @var WmsInstanceLayer[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove", "refresh"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
@@ -124,7 +124,7 @@ class WmsInstance extends SourceInstance
      * Sets dimensions
      *
      * @param DimensionInst[] $dimensions
-     * @return \Mapbender\WmsBundle\Entity\WmsInstance
+     * @return $this
      */
     public function setDimensions(array $dimensions)
     {
@@ -147,7 +147,7 @@ class WmsInstance extends SourceInstance
     /**
      * Sets vendorspecifics
      * @param ArrayCollection|DimensionInst[]|VendorSpecific[] $vendorspecifics
-     * @return \Mapbender\WmsBundle\Entity\WmsInstance
+     * @return $this
      */
     public function setVendorspecifics(array $vendorspecifics)
     {
@@ -158,8 +158,8 @@ class WmsInstance extends SourceInstance
     /**
      * Set layers
      *
-     * @param array $layers
-     * @return WmsInstance
+     * @param WmsInstanceLayer[]|ArrayCollection $layers
+     * @return $this
      */
     public function setLayers($layers)
     {
@@ -168,9 +168,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Get layers
-     *
-     * @return \Mapbender\WmsBundle\Entity\WmsInstanceLayer[]|ArrayCollection
+     * @return WmsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
     {
@@ -196,7 +194,7 @@ class WmsInstance extends SourceInstance
      * Set srs
      *
      * @param array $srs
-     * @return WmsInstance
+     * @return $this
      */
     public function setSrs($srs)
     {
@@ -218,7 +216,7 @@ class WmsInstance extends SourceInstance
      * Set format
      *
      * @param string $format
-     * @return WmsInstance
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -240,7 +238,7 @@ class WmsInstance extends SourceInstance
      * Set infoformat
      *
      * @param string $infoformat
-     * @return WmsInstance
+     * @return $this
      */
     public function setInfoformat($infoformat)
     {
@@ -262,7 +260,7 @@ class WmsInstance extends SourceInstance
      * Set exceptionformat
      *
      * @param string $exceptionformat
-     * @return WmsInstance
+     * @return $this
      */
     public function setExceptionformat($exceptionformat)
     {
@@ -284,7 +282,7 @@ class WmsInstance extends SourceInstance
      * Set transparency
      *
      * @param boolean $transparency
-     * @return WmsInstance
+     * @return $this
      */
     public function setTransparency($transparency)
     {
@@ -306,7 +304,7 @@ class WmsInstance extends SourceInstance
      * Set opacity
      *
      * @param integer $opacity
-     * @return WmsInstance
+     * @return $this
      */
     public function setOpacity($opacity)
     {
@@ -395,7 +393,7 @@ class WmsInstance extends SourceInstance
      * Set buffer
      *
      * @param boolean $buffer
-     * @return WmsInstance
+     * @return $this
      */
     public function setBuffer($buffer)
     {
@@ -417,7 +415,7 @@ class WmsInstance extends SourceInstance
      * Set wmssource
      *
      * @param WmsSource $wmssource
-     * @return WmsInstance
+     * @return $this
      */
     public function setSource($wmssource = null)
     {
@@ -439,7 +437,7 @@ class WmsInstance extends SourceInstance
      * Add layers
      *
      * @param WmsInstanceLayer $layer
-     * @return WmsInstance
+     * @return $this
      */
     public function addLayer(WmsInstanceLayer $layer)
     {
@@ -459,6 +457,8 @@ class WmsInstance extends SourceInstance
 
     /**
      * @return WmsMetadata
+     * @deprecated metadata rendering is doable and should be done purely in twig
+     * @see \Mapbender\CoreBundle\Controller\ApplicationController::metadataAction()
      */
     public function getMetadata()
     {

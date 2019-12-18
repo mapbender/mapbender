@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender;
 
-use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -139,8 +138,9 @@ abstract class BaseKernel extends Kernel
     protected function buildContainer()
     {
         $container = parent::buildContainer();
-        $container->addCompilerPass(new RebuildElementInventoryPass($this));
-
+        if (\class_exists('\Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex')) {
+            \Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex::autoRegisterAll($container);
+        }
         return $container;
     }
 }

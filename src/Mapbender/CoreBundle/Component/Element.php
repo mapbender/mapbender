@@ -57,7 +57,7 @@ abstract class Element extends MinimalBound
      * This method will be made final in a future release.
      *
      * @param Application        $application Application component
-     * @param ContainerInterface $container   Container service
+     * @param ContainerInterface $container
      * @param Entity             $entity
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
@@ -185,6 +185,11 @@ abstract class Element extends MinimalBound
      */
     public function getAssets()
     {
+        // @todo 3.1: remove listAssets inflection. This will break:
+        //        data-manager < 1.0.6.2
+        //        query-builder < 1.0.2
+        //        digitizer < 1.1.67
+        //        A LOT of project Elements :\
         return $this::listAssets();
     }
 
@@ -211,6 +216,7 @@ abstract class Element extends MinimalBound
      *
      * @param Request $request
      * @return Response
+     * @since v3.0.8-beta1
      */
     public function handleHttpRequest(Request $request)
     {

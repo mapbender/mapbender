@@ -8,15 +8,11 @@ mb:
       success: Your application has been saved.
       failure:
         general: There was an error trying to save your application.
-        create.directory: |
-          Your application has been updated but the application's directories can not be created.
+        create.directory: Your application has been updated but the application's directories can not be created.
     remove:
       success: Your application has been deleted.
       failure:
         general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
-        remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
   layerset:
     create:
       success: Your layerset has been created.
@@ -46,6 +42,7 @@ mb:
           ok: 'Source OK'
           toupdate: 'Source not current anymore'
           unreachable: 'Source unreachable'
+        embedded_in_applications: '{0} This source is not assigned to any application|{1} This source is assigned to one application|]1,Inf[ This source is assigned to %count% applications'
       map:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
@@ -68,11 +65,6 @@ mb:
           '': 'No element added'
       zoombar:
         draggable: Draggable
-      filter:
-        source: 'Filter source'
-        layerset: 'Filter layerset'
-        application: 'Filter application'
-        element: Filter        
       overview:
         maximize: Maximize
         fix: Fix
@@ -107,7 +99,7 @@ mb:
         security:
           title: Security
           add_users_groups: 'Add users and groups'
-          public: activated
+          public: public access
         save: Save
         cancel: Cancel
         view_this: 'View this application'
@@ -224,10 +216,6 @@ mb:
     import:
       application:
         failed: 'Application cannot be imported.'
-      acl:
-        failed: 'Acls cannot be imported.'
-      source:
-        failed: 'Sources cannot be imported.'
   core:
     admin:
       button:
@@ -255,9 +243,3 @@ mb:
           format_error: 'This format is not supported!'
           resolution:
             error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: Applications

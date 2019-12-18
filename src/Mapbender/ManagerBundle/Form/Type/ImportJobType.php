@@ -15,14 +15,6 @@ class ImportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'importjob';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array());
@@ -34,7 +26,7 @@ class ImportJobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('importFile', 'file', array('required' => true))
+            ->add('importFile', 'Symfony\Component\Form\Extension\Core\Type\FileType')
         ;
     }
 

@@ -13,8 +13,6 @@ mb:
       success: 'Uygulama silindi.'
       failure:
         general: 'Uygulama silinemiyor.'
-        already.removed:  'Uygulama bulunamadı.'
-        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.'
   layerset:
     create:
       success: 'Katman oluşturuldu.'
@@ -66,10 +64,6 @@ mb:
           '': 'Öğe eklenmedi'
       zoombar:
         draggable: 'Sürüklenebilir'
-      filter:
-        source: 'Kaynak filtrele'
-        layerset: 'Katman filtrele'
-        application: 'Uygulama filtrele'
       overview:
         maximize: 'Maksimuma çıkarma'
         fix: 'Sabit'
@@ -104,7 +98,7 @@ mb:
         security:
           title: 'Güvenlik'
           add_users_groups: 'Kullanıcı ve Grup ekle'
-          public: 'Aktif'
+          public: Kamu erişim
         save: 'Kaydet'
         cancel: 'Vazgeç'
         view_this: 'Bu uygulamayı görüntüle'
@@ -215,10 +209,6 @@ mb:
     import:
       application:
         failed: 'Uygulama içeri aktarıllamıyor (Import).'
-      acl:
-        failed: 'Erişim kontrol listesi içeri aktarıllamıyor (Import).'
-      source:
-        failed: 'Kaynaklar içeri aktarıllamıyor (Import).'
   core:
     admin:
       button:
@@ -246,9 +236,3 @@ mb:
           format_error: 'Bu format desteklenmiyor!'
           resolution:
             error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
-form:
-  manager:
-    admin:
-      application:
-        export:
-          application: 'Uygulama'

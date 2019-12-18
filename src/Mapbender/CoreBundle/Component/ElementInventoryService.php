@@ -7,7 +7,8 @@ namespace Mapbender\CoreBundle\Component;
 /**
  * Maintains inventory of Element Component classes
  *
- * Registered in container as mapbender.element_inventory.service
+ * Default implementation for service mapbender.element_inventory.service
+ * @since v3.0.8-beta1
  */
 class ElementInventoryService
 {

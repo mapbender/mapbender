@@ -23,20 +23,32 @@ class ButtonAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'text', array('required' => false))
-            ->add('icon', new IconClassType(), array('required' => false))
-            ->add('label', 'checkbox', array(
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('icon', 'Mapbender\CoreBundle\Element\Type\IconClassType', array(
+                'required' => false,
+            ))
+            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.button.show_label',
             ))
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('click', 'text', array('required' => false))
-            ->add('group', 'text', array('required' => false))
-            ->add('action', 'text', array('required' => false))
-            ->add('deactivate', 'text', array('required' => false))
+            ->add('click', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('group', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('action', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('deactivate', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
         ;
     }
 

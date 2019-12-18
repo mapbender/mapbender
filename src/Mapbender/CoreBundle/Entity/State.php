@@ -5,8 +5,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Signer;
 
 /**
- * Source entity
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity

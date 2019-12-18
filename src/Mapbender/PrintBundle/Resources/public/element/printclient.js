@@ -37,10 +37,12 @@
                 this._initJobList($jobList);
             }
 
-            $('select[name="scale_select"]', this.$form)
-                .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="rotation"]', this.$form)
-                .on('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="scale_select"]', this.$form).on('change', function() {
+                self._updateGeometry();
+            });
+            $('input[name="rotation"]', this.$form).on('keyup', function() {
+                self._updateGeometry();
+            });
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
@@ -61,7 +63,9 @@
                         self._deactivateSelection();
                     }
                 });
-                $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.$form).on('click', function() {
+                    self.$form.submit();
+                });
             } else {
                 // popup comes with its own buttons
                 $('.printSubmit', this.$form).remove();
@@ -97,7 +101,7 @@
                                         label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                         cssClass: 'button right',
                                         callback: function(){
-                                            self._print();
+                                            self.$form.submit();
                                         }
                                     }
                             }
@@ -117,9 +121,9 @@
                 self.selectionActive = true;
                 control.activate();
                 if (reset) {
-                    self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
+                    self._setScale();
                 } else {
-                    self._updateGeometry(false);
+                    self._updateGeometry();
                 }
                 $('.printSubmit', self.$form).removeClass('hidden');
             });
@@ -171,7 +175,6 @@
         },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
-            var styledSelect = select.parent().find(".dropdownValue.iconDown");
             var scales = this.options.scales;
             var currentScale = this.map.model.getCurrentScale();
             var selectValue;
@@ -193,10 +196,7 @@
                 selectValue = scales[scales.length-1];
             }
 
-            select.val(selectValue);
-            styledSelect.html('1:'+selectValue);
-
-            this._updateGeometry(true);
+            select.val(selectValue).trigger('change');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             // adjust for geodesic pixel aspect ratio so
@@ -235,7 +235,7 @@
             this.control.unsetFeature();
 
             var center;
-            if (reset) {
+            if (reset || !this.feature) {
                 center = this.map.map.olMap.getCenter();
             } else {
                 center = this.feature.geometry.getBounds().getCenterLonLat();
@@ -498,18 +498,32 @@
             }
             return jobData;
         },
+        /**
+         * @private
+         * @deprecated extend _collectJobData if you need more stuff sent to the server
+         * @deprecated extend _onSubmit if you need to check further preconditions before
+         *     form is sent
+         */
         _print: function() {
+            this.$form.submit();
+        },
+        _onSubmit: function(evt) {
+            if (!this.selectionActive) {
+                // prevent submit without selection (sidepane mode has separate button to start selecting)
+                return false;
+            }
+            // add job data to hidden form fields
             var jobData = this._collectJobData();
             if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-                return;
+                // prevent further handling
+                return false;
             }
-
-            this._submitJob(jobData);
-        },
-        _onSubmit: function(evt) {
+            this._injectJobData(jobData);
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
+            // let the browser do the rest
+            return true;
         },
         _onTemplateChange: function() {
             var self = this;

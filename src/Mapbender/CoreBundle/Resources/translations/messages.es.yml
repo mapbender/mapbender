@@ -1,4 +1,36 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Añadir
+    back: Atrás
+    cancel: Cancelar
+    close: Cerrar
+    delete: Borrar
+    edit: Editar
+    filter: Filtrar
+    print: Imprimir
+    refresh: Actualizar
+    remove: Remover
+    save: Guardar
+    search: Buscar
+  terms:
+    application:
+      singular: Aplicación
+      plural: Aplicaciónes
+    source:
+      singular: Fuente
+      plural: Fuentes
+    layerset:
+      singular: Conjunto de capas
+      plural: Conjuntos de capas
+    sourceinstance:
+      singular: Instancia
+      plural: Instancias
+      typed:
+        singular: '%type% instancia'
+  states:
+    active: activo # m.; f.: activa
+    inactive: inactivo # m.; f.: inactiva
   core:
     featureinfo:
       error:
@@ -163,7 +195,7 @@ mb:
           ok: Close
     gpsposition:
       error:
-        notsupported: 'Lo siento, pero los servicios de geolocalización no son soportados por su navegador.'
+        notsupported: Los servicios de geolocalización no son soportados por su navegador.
         nosignal: Actualmente no es posible localizar su posición.
       class:
         title: 'Posición GPS'

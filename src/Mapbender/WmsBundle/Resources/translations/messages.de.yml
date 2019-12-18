@@ -11,10 +11,6 @@ mb:
           cancel: Abbrechen
           load: Laden
       error:
-        url: 'WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden! Die Capabilities-URL ist nicht gültig.'
-        service: 'WMS laden: der Service %service% wird nicht unterstützt!'
-        operation: 'WMS laden: die WMS Operation %operation% wird nicht unterstützt!'
-        version: 'WMS laden: die WMS Version %version% wird nicht unterstützt!'
         load: 'WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden!'
       repo:
         macros:
@@ -53,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Achtung: Die Maßstabsberechnungen unterliegen der limitierten ScaleHint-Auflösung in WMS 1.1.1'
         instance:
-          title:
-            wmsinstance: 'WMS Instanz'
           btn:
             save: Speichern
             cancel: Abbrechen

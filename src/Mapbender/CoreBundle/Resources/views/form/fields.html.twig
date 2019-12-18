@@ -19,7 +19,7 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="messageBox error">
+        <div class="alert alert-danger">
             <ul>
             {% for error in errors %}
                 <li>{{ error.message }}</li>
@@ -221,9 +221,10 @@
 {% endblock checkbox_widget %}
 
 {% block radio_widget %}
-  {%- if 'region_properties' in form.parent.vars['block_prefixes'] -%}
-    {%- set _iconClass = 'iconRadio' ~ (value | default('')) %}
-    <span class="radioWrapper {{ _iconClass }}{% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" data-icon="{{ _iconClass }}" title="{{ form.vars.label | trans }}">
+  {%- if 'application_region_properties' in form.parent.vars['block_prefixes'] -%}
+    {%- set _iconClass = form.parent.vars.iconMap[value] -%}
+    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ form.vars.label | trans }}">
+      <i class="{{ _iconClass }}"></i>
       {%- set attr = attr | merge({'class' : attr.class | default('') ~  ' hidden' | trim }) -%}
       {{ block('div_radio_widget') }}
     </span>
@@ -232,14 +233,14 @@
   {%- endif -%}
 {% endblock radio_widget %}
 
-{% block region_properties_widget %}
+{% block application_region_properties_widget %}
   <div {{ block('widget_container_attributes') }}>
     {%- for choice in form -%}
       {# do not invoke form_label, label is placed into a title attribute tooltip #}
       {{- form_widget(choice, {'block_name': 'region_properties_choice_value'}) -}}
     {%- endfor -%}
   </div>
-{% endblock region_properties_widget %}
+{% endblock application_region_properties_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}
@@ -372,7 +373,13 @@
     {% if label_attr.class is not defined or not (' labelCheck ' in (' '~label_attr.class~' ') or ' labelInput ' in (' '~label_attr.class~' ')) %}
       {% set label_attr = label_attr|merge({'class': ((label_attr.class | default('')) ~ ' ' ~_labelClass)|trim}) %}
     {% endif %}
-    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
+    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+    {%- with { '_labeltext': label|trans({}, translation_domain)} -%}
+    {%- with { '_labeltextucfirst':  (_labeltext | slice(0, 1) | capitalize) ~ (_labeltext | slice(1) )} -%}
+    {{ _labeltextucfirst }}
+    {%- endwith -%}
+    {%- endwith -%}
+    {%- if required -%}<span class="required">*</span>{%- endif -%}</label>
   {% endspaceless %}
 {% endblock form_label %}
 
@@ -434,7 +441,7 @@
   {% spaceless %}
 
     {% set prototype = form_widget(form.ace.vars.prototype) %}
-    <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidePermissions{% endif %}">
+    <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
@@ -470,7 +477,7 @@
     <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
          data-icon-on="active" data-icon-off="" >
       {{- form.vars.attr.class -}}
-      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
+      <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endspaceless %}
 {% endblock tagbox_widget %}
@@ -516,7 +523,7 @@
 
 {% block widget_attributes %}
   {% spaceless %}
-    id="{{ id }}" name="{{ full_name }}"{% if read_only %} readonly="readonly"{% endif %}{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}{% if max_length %} maxlength="{{ max_length }}"{% endif %}{% if pattern %} pattern="{{ pattern }}"{% endif %}
+    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}
     {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
   {% endspaceless %}
 {% endblock widget_attributes %}

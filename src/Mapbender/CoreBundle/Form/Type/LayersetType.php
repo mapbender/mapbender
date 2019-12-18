@@ -11,20 +11,19 @@ class LayersetType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'layerset';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $builder->add("id", "hidden", array("required" => false))
-                ->add("title", "text", array(
-                    'max_length' => 128));
+        $builder
+            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+                'required' => false,
+            ))
+            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'attr' => array(
+                    'maxlength' => 128,
+                ),
+            ))
+        ;
     }
 
 }

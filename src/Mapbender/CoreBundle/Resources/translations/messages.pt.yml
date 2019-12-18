@@ -1,4 +1,36 @@
 mb:
+  actions:
+    accept: Ok    # appropriate?
+    add: Adicionar
+    back: Voltar
+    cancel: Cancelar
+    close: Fechar
+    delete: Remover
+    edit: Editar
+    filter: Filtrar
+    print: Imprimir
+    refresh: Atualizar
+    remove: Remover
+    save: Guardar
+    search: Procurar
+  terms:
+    application:
+      singular: Aplicação
+      plural: Aplicações
+    source:
+      singular: Origem de dados
+      plural: Origens de dados
+    layerset:
+      singular: Conjunto de camadas
+      plural: Conjuntos de camadas
+    sourceinstance:
+      singular: Instância
+      plural: Instâncias
+      typed:
+        singular: '%type% instância'
+  states:
+    active: ativa # m.; f.: ativo
+    inactive: inativa # m.; f.: inativo
   core:
     featureinfo:
       error:

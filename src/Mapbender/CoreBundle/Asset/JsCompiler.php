@@ -8,7 +8,8 @@ use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Locates and merges JavaScript assets for applications.
- * Registered in container as mapbender.asset_compiler.js
+ * Default implementation for service mapbender.asset_compiler.js
+ * @since v3.0.8.5-beta1
  */
 class JsCompiler extends AssetFactoryBase
 {

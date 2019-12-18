@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A WmtsSource entity presents an OGC WMTS.
  * @ORM\Entity
  * @ORM\Table(name="mb_wmts_wmtssource")
- * ORM\DiscriminatorMap({"mb_wmts_wmtssource" = "WmtsSource"})
  */
 class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
 {
@@ -143,12 +142,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
         return $this->instances;
     }
 
-    public function getManagertype()
-    {
-        // single controller for WMTS + TMS
-        return strtolower(Source::TYPE_WMTS);
-    }
-
     public function getTypeLabel()
     {
         if (!$this->type) {
@@ -215,7 +208,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Get alias
      * @return string
      */
     public function getAlias()
@@ -224,9 +216,8 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set fees
      * @param string $fees
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setFees($fees)
     {
@@ -284,9 +275,8 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Add layer
      * @param WmtsLayerSource $layer
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function addLayer(WmtsLayerSource $layer)
     {
@@ -389,7 +379,7 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     /**
      * Set getTile
      * @param RequestInformation $getTile
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setGetTile(RequestInformation $getTile)
     {

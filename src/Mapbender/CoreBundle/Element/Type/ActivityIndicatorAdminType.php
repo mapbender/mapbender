@@ -23,10 +23,20 @@ class ActivityIndicatorAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('activityClass', 'text', array('required' => false))
-            ->add('ajaxActivityClass', 'text', array('required' => false))
-            ->add('tileActivityClass', 'text', array('required' => false));
+        $builder
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('activityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('ajaxActivityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+            ->add('tileActivityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+            ))
+        ;
     }
 
 }

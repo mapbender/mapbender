@@ -22,14 +22,16 @@ class ScaleBarAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // @todo: add missing field labels
         $builder
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('maxWidth', 'text', array('required' => true))
-            ->add('anchor', "choice", array(
+            // @todo: should be an optional positive integer
+            ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
                     'left-top' => 'left-top',
@@ -39,7 +41,7 @@ class ScaleBarAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('units', 'choice', array(
+            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(

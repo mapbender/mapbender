@@ -9,14 +9,10 @@ use Mapbender\Component\Transformer\Target\MutableUrlTarget;
  */
 class OnlineResource implements MutableUrlTarget
 {
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $format;
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $href;
 
     /**

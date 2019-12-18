@@ -24,7 +24,12 @@
 .toolBar {
   @include frontendContainerStyle();
   .toolBarItem {
+    padding:5px;
+    display: inline-block;
+    text-wrap: avoid;
+    white-space: nowrap;
     color: fade-out($lightFontColor, .3);
+    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     &:hover {
       color: $lightFontColor;
     }
@@ -40,30 +45,22 @@
     background-color: $contentColor;
     color:$firstColor;
   }
+  margin: 0;
+  padding:$space/4 $space/2 $space/4 $space/2;
+  border-color: darken($contentColor, 20%);
 
   &.top {
-    padding:$space/4 $space/2 $space/4 $space/2;
     .toolBarItem {
-      display: inline-block;
-      text-wrap: avoid;
-      white-space: nowrap;
-      padding: 5px;
       > label, > span, > a span {
         margin-bottom: 0;
       }
     }
-    border-bottom:solid 1px darken($contentColor, 20%);
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
   }
   &.bottom {
-    padding:$space/4 $space/2 $space/4 $space/2;
-    margin-bottom: 0;
     .toolBarItem{
-      vertical-align: middle;
       font-size:80%;
-      padding:5px;
-      display: inline-block;
-      text-wrap: avoid;
-      white-space: nowrap;
 
       > label{
         margin-bottom: 0;
@@ -71,7 +68,7 @@
     }
 
     .dropdownList{
-      bottom:0px;
+      bottom:0;   // to "drop up"
       margin-bottom: $inputHeight;
     }
   }

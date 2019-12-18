@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
- * WmsInstanceLayer class
- *
  * @author Paul Schmidt
  *
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
@@ -23,7 +21,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh", "persist"})
      * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceInstance;
@@ -530,8 +528,8 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @internal
-     * @param WmsInstance $instance source
-     * @param WmsLayerSource $layerSource also the source, purpose unknown
+     * @param WmsInstance $instance
+     * @param WmsLayerSource $layerSource
      * @param int $priority
      */
     public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, $priority = 0)

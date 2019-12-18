@@ -1,4 +1,6 @@
+/* Main backend styles */
 @import "libs/variables";
+@import "bundles/mapbendermanager/sass/manager/variables.scss";
 @import "libs/mixins";
 @import "libs/icons";
 
@@ -54,38 +56,22 @@
   $col1Width: 120px;
   $height:120px;
 
-  .filterItem, .col2 {
-    min-height:$height;
-  }
   .col1{
     width:$col1Width;
-    padding: 0;
-    display:table;
+    line-height: $height;
+    max-height: $height;
     text-align: center;
     font-size: 70px;
     color: lighten($darkFontColor, 10%);
 
     div.cell {
-      display: table-cell;
-      vertical-align:middle;
-      height: 120px;
-      width: 120px;
-
-      img{
-         max-height: 100%;
-         max-width: 100%;
-         display: block;
-         margin: 0 auto;
-      }
+      max-height: inherit;
     }
-  }
-
-  .col2{
-    margin-left: $col1Width;
-  }
-  .iconAppDefault{
-    &:before {
-      margin: 0;
+    img {
+      max-height: inherit;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
     }
   }
 }
@@ -191,8 +177,10 @@
 
   textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
-  .messageBox {
-    margin: 23px 0 0 1em;
+  .alert-info, /** @deprecated: */.messageBox.hint {
+    // instruction box
+    margin-left: 1em;
+    margin-top: 21px;   // HACK: calculated root line-height (no variable)
   }
 }
 
@@ -254,7 +242,18 @@
   .iconColumn {
     // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
     padding-right: $space / 2;
+    // neat alignment for "Layouts" table (differing number of icons in cells)
     text-align: right;
+    // .iconColumn contents mix div / a / span elements, but they should all
+    // size and align the same way
+    > * {
+      display: inline-block;
+      min-width: 1.2em;
+    }
+    a:before {
+      // undo built-in margin on a.icon...:before
+      margin: 0;
+    }
   }
   .iconColumn, .idColumn {
     white-space: nowrap;
@@ -305,7 +304,4 @@
       opacity: .6;
     }
   }
-  .iconRadio {@extend .iconCheckbox}
-  .iconRadiotabs {@extend .iconTabActive}
-  .iconRadioaccordion {@extend .iconBars}
 }

@@ -11,10 +11,6 @@ mb:
           cancel: Cancella
           load: Carica
       error:
-        url: 'WMSLoader: le WMS capabilities non possono essere caricate! L''URL delle capabilities non è valido.'
-        service: 'WMSLoader: il servizio %service% non è supportato!'
-        operation: 'WMSLoader: l''Operazione WMS %operation% non è supportata!'
-        version: 'WMSLoader: la versione del WMS %version% non è supportata!'
         load: 'WMSLoader: le WMS capabilities non possono essere caricate!'
       repo:
         macros:
@@ -53,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Attenzione: i calcoli per la scala sono soggetti a una limitata risoluzione in WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'istanza WMS'
           btn:
             save: Salva
             cancel: Cancella

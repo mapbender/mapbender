@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A Wmc entity presents an OGC WMC.
  * @ORM\Entity
  * @ORM\Table(name="mb_wmc_wmc")
- * ORM\DiscriminatorMap({"mb_wmc" = "Wmc"})
  */
 class Wmc
 {

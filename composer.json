@@ -8,15 +8,16 @@
         "php": ">=5.4.30",
         "ext-dom": "*",
         "ext-gd": "*",
-        "symfony/symfony": "^2.3",
+        "symfony/symfony": "^2.4|^3",
+        "symfony/security-acl": "~2.8 || ~3.0",
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^1.3",
+        "sensio/generator-bundle": "^2 || ^3",
 
         "setasign/fpdi-fpdf": "1.6.*",
 
-        "eslider/sasscb":  "3.1.x",
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
@@ -24,9 +25,12 @@
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "wheregroup/open-sans": "1.x",
+        "wheregroup/doctrine-dbal-shims": "^1",
+        "wheregroup/assetic-filter-sassc": "^0.0.1",
+        "wheregroup/sassc-binaries": "^0.0.1",
 
         "mapbender/fom": "~3.1.2 || ^3.2.1",
-        "mapbender/owsproxy": "^3.0.6.2@dev",
+        "mapbender/owsproxy": "^3.0.6.2",
 
         "mapbender/mapquery": "1.x"
     },

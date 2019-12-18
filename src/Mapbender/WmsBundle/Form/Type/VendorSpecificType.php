@@ -8,19 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\WmsBundle\Component\VendorSpecific as VS;
 
-/**
- * VendorSpecificInstType class
- */
 class VendorSpecificType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return "vendorspecific";
-    }
 
     /**
      * @inheritdoc
@@ -40,7 +29,7 @@ class VendorSpecificType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('vstype', 'choice', array(
+            ->add('vstype', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
@@ -49,13 +38,13 @@ class VendorSpecificType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('name', 'text', array(
+            ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
             ))
-            ->add('default', 'text', array(
+            ->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
             ))
-            ->add('hidden', 'checkbox', array(
+            ->add('hidden', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
             ->addModelTransformer(new VendorSpecificTransformer())

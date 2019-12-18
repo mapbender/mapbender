@@ -2,11 +2,11 @@
     <td class="level1 itemType"><span class="itemType iconLinkButton hover-highlight-effect"></span></td>
     <td class="titleColumn" title="{{ form.title.vars.label | trans }}">{{ form_widget(form.title) }}</td>
     <td title="{{ form.tileMatrixSet.vars.label | trans }}">{{ form_widget(form.tileMatrixSet) }}</td>
-    <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ form.active.vars.label | trans }}">{{ form_widget(form.active) }}</td>
-    <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ form.allowselected.vars.label | trans }}">{{ form_widget(form.allowselected) }}</td>
-    <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ form.selected.vars.label | trans }}">{{ form_widget(form.selected) }}</td>
-    <td class="checkboxColumn" data-check-identifier="checkInfoAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc"|trans }}">{{ form_widget(form.allowinfo) }}</td>
-    <td class="checkboxColumn" data-check-identifier="checkInfoOn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.infotoc"|trans }}">{{ form_widget(form.info) }}</td>
+    {{ form_row(form.active) }}
+    {{ form_row(form.allowselected) }}
+    {{ form_row(form.selected) }}
+    {{ form_row(form.allowinfo) }}
+    {{ form_row(form.info) }}
     <td class="moreColumn">
       <div class="infoMsgBox hidden">
         <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}">{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>

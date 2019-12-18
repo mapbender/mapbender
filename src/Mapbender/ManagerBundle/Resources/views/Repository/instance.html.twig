@@ -1,17 +1,42 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
+{%- set _h1_text = instance.source.title -%}
+{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': instance.source.type})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
+{%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
+
+{% form_theme form _self %}
+{% block checkbox_row %}
+    {% if form.parent and form.parent.parent and 'source_instance_layer_collection' in form.parent.parent.vars.block_prefixes %}
+    {% set _columnClass = ('checkboxColumn ' ~ (form.vars.columnClass | default(''))) | trim %}
+    {% set _tagName = tagName | default('td') %}
+    <{{ _tagName }} class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
+      {{- block('checkbox_widget') -}}
+    </{{ _tagName }}>
+    {% else %}
+        {{- block('form_row') }}
+    {% endif %}
+{% endblock checkbox_row %}
 
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
 {% endblock %}
 
+{% block heading %}
+    <div class="contentTitle">
+        <h1><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ _h1_text | default(title) }}<div class="clear"></div></h1>
+        <p>{{ _h1_subtext }}</p>
+    </div>
+{% endblock heading %}
+
 {% block manager_content %}
 <div class="instanceContainer">
   {{ form_start(form) }}
 
     <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
+      <input class="button" type="submit" name="save" value="{{"mb.actions.save"|trans}}" />
+    {% if app.request.attributes.get('slug') %}
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.actions.back"|trans}}</a>
+    {% endif %}
     </div>
 
     <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
@@ -38,7 +63,9 @@
     {% endblock form_layers %}
     <div class="button-group">
       <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
+    {% if app.request.attributes.get('slug') %}
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.actions.back"|trans}}</a>
+    {% endif %}
     </div>
     {{ form_row(form._token) }}
   {# suppress visible post-form 'dimensions' collection'; @todo: fix dimensions integration into form #}

@@ -2,9 +2,9 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
-use Mapbender\CoreBundle\Mapbender;
 
 /**
  * Class ApplicationTest
@@ -60,10 +60,8 @@ class ApplicationTest extends TestBase
      */
     protected function getYamlApplications()
     {
-        /** @var Mapbender $m */
-        $m = $this->getContainer()->get("mapbender");
-        return $m->getYamlApplicationEntities();
+        /** @var ApplicationYAMLMapper $repository */
+        $repository = $this->getContainer()->get('mapbender.application.yaml_entity_repository');
+        return $repository->getApplications();
     }
-
-
 }

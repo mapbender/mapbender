@@ -125,9 +125,6 @@ class Application
      */
     protected $publicOptions = array();
 
-    /**
-     * Application constructor.
-     */
     public function __construct()
     {
         $this->elements         = new ArrayCollection();
@@ -136,8 +133,6 @@ class Application
     }
 
     /**
-     * Get entity source type
-     *
      * @param int $source
      * @return $this
      */
@@ -149,8 +144,6 @@ class Application
     }
 
     /**
-     * Get type
-     *
      * @return string
      */
     public function getSource()
@@ -159,10 +152,8 @@ class Application
     }
 
     /**
-     * Set id
-     *
      * @param $id
-     * @return Application
+     * @return $this
      */
     public function setId($id)
     {
@@ -171,8 +162,6 @@ class Application
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -277,7 +266,6 @@ class Application
      *
      * @param ArrayCollection $regionProperties
      * @return $this
-     * @internal param array $template
      */
     public function setRegionProperties(ArrayCollection $regionProperties)
     {
@@ -297,8 +285,6 @@ class Application
     }
 
     /**
-     * Get region properties
-     *
      * @param RegionProperties $regionProperties
      */
     public function addRegionProperties(RegionProperties $regionProperties)
@@ -368,6 +354,49 @@ class Application
     public function getLayersets()
     {
         return $this->layersets;
+    }
+
+    /**
+     * Read-only informative pseudo-relation
+     *
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getSourceInstances()
+    {
+        // @todo: figure out if there's an appropriate ORM annotation that can do this without
+        //        writing code
+        $instances = new ArrayCollection();
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances() as $instance) {
+                $instances->add($instance);
+            }
+        }
+        return $instances;
+    }
+
+    /**
+     * Read-only informative pseudo-relation
+     *
+     * @param Source $source to filter by specific Source
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getInstancesOfSource(Source $source)
+    {
+        $instances = new ArrayCollection();
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstancesOf($source) as $instance) {
+                $instances->add($instance);
+            }
+        }
+        return $instances;
+    }
+
+    public function getLayersetsWithInstancesOf(Source $source)
+    {
+        return $this->getLayersets()->filter(function($layerset) use ($source) {
+            /** @var Layerset $layerset */
+            return !!$layerset->getInstancesOf($source)->count();
+        });
     }
 
     /**

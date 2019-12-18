@@ -2,8 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Identifier class.
- *
  * @author Paul Schmidt
  */
 class Identifier

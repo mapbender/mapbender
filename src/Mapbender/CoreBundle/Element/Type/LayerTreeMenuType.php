@@ -11,7 +11,7 @@ class LayerTreeMenuType extends AbstractType
 {
     protected $exposedChoices = array();
 
-    public function __construct($legacyDummy)
+    public function __construct($legacyDummy = null)
     {
         $this->exposedChoices = array(
             "Remove layer" => "layerremove",
@@ -21,7 +21,6 @@ class LayerTreeMenuType extends AbstractType
             "Dimension" => "dimension",
         );
     }
-
 
     /**
      * @inheritdoc
@@ -35,20 +34,11 @@ class LayerTreeMenuType extends AbstractType
         ));
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'layertree_menu';
-    }
-
     /**
      * @return null|string|\Symfony\Component\Form\FormTypeInterface
      */
     public function getParent()
     {
-        return 'choice';
+        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 }

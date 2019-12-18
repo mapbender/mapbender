@@ -23,7 +23,7 @@ class ImageExportAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('target', 'target_element', array(
+        $builder->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
             'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
             'application' => $options['application'],
             'required' => false,

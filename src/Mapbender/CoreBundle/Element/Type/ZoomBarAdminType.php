@@ -24,7 +24,7 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder
-            ->add('components', 'choice', array(
+            ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
@@ -41,20 +41,20 @@ class ZoomBarAdminType extends AbstractType
                     'size' => 6,
                 ),
             ))
-            ->add('target', 'target_element', array(
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('stepSize', 'text', array('required' => false))
-            ->add('stepByPixel', 'choice', array(
+            ->add('stepSize', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
+            ->add('stepByPixel', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => array(
                     'true' => 'true',
                     'false' => 'false',
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('anchor', "choice", array(
+            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
                     'inline' => 'inline',
@@ -65,7 +65,7 @@ class ZoomBarAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('draggable', 'checkbox', array(
+            ->add('draggable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.zoombar.draggable',
             ))

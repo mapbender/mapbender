@@ -1,22 +1,16 @@
 services:
 
-    #
-    # Form Types
-    #
-    # Form types must be prefixed with "mapbender.form_type.element"
-    # and named using lowercase element class name
-    # to be accessible by initialisation in MB Core
-    #
-    # Example: for HTMLElementAdminType it must be mapbender.form_type.element.htmlelement
-    #
-
-    #
     # Element Form Types
     #
+    # Always access form types by their fully qualified class name, not by service id.
+    # If you want to modify the behavior of an existing form type, use form type
+    # extensions. See https://symfony.com/doc/2.8/form/create_form_type_extension.html
+    # DO NOT reinject a servicy form type with a different class.
+
     mapbender.form_type.element.htmlelement:
         class: Mapbender\CoreBundle\Element\Type\HTMLElementAdminType
         tags:
-            - { name: form.type, alias: htmlelement }
+            - { name: form.type }
 
     #
     # Common Form Types
@@ -27,4 +21,4 @@ services:
                 - '@mapbender.constraint.html'
                 - '@mapbender.constraint.twig'
             tags:
-                - { name: form.type, alias: html }
+                - { name: form.type }

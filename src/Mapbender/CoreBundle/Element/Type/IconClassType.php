@@ -6,14 +6,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IconClassType extends AbstractType
 {
-    public function getName()
-    {
-        return 'iconclass';
-    }
-
     public function getParent()
     {
-        return 'choice';
+        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -52,9 +47,10 @@ class IconClassType extends AbstractType
         asort($icons);
 
         $resolver->setDefaults(array(
-            'empty_value' => 'Choose an option',
-            'empty_data' => '',
-            'choices' => $icons,
+            // @todo: provide placeholder translations
+            'placeholder' => 'Choose an option',
+            'choices' => array_flip($icons),
+            'choices_as_values' => true,
         ));
     }
 }

@@ -8,21 +8,22 @@ use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegionPropertiesType extends AbstractType
 {
-
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'region_properties';
+        return 'application_region_properties';
     }
 
     public function getParent()
     {
-        return 'choice';
+        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -77,5 +78,14 @@ class RegionPropertiesType extends AbstractType
             }
         }
         return null;
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['iconMap'] = array(
+            '' => 'fa fa-square-o', // @todo Fontawesome 5: far fa-square; or find some other icon
+            'tabs' => 'fa fas fa-folder',
+            'accordion' => 'fa fas fa-bars',
+        );
     }
 }

@@ -2,10 +2,14 @@
 .listFilterServiceBoxes{
   $col1Width: 60px;
 
-  .col1{width:$col1Width;}
-  .col2{
-    margin-left: $col1Width;
-    min-height: $fontSize*7;
+  .col1 {
+    width: $col1Width;
+    padding: $space/4;
+
+    .icon {
+        // undo built-in cursor: pointer on .icon*
+        cursor: default;
+    }
   }
 }
 
@@ -59,10 +63,6 @@ fieldset.box {
   .list{
     border-left:dashed 1px darken(#fff, 20%);
     margin-bottom:$space/2;
-    &.closed{
-      & > li{display:none;}
-      & > .openCloseTitle{display:block;}
-    }
     li{margin-left:$space;}
 
     // no margin for labeltext lists ...
@@ -72,21 +72,24 @@ fieldset.box {
       .metaText{margin-left:0;}
     }
   }
+  .list.closed {
+    li.openCloseTitle~li {
+      display: none;
+    }
+  }
   .labelText{
     width:$labeText;
     margin-right:$space/2;
   }
-  .openCloseTitle{
+  li.openCloseTitle {
     cursor:pointer;
-    display: inline-block;
-    margin-left:-10px !important;
-    padding-left:5px;
-    height:17px;
-    font-style:italic;
+    margin-left: -5px;  // push ~halfway on top of the border-left
     &:before {
-      font-style: normal;
+      margin-right: .5em;
     }
-    &.iconSmall:before{margin-right:$space/2;}
+    &~li {
+      margin-left: 1em;
+    }
   }
   .metaText{
     display: block;
@@ -102,6 +105,7 @@ fieldset.box {
       overflow: hidden;
       text-overflow: ellipsis;
       vertical-align: middle;
+      white-space: nowrap;
   }
 
   .extendedGroup {
@@ -155,6 +159,10 @@ fieldset.box {
 .instanceTable{
   margin-top:$space;
   margin-bottom:$space;
+  .checkWrapper.left {
+    /** @todo: remove float from checkbox_widget block globally */
+    float: none;
+  }
 
   .checkboxColumn{text-align:center;}
   .odd{background-color:darken($contentColor, 6%);}
@@ -191,15 +199,7 @@ fieldset.box {
         line-height: $inputHeight;
         float: none;
         width: 1em;
-        &:before {
-          margin: 0;
-        }
       }
-    }
-  }
-  thead .checkboxColumn {
-    span:before {
-      margin: 0;
     }
   }
   .level0 .itemType{margin-left:4px;}

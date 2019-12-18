@@ -5,8 +5,6 @@ namespace Mapbender\WmsBundle\Component;
 use Mapbender\CoreBundle\Component\Source\CustomParameter;
 
 /**
- * Identifier class.
- *
  * @author Paul Schmidt
  */
 class VendorSpecific extends CustomParameter
