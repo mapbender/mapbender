@@ -38,6 +38,18 @@ Note that issues with checkbox markup generated via `form_row` have been resolve
 the correct (legacy) markup for all basic form types. Manual form markup construction in custom twig is no longer necessary and will
 on the contrary impede future form theme switches.
 
+#### Changed package dependencies
+For improved Symfony forward compatibility, `eslider/sasscb` has been replaced with `wheregroup/assetic-filter-sassc:^0.0.1` *and*
+`wheregroup/sassc-binaries:^0.0.1`.
+
+For PostgreSQL 10 schema migration support, the dependency `wheregroup/doctrine-dbal-shims:^1` has been added.
+
+If you update Mapbender with git only, you will have to add these packages manually at your own discretion. When upgrading via
+Mapbender the recommended way (`bin/composer update`, or optionally `bin/composer update mapbender/mapbender` for a targetted single-package update),
+you will not be impacted at all.
+
+If these packages are not installed correctly, all Application and backend CSS compilation will fail (completely unstyled HTML pages).
+
 #### Dropped dependencies
 The legacy Joii library is no longer required nor provided by Mapbender and will not be reintroduced.
 If you expect Joii usages in custom JavaScript code, you will have to readd the dependency on the project level:
