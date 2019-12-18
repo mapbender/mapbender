@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Achtung: Die Maßstabsberechnungen unterliegen der limitierten ScaleHint-Auflösung in WMS 1.1.1'
         instance:
-          title:
-            wmsinstance: 'WMS Instanz'
           btn:
             save: Speichern
             cancel: Abbrechen

@@ -30,6 +30,7 @@ class Endpoint
      * InstanceTunnel constructor.
      * @param InstanceTunnelService
      * @param SourceInstance $instance
+     * @todo: needs application binding for reusable source instances
      */
     public function __construct($service, SourceInstance $instance)
     {
@@ -71,6 +72,7 @@ class Endpoint
 
     /**
      * @return Application
+     * @todo: application should already be bound to Endpoint instance for reusable source instances
      */
     public function getApplicationEntity()
     {

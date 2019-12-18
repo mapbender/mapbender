@@ -75,6 +75,7 @@ class InstanceTunnelService
      *
      * @param SourceInstance $instance
      * @return Endpoint
+     * @todo: needs application binding for reusable source instances
      */
     public function getEndpoint(SourceInstance $instance)
     {
@@ -90,6 +91,7 @@ class InstanceTunnelService
      *
      * @param SourceInstance $instance
      * @return Endpoint
+     * @todo: needs application binding for reusable source instances
      */
     public function makeEndpoint(SourceInstance $instance)
     {
@@ -150,6 +152,7 @@ class InstanceTunnelService
     public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
     {
         $sourceInstance = $instanceLayer->getSourceInstance();
+        // @todo reusable source instances: work around "missing" layerset => instance ownership
         $application = $sourceInstance->getLayerset()->getApplication();
         return $this->router->generate($this->legendTunnelRouteName, array(
             'slug' => $application->getSlug(),

@@ -23,6 +23,11 @@ mb:
     layerset:
       singular: Слой  # @todo: this is simply "layer"
       plural: Слои
+    sourceinstance:
+      singular: Экземпляр
+      plural: Экземпля́ры
+      typed:
+        singular: '%type% экземпляр'
   states:
     active: активный
     inactive: неактивный

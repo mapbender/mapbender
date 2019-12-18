@@ -23,6 +23,11 @@ mb:
     layerset:
       singular: Layer set
       plural: Layer sets
+    sourceinstance:
+      singular: Instance
+      plural: Instances
+      typed:
+        singular: '%type% instance'
   states:
     active: active
     inactive: inactive

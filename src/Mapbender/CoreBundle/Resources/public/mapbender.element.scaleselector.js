@@ -77,12 +77,7 @@
          */
         _updateScale: function() {
             var scale = this.mbMap.getModel().getCurrentScale();
-
-            this.$select
-                .val(scale)
-                .siblings(".dropdownValue")
-                .text(scale)
-            ;
+            this.$select.val(scale).trigger('change');
         },
 
         _destroy: $.noop

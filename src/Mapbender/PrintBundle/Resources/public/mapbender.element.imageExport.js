@@ -151,13 +151,22 @@
                 this.close();
             }
         },
-        _submitJob: function(jobData) {
+        _injectJobData: function(jobData) {
             var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
+        },
+        /**
+         * Injects data AND submits form
+         * @param {Object} jobData
+         * @private
+         * @deprecated distinctly use _injectJobData and regular form submit events
+         */
+        _submitJob: function(jobData) {
+            this._injectJobData(jobData);
             $('input[type="submit"]', this.$form).click();
         },
         /**

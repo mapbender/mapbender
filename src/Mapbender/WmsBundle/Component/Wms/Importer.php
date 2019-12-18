@@ -147,6 +147,7 @@ class Importer extends RefreshableSourceLoader
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);
+            // @todo reusable source instances: update affected applications without assuming instance => layerset ownership
             $application = $instance->getLayerset()->getApplication();
             $application->setUpdated(new \DateTime('now'));
             $this->entityManager->persist($application);

@@ -57,7 +57,7 @@ abstract class Element extends MinimalBound
      * This method will be made final in a future release.
      *
      * @param Application        $application Application component
-     * @param ContainerInterface $container   Container service
+     * @param ContainerInterface $container
      * @param Entity             $entity
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)

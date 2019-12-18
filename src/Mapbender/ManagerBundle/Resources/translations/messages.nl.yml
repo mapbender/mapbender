@@ -98,7 +98,7 @@ mb:
         security:
           title:  Beveiliging
           add_users_groups: 'Voeg gebruikers en groepen toe'
-          public: geactiveerd
+          public: Publieke toegang
         save: Bewaar
         cancel: Annuleren
         view_this: 'Toon deze applicatie'

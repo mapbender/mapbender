@@ -208,7 +208,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Get alias
      * @return string
      */
     public function getAlias()
@@ -217,9 +216,8 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set fees
      * @param string $fees
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setFees($fees)
     {
@@ -277,9 +275,8 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Add layer
      * @param WmtsLayerSource $layer
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function addLayer(WmtsLayerSource $layer)
     {
@@ -382,7 +379,7 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     /**
      * Set getTile
      * @param RequestInformation $getTile
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setGetTile(RequestInformation $getTile)
     {

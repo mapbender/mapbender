@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Precaución: Calculos de escala están sujetos a limitaciones de resolución ScaleHint en WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'WMS instancia'
           btn:
             save: Guardar
             cancel: Cancelar

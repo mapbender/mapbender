@@ -46,17 +46,6 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ->add('srs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'SRS',
             ))
-            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'label' => 'Map units',
-                'choices' => array(
-                    'Degrees' => 'degrees',
-                    'Meters' => 'm',
-                    'Feet' => 'ft',
-                    'Miles' => 'mi',
-                    'Inches' => 'inches',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('extent_max', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.max_extent',
                 'property_path' => '[extents][max]',

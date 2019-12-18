@@ -23,6 +23,11 @@ mb:
     layerset:
       singular: Conjunto de camadas
       plural: Conjuntos de camadas
+    sourceinstance:
+      singular: Instância
+      plural: Instâncias
+      typed:
+        singular: '%type% instância'
   states:
     active: ativa # m.; f.: ativo
     inactive: inativa # m.; f.: inativo

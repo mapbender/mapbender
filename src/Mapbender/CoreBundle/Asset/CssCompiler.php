@@ -50,6 +50,12 @@ class CssCompiler extends AssetFactoryBase
     public function compile($inputs, $debug=false)
     {
         $content = $this->concatenateContents($inputs, $debug);
+        // Quite damaging hack for special snowflake mobile template
+        // Pulls imports in front of everything else, including variable (re)definitions
+        // This makes it impossible to @import modules accessing variable definitions after
+        // redefining those variables.
+        // @todo: make mobile template scss work with and without squashing, then disable squashing
+        //        alternatively nuke mobile template completely (Mapbender 3.1?)
         $content = $this->squashImports($content);
 
         $sass = clone $this->sassFilter;

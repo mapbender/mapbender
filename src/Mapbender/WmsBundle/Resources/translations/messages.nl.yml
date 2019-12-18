@@ -49,8 +49,6 @@ mb:
           message:
             cautionscalehint: 'Pas op: Schaal berekeningen zijn onderworpen aan gelimiteerde Schaal-Hint resolutie in WMS 1.1.1!'
         instance:
-          title:
-            wmsinstance: 'WMS instantie'
           btn:
             save: Bewaar
             cancel: Annuleren

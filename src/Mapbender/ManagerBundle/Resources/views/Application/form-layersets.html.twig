@@ -33,7 +33,7 @@
                   <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }}"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input data-url="{{ path('mapbender_manager_repository_instanceenabled', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %}>
+                    <input data-url="{{ path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %}>
                   </div>
                   <a class="iconEdit hover-highlight-effect editInstance" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}" href="{{ path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}"></a>
                   <span class="iconRemove hover-highlight-effect removeInstance" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}" data-url="{{ path("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}"></span>

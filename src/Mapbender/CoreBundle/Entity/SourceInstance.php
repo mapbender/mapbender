@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
@@ -24,14 +25,15 @@ abstract class SourceInstance
     protected $id;
 
     /**
-     * @var string $title The source title
+     * @var string $title
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
 
     /**
+     * @var Layerset|null
      * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $layerset;
 
@@ -52,8 +54,7 @@ abstract class SourceInstance
     protected $basesource = false;
 
     /**
-     *
-     * @var Source a source
+     * @var Source
      */
     protected $source;
 
@@ -127,21 +128,17 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets the layerset
-     *
-     * @param  Layerset       $layerset Layerset
+     * @param Layerset|null $layerset
      * @return $this
      */
-    public function setLayerset(Layerset $layerset)
+    public function setLayerset(Layerset $layerset=null)
     {
         $this->layerset = $layerset;
-
         return $this;
     }
 
     /**
-     * Returns the layerset
-     * @return Layerset
+     * @return Layerset|null
      */
     public function getLayerset()
     {
@@ -205,9 +202,14 @@ abstract class SourceInstance
     /**
      * Returns source
      *
-     * @return \Mapbender\WmsBundle\Entity\WmsSource|Source
+     * @return Source
      */
     abstract public function getSource();
+
+    /**
+     * @return SourceInstanceItem[]|Collection
+     */
+    abstract public function getLayers();
 
     /**
      *

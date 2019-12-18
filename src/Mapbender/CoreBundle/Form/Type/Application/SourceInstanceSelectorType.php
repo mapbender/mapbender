@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Application;
 
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Form\Type\RelatedObjectChoiceType;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -32,13 +33,18 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         $resolver->setRequired(array(
             'application',
         ));
+        // no use ($this) on lambdas in PHP5.4
+        $self = $this;
         $resolver->setDefaults(array(
             'label_with_layerset_prefix' => true,
-            'choice_label' => function(Options $options) {
+            'choice_label' => function(Options $options) use ($self) {
                 if ($options['label_with_layerset_prefix']) {
-                    return function($choice) {
+                    $instanceIdToLayersetMap = $self->getInstanceIdToLayersetMap($options['application']);
+
+                    return function($choice) use ($instanceIdToLayersetMap) {
                         /** @var SourceInstance $choice*/
-                        $label = ltrim($choice->getLayerset()->getTitle() . ': ', ' :');
+                        $layerset = $instanceIdToLayersetMap[$choice->getId()];
+                        $label = ltrim($layerset->getTitle() . ': ', ' :');
                         $label .= $choice->getTitle();
                         return $label;
                     };
@@ -87,5 +93,20 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     public function transform($value)
     {
         return $value;
+    }
+
+    /**
+     * @param Application $application
+     * @return Layerset[] keyed on source instance id
+     */
+    protected function getInstanceIdToLayersetMap(Application $application)
+    {
+        $map = array();
+        foreach ($application->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances() as $instance) {
+                $map[$instance->getId()] = $layerset;
+            }
+        }
+        return $map;
     }
 }

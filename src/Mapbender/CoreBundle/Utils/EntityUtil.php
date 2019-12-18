@@ -70,12 +70,12 @@ class EntityUtil
     /**
      * Returns a "getter" method name for an property equal to Doctrine conventions.
      * @param mixed $entity object or class
-     * @param string $property a property name
-     * @return string a "getter" name
+     * @param string $propertyName
+     * @return string
      */
-    public static function getGetter($entity, $property)
+    public static function getGetter($entity, $propertyName)
     {
-        $temp = 'get' . strtolower(str_replace('_', '', $property));
+        $temp = 'get' . strtolower(str_replace('_', '', $propertyName));
         foreach (get_class_methods(self::getRealClass($entity)) as $method) {
             if (strtolower($method) === $temp) {
                 return $method;
@@ -99,12 +99,12 @@ class EntityUtil
     /**
      * Returns a "getter" method name for an property equal to Doctrine conventions.
      * @param mixed $entity object or class
-     * @param string $property a property name
-     * @return string a "getter" name
+     * @param string $propertyName
+     * @return string
      */
-    public static function getSetter($entity, $property)
+    public static function getSetter($entity, $propertyName)
     {
-        $temp = 'set' . strtolower(str_replace('_', '', $property));
+        $temp = 'set' . strtolower(str_replace('_', '', $propertyName));
         foreach (get_class_methods(self::getRealClass($entity)) as $method) {
             if (strtolower($method) === $temp) {
                 return $method;

@@ -45,8 +45,8 @@ class SourceInstanceItemType extends AbstractType
         /** @var SourceInstanceItem|null $layer */
         $layer = $form->getData();
 
-        if ($layer) {
-            $view['title']->vars['attr'] = array(
+        if ($layer && $layer->getSourceItem()) {
+            $view['title']->vars['attr'] += array(
                 'placeholder' => $layer->getSourceItem()->getTitle(),
             );
         }
