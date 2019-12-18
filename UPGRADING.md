@@ -22,13 +22,33 @@ the `hidden` CSS declaration, Mapbender will continue providing it for the fores
 Class `mbHiddenCheckbox` no longer exists. Class `checkbox` is no longer globally hidden. Instead, `.checkWrapper > input[type="checkbox"]`
 is hidden, to allow modern form markup to contain visible checkboxes.
 
-#### Rendering form markup
-For maximum forward compatibility, do not generate legacy form markup (`labelInput`, `labelCheck`, `inputWrapper` explicity. Use a form type
+#### Form markup changes
+To improve Bootstrap-theme compatibility, a significant amount of form markup-generating twig code has been
+reduced to remove theme-specific element structure and CSS classes. Instead,
+forms are now rendered via simple `{{ form_row(forrm.single_field) }}` or even just `{{ form_widget(form) }}` twig
+constructs. This may lead to conflicts in customized form templates.
+
+For maximum forward compatibility with Mapbender and potential default form theme changes, do not generate legacy form markup (`labelInput`, `labelCheck`, `inputWrapper` explicity. Use a form type
 and use `{{ form_widget(form) }}` or `{{ form_row(form.single_field) }}` in twig templates whenever possible.
+
+Labels (or label translation key references) should be placed into the form type class as a `label` value.  
+Custom CSS classes and other attributes should be reviewed for necessity and placed into the `attr` value of the form type.
 
 Note that issues with checkbox markup generated via `form_row` have been resolved since 3.0.8-RC1. The form theme now generates
 the correct (legacy) markup for all basic form types. Manual form markup construction in custom twig is no longer necessary and will
 on the contrary impede future form theme switches.
+
+#### Dropped dependencies
+The legacy Joii library is no longer required nor provided by Mapbender and will not be reintroduced.
+If you expect Joii usages in custom JavaScript code, you will have to readd the dependency on the project level:
+```sh
+bin/composer require 'wheregroup/joii:^3'
+```
+You will also have to add the script dependency to your Template class.
+
+To find remaining Joii usages in your project, search for `=\s*Class\s*\(` (regex, case sensitive) in Javascript files.
+
+To permanently get your project code away from Joii, you should use [standard ES5 JavaScript classes](https://dev.to/_hridaysharma/understanding-classes-es5-and-prototypal-inheritance-in-javascript-n8d).
 
 ## 3.0.8
 #### Package conflicts
