@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @UniqueEntity("title")
  * @UniqueEntity("slug")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */

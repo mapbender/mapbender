@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -162,18 +163,10 @@ class Importer extends RefreshableSourceLoader
      */
     protected function getAffectedApplications(Source $source)
     {
-        $applications = array();
-        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
         // @todo: remove copy&pasted logic from ManagerBundle\RepositoryController::getApplicationsRelatedToSource
-        foreach ($this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application')->findAll() as $application) {
-            /** @var Application $application*/
-            foreach ($application->getSourceInstances() as $instance) {
-                if ($instance->getSource()->getId() == $source->getId()) {
-                    $applications[] = $application;
-                    break;
-                }
-            }
-        }
+        /** @var ApplicationRepository $repository */
+        $repository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        $applications = $repository->findWithInstancesOf($source);
         return $applications;
     }
 

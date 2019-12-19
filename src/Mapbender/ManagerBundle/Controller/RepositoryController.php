@@ -8,6 +8,7 @@ use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -602,22 +603,10 @@ class RepositoryController extends ApplicationControllerBase
      */
     protected function getApplicationsRelatedToSource(EntityManagerInterface $em, Source $source, $order = null)
     {
-        $applications = array();
-        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
         // @todo: remove copy&pasted logic from Wms Importer ::getAffectedApplications
-        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
-            /** @var Application $application*/
-            foreach ($application->getSourceInstances() as $instance) {
-                if ($instance->getSource()->getId() == $source->getId()) {
-                    $applications[] = $application;
-                    break;
-                }
-            }
-        }
-        if ($order) {
-            $applications = new ArrayCollection($applications);
-            $applications = $applications->matching(Criteria::create()->orderBy($order))->getValues();
-        }
+        /** @var ApplicationRepository $repository */
+        $repository = $em->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        $applications = $repository->findWithInstancesOf($source, null, $order);
         return $applications;
     }
 
