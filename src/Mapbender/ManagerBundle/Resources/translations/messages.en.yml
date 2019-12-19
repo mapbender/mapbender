@@ -99,7 +99,7 @@ mb:
         security:
           title: Security
           add_users_groups: 'Add users and groups'
-          public: activated
+          public: public access
         save: Save
         cancel: Cancel
         view_this: 'View this application'

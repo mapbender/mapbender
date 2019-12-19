@@ -134,4 +134,13 @@ abstract class BaseKernel extends Kernel
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
     }
+
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+        if (\class_exists('\Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex')) {
+            \Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex::autoRegisterAll($container);
+        }
+        return $container;
+    }
 }

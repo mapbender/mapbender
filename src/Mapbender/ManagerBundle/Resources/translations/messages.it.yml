@@ -98,7 +98,7 @@ mb:
         security:
           title: Sicurezza
           add_users_groups: 'Aggiungi utenti e gruppi'
-          public: attivato
+          public: accesso pubblico
         save: Salva
         cancel: Cancella
         view_this: 'Vedi questa applicazione'
