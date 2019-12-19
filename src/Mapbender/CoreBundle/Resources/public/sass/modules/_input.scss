@@ -13,6 +13,7 @@
   }
   &::placeholder {
     color: mix($inputBackgroundColor, $inputForegroundColor, 50%);
+    opacity: 1;   // counter Firefox default opacity
   }
 
   @extend .smallText;
