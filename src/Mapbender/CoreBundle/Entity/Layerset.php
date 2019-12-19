@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Christian Wygoda
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\LayersetRepository")
  * @ORM\Table(name="mb_core_layerset", uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
  * @UniqueEntity(fields={"application", "title"}, message ="Duplicate entry for key 'title'.")
  */

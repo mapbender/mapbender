@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Repository\LayersetRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -162,18 +163,19 @@ class Importer extends RefreshableSourceLoader
      */
     protected function getAffectedApplications(Source $source)
     {
+        /** @var LayersetRepository $layersetRepository */
+        $layersetRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
         $applications = array();
         // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
         // @todo: remove copy&pasted logic from ManagerBundle\RepositoryController::getApplicationsRelatedToSource
-        foreach ($this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application')->findAll() as $application) {
-            /** @var Application $application*/
-            foreach ($application->getSourceInstances() as $instance) {
-                if ($instance->getSource()->getId() == $source->getId()) {
-                    $applications[] = $application;
-                    break;
-                }
+        foreach ($layersetRepository->findWithInstancesOf($source) as $layerset) {
+            $application = $layerset->getApplication();
+            $applicationId = $application->getId();
+            if (!array_key_exists($applicationId, $applications)) {
+                $applications[$applicationId] = $application;
             }
         }
+        $applications = array_values($applications);
         return $applications;
     }
 
