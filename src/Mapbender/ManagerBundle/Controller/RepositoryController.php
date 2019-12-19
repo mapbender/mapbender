@@ -604,6 +604,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $applications = array();
         // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
+        // @todo: remove copy&pasted logic from Wms Importer ::getAffectedApplications
         foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
             /** @var Application $application*/
             foreach ($application->getSourceInstances() as $instance) {

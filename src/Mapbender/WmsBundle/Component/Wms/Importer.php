@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -144,16 +145,38 @@ class Importer extends RefreshableSourceLoader
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        foreach ($this->getAffectedApplications($target) as $application) {
+            $application->setUpdated(new \DateTime('now'));
+            $this->entityManager->persist($application);
+        }
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);
-            // @todo reusable source instances: update affected applications without assuming instance => layerset ownership
-            $application = $instance->getLayerset()->getApplication();
-            $application->setUpdated(new \DateTime('now'));
-            $this->entityManager->persist($application);
             $this->entityManager->persist($instance);
         }
     }
+
+    /**
+     * @param Source $source
+     * @return Application[]
+     */
+    protected function getAffectedApplications(Source $source)
+    {
+        $applications = array();
+        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedApplications)
+        // @todo: remove copy&pasted logic from ManagerBundle\RepositoryController::getApplicationsRelatedToSource
+        foreach ($this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application')->findAll() as $application) {
+            /** @var Application $application*/
+            foreach ($application->getSourceInstances() as $instance) {
+                if ($instance->getSource()->getId() == $source->getId()) {
+                    $applications[] = $application;
+                    break;
+                }
+            }
+        }
+        return $applications;
+    }
+
 
     /**
      * @param Source $target
