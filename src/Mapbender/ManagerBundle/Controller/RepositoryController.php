@@ -339,7 +339,7 @@ class RepositoryController extends ApplicationControllerBase
         if (!$layerset && $application) {
             $layerset = $application->getLayersets()->filter(function($layerset) use ($instance) {
                 /** @var Layerset $layerset */
-                return $layerset->getInstances(true)->contains($instance);
+                return $layerset->getCombinedInstances()->contains($instance);
             })->first();
         }
 
