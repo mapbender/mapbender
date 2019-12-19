@@ -573,8 +573,7 @@ class ApplicationController extends WelcomeController
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
         $entityManager = $this->getEntityManager();
-        /** @var Application|null $application */
-        $application = $entityManager->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+        $application = $this->getDbApplicationRepository()->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {
@@ -655,8 +654,7 @@ class ApplicationController extends WelcomeController
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
         $em = $this->getEntityManager();
-        /** @var Application|null $application */
-        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+        $application = $this->getDbApplicationRepository()->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {

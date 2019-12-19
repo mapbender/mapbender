@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -146,7 +145,9 @@ class Importer extends RefreshableSourceLoader
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
-        foreach ($this->getAffectedApplications($target) as $application) {
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
             $application->setUpdated(new \DateTime('now'));
             $this->entityManager->persist($application);
         }
@@ -156,20 +157,6 @@ class Importer extends RefreshableSourceLoader
             $this->entityManager->persist($instance);
         }
     }
-
-    /**
-     * @param Source $source
-     * @return Application[]
-     */
-    protected function getAffectedApplications(Source $source)
-    {
-        // @todo: remove copy&pasted logic from ManagerBundle\RepositoryController::getApplicationsRelatedToSource
-        /** @var ApplicationRepository $repository */
-        $repository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
-        $applications = $repository->findWithInstancesOf($source);
-        return $applications;
-    }
-
 
     /**
      * @param Source $target
