@@ -8,7 +8,6 @@ use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -169,12 +168,13 @@ class RepositoryController extends ApplicationControllerBase
         if (!$this->isGranted('VIEW', $oid)) {
             $this->denyAccessUnlessGranted('VIEW', $source);
         }
+        $related = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, array(
+            'title' => Criteria::ASC,
+            'id' => Criteria::ASC,
+        ));
         return $this->render($source->getViewTemplate(), array(
             'source' => $source,
-            'applications' => $this->getApplicationsRelatedToSource($em, $source, array(
-                'title' => Criteria::ASC,
-                'id' => Criteria::ASC,
-            )),
+            'applications' => $related,
             'title' => $source->getType() . ' ' . $source->getTitle(),
             'wms' => $source,   // HACK: source name in legacy templates
             'wmts' => $source,  // HACK: source name in legacy templates
@@ -209,13 +209,14 @@ class RepositoryController extends ApplicationControllerBase
         if (!($this->isGranted('DELETE', $oid))) {
             $this->denyAccessUnlessGranted('DELETE', $source);
         }
+        $affectedApplications = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, array(
+            'title' => Criteria::ASC,
+            'id' => Criteria::ASC,
+        ));
         if ($request->getMethod() === Request::METHOD_GET) {
             return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
                 'source' => $source,
-                'applications' => $this->getApplicationsRelatedToSource($em, $source, array(
-                    'title' => Criteria::ASC,
-                    'id' => Criteria::ASC,
-                )),
+                'applications' => $affectedApplications,
             ));
         }
         // capture ACL and entity updates in a single transaction
@@ -226,7 +227,7 @@ class RepositoryController extends ApplicationControllerBase
         $aclProvider->deleteAcl($oid);
 
         $dtNow = new \DateTime('now');
-        foreach ($this->getApplicationsRelatedToSource($em, $source) as $affectedApplication) {
+        foreach ($affectedApplications as $affectedApplication) {
             $em->persist($affectedApplication);
             $affectedApplication->setUpdated($dtNow);
         }
@@ -322,7 +323,7 @@ class RepositoryController extends ApplicationControllerBase
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
         if (!$layerset) {
             if ($slug) {
-                $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+                $application = $this->getDbApplicationRepository()->findOneBy(array(
                     'slug' => $slug,
                 ));
             } else {
@@ -338,7 +339,7 @@ class RepositoryController extends ApplicationControllerBase
         if (!$layerset && $application) {
             $layerset = $application->getLayersets()->filter(function($layerset) use ($instance) {
                 /** @var Layerset $layerset */
-                return $layerset->getInstances(true)->contains($instance);
+                return $layerset->getCombinedInstances()->contains($instance);
             })->first();
         }
 
@@ -593,21 +594,6 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
         return $layersets;
-    }
-
-    /**
-     * @param EntityManagerInterface $em
-     * @param Source $source
-     * @param array|null $order
-     * @return Application[]
-     */
-    protected function getApplicationsRelatedToSource(EntityManagerInterface $em, Source $source, $order = null)
-    {
-        // @todo: remove copy&pasted logic from Wms Importer ::getAffectedApplications
-        /** @var ApplicationRepository $repository */
-        $repository = $em->getRepository('\Mapbender\CoreBundle\Entity\Application');
-        $applications = $repository->findWithInstancesOf($source, null, $order);
-        return $applications;
     }
 
     /**

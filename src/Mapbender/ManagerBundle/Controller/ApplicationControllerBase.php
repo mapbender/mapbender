@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -93,9 +94,7 @@ abstract class ApplicationControllerBase extends Controller
      */
     protected function requireApplication($slug, $includeYaml = false)
     {
-        $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application');
-        /** @var Application|null $application */
-        $application = $repository->findOneBy(array(
+        $application = $this->getDbApplicationRepository()->findOneBy(array(
             'slug' => $slug,
         ));
         if (!$application && $includeYaml) {
@@ -194,5 +193,13 @@ abstract class ApplicationControllerBase extends Controller
     protected function getSourceInstanceRepository()
     {
         return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\SourceInstance');
+    }
+
+    /**
+     * @return ApplicationRepository
+     */
+    protected function getDbApplicationRepository()
+    {
+        return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\Application');
     }
 }

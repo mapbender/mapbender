@@ -218,11 +218,12 @@ class Layerset
      * Read-only informative pseudo-relation
      *
      * @param Source $source
-     * @return ArrayCollection|Collection
+     * @param bool $includeUnowned
+     * @return SourceInstance[]|ArrayCollection
      */
-    public function getInstancesOf(Source $source)
+    public function getInstancesOf(Source $source, $includeUnowned = true)
     {
-        return $this->instances->filter(function ($instance) use ($source) {
+        return $this->getInstances($includeUnowned)->filter(function ($instance) use ($source) {
             /** @var SourceInstance $instance */
             return $instance->getSource() === $source;
         });
