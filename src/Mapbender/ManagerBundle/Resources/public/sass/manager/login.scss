@@ -74,8 +74,9 @@
       @include absolute('' 0 0 0);
     }
   }
-  .login-wrapper {
-    position: relative;
+  /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
+  .login-wrapper, .logoContainer {
+    position: relative; // solve z-index clash vs .head
     width: 90%;
     max-width: 340px;
     margin: 0 auto;
@@ -97,7 +98,7 @@
     }
     .labelInput {
       width: 100%;
-      line-height: 10px;
+      line-height: 1.414;
     }
 
     .inputWrapper {
@@ -114,15 +115,15 @@
     text-align: center;
     display: block;
     height: auto;
+    padding-top: 15px;
     .logo {
       max-height: 120px;
       max-width: 100%;
     }
   }
-  .logoContainer, .loginBox {
+  .loginBox {
     margin-top: 15px;
   }
-
   .labelInput {
     display: block;
     width: 100%;
