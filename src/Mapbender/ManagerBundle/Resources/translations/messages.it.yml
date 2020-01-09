@@ -146,7 +146,6 @@ mb:
     managerbundle:
       applications: Applicazioni
       new_application: 'Nuova applicazione'
-      sources: Fonti
       add_source: 'Aggiungi fonte'
       add_user_group: 'Aggiungi utenti e gruppi'
       acl_element: 'Acl elemento'

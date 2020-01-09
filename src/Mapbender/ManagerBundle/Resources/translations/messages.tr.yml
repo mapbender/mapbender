@@ -140,7 +140,6 @@ mb:
     managerbundle:
       applications: 'Uygulamalar'
       new_application: 'Uygulama oluştur'
-      sources: 'Kaynaklar'
       add_source: 'Kaynak ekle'
       add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle'
       acl_element: 'Acl element'

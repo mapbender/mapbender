@@ -146,7 +146,6 @@ mb:
     managerbundle:
       applications: Aplicações
       new_application: 'Criar aplicação'
-      sources: 'Origem de dados'
       add_source: 'Adiciona origem de dados'
       add_user_group: 'Adicionar usuários e grupos'
       acl_element: Acl

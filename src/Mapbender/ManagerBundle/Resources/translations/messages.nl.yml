@@ -146,7 +146,6 @@ mb:
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'
-      sources: Bronnen
       add_source: 'Voeg bron toe'
       add_user_group: 'Voeg gebruikers en groepen toe'
       acl_element: 'Toegangs-restrictie (ACL) element'

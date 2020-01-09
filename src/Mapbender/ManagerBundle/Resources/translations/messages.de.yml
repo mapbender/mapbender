@@ -147,7 +147,6 @@ mb:
     managerbundle:
       applications: Anwendungen
       new_application: 'Neue Anwendung'
-      sources: Datenquelle
       add_source: 'Neue Datenquelle'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'
       acl_element: 'Acl Element'
