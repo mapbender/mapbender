@@ -34,7 +34,7 @@ $pageWidth: $contentPaneWidth + $navWidth;
   .navItem {
     > a {
       display: block;
-      @include transition(all 0.3s linear);
+      @include transition(color 0.3s linear);
       // separate text from built-in icon
       &:before{margin-right:5px;}
     }
@@ -181,6 +181,7 @@ div.contentTitle {
     padding: 10px;
     .navItem {
       > a {
+        @include transition(color, background-color linear 0.3s);
         padding: 2px 10px;
         &:hover, &:focus {
           background-color: #E0DDDD;
