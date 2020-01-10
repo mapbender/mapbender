@@ -17,6 +17,16 @@ $(function() {
         me.addClass("active");
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
+    var activeTab = (window.location.hash || '').substring(1);
+    $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
+        var tabId = $(this).attr('id');
+        // rewrite url fragment without scrolling page
+        // see https://stackoverflow.com/questions/3870057/how-can-i-update-window-location-hash-without-jumping-the-document
+        window.history.replaceState(null, null, '#' + tabId);
+    });
+    if (activeTab) {
+        $('#' + activeTab, $('.tabContainer, .tabContainerAlt')).click();
+    }
 
     // List toggles used in source views (collapsible layer / matrix nodes)
     $(".openCloseTitle").on("click", function() {

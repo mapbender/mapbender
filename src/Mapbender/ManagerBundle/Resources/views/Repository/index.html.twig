@@ -28,10 +28,10 @@
               <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
               {% endif %}
               {% if is_granted('DELETE', oid) %}
-                 <span class="iconRemove hover-highlight-effect"
+                 <a href="#" class="-fn-delete hover-highlight-effect"
                   title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                   data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                  data-id="{{ source.id }}"></span>
+                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
               {% endif %}
             </div>
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
