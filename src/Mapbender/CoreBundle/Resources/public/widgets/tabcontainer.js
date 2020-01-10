@@ -65,9 +65,6 @@ var initTabContainer = function ($context) {
             previous:   previous
         });
     });
-
-    accordion.data('ready',true);
-    accordion.trigger('ready');
 };
 
 $(function () {
