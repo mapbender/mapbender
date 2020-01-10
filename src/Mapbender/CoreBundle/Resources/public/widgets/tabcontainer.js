@@ -66,10 +66,6 @@ var initTabContainer = function ($context) {
         });
     });
 
-    accordion.bind('select', function(e, title) {
-        return $(e.currentTarget).find('.accordion > .tablecell:contains("' + title + '")').trigger('click');
-    });
-
     accordion.data('ready',true);
     accordion.trigger('ready');
 };
