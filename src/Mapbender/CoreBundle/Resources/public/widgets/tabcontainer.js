@@ -12,30 +12,7 @@ var initTabContainer = function ($context) {
         me.addClass("active");
     });
 
-    var accordion = $.extend($(".accordionContainer", $context), {
-        hasOutsideScroll: function() {
-            return this.parent().height() < this.height();
-        },
-        updateHeight:       function() {
-            var contentCells = $("> .container-accordion > .accordion-cell", this);
-            var tabCells = $("> .accordion", this);
-            var tabCellsHeight = this.parent().height();
-
-            $.each(tabCells, function(idx, el) {
-                var tabCell = $(el);
-                tabCellsHeight -= tabCell.height();
-            });
-            contentCells.height(tabCellsHeight);
-        }
-    });
-
-    // IE Scroll BugFix
-    if(accordion.hasOutsideScroll()){
-        accordion.updateHeight();
-        $(window).on('resize', $.proxy(accordion.updateHeight, accordion));
-    }
-
-    accordion.on('click', '.accordion', function(event) {
+    $(".accordionContainer", $context).on('click', '.accordion', function(event) {
         var me = $(this);
         var tab = $(event.delegateTarget);
         if (me.hasClass('active')) {
