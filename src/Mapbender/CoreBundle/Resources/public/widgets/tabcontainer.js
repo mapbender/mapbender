@@ -38,26 +38,14 @@ var initTabContainer = function ($context) {
     accordion.on('click', '.accordion', function(event) {
         var me = $(this);
         var tab = $(event.delegateTarget);
-        var isActive = me.hasClass('active');
-
-        if(isActive) {
+        if (me.hasClass('active')) {
             return;
         }
 
-        var previous = tab.find("> .active");
-        previous.removeClass("active");
-
-        if(me.hasClass('accordion')) {
-            if(isActive) {
-                me.removeClass('active');
-            } else {
-                me.addClass('active');
-                $("#" + me.attr("id").replace("accordion", "container"), tab).addClass("active");
-            }
-        } else {
-            me.addClass("active");
-            $("#" + me.attr("id").replace("tab", "container"), tab).addClass("active");
-        }
+        // remove .active from both accordion headers and accordion content containers
+        $('> .active', tab).not(me).removeClass('active');
+        me.addClass('active');
+        $("#" + me.attr("id").replace("accordion", "container"), tab).addClass("active");
 
         me.trigger('selected', {
             current:    me,
