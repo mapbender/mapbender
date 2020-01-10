@@ -1,4 +1,4 @@
-## dev-staging/v3.0.8.5 @ ??? post-merge
+## dev-staging/v3.0.8.5 @ fcb73bfd8
 ### Regression fixes
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
 - Fix PHP strict warning when editing / creating a LayerTree Element
