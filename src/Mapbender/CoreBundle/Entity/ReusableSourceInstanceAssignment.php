@@ -21,7 +21,7 @@ class ReusableSourceInstanceAssignment extends SourceInstanceAssignment
 
     /**
      * @var SourceInstance
-     * @ORM\ManyToOne(targetEntity="SourceInstance")
+     * @ORM\ManyToOne(targetEntity="SourceInstance", inversedBy="reusableassignments")
      * @ORM\JoinColumn(name="instance_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $instance;

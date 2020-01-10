@@ -40,6 +40,11 @@ abstract class SourceInstance extends SourceInstanceAssignment
      */
     protected $source;
 
+    /**
+     * @var ReusableSourceInstanceAssignment[]|Collection
+     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="instance", orphanRemoval=true, cascade={"remove"})
+     */
+    protected $reusableassignments;
 
     final public function getInstance()
     {
