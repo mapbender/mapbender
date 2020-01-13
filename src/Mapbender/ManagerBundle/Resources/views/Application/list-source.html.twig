@@ -5,9 +5,9 @@
   <li class="filterItem">
     <a class="checkContainer" href="{{ path('mapbender_manager_application_attachreusableinstance', {'layerset': layerset, 'instance': instance}) }}">
       <span>{{ instance.source.type }}</span>
-      <span class="subTitle">{{ instance.source.id }} / {{ instance.source.title }}</span>
+      <span class="subTitle">{{ instance.source.id }} / {{ instance.title | default(instance.source.title) }}</span>
       <span>{{ instance.source.alias }}</span>
-      <div class="description"><span class="badge badge-info pull-right badge-sm">Zentral verwaltete Instanz</span>{{ instance.source.description | trans }}<div class="clear"></div></div>
+      <div class="description"><span class="badge badge-info pull-right badge-sm"><i class="fa fas fa-wifi"></i>&nbsp;{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}</span>{{ instance.source.description | trans }}<div class="clear"></div></div>
     </a>
   {% endfor %}
 {% for source in sources %}
