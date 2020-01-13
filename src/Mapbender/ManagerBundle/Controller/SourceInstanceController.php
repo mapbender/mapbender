@@ -5,6 +5,8 @@ namespace Mapbender\ManagerBundle\Controller;
 
 
 use FOM\ManagerBundle\Configuration\Route;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,5 +58,27 @@ class SourceInstanceController extends ApplicationControllerBase
         } else {
             return $this->redirectToRoute('mapbender_manager_sourceinstance_listreusable');
         }
+    }
+
+    /**
+     * @Route("/instance/createshared/{source}", methods={"GET", "POST"}))
+     * @param Request $request
+     * @param Source $source
+     * @return Response
+     */
+    public function createsharedAction(Request $request, Source $source)
+    {
+        // @todo: only act on post
+        $em = $this->getEntityManager();
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $instance = $directory->createInstance($source);
+        $instance->setLayerset(null);
+        $em->persist($instance);
+        $em->flush();
+        $this->addFlash('success', "Neue freie Instanz erzeugt");
+        return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
+            'instanceId' => $instance->getId(),
+        ));
     }
 }

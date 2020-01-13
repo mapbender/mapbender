@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
@@ -568,7 +569,7 @@ class ApplicationController extends WelcomeController
      * @param string $slug of Application
      * @param int $layersetId
      * @param int $sourceId
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
@@ -625,8 +626,13 @@ class ApplicationController extends WelcomeController
         $assignment = new ReusableSourceInstanceAssignment();
         $assignment->setLayerset($layerset);
         $assignment->setInstance($instance);
-        $assignment->setWeight(-1);
-        // @todo: sort full collection bound + reusable instances by weight
+        $assignment->setWeight(0);
+
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
+            /** @var SourceInstanceAssignment $otherAssignment */
+            $otherAssignment->setWeight($index + 1);
+        }
+
         $layerset->getReusableInstanceAssignments()->add($assignment);
         $em->persist($assignment);
         $em->persist($application);
@@ -635,6 +641,7 @@ class ApplicationController extends WelcomeController
         // sanity
         $instance->setLayerset(null);
         $em->flush();
+        // @todo: translate flash message
         $this->addFlash('success', 'Die zentral verwaltete Instanz wurde der Applikation zugewiesen');
         return $this->redirectToRoute("mapbender_manager_application_edit", array(
             "slug" => $application->getSlug(),
