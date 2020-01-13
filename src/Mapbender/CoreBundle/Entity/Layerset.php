@@ -171,6 +171,16 @@ class Layerset
     }
 
     /**
+     * @param ReusableSourceInstanceAssignment[]|ArrayCollection $reusableInstanceAssignments
+     * @return $this
+     */
+    public function setReusableInstanceAssignments($reusableInstanceAssignments)
+    {
+        $this->reusableInstanceAssignments = $reusableInstanceAssignments;
+        return $this;
+    }
+
+    /**
      * Get instances
      *
      * @param bool $includeUnowned NOTE: cannot be true by default to avoid erroneous doctrine behaviour
