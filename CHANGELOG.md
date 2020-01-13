@@ -39,11 +39,10 @@
 ### Visual fixes and changes - login and backend
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Fix encoding errors of backend headings containing HTML-escapable characters
-- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Fix untranslated "Back" button in backend source views
 - Change misleading "active" labeling in Application Security tab to "public access" (this is _not_ a functional change, only a text update)
 - Increase form field contrast for better placeholder readability
-- Split (very long) title of source instance editing form into multiple lines
+- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups (e.g. Layerset title editing)
 - Replace custom backend message boxes with standard Boostrap `.alert`
