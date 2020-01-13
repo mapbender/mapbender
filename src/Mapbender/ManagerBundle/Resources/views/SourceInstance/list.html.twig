@@ -8,7 +8,7 @@
 {% block manager_content %}
 {# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
     {% if items and items | length %}
-      <label for="inputFilter0" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+      <label for="inputFilter0" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilter0" type="text" class="input listFilterInput">
 
       <ul id="listFilter0" class="listFilterContainer listFilterBoxes listFilterServiceBoxes -fn-instance-list">
         {% for item in items -%}
