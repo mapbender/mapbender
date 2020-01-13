@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * @author Paul Schmidt
@@ -137,21 +136,5 @@ class State
     public function getJson()
     {
         return $this->json;
-    }
-
-    /**
-     * Sign state sources
-     *
-     * @param Signer $signer
-     */
-    public function signSources(Signer $signer)
-    {
-        $json = json_decode($this->getJson(), true);
-        if ($json && isset($json['sources']) && is_array($json['sources'])) {
-            foreach ($json['sources'] as $source) {
-                $source['configuration']['options']['url'] =
-                    $signer->signUrl($source['configuration']['options']['url']);
-            }
-        }
     }
 }
