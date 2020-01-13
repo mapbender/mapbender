@@ -1,6 +1,7 @@
-## dev-release/3.0.7 @ 454345992
+## dev-release/3.0.7 @ 3a1b44026
 ### Regression fixes
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
+- Fix PHP strict warning when editing / creating a LayerTree Element
 ### Other functional fixes
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
 - Fix unreliable / broken initial map srs configurations depending on database response order
@@ -36,11 +37,16 @@
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Fix encoding errors of backend headings containing HTML-escapable characters
 - Fix untranslated "Back" button in backend source views
+- Change misleading "active" labeling in Application Security tab to "public access" (this is _not_ a functional change, only a text update)
+- Increase form field contrast for better placeholder readability
+- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups (e.g. Layerset title editing)
 - Replace custom backend message boxes with standard Boostrap `.alert`
+- Remember last active tab also in Source item view (previously only in application editing)
 - Replace some custom backend-only icon constructs with forward-compatible FontAwesome markup
 - Improve wording consistency of common backend button / interaction labels (save vs update, delete, back etc)
+- Consistently use plural forms for all top-level menu items
 - Remove confusing WMTS instance form fields for unpersisted values
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
@@ -61,14 +67,18 @@
 - Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
 - Moved owsproxy dependency back to stable / tagged version releases
 ### Other changes
+- Capitalize all field labels generated through form theme
 - [CSS] `.linkButton` and all `<a>` elements now inherit font color by default
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
 - [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts
 - [CSS] switch to root-relative units for all header elements and font-size classes
 - [CSS] `table` elements in popups and sidepanes now have full width by default, globally
 - [CSS] [Potential break] Resolve conflicts with Bootstrap checkbox markup. Elements with class `.checkbox` are no longer globally hidden. See UPGRADING.md for guidance.
+- [CSS] allow natural text flow in div.contentTitle
+- [CSS] extract new SCSS variables `$inputForegroudColor` (previously identical to `$secondColor`) and `$inputBackgroundColor` (previously hard-coded to full white)
 - Add `translation:get` command (optional MapbenderIntrospectionBundle, inactive by default)
 - Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations (optional MapbenderIntrospectionBundle, inactive by default)
+- Add `mapbender:inspect:translations:twigs` command to scan for JavaScript-side translation aliasing (optional MapbenderIntrospectionBundle, inactive by default)
 - Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0
 
 ## v3.0.8.4

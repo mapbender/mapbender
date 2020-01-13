@@ -569,7 +569,7 @@ class ApplicationController extends WelcomeController
      * @param string $slug of Application
      * @param int $layersetId
      * @param int $sourceId
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {

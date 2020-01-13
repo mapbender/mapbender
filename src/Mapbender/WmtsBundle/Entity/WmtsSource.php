@@ -203,25 +203,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set alias
-     * @param string $alias
-     * @return $this
-     */
-    public function setAlias($alias)
-    {
-        $this->alias = $alias;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    /**
      * @param string $fees
      * @return $this
      */
