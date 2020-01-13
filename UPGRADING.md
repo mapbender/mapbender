@@ -44,7 +44,7 @@ For improved Symfony forward compatibility, `eslider/sasscb` has been replaced w
 
 For PostgreSQL 10 schema migration support, the dependency `wheregroup/doctrine-dbal-shims:^1` has been added.
 
-If you update Mapbender with git only, you will have to add these packages manually at your own discretion. When upgrading via
+If you update Mapbender with git only, you will have to add these packages manually at your own discretion. When upgrading
 Mapbender the recommended way (`bin/composer update`, or optionally `bin/composer update mapbender/mapbender` for a targetted single-package update),
 you will not be impacted at all.
 
