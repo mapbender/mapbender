@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ a8dcdd3f0
+## dev-release/3.0.7 @ 3a1b44026
 ### Regression fixes
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
 - Fix PHP strict warning when editing / creating a LayerTree Element
@@ -39,7 +39,7 @@
 - Fix untranslated "Back" button in backend source views
 - Change misleading "active" labeling in Application Security tab to "public access" (this is _not_ a functional change, only a text update)
 - Increase form field contrast for better placeholder readability
-- Split (very long) title of source instance editing form into multiple lines
+- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups (e.g. Layerset title editing)
 - Replace custom backend message boxes with standard Boostrap `.alert`
