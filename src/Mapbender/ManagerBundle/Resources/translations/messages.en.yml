@@ -26,6 +26,8 @@ mb:
       create:
         success: A new instance has been created. Please edit it.
   manager:
+    sourceinstance:
+      embedded_in_applications: '{0} This instance is not attached to any application|{1} This source is assigned to one application|]1,Inf[ This instance is attached to %count% applications'
     admin:
       sources: Sources
       source:

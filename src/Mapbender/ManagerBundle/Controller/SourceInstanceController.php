@@ -4,16 +4,72 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
+use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\Repository\LayersetRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
+    /**
+     * @Route("/instance/{instance}", methods={"GET"})
+     * @param Request $request
+     * @param SourceInstance $instance
+     * @return Response
+     */
+    public function viewAction(Request $request, SourceInstance $instance)
+    {
+        $applicationRepository = $this->getDbApplicationRepository();
+        $layersetRepository = $this->getLayersetRepository();
+        $order = array(
+            'application' => Criteria::ASC,
+        );
+        $applicationOrder = array(
+            'title' => Criteria::ASC,
+            'slug' => Criteria::ASC,
+        );
+        $viewData = array(
+            'layerset_groups' => array(),
+        );
+        $relatedApplications = $applicationRepository->findWithSourceInstance($instance, null, $applicationOrder);
+        foreach ($relatedApplications as $application) {
+            /** @var Layerset[] $relatedLayersets */
+            $relatedLayersets = $application->getLayersets()->filter(function($layerset) use ($instance) {
+                /** @var Layerset $layerset */
+                return $layerset->getCombinedInstances()->contains($instance);
+            })->getValues();
+            if (!$relatedLayersets) {
+                throw new \LogicException("Instance => Application lookup error; should contain instance #{$instance->getId()}, but doesn't");
+                continue;
+            }
+            $appViewData = array(
+                'application' => $application,
+                'instance_groups' => array(),
+            );
+            foreach ($relatedLayersets as $ls) {
+                $layersetViewData = array(
+                    'layerset' => $ls,
+                    'instance_assignments' => array(),
+                );
+                $assignments = $ls->getCombinedInstanceAssignments()->filter(function ($a) use ($instance) {
+                    /** @var SourceInstanceAssignment $a */
+                    return $a->getInstance() === $instance;
+                });
+                $layersetViewData['instance_assignments'] = $assignments;
+                $appViewData['instance_groups'][] = $layersetViewData;
+            }
+            $viewData['layerset_groups'][] = $appViewData;
+        }
+        return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
+    }
+
     /**
      * @Route("/instance/list/reusable", methods={"GET"})
      * @param Request $request
@@ -50,13 +106,17 @@ class SourceInstanceController extends ApplicationControllerBase
     {
         /** @todo: specify / implement proper grants */
         $this->denyAccessUnlessGranted('DELETE', $instance->getSource());
-        $em = $this->getEntityManager();
-        $em->remove($instance);
-        $em->flush();
-        if ($returnUrl = $request->query->get('return')) {
-            return $this->redirect($returnUrl);
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $em = $this->getEntityManager();
+            $em->remove($instance);
+            $em->flush();
+            if ($returnUrl = $request->query->get('return')) {
+                return $this->redirect($returnUrl);
+            } else {
+                return $this->redirectToRoute('mapbender_manager_sourceinstance_listreusable');
+            }
         } else {
-            return $this->redirectToRoute('mapbender_manager_sourceinstance_listreusable');
+            return $this->viewAction($request, $instance);
         }
     }
 
@@ -80,5 +140,14 @@ class SourceInstanceController extends ApplicationControllerBase
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
         ));
+    }
+    /**
+     * @return LayersetRepository
+     */
+    protected function getLayersetRepository()
+    {
+        /** @var LayersetRepository $repository */
+        $repository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
+        return $repository;
     }
 }

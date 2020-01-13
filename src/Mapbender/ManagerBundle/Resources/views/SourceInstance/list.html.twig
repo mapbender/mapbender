@@ -1,10 +1,16 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
+{% endblock %}
+
 {% block manager_content %}
 {# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
     {% if items and items | length %}
       <label for="inputFilter0" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 
-      <ul id="listFilter0" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
+      <ul id="listFilter0" class="listFilterContainer listFilterBoxes listFilterServiceBoxes -fn-instance-list">
         {% for item in items -%}
         <li class="filterItem">
           <div class="col1">
@@ -19,14 +25,14 @@
               <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                 ><i class="fa fa-desktop"></i></a>
             {% if is_granted('DELETE', oid) %}
-              <a href="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
-                 class="hover-highlight-effect"
-                 title="{{"mb.actions.delete"|trans}}"
-                 ><i class="fa fa-times"></i></a>
+              <a class="-fn-delete hover-highlight-effect" href="#"
+                  data-url="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
+                  title="{{"mb.actions.delete"|trans}}"
+                  ><i class="fa fa-times"></i></a>
             {% endif %}
             </div>
             {# @todo: link to instance editing #}
-              <span class="h2">{{ item.source.title }}</span>
+              <span class="h2">{{ item.title | default(item.source.title) }}</span>
               <div class="clear"></div>
             {# <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a> #}
           </div>
