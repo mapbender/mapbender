@@ -369,24 +369,38 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/instance/{instance}/publicize")
+     * @ManagerRoute("/instance/{instance}/promotetoshared")
      * @param Request $request
      * @param SourceInstance $instance
      * @return Response
      */
     public function promotetosharedinstanceAction(Request $request, SourceInstance $instance)
     {
-        if (!$instance->getLayerset()) {
+        $layerset = $instance->getLayerset();
+        if (!$layerset) {
             throw new \LogicException("Instance is already shared");
         }
         $em = $this->getEntityManager();
-        $instanceCopy = clone $instance;
-        $instanceCopy->setLayerset(null);
-        $em->persist($instanceCopy);
+        $assignment = new ReusableSourceInstanceAssignment();
+        $assignment->setInstance($instance);
+
+        $assignment->setWeight($instance->getWeight());
+        $assignment->setEnabled($instance->getEnabled());
+        $layerset->getInstances(false)->removeElement($instance);
+        $instance->setLayerset(null);
+        $assignment->setLayerset($layerset);
+        $layerset->getReusableInstanceAssignments()->add($assignment);
+        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
+        $em->persist($layerset);
+        $em->persist($instance);
+        $layerset->getApplication()->setUpdated(new \DateTime('now'));
+        $em->persist($layerset->getApplication());
         $em->flush();
-        $this->addFlash('success', "Die Instanz steht nun als zentral verwaltete Instanz zur Verfügung");
-        return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
-            'instanceId' => $instanceCopy->getId(),
+        // @todo: translate flash message
+        $this->addFlash('success', "Die Instanz wurde zu einer freien Instanz umgewandelt");
+        return $this->redirectToRoute('mapbender_manager_repository_instance', array(
+            'instanceId' => $instance->getId(),
+            'slug' => $layerset->getApplication()->getSlug(),
         ));
     }
 

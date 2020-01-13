@@ -32,7 +32,7 @@
                 <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}">Private Instanz in dieser Anwendung erzeugen</a>
                 {%- endif -%}
                 {%- if not _is_reusable_instance -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}">Als zentral verwaltete Instanz publizieren</a>
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;In freie Instanz umwandeln</a>
                 {%- endif -%}
             </div>
             <div class="clearContainer"></div>
