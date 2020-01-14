@@ -26,47 +26,7 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     public function viewAction(Request $request, SourceInstance $instance)
     {
-        $applicationRepository = $this->getDbApplicationRepository();
-        $layersetRepository = $this->getLayersetRepository();
-        $order = array(
-            'application' => Criteria::ASC,
-        );
-        $applicationOrder = array(
-            'title' => Criteria::ASC,
-            'slug' => Criteria::ASC,
-        );
-        $viewData = array(
-            'layerset_groups' => array(),
-        );
-        $relatedApplications = $applicationRepository->findWithSourceInstance($instance, null, $applicationOrder);
-        foreach ($relatedApplications as $application) {
-            /** @var Layerset[] $relatedLayersets */
-            $relatedLayersets = $application->getLayersets()->filter(function($layerset) use ($instance) {
-                /** @var Layerset $layerset */
-                return $layerset->getCombinedInstances()->contains($instance);
-            })->getValues();
-            if (!$relatedLayersets) {
-                throw new \LogicException("Instance => Application lookup error; should contain instance #{$instance->getId()}, but doesn't");
-                continue;
-            }
-            $appViewData = array(
-                'application' => $application,
-                'instance_groups' => array(),
-            );
-            foreach ($relatedLayersets as $ls) {
-                $layersetViewData = array(
-                    'layerset' => $ls,
-                    'instance_assignments' => array(),
-                );
-                $assignments = $ls->getCombinedInstanceAssignments()->filter(function ($a) use ($instance) {
-                    /** @var SourceInstanceAssignment $a */
-                    return $a->getInstance() === $instance;
-                });
-                $layersetViewData['instance_assignments'] = $assignments;
-                $appViewData['instance_groups'][] = $layersetViewData;
-            }
-            $viewData['layerset_groups'][] = $appViewData;
-        }
+        $viewData = $this->getApplicationRelationViewData($instance);
         return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
     }
 
@@ -141,6 +101,53 @@ class SourceInstanceController extends ApplicationControllerBase
             'instanceId' => $instance->getId(),
         ));
     }
+
+    /**
+     * @param SourceInstance $instance
+     * @return mixed[]
+     */
+    protected function getApplicationRelationViewData(SourceInstance $instance)
+    {
+        $applicationRepository = $this->getDbApplicationRepository();
+        $applicationOrder = array(
+            'title' => Criteria::ASC,
+            'slug' => Criteria::ASC,
+        );
+        $viewData = array(
+            'layerset_groups' => array(),
+        );
+        $relatedApplications = $applicationRepository->findWithSourceInstance($instance, null, $applicationOrder);
+        foreach ($relatedApplications as $application) {
+            /** @var Layerset[] $relatedLayersets */
+            $relatedLayersets = $application->getLayersets()->filter(function($layerset) use ($instance) {
+                /** @var Layerset $layerset */
+                return $layerset->getCombinedInstances()->contains($instance);
+            })->getValues();
+            if (!$relatedLayersets) {
+                throw new \LogicException("Instance => Application lookup error; should contain instance #{$instance->getId()}, but doesn't");
+                continue;
+            }
+            $appViewData = array(
+                'application' => $application,
+                'instance_groups' => array(),
+            );
+            foreach ($relatedLayersets as $ls) {
+                $layersetViewData = array(
+                    'layerset' => $ls,
+                    'instance_assignments' => array(),
+                );
+                $assignments = $ls->getCombinedInstanceAssignments()->filter(function ($a) use ($instance) {
+                    /** @var SourceInstanceAssignment $a */
+                    return $a->getInstance() === $instance;
+                });
+                $layersetViewData['instance_assignments'] = $assignments;
+                $appViewData['instance_groups'][] = $layersetViewData;
+            }
+            $viewData['layerset_groups'][] = $appViewData;
+        }
+        return $viewData;
+    }
+
     /**
      * @return LayersetRepository
      */
