@@ -88,13 +88,7 @@
             <call method="setTimeout">
                 <argument>%assetic.filter.sass.timeout%</argument>
             </call>
-            <call method="setStyle">
-                <argument>%assetic.filter.sass.style%</argument>
-            </call>
-            <call method="setCompass">
-                <argument>%assetic.filter.sass.compass%</argument>
-            </call>
-			
+
             <!-- default option for SASSC -->
             <call method="setCacheLocation">
                 <argument>false</argument>
