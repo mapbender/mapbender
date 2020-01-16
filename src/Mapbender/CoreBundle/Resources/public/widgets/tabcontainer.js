@@ -12,22 +12,22 @@ var initTabContainer = function ($context) {
         me.addClass("active");
     });
 
-    $(".accordionContainer", $context).on('click', '.accordion', function(event) {
+    $(".accordionContainer", $context).on('click', '.accordion', function() {
         var me = $(this);
-        var tab = $(event.delegateTarget);
+        var $group = $(this).closest('.accordionContainer');
         if (me.hasClass('active')) {
             return;
         }
-
+        var previous = $('> .container-accordion.active', $group);
         // remove .active from both accordion headers and accordion content containers
-        $('> .active', tab).not(me).removeClass('active');
+        $('> .active', $group).not(me).removeClass('active');
         me.addClass('active');
-        $("#" + me.attr("id").replace("accordion", "container"), tab).addClass("active");
+        $("#" + me.attr("id").replace("accordion", "container"), $group).addClass("active");
 
         me.trigger('selected', {
             current:    me,
-            currentTab: tab,
-            previous:   previous
+            currentTab: $group,
+            previous: previous
         });
     });
 };
