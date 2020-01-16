@@ -24,14 +24,6 @@ class FeatureInfoAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                'choices' => array(
-                    'Dialog' => 'dialog',
-                    'Element' => 'element',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('displayType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'choices' => array(

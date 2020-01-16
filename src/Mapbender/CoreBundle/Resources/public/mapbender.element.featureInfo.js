@@ -5,7 +5,6 @@
             target: null,
             autoActivate: false,
             deactivateOnClose: true,
-            type: 'dialog',
             displayType: 'tabs',
             printResult: false,
             showOriginal: false,
@@ -22,8 +21,10 @@
         queries: {},
         state: null,
         contentManager: null,
+        mobilePane: null,
 
         _create: function() {
+            this.mobilePane = this.element.closest('.mobilePane');
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
@@ -336,7 +337,7 @@
         _open: function() {
             var widget = this;
             var options = widget.options;
-            if (options.type === 'dialog') {
+            if (!this.mobilePane.length) {
                 if (!widget.popup || !widget.popup.$element) {
                     widget.popup = new Mapbender.Popup2({
                         title: widget.element.attr('data-title'),
