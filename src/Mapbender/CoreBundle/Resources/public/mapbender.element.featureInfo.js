@@ -46,36 +46,6 @@
                 widget.activate();
             }
 
-            widgetElement.on('click', '.js-header', function(e) {
-                $('.js-content.active:first', widgetElement).each(function(idx, item){ // only one tab is active
-                    if($('iframe:first', $(item)).length){
-                        function fireIfLoaded($item, num){
-                            if($('iframe:first', $item).data('loaded')){
-                                widget._trigger('featureinfo', null, {
-                                    action: "activated_content",
-                                    id: widgetElement.attr('id'),
-                                    activated_content: [$item.attr('id')]
-                                });
-                                return;
-                            }
-                            if (num > 100) {
-                                window.console && console.warn("FeatureInfoIframe: the content can not be loaded!");
-                                return;
-                            }
-                            window.setTimeout(function(){
-                                fireIfLoaded($item, num++);
-                            }, 100);
-                        }
-                        fireIfLoaded($(item), 0);
-                    } else {
-                        widget._trigger('featureinfo', null, {
-                            action: "activated_content",
-                            id: widgetElement.attr('id'),
-                            activated_content: [$(item).attr('id')]
-                        });
-                    }
-                });
-            });
             widget._trigger('ready');
         },
         _contentElementId: function(source) {
