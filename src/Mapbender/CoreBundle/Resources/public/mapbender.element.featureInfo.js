@@ -208,17 +208,15 @@
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     this._open();
-                    var uuid = Mapbender.Util.UUID();
-                    var iframe = $(self._getIframeDeclaration(uuid, null));
+                    var iframe = $(this._getIframeDeclaration(null, null));
                     self._addContent(layerId, layerTitle, iframe);
-                    var doc = document.getElementById(uuid).contentWindow.document;
+                    var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
-                        iframe.data('loaded', true);
                         $('#' + self._getContentManager().headerId(layerId), self.element).click();
-                        iframe.contents().find("body").css("background","transparent");
+                        $('body', doc).css("background", "transparent");
                         self._triggerHaveResult(source);
                     });
                     doc.open();
@@ -234,31 +232,18 @@
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
-            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    var self = this;
-                    data = this._cleanHtml(data);
-                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(layerId, layerTitle, data);
-                        this._triggerHaveResult(source);
-                        this._open();
-                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
-                    } else {
-                        this._removeContent(layerId);
-                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
-                    break;
-                case 'text/plain':
-                default:
-                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
-                        this._triggerHaveResult(source);
-                    } else {
-                        this._setContentEmpty(layerId);
-                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
-                    break;
+            var layerId = source.mqlid;
+            if (mimetype.search(/text[/]html/i) === 0) {
+                data = this._cleanHtml(data);
+            }
+            if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                this._addContent(layerId, layerTitle, data);
+                this._triggerHaveResult(source);
+                this._open();
+                $('#' + this._getContentManager().headerId(layerId), this.element).click();
+            } else {
+                this._removeContent(layerId);
+                Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
             }
         },
         _cleanHtml: function(data) {
@@ -377,22 +362,11 @@
             $(this._selectorSelfAndSub(manager.headerId(layerId), manager.headerContentSel), $context).remove();
             $(this._selectorSelfAndSub(manager.contentId(layerId), manager.contentContentSel), $context).remove();
             delete(this.queries[layerId]);
-            for (var prop in this.queries) {
-                return;
+            if (!Object.keys(this.queries).length) {
+                $(manager.headerSel, this.element).remove();
+                $(manager.contentSel, this.element).remove();
             }
-            this._setContentEmpty();
          },
-        _setContentEmpty: function(id) {
-            var $context = this._getContext();
-            var manager = this._getContentManager();
-            if (id) {
-//                $(this._selectorSelfAndSub(manager.headerId(id), manager.headerContentSel), $context).text('');
-                $(this._selectorSelfAndSub(manager.contentId(id), manager.contentContentSel), $context).empty();
-            } else {
-                $(manager.headerSel, manager.$headerParent).remove();
-                $(manager.contentSel, manager.$contentParent).remove();
-            }
-        },
         _addContent: function(layerId, layerTitle, content) {
             var $context = this._getContext();
             var manager = this._getContentManager();
