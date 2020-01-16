@@ -31,6 +31,7 @@
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
         <parameter key="mapbender.asset_compiler.js.class">Mapbender\CoreBundle\Asset\JsCompiler</parameter>
         <parameter key="mapbender.asset_compiler.css.class">Mapbender\CoreBundle\Asset\CssCompiler</parameter>
+        <parameter key="mapbender.asset_compiler.css.timeout">%assetic.filter.sass.timeout%</parameter>
         <parameter key="mapbender.asset_compiler.translations.class">Mapbender\CoreBundle\Asset\TranslationCompiler</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
@@ -38,6 +39,8 @@
         <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
              try setting /usr/bin/sassc -->
         <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
+        <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
+        <parameter key="assetic.filter.sass.timeout">null</parameter>
     </parameters>
 
     <services>
@@ -82,17 +85,9 @@
         </service>
 
         <service id="mapbender.assetic.filter.sass" class="%assetic.filter.scss.class%">
-            <tag name="assetic.filter" alias="sass" />
-
             <argument>%mapbender.asset.sassc_binary_path%</argument>
             <call method="setTimeout">
-                <argument>%assetic.filter.sass.timeout%</argument>
-            </call>
-            <call method="setStyle">
-                <argument>%assetic.filter.sass.style%</argument>
-            </call>
-            <call method="setCompass">
-                <argument>%assetic.filter.sass.compass%</argument>
+                <argument>%mapbender.asset_compiler.css.timeout%</argument>
             </call>
 
             <!-- default option for SASSC -->
@@ -184,7 +179,9 @@
             <argument>%kernel.root_dir%/../web</argument>
             <argument>%kernel.bundles%</argument>
             <argument type="service" id="mapbender.assetic.filter.sass" />
-            <argument type="service" id="assetic.filter.cssrewrite" />
+            <argument type="service">
+                <service class="Assetic\Filter\CssRewriteFilter" />
+            </argument>
             <argument type="service" id="router" />
         </service>
         <service id="mapbender.asset_compiler.js" class="%mapbender.asset_compiler.js.class%">
