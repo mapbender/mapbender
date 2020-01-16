@@ -137,9 +137,7 @@
             var self = this;
             var x = e.xy.x;
             var y = e.xy.y;
-            var called = false;
             this.queries = {};
-            $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src) {
                 var layerTitle = self._getTabTitle(src);
                 var url = src.getPointFeatureInfoUrl(x, y, self.options.maxCount);
@@ -149,15 +147,11 @@
                         self._addContent(src.mqlid, layerTitle, 'wird geladen');
                         self._open();
                     }
-                    called = true;
                     self._setInfo(src, url);
                 } else {
                     self._removeContent(src.mqlid);
                 }
             });
-            if (!called) {
-                $('#js-error-featureinfo').removeClass('hidden');
-            }
         },
         _getIframeDeclaration: function(uuid, url) {
             var id = uuid ? (' id="' + uuid + '"') : '';
