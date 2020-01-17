@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -232,5 +233,48 @@ class Element
     public function setYamlRoles($yamlRoles)
     {
         $this->yamlRoles = $yamlRoles;
+    }
+
+    /**
+     * Get a sibling entity in the same application by id.
+     *
+     * @param integer $id
+     * @param bool $sameRegion
+     * @return Element|null
+     */
+    public function getSiblingElement($id, $sameRegion)
+    {
+        if ($id === null || false) {
+            throw new \LogicException("No element sibling can have id " . var_export($id, true));
+        }
+        if (!$this->getApplication()->isYamlBased()) {
+            // Database ids can only be integers, and won't match with a string id.
+            $id = intval($id);
+        }
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('id', $id))
+        ;
+        if ($sameRegion) {
+            $criteria->andWhere(Criteria::expr()->eq('region', $this->getRegion()));
+        }
+        return $this->getApplication()->getElements()->matching($criteria)->first() ?: null;
+    }
+
+    /**
+     * Get a sibling entity in the same application, using an id placed into this entity's
+     * configuration array at a given $configPropertyName.
+     *
+     * @param string $configPropertyName default 'target'
+     * @return Element|null
+     * @todo: systemically prevent self-targetting and circular references
+     */
+    public function getTargetElement($configPropertyName = 'target')
+    {
+        $config = $this->getConfiguration() ?: array();
+        if (isset($config[$configPropertyName])) {
+            return $this->getSiblingElement($config[$configPropertyName], false);
+        } else {
+            return null;
+        }
     }
 }
