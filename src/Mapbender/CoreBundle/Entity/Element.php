@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity(repositoryClass="ElementRepository")
+ * @ORM\Entity
  * @ORM\Table(name="mb_core_element")
  */
 class Element
