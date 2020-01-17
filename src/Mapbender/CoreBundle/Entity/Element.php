@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -10,14 +11,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity(repositoryClass="ElementRepository")
+ * @ORM\Entity
  * @ORM\Table(name="mb_core_element")
  */
 class Element
 {
 
     /**
-     * @var integer $id
+     * @var integer
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -25,33 +26,34 @@ class Element
     protected $id;
 
     /**
-     * @var string $title The element title
+     * @var string|null
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank()
      */
     protected $title;
 
     /**
-     * @var string $class The element class
+     * @var string|null
      * @ORM\Column(type="string", length=1024)
      */
     protected $class;
 
     /**
-     * @var array $configuration The element configuration
+     * @var array|null
      * @ORM\Column(type="array", nullable=true)
      */
     protected $configuration;
 
     /**
-     * @var Application The configuration entity for the application
+     * @var Application|null
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="elements")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $application;
 
     /**
-     * @var string $region The template region for the element
+     * Name of container region in template
+     * @var string|null
      * @ORM\Column()
      */
     protected $region;
@@ -62,21 +64,14 @@ class Element
     protected $enabled = true;
 
     /**
-     * @var integer $weight The sorting weight for display
+     * Sorting weight within region
+     * @var integer|null
      * @ORM\Column(type="integer")
      */
     protected $weight;
 
-    /** @var array */
+    /** @var string[]|null */
     protected $yamlRoles;
-
-    /**
-     * Element constructor.
-     */
-    public function __construct()
-    {
-        $this->enabled = true;
-    }
 
     /**
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
@@ -90,8 +85,6 @@ class Element
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -100,8 +93,6 @@ class Element
     }
 
     /**
-     * Set title
-     *
      * @param string $title
      * @return $this
      */
@@ -113,8 +104,6 @@ class Element
     }
 
     /**
-     * Get title
-     *
      * @return string
      */
     public function getTitle()
@@ -123,22 +112,17 @@ class Element
     }
 
     /**
-     * Set class
-     *
      * @param string $class
      * @return $this
      */
     public function setClass($class)
     {
         $this->class = $class;
-
         return $this;
     }
 
     /**
-     * Get class
-     *
-     * @return string
+     * @return string|null
      */
     public function getClass()
     {
@@ -146,22 +130,17 @@ class Element
     }
 
     /**
-     * Set configuration
-     *
      * @param array $configuration
      * @return $this
      */
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
-
         return $this;
     }
 
     /**
-     * Get configuration
-     *
-     * @return array
+     * @return array|null
      */
     public function getConfiguration()
     {
@@ -169,22 +148,17 @@ class Element
     }
 
     /**
-     * Set region
-     *
      * @param string $region
      * @return $this
      */
     public function setRegion($region)
     {
         $this->region = $region;
-
         return $this;
     }
 
     /**
-     * Get region
-     *
-     * @return string
+     * @return string|null
      */
     public function getRegion()
     {
@@ -192,21 +166,16 @@ class Element
     }
 
     /**
-     * Set enabled
-     *
      * @param boolean $enabled
      * @return $this
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-
         return $this;
     }
 
     /**
-     * Is enabled?
-     *
      * @return boolean
      */
     public function getEnabled()
@@ -215,22 +184,17 @@ class Element
     }
 
     /**
-     * Set weight
-     *
      * @param integer $weight
      * @return $this
      */
     public function setWeight($weight)
     {
         $this->weight = $weight;
-
         return $this;
     }
 
     /**
-     * Get weight
-     *
-     * @return integer
+     * @return integer|null
      */
     public function getWeight()
     {
@@ -238,22 +202,17 @@ class Element
     }
 
     /**
-     * Set application
-     *
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @return $this
      */
     public function setApplication(Application $application)
     {
         $this->application = $application;
-
         return $this;
     }
 
     /**
-     * Get application
-     *
-     * @return Application
+     * @return Application|null
      */
     public function getApplication()
     {
@@ -261,15 +220,7 @@ class Element
     }
 
     /**
-     * @return string Element ID
-     */
-    public function __toString()
-    {
-        return (string) $this->id;
-    }
-
-    /**
-     * @return array
+     * @return string[]|null
      */
     public function getYamlRoles()
     {
@@ -277,7 +228,7 @@ class Element
     }
 
     /**
-     * @param array $yamlRoles
+     * @param string[]|null $yamlRoles
      */
     public function setYamlRoles($yamlRoles)
     {
@@ -285,9 +236,45 @@ class Element
     }
 
     /**
-     * @return string|null
+     * Get a sibling entity in the same application by id.
+     *
+     * @param integer $id
+     * @param bool $sameRegion
+     * @return Element|null
      */
-    public function getDescription() {
-        return '';
+    public function getSiblingElement($id, $sameRegion)
+    {
+        if ($id === null || false) {
+            throw new \LogicException("No element sibling can have id " . var_export($id, true));
+        }
+        if (!$this->getApplication()->isYamlBased()) {
+            // Database ids can only be integers, and won't match with a string id.
+            $id = intval($id);
+        }
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('id', $id))
+        ;
+        if ($sameRegion) {
+            $criteria->andWhere(Criteria::expr()->eq('region', $this->getRegion()));
+        }
+        return $this->getApplication()->getElements()->matching($criteria)->first() ?: null;
+    }
+
+    /**
+     * Get a sibling entity in the same application, using an id placed into this entity's
+     * configuration array at a given $configPropertyName.
+     *
+     * @param string $configPropertyName default 'target'
+     * @return Element|null
+     * @todo: systemically prevent self-targetting and circular references
+     */
+    public function getTargetElement($configPropertyName = 'target')
+    {
+        $config = $this->getConfiguration() ?: array();
+        if (isset($config[$configPropertyName])) {
+            return $this->getSiblingElement($config[$configPropertyName], false);
+        } else {
+            return null;
+        }
     }
 }

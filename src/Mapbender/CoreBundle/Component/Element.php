@@ -103,22 +103,6 @@ abstract class Element extends MinimalBound
 
     /*************************************************************************
      *                                                                       *
-     *             Shortcut functions for leaner Twig templates              *
-     *                                                                       *
-     *************************************************************************/
-
-    /**
-     * Get the element description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->entity->getDescription();
-    }
-
-    /*************************************************************************
-     *                                                                       *
      *                              Frontend stuff                           *
      *                                                                       *
      *************************************************************************/
