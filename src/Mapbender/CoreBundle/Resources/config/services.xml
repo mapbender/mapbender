@@ -61,8 +61,9 @@
         </service>
 
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
-            <argument type="service" id="service_container" />
             <tag name="form.type" alias="target_element"/>
+            <argument type="service" id="translator" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
 
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">

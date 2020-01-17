@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
@@ -10,7 +11,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -24,7 +24,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class TargetElementType extends AbstractType
 {
-
     /** @var EntityRepository */
     protected $repository;
     /** @var TranslatorInterface */
@@ -33,10 +32,10 @@ class TargetElementType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
-        $this->repository = $container->get('doctrine')->getRepository('Mapbender\CoreBundle\Entity\Element');
-        $this->translator = $container->get('translator');
+        $this->translator = $translator;
+        $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
     }
 
     /**
