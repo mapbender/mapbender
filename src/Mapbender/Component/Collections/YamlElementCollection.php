@@ -6,6 +6,8 @@ namespace Mapbender\Component\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
@@ -14,7 +16,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class YamlElementCollection extends AbstractLazyCollection
+class YamlElementCollection extends AbstractLazyCollection implements Selectable
 {
     /** @var ElementFactory */
     protected $factory;
@@ -81,5 +83,14 @@ class YamlElementCollection extends AbstractLazyCollection
             $this->logger->warning("Your YAML application contains an invalid Element {$className}: {$e->getMessage()}");
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function matching(Criteria $criteria)
+    {
+        $this->initialize();
+        return $this->collection->matching($criteria);
     }
 }
