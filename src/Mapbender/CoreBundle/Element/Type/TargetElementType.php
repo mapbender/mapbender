@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Choice-style form element for picking an element's "target" element (this is used e.g. for a generic Button
@@ -24,26 +25,18 @@ use Symfony\Component\Form\FormView;
 class TargetElementType extends AbstractType
 {
 
-    /**
-     * ContainerInterface
-     * @var ContainerInterface Container
-     */
-    protected $container;
+    /** @var EntityRepository */
+    protected $repository;
+    /** @var TranslatorInterface */
+    protected $translator;
 
     /**
      * @inheritdoc
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getContainer()
-    {
-        return $this->container;
+        $this->repository = $container->get('doctrine')->getRepository('Mapbender\CoreBundle\Entity\Element');
+        $this->translator = $container->get('translator');
     }
 
     /**
@@ -72,11 +65,14 @@ class TargetElementType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $fixedParentOptions = array(
+            'class' => 'Mapbender\CoreBundle\Entity\Element',
+        );
         $type = $this;
-        $resolver->setDefaults(array(
+        $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
-            'class' => 'MapbenderCoreBundle:Element',
+            'class' => 'Mapbender\CoreBundle\Entity\Element',
             'choice_label' => 'title',
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',
@@ -85,6 +81,7 @@ class TargetElementType extends AbstractType
                 return $type->getChoicesQueryBuilder($options);
             }
         ));
+        $resolver->setAllowedValues('class', array($fixedParentOptions['class']));
     }
 
     /**
@@ -96,9 +93,9 @@ class TargetElementType extends AbstractType
     public function getChoicesQueryBuilder(Options $options)
     {
         $builderName = '_target';
-        /** @var EntityRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')->getRepository($options['class']);
-        $qb = $repository->createQueryBuilder($builderName);
+        /** @var Application $application */
+        $application = $options['application'];
+        $qb = $this->repository->createQueryBuilder($builderName);
         $applicationFilter = $qb->expr()->eq($builderName . '.application', $options['application']->getId());
         $filter = $qb->expr()->andX();
         $filter->add($applicationFilter);
@@ -113,8 +110,6 @@ class TargetElementType extends AbstractType
             $qb->setParameter('class', $options['element_class']);
         } else {
             $elementIds = array();
-            /** @var Application $application */
-            $application = $options['application'];
             foreach ($application->getElements() as $elementEntity) {
                 $elementComponentClass = $elementEntity->getClass();
                 if (class_exists($elementComponentClass)) {
@@ -138,8 +133,7 @@ class TargetElementType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $entityManager = $this->container->get('doctrine')->getManager();
-        $transformer = new ElementIdTransformer($entityManager);
+        $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
         if (!empty($options['element_class']) && is_a('Mapbender\CoreBundle\Element\Map', $options['element_class'], true)) {
             $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
@@ -149,8 +143,7 @@ class TargetElementType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
-        $translator = $this->container->get('translator');
+        $translator = $this->translator;
         $translatedLcLabels = array_map(function($element) use ($translator) {
             $transLabel = $translator->trans($element->label);
             // sorting should be case-insensitive
@@ -161,5 +154,4 @@ class TargetElementType extends AbstractType
         // see https://bugs.php.net/bug.php?id=50688
         array_multisort($view->vars['choices'], $translatedLcLabels);
     }
-
 }
