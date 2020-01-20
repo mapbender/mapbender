@@ -36,7 +36,6 @@
         _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
-            var widgetElement = widget.element;
             this.target = mbMap;
             widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
                 {'click': widget._triggerFeatureInfo},
@@ -56,11 +55,6 @@
             if ($('#' + id, this._getContext()).length) {
                 return id;
             }
-        },
-        _contentRef: function(layerId) {
-            var $context = this._getContext();
-            var manager = this._getContentManager();
-            return $('#' + manager.contentId(layerId), $context);
         },
         /**
          * Default action for mapbender element
