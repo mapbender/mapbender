@@ -256,8 +256,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         $(this.mbMap.element).trigger('mbmapclick', {
             mbMap: this.mbMap,
             pixel: [event.x, event.y],
-            coordinate: [clickLonLat.lon, clickLonLat.lat],
-            event: event
+            coordinate: [clickLonLat.lon, clickLonLat.lat]
         });
     },
     _setupHistoryControl: function() {
