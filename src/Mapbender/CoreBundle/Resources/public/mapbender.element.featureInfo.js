@@ -196,7 +196,6 @@
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
-                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
                         $('body', doc).css("background", "transparent");
                         self._triggerHaveResult(source);
                     });
@@ -221,7 +220,6 @@
                 this._addContent(layerId, layerTitle, data);
                 this._triggerHaveResult(source);
                 this._open();
-                $('#' + this._getContentManager().headerId(layerId), this.element).click();
             } else {
                 this._removeContent(layerId);
                 Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -369,28 +367,14 @@
             $(this._selectorSelfAndSub(contentId, manager.contentContentSel), $context)
                 .empty().append(content);
             if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
-                var $tabcont;
                 initTabContainer($context);
-                if(this.options.displayType === 'tabs') {
-                    $tabcont = $header.parents('.tabContainer:first');
-                    $('.tabs .tab', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
+                var $tabcont = $header.closest('.tabContainer,.accordionContainer');
+                if (!$('> .active', $tabcont).length) {
+                    var isAccordion = $tabcont.hasClass('accordionContainer');
+                    $('>.tabs >.tab', $tabcont).removeClass('active');
+                    var containerId = 'container' + $header.attr('id').replace(isAccordion ? 'accordion' : 'tab', '');
                     $header.addClass('active');
-                    $('.container', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $('#container' + $header.attr('id').replace('tab', ''), $tabcont).addClass('active');
-                } else if (this.options.displayType === 'accordion') {
-                    $tabcont = $header.parents('.accordionContainer:first');
-                    $('.accordion', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $header.addClass('active');
-                    $('.container-accordion', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $('#container' + $header.attr('id').replace('accordion', ''), $tabcont).addClass('active');
+                    $('#' + containerId).addClass('active');
                 }
             }
         },
