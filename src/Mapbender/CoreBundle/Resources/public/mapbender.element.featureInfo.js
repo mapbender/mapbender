@@ -137,11 +137,20 @@
             }
             var request = $.ajax(ajaxOptions);
             request.done(function(data, textStatus, jqXHR) {
+                var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                if (self.options.showOriginal) {
-                    self._showOriginal(source, layerTitle, data, mimetype);
+                if (!self.options.showOriginal && mimetype.search(/text[/]html/i) === 0) {
+                    data_ = self._cleanHtml(data_);
+                }
+                data_ = $.trim(data_);
+                if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
+                    Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    // @todo: stop using mapquery-specific stuff
+                    self._removeContent(source.mqlid);
+                } else if (self.options.showOriginal) {
+                    self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
-                    self._showEmbedded(source, layerTitle, data, mimetype);
+                    self._showEmbedded(source, layerTitle, data_, mimetype);
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -179,11 +188,6 @@
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
             var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
-            if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
-                this._removeContent(layerId);
-                Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                return;
-            }
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -212,18 +216,11 @@
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
+            // @todo: stop using mapquery-specific stuff
             var layerId = source.mqlid;
-            if (mimetype.search(/text[/]html/i) === 0) {
-                data = this._cleanHtml(data);
-            }
-            if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                this._addContent(layerId, layerTitle, data);
-                this._triggerHaveResult(source);
-                this._open();
-            } else {
-                this._removeContent(layerId);
-                Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-            }
+            this._addContent(layerId, layerTitle, data);
+            this._triggerHaveResult(source);
+            this._open();
         },
         _cleanHtml: function(data) {
             try {
