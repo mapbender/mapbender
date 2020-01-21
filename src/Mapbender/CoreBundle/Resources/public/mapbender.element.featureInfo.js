@@ -101,14 +101,9 @@
             var self = this;
             this.queries = {};
             $.each(this.target.getModel().getSources(), function(idx, src) {
-                var layerTitle = self._getTabTitle(src);
                 var url = src.getPointFeatureInfoUrl(x, y, self.options.maxCount);
                 if (url) {
                     self.queries[src.mqlid] = url;
-                    if (!self.options.onlyValid) {
-                        self._addContent(src.mqlid, layerTitle, 'wird geladen');
-                        self._open();
-                    }
                     self._setInfo(src, url);
                 } else {
                     self._removeContent(src.mqlid);
