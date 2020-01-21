@@ -278,25 +278,18 @@
                         cssClass: 'featureinfoDialog',
                         width: options.width,
                         height: options.height,
+
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: function() {
                                     this.close();
-                                    if (widget.options.deactivateOnClose) {
-                                        widget.deactivate();
-                                    }
                                 }
                             }
                         }
                     });
                     widget.popup.$element.on('close', function() {
-                        widget._trigger('featureinfo', null, {
-                            action: "closedialog",
-                            title:  widget.element.attr('title'),
-                            id:     widget.element.attr('id')
-                        });
                         if (widget.options.deactivateOnClose) {
                             widget.deactivate();
                         }
