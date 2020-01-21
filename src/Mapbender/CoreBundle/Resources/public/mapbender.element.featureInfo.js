@@ -161,7 +161,7 @@
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    return !!("" + data).match(/<[a-z]+>\s*[^<]+\s*<[/][a-z]+>/gi);
+                    return !!("" + data).match(/<[/][a-z]+>/gi);
                 case 'text/plain':
                     return !!("" + data).match(/[^\s]/g);
                 default: // TODO other mimetypes ?
