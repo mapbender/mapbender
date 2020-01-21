@@ -244,7 +244,7 @@ class Element
      */
     public function getSiblingElement($id, $sameRegion)
     {
-        if ($id === null || false) {
+        if ($id === null || $id === false) {
             throw new \LogicException("No element sibling can have id " . var_export($id, true));
         }
         if (!$this->getApplication()->isYamlBased()) {
