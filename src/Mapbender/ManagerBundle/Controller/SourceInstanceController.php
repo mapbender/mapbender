@@ -41,12 +41,9 @@ class SourceInstanceController extends ApplicationControllerBase
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $oid);
 
-        $items = array();
-        foreach ($this->getSourceInstanceRepository()->findReusableInstances() as $item) {
-            if ($this->isGranted('VIEW', $item->getSource())) {
-                $items[] = $item;
-            }
-        }
+        // NOTE: ACL system cannot infer from assignable privilege on abstract Source to privilege
+        //       on concrete WmsSource / WmtsSource. DO NOT check grants on concrete source objects.
+        $items = $this->getSourceInstanceRepository()->findReusableInstances();
 
         return $this->render('@MapbenderManager/SourceInstance/list.html.twig', array(
             'title' => $this->getTranslator()->trans('mb.terms.sourceinstance.reusable.plural'),
