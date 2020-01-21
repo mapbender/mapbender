@@ -347,6 +347,9 @@
                 $header.attr('id', headerId);
                 manager.$headerParent.append($header);
             }
+            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
+                $header.addClass('active');
+            }
             $(this._selectorSelfAndSub(headerId, manager.headerContentSel), $context).text(layerTitle);
             var $content = $('#' + contentId, $context);
             if ($content.length === 0) {
@@ -354,19 +357,10 @@
                 $content.attr('id', contentId);
                 manager.$contentParent.append($content);
             }
+            $content.toggleClass('active', $header.hasClass('active'));
             $(this._selectorSelfAndSub(contentId, manager.contentContentSel), $context)
                 .empty().append(content);
-            if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
-                initTabContainer($context);
-                var $tabcont = $header.closest('.tabContainer,.accordionContainer');
-                if (!$('> .active', $tabcont).length) {
-                    var isAccordion = $tabcont.hasClass('accordionContainer');
-                    $('>.tabs >.tab', $tabcont).removeClass('active');
-                    var containerId = 'container' + $header.attr('id').replace(isAccordion ? 'accordion' : 'tab', '');
-                    $header.addClass('active');
-                    $('#' + containerId).addClass('active');
-                }
-            }
+            initTabContainer($context);
         },
         _printContent: function() {
             var $context = this._getContext();
