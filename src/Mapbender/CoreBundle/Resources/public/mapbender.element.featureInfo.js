@@ -128,14 +128,8 @@
         _setInfo: function(source, url) {
             var self = this;
             var layerTitle = this._getTabTitle(source);
-            var contentType_ = "";
-            if (typeof (source.configuration.options.info_charset) !== 'undefined') {
-                contentType_ += contentType_.length > 0 ? ";"
-                    : "" + source.configuration.options.info_charset;
-            }
             var ajaxOptions = {
-                url: url,
-                contentType: contentType_
+                url: url
             };
             var useProxy = source.configuration.options.proxy;
             // also use proxy on different host / scheme to avoid CORB
