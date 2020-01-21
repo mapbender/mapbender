@@ -150,8 +150,8 @@
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
-                Mapbender.info(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                self._addContent(source.mqlid, layerTitle, errorThrown);
+                Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
+                this._removeContent(source.mqlid);
             });
         },
         _isDataValid: function(data, mimetype) {
