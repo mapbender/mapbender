@@ -70,6 +70,12 @@
             <tag name="form.type" alias="app_layerset"/>
         </service>
 
+        <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
+            <tag name="form.type"/>
+            <!-- arguments 1:1 for ChoiceType parent class constructor -->
+            <argument type="service" id="form.choice_list_factory"/>
+        </service>
+
         <service id="signer" class="%signer.class%">
             <argument>%secret%</argument>
         </service>
