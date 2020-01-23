@@ -134,13 +134,13 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     protected function processElementDefinition($definition)
     {
         if ($definition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
-            if (!isset($elementDefinition['layersets'])) {
+            if (!isset($definition['layersets'])) {
                 if (isset($definition['layerset'])) {
                     // @todo: add strict mode support and throw if enabled
                     @trigger_error("Deprecated: your YAML Map Element defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
-                    $elementDefinition['layersets'] = array($definition['layerset']);
+                    $definition['layersets'] = array($definition['layerset']);
                 } else {
-                    $elementDefinition['layersets'] = array();
+                    $definition['layersets'] = array();
                 }
             }
             unset($definition['layerset']);
