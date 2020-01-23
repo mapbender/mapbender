@@ -31,9 +31,9 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'required' => true,
                 'multiple' => true,
                 'expanded' => true,
-                'auto_initialize' => false,
                 'attr' => array(
                     'data-sortable' => 'choiceExpandedSortable',
+                    'class' => 'input inputWrapper choiceExpandedSortable',
                 ),
             ))
             ->add('dpi', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
