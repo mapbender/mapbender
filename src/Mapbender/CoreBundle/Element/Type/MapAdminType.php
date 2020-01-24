@@ -68,13 +68,6 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     public function transform($value)
     {
         if ($value) {
-            if (array_key_exists('layerset', $value)) {
-                if (!array_key_exists('layersets', $value)) {
-                    // legacy db config, promote to array-form 'layersets'
-                    $value['layersets'] = (array)$value['layerset'];
-                }
-                unset($value['layerset']);
-            }
             if (array_key_exists('otherSrs', $value) && is_array($value['otherSrs'])) {
                 $value['otherSrs'] = implode(',', array_filter($value['otherSrs']));
             }
