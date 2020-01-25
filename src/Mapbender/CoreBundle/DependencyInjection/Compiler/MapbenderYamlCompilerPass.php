@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
 use Symfony\Component\Config\Resource\FileResource;
@@ -22,6 +24,8 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
 {
     /** @var string Applications directory path where YAML files are */
     protected $applicationDir;
+    /** @var boolean to throw exceptions instead of logging warnings if loaded definitions are outdated */
+    protected $strictElementConfigs = false;
 
     /**
      * MapbenderYamlCompilerPass constructor.
@@ -38,9 +42,19 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        $this->strictElementConfigs = $this->resolveParameterReference($container, 'mapbender.strict.static_app.element_configuration');
         if ($this->applicationDir) {
             $this->loadYamlApplications($container, $this->applicationDir);
         }
+    }
+
+    protected function resolveParameterReference(ContainerBuilder $container, $name)
+    {
+        $value = $container->getParameter($name);
+        while (preg_match('/^[%].*?[%]$/', $value)) {
+            $value = $container->getParameter(substr($value, 1, -1));
+        }
+        return $value;
     }
 
     /**
@@ -133,19 +147,94 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     protected function processElementDefinition($definition)
     {
-        if ($definition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
-            if (!isset($definition['layersets'])) {
-                if (isset($definition['layerset'])) {
-                    // @todo: add strict mode support and throw if enabled
-                    @trigger_error("Deprecated: your YAML Map Element defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
-                    $definition['layersets'] = array($definition['layerset']);
-                } else {
-                    $definition['layersets'] = array();
-                }
-            }
-            unset($definition['layerset']);
+        // @todo: look up and adjust migrated class names as well
+        if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
+            $className = $definition['class'];
+            $dummyEntity = new Element();
+            $nonConfigs = array_intersect_key($definition, array(
+                'class' => true,
+                'title' => true,
+            ));
+            $configBefore = array_diff_key($definition, $nonConfigs);
+            $dummyEntity->setConfiguration($configBefore);
+            $className::updateEntityConfig($dummyEntity);
+            $configAfter = $dummyEntity->getConfiguration();
+            $this->onElementConfigChange($nonConfigs['class'], $configBefore, $configAfter);
+            $definition = array_replace($configAfter, $nonConfigs);
         }
+        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip(array(
+            'class',
+            'title',
+        ))));
         return $definition;
+    }
+
+    /**
+     * Invoked when an element configuration needed adjustment.
+     * May either log a warning message or throw, depending on configuration parameter
+     * 'mapbender.strict.static_app.element_configuration'.
+     *
+     * @param $className
+     * @param $configBefore
+     * @param $configAfter
+     */
+    protected function onElementConfigChange($className, $configBefore, $configAfter)
+    {
+        $changedValueKeys = array_keys(array_uintersect_assoc($configAfter, $configBefore, function ($a, $b) {
+            return ($a !== $b) ? 0 : (-1 + 2 * intval($a > $b));
+        }));
+        $keysBefore = array_keys($configBefore);
+        $keysAfter = array_keys($configAfter);
+        $removedKeys = array_diff($keysBefore, $keysAfter);
+        $addedKeys = array_diff($keysAfter, $keysBefore);
+        $messageParts = array();
+        if ($removedKeys) {
+            $messageParts[] = 'removed ' . implode(', ', $removedKeys);
+        }
+        if ($addedKeys) {
+            $messageParts[] = 'added ' . implode(', ', $addedKeys);
+        }
+        foreach ($changedValueKeys as $k) {
+            $messageParts[] = implode(' ', array(
+                'changed',
+                $k,
+                'from',
+                var_export($configBefore[$k], true),
+                'to',
+                var_export($configAfter[$k], true),
+            ));
+        }
+        if ($messageParts) {
+            $messageCommon = "outdated {$className} configuration: " . implode('; ', $messageParts);
+            if ($this->strictElementConfigs) {
+                throw new \RuntimeException("Yaml application contains {$messageCommon}");
+            } else {
+                @trigger_error("WARNING: had to perform adjustments on {$messageCommon}. Update your Yaml application definition accordingly");
+            }
+        }
+    }
+
+    /**
+     * Inspect Element configuration for values not present in Element component's default configuration.
+     * May either log a warning message or throw, depending on configuration parameter
+     * 'mapbender.strict.static_app.element_configuration'.
+     *
+     * @param string|MinimalInterface $className
+     * @param $config
+     */
+    protected function checkElementConfig($className, $config)
+    {
+        $defaults = $className::getDefaultConfiguration();
+        $keysWithoutDefaults = array_diff(array_keys($config), array_keys($defaults));
+        if ($keysWithoutDefaults) {
+            $messageCommon = "configuration for {$className} with invalid keys " . implode(',', $keysWithoutDefaults);
+            if ($this->strictElementConfigs) {
+                throw new \RuntimeException("Yaml application contains {$messageCommon}");
+            } else {
+                @trigger_error("WARNING: had to perform adjustments on {$messageCommon}. Update your Yaml application definition accordingly");
+            }
+        }
     }
 
     /**
