@@ -43,7 +43,10 @@ class SourceInstanceController extends ApplicationControllerBase
 
         // NOTE: ACL system cannot infer from assignable privilege on abstract Source to privilege
         //       on concrete WmsSource / WmtsSource. DO NOT check grants on concrete source objects.
-        $items = $this->getSourceInstanceRepository()->findReusableInstances();
+        $items = $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+            'title' => 'ASC',
+            'id' => 'ASC',
+        ));
 
         return $this->render('@MapbenderManager/SourceInstance/list.html.twig', array(
             'title' => $this->getTranslator()->trans('mb.terms.sourceinstance.reusable.plural'),
