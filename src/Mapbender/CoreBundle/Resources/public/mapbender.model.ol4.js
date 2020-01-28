@@ -71,8 +71,7 @@ window.Mapbender.MapModelOl4 = (function() {
             $(self.mbMap.element).trigger('mbmapclick', {
                 mbMap: self.mbMap,
                 pixel: data.pixel.slice(),
-                coordinate: data.coordinate.slice(),
-                event: data.originalEvent
+                coordinate: data.coordinate.slice()
             });
         });
     },
