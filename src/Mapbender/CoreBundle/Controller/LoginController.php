@@ -30,7 +30,7 @@ class LoginController extends Controller
     public function loginAction(Request $request)
     {
         $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LoginType', null, array(
-            'action' => 'login/check',
+            'action' => $this->generateUrl('mapbender_core_login_logincheck'),
         ));
 
         if ($request->getMethod() === 'GET') {

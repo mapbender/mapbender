@@ -3,75 +3,53 @@
  * See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/public/js/frontend
  */
 var initTabContainer = function ($context) {
-
-    $(".tabContainer, .tabContainerAlt", $context).on('click', '.tab', function () {
-        var me = $(this);
-        var $cnt = $(this).parent().parent();
-        $('>.tabs >.tab, >.container', $cnt).removeClass('active');
-        $('>.container#' + me.attr('id').replace("tab", "container"), $cnt).addClass('active');
-        me.addClass("active");
-    });
-
-    var accordion = $.extend($(".accordionContainer", $context), {
-        hasOutsideScroll: function() {
-            return this.parent().height() < this.height();
-        },
-        updateHeight:       function() {
-            var contentCells = $("> .container-accordion > .accordion-cell", this);
-            var tabCells = $("> .accordion", this);
-            var tabCellsHeight = this.parent().height();
-
-            $.each(tabCells, function(idx, el) {
-                var tabCell = $(el);
-                tabCellsHeight -= tabCell.height();
-            });
-            contentCells.height(tabCellsHeight);
-        }
-    });
-
-    // IE Scroll BugFix
-    if(accordion.hasOutsideScroll()){
-        accordion.updateHeight();
-        $(window).on('resize', $.proxy(accordion.updateHeight, accordion));
-    }
-
-    accordion.on('click', '.accordion', function(event) {
-        var me = $(this);
-        var tab = $(event.delegateTarget);
-        var isActive = me.hasClass('active');
-
-        if(isActive) {
-            return;
-        }
-
-        var previous = tab.find("> .active");
-        previous.removeClass("active");
-
-        if(me.hasClass('accordion')) {
-            if(isActive) {
-                me.removeClass('active');
-            } else {
-                me.addClass('active');
-                $("#" + me.attr("id").replace("accordion", "container"), tab).addClass("active");
+    $('.tabContainer, .tabContainerAlt', $context)
+        .filter(function() {
+            return (typeof ($(this).data('tabcontainer-initialized')) === 'undefined');
+        })
+        .on('click', '.tab', function () {
+            var $tabHeader = $(this);
+            var $cnt = $(this).parent().parent();
+            $('>.tabs >.tab, >.container', $cnt).removeClass('active');
+            $('>.container#' + $tabHeader.attr('id').replace("tab", "container"), $cnt).addClass('active');
+            $tabHeader.addClass("active");
+        })
+        .each(function() {
+            $(this).data('tabcontainer-initialized', true)
+        })
+    ;
+    $(".accordionContainer", $context)
+        .filter(function() {
+            return (typeof ($(this).data('accordion-initialized')) === 'undefined');
+        })
+        .on('click', '.accordion', function() {
+            var $header = $(this);
+            if ($header.hasClass('active')) {
+                return;
             }
-        } else {
-            me.addClass("active");
-            $("#" + me.attr("id").replace("tab", "container"), tab).addClass("active");
-        }
+            var $group = $(this).closest('.accordionContainer');
+            var previous = $('> .container-accordion.active', $group);
+            // remove .active from both accordion headers and accordion content containers
+            $('> .active', $group).not($header).removeClass('active');
+            $header.addClass('active');
+            $("#" + $header.attr("id").replace("accordion", "container"), $group).addClass("active");
 
-        me.trigger('selected', {
-            current:    me,
-            currentTab: tab,
-            previous:   previous
-        });
-    });
-
-    accordion.bind('select', function(e, title) {
-        return $(e.currentTarget).find('.accordion > .tablecell:contains("' + title + '")').trigger('click');
-    });
-
-    accordion.data('ready',true);
-    accordion.trigger('ready');
+            $header.trigger('selected', {
+                // @todo: this event data is completely confusing
+                //   'current' is the now active header
+                //   'previous' is the previously active content pane (NOT the header)
+                //   'currentTab' is the entire parent accordion container (neither header nor content pane)
+                // figure out which event consumer uses what, and if it's safe to fix the
+                // inconsistencies
+                current:    $header,
+                currentTab: $group,
+                previous: previous
+            });
+        })
+        .each(function() {
+            $(this).data('accordion-initialized', true);
+        })
+    ;
 };
 
 $(function () {

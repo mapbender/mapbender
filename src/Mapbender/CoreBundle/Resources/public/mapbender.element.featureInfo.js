@@ -5,7 +5,6 @@
             target: null,
             autoActivate: false,
             deactivateOnClose: true,
-            type: 'dialog',
             displayType: 'tabs',
             printResult: false,
             showOriginal: false,
@@ -21,9 +20,11 @@
         queries: {},
         state: null,
         contentManager: null,
+        mobilePane: null,
         isActive: false,
 
         _create: function() {
+            this.mobilePane = this.element.closest('.mobilePane');
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
@@ -35,43 +36,12 @@
         _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
-            var widgetElement = widget.element;
             this.target = mbMap;
             this._setupMapClickHandler();
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
             }
 
-            widgetElement.on('click', '.js-header', function(e) {
-                $('.js-content.active:first', widgetElement).each(function(idx, item){ // only one tab is active
-                    if($('iframe:first', $(item)).length){
-                        function fireIfLoaded($item, num){
-                            if($('iframe:first', $item).data('loaded')){
-                                widget._trigger('featureinfo', null, {
-                                    action: "activated_content",
-                                    id: widgetElement.attr('id'),
-                                    activated_content: [$item.attr('id')]
-                                });
-                                return;
-                            }
-                            if (num > 100) {
-                                window.console && console.warn("FeatureInfoIframe: the content can not be loaded!");
-                                return;
-                            }
-                            window.setTimeout(function(){
-                                fireIfLoaded($item, num++);
-                            }, 100);
-                        }
-                        fireIfLoaded($(item), 0);
-                    } else {
-                        widget._trigger('featureinfo', null, {
-                            action: "activated_content",
-                            id: widgetElement.attr('id'),
-                            activated_content: [$(item).attr('id')]
-                        });
-                    }
-                });
-            });
             widget._trigger('ready');
         },
         _contentElementId: function(source) {
@@ -82,11 +52,6 @@
             if ($('#' + id, this._getContext()).length) {
                 return id;
             }
-        },
-        _contentRef: function(layerId) {
-            var $context = this._getContext();
-            var manager = this._getContentManager();
-            return $('#' + manager.contentId(layerId), $context);
         },
         /**
          * Default action for mapbender element
@@ -135,27 +100,16 @@
             });
             var self = this;
             var model = this.target.getModel();
-            var called = false;
             this.queries = {};
-            $('#js-error-featureinfo').addClass('hidden');
             $.each(model.getSources(), function(idx, src) {
-                var layerTitle = self._getTabTitle(src);
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
                     self.queries[src.mqlid] = url;
-                    if (!self.options.onlyValid) {
-                        self._addContent(src.mqlid, layerTitle, 'wird geladen');
-                        self._open();
-                    }
-                    called = true;
                     self._setInfo(src, url);
                 } else {
                     self._removeContent(src.mqlid);
                 }
             });
-            if (!called) {
-                $('#js-error-featureinfo').removeClass('hidden');
-            }
         },
         _getIframeDeclaration: function(uuid, url) {
             var id = uuid ? (' id="' + uuid + '"') : '';
@@ -170,14 +124,8 @@
         _setInfo: function(source, url) {
             var self = this;
             var layerTitle = this._getTabTitle(source);
-            var contentType_ = "";
-            if (typeof (source.configuration.options.info_charset) !== 'undefined') {
-                contentType_ += contentType_.length > 0 ? ";"
-                    : "" + source.configuration.options.info_charset;
-            }
             var ajaxOptions = {
-                url: url,
-                contentType: contentType_
+                url: url
             };
             var useProxy = source.configuration.options.proxy;
             // also use proxy on different host / scheme to avoid CORB
@@ -190,22 +138,31 @@
             }
             var request = $.ajax(ajaxOptions);
             request.done(function(data, textStatus, jqXHR) {
+                var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                if (self.options.showOriginal) {
-                    self._showOriginal(source, layerTitle, data, mimetype);
+                if (!self.options.showOriginal && mimetype.search(/text[/]html/i) === 0) {
+                    data_ = self._cleanHtml(data_);
+                }
+                data_ = $.trim(data_);
+                if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
+                    Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    // @todo: stop using mapquery-specific stuff
+                    self._removeContent(source.mqlid);
+                } else if (self.options.showOriginal) {
+                    self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
-                    self._showEmbedded(source, layerTitle, data, mimetype);
+                    self._showEmbedded(source, layerTitle, data_, mimetype);
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
-                Mapbender.info(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                self._addContent(source.mqlid, layerTitle, errorThrown);
+                Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
+                this._removeContent(source.mqlid);
             });
         },
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    return !!("" + data).match(/<[a-z]+>\s*[^<]+\s*<[/][a-z]+>/gi);
+                    return !!("" + data).match(/<[/][a-z]+>/gi);
                 case 'text/plain':
                     return !!("" + data).match(/[^\s]/g);
                 default: // TODO other mimetypes ?
@@ -232,27 +189,19 @@
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
             var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
-            if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
-                this._removeContent(layerId);
-                Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                return;
-            }
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     this._open();
-                    var uuid = Mapbender.Util.UUID();
-                    var iframe = $(self._getIframeDeclaration(uuid, null));
+                    var iframe = $(this._getIframeDeclaration(null, null));
                     self._addContent(layerId, layerTitle, iframe);
-                    var doc = document.getElementById(uuid).contentWindow.document;
+                    var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
-                        iframe.data('loaded', true);
-                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
-                        iframe.contents().find("body").css("background","transparent");
+                        $('body', doc).css("background", "transparent");
                         self._triggerHaveResult(source);
                     });
                     doc.open();
@@ -268,32 +217,11 @@
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
-            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    var self = this;
-                    data = this._cleanHtml(data);
-                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(layerId, layerTitle, data);
-                        this._triggerHaveResult(source);
-                        this._open();
-                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
-                    } else {
-                        this._removeContent(layerId);
-                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
-                    break;
-                case 'text/plain':
-                default:
-                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
-                        this._triggerHaveResult(source);
-                    } else {
-                        this._setContentEmpty(layerId);
-                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
-                    break;
-            }
+            // @todo: stop using mapquery-specific stuff
+            var layerId = source.mqlid;
+            this._addContent(layerId, layerTitle, data);
+            this._triggerHaveResult(source);
+            this._open();
         },
         _cleanHtml: function(data) {
             try {
@@ -335,7 +263,7 @@
         _open: function() {
             var widget = this;
             var options = widget.options;
-            if (options.type === 'dialog') {
+            if (!this.mobilePane.length) {
                 if (!widget.popup || !widget.popup.$element) {
                     widget.popup = new Mapbender.Popup2({
                         title: widget.element.attr('data-title'),
@@ -348,25 +276,18 @@
                         cssClass: 'featureinfoDialog',
                         width: options.width,
                         height: options.height,
+
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: function() {
                                     this.close();
-                                    if (widget.options.deactivateOnClose) {
-                                        widget.deactivate();
-                                    }
                                 }
                             }
                         }
                     });
                     widget.popup.$element.on('close', function() {
-                        widget._trigger('featureinfo', null, {
-                            action: "closedialog",
-                            title:  widget.element.attr('title'),
-                            id:     widget.element.attr('id')
-                        });
                         if (widget.options.deactivateOnClose) {
                             widget.deactivate();
                         }
@@ -411,22 +332,11 @@
             $(this._selectorSelfAndSub(manager.headerId(layerId), manager.headerContentSel), $context).remove();
             $(this._selectorSelfAndSub(manager.contentId(layerId), manager.contentContentSel), $context).remove();
             delete(this.queries[layerId]);
-            for (var prop in this.queries) {
-                return;
+            if (!Object.keys(this.queries).length) {
+                $(manager.headerSel, this.element).remove();
+                $(manager.contentSel, this.element).remove();
             }
-            this._setContentEmpty();
          },
-        _setContentEmpty: function(id) {
-            var $context = this._getContext();
-            var manager = this._getContentManager();
-            if (id) {
-//                $(this._selectorSelfAndSub(manager.headerId(id), manager.headerContentSel), $context).text('');
-                $(this._selectorSelfAndSub(manager.contentId(id), manager.contentContentSel), $context).empty();
-            } else {
-                $(manager.headerSel, manager.$headerParent).remove();
-                $(manager.contentSel, manager.$contentParent).remove();
-            }
-        },
         _addContent: function(layerId, layerTitle, content) {
             var $context = this._getContext();
             var manager = this._getContentManager();
@@ -438,6 +348,9 @@
                 $header.attr('id', headerId);
                 manager.$headerParent.append($header);
             }
+            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
+                $header.addClass('active');
+            }
             $(this._selectorSelfAndSub(headerId, manager.headerContentSel), $context).text(layerTitle);
             var $content = $('#' + contentId, $context);
             if ($content.length === 0) {
@@ -445,33 +358,10 @@
                 $content.attr('id', contentId);
                 manager.$contentParent.append($content);
             }
+            $content.toggleClass('active', $header.hasClass('active'));
             $(this._selectorSelfAndSub(contentId, manager.contentContentSel), $context)
                 .empty().append(content);
-            if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
-                var $tabcont;
-                initTabContainer($context);
-                if(this.options.displayType === 'tabs') {
-                    $tabcont = $header.parents('.tabContainer:first');
-                    $('.tabs .tab', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $header.addClass('active');
-                    $('.container', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $('#container' + $header.attr('id').replace('tab', ''), $tabcont).addClass('active');
-                } else if (this.options.displayType === 'accordion') {
-                    $tabcont = $header.parents('.accordionContainer:first');
-                    $('.accordion', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $header.addClass('active');
-                    $('.container-accordion', $tabcont).each(function(idx, item){
-                        $(item).removeClass('active');
-                    });
-                    $('#container' + $header.attr('id').replace('accordion', ''), $tabcont).addClass('active');
-                }
-            }
+            initTabContainer($context);
         },
         _printContent: function() {
             var $context = this._getContext();
@@ -487,7 +377,6 @@
             w.document.write(printContent);
             w.print();
         },
-
         _setupMapClickHandler: function () {
             var self = this;
             self.target.element.on('mbmapclick', function(event, data) {

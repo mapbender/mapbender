@@ -71,6 +71,8 @@
             var $targetList = $("ul.layers:first", this.element);
             if (this.options.useTheme) {
                 // Collect layerset <=> theme relations
+                // @todo: knowing the layerset should not need "finding", we should iterate through displayable layersets,
+                //        then through source instances in the layerset, so the layerset is already known
                 // @todo 3.1.0: this should happen server-side
                 var layerset = this._findLayersetWithSource(source);
                 var theme = {};
@@ -711,14 +713,18 @@
             var layerset = null;
             Mapbender.Util.SourceTree.iterateLayersets(function(layersetDef, layersetId) {
                 for (var i = 0; i < layersetDef.length; i++) {
-                    if (layersetDef[i][source.origId]) {
-                        layerset = {
-                            id: layersetId,
-                            title: Mapbender.configuration.layersetmap[layersetId],
-                            content: layersetDef
-                        };
-                        // stop iteration
-                        return false;
+                    var entries = Object.entries(layersetDef[i]);
+                    for (var j = 0; j < entries.length; ++j) {
+                        var entry = entries[j][1];
+                        if (entry.origId.toString() === source.origId.toString()) {
+                            layerset = {
+                                id: layersetId,
+                                title: Mapbender.configuration.layersetmap[layersetId],
+                                content: layersetDef
+                            };
+                            // stop iteration
+                            return false;
+                        }
                     }
                 }
             });

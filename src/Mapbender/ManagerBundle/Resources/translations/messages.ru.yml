@@ -146,7 +146,6 @@ mb:
     managerbundle:
       applications: Приложения
       new_application: 'Новое приложение'
-      sources: Источники
       add_source: 'Добавить источник'
       add_user_group: 'Добавить пользователей и группы'
       acl_element: 'Acl элемент'

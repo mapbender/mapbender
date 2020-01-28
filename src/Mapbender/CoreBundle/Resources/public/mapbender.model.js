@@ -113,6 +113,25 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         // * layer lookup via 'mqlid' on source definitions
 
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
+        // monkey-patch zoom interactions
+        (function(olMap) {
+            // need to monkey patch here in order to get next zoom in movestart event
+            // prevents duplicate loads of WMS where a layer is going out of scale
+            var setCenterOriginal = olMap.setCenter;
+            var zoomToOriginal = olMap.zoomTo;
+            olMap.setCenter = function(center, zoom) {
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
+                setCenterOriginal.apply(this, arguments);
+            };
+            olMap.zoomTo = function(zoom, xy) {
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
+                zoomToOriginal.apply(this, arguments);
+            };
+        })(this.olMap);
 
         this.setView(true);
         this.processUrlParams();
@@ -146,8 +165,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         $(this.mbMap.element).trigger('mbmapclick', {
             mbMap: this.mbMap,
             pixel: [event.x, event.y],
-            coordinate: [clickLonLat.lon, clickLonLat.lat],
-            event: event
+            coordinate: [clickLonLat.lon, clickLonLat.lat]
         });
     },
     _setupHistoryControl: function() {

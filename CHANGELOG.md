@@ -1,6 +1,7 @@
-## v3.0.8.5-RC1
+## dev-staging/v3.0.8.5 @ fcb73bfd8
 ### Regression fixes
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
+- Fix PHP strict warning when editing / creating a LayerTree Element
 ### Other functional fixes
 - Disable sqlite foreign keys when running doctrine:schema:update command for safety
 - Fix unreliable / broken initial map srs configurations depending on database response order
@@ -12,6 +13,7 @@
 - Fix nonfunctional CSS minification in `prod` environment ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
 - Add missing grants check for instance enable toggle / instance reordering actions (requires `EDIT` on containing Application)
 - Resolve misc form type, service configuration and other incompatibilities with Symfony 3
+- [FeatureInfo] fix validation of HTML documents where every tag has attributes
 - [PrintClient] fix missing data if form is submitted by pressing Enter key
 - [PrintClient] prevent form submit in sidepane if selection rectangle is inactive
 - [PrintClient] Fix selection rectangle recentering on change of scale dropdown or rotation field
@@ -20,8 +22,10 @@
 - [Backend] Fix errors on import of previously broken application export formats
 - [Backend] SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - [Backend] Maintain backend element form confirmation on close behaviour after submitting once with validation errors
+- [Backend] Fix login form submit url if login form is triggered through non-login url (e.g. editing Element after session expiry / logging out in a different tab)
 - [Framework] Fix missing .dropdownValue visual update on "changed" event
 - [Framework] Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
+- [Framework] Fix progressive slowdown caused by repeated reinitialization of tab container / accordion widgets
 ### New / extended functionality
 - Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
 - Show dependent applications and instances in source view (as a new "Applications" tab)
@@ -33,18 +37,26 @@
 - [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
 ### Visual fixes and changes - frontend
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- [FeatureInfo] fix inconsistent popup behaviour when displaying a mix of html and plain text responses
+- [FeatureInfo] resolve popup behaviour variations between `onlyValid` on or off
+- [FeatureInfo] activate first loaded tab / accordion pane only
+- [FeatureInfo] detect empty server response even with `onlyValid` option off
 - [ZoomBar] replace history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - [ZoomBar] fix horizontal alignment of zoom level icons
 ### Visual fixes and changes - login and backend
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Fix encoding errors of backend headings containing HTML-escapable characters
-- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Fix untranslated "Back" button in backend source views
+- Change misleading "active" labeling in Application Security tab to "public access" (this is _not_ a functional change, only a text update)
+- Increase form field contrast for better placeholder readability
+- Split instance editing `<h1>` to improve presentation of instances with very long titles
 - Supply validation error messages (line + snippet) for yaml-type form fields
 - Disable undesirable close on outside click / mouse drag in misc backend modal popups (e.g. Layerset title editing)
 - Replace custom backend message boxes with standard Boostrap `.alert`
+- Remember last active tab also in Source item view (previously only in application editing)
 - Replace some custom backend-only icon constructs with forward-compatible FontAwesome markup
 - Improve wording consistency of common backend button / interaction labels (save vs update, delete, back etc)
+- Consistently use plural forms for all top-level menu items
 - Remove confusing WMTS instance form fields for unpersisted values
 - Remove form fields related to inactive, unimplemented WMTS featureinfo
 - Remove inconsequential Source Instance attribute `visible` and related form fields; instance visibility is always determined by the root layer's `selected` settting
@@ -60,6 +72,7 @@
 - Support viewing Yaml-based applications with `published: false` for users with appropriate privileges (root user, global Application view grant, or passing Yaml-Application-specific role check)
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+- [Framework] add engine-agnostic `mbmapclick` event
 ### Package dependency changes
 *NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
 - Dropped legacy joii library dependency
@@ -68,15 +81,19 @@
 - Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
 - Moved owsproxy dependency back to stable / tagged version releases
 ### Other changes
+- Capitalize all field labels generated through form theme
+- [FeatureInfo] remove `type` configuration option only relevant for destkop vs mobile templates; auto-detect instead
 - [CSS] `.linkButton` and all `<a>` elements now inherit font color by default
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
 - [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts
 - [CSS] switch to root-relative units for all header elements and font-size classes
 - [CSS] `table` elements in popups and sidepanes now have full width by default, globally
 - [CSS] [Potential break] Resolve conflicts with Bootstrap checkbox markup. Elements with class `.checkbox` are no longer globally hidden. See UPGRADING.md for guidance.
-- [CSS] Extract new SASS variables `$inputBackgroundColor` and `$inputForegroundColor` for targetted customization of form field background / text color
+- [CSS] allow natural text flow in div.contentTitle
+- [CSS] extract new SCSS variables `$inputForegroudColor` (previously identical to `$secondColor`) and `$inputBackgroundColor` (previously hard-coded to full white)
 - Add `translation:get` command (optional MapbenderIntrospectionBundle, inactive by default)
 - Add `mapbender:inspect:translations` command to scan for invalid repeats and identity translations (optional MapbenderIntrospectionBundle, inactive by default)
+- Add `mapbender:inspect:translations:twigs` command to scan for JavaScript-side translation aliasing (optional MapbenderIntrospectionBundle, inactive by default)
 - Removed `mapbender:generate:template` command; never worked in any release, all the way back to 3.0.0.0
 
 ## v3.0.8.4
