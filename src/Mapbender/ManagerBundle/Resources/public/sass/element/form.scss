@@ -27,17 +27,19 @@
     }
   }
   .choiceExpandedSortable {
-    color: $secondColor;
-    display: inline-block;
-    border: solid 1px lighten($thirdColor, 15%);
-    background-color: $contentColor;
+    &.input {
+      // undo fixed pixel height on .input
+      // @todo: .input should not have any height rule
+      height: auto;
+    }
+    .checkWrapper.left {
+      // undo redundant floats
+      // @todo: unfloat checkboxes globally
+      float: none;
+    }
     .sortableItem {
-      padding: 0 0.4em;
       cursor: move;
-      line-height: $lineHeight;
       .checkWrapper, label {
-        line-height: inherit;
-        color: inherit;
         margin: 0;
       }
       label {
@@ -49,7 +51,7 @@
         padding-left: 0.2em;
       }
       &:hover {
-        background-color: darken($contentColor, 10%);
+        background-color: darken($inputBackgroundColor, 10%);
       }
     }
   }
