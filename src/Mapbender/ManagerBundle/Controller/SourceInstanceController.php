@@ -65,7 +65,8 @@ class SourceInstanceController extends ApplicationControllerBase
     public function deleteAction(Request $request, SourceInstance $instance)
     {
         /** @todo: specify / implement proper grants */
-        $this->denyAccessUnlessGranted('DELETE', $instance->getSource());
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('DELETE', $oid);
         if ($request->isMethod(Request::METHOD_POST)) {
             $em = $this->getEntityManager();
             $em->remove($instance);
