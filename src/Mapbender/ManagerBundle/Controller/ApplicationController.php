@@ -512,6 +512,7 @@ class ApplicationController extends WelcomeController
 
         $layerset = $this->requireLayerset($layersetId, $application);
         $sources = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
+            'title' => 'ASC',
             'id' => 'ASC',
         ));
 
