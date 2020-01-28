@@ -4,6 +4,8 @@ namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Christian Wygoda
  */
-class Map extends Element
+class Map extends Element implements ConfigMigrationInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;
@@ -228,9 +230,6 @@ class Map extends Element
         }
 
         $configuration['extra'] = $extra;
-        if (!isset($configuration['layersets']) && isset($configuration['layerset'])) {# "layerset" deprecated start
-            $configuration['layersets'] = array($configuration['layerset']);
-        }# "layerset" deprecated end
         if ($scale = $request->get('scale')) {
             $configuration['targetscale'] = intval($scale);
         }
@@ -376,5 +375,16 @@ class Map extends Element
             }
         }
         return $configuration;
+    }
+
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $config = $entity->getConfiguration();
+        if (isset($config['layerset']) && !isset($config['layersets'])) {
+            // legacy db config, promote to array-form 'layersets'
+            $config['layersets'] = (array)$config['layerset'];
+        }
+        unset($config['layerset']);
+        $entity->setConfiguration($config);
     }
 }

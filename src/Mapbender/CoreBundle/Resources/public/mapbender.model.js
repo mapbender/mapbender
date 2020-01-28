@@ -201,13 +201,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 scales: this.mbMap.options.scales
             });
         }
-        var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
+        this.olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
         // Use a faked, somewhat compatible-ish surrogate for MapQuery Map
         // @todo: eliminate MapQuery method / property access completely
         // * accesses to 'layersList'
         // * layer lookup via 'mqlid' on source definitions
 
-        this.map = new NotMapQueryMap(this.mbMap.element, olMap);
+        this.map = new NotMapQueryMap(this.mbMap.element, this.olMap);
 
         // monkey-patch zoom interactions
         (function(olMap) {
@@ -227,7 +227,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 }
                 zoomToOriginal.apply(this, arguments);
             };
-        })(this.map.olMap);
+        })(this.olMap);
 
         this.setView(true);
         this.parseURL();
@@ -237,11 +237,31 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         this._setupHistoryControl();
         this._setupNavigationControl();
-        this.map.olMap.events.register('zoomend', this, this._afterZoom);
+        this._initEvents(this.olMap, this.mbMap);
+    },
+    _initEvents: function(olMap, mbMap) {
+        var self = this;
+        olMap.events.register('zoomend', this, this._afterZoom);
+        var clickHandlerOptions = {
+            map: olMap
+        };
+        var handlerFn = function(event) {
+            return self._onMapClick(event);
+        };
+        var clickHandler = new OpenLayers.Handler.Click({}, {click: handlerFn}, clickHandlerOptions);
+        clickHandler.activate();
+    },
+    _onMapClick: function(event) {
+        var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
+        $(this.mbMap.element).trigger('mbmapclick', {
+            mbMap: this.mbMap,
+            pixel: [event.x, event.y],
+            coordinate: [clickLonLat.lon, clickLonLat.lat]
+        });
     },
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
-        this.map.olMap.addControl(this.historyControl);
+        this.olMap.addControl(this.historyControl);
     },
     _patchNavigationControl: function() {
         var self = this;
@@ -1206,7 +1226,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @returns {object} sourceDef same ref, potentially modified
      */
     addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
-        var sourceDef;
+        var sourceDef, i, isNew = true;
         if (sourceOrSourceDef instanceof Mapbender.Source) {
             sourceDef = sourceOrSourceDef;
         } else {
@@ -1219,15 +1239,23 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             }
             sourceDef.rewriteLayerIds();
         }
-
-        if (!this.getSourcePos(sourceDef)) {
+        // Note: do not bother with getSourcePos, checking for undefined vs null vs 0 return value
+        //       is not worth the trouble
+        // @todo: Layersets should be objects with a .containsSource method
+        for (i = 0; i < this.sourceTree.length; ++i) {
+            if (this.sourceTree[i].id.toString() === sourceDef.id.toString()) {
+                isNew = false;
+                break;
+            }
+        }
+        if (isNew) {
             this.sourceTree.push(sourceDef);
         }
         var projCode = this.getCurrentProjectionCode();
 
         sourceDef.mqlid = this.map.trackSource(sourceDef).id;
         var olLayers = sourceDef.initializeLayers(projCode);
-        for (var i = 0; i < olLayers.length; ++i) {
+        for (i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
         }

@@ -104,7 +104,8 @@ class ConfigService
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
             'metadata' => $router->generate('mapbender_core_application_metadata', $config),
-            'config'   => $router->generate('mapbender_core_application_configuration', $config));
+            'config'   => $router->generate('mapbender_core_application_configuration', $config),
+        );
 
         if ($searchSubject !== $drupal_mark) {
             foreach ($urls as $k => $v) {

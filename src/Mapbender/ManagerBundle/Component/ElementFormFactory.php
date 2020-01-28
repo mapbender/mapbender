@@ -96,15 +96,6 @@ class ElementFormFactory extends BaseElementFactory
 
     /**
      * @param Element $element
-     * @return string|\Mapbender\CoreBundle\Component\Element
-     */
-    protected function getComponentClass(Element $element)
-    {
-        return $this->inventoryService->getAdjustedElementClassName($element->getClass());
-    }
-
-    /**
-     * @param Element $element
      * @return string|null
      * @throws \RuntimeException
      * @throws ServiceNotFoundException

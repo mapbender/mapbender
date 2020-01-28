@@ -136,7 +136,7 @@
 
 {% block choice_widget_expanded_sortable %}
   {% spaceless %}
-  <div class="{{ form.vars.attr['data-sortable'] }}" {{ block('widget_container_attributes') }}>
+  <div {{ block('widget_container_attributes') }}>
     {% for child in form %}
       <div class="sortableItem">
         {{ form_widget(child) }}
