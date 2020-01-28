@@ -546,6 +546,7 @@ class ApplicationController extends WelcomeController
         $instanceCopy = clone $instance;
         $em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
+        $instanceCopy->setWeight(-1);
         $layerset->addInstance($instanceCopy);
         /**
          * remove original shared instance from layerset
@@ -557,7 +558,12 @@ class ApplicationController extends WelcomeController
             return $assignment->getInstance() !== $instance;
         });
         foreach ($reusablePartitions[1] as $removableAssignment) {
+            /** @var SourceInstanceAssignment $removableAssignment */
             $em->remove($removableAssignment);
+            $assignmentWeight = $removableAssignment->getWeight();
+            if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
+                $instanceCopy->setWeight($assignmentWeight);
+            }
         }
         $layerset->setReusableInstanceAssignments($reusablePartitions[0]);
         WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
