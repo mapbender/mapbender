@@ -521,7 +521,10 @@ class ApplicationController extends WelcomeController
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $sources,
-            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(),
+            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+                'title' => 'ASC',
+                'id' => 'ASC',
+            )),
         ));
     }
 
