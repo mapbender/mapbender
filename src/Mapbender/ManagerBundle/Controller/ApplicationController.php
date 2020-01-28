@@ -508,25 +508,23 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->requireApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
+        $sourceOid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('VIEW', $sourceOid);
 
         $layerset = $this->requireLayerset($layersetId, $application);
         $sources = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
+            'title' => 'ASC',
             'id' => 'ASC',
         ));
-
-        $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $allowed_sources = array();
-        foreach ($sources as $source) {
-            if ($this->isGranted('VIEW', $oid) || $this->isGranted('VIEW', $source)) {
-                $allowed_sources[] = $source;
-            }
-        }
 
         return $this->render('@MapbenderManager/Application/list-source.html.twig', array(
             'application' => $application,
             'layerset' => $layerset,
-            'sources' => $allowed_sources,
-            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(),
+            'sources' => $sources,
+            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+                'title' => 'ASC',
+                'id' => 'ASC',
+            )),
         ));
     }
 
