@@ -48,9 +48,9 @@
         <div class="right">
           <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.actions.save"|trans}}" />
         {% if app.request.attributes.get('slug') %}
-          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% elseif layerset is defined and layerset %}
-            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% endif %}
         </div>
         <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
@@ -80,9 +80,9 @@
     <div class="button-group">
       <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
         {% if app.request.attributes.get('slug') %}
-          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% elseif layerset is defined and layerset %}
-            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% endif %}
     </div>
     {{ form_row(form._token) }}
