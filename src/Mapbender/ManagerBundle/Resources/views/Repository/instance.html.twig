@@ -29,7 +29,7 @@
         <div class="clear">
             <div class="pull-right">
                 {%- if _is_reusable_instance and layerset is defined and layerset -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}">Private Instanz in dieser Anwendung erzeugen</a>
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;In private Instanz in dieser Anwendung umwandeln</a>
                 {%- endif -%}
                 {%- if not _is_reusable_instance -%}
                 <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;In freie Instanz umwandeln</a>
