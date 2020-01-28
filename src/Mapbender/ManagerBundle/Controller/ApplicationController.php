@@ -547,6 +547,20 @@ class ApplicationController extends WelcomeController
         $em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
         $layerset->addInstance($instanceCopy);
+        /**
+         * remove original shared instance from layerset
+         * @todo: finding the right assignment requires more information than is currently passed on by
+         * @see RepositoryController::instanceAction. We simply remove all assignments of the instance.
+         */
+        $reusablePartitions = $layerset->getReusableInstanceAssignments()->partition(function($_, $assignment) use ($instance) {
+            /** @var SourceInstanceAssignment $assignment */
+            return $assignment->getInstance() !== $instance;
+        });
+        foreach ($reusablePartitions[1] as $removableAssignment) {
+            $em->remove($removableAssignment);
+        }
+        $layerset->setReusableInstanceAssignments($reusablePartitions[0]);
+        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
         $em->persist($layerset);
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
