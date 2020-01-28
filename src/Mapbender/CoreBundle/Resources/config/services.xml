@@ -24,9 +24,15 @@
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
         <parameter key="mapbender.sqlite_connection_listener.class">Mapbender\CoreBundle\Component\EventListener\SqliteConnectionListener</parameter>
+        <!-- strict mode flag cascade; set mapbender.strict to true to enable all checks at once -->
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
         <parameter key="mapbender.strict.asset.bundle_scopes">%mapbender.strict%</parameter>
+        <!-- Strict mode flags for processing of Yaml-defined applications -->
+        <parameter key="mapbender.strict.static_app">%mapbender.strict%</parameter>
+        <parameter key="mapbender.strict.static_app.elements">%mapbender.strict.static_app%</parameter>
+        <parameter key="mapbender.strict.static_app.element_definition">%mapbender.strict.static_app.elements%</parameter>
+        <parameter key="mapbender.strict.static_app.element_configuration">%mapbender.strict.static_app.element_definition%</parameter>
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
         <parameter key="mapbender.asset_compiler.js.class">Mapbender\CoreBundle\Asset\JsCompiler</parameter>
@@ -71,6 +77,12 @@
 
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
             <tag name="form.type" alias="app_layerset"/>
+        </service>
+
+        <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
+            <tag name="form.type"/>
+            <!-- arguments 1:1 for ChoiceType parent class constructor -->
+            <argument type="service" id="form.choice_list_factory"/>
         </service>
 
         <service id="signer" class="%signer.class%">

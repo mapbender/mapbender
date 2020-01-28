@@ -94,7 +94,6 @@ class ElementFactory extends BaseElementFactory
      *
      * @param Entity\Element $element
      * @param mixed[] $configuration
-     * @param string|null $title
      */
     public function configureElement(Entity\Element $element, $configuration)
     {

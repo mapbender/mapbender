@@ -104,7 +104,6 @@ class ZoomBar extends Element implements ConfigMigrationInterface
         }
         unset($config['stepsize']);
         unset($config['stepbypixel']);
-        $config['components'] = static::filterComponentList($entity, $config['components']);
         $entity->setConfiguration($config);
     }
 
@@ -119,6 +118,13 @@ class ZoomBar extends Element implements ConfigMigrationInterface
             $componentList[] = 'zoom_in_out';
         }
         return $componentList;
+    }
+
+    public function getConfiguration()
+    {
+        $config = $this->entity->getConfiguration();
+        $config['components'] = static::filterComponentList($this->entity, $config['components']);
+        return $config;
     }
 
     /**

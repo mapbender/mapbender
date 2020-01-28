@@ -13,6 +13,7 @@
 - Fix nonfunctional CSS minification in `prod` environment ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
 - Add missing grants check for instance enable toggle / instance reordering actions (requires `EDIT` on containing Application)
 - Resolve misc form type, service configuration and other incompatibilities with Symfony 3
+- [FeatureInfo] fix validation of HTML documents where every tag has attributes
 - [PrintClient] fix missing data if form is submitted by pressing Enter key
 - [PrintClient] prevent form submit in sidepane if selection rectangle is inactive
 - [PrintClient] Fix selection rectangle recentering on change of scale dropdown or rotation field
@@ -21,8 +22,10 @@
 - [Backend] Fix errors on import of previously broken application export formats
 - [Backend] SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - [Backend] Maintain backend element form confirmation on close behaviour after submitting once with validation errors
+- [Backend] Fix login form submit url if login form is triggered through non-login url (e.g. editing Element after session expiry / logging out in a different tab)
 - [Framework] Fix missing .dropdownValue visual update on "changed" event
 - [Framework] Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
+- [Framework] Fix progressive slowdown caused by repeated reinitialization of tab container / accordion widgets
 ### New / extended functionality
 - Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
 - Show dependent applications and instances in source view (as a new "Applications" tab)
@@ -34,6 +37,10 @@
 - [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
 ### Visual fixes and changes - frontend
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
+- [FeatureInfo] fix inconsistent popup behaviour when displaying a mix of html and plain text responses
+- [FeatureInfo] resolve popup behaviour variations between `onlyValid` on or off
+- [FeatureInfo] activate first loaded tab / accordion pane only
+- [FeatureInfo] detect empty server response even with `onlyValid` option off
 - [ZoomBar] replace history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - [ZoomBar] fix horizontal alignment of zoom level icons
 ### Visual fixes and changes - login and backend
@@ -65,6 +72,7 @@
 - Support viewing Yaml-based applications with `published: false` for users with appropriate privileges (root user, global Application view grant, or passing Yaml-Application-specific role check)
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+- [Framework] add engine-agnostic `mbmapclick` event
 ### Package dependency changes
 *NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
 - Dropped legacy joii library dependency
@@ -74,6 +82,7 @@
 - Moved owsproxy dependency back to stable / tagged version releases
 ### Other changes
 - Capitalize all field labels generated through form theme
+- [FeatureInfo] remove `type` configuration option only relevant for destkop vs mobile templates; auto-detect instead
 - [CSS] `.linkButton` and all `<a>` elements now inherit font color by default
 - [CSS] `.icon*` no longer has a universal margin-right; only when applied on links and `.toolBarItem`
 - [CSS] Allow default-styled lists via .list-default class, document Bootstrap conflicts

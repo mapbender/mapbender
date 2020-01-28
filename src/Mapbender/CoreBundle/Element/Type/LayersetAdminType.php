@@ -26,7 +26,7 @@ class LayersetAdminType extends AbstractType
      */
     public function getParent()
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return 'Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType';
     }
 
     /**
