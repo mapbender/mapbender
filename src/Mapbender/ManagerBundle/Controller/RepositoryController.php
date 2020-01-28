@@ -1,9 +1,7 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -321,9 +319,10 @@ class RepositoryController extends ApplicationControllerBase
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
         $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
+        $applicationRepository = $this->getDbApplicationRepository();
         if (!$layerset) {
             if ($slug) {
-                $application = $this->getDbApplicationRepository()->findOneBy(array(
+                $application = $applicationRepository->findOneBy(array(
                     'slug' => $slug,
                 ));
             } else {
@@ -351,7 +350,7 @@ class RepositoryController extends ApplicationControllerBase
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($instance);
             $dtNow = new \DateTime('now');
-            foreach ($this->getApplicationsRelatedToSourceInstance($em, $instance) as $affectedApplication) {
+            foreach ($applicationRepository->findWithSourceInstance($instance) as $affectedApplication) {
                 $em->persist($affectedApplication);
                 $affectedApplication->setUpdated($dtNow);
             }
@@ -582,54 +581,5 @@ class RepositoryController extends ApplicationControllerBase
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);
-    }
-
-    protected function getLayersetsRelatedToSource(EntityManagerInterface $em, Source $source)
-    {
-        $layersets = array();
-        // @todo: move this logic to a custom SourceRepository class if possible (~getAssignedLayersets)
-        foreach ($em->getRepository('MapbenderCoreBundle:Layerset')->findAll() as $layerset) {
-            /** @var Layerset $layerset*/
-            if ($layerset->getInstancesOf($source)->count()) {
-                $layersets[] = $layerset;
-            }
-        }
-        return $layersets;
-    }
-
-    protected function getLayersetsRelatedToSourceInstance(EntityManagerInterface $em, SourceInstance $instance)
-    {
-        $layersets = array();
-        // @todo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedLayersets)
-        foreach ($em->getRepository('MapbenderCoreBundle:Layerset')->findAll() as $layerset) {
-            /** @var Layerset $layerset*/
-            if ($layerset->getInstances()->contains($instance)) {
-                $layersets[] = $layerset;
-            }
-        }
-        return $layersets;
-    }
-
-    /**
-     * @param EntityManagerInterface $em
-     * @param SourceInstance $instance
-     * @param array|null $order
-     * @return Application[]
-     */
-    protected function getApplicationsRelatedToSourceInstance(EntityManagerInterface $em, SourceInstance $instance, $order = null)
-    {
-        $applications = array();
-        // @todo: move this logic to a custom SourceInstanceRepository class if possible (~getAssignedApplications)
-        foreach ($em->getRepository('MapbenderCoreBundle:Application')->findAll() as $application) {
-            /** @var Application $application*/
-            if ($application->getSourceInstances()->contains($instance)) {
-                $applications[] = $application;
-            }
-        }
-        if ($order) {
-            $applications = new ArrayCollection($applications);
-            $applications = $applications->matching(Criteria::create()->orderBy($order))->getValues();
-        }
-        return $applications;
     }
 }
