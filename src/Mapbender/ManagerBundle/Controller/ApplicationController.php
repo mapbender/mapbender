@@ -719,6 +719,7 @@ class ApplicationController extends WelcomeController
         $em = $this->getEntityManager();
         $layerset->getReusableInstanceAssignments()->removeElement($assignment);
         $em->remove($assignment);
+        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
         $application->setUpdated(new \DateTime('now'));
         $em->persist($application);
         $em->persist($layerset);
