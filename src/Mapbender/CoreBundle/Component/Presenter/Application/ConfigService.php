@@ -153,7 +153,6 @@ class ConfigService
                 }
                 // HACK: rewrite ids to fix massive JavaScript-side confusion about duplicate "source" ids
                 $conf['id'] = $assignmentId;
-                $conf['origId'] = $assignmentId;
 
                 $layerSets[] = array(
                     $assignmentId => $conf,
