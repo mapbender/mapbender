@@ -1,5 +1,6 @@
 ## dev-staging/v3.0.8.5 @ fcb73bfd8
 ### Regression fixes
+- Fix broken layerset order saving in Map administration
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
 - Fix PHP strict warning when editing / creating a LayerTree Element
 ### Other functional fixes
@@ -44,6 +45,7 @@
 - [ZoomBar] replace history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - [ZoomBar] fix horizontal alignment of zoom level icons
 ### Visual fixes and changes - login and backend
+- Sort sources primarily by title in source index view and in layerset assignment list
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Fix encoding errors of backend headings containing HTML-escapable characters
 - Fix untranslated "Back" button in backend source views
