@@ -1,4 +1,4 @@
-## dev-staging/v3.0.8.5 @ fcb73bfd8
+## dev-staging/v3.0.8.5 @ 2c154d7ae
 ### Regression fixes
 - Fix broken layerset order saving in Map administration
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
