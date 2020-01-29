@@ -35,7 +35,7 @@
     <div class="right">
       <input class="button" type="submit" name="save" value="{{"mb.actions.save"|trans}}" />
     {% if app.request.attributes.get('slug') %}
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.actions.back"|trans}}</a>
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
     {% endif %}
     </div>
 
@@ -64,7 +64,7 @@
     <div class="button-group">
       <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
     {% if app.request.attributes.get('slug') %}
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.actions.back"|trans}}</a>
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
     {% endif %}
     </div>
     {{ form_row(form._token) }}
