@@ -1,4 +1,4 @@
-## dev-staging/v3.0.8.5 @ 2c154d7ae
+## v3.0.8.5
 ### Regression fixes
 - Fix broken layerset order saving in Map administration
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
@@ -24,6 +24,7 @@
 - [Backend] SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - [Backend] Maintain backend element form confirmation on close behaviour after submitting once with validation errors
 - [Backend] Fix login form submit url if login form is triggered through non-login url (e.g. editing Element after session expiry / logging out in a different tab)
+- [Backend] remove control over ineffective _global_ Element grants (never checked; grants on concrete Elements in concrete Applications remain effective)
 - [Framework] Fix missing .dropdownValue visual update on "changed" event
 - [Framework] Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
 - [Framework] Fix progressive slowdown caused by repeated reinitialization of tab container / accordion widgets
