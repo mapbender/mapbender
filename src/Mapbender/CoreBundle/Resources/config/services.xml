@@ -230,5 +230,17 @@
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
+        <service id="mapbender.command.init_db" class="Mapbender\CoreBundle\Command\InitDbCommand">
+            <tag name="console.command" command="mapbender:database:init" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+        <service id="mapbender.init_db_handler.prune_global_element_grants" class="Mapbender\CoreBundle\EventHandler\InitDb\PruneGlobalElementGrantHandler">
+            <argument type="service" id="security.acl.provider" on-invalid="null" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+        <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>
