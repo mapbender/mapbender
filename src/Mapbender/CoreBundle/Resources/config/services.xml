@@ -235,5 +235,9 @@
             <argument type="service" id="security.acl.provider" on-invalid="null" />
             <tag name="kernel.event_subscriber" />
         </service>
+        <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>
