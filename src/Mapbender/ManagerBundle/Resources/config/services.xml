@@ -5,6 +5,10 @@
     <parameters>
         <parameter key="mapbender.manager.element_form_factory.service.class">Mapbender\ManagerBundle\Component\ElementFormFactory</parameter>
         <parameter key="mapbender.strict.element_api.form_type">%mapbender.strict.element_api%</parameter>
+        <!-- maintain status quo for anonymous grants for unfinshed Application grant work
+             @todo: finish Application grant remodeling, use 'published' exclusively, purge anoymous grants in
+                    DB initialization -->
+        <parameter key="fom.acl_assignment.show_anonymous">true</parameter>
         <!-- populated by compiler passes -->
         <parameter type="collection" key="mapbender.manager.menu.items" />
         <!-- popuplated by RegisterLegacyMenuRoutesPass -->
