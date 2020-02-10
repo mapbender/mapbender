@@ -1,5 +1,6 @@
-## dev-staging/v3.0.8.5 @ fcb73bfd8
+## v3.0.8.5
 ### Regression fixes
+- Fix broken layerset order saving in Map administration
 - Fix missing WMS data when querying a layer with name "0" (broken in v3.0.8.2)
 - Fix PHP strict warning when editing / creating a LayerTree Element
 ### Other functional fixes
@@ -23,6 +24,7 @@
 - [Backend] SourceInstance opacity field: reduce step to default 1 to prevent HTML5 form validation failures
 - [Backend] Maintain backend element form confirmation on close behaviour after submitting once with validation errors
 - [Backend] Fix login form submit url if login form is triggered through non-login url (e.g. editing Element after session expiry / logging out in a different tab)
+- [Backend] remove control over ineffective _global_ Element grants (never checked; grants on concrete Elements in concrete Applications remain effective)
 - [Framework] Fix missing .dropdownValue visual update on "changed" event
 - [Framework] Fix missing .dropdownValue visual update when value changes on form reset ([#1214](https://github.com/mapbender/mapbender/issues/1214))
 - [Framework] Fix progressive slowdown caused by repeated reinitialization of tab container / accordion widgets
@@ -33,8 +35,10 @@
 - When cloning DB applications, also clone access control rules
 - Automatically assign owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
 - Allow privileged users to access non-published Yaml-based applications
+- Support viewing Yaml-based applications with `published: false` for users with appropriate privileges (root user, global Application view grant, or passing Yaml-Application-specific role check)
 - Support accessing non-published Yaml-based application in clone and export cli commands
 - [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
+- [Framework] add engine-agnostic `mbmapclick` event
 ### Visual fixes and changes - frontend
 - Fix translations of login errors ([PR#1206](https://github.com/mapbender/mapbender/pull/1206))
 - [FeatureInfo] fix inconsistent popup behaviour when displaying a mix of html and plain text responses
@@ -44,6 +48,7 @@
 - [ZoomBar] replace history icons with more appropriate double-arrows (also forward-compatible with Fontawesome 5)
 - [ZoomBar] fix horizontal alignment of zoom level icons
 ### Visual fixes and changes - login and backend
+- Sort sources primarily by title in source index view and in layerset assignment list
 - Fix display of wide-format custom logos in backend sidepane and login areas
 - Fix encoding errors of backend headings containing HTML-escapable characters
 - Fix untranslated "Back" button in backend source views
@@ -63,16 +68,6 @@
 - Remove inconsequential Map Element configuration field `units` (units are auto-determined by CRS)
 - Remove unused tooltip Element configuration (ZoomBar, ScaleDisplay, ScaleBar, Overview, FeatureInfo, CoordinatesDisplay, Legend, Sketch)
 - Remove schema validation status display icons from backend Source listing (schema validation has been disabled since 3.0.8)
-### New / extended functionality
-- Support dynamic vendor specifics value substitutions with arbitrary prefix / postfix strings
-- Show dependent applications and instances in source view (as a new "Applications" tab)
-- Show affected applications and instances in source deletion confirmation popup
-- When cloning DB applications, also clone access control rules
-- Automatically assign owner permission for current user on cloned application ([PR#1207](https://github.com/mapbender/mapbender/pull/1207))
-- Support viewing Yaml-based applications with `published: false` for users with appropriate privileges (root user, global Application view grant, or passing Yaml-Application-specific role check)
-- Support accessing non-published Yaml-based application in clone and export cli commands
-- [Framework] Support direct message key and wildcard key prefixes as Element / Template translation requirement inputs ([PR#1208](https://github.com/mapbender/mapbender/pull/1208))
-- [Framework] add engine-agnostic `mbmapclick` event
 ### Package dependency changes
 *NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
 - Dropped legacy joii library dependency

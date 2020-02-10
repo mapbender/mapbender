@@ -220,6 +220,10 @@ class Importer extends RefreshableSourceLoader
             $layerSublayer = $this->findLayer($layerOldSub, $updatedSubLayers);
             if (count($layerSublayer) !== 1) {
                 $this->entityManager->remove($layerOldSub);
+                // NOTE: child layer is reachable from TWO different association collections and must be
+                //       manually removed from both, or it will be rediscovered and re-saved on flush
+                $targetSubLayers->removeElement($layerOldSub);
+                $target->getSource()->getLayers()->removeElement($layerOldSub);
             }
         }
         $num = 0;
