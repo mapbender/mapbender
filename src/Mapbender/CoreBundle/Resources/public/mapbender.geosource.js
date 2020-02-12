@@ -180,64 +180,18 @@ Mapbender.Geo.SourceHandler = {
      * @param {object} source wms source
      * @param {object} changeOptions options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
-     * @param {boolean | null} defaultSelected 
+     * @param {boolean | null} defaultSelected
      * @param {boolean} mergeSelected
      * @returns {object} changes
      */
     createOptionsLayerState: function createOptionsLayerState(source, changeOptions, defaultSelected, mergeSelected) {
+        var self = this;
         var layerChanges = {
         };
-        function setSelected(layer) {
-            var layerOpts = changeOptions.layers[layer.options.id];
-            var newTreeOptions = {
-                selected: null
-            };
-            var changedTreeOptions;
-            if (layer.children && layer.children.length) {
-                for (var i = 0; i < layer.children.length; i++) {
-                    if (setSelected(layer.children[i])) {
-                        newTreeOptions.selected = true;
-                    }
-                }
-                if (newTreeOptions.selected === null && layerOpts) {
-                    newTreeOptions.selected = layerOpts.options.treeOptions.selected;
-                }
-                if (newTreeOptions.selected === null && defaultSelected !== null) {
-                    newTreeOptions.selected = defaultSelected;
-                }
-            } else {
-                newTreeOptions.selected = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
-            }
-            if (mergeSelected) {
-                newTreeOptions.selected = newTreeOptions.selected || layer.options.treeOptions.selected;
-            }
-            if (newTreeOptions.selected === null) {
-                return null;
-            }
 
-            if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
-                changedTreeOptions = {
-                    selected: newTreeOptions.selected
-                };
-                if (mergeSelected && !newTreeOptions.selected) {
-                    newTreeOptions.info = layer.options.treeOptions.info;
-                } else {
-                    newTreeOptions.info = newTreeOptions.selected;
-                }
-                newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
-                if (newTreeOptions.info !== layer.options.treeOptions.info) {
-                    changedTreeOptions.info = newTreeOptions.info;
-                }
-            }
-            if (changedTreeOptions) {
-                layerChanges[layer.options.id] = {
-                    options: {
-                        treeOptions: changedTreeOptions
-                    }
-                };
-            }
-            return newTreeOptions.selected;
-        }
+
+        layerChanges = $.extend(layerChanges, self.createOptionsChangeObject(source.configuration.children[0], changeOptions, defaultSelected, mergeSelected));
+
         var changed = {
             sourceIdx: {
                 id: source.id
@@ -247,9 +201,78 @@ Mapbender.Geo.SourceHandler = {
                 type: 'selected'
             }
         };
-        setSelected(source.configuration.children[0]);
         return {
             change: changed
+        };
+    },
+    createOptionsChangeObject: function(layer, changeOptions, defaultSelected, mergeSelected){
+        var layerChanges = {};
+        var layerOpts = changeOptions.layers[layer.options.id];
+        var self = this;
+        var newTreeOptions;
+        var changedTreeOptions;
+
+        if (layer.children) {
+            for (var i = 0; i < layer.children.length; i++) {
+                var child = layer.children[i];
+                layerChanges = $.extend(layerChanges, self.createOptionsChangeObject(child, changeOptions, defaultSelected, mergeSelected));
+            }
+        }
+        layerOpts = layerOpts ? layerOpts : self.createOptionsLayerObjectDefault();
+        newTreeOptions = $.extend({}, self.createOptionsLayerSelection(layer, layerOpts, defaultSelected, mergeSelected));
+        newTreeOptions = $.extend(newTreeOptions, self.createOptionsLayerInfo(newTreeOptions, layerOpts));
+
+        //Änderungen werden nur dann relevant sollten sie sich von der Default-Konfig unterscheiden
+        if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
+            changedTreeOptions = {
+                selected: newTreeOptions.selected
+            };
+        }
+        if (newTreeOptions.info !== layer.options.treeOptions.info) {
+            changedTreeOptions = $.extend(changedTreeOptions || {}, {
+                info: newTreeOptions.info
+            });
+        }
+
+        if(changedTreeOptions){
+            layerChanges[layer.options.id] = {
+                options: {
+                    treeOptions: changedTreeOptions
+                }
+            };
+        }
+
+        return layerChanges;
+    },
+    createOptionsLayerSelection: function(layer, layerOpts, defaultSelected, mergeSelected){
+        if(!layer){
+            return;
+        }
+
+        var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
+        if (mergeSelected) {
+            sel = sel || layer.options.treeOptions.selected;
+        }
+
+        return {
+            selected: sel
+        };
+    },
+
+    createOptionsLayerInfo: function(newTreeOptions, layerOpts){
+        var info = newTreeOptions.selected && layerOpts.options.treeOptions.info;
+        return {
+            info: info
+        };
+    },
+
+    createOptionsLayerObjectDefault: function(){
+        return {
+            options: {
+                treeOptions: {
+                    selected: false
+                }
+            }
         };
     },
     /**
