@@ -25,10 +25,15 @@ class IconClassType extends AbstractType
             'icon-legend'       => 'Legend',
             'icon-about'        => 'About',
 
+
+            // DBImm Maps
+            'iconBorisInfo'     => 'BORISInfo',
+
             // FontAwesome
             'iconAbout'         => 'About (FontAwesome)',
             'iconAreaRuler'     => 'Area ruler (FontAwesome)',
             'iconInfoActive'    => 'Feature info (FontAwesome)',
+            'iconIVL'           => 'IVL Steuerung (FontAwesome)',
             'iconGps'           => 'GPS (FontAwesome)',
             'iconLegend'        => 'Legend (FontAwesome)',
             'iconPrint'         => 'Print (FontAwesome)',
@@ -39,9 +44,11 @@ class IconClassType extends AbstractType
             'iconWmcEditor'     => 'WMC Editor (FontAwesome)',
             'iconWmcLoader'     => 'WMC Loader (FontAwesome)',
             'iconCoordinates'   => 'Coordinates (FontAwesome)',
+            'iconCoord'         => 'Koordinaten (FontAwesome)',
             'iconGpsTarget'     => 'Gps Target (FontAwesome)',
             'iconPoi'           => 'POI (FontAwesome)',
             'iconImageExport'   => 'Image Export (FontAwesome)',
+            'iconRedo'          => 'Neu Laden (FontAwesome)',
             'iconSketch'        => 'Sketch (FontAwesome)');
 
         asort($icons);
