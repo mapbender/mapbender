@@ -1,30 +1,40 @@
 <?php
 
-namespace Mapbender\CoreBundle\DataFixtures\ORM;
+namespace Mapbender\CoreBundle\DataFixtures\ORM\Epsg;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Mapbender\CoreBundle\Entity\SRS;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * The LoadEpsgData loads the epsg parameter from a text file into a database table.
+ * Copies epsg code definitions into the database.
+ * Not a fixture.
  *
  * @author Paul Schmidt
  */
 class LoadEpsgData implements FixtureInterface
 {
-
     /**
      * @inheritdoc
      */
     public function load(ObjectManager $manager)
     {
+        $output = new ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, true);
+        $output->writeln("<error>Invoking Epsg update as a fixture is deprecated. Use mapbender:database:init command.</error>");
+
+        $this->doLoad($manager, $output);
+    }
+
+    public static function doLoad(ObjectManager $manager, OutputInterface $output)
+    {
         $filepath = __DIR__ . '/../../../Resources/proj4/proj4js_epsg.txt';
+        $output->writeln("Importing EPSG definitions from " . realpath($filepath));
         $file     = @fopen($filepath, "r");
-        $repo     = $manager->getRepository($class = get_class(new SRS()));
+        $repo = $manager->getRepository($class = get_class(new SRS()));
         $imported = 0;
         $updated  = 0;
-        echo "EPSG ";
         while (!feof($file)) {
             $help = trim(str_ireplace("\n", "", fgets($file)));
             if (strlen($help) === 0) {
@@ -49,7 +59,8 @@ class LoadEpsgData implements FixtureInterface
             $manager->persist($srs);
         }
         $manager->flush();
-        echo "updated: " . $updated . ", imported: " . $imported . PHP_EOL;
+
         fclose($file);
+        $output->writeln("Updated {$updated} EPSG entities, created {$imported}", OutputInterface::VERBOSITY_VERBOSE);
     }
 }

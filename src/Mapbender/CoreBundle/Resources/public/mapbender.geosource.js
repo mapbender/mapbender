@@ -287,8 +287,6 @@ Mapbender.Geo.SourceHandler = {
                 enabled = enabled && parentEnabled;
                 featureInfo = featureInfo && parentEnabled;
             });
-            // @todo TBD: disable featureInfo if layer visual is disabled?
-            // featureInfo = featureInfo && enabled
             var visibility = enabled && !(outOfScale || outOfBounds);
             infoMap[layerId] = {
                 layer: layer,
@@ -296,7 +294,8 @@ Mapbender.Geo.SourceHandler = {
                     outOfScale: outOfScale,
                     outOfBounds: outOfBounds,
                     visibility: visibility,
-                    info: featureInfo
+                    // no feature info if layer turned off or out of scale
+                    info: featureInfo && visibility
                 },
                 order: order,
                 parents: parents

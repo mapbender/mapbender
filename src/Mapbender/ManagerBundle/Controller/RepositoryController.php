@@ -49,7 +49,10 @@ class RepositoryController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('VIEW', $oid);
         $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
         /** @var Source[] $sources */
-        $sources = $repository->findBy(array(), array('id' => 'ASC'));
+        $sources = $repository->findBy(array(), array(
+            'title' => 'ASC',
+            'id' => 'ASC',
+        ));
 
         $reloadableIds = array();
         // NOTE: direct object grants checks do not work because Symfony ACL cannot currently infer from e.g. concrete
