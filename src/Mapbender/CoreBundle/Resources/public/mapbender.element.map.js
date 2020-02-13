@@ -206,47 +206,6 @@
          */
         highlightOff: function(features){
             this.model.highlightOff(features);
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        loadSrs: function(srslist){
-            $.ajax({
-                url: this.elementUrl + 'loadsrs',
-                type: 'POST',
-                data: {
-                    srs: srslist
-                },
-                dataType: 'json',
-                contetnType: 'json',
-                context: this,
-                success: this._loadSrsSuccess,
-                error: this._loadSrsError
-            });
-            return false;
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        _loadSrsSuccess: function(response, textStatus, jqXHR){
-            if(response.data) {
-                for(var i = 0; i < response.data.length; i++) {
-                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
-                    this.model.srsDefs.push(response.data[i]);
-                    this.fireModelEvent({
-                        name: 'srsadded',
-                        value: response.data[i]
-                    });
-                }
-            } else if(response.error) {
-                Mapbender.error(Mapbender.trans(response.error));
-            }
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        _loadSrsError: function(response){
-            Mapbender.error(Mapbender.trans(response));
         }
     });
 

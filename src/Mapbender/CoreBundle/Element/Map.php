@@ -277,45 +277,6 @@ class Map extends Element implements ConfigMigrationInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
-    {
-        switch ($action) {
-            case 'loadsrs':
-                $data = $this->loadSrsDefinitions();
-                return new JsonResponse($data);
-            default:
-                throw new NotFoundHttpException('No such action');
-        }
-    }
-
-    /**
-     * Returns proj4js srs definitions from a GET parameter srs
-     * @return array srs definitions
-     */
-    protected function loadSrsDefinitions()
-    {
-        $srsList = $this->container->get('request_stack')->getCurrentRequest()->get("srs", null);
-        $srses   = preg_split("/\s?,\s?/", $srsList);
-        $allsrs  = array();
-        foreach ($srses as $srs) {
-            $parts = preg_split("/\s*\|\s*/", trim($srs));
-            $allsrs[] = array(
-                "name" => $parts[0],
-                "title" => (count($parts) > 0) ? trim($parts[1]) : '',
-            );
-        }
-        $result = $this->getSrsDefinitions($allsrs);
-        if (count($result) > 0) {   // @todo: an incomplete result set should already be an error; not just a completely empty one
-            return array("data" => $result);
-        } else {
-            // @todo: use HTTP status codes, not 'error' subkeys in a 200 OK response :\
-            return array("error" => $this->trans("mb.core.map.srsnotfound", array('%srslist%', $srsList)));
-        }
-    }
-
-    /**
      * Returns proj4js srs definitions from srs names
      * @param array[] $srsSpecs arrays with 'name' and 'title' keys
      * @return string[][] each entry with keys 'name' (code), 'title' (display label) and 'definition' (proj4 compatible)
