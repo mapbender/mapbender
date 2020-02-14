@@ -1,10 +1,4 @@
-@import "libs/variables";
-@import "libs/mixins";
-
 .mb-wmcEditor{
-  .tableCore{
-    width:100%;
-  }
   th{text-align:left;}
   .iconColumn{padding-left:$space/2;}
   .iconAdd{color:$darkFontColor;}
