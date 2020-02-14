@@ -78,6 +78,5 @@ $tabSize:32px;
     @include absolute($topPaneHeight 0 0 '');
     .sidePaneTabs{left:-$tabSize;}
   }
-  .sideContent{@include stretch();}
 }
 .sidePaneOpened .sidePane{width:350px;}

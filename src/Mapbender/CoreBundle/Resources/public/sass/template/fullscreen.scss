@@ -397,9 +397,6 @@ $tabSize: 32px;
       left: -$tabSize;
     }
   }
-  .sideContent {
-    @include stretch();
-  }
 }
 
 .sidePaneOpened .sidePane {
