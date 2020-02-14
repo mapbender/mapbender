@@ -69,6 +69,8 @@ class JsCompiler extends AssetFactoryBase
             '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
             '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
             '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
+            // update for reliance on robloach/component-installer
+            '/components/jquerydialogextendjs/jquerydialogextendjs-built.js' => '/../vendor/wheregroup/jquerydialogextendjs/build/jquery.dialogextend.min.js',
         );
     }
 }
