@@ -16,21 +16,6 @@ class JsCompiler extends AssetFactoryBase
     /** @var EngineInterface */
     protected $templateEngine;
 
-    /**
-     * Mark assets as moved, so refs can be rewritten
-     * This is a ~curated list, currently not intended for configurability.
-     * @var string[]
-     */
-    protected $migratedRefs = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
-        '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
-        '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
-        '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
-    );
-
     public function __construct(EngineInterface $templateEngine, FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
     {
         parent::__construct($fileLocator, $webDir, $bundleClassMap);
@@ -55,18 +40,6 @@ class JsCompiler extends AssetFactoryBase
     }
 
     /**
-     * @param string $input reference to an asset file
-     * @return string resolved absolute path to file
-     */
-    protected function locateAssetFile($input)
-    {
-        while (!empty($this->migratedRefs[$input])) {
-            $input = $this->migratedRefs[$input];
-        }
-        return parent::locateAssetFile($input);
-    }
-
-    /**
      * Returns JavaScript code with final client-side application initialization.
      * This should be the very last bit, following all other JavaScript definitions
      * and initializations.
@@ -84,5 +57,18 @@ class JsCompiler extends AssetFactoryBase
         );
         $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
         return $this->templateEngine->render($appLoaderTemplate, $viewParams);
+    }
+
+    protected function getMigratedReferencesMapping()
+    {
+        return array(
+            '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
+            '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
+            '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
+            '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
+        );
     }
 }
