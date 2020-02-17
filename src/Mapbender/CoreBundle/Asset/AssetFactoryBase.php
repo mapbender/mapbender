@@ -43,6 +43,7 @@ class AssetFactoryBase
     {
         $parts = array();
         $uniqueRefs = array();
+        $migratedRefMapping = $this->getMigratedReferencesMapping();
 
         foreach ($inputs as $input) {
             if ($input instanceof StringAsset) {
@@ -50,6 +51,9 @@ class AssetFactoryBase
                 $parts[] = $input->getContent();
             } else {
                 $normalizedReference = $this->normalizeReference($input);
+                while (!empty($migratedRefMapping[$normalizedReference])) {
+                    $normalizedReference = $migratedRefMapping[$normalizedReference];
+                }
                 if (empty($uniqueRefs[$normalizedReference])) {
                     $realAssetPath = $this->locateAssetFile($normalizedReference);
                     if ($debug) {
@@ -125,5 +129,15 @@ class AssetFactoryBase
             }
         }
         return $input;
+    }
+
+    /**
+     * Should return a mapping of
+     *   known old, no longer valid asset file reference => new, valid reference
+     * @return string[]
+     */
+    protected function getMigratedReferencesMapping()
+    {
+        return array();
     }
 }
