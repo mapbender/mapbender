@@ -38,6 +38,7 @@
     "conflict": {
         "mapbender/fom": "<3.1.5, 3.2.0 - 3.2.3",
         "mapbender/digitizer": "<1.1.68",
+        "mapbender/coordinates-utility": "<1.0.9",
         "mapbender/data-source": "<0.1.11",
         "mapbender/wmts": "*"
     },
