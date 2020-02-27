@@ -636,7 +636,7 @@ class ApplicationController extends WelcomeController
     public function attachreusableinstanceAction(Request $request, Layerset $layerset, SourceInstance $instance)
     {
         if ($instance->getLayerset()) {
-            throw new \LogicException("Keine zentral verwaltete Instanz");
+            throw new \LogicException("Keine freie Instanz");
         }
         $em = $this->getEntityManager();
         $application = $layerset->getApplication();
@@ -659,9 +659,10 @@ class ApplicationController extends WelcomeController
         $instance->setLayerset(null);
         $em->flush();
         // @todo: translate flash message
-        $this->addFlash('success', 'Die zentral verwaltete Instanz wurde der Applikation zugewiesen');
-        return $this->redirectToRoute("mapbender_manager_application_edit", array(
+        $this->addFlash('success', 'Die freie Instanz wurde der Applikation zugewiesen');
+        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
+            "instanceId" => $instance->getId(),
         ));
     }
 
