@@ -20,7 +20,7 @@
                 {%- if instance.layerset -%}
                 <span title="{{ 'mb.terms.sourceinstance.bound.singular' | trans }}"><i class="fa fas fa-anchor"></i></span>&nbsp;
                 {%- else -%}
-                <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}"><i class="fa fas fa-wifi"></i></span>&nbsp;
+                <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}"><i class="fa fas fa-wifi"></i></span>&nbsp;#{{ instance.id }}:&nbsp;
                 {%- endif -%}
                 {{ instance.title | default('#' ~ instance.id) }}
                 ({{ "mb.terms.layerset.singular" | trans }} {{ layerset.title | default(layerset.id) }})
