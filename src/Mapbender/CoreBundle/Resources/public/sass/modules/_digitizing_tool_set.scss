@@ -1,21 +1,14 @@
+// HACK missing CSS for Digitizer
+// @todo: rules for Digitizer should be in Digitizer repository, not here
 .digitizing-tool-set {
-  margin-top: 2px;
-
+  font-size: 17px;
   > button {
-
-    &:first-child{
-      margin-left: 0px;
-    }
-    margin-left: -1px;
     padding: 3px 4px;
-    &.active,
-    &.active:focus {
-      background-color: $buttonFirstActiveColor;
-    }
-    &:before {
-      display: inline-block;
-      font-size: 17px;
-      padding-top: 2px;
+    &.button {
+      // defeat .button rules
+      // @todo: if we don't want button rules, don't add button class
+      font-size: inherit;
+      height: auto;
     }
   }
 }
