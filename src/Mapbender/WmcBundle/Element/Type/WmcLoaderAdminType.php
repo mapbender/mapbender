@@ -50,8 +50,6 @@ class WmcLoaderAdminType extends AbstractType
                 'choices' => array(
                     "Id Loader" => "wmcidloader",
                     "From List Loader" => "wmclistloader",
-                    "Wmc Xml Loader" => "wmcxmlloader",
-                    "Wmc From Url Loader" => "wmcurlloader",
                 ),
                 'choices_as_values' => true,
             ))
