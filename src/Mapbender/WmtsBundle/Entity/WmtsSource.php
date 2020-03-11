@@ -87,12 +87,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     public $getFeatureInfo = null;
 
     /**
-     * @var string|null
-     * @ORM\Column(type="string",nullable=true)
-     */
-    protected $serviceMetadataURL = "";
-
-    /**
      * @var ArrayCollection A list of WMTS Theme
      * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "asc"})
@@ -364,17 +358,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set getCapabilities
-     * @param RequestInformation $getCapabilities
-     * @return $this
-     */
-    public function setGetCapabilities(RequestInformation $getCapabilities)
-    {
-        $this->getCapabilities = $getCapabilities;
-        return $this;
-    }
-
-    /**
      * Get getCapabilities
      * @return RequestInformation|null
      */
@@ -420,27 +403,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     public function getGetFeatureInfo()
     {
         return $this->getFeatureInfo;
-    }
-
-    /**
-     * Set serviceMetadataURL
-     * @param string $serviceMetadataURL
-     * @return $this
-     */
-    public function setServiceMetadataURL($serviceMetadataURL)
-    {
-        $this->serviceMetadataURL = $serviceMetadataURL;
-        return $this;
-    }
-
-    /**
-     * Get serviceMetadataURL
-     *
-     * @return string
-     */
-    public function getServiceMetadataURL()
-    {
-        return $this->serviceMetadataURL;
     }
 
     /**
