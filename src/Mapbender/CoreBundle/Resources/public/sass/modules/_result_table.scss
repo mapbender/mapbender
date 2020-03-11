@@ -1,4 +1,9 @@
-
+/**
+ * Replacement CSS for original datatables CSS +/- workarounds for vis-ui-specific quirks
+ * @todo: if this is a common Mapbender widget, it should be extracted from vis-ui so markup and CSS can be developed together
+ * @todo: remove icon hacks (incompatible with FA5)
+ * @todo: use datatables original css; only adjust for colors
+ */
 .mapbender-element-result-table {
 
   > .dataTables_wrapper {
@@ -85,7 +90,7 @@
               transition: opacity 0.5s ease-in-out 0s;
               > button {
                 margin-right: -1px;
-                font-size: 0;
+                font-size: 0; // for vis-ui <=0.1.79 generating unwanted button labels nobody wants
                 padding: 0px;
                 &:first-child {
                   margin-left: 0px;
@@ -125,6 +130,17 @@
       border: 1px solid #6FB536;
       right: 0;
     }
+    .dataTables_paginate {
+      // clearfix; should be redundant with original css
+      &:before,
+      &:after {
+        display: table; // 2
+        content: " "; // 1
+      }
+      &:after {
+        clear: both;
+      }
+    }
 
     > .paging_simple_numbers {
 
@@ -142,7 +158,6 @@
       }
 
       a {
-//        @extend .btn;
         @extend .button;
         margin-right: 0px;
         display: inline-block;

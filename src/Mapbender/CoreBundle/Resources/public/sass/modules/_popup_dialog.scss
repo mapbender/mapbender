@@ -1,13 +1,3 @@
-.mb-element-modal-dialog{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: block;
-  z-index: 1000;
-}
-
 /* jQuery UI Dialog with Bootstrap classes */
 .mb-element-popup-dialog {
   border-radius: 0;
@@ -15,12 +5,15 @@
   .ui-dialog-titlebar-close {
     font-size: 0;
   }
-
   z-index: 22;
   border: 1px solid #b3b3b3;
   box-shadow:none;
   background: #E4E4E4 url($contentPatternUrl);
   border-bottom-width: 5px;
+
+  .ui-button-icon-only .ui-button-icon-space {
+    display: none;
+  }
 
   > .modal-header {
     background-color: $buttonFirstActiveColor;
@@ -45,11 +38,6 @@
         opacity: .2;
         &:hover, &:focus {
           opacity: .5;
-        }
-      }
-      button.close {
-        .ui-button-icon-space {
-          display: none;
         }
       }
       a {
@@ -93,15 +81,12 @@
 
     // Tab-Navigator displaying if direct bounded to the window
     > .mapbender-element-tab-navigator {
-      > ul.modal-header {
-        border: none;
+      > .ui-tabs-nav {
         background-color: #B6D39E;
-        > li {
-          margin: 0;
+        &.nav-tabs > li > a {
+          // undo Bootstrap .nav-tabs>li>a border rule
+          // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
           border: none;
-          > a {
-            border: none;
-          }
         }
       }
       > .tab-content {
@@ -115,7 +100,6 @@
 
   > .modal-footer {
     border-top: 1px solid #c0c0c0;
-    background-color: transparent;
     padding: 10px;
     button {
       border-radius: 0;
