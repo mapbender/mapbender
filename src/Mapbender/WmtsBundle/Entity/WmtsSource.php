@@ -72,12 +72,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
      * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
-    public $getCapabilities = null;
-
-    /**
-     * @var RequestInformation|null
-     * @ORM\Column(type="object", nullable=true)
-     */
     public $getTile = null;
 
     /**
@@ -358,15 +352,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Get getCapabilities
-     * @return RequestInformation|null
-     */
-    public function getGetCapabilities()
-    {
-        return $this->getCapabilities;
-    }
-
-    /**
      * @param RequestInformation $getTile
      * @return $this
      */
@@ -517,10 +502,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
         if ($requestInfo = $this->getGetFeatureInfo()) {
             $requestInfo->mutateUrls($transformer);
             $this->setGetFeatureInfo(clone $requestInfo);
-        }
-        if ($requestInfo = $this->getGetCapabilities()) {
-            $requestInfo->mutateUrls($transformer);
-            $this->setGetCapabilities(clone $requestInfo);
         }
         foreach ($this->getLayers() as $layer) {
             $layer->mutateUrls($transformer);
