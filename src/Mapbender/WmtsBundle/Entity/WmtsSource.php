@@ -72,12 +72,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
      * @var RequestInformation|null
      * @ORM\Column(type="object", nullable=true)
      */
-    public $getCapabilities = null;
-
-    /**
-     * @var RequestInformation|null
-     * @ORM\Column(type="object", nullable=true)
-     */
     public $getTile = null;
 
     /**
@@ -358,7 +352,6 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set getTile
      * @param RequestInformation $getTile
      * @return $this
      */
