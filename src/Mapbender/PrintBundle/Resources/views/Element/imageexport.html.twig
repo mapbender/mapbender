@@ -1,12 +1,24 @@
 <div id="{{ id }}" class="mb-element mb-element-imageexport" title="{{ title|trans }}">
-  <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
-  <p>{{ 'mb.print.imageexport.chooseformat'| trans }}</p>
-  <input type="radio" value="png" name="imageformat" checked>PNG<br>
-  <input type="radio" value="jpeg" name="imageformat">JPG
-    <div class="hidden -fn-hidden-fields">
+  <form action="{{ submitUrl }}" method="post" target="_blank">
+    {% block form_fields %}
+    <div class="form-group">
+      <label for="imageformat">{{ 'mb.print.imageexport.chooseformat'| trans }}</label>
+      <div class="radio">
+        <label><input type="radio" name="imageformat" value="png" checked />PNG</label>
+      </div>
+      <div class="radio">
+        <label><input type="radio" name="imageformat" value="png" />JPG</label>
+      </div>
     </div>
-    <div class="hidden">
-      <input type="submit" class="-fn-submit"/>
+    {% endblock form_fields %}
+    <div class="hidden -fn-hidden-fields"></div>
+    <div class="ui-helper-clearfix form-group">
+      <div class="right">
+        {% block form_buttons %}
+        <input type="submit" class="button" value="{{ 'mb.print.imageexport.popup.btn.ok' | trans() }}" />
+        <button type="button" class="button critical popupClose">{{ 'mb.print.imageexport.popup.btn.cancel' | trans() }}</button>
+        {% endblock form_buttons %}
+      </div>
     </div>
   </form>
 </div>

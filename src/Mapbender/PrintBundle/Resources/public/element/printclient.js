@@ -70,7 +70,6 @@
                 // popup comes with its own buttons
                 $('.printSubmit', this.$form).remove();
             }
-            this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
         },
 
@@ -513,18 +512,15 @@
                 // prevent submit without selection (sidepane mode has separate button to start selecting)
                 return false;
             }
-            // add job data to hidden form fields
-            var jobData = this._collectJobData();
-            if (!jobData.layers.length) {
-                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-                // prevent further handling
-                return false;
+            var proceed = this._super(evt);
+            var $tabs = $('.tab-container', this.element);
+            if (proceed && $tabs.length) {
+                // switch to queue display tab on successful submit
+                window.setTimeout(function() {
+                    $tabs.tabs({active: 1});
+                }, 50);
             }
-            this._injectJobData(jobData);
-            // switch to queue display tab on successful submit
-            $('.tab-container', this.element).tabs({active: 1});
-            // let the browser do the rest
-            return true;
+            return proceed;
         },
         _onTemplateChange: function() {
             var self = this;
