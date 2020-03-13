@@ -89,6 +89,8 @@
     {% endblock printclient_form_bottom %}
 
     <div class="hidden -fn-hidden-fields"></div>
-    <input type="submit" style="display: none"/>
-    <input type="button" class="button printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
+    <div class="right ui-helper-clearfix">
+        <input type="submit" class="button" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}" />
+        <button type="button" class="button critical buttonCancel popupClose">{{ 'mb.core.printclient.popup.btn.cancel' | trans }}</button>
+    </div>
 </form>

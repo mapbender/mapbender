@@ -83,23 +83,7 @@
                             content: self.element,
                             width: 400,
                             scrollable: false,
-                            cssClass: 'customPrintDialog',
-                            buttons: {
-                                    'cancel': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                        cssClass: 'button buttonCancel critical right',
-                                        callback: function(){
-                                            this.close();
-                                        }
-                                    },
-                                    'ok': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                        cssClass: 'button right',
-                                        callback: function(){
-                                            self.$form.submit();
-                                        }
-                                    }
-                            }
+                            cssClass: 'customPrintDialog'
                         });
                     this.popup.$element.one('close', $.proxy(this.close, this));
                 }
@@ -120,7 +104,7 @@
                 } else {
                     self._updateGeometry();
                 }
-                $('.printSubmit', self.$form).removeClass('hidden');
+                $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
         _deactivateSelection: function() {
@@ -133,7 +117,7 @@
             if (wasActive && this.layer) {
                 this.map.map.olMap.removeLayer(this.layer);
             }
-            $('.printSubmit', this.$form).addClass('hidden');
+            $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
             if (this.useDialog_ || this.$selectionFrameToggle.data('active')) {
