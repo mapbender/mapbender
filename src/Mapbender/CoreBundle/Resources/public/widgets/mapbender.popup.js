@@ -75,10 +75,9 @@
             }
             this.$element.resizable(resizableOptions);
         }
-        if (this.options.closeButton) {
-            this.$element.on('click', '.popupClose', $.proxy(this.close, this));
-        } else {
-            $('.popupClose', this.$element).remove();
+        this.$element.on('click', '.popupClose', $.proxy(this.close, this));
+        if (!this.options.closeButton) {
+            $('.popupHead .popupClose', this.$element).remove();
         }
         this.addButtons(this.options.buttons || []);
 
