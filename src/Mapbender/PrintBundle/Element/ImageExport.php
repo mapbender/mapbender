@@ -53,7 +53,8 @@ class ImageExport extends Element
                 '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',
             ),
             'trans' => array(
-                'MapbenderPrintBundle:Element:imageexport.json.twig',
+                'mb.print.imageexport.popup.*',
+                'mb.print.imageexport.info.*',
             ),
         );
     }
