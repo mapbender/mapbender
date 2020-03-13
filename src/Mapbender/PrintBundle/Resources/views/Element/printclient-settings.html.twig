@@ -1,7 +1,6 @@
-{% if configuration.type == 'element' %}
-    <input type="button" class="button -fn-toggle-frame" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
-    <br>
-{% endif %}
+<div>
+    <button type="button" class="button hidden -fn-toggle-frame">{{ 'mb.core.printclient.btn.activate' | trans }}</button>
+</div>
 
 <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
     {% block printclient_form_top %}

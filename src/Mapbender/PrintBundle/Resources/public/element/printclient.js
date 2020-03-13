@@ -22,6 +22,7 @@
         overwriteTemplates: false,
         digitizerData: null,
         jobList: null,
+        useDialog_: null,
         $selectionFrameToggle: null,
         // buffer for ajax-loaded 'getTemplateSize' requests
         // we generally don't want to keep reloading size information
@@ -46,37 +47,32 @@
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
+            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
-            if (this.options.type === 'element') {
-                $(this.element).show();
-                this.$selectionFrameToggle.on('click', function() {
-                    var $button = $(this);
-                    var wasActive = !!$button.data('active');
-                    $button.data('active', !wasActive);
-                    $button.toggleClass('active', !wasActive);
-                    var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
-                                               : 'mb.core.printclient.btn.deactivate';
-                    $button.val(Mapbender.trans(buttonText));
-                    if (!wasActive) {
-                        self.activate();
-                    } else {
-                        self._deactivateSelection();
-                    }
-                });
-                $('.printSubmit', this.$form).on('click', function() {
-                    self.$form.submit();
-                });
-            } else {
-                // popup comes with its own buttons
-                $('.printSubmit', this.$form).remove();
-            }
+            this.$selectionFrameToggle.toggleClass('hidden', this.useDialog_);
+            $('.popupClose', this.element).toggleClass('hidden', !this.useDialog_);
+            $('button[type="submit"], input[type="submit"]', this.$form).toggleClass('hidden', !this.useDialog_);
+            this.$selectionFrameToggle.on('click', function() {
+                var $button = $(this);
+                var wasActive = !!$button.data('active');
+                $button.data('active', !wasActive);
+                $button.toggleClass('active', !wasActive);
+                var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
+                                           : 'mb.core.printclient.btn.deactivate';
+                $button.text(Mapbender.trans(buttonText));
+                if (!wasActive) {
+                    self.activate();
+                } else {
+                    self._deactivateSelection();
+                }
+            });
             this._super();
         },
 
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            if (this.options.type === 'dialog') {
+            if (this.useDialog_) {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup({
                             title: self.element.attr('title'),
@@ -140,7 +136,7 @@
             $('.printSubmit', this.$form).addClass('hidden');
         },
         activate: function() {
-            if (!this.$selectionFrameToggle.length || this.$selectionFrameToggle.data('active')) {
+            if (this.useDialog_ || this.$selectionFrameToggle.data('active')) {
                 var resetScale = !this._isSelectionOnScreen();
                 this._activateSelection(resetScale);
             }
