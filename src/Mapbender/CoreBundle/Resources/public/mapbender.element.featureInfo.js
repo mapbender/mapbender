@@ -194,7 +194,8 @@
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     this._open();
-                    var iframe = $(this._getIframeDeclaration(null, null));
+                    var uuid = Mapbender.Util.UUID();
+                    var iframe = $(this._getIframeDeclaration(uuid, null));
                     self._addContent(layerId, layerTitle, iframe);
                     var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
