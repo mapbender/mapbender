@@ -26,6 +26,10 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
+body {
+  background-image:url($imageBasePath + '/body.png');
+}
+
 .navigation, .accountBar {
   color: $middleFontColor;
 }

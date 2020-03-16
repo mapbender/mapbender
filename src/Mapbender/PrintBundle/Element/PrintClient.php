@@ -57,6 +57,7 @@ class PrintClient extends Element
             ),
             'trans' => array(
                 'MapbenderPrintBundle:Element:printclient.json.twig',
+                'mb.print.imageexport.info.*',
             ),
         );
     }
@@ -104,7 +105,6 @@ class PrintClient extends Element
                 "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))),
             'required_fields_first' => false,
             "replace_pattern" => null,
-            'type' => 'dialog',
             "file_prefix" => 'mapbender',
         );
     }

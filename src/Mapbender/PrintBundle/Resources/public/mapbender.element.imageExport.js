@@ -23,7 +23,7 @@
         },
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-
+            this.$form.on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
         },
         defaultAction: function(callback){
@@ -33,7 +33,7 @@
             this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: self.element.attr('title'),
                     draggable: true,
                     header: true,
@@ -41,22 +41,7 @@
                     closeOnESC: false,
                     content: self.element,
                     width: 250,
-                    buttons: {
-                        'cancel': {
-                            label: Mapbender.trans("mb.print.imageexport.popup.btn.cancel"),
-                            cssClass: 'button buttonCancel critical right',
-                            callback: function(){
-                                this.close();
-                            }
-                        },
-                        'ok': {
-                            label: Mapbender.trans("mb.print.imageexport.popup.btn.ok"),
-                            cssClass: 'button right',
-                            callback: function(){
-                                self._exportImage();
-                            }
-                        }
-                    }
+                    scrollable: false
                 });
                 this.popup.$element.one('close', $.proxy(this.close, this));
             }
@@ -142,14 +127,15 @@
                 }
             };
         },
-        _exportImage: function() {
+        _onSubmit: function(evt) {
+            // add job data to hidden form fields
             var jobData = this._collectJobData();
             if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
-            } else {
-                this._submitJob(jobData);
-                this.close();
+                return false;
             }
+            this._injectJobData(jobData);
+            return true;    // let the browser do the rest
         },
         _injectJobData: function(jobData) {
             var $hiddenArea = $('.-fn-hidden-fields', this.$form);

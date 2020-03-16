@@ -1,61 +1,55 @@
 /* jQuery UI Dialog with Bootstrap classes */
 .mb-element-popup-dialog {
-  border-radius: 0;
+  border-radius: 0;   // defeat .ui-corner-all
 
-  .ui-dialog-titlebar-close {
-    font-size: 0;
-  }
-  z-index: 22;
   border: 1px solid #b3b3b3;
   box-shadow:none;
-  background: #E4E4E4 url($contentPatternUrl);
+  background: #E4E4E4;
   border-bottom-width: 5px;
 
   .ui-button-icon-only .ui-button-icon-space {
     display: none;
   }
 
-  > .modal-header {
+  .ui-dialog-titlebar {
     background-color: $buttonFirstActiveColor;
     padding-top: 7px;
     padding-bottom: 6px;
-    user-select: none;
     position: relative;
-    border-bottom: none;
+    user-select: none;
+    &.modal-header {
+      // defeat collateral border-bottom rule from Bootstrap .modal-header (thanks vis-ui.js!)
+      border-bottom: none;
+    }
+
+    > .ui-button, > .ui-dialog-titlebar-buttonpane {
+      font-size: 16px;
+      text-shadow: rgb(255, 255, 255) 0 1px 0;  // same as Bootstrap .close
+      color: #000000;                           // same as Bootstrap .close
+    }
+    .ui-button.close {
+      // defeat collateral font-size rule from Bootstrap .close (thanks vis-ui.js!)
+      font-size: 16px;
+    }
 
     .ui-dialog-title {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 14px;
       color: #fff;
-      user-select: none;
     }
-
-    .ui-dialog-titlebar-buttonpane{
-      line-height: 1;
-      text-shadow: rgb(255, 255, 255) 0 1px 0;
-      color: #000000;
-      > button, > a {
-        opacity: .2;
-        &:hover, &:focus {
-          opacity: .5;
-        }
-      }
-      a {
-        color: inherit;
-        width: auto;
-        white-space: normal;
-        span{
-          font-size: 0;
-        }
-      }
-      .ui-icon:before {
-        display: inline-block;
-        font-size: 18px;
-        font-weight: bold;
+    a.ui-button {
+      // jquerydialogextendjs uses anchors instead of buttons
+      width: auto;            // size to contained glyph
+      display: inline-block;  // allow top / bottom margins to match <button> used for close
+      text-decoration: none;
+    }
+    .ui-button {
+      font-weight: bold;
+      opacity: .2;
+      &:hover, &:focus {
+        opacity: .5;
       }
       .ui-icon.ui-icon-closethick:before {
-        font-size: 23px;
-        line-height: 18px;
         font-family: FontAwesome;
         content: "\f00d";
       }
@@ -73,12 +67,12 @@
       }
     }
   }
-
-  > .modal-body {
-    /** Dialog resizing fix */
+  .ui-dialog-content {
+    /** Dialog resizing fix (jumpy scrollbar with tab-navigator in content, width auto-updated (badly) by vis-ui javascript...) */
     width: auto !important;
     overflow: auto;
-
+  }
+  > .modal-body {
     // Tab-Navigator displaying if direct bounded to the window
     > .mapbender-element-tab-navigator {
       > .ui-tabs-nav {
@@ -98,11 +92,11 @@
     }
   }
 
-  > .modal-footer {
-    border-top: 1px solid #c0c0c0;
-    padding: 10px;
+  > .ui-dialog-buttonpane {
+    border-top: 1px solid #b3b3b3;    // Same as Bootstrap .modal-footer but darker (matching dialog outer border)
+    padding: 10px;                    // Add padding / also defeat different Bootstrap .modal-footer padding
     button {
-      border-radius: 0;
+      border-radius: 0;               // defeat corner-radius from both Bootsrap .btn / jQueryUI .ui-corner-all
     }
   }
   .ui-resizable-handle {
