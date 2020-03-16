@@ -14,7 +14,6 @@
 {% block details_content %}
   {% include 'MapbenderWmtsBundle:Repository:source/view-details.html.twig' %}
 {% endblock %}
-
 {% block layers_content %}
   {% for layer in source.layers %}
     {% include "MapbenderWmtsBundle:Repository:layer.html.twig" with {'layer': layer, 'itemLevel': 1 }%}
