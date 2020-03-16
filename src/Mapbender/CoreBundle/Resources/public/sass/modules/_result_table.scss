@@ -1,24 +1,29 @@
-
+/**
+ * Replacement CSS for original datatables CSS +/- workarounds for vis-ui-specific quirks
+ * @todo: if this is a common Mapbender widget, it should be extracted from vis-ui so markup and CSS can be developed together
+ * @todo: remove icon hacks (incompatible with FA5)
+ * @todo: use datatables original css; only adjust for colors
+ */
 .mapbender-element-result-table {
 
   > .dataTables_wrapper {
     position: relative;
 
     > table[role="grid"] {
+      font-size: $uiFontSize;
       > thead > tr > th {
         background-color: $buttonFirstColor;
         cursor: pointer;
         user-select: none;
         border: 1px solid $buttonSecondColor;
+        &:last-child {
+          // match calculated with of .buttons column
+          border-right: none;
+        }
         color: #ffffff;
         font-weight: normal;
-        font-size: $uiFontSize;
-        padding: 3px 15px 3px 6px;
+        padding: 3px 6px;
 
-        @include transition(all, 0.3s, ease-in-out);
-        &:focus {
-          box-shadow: 0 0 5px $buttonFirstActiveColor;
-        }
         &:hover{
           background-color: $buttonSecondColor;
         }
@@ -29,27 +34,24 @@
         &.buttons.sorting_disabled {
           cursor: default;
         }
-        &:after {
-          clear: both;
+        text-align: right;
+        &.sorting:after {
           display: inline-block;
-          float: right;
-          width: 0px;
-          white-space: normal;
+          content: "\f0dc";
           font-family: FontAwesome;
         }
-        &.sorting:after {
-          content: "\f0dc";
-        }
         &.sorting_asc:after {
+          display: inline-block;
           content: "\f160";
+          font-family: FontAwesome;
         }
         &.sorting_desc:after {
+          display: inline-block;
           content: "\f161";
+          font-family: FontAwesome;
         }
       }
       > tbody > tr {
-        cursor: pointer;
-
         &.odd {
           background-color: #F8F8F8;
         }
@@ -66,53 +68,46 @@
           background-color: $selectColor;
         }
         > td {
-          background: transparent;
-          vertical-align: middle;
-          padding-top: 4px;
-          padding-bottom: 4px;
-
-          &.selection {
-            vertical-align: middle;
-          }
+          padding: 4px;
 
           &.buttons {
-            text-align: center;
-            padding: 0px;
+            text-align: right;
+            white-space: nowrap;
+            border-top: none;   // undo Bootstrap 1px top border on .table > tbody > tr > td
+            padding: 0;
             > div.button-navigation {
-              white-space: nowrap;
-              float: right;
-              padding: 0px;
-              transition: opacity 0.5s ease-in-out 0s;
+              display: inline-block;
               > button {
-                margin-right: -1px;
-                font-size: 0;
-                padding: 0px;
-                &:first-child {
-                  margin-left: 0px;
-                }
+                font-size: 0; // for vis-ui <=0.1.79 generating unwanted visible button labels
                 &:before {
                   display: inline-block;
                   font-size: $uiFontSize;
-                  vertical-align: bottom;
                   padding: 3px 3px 2px 4px;
                 }
+                &.button {
+                  padding: 0;   // undo global .button padding
+                }
+              }
+              .button {
+                border-right-width: 0;
+              }
+              .button:last-child {
+                border-right-width: 1px;
               }
             }
           }
 
-          font-size: $uiFontSize;
           &.selection {
             padding-top: 0;
+            vertical-align: middle;
             > input[type="checkbox"] {
               margin: 0 auto;
               vertical-align: middle;
             }
           }
-
-          cursor: default;
         }
       }
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
 
     > .dataTables_info {
@@ -125,27 +120,29 @@
       border: 1px solid #6FB536;
       right: 0;
     }
+    .dataTables_paginate {
+      // clearfix; should be redundant with original css
+      &:before,
+      &:after {
+        display: table; // 2
+        content: " "; // 1
+      }
+      &:after {
+        clear: both;
+      }
+    }
 
     > .paging_simple_numbers {
 
-      text-align: left;
-
       > span {
-        float: left;
         display: inline-block;
-        a.paginate_button {
-          margin-left: -1px;
-        }
         > span {
           padding-right: 5px;
         }
       }
 
-      a {
-//        @extend .btn;
+      a.paginate_button {
         @extend .button;
-        margin-right: 0px;
-        display: inline-block;
 
         &.previous {
           float: left;
@@ -156,7 +153,6 @@
         }
 
         &.next {
-          margin-right: 0;
           float: right;
           font-size: 0;
           &:after{
@@ -165,13 +161,15 @@
         }
 
         &.current {
-          background-color: $buttonFirstActiveColor !important;
+          background-color: $buttonFirstActiveColor;
         }
 
         &.disabled {
-          opacity: 0.7;
           display: none;
         }
+      }
+      a.paginate_button + a.paginate_button {
+        border-left: none;
       }
     }
   }

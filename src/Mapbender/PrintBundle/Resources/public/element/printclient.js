@@ -22,6 +22,7 @@
         overwriteTemplates: false,
         digitizerData: null,
         jobList: null,
+        useDialog_: null,
         $selectionFrameToggle: null,
         // buffer for ajax-loaded 'getTemplateSize' requests
         // we generally don't want to keep reloading size information
@@ -46,38 +47,32 @@
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
+            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
-            if (this.options.type === 'element') {
-                $(this.element).show();
-                this.$selectionFrameToggle.on('click', function() {
-                    var $button = $(this);
-                    var wasActive = !!$button.data('active');
-                    $button.data('active', !wasActive);
-                    $button.toggleClass('active', !wasActive);
-                    var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
-                                               : 'mb.core.printclient.btn.deactivate';
-                    $button.val(Mapbender.trans(buttonText));
-                    if (!wasActive) {
-                        self.activate();
-                    } else {
-                        self._deactivateSelection();
-                    }
-                });
-                $('.printSubmit', this.$form).on('click', function() {
-                    self.$form.submit();
-                });
-            } else {
-                // popup comes with its own buttons
-                $('.printSubmit', this.$form).remove();
-            }
-            this.$form.on('submit', this._onSubmit.bind(this));
+            this.$selectionFrameToggle.toggleClass('hidden', this.useDialog_);
+            $('.popupClose', this.element).toggleClass('hidden', !this.useDialog_);
+            $('button[type="submit"], input[type="submit"]', this.$form).toggleClass('hidden', !this.useDialog_);
+            this.$selectionFrameToggle.on('click', function() {
+                var $button = $(this);
+                var wasActive = !!$button.data('active');
+                $button.data('active', !wasActive);
+                $button.toggleClass('active', !wasActive);
+                var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
+                                           : 'mb.core.printclient.btn.deactivate';
+                $button.text(Mapbender.trans(buttonText));
+                if (!wasActive) {
+                    self.activate();
+                } else {
+                    self._deactivateSelection();
+                }
+            });
             this._super();
         },
 
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            if (this.options.type === 'dialog') {
+            if (this.useDialog_) {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup({
                             title: self.element.attr('title'),
@@ -88,23 +83,7 @@
                             content: self.element,
                             width: 400,
                             scrollable: false,
-                            cssClass: 'customPrintDialog',
-                            buttons: {
-                                    'cancel': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                        cssClass: 'button buttonCancel critical right',
-                                        callback: function(){
-                                            this.close();
-                                        }
-                                    },
-                                    'ok': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                        cssClass: 'button right',
-                                        callback: function(){
-                                            self.$form.submit();
-                                        }
-                                    }
-                            }
+                            cssClass: 'customPrintDialog'
                         });
                     this.popup.$element.one('close', $.proxy(this.close, this));
                 }
@@ -125,7 +104,7 @@
                 } else {
                     self._updateGeometry();
                 }
-                $('.printSubmit', self.$form).removeClass('hidden');
+                $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
         _deactivateSelection: function() {
@@ -138,10 +117,10 @@
             if (wasActive && this.layer) {
                 this.map.map.olMap.removeLayer(this.layer);
             }
-            $('.printSubmit', this.$form).addClass('hidden');
+            $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
-            if (!this.$selectionFrameToggle.length || this.$selectionFrameToggle.data('active')) {
+            if (this.useDialog_ || this.$selectionFrameToggle.data('active')) {
                 var resetScale = !this._isSelectionOnScreen();
                 this._activateSelection(resetScale);
             }
@@ -512,18 +491,15 @@
                 // prevent submit without selection (sidepane mode has separate button to start selecting)
                 return false;
             }
-            // add job data to hidden form fields
-            var jobData = this._collectJobData();
-            if (!jobData.layers.length) {
-                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-                // prevent further handling
-                return false;
+            var proceed = this._super(evt);
+            var $tabs = $('.tab-container', this.element);
+            if (proceed && $tabs.length) {
+                // switch to queue display tab on successful submit
+                window.setTimeout(function() {
+                    $tabs.tabs({active: 1});
+                }, 50);
             }
-            this._injectJobData(jobData);
-            // switch to queue display tab on successful submit
-            $('.tab-container', this.element).tabs({active: 1});
-            // let the browser do the rest
-            return true;
+            return proceed;
         },
         _onTemplateChange: function() {
             var self = this;

@@ -40,14 +40,6 @@ class PrintClientAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                'choices' => array(
-                    'Dialog' => 'dialog',
-                    'Element' => 'element',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

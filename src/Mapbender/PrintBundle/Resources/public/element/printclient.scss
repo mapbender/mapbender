@@ -16,11 +16,7 @@
     width: 100%;
     margin-bottom: $space/2;
   }
-  .printSubmit {
-    float: right;
-  }
-
-  .printToggle.active {
+  .button.active {
     background-color: #538e24;
   }
 
@@ -78,16 +74,5 @@
     float: left;
     padding: .5em 1em;
     text-decoration: none;
-  }
-
-  // from jquery-ui themes/base/base.css
-  .ui-helper-clearfix:before,
-  .ui-helper-clearfix:after {
-      content: "";
-      display: table;
-      border-collapse: collapse;
-  }
-  .ui-helper-clearfix:after {
-      clear: both;
   }
 }

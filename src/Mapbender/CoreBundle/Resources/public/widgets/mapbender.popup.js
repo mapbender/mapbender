@@ -32,9 +32,6 @@
  *   - CSS for following classes:
  *     - noTitle
  *     - noSubTitle
- *     - ajax content
- *     - ajaxWaiting content
- *     - ajaxFailed content
  */
 (function($) {
     var counter = 0;
@@ -78,10 +75,9 @@
             }
             this.$element.resizable(resizableOptions);
         }
-        if (this.options.closeButton) {
-            this.$element.on('click', '.popupClose', $.proxy(this.close, this));
-        } else {
-            $('.popupClose', this.$element).remove();
+        this.$element.on('click', '.popupClose', $.proxy(this.close, this));
+        if (!this.options.closeButton) {
+            $('.popupHead .popupClose', this.$element).remove();
         }
         this.addButtons(this.options.buttons || []);
 
@@ -188,19 +184,18 @@
 
             title: null,
             subtitle: null,
-            // Content, can be simple string, DOM nodes, jQuery nodes or Ajax
+            // Content, can be simple string, DOM nodes, jQuery nodes
             content: null,
-
-            // Buttons, object with key which becomes identifier, label and
-            // callback
-            buttons: {
-                'ok': {
-                    label: 'Ok',
-                    callback: function() {
-                        this.close();
-                    }
-                }
-            }
+            /**
+             * @typedef {Object} PopupButtonConfig
+             * @property {String} label
+             * @property {callback} callback
+             * @property {String} cssClass
+             */
+            /**
+             * @type {Array<PopupButtonConfig>}
+             */
+            buttons: []
         },
         option: function(key, value) {
             switch(key) {
@@ -303,7 +298,7 @@
 
         addButtons: function(buttons) {
             var self = this,
-                buttonset = $('');
+                buttonset = $('.popupButtons', this.$element);
 
             $.each(buttons, function(key, conf) {
                 var button = $('<a/>', {
@@ -323,9 +318,9 @@
                         return false;
                     });
                 }
-                buttonset = buttonset.add(button);
+                buttonset.append(button);
             });
-            $('.popupButtons', this.$element).append(buttonset);
+            buttonset.parent().toggleClass('hidden', !buttonset.children().length);
         },
 
         /**

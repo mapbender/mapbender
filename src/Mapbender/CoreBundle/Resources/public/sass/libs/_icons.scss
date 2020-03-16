@@ -151,18 +151,9 @@ span.iconBig {
   }
 }
 
-// Support hack for coordinates utility
-.mb-element-coordinatesutility .copyClipBoard:before {
-  font-family: FontAwesome;
-}
-
-
 @mixin buttonFAIcon($content) {
-  margin-bottom: -1px;
   content: $content;
   font-size: $uiFontSize;
   font-family: FontAwesome;
-  vertical-align: bottom;
   display: inline-block;
-  margin-top: 1px;
 }

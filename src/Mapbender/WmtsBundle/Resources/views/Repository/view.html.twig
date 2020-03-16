@@ -3,7 +3,7 @@
 {% block tab_headers %}
   {{ parent() }}
   <li id="tabMatrixsets" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.matrixsets" | trans }}</li>
-  {% if source.themes %}
+  {% if source.themes | length %}
     <li id="tabTheme" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.theme" | trans }}</li>
   {% endif %}
 {% endblock %}
@@ -14,6 +14,7 @@
 {% block details_content %}
   {% include 'MapbenderWmtsBundle:Repository:source/view-details.html.twig' %}
 {% endblock %}
+
 {% block layers_content %}
   {% for layer in source.layers %}
     {% include "MapbenderWmtsBundle:Repository:layer.html.twig" with {'layer': layer, 'itemLevel': 1 }%}
@@ -27,7 +28,7 @@
       {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig" with {'tilematrixset': tilematrixset }%}
     {% endfor %}
   </div>
-  {% if source.themes %}
+  {% if source.themes | length %}
     <div id="containerTheme" class="container serviceContainer serviceServiceContainer">
       {% for theme in source.themes %}
         {% include "MapbenderWmtsBundle:Repository:theme.html.twig" with {'theme': theme, 'itemLevel': 1 }%}

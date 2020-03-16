@@ -1,4 +1,5 @@
 @import "_compass";
+@import "modules/jqueryui_minimal";
 
 *{@include box-sizing(border-box);}
 html, body{
@@ -12,11 +13,6 @@ html, body{
   }
   line-height:$lineHeight;
   color:$darkFontColor;
-  background-image:url($imageBasePath + '/body.png');
-
-  @include background(linear-gradient(rgba(255,255,255,.3) 100px,
-                                      rgba(255,255,255,0)) fixed,
-                      url($imageBasePath + '/body.png'));
 }
 // @todo: Resolve conflicts of these extra list and heading rules with Bootstrap and
 //        general expectations. Should adopt Bootstrap convention to display lists with
