@@ -179,6 +179,10 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl2.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl2.js',
                     '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 );
                 break;
@@ -207,6 +211,10 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
                     // "$modelJsBase/mapbender.model.mappopup.js",
                 );
                 break;
