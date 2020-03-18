@@ -177,7 +177,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                    '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 );
                 break;
             default:
