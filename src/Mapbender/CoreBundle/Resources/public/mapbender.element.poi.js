@@ -89,7 +89,7 @@
             var deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
             this.poi = {
                 point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
-                scale: this.mbMap.model.getScale(),
+                scale: this.mbMap.model.getCurrentScale(),
                 srs: srsName
             };
             this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
