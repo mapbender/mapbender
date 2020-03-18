@@ -78,26 +78,13 @@
             this.clickActive = true;
         },
 
-        /**
-         * The actual click event handler. Here Pixel and World coordinates
-         * are extracted and then send to the mapClickWorker
-         */
         _mapClickHandler: function(event, data) {
             if (this.clickActive) {
-                this._setPoiMarkerLayer({
-                    pixel: {
-                        x: data.pixel[0],
-                        y: data.pixel[1]
-                    },
-                    world: {
-                        lon: data.coordinate[0],
-                        lat: data.coordinate[1]
-                    }
-                });
+                this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
             }
         },
 
-        _setPoiMarkerLayer: function(coordinates) {
+        _setPoiMarker: function(lon, lat) {
             var srsName = Mapbender.Model.getCurrentProjectionCode();
             var deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
 
@@ -108,7 +95,7 @@
 
             this.poiMarkerLayer.clearMarkers();
 
-            var poiMarker = new OpenLayers.Marker(coordinates.world, new OpenLayers.Icon(
+            var poiMarker = new OpenLayers.Marker({lon: lon, lat: lat}, new OpenLayers.Icon(
                 Mapbender.configuration.application.urls.asset +
                 this.mbMap.options.poiIcon.image, {
                     w: this.mbMap.options.poiIcon.width,
@@ -122,7 +109,7 @@
             this.poiMarkerLayer.addMarker(poiMarker);
 
             this.poi = {
-                point: coordinates.world.lon.toFixed(deci) + ',' + coordinates.world.lat.toFixed(deci),
+                point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
                 scale: this.mbMap.model.getScale(),
                 srs: srsName
             };
@@ -162,17 +149,7 @@
                     cssClass: 'button',
                     callback: function() {
                         self.gpsElement.mbGpsPosition('getGPSPosition', function(lonLat) {
-                            var plox = self.mbMap.map.olMap.getPixelFromLonLat(lonLat);
-
-                            var coordinates = {
-                                pixel: {
-                                    x: plox.x,
-                                    y: plox.y
-                                },
-                                world: lonLat
-                            };
-
-                            self._setPoiMarkerLayer(coordinates);
+                            self._setPoiMarker(lonLat.lon, lonLat.lat);
                         });
                     }
                 });
