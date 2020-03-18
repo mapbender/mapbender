@@ -64,6 +64,17 @@ window.Mapbender.MapModelBase = (function() {
             return scales.indexOf(scale);
         },
         /**
+         * BC convenience getter. Commonly used only to determine number of decimals for rounding
+         * coordinates for display.
+         *
+         * @param {String} srsName
+         * @return {number}
+         * engine-agnostic
+         */
+        getProjectionUnitsPerMeter: function(srsName) {
+            return Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName);
+        },
+        /**
          * @param {int} scale
          * @param {number} [dpi]
          * @return {number}
