@@ -15,6 +15,17 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
         },
         hide: function() {
             this.wrappedLayer_.setVisibility(false);
+        },
+        /**
+         * @param {Array<OpenLayers.Feature>} features
+         */
+        addNativeFeatures: function(features) {
+            this.wrappedLayer_.addFeatures(features);
+        },
+        getMarkerFeature_: function(lon, lat) {
+            // @todo: marker styles with icons?
+            var geometry = new OpenLayers.Geometry.Point(lon, lat);
+            return new OpenLayers.Feature.Vector(geometry);
         }
     });
     return VectorLayerBridgeOl2;

@@ -6,6 +6,9 @@ window.Mapbender.VectorLayerBridge = (function() {
     Object.assign(VectorLayerBridge.prototype, {
         getNativeLayer: function() {
             return this.wrappedLayer_;
+        },
+        addMarker: function(lon, lat) {
+            this.addNativeFeatures([this.getMarkerFeature_(lon, lat)]);
         }
     });
     return VectorLayerBridge;

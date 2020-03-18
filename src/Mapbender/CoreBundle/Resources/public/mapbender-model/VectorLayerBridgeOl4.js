@@ -18,6 +18,18 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         },
         hide: function() {
             this.wrappedLayer_.setVisible(false);
+        },
+        /**
+         * @param {Array<ol.Feature>} features
+         */
+        addNativeFeatures: function(features) {
+            this.wrappedLayer_.getSource().addFeatures(features);
+        },
+        getMarkerFeature_: function(lon, lat) {
+            // @todo: marker styles with icons?
+            return new ol.Feature({
+                geometry: new ol.geom.Point([lon, lat])
+            });
         }
     });
     return VectorLayerBridgeOl4;
