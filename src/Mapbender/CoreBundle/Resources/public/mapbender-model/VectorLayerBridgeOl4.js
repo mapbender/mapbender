@@ -6,6 +6,7 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             map: olMap,
             source: new ol.source.Vector({wrapX: false})
         });
+        this.markerStyle_ = null;
     }
     VectorLayerBridgeOl4.prototype = Object.create(Mapbender.VectorLayerBridge.prototype);
     Object.assign(VectorLayerBridgeOl4.prototype, {
@@ -25,11 +26,40 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         addNativeFeatures: function(features) {
             this.wrappedLayer_.getSource().addFeatures(features);
         },
+        setBuiltinMarkerStyle: function(name) {
+            switch (name) {
+                default:
+                    if (name === null) {
+                        throw new Error("Unknown marker style " + name);
+                    } else {
+                        this.markerStyle_ = null;
+                    }
+                    break;
+                case 'poiIcon':
+                    // @todo: move poi icon options out of mbMap widget
+                    var poiOptions = $['mapbender']['mbMap'].prototype.options.poiIcon;
+                    var iconUrl = Mapbender.configuration.application.urls.asset + poiOptions.image;
+                    this.markerStyle_ = new ol.style.Style({
+                        image: new ol.style.Icon({
+                            src: iconUrl,
+                            imgSize: [poiOptions.width, poiOptions.height],
+                            anchor: [-poiOptions.xoffset, -poiOptions.yoffset],
+                            anchorOrigin: ol.style.IconOrigin.TOP_LEFT,
+                            anchorXUnits: ol.style.IconAnchorUnits.PIXELS,
+                            anchorYUnits: ol.style.IconAnchorUnits.PIXELS
+                        })
+                    });
+                    break;
+            }
+        },
         getMarkerFeature_: function(lon, lat) {
-            // @todo: marker styles with icons?
-            return new ol.Feature({
+            var feature = new ol.Feature({
                 geometry: new ol.geom.Point([lon, lat])
             });
+            if (this.markerStyle_) {
+                feature.setStyle(this.markerStyle_);
+            }
+            return feature;
         }
     });
     return VectorLayerBridgeOl4;

@@ -3,6 +3,7 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
     function VectorLayerBridgeOl2(olMap) {
         window.Mapbender.VectorLayerBridge.call(this, olMap);
         this.wrappedLayer_ = new OpenLayers.Layer.Vector();
+        this.markerStyle_ = null;
     }
     VectorLayerBridgeOl2.prototype = Object.create(Mapbender.VectorLayerBridge.prototype);
     Object.assign(VectorLayerBridgeOl2.prototype, {
@@ -22,10 +23,37 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
         addNativeFeatures: function(features) {
             this.wrappedLayer_.addFeatures(features);
         },
+        setBuiltinMarkerStyle: function(name) {
+            switch (name) {
+                default:
+                    if (name === null) {
+                        throw new Error("Unknown marker style " + name);
+                    } else {
+                        this.markerStyle_ = null;
+                    }
+                    break;
+                case 'poiIcon':
+                    // @todo: move poi icon options out of mbMap widget
+                    var poiOptions = $['mapbender']['mbMap'].prototype.options.poiIcon;
+                    var iconUrl = Mapbender.configuration.application.urls.asset + poiOptions.image;
+                    this.markerStyle_ = {
+                        fillOpacity: 1.0,
+                        externalGraphic: iconUrl,
+                        graphicWidth: poiOptions.width,
+                        graphicHeight: poiOptions.height,
+                        graphicXOffset: poiOptions.xoffset,
+                        graphicYOffset: poiOptions.yoffset
+                    };
+                    break;
+            }
+        },
         getMarkerFeature_: function(lon, lat) {
-            // @todo: marker styles with icons?
             var geometry = new OpenLayers.Geometry.Point(lon, lat);
-            return new OpenLayers.Feature.Vector(geometry);
+            var feature = new OpenLayers.Feature.Vector(geometry);
+            if (this.markerStyle_) {
+                feature.style = this.markerStyle_;
+            }
+            return feature;
         }
     });
     return VectorLayerBridgeOl2;
