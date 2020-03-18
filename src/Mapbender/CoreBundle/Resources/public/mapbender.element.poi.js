@@ -221,13 +221,9 @@
             var params = $.param({ poi: poi });
             var poiURL = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + params;
             body += '\n\n' + poiURL;
-            /*
-             * @ TODO use MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js
-             * to call social networks
-             */
             if(this.options.useMailto) {
                 var mailto_link = 'mailto:?body=' + escape(body);
-                win = window.open(mailto_link,'emailWindow');
+                var win = window.open(mailto_link, 'emailWindow');
                 window.setTimeout(function() {if (win && win.open &&!win.closed) win.close();}, 100);
             } else {
                 var ta = $('<div/>', {
