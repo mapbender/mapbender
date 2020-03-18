@@ -17,16 +17,20 @@
         closeCallback: null,
 
         _create: function() {
-            if(!Mapbender.checkTarget("mbPOI", this.options.target)){
-                return;
-            }
-
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            var target = this.options.target;
+            Mapbender.elementRegistry.waitReady(target).then(
+                function(mbMap) {
+                    self._setup(mbMap);
+                },
+                function() {
+                    Mapbender.checkTarget("mbPOI", target);
+                }
+            );
         },
 
-        _setup: function() {
-            this.map = $('#' + this.options.target);
-            this.mbMap = this.map.data('mapbenderMbMap');
+        _setup: function(mbMap) {
+            this.mbMap = mbMap;
             this.mbMap.element.on('mbmapclick', this._mapClickHandler.bind(this));
 
             if (this.options.gps) {
@@ -66,7 +70,7 @@
          * @private
          */
         _open: function(closeCallback) {
-            if (!this.popup && this.map.length !== 0) {
+            if (!this.popup) {
                 this.popup = new Mapbender.Popup(this._getPopupOptions());
                 this.popup.$element.one('close', this.close.bind(this));
             }
