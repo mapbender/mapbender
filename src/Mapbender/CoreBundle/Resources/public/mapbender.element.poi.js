@@ -98,8 +98,8 @@
         },
 
         _setPoiMarkerLayer: function(coordinates) {
-            var proj = this.mbMap.map.olMap.getProjectionObject();
-            var deci = 0;
+            var srsName = Mapbender.Model.getCurrentProjectionCode();
+            var deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
 
             if (!this.poiMarkerLayer) {
                 this.poiMarkerLayer = new OpenLayers.Layer.Markers();
@@ -121,14 +121,10 @@
 
             this.poiMarkerLayer.addMarker(poiMarker);
 
-            if (!proj.units || proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
-                deci = 5;
-            }
-
             this.poi = {
                 point: coordinates.world.lon.toFixed(deci) + ',' + coordinates.world.lat.toFixed(deci),
                 scale: this.mbMap.model.getScale(),
-                srs: proj.projCode
+                srs: srsName
             };
             this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
         },
