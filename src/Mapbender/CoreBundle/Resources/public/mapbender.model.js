@@ -10,6 +10,7 @@ window.Mapbender.MapModelOl2 = function(mbMap) {
     this._geoJsonReader = new OpenLayers.Format.GeoJSON();
     this._wktReader = new OpenLayers.Format.WKT();
     this._initMap(mbMap);
+    window.Mapbender.vectorLayerPool = window.Mapbender.VectorLayerPool.factory(Mapbender.mapEngine, this.olMap);
 };
 Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
 Object.assign(Mapbender.MapModelOl2.prototype, {

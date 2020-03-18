@@ -11,10 +11,10 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
             this.wrappedLayer_.removeAllFeatures();
         },
         show: function() {
-            this.setVisibility(true);
+            this.wrappedLayer_.setVisibility(true);
         },
         hide: function() {
-            this.setVisibility(false);
+            this.wrappedLayer_.setVisibility(false);
         }
     });
     return VectorLayerBridgeOl2;

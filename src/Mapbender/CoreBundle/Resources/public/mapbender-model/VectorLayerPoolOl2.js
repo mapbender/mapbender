@@ -1,7 +1,7 @@
 window.Mapbender = Mapbender || {};
 window.Mapbender.VectorLayerPoolOl2 = (function() {
     function VectorLayerPoolOl2(olMap) {
-        window.Mapbender.VectorLayerPoolOl2.apply(this, arguments);
+        window.Mapbender.VectorLayerPool.apply(this, arguments);
     }
     window.Mapbender.VectorLayerPool.typeMap['ol2'] = VectorLayerPoolOl2;
     VectorLayerPoolOl2.prototype = Object.create(Mapbender.VectorLayerPool.prototype);
@@ -16,8 +16,9 @@ window.Mapbender.VectorLayerPoolOl2 = (function() {
                 bridgeLayers: []
             };
         },
-        spliceElementLayerDescriptor_: function(descriptor, index) {
-            window.Mapbender.VectorLayerPool.prototype.addElementLayerDescriptor_.call(this, descriptor, index);
+        addBridgeLayerToGroup_: function(group, layerBridge) {
+            window.Mapbender.VectorLayerPool.prototype.addBridgeLayerToGroup_.call(this, group, layerBridge);
+            this.olMap.addLayer(layerBridge.getNativeLayer());
         }
     });
 }());
