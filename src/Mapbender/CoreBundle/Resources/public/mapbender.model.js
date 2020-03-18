@@ -114,6 +114,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         // * layer lookup via 'mqlid' on source definitions
 
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
+
         // monkey-patch zoom interactions
         (function(olMap) {
             // need to monkey patch here in order to get next zoom in movestart event

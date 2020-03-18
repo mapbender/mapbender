@@ -183,7 +183,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl2.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl2.js',
-                    '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 );
                 break;
             default:
