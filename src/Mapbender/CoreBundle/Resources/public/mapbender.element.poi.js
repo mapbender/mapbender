@@ -8,9 +8,8 @@
         },
         map: null,
         mbMap: null,
-        mapClickProxy: null,
+        clickActive: false,
         popup: null,
-        point: null,
         poiMarkerLayer: null,
         poi: null,
         gpsElement: null,
@@ -28,7 +27,7 @@
         _setup: function() {
             this.map = $('#' + this.options.target);
             this.mbMap = this.map.data('mapbenderMbMap');
-            this.mapClickProxy = $.proxy(this._mapClickHandler, this);
+            this.mbMap.element.on('mbmapclick', this._mapClickHandler.bind(this));
 
             if (this.options.gps) {
                 this.gpsElement = $('#' + this.options.gps);
@@ -38,52 +37,59 @@
             }
         },
 
-        defaultAction: function(closeCallback) {
-            return this.open(closeCallback);
-        },
-
         /**
-         * On activation, bind the onClick function to handle map click events.
-         * For the call to be made in the right context, the onClickProxy must
-         * be used.
+         * Deprecated
          */
+        defaultAction: function(closeCallback) {
+            if (this.popup) {
+                this.deactivate();
+            } else {
+                this.activate(closeCallback);
+            }
+        },
         activate: function(closeCallback) {
-            this.open(closeCallback);
+            this._open(closeCallback);
+        },
+        deactivate: function() {
+            this.close();
         },
         /**
          * Same as activate, but proper Button API name expectation
          * @param closeCallback
          */
         open: function(closeCallback) {
+            this.activate(closeCallback);
+        },
+        /**
+         * Method name aliasing to Avoid detection by control button
+         * @param closeCallback
+         * @private
+         */
+        _open: function(closeCallback) {
             if (!this.popup && this.map.length !== 0) {
                 this.popup = new Mapbender.Popup(this._getPopupOptions());
                 this.popup.$element.one('close', this.close.bind(this));
-                this.map.on('click', this.mapClickProxy);
             }
             this.closeCallback = closeCallback;
+            this.clickActive = true;
         },
 
         /**
          * The actual click event handler. Here Pixel and World coordinates
          * are extracted and then send to the mapClickWorker
          */
-        _mapClickHandler: function(event) {
-            if(event && event.pageX && event.pageY) {
-                var x, y;
-                x = event.pageX - this.map.offset().left;
-                y = event.pageY - this.map.offset().top;
-
-                var olMap = this.mbMap.map.olMap;
-                var lonLat = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y));
-                var coordinates = {
+        _mapClickHandler: function(event, data) {
+            if (this.clickActive) {
+                this._setPoiMarkerLayer({
                     pixel: {
-                        x: x,
-                        y: y
+                        x: data.pixel[0],
+                        y: data.pixel[1]
                     },
-                    world: lonLat
-                };
-
-                this._setPoiMarkerLayer(coordinates);
+                    world: {
+                        lon: data.coordinate[0],
+                        lat: data.coordinate[1]
+                    }
+                });
             }
         },
 
@@ -194,7 +200,7 @@
             }
             this.closeCallback = null;
             this.popup = null;
-            this.map.off('click', self.mapClickProxy);
+            this.clickActive = false;
         },
 
         _sendPoi: function(content) {
