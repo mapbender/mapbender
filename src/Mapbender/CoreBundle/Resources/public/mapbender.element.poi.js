@@ -80,14 +80,21 @@
 
         _mapClickHandler: function(event, data) {
             if (this.clickActive) {
+                this._updatePoi(data.coordinate[0], data.coordinate[1]);
                 this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
             }
         },
-
-        _setPoiMarker: function(lon, lat) {
+        _updatePoi: function(lon, lat) {
             var srsName = Mapbender.Model.getCurrentProjectionCode();
             var deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
-
+            this.poi = {
+                point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
+                scale: this.mbMap.model.getScale(),
+                srs: srsName
+            };
+            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
+        },
+        _setPoiMarker: function(lon, lat) {
             if (!this.poiMarkerLayer) {
                 this.poiMarkerLayer = new OpenLayers.Layer.Markers();
                 this.mbMap.map.olMap.addLayer(this.poiMarkerLayer);
@@ -107,13 +114,6 @@
             );
 
             this.poiMarkerLayer.addMarker(poiMarker);
-
-            this.poi = {
-                point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
-                scale: this.mbMap.model.getScale(),
-                srs: srsName
-            };
-            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
         },
         _getPopupOptions: function() {
             var self = this;
@@ -149,6 +149,7 @@
                     cssClass: 'button',
                     callback: function() {
                         self.gpsElement.mbGpsPosition('getGPSPosition', function(lonLat) {
+                            self._updatePoi(lonLat.lon, lonLat.lat);
                             self._setPoiMarker(lonLat.lon, lonLat.lat);
                         });
                     }
