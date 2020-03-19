@@ -199,7 +199,7 @@ window.Mapbender.MapEngineOl2 = (function() {
             olMap.resetLayersZIndex();
         },
         getFeatureBounds: function(olFeature) {
-            return this.boundsFromArray(feature.geometry.getBounds().toArray());
+            return this.boundsFromArray(olFeature.geometry.getBounds().toArray());
         },
         getFeatureProperties: function(olFeature) {
             return olFeature.data;
