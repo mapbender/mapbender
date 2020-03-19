@@ -155,7 +155,7 @@
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
             var scales = this.options.scales;
-            var currentScale = this.map.model.getCurrentScale();
+            var currentScale = Math.round(this.map.getModel().getCurrentScale());
             var selectValue;
 
             $.each(scales, function(idx, scale) {
