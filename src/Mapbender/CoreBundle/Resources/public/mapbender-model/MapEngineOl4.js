@@ -169,6 +169,21 @@ window.Mapbender.MapEngineOl4 = (function() {
             var coord = olMap.getCoordinateFromPixel([x, y]);
             return nativeSource.getGetFeatureInfoUrl(coord, res, proj, params);
         },
+        /**
+         * @param {(ol.layer.Tile|ol.layer.Image)} olLayer
+         * @param {*} bounds
+         * @return {String}
+         */
+        getWmsBaseUrl: function(olLayer, bounds, srsName) {
+            var source = olLayer.getSource();
+            if (typeof source.tileUrlFunction === 'function') {
+                /** @var {ol.source.TileWMS} source */
+                return source.tileUrlFunction([0, 0, 0], 1, ol.proj.get(srsName));
+            } else {
+                /** @var {ol.source.ImageWMS} source */
+                return source.getRequestUrl_([0,0,0,0], [0,0], 1, ol.proj.get(srsName), source.getParams());
+            }
+        },
         getLayerArray: function(olMap) {
             return olMap.getLayers().getArray();
         },

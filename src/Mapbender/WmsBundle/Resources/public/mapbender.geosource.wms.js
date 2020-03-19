@@ -158,8 +158,8 @@ window.Mapbender.WmsSource = (function() {
             return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
         },
         getMultiLayerPrintConfig: function(bounds, scale, srsName) {
-            var olLayer = this.getNativeLayer(0);
-            var baseUrl = Mapbender.Util.removeProxy(olLayer.getURL(bounds));
+            var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), bounds, srsName);
+            baseUrl = Mapbender.Util.removeProxy(baseUrl);
             var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = this.getExtendedLeafInfo(this, scale, bounds);

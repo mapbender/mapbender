@@ -169,6 +169,14 @@ window.Mapbender.MapEngineOl2 = (function() {
             olLayer.removeBackBuffer();
             olLayer.destroy(false);
         },
+        /**
+         * @param {OpenLayers.Layer.WMS} olLayer
+         * @param {*} bounds
+         * @return {String}
+         */
+        getWmsBaseUrl: function(olLayer, bounds) {
+            return olLayer.getURL(bounds);
+        },
         getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
             var firstOlLayer = source.getNativeLayer(0);
             var control = new OpenLayers.Control.WMSGetFeatureInfo({
