@@ -135,9 +135,10 @@ window.Mapbender.MapEngineOl4 = (function() {
          * @return {Object}
          */
         transformCoordinate: function(coordinate, fromProj, toProj) {
-            var from_ = this._getProj(fromProj);
-            var to_ = this._getProj(toProj);
-            return proj4.transform(from_, to_, coordinate);
+            var from_ = proj4.Proj(fromProj);
+            var to_ = proj4.Proj(toProj);
+            // NOTE: proj4 modifies passed object in-place
+            return proj4.transform(from_, to_, Object.assign({}, coordinate));
         },
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
