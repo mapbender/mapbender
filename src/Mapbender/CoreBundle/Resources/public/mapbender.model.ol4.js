@@ -11,6 +11,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this._geojsonFormat = new ol.format.GeoJSON();
         this._initMap();
         window.Mapbender.vectorLayerPool = window.Mapbender.VectorLayerPool.factory(Mapbender.mapEngine, this.olMap);
+        this.displayPois(this._poiOptions);
     }
 
     MapModelOl4.prototype = Object.create(Mapbender.MapModelBase.prototype);

@@ -129,7 +129,7 @@ window.Mapbender.MapEngineOl2 = (function() {
          * @param {(String|Proj4js.Proj)} toProj
          * @return {Object}
          */
-        tranformCoordinate: function(coordinate, fromProj, toProj) {
+        transformCoordinate: function(coordinate, fromProj, toProj) {
             var from_ = this._getProj(fromProj).proj;
             var to_ = this._getProj(toProj).proj;
             return Proj4js.transform(from_, to_, coordinate);

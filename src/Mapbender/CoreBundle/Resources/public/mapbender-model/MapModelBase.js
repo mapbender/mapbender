@@ -25,7 +25,7 @@ window.Mapbender.MapModelBase = (function() {
         this.sourceBaseId_ = 0;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
-        this._startProj = mapOptions.targetsrs || mapOptions.srs;
+        var startProj = this._startProj = mapOptions.targetsrs || mapOptions.srs;
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
         var startExtentArray;
         if (mapOptions.extra && mapOptions.extra.bbox) {
@@ -33,6 +33,12 @@ window.Mapbender.MapModelBase = (function() {
         } else {
             startExtentArray = mapOptions.extents.start || mapOptions.extents.max;
         }
+        var poiOptions = (mbMap.options.extra || {}).pois || [];
+        this._poiOptions = poiOptions.map(function(poi) {
+            return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
+                label: poi.label
+            });
+        });
         this.mapStartExtent = Mapbender.mapEngine.boundsFromArray(startExtentArray);
     }
 
@@ -717,6 +723,20 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
             return zoom;
+        },
+        displayPois: function(poiOptions) {
+            if (!poiOptions.length) {
+                return;
+            }
+            var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            layer.setBuiltinMarkerStyle('poiIcon');
+            for (var i = 0; i < poiOptions.length; ++i) {
+                this.displayPoi(layer, poiOptions[i]);
+            }
+        },
+        displayPoi: function(layer, poi) {
+            console.log("Displaying poi", poi);
+            layer.addMarker(poi.x, poi.y);
         },
         _comma_dangle_dummy: null
     });

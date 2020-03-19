@@ -134,7 +134,7 @@ window.Mapbender.MapEngineOl4 = (function() {
          * @param {(String|Proj4js.Proj)} toProj
          * @return {Object}
          */
-        tranformCoordinate: function(coordinate, fromProj, toProj) {
+        transformCoordinate: function(coordinate, fromProj, toProj) {
             var from_ = this._getProj(fromProj);
             var to_ = this._getProj(toProj);
             return proj4.transform(from_, to_, coordinate);

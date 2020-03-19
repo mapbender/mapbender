@@ -11,7 +11,7 @@ window.Mapbender.MapModelOl2 = function(mbMap) {
     this._wktReader = new OpenLayers.Format.WKT();
     this._initMap(mbMap);
     window.Mapbender.vectorLayerPool = window.Mapbender.VectorLayerPool.factory(Mapbender.mapEngine, this.olMap);
-    this.initializePois((mbMap.options.extra || {}).pois || []);
+    this.displayPois(this._poiOptions);
 };
 Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
 Object.assign(Mapbender.MapModelOl2.prototype, {
@@ -197,17 +197,14 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
     setView: function(addLayers) {
         var mapOptions = this.mbMap.options;
-        var pois = mapOptions.extra && mapOptions.extra.pois;
         var lonlat;
 
         if (mapOptions.center) {
             lonlat = new OpenLayers.LonLat(mapOptions.center);
             this.map.olMap.setCenter(lonlat);
-        } else if (pois && pois.length === 1) {
-            var singlePoi = pois[0];
-            lonlat = new OpenLayers.LonLat(singlePoi.x, singlePoi.y);
-            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this.getProj(this._startProj));
-            this.map.olMap.setCenter(lonlat);
+        } else if (this._poiOptions && this._poiOptions.length === 1) {
+            var singlePoi = this._poiOptions[0];
+            this.centerXy(singlePoi.x, singlePoi.y);
         } else {
             this.setExtent(this.mapStartExtent);
         }
@@ -215,36 +212,22 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this.initializeSourceLayers();
         }
     },
-    initializePois: function(poiOptionsList) {
-        var self = this;
-        if (!poiOptionsList.length) {
-            return;
+    displayPoi: function(layer, poi) {
+        var olMap = this.olMap;
+        Mapbender.MapModelBase.prototype.displayPoi.call(this, layer, poi);
+        if (poi.label) {
+            olMap.addPopup(new OpenLayers.Popup.FramedCloud(null,
+                new OpenLayers.LonLat(poi.x, poi.y),
+                null,
+                poi.label,
+                null,
+                true,
+                function() {
+                    olMap.removePopup(this);
+                    this.destroy();
+                }
+            ));
         }
-        var pois = poiOptionsList.map(function(poi) {
-            return {
-                position: Mapbender.mapEngine.tranformCoordinate({x: poi.x, y: poi.y}, poi.srs || self._startProj, self._startProj),
-                label: poi.label
-            };
-        });
-        var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-        layer.setBuiltinMarkerStyle('poiIcon');
-
-        $.each(pois, function(idx, poi) {
-            layer.addMarker(poi.position.x, poi.position.y);
-
-            if (poi.label) {
-                self.map.olMap.addPopup(new OpenLayers.Popup.FramedCloud('chicken',
-                    new OpenLayers.LonLat(poi.position.x, poi.position.y),
-                    null,
-                    poi.label,
-                    null,
-                    true,
-                    function() {
-                        self.mbMap.removePopup(this);
-                        this.destroy();
-                    }));
-            }
-        });
     },
     getCurrentProjectionCode: function() {
         if (this.olMap) {
