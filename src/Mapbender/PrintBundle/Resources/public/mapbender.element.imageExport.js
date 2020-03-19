@@ -66,7 +66,13 @@
             return null;
         },
         _getExportExtent: function() {
-            return this.map.map.olMap.getExtent();
+            var lbrt = this.map.model.getCurrentExtentArray();
+            return {
+                left: lbrt[0],
+                bottom: lbrt[1],
+                right: lbrt[2],
+                top: lbrt[3]
+            };
         },
         _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
