@@ -48,8 +48,10 @@
                 this.popup.close();
                 this.popup = null;
             }
-
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         /**
          * @returns {Array<Object>} sourceTreeish configuration objects

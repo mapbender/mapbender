@@ -35,7 +35,10 @@
                 }
                 this.popup = null;
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         /**
          * opens a dialog

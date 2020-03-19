@@ -93,7 +93,10 @@
                 }
                 this.popup = null;
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         open: function(callback){
             this.callback = callback ? callback : null;
