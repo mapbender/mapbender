@@ -584,8 +584,9 @@ Mapbender.Util.addProxy = function(url) {
 };
 
 Mapbender.Util.removeProxy = function(url) {
-    if (url.indexOf(OpenLayers.ProxyHost) === 0) {
-        return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
+    var proxyBase = Mapbender.configuration.application.urls.proxy + '?url=';
+    if (url.indexOf(proxyBase) === 0) {
+        return decodeURIComponent(url.substring(proxyBase.length));
     }
     return url;
 };
