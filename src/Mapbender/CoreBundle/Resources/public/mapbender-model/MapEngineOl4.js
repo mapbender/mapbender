@@ -126,6 +126,19 @@ window.Mapbender.MapEngineOl4 = (function() {
             });
             return bounds;
         },
+        /**
+         * @param {Object} coordinate
+         * @property {Number} coordinate.x
+         * @property {Number} coordinate.y
+         * @param {(String|Proj4js.Proj)} fromProj
+         * @param {(String|Proj4js.Proj)} toProj
+         * @return {Object}
+         */
+        tranformCoordinate: function(coordinate, fromProj, toProj) {
+            var from_ = this._getProj(fromProj);
+            var to_ = this._getProj(toProj);
+            return proj4.transform(from_, to_, coordinate);
+        },
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
             var to = this._getProj(toProj, true);

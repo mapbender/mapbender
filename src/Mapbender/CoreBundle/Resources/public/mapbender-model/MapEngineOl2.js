@@ -121,6 +121,19 @@ window.Mapbender.MapEngineOl2 = (function() {
         boundsFromArray: function(values) {
             return OpenLayers.Bounds.fromArray(values);
         },
+        /**
+         * @param {Object} coordinate
+         * @property {Number} coordinate.x
+         * @property {Number} coordinate.y
+         * @param {(String|Proj4js.Proj)} fromProj
+         * @param {(String|Proj4js.Proj)} toProj
+         * @return {Object}
+         */
+        tranformCoordinate: function(coordinate, fromProj, toProj) {
+            var from_ = this._getProj(fromProj).proj;
+            var to_ = this._getProj(toProj).proj;
+            return Proj4js.transform(from_, to_, coordinate);
+        },
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
             var to = this._getProj(toProj, true);
