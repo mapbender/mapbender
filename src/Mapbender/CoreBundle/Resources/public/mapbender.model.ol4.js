@@ -331,10 +331,6 @@ createVectorLayer: function() {
     });
 },
 destroyVectorLayer: function(olLayer) {
-    var olMap = this.olMap;
-    _.each(olLayer.interactions, function(interaction) {
-        olMap.removeInteraction(interaction);
-    });
     this.olMap.removeLayer(olLayer);
 },
 
