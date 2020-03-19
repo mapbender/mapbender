@@ -37,7 +37,8 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
                     var poiOptions = $['mapbender']['mbMap'].prototype.options.poiIcon;
                     var iconUrl = Mapbender.configuration.application.urls.asset + poiOptions.image;
                     this.markerStyle_ = {
-                        fillOpacity: 1.0,
+                        fillOpacity: 0.0,
+                        graphicOpacity: 1.0,
                         externalGraphic: iconUrl,
                         graphicWidth: poiOptions.width,
                         graphicHeight: poiOptions.height,

@@ -11,6 +11,7 @@ window.Mapbender.MapModelOl2 = function(mbMap) {
     this._wktReader = new OpenLayers.Format.WKT();
     this._initMap(mbMap);
     window.Mapbender.vectorLayerPool = window.Mapbender.VectorLayerPool.factory(Mapbender.mapEngine, this.olMap);
+    this.initializePois((mbMap.options.extra || {}).pois || []);
 };
 Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
 Object.assign(Mapbender.MapModelOl2.prototype, {
@@ -213,49 +214,27 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (addLayers) {
             this.initializeSourceLayers();
         }
-        this.initializePois(pois || []);
     },
     initializePois: function(poiOptionsList) {
         var self = this;
         if (!poiOptionsList.length) {
             return;
         }
-        var mapProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
         var pois = poiOptionsList.map(function(poi) {
-            var coord = new OpenLayers.LonLat(poi.x, poi.y);
-            if (poi.srs) {
-                coord = coord.transform(self.getProj(poi.srs), mapProj);
-            }
             return {
-                position: coord,
+                position: Mapbender.mapEngine.tranformCoordinate({x: poi.x, y: poi.y}, poi.srs || self._startProj, self._startProj),
                 label: poi.label
             };
         });
-
-        var poiMarkerLayer = new OpenLayers.Layer.Markers();
-        var poiIcon = new OpenLayers.Icon(
-            Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
-            {
-                w: this.mbMap.options.poiIcon.width,
-                h: this.mbMap.options.poiIcon.height
-            },
-            {
-                x: this.mbMap.options.poiIcon.xoffset,
-                y: this.mbMap.options.poiIcon.yoffset
-            }
-        );
-
-        this.map.olMap.addLayer(poiMarkerLayer);
+        var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+        layer.setBuiltinMarkerStyle('poiIcon');
 
         $.each(pois, function(idx, poi) {
-            // Marker
-            poiMarkerLayer.addMarker(new OpenLayers.Marker(
-                poi.position,
-                poiIcon.clone()));
+            layer.addMarker(poi.position.x, poi.position.y);
 
             if (poi.label) {
                 self.map.olMap.addPopup(new OpenLayers.Popup.FramedCloud('chicken',
-                    poi.position,
+                    new OpenLayers.LonLat(poi.position.x, poi.position.y),
                     null,
                     poi.label,
                     null,
