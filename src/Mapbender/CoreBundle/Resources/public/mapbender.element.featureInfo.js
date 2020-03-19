@@ -65,8 +65,7 @@
             this.isActive = true;
         },
         deactivate: function() {
-            var widget = this;
-            widget._trigger('featureinfo', null, {
+            this._trigger('featureinfo', null, {
                 action: "deactivate",
                 title: this.element.attr('title'),
                 id: this.element.attr('id')
@@ -75,15 +74,17 @@
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
 
-            if (widget.popup) {
-                if (widget.popup.$element) {
+            if (this.popup) {
+                if (this.popup.$element) {
                     $('body').append(this.element.addClass('hidden'));
-                    widget.popup.destroy();
+                    this.popup.destroy();
                 }
-                widget.popup = null;
+                this.popup = null;
             }
-
-            widget.callback ? widget.callback.call() : widget.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         /**
          * Trigger the Feature Info call for each layer.

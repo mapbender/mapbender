@@ -118,7 +118,10 @@
                     self.layers[type].removeAllFeatures();
                 });
                 this._close();
-                this.callback ? this.callback.call() : this.callback = null;
+                if (this.callback) {
+                    (this.callback)();
+                    this.callback = null;
+                }
 
                 this.activated = false;
             }

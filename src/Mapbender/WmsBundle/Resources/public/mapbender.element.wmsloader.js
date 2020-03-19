@@ -116,7 +116,10 @@
                     this.popup.destroy();
                 this.popup = null;
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         loadDeclarativeWms: function(elm){
             var layerNamesToActivate = typeof(elm.attr('mb-wms-layers')) !== 'undefined' && elm.attr('mb-wms-layers').split(',');
