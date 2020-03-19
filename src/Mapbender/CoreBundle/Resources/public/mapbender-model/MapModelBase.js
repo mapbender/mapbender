@@ -735,6 +735,38 @@ window.Mapbender.MapModelBase = (function() {
         getCurrentViewportSize: function() {
             return Mapbender.mapEngine.getCurrentViewportSize(this.olMap);
         },
+        /**
+         * Returns individual print / export instructions for each active layer in the source individually.
+         * This allows image export / print to respect min / max scale hints on a per-layer basis and print
+         * layers at varying resolutions.
+         * The multitude of layers will be squashed on the PHP side while considering the actual print
+         * resolution (which is not known here), to minimize the total amount of requests.
+         *
+         * @param sourceOrLayer
+         * @param scale
+         * @param extent
+         * @return {Array<Model~SingleLayerPrintConfig>}
+         */
+        getPrintConfigEx: function(sourceOrLayer, scale, extent) {
+            var source = this.getMbConfig(sourceOrLayer, true, true);
+            var extent_ = extent || this.getMapExtent();
+            var dataOut = [];
+            var commonLayerData = {
+                type: source.configuration.type,
+                sourceId: source.id,
+                opacity: source.configuration.options.opacity
+            };
+            if (typeof source.getMultiLayerPrintConfig === 'function') {
+                var srsName = this.getCurrentProjectionCode();
+                var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, srsName);
+                mlPrintConfigs.map(function(pc) {
+                    dataOut.push($.extend({}, commonLayerData, pc));
+                });
+            } else {
+                console.warn("Unprintable source", sourceOrLayer);
+            }
+            return dataOut;
+        },
         displayPois: function(poiOptions) {
             if (!poiOptions.length) {
                 return;
