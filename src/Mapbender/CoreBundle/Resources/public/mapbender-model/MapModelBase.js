@@ -735,7 +735,6 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         displayPoi: function(layer, poi) {
-            console.log("Displaying poi", poi);
             layer.addMarker(poi.x, poi.y);
         },
         _comma_dangle_dummy: null
