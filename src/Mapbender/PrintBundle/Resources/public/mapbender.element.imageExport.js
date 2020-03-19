@@ -81,14 +81,7 @@
 
             for (var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
-                var olLayer = this.map.model.getNativeLayer(sourceDef);
-                var extra = {
-                    opacity: sourceDef.configuration.options.opacity,
-                    changeAxis: this._changeAxis(olLayer)
-                };
-                _.forEach(this.map.model.getPrintConfigEx(sourceDef, scale, extent), function(printConfig) {
-                    dataOut.push($.extend({}, printConfig, extra));
-                });
+                dataOut.push.apply(dataOut, this.map.model.getPrintConfigEx(sourceDef, scale, extent));
             }
             return dataOut;
         },
@@ -353,25 +346,6 @@
                 return urlOut;
             }
         },
-        /**
-         * Check BBOX format inversion
-         *
-         * @param {OpenLayers.Layer.HTTPRequest} layer
-         * @returns {boolean}
-         * @private
-         */
-        _changeAxis: function(layer) {
-            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
-
-            if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
         _noDanglingCommaDummy: null
     });
 
