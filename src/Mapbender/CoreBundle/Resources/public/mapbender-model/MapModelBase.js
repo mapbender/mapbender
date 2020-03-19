@@ -14,6 +14,11 @@ window.Mapbender.MapModelBase = (function() {
      * @property {*} event
      */
     /**
+     * @typedef {Object} mmDimension
+     * @property {Number} width
+     * @propery {Number} height
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -723,6 +728,12 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
             return zoom;
+        },
+        /**
+         * @return {mmDimension}
+         */
+        getCurrentViewportSize: function() {
+            return Mapbender.mapEngine.getCurrentViewportSize(this.olMap);
         },
         displayPois: function(poiOptions) {
             if (!poiOptions.length) {

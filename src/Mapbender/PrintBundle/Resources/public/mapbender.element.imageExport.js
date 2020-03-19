@@ -96,13 +96,13 @@
         },
         _collectJobData: function() {
             var mapExtent = this._getExportExtent();
-            var imageSize = this.map.map.olMap.getCurrentSize();
+            var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
             var geometryLayers = this._collectGeometryAndMarkerLayers();
             return {
                 layers: rasterLayers.concat(geometryLayers),
-                width: imageSize.w,
-                height: imageSize.h,
+                width: imageSize.width,
+                height: imageSize.height,
                 center: {
                     x: mapExtent.getCenterLonLat().lon,
                     y: mapExtent.getCenterLonLat().lat
