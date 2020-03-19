@@ -49,11 +49,7 @@
                 this.popup = null;
             }
 
-            if ( this.callback ) {
-                this.callback.call();
-            } else {
-                this.callback = null;
-            }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          * @returns {Array<Object>} sourceTreeish configuration objects
