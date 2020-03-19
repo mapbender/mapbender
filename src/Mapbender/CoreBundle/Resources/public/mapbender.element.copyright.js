@@ -52,7 +52,10 @@
             if(this.popup){
                 this.popup.close();
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         _destroy: $.noop
     });

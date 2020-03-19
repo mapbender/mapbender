@@ -144,7 +144,10 @@
                 this.popup.destroy();
             }
             this.popup = null;
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         _mapSrsChanged: function(event, srs){
             if (this.control) {

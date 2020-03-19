@@ -79,7 +79,10 @@
             if (this.options.deactivate_on_close) {
                 this._removeAllFeatures();
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
         },
         // sidepane interaction, safe to use activate / deactivate unchanged
         reveal: function() {
