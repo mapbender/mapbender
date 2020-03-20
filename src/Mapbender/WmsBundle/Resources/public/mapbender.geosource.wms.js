@@ -178,17 +178,17 @@ window.Mapbender.WmsSource = (function() {
                 {x: x, y: y},
                 olLayer.params.FORMAT
             );
-            reqObj.params = $.extend({}, this.customParams, reqObj.params);
-            reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
-            reqObj.params['STYLES'] = [];
-            reqObj.params['EXCEPTIONS'] = this.configuration.options.exception_format;
-            reqObj.params['INFO_FORMAT'] = this.configuration.options.info_format || 'text/html';
-            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
-            return reqUrl;
+            var params = $.extend({}, this.customParams, reqObj.params, {
+                QUERY_LAYERS: queryLayers.join(','),
+                STYLES: (Array(queryLayers.length)).join(','),
+                EXCEPTIONS: this.configuration.options.exception_format,
+                INFO_FORMAT: this.configuration.options.info_format || 'text/html'
+            });
+            params.LAYERS = params.QUERY_LAYERS;
+            return Mapbender.Util.replaceUrlParams(reqObj.url, params, true);
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var baseUrl = this.getPrintConfigLegacy(bounds).url;
-            var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
             var units = projection.proj.units || 'degrees';
@@ -197,11 +197,11 @@ window.Mapbender.WmsSource = (function() {
             };
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
-                    var layerParams = $.extend(OpenLayers.Util.upperCaseObject(baseParams), {
+                    var replaceParams = {
                         LAYERS: item.layer.options.name,
                         STYLES: item.layer.options.style || ''
-                    });
-                    var layerUrl = [baseUrl.split('?')[0], OpenLayers.Util.getParameterString(layerParams)].join('?');
+                    };
+                    var layerUrl = Mapbender.Util.replaceUrlParams(baseUrl, replaceParams, false);
                     dataOut.push({
                         url: layerUrl,
                         minResolution: resFromScale(item.layer.options.minScale),

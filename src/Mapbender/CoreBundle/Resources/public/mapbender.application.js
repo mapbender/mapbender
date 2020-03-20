@@ -542,6 +542,106 @@ Mapbender.Util.Url = function(urlString){
     };
 };
 
+/**
+ * @param {String} x
+ * @return {String}
+ */
+Mapbender.Util.escapeRegex = function(x) {
+    // See https://stackoverflow.com/a/6969486
+    return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+/**
+ * Strips named url params from given url.
+ * Only supports scalar ASCII param names.
+ *
+ * @param {String} url
+ * @param {Array<String>} names
+ * @param {boolean} [caseSensitive] default true
+ * @return {String}
+ */
+Mapbender.Util.removeUrlParams = function(url, names, caseSensitive) {
+    var ci_ = !caseSensitive && (typeof caseSensitive !== 'undefined');
+    var qmAt = url.indexOf('?');
+    if (qmAt === -1 || !names.length) {
+        // nothing to do
+        return url;
+    }
+    var hashAt = url.indexOf('#');
+    if (hashAt !== -1) {
+        return Mapbender.Util.removeUrlParams(url.substring(0, hashAt), names, caseSensitive) + url.substring(hashAt);
+    }
+    var base = url.substring(0, qmAt + 1);
+    var queryPart = url.substring(qmAt + 1);
+    var flags = (ci_ && 'gi') || 'g';
+    for (var i = 0; i < names.length; ++i) {
+        var name = names[i];
+        if (decodeURIComponent(name) !== encodeURIComponent(name)) {
+            console.warn("Fixme: Url parameter name contains url-encodable characters, results will be undefined", name, url);
+        }
+    }
+    var patternParts = [
+        '(&+|^)',
+        '(', names.map(Mapbender.Util.escapeRegex).join('|'), ')',
+        '([=][^&]+)?'
+    ];
+    var rx = new RegExp(patternParts.join(''), flags);
+    var strippedQueryPart = queryPart.replace(rx, '').replace(/^&+/, '').replace(/&+$/, '');
+    return [base, strippedQueryPart].join('');
+};
+
+/**
+ * Appends params to query string of given URL.
+ *
+ * @param {String} url
+ * @param {Object} params
+ * @return {String}
+ */
+Mapbender.Util.addUrlParams = function(url, params) {
+    var hashAt = url.indexOf('#');
+    if (hashAt !== -1) {
+        return Mapbender.Util.addUrlParams(url.substring(0, hashAt), params) + url.substring(hashAt);
+    }
+    var newParams = jQuery.param(params, false);
+    var separator;
+    if (!(/\?/).test(url)) {
+        separator = '?';
+    } else if ((/[?&]$/).test(url)) {
+        separator = '';
+    } else {
+        separator = '&';
+    }
+    return [url, newParams].join(separator).replace(/&*$/, '');
+};
+
+/**
+ * Appends params to query string of given URL.
+ *
+ * @param {String} url
+ * @param {Object} params
+ * @param {boolean} [caseSensitive] default true
+ * @return {String}
+ */
+Mapbender.Util.replaceUrlParams = function(url, params, caseSensitive) {
+    var hashAt = url.indexOf('#');
+    if (hashAt !== -1) {
+        return Mapbender.Util.replaceUrlParams(url.substring(0, hashAt), params, caseSensitive) + url.substring(hashAt);
+    }
+    var names = Object.keys(params);
+    var stripped = Mapbender.Util.removeUrlParams(url, names, caseSensitive);
+    var filteredParams = {};
+    for (var i = 0; i < names.length; ++i) {
+        var name = names[i];
+        var value = params[name];
+        // legacy fun time: allow pure removal by 'replacing' param with null.
+        // This emulates behavior of OpenLayers.Util.getParameterString where null values are silently dropped
+        if (value !== null) {
+            filteredParams[name] = value;
+        }
+    }
+    return Mapbender.Util.addUrlParams(stripped, filteredParams);
+};
+
 Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
 };
