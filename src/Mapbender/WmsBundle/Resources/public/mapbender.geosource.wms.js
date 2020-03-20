@@ -185,7 +185,7 @@ window.Mapbender.WmsSource = (function() {
                 INFO_FORMAT: this.configuration.options.info_format || 'text/html'
             });
             params.LAYERS = params.QUERY_LAYERS;
-            return Mapbender.Util.replaceUrlParams(reqObj.url, params, true);
+            return Mapbender.Util.replaceUrlParams(reqObj.url, params, false);
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var baseUrl = this.getPrintConfigLegacy(bounds).url;
