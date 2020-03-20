@@ -188,7 +188,6 @@ window.Mapbender.WmsSource = (function() {
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var baseUrl = this.getPrintConfigLegacy(bounds).url;
-            var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
             var units = projection.proj.units || 'degrees';
@@ -197,11 +196,11 @@ window.Mapbender.WmsSource = (function() {
             };
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
-                    var layerParams = $.extend(OpenLayers.Util.upperCaseObject(baseParams), {
+                    var replaceParams = {
                         LAYERS: item.layer.options.name,
                         STYLES: item.layer.options.style || ''
-                    });
-                    var layerUrl = [baseUrl.split('?')[0], OpenLayers.Util.getParameterString(layerParams)].join('?');
+                    };
+                    var layerUrl = Mapbender.Util.replaceUrlParams(baseUrl, replaceParams, false);
                     dataOut.push({
                         url: layerUrl,
                         minResolution: resFromScale(item.layer.options.minScale),
