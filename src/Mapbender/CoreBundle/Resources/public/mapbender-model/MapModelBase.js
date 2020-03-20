@@ -314,9 +314,7 @@ window.Mapbender.MapModelBase = (function() {
             return [x.left, x.bottom, x.right, x.top];
         },
         getPointFeatureInfoUrl: function(source, x, y, maxCount) {
-            var styles = [];
             var layerNames = source.getFeatureInfoLayers().map(function(layer) {
-                styles.push('');
                 return layer.options.name;
             });
             var engine = Mapbender.mapEngine;
@@ -325,13 +323,13 @@ window.Mapbender.MapModelBase = (function() {
                 return false;
             }
             var params = $.extend({}, source.customParams || {}, {
-                LAYERS: layerNames,
-                QUERY_LAYERS: layerNames,
-                STYLES: styles,
+                QUERY_LAYERS: layerNames.join(','),
+                STYLES: (Array(layerNames.length)).join(','),
                 INFO_FORMAT: source.configuration.options.info_format || 'text/html',
                 EXCEPTIONS: source.configuration.options.exception_format,
                 FEATURE_COUNT: maxCount || 100
             });
+            params.LAYERS = params.QUERY_LAYERS;
             return engine.getPointFeatureInfoUrl(this.olMap, source, x, y, params);
         },
         /**

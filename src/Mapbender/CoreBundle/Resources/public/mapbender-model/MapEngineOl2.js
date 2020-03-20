@@ -193,8 +193,7 @@ window.Mapbender.MapEngineOl2 = (function() {
                 source.configuration.options.format
             );
             var params_ = $.extend({}, reqObj.params, params);
-            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(params_));
-            return reqUrl;
+            return Mapbender.Util.replaceUrlParams(reqObj.url, params_, false);
         },
         getLayerArray: function(olMap) {
             return olMap.layers;
