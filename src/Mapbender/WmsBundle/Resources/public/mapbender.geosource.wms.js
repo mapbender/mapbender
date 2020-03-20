@@ -178,13 +178,14 @@ window.Mapbender.WmsSource = (function() {
                 {x: x, y: y},
                 olLayer.params.FORMAT
             );
-            reqObj.params = $.extend({}, this.customParams, reqObj.params);
-            reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
-            reqObj.params['STYLES'] = [];
-            reqObj.params['EXCEPTIONS'] = this.configuration.options.exception_format;
-            reqObj.params['INFO_FORMAT'] = this.configuration.options.info_format || 'text/html';
-            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
-            return reqUrl;
+            var params = $.extend({}, this.customParams, reqObj.params, {
+                QUERY_LAYERS: queryLayers.join(','),
+                STYLES: (Array(queryLayers.length)).join(','),
+                EXCEPTIONS: this.configuration.options.exception_format,
+                INFO_FORMAT: this.configuration.options.info_format || 'text/html'
+            });
+            params.LAYERS = params.QUERY_LAYERS;
+            return Mapbender.Util.replaceUrlParams(reqObj.url, params, true);
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var baseUrl = this.getPrintConfigLegacy(bounds).url;
