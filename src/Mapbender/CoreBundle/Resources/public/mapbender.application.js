@@ -542,31 +542,6 @@ Mapbender.Util.Url = function(urlString){
     };
 };
 
-Mapbender.Util.getUrlParameters = function(url) {
-    var params = {};
-
-    if (url.indexOf('?') === -1) {
-        return params;
-    }
-
-    var search = decodeURIComponent(url.slice(url.indexOf('?') + 1));
-    var definitions = search.split('&');
-
-    definitions.forEach( function(val, key) {
-        var parts = val.split( '=', 2 );
-
-        var paramKey   = parts[0];
-        var paramValue = parts[1];
-        if (paramValue.indexOf(',') !== -1) {
-            paramValue = paramValue.split(',');
-        }
-
-        params[paramKey] = paramValue;
-    });
-
-    return params;
-};
-
 Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
 };
