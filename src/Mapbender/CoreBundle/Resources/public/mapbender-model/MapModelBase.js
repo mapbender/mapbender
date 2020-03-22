@@ -78,21 +78,22 @@ window.Mapbender.MapModelBase = (function() {
          * BC convenience getter. Commonly used only to determine number of decimals for rounding
          * coordinates for display.
          *
-         * @param {String} srsName
+         * @param {String} [srsName] defaults to current projection
          * @return {number}
          * engine-agnostic
          */
         getProjectionUnitsPerMeter: function(srsName) {
-            return Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName);
+            return Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName || this.getCurrentProjectionCode());
         },
         /**
          * @param {int} scale
          * @param {number} [dpi]
+         * @param {String} [srsName] defaults to current projection
          * @return {number}
          * engine-agnostic
          */
-        scaleToResolution: function (scale, dpi) {
-            var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+        scaleToResolution: function (scale, dpi, srsName) {
+            var upm = this.getProjectionUnitsPerMeter(srsName);
             var inchesPerMetre = 39.37;
             return (scale * upm) / (inchesPerMetre * (dpi || this.options.dpi || 72));
         },
@@ -100,11 +101,12 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {number} resolution
          * @param {number} [dpi=72]
+         * @param {String} [srsName] defaults to current projection
          * @returns {number}
          * engine-agnostic
          */
-        resolutionToScale: function(resolution, dpi) {
-            var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+        resolutionToScale: function(resolution, dpi, srsName) {
+            var upm = this.getProjectionUnitsPerMeter(srsName);
             var inchesPerMetre = 39.37;
             return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
         },
