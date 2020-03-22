@@ -583,7 +583,7 @@ Mapbender.Util.removeUrlParams = function(url, names, caseSensitive) {
     var patternParts = [
         '(&+|^)',
         '(', names.map(Mapbender.Util.escapeRegex).join('|'), ')',
-        '([=][^&]+)?'
+        '([=][^&]*)?'
     ];
     var rx = new RegExp(patternParts.join(''), flags);
     var strippedQueryPart = queryPart.replace(rx, '').replace(/^&+/, '').replace(/&+$/, '');
