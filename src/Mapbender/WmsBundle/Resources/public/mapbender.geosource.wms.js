@@ -159,6 +159,12 @@ window.Mapbender.WmsSource = (function() {
         },
         getMultiLayerPrintConfig: function(bounds, scale, srsName) {
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName);
+            var extraParams = {
+                SERVICE: 'WMS',
+                REQUEST: 'GetMap',
+                VERSION: this.configuration.options.version,
+                FORMAT: this.configuration.options.format || 'image/png'
+            };
             baseUrl = Mapbender.Util.removeProxy(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(this, scale, bounds);
@@ -168,10 +174,10 @@ window.Mapbender.WmsSource = (function() {
             var changeAxis = this._isBboxFlipped(srsName);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
-                    var replaceParams = {
+                    var replaceParams = Object.assign({}, extraParams, {
                         LAYERS: item.layer.options.name,
                         STYLES: item.layer.options.style || ''
-                    };
+                    });
                     var layerUrl = Mapbender.Util.replaceUrlParams(baseUrl, replaceParams, false);
                     dataOut.push({
                         url: layerUrl,

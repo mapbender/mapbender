@@ -171,10 +171,10 @@ window.Mapbender.MapEngineOl4 = (function() {
         },
         /**
          * @param {(ol.layer.Tile|ol.layer.Image)} olLayer
-         * @param {*} bounds
+         * @param {String} srsName
          * @return {String}
          */
-        getWmsBaseUrl: function(olLayer, bounds, srsName) {
+        getWmsBaseUrl: function(olLayer, srsName) {
             var source = olLayer.getSource();
             if (typeof source.tileUrlFunction === 'function') {
                 /** @var {ol.source.TileWMS} source */
