@@ -89,7 +89,17 @@
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryAndMarkerLayers();
+            var geometryLayers;
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    geometryLayers = this._collectGeometryAndMarkerLayers();
+                    break;
+                case 'ol4':
+                    geometryLayers = this._collectGeometryLayers4();
+                    break;
+                default:
+                    throw new Error("Unsupported map engine " + Mapbender.mapEngine.code);
+            }
             return {
                 layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.width,
@@ -240,45 +250,40 @@
             };
         },
         _collectGeometryLayers4: function() {
-            var printStyleOptions = this.model.getVectorLayerPrintStyleOptions();
-
-            var vectorLayers = [];
-            var allFeatures = this.model.getVectorLayerFeatures();
-            for (var owner in allFeatures) {
-                for (var uuid in allFeatures[owner]) {
-                    var features = allFeatures[owner][uuid];
-                    if (!features) {
-                        continue;
-                    }
-                    var geometries = [];
-                    for (var idx = 0; idx < features.length; idx++) {
-                        var geometry = this._geometryToGeoJson(features[ idx ].getGeometry());
-                        if (geometry) {
-                            var styleOptions = {};
-                            if (printStyleOptions.hasOwnProperty(owner) && printStyleOptions[owner].hasOwnProperty(uuid)) {
-                                styleOptions = printStyleOptions[owner][uuid];
-                            }
-
-                            geometry.style = styleOptions;
-                            geometries.push(geometry);
-                        }
-                    }
-
-                    var layerOpacity = 1;
-                    if (this.model.vectorLayer.hasOwnProperty(owner)
-                        && this.model.vectorLayer[owner].hasOwnProperty(uuid )
-                    ) {
-                        layerOpacity = this.model.vectorLayer[owner][uuid].getOpacity()
-                    }
-
-                    vectorLayers.push({
-                        "type": "GeoJSON+Style",
-                        "opacity": layerOpacity,
-                        "geometries": geometries
-                    });
+            var printStyleOptions = {} || this.model.getVectorLayerPrintStyleOptions();
+            var layersFlat = [];
+            this.map.model.olMap.getLayers().getArray().forEach(function (olLayer) {
+                olLayer.getLayersArray(layersFlat);
+            });
+            var vectorLayers = layersFlat.filter(function (olLayer) {
+                return olLayer instanceof ol.layer.Vector;
+            });
+            var dataOut = [];
+            for (var li = 0; li < vectorLayers.length; ++li) {
+                var layer = vectorLayers[li];
+                var features = layer.getSource().getFeatures();
+                var layerFeatureData = [];
+                for (var fi = 0; fi < features.length; ++fi) {
+                    var feature = features[fi];
+                    // @todo: no private access
+                    var formattedFeature = Mapbender.Model._geojsonFormat.writeFeatureObject(feature).geometry;
+                    // @todo: extract style
+                    formattedFeature.style = {
+                        fillColor: '#ff00ff',
+                        fillOpacity: 1.0,
+                        strokeColor: '#00ff00',
+                        pointRadius: 27
+                    };
+                    formattedFeature.style = this.map.model.extractSvgFeatureStyle(layer, feature);
+                    layerFeatureData.push(formattedFeature);
                 }
+                dataOut.push({
+                    "type": "GeoJSON+Style",
+                    "opacity": layer.getOpacity(),
+                    "geometries": layerFeatureData
+                });
             }
-            return vectorLayers;
+            return dataOut;
         },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed

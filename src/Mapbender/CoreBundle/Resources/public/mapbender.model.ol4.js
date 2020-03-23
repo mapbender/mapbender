@@ -819,30 +819,50 @@ getGeomFromFeature: function(feature) {
     return feature.getGeometry();
 },
 
-/**
- * Returns the features of the vectorLayers hashed by owner and uuid.
- * @returns {object.<string>.<string>.<Array.<ol.Feature>>}
- */
-getVectorLayerFeatures: function() {
-    var features = {};
-    for (var owner in this.vectorLayer) {
-        for (var uuid in this.vectorLayer[owner]) {
-            var vectorLayer = this.vectorLayer[owner][uuid];
-            if (!vectorLayer instanceof ol.layer.Vector) {
-                continue;
+        extractSvgFeatureStyle: function(olLayer, feature, resolution) {
+            // @todo: monolithic; split
+            var styleOptions = {};
+            var layerStyleFn = olLayer.getStyleFunction();
+            /** @var {ol.style.Style} olStyle */
+            var olStyle = layerStyleFn(feature, resolution)[0];
+
+            var fill = olStyle.getFill();
+            var stroke = olStyle.getStroke();
+            var image = olStyle.getImage();
+            var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(fill.getColor());
+            styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
+            styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
+
+            var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(stroke.getColor());
+            styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
+            styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
+            styleOptions['strokeWidth'] = stroke.getWidth();
+
+            styleOptions['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
+            if (image && (image instanceof ol.style.RegularShape)) {
+                styleOptions['pointRadius'] = image.getRadius() || 6;
             }
 
-            if (!features[owner]) {
-                features[owner] = {};
+            /** @var {(ol.style.Text|null)} text */
+            var text = olStyle.getText();
+            var label = text && text.getLabel();
+            if (label) {
+                styleOptions['label'] = label;
+                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(text.getFill().getColor());
+                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
+                styleOptions['fontOpacity'] = colorAndOpacityObjectFontColor.opacity;
+                var textStroke = text.getStroke();
+                var colorAndOpacityObjectFontStroke = this.getHexNormalColorAndOpacityObject(text.getFill().getColor());
+                styleOptions['labelOutlineColor'] = colorAndOpacityObjectFontStroke.color;
+                styleOptions['labelOutlineOpacity'] = colorAndOpacityObjectFontStroke.opacity;
+                styleOptions['labelOutlineWidth'] = textStroke.getWidth();
+
+                // @todo: properly interpret label alignment. See https://openlayers.org/en/v4.6.5/examples/vector-labels.html
+                styleOptions['labelAlign'] = 'cm';
             }
 
-            features[owner][uuid] = vectorLayer.getSource().getFeatures();
-        }
-    }
-
-    return features;
-},
-
+            return styleOptions;
+        },
 /**
  * Returns the print style options of the vectorLayers hashed by owner and uuid.
  * @returns {Object.<string>.<string>.<object>}
