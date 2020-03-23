@@ -161,11 +161,9 @@ window.Mapbender.WmsSource = (function() {
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName);
             baseUrl = Mapbender.Util.removeProxy(baseUrl);
             var dataOut = [];
-            var leafInfoMap = this.getExtendedLeafInfo(this, scale, bounds);
-            var engine = Mapbender.mapEngine;
-            var units = engine.getProjectionUnits(srsName);
+            var leafInfoMap = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(this, scale, bounds);
             var resFromScale = function(scale) {
-                return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
+                return (scale && Mapbender.Model.scaleToResolution(scale, undefined, srsName)) || null;
             };
             var changeAxis = this._isBboxFlipped(srsName);
             _.forEach(leafInfoMap, function(item) {
