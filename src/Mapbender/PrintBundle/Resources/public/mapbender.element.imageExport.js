@@ -250,7 +250,6 @@
             };
         },
         _collectGeometryLayers4: function() {
-            var printStyleOptions = {} || this.model.getVectorLayerPrintStyleOptions();
             var layersFlat = [];
             this.map.model.olMap.getLayers().getArray().forEach(function (olLayer) {
                 olLayer.getLayersArray(layersFlat);

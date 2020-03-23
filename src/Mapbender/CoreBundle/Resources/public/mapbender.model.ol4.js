@@ -819,6 +819,47 @@ getGeomFromFeature: function(feature) {
     return feature.getGeometry();
 },
 
+        /**
+         * Extract RGB color from CSS / SVG color rule value and normalize to six-digit hex string (with leading '#')
+         * @param {String} rule possible forms: 'rgba(<int>,<int>,<int>,float)', 'rgb(<int>,<int>,<int>)', '#123', '#102030'
+         * @return {String}
+         * @private
+         */
+        _normalizeCssRgb: function(rule) {
+            if (/^#[a-z0-9]{3,6}$/i.test(rule)) {
+                if (rule.length === 4) {
+                    // short form, e.g. '#9cf', expand to six digits
+                    return ['#', rule[1], rule[1], rule[2], rule[2], rule[3], rule[3]].join('');
+                }
+                return rule;
+            }
+            var matches = (rule || '').match(/^rgba\((\d+),(\d+),(\d+),.*\)$/);
+            if (!matches) {
+                matches = (rule || '').match(/^rgb\((\d+),(\d+),(\d+)\)$/);
+            }
+            if (matches) {
+                var components = [matches[1], matches[2], matches[3]].map(function(component) {
+                    // expand to two-digit hex by prepending a zero, then slicing
+                    return ['0', parseInt(component).toString(16)].join('').slice(-2);
+                });
+                return ['#', components.join('')].join('');
+            }
+            throw new Error("Unrecognized color input format " + rule);
+        },
+        /**
+         * Extract opacity from CSS / SVG color rule value and normalize to float
+         * @param {String} rule possible forms: 'rgba(<int>,<int>,<int>,float)', 'rgb(<int>,<int>,<int>)', '#123', '#102030'
+         * @return {Number}
+         * @private
+         */
+        _normalizeCssAlpha: function(rule) {
+            var matches = (rule || '').match(/^rgba\(\d+,\d+,\d+,(\d*\.\d*)\)$/);
+            if (matches) {
+                return parseFloat(matches[1]);
+            } else {
+                return 1.0;
+            }
+        },
         extractSvgFeatureStyle: function(olLayer, feature, resolution) {
             // @todo: monolithic; split
             var styleOptions = {};
@@ -829,13 +870,11 @@ getGeomFromFeature: function(feature) {
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
             var image = olStyle.getImage();
-            var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(fill.getColor());
-            styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
-            styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
+            styleOptions['fillColor'] = this._normalizeCssRgb(fill.getColor());
+            styleOptions['fillOpacity'] = this._normalizeCssAlpha(fill.getColor());
 
-            var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(stroke.getColor());
-            styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
-            styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
+            styleOptions['strokeColor'] = this._normalizeCssRgb(stroke.getColor());
+            styleOptions['strokeOpacity'] = this._normalizeCssAlpha(stroke.getColor());
             styleOptions['strokeWidth'] = stroke.getWidth();
 
             styleOptions['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
@@ -848,13 +887,11 @@ getGeomFromFeature: function(feature) {
             var label = text && text.getLabel();
             if (label) {
                 styleOptions['label'] = label;
-                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(text.getFill().getColor());
-                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
-                styleOptions['fontOpacity'] = colorAndOpacityObjectFontColor.opacity;
+                styleOptions['fontColor'] = this._normalizeCssRgb(text.getFill().getColor());
+                styleOptions['fontOpacity'] = this._normalizeCssAlpha(text.getFill().getColor());
                 var textStroke = text.getStroke();
-                var colorAndOpacityObjectFontStroke = this.getHexNormalColorAndOpacityObject(text.getFill().getColor());
-                styleOptions['labelOutlineColor'] = colorAndOpacityObjectFontStroke.color;
-                styleOptions['labelOutlineOpacity'] = colorAndOpacityObjectFontStroke.opacity;
+                styleOptions['labelOutlineColor'] = this._normalizeCssRgb(textStroke.getColor());
+                styleOptions['labelOutlineOpacity'] = this._normalizeCssAlpha(textStroke.getColor());
                 styleOptions['labelOutlineWidth'] = textStroke.getWidth();
 
                 // @todo: properly interpret label alignment. See https://openlayers.org/en/v4.6.5/examples/vector-labels.html
@@ -863,91 +900,6 @@ getGeomFromFeature: function(feature) {
 
             return styleOptions;
         },
-/**
- * Returns the print style options of the vectorLayers hashed by owner and uuid.
- * @returns {Object.<string>.<string>.<object>}
- */
-getVectorLayerPrintStyleOptions: function() {
-    var olVectorLayerStyles = this.getVectorLayerStyles();
-
-    var allStyleOptions = {};
-
-    for (var owner in olVectorLayerStyles) {
-        for (var uuid in olVectorLayerStyles[owner]) {
-            var olStyle = olVectorLayerStyles[owner][uuid];
-
-            if (!olStyle instanceof ol.style.Style) {
-                continue;
-            }
-
-            var styleOptions = {};
-
-            // fill things.
-            var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(olStyle.getFill().getColor());
-            styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
-            styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
-
-            // stroke things.
-            var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(olStyle.getStroke().getColor());
-            styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
-            styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
-            styleOptions['strokeWidth'] = olStyle.getStroke().getWidth();
-
-            var strokeLinecap = olStyle.getStroke().getLineCap();
-            styleOptions['strokeLinecap'] = strokeLinecap ? strokeLinecap : 'round';
-
-            var strokeDashstyle = olStyle.getStroke().getLineDash();
-            styleOptions['strokeDashstyle'] = strokeDashstyle ? strokeDashstyle : 'solid';
-
-
-            styleOptions['pointRadius'] = 6;
-            styleOptions['cursor'] = 'inherit';
-
-            // font/label things.
-            var fontColor = olStyle.getText().getFill().getColor();
-            if (fontColor) {
-                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(olStyle.getText().getFill().getColor());
-                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
-
-            } else {
-                styleOptions['fontColor'] = '#000000';
-            }
-
-            var labelAlign = olStyle.getText().getTextAlign();
-            styleOptions['labelAlign'] = labelAlign ? labelAlign : 'cm';
-
-            styleOptions['labelOutlineColor'] = 'white';
-            styleOptions['labelOutlineWidth'] = 3;
-
-            allStyleOptions[owner][uuid] = styleOptions;
-        }
-    }
-
-    return allStyleOptions;
-},
-
-/**
- * Returns an object with color and opacity. If the color is in rgb or rgba form, it will be converted
- * into a hex string.
- * @param {string} color
- * @returns {object}
- */
-getHexNormalColorAndOpacityObject: function (color) {
-    var opacity = 1;
-    if (color.indexOf('rgb') !== -1) {
-        if (color.indexOf('rgba') !== -1) {
-            opacity = color.replace(/^.*,(.+)\)/,'$1');
-        }
-        color = this.rgb2hex(color);
-    }
-
-    var hexColorAndOpacityObject = {};
-    hexColorAndOpacityObject['color'] = color;
-    hexColorAndOpacityObject['opacity'] = opacity;
-
-    return hexColorAndOpacityObject;
-},
-
 /**
  * @param {string} orig
  * @returns {string}
