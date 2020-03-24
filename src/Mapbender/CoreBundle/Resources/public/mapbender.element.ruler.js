@@ -27,9 +27,22 @@
         _createControl: function() {
             var nVertices = 1;
             var self = this;
-            var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
-                    OpenLayers.Handler.Polygon);
-            var control = new OpenLayers.Control.Measure(handler, {
+            var handlerClass, validateEventGeometry;
+            if (this.options.type === 'area') {
+                handlerClass = OpenLayers.Handler.Polygon;
+                validateEventGeometry = function(event) {
+                    // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
+                    // small) area for them. Ignore these cases.
+                    return event.geometry.components[0].components.length >= 4;
+                }
+            } else {
+                handlerClass = OpenLayers.Handler.Path;
+                validateEventGeometry = function(event) {
+                    return event.geometry.components.length >= 2;
+                }
+            }
+
+            var control = new OpenLayers.Control.Measure(handlerClass, {
                 persist: true,
                 immediate: !!this.options.immediate,
                 displaySystemUnits: {
@@ -44,6 +57,9 @@
                     self._handleFinal(event);
                 },
                 'measurepartial': function(event) {
+                    if (!validateEventGeometry(event)) {
+                        return;
+                    }
                     var nVerticesNow = event.geometry.components.length;
                     if (nVerticesNow <= 2) {
                         self._reset();
@@ -171,11 +187,6 @@
         _getMeasureFromEvent: function(event){
             var measure = event.measure;
             if (!measure) {
-                return null;
-            }
-            if (this.options.type === 'area' && event.geometry.components[0].components.length < 4) {
-                // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
-                // small) area for them. Ignore these cases.
                 return null;
             }
             return this._formatMeasure(measure);
