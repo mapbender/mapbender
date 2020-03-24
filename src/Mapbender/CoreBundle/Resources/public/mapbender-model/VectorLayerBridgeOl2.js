@@ -50,11 +50,7 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
         },
         getMarkerFeature_: function(lon, lat) {
             var geometry = new OpenLayers.Geometry.Point(lon, lat);
-            var feature = new OpenLayers.Feature.Vector(geometry);
-            if (this.markerStyle_) {
-                feature.style = this.markerStyle_;
-            }
-            return feature;
+            return new OpenLayers.Feature.Vector(geometry, null, this.markerStyle_ || null);
         }
     });
     return VectorLayerBridgeOl2;
