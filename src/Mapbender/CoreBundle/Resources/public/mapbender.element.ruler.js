@@ -39,37 +39,33 @@
             });
             var immediate = this.options.immediate || false;
 
-            var type = this.typeMap[this.options.type].name;
-
-            this.layerId = this.mapModel.createDrawControl(type, id, {
-                events: {
-                    'drawstart': function(event) {
-                        var obvservable = {value: null};
-                        this.featureVeriticesLength = this.typeMap[this.options.type].startVertices;
-                        this._reset();
-
-                        model.eventFeatureWrapper(event, model.onFeatureChange, [function(f) {
-
-                            if(model.getGeometryCoordinates(f).length !== this.featureVeriticesLength) {
-                                this._handleModify(model.getFeatureSize(f,this.options.type));
-                            }
-                            if(model.getGeometryCoordinates(f).length === this.featureVeriticesLength) {
-                                this.featureVeriticesLength = this.featureVeriticesLength + this.typeMap[this.options.type].increase;
-                                this._handlePartial(model.getFeatureSize(f,this.options.type));
-                            }
-
-                        }.bind(this), obvservable]);
-
-                    }.bind(this),
-
-                    'drawend': function(event) {
-                        model.eventFeatureWrapper(event, function(f) {
-                            this._handleFinal(model.getFeatureSize(model.getGeomFromFeature(f),this.options.type));
-                        }.bind(this));
-                    }.bind(this)
-                }
+            var controlOptions = {
+                type: this.options.type === 'line' ? 'LineString' : 'Polygon',
+                source: new ol.source.Vector(),
+                persist: true
+            };
+            var self = this;
+            this.control = new ol.interaction.Draw(controlOptions);
+            this.control.on('drawstart', function(event) {
+                self._reset();
+                var feature = event.feature;
+                var geometry = feature.getGeometry();
+                var nVertices = geometry.getFlatCoordinates().length;
+                geometry.on('change', function() {
+                    var nVerticesNow = geometry.getFlatCoordinates().length;
+                    if (nVerticesNow === nVertices) {
+                        // geometry change event does not have a .feature attribute like drawend, shim it
+                        self._handleModify({feature: feature});
+                    } else {
+                        // geometry change event does not have a .feature attribute like drawend, shim it
+                        self._handlePartial({feature: feature});
+                        nVertices = nVerticesNow;
+                    }
+                });
             });
-
+            this.control.on('drawend', function(event) {
+                self._handleFinal(event);
+            });
             this.container = $('<div/>');
             this.total = $('<div/>').appendTo(this.container);
             this.segments = $('<ul/>').appendTo(this.container);
