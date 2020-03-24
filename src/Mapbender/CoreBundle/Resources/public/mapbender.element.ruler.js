@@ -3,10 +3,6 @@
     $.widget("mapbender.mbRuler", {
         options: {
             target: null,
-            click: undefined,
-            icon: undefined,
-            label: true,
-            group: undefined,
             immediate: null,
             persist: true,
             type: 'line',
@@ -78,9 +74,6 @@
         defaultAction: function(callback){
             this.activate(callback);
         },
-        /**
-         * This activates this button and will be called on click
-         */
         activate: function(callback){
             this.callback = callback ? callback : null;
             var self = this,
@@ -119,10 +112,6 @@
                     $("#linerulerButton").parent().addClass("toolBarItemActive") :
                     $("#arearulerButton").parent().addClass("toolBarItemActive");
         },
-        /**
-         * This deactivates this button and will be called if another button of
-         * this group is activated.
-         */
         deactivate: function(){
             this.container.detach();
             var olMap = this.mapModel.map.olMap;
