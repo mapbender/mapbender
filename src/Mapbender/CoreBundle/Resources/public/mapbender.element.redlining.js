@@ -226,17 +226,12 @@
             this.layer.removeAllFeatures();
         },
         _endEdit: function(nextControl) {
-            var editFeature = (this.editControl || {}).feature;
+            $('input[name=label-text]', this.element).off('keyup');
             if (this.editControl && nextControl !== this.editControl) {
                 this.editControl.deactivate();
             }
-            if (editFeature && editFeature.style && editFeature.style.label) {
-                editFeature.style = this._setTextDefault(editFeature.style);
-                editFeature.layer.redraw();
-            }
         },
         _deactivateControl: function(){
-            $('input[name=label-text]', this.element).off('keyup');
             if (this.activeControl !== null) {
                 this.activeControl.deactivate();
                 this.activeControl.destroy();
