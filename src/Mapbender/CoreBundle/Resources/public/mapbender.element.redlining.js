@@ -202,13 +202,14 @@
                     return new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
                                 featureAdded: function (feature) {
-                                    if ($('input[name=label-text]', self.element).val().trim() === '') {
+                                    var text = $('input[name=label-text]', self.element).val().trim();
+                                    if (!text) {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                                         self._removeFeature(feature);
                                     } else {
-                                        feature.style = self._generateTextStyle($('input[name=label-text]', self.element).val());
+                                        feature.style = self._generateTextStyle();
                                         self._addToGeomList(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
-                                        self.layer.redraw();
+                                        self._updateFeatureLabel(feature, text);
                                         $('input[name=label-text]', self.element).val('');
                                     }
                                 }
@@ -257,29 +258,40 @@
         _addToGeomList: function(feature, typeLabel){
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
-            row.attr("data-id", feature.id);
+            row.data('feature', feature);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
         },
         _removeFromGeomList: function(e){
-            var $tr = $(e.target).parents("tr:first");
-            var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            var $tr = $(e.target).closest('tr');
+            var eventFeature = $tr.data('feature');
             if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
                 this._endEdit(null);
             }
             this._removeFeature(eventFeature);
             $tr.remove();
         },
-        _modifyFeature: function(e){
-            var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+        _modifyFeature: function(e) {
+            var self = this;
+            var $row = $(e.target).closest('tr');
+            var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit(this.editControl);
             if (eventFeature.style && eventFeature.style.label) {
                 eventFeature.style = this._setTextEdit(eventFeature.style);
                 $('input[name=label-text]', this.element).val(eventFeature.style.label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
-                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this, eventFeature));
+                $('input[name=label-text]', this.element).on('keyup', function() {
+                    var text = $(this).val().trim();
+                    if (!text) {
+                        Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                    } else {
+                        self._updateFeatureLabel(eventFeature, text);
+                        var label = self._getGeomLabel(eventFeature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
+                        $('.geometry-name', $row).text(label);
+                    }
+                });
             }
             this.editControl.activate();
             this.editControl.selectFeature(eventFeature);
@@ -290,14 +302,11 @@
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
-            var feature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+            var feature = $(e.target).closest('tr').data('feature');
             this.mbMap.getModel().zoomToFeature(feature);
         },
-        _generateTextStyle: function(label){
+        _generateTextStyle: function() {
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
-            if (label) {
-                style.label = label;
-            }
             style.labelAlign = 'lm';
             style.labelXOffset = 10;
             style.pointRadius = 6;
@@ -314,19 +323,9 @@
             style.fillColor = style.strokeColor = style.fontColor = 'blue';
             return style;
         },
-        
-        _writeText: function(feature) {
-            if (feature.style && feature.style.label) {
-                var inputText = $('input[name=label-text]', this.element).val().trim();
-                if (!inputText) {
-                    Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                } else {
-                    feature.style.label = inputText;
-                    var label = this._getGeomLabel(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
-                    $('.geometry-table tr[data-id="'+feature.id+'"] .geometry-name', this.element).text(label);
-                    feature.layer.redraw();
-                }
-            }
+        _updateFeatureLabel: function(feature, label) {
+            feature.style.label = label;
+            feature.layer.redraw();
         },
         _onSrsChange: function(event, data) {
             this._endEdit(null);
