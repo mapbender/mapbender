@@ -25,25 +25,26 @@
             });
         },
         _createControl: function() {
-            return this.control;
-        },
-        _setup: function(mbMap) {
-            this.mapModel = mbMap.getModel();
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
-            this.control = new OpenLayers.Control.Measure(handler, {
+            var control = new OpenLayers.Control.Measure(handler, {
                 persist: true,
                 immediate: !!this.options.immediate,
                 geodesic: true
             });
 
-            this.control.events.on({
+            control.events.on({
                 'scope': this,
                 'measure': this._handleFinal,
                 'measurepartial': this._handlePartial,
                 'measuremodify': this._handleModify
             });
 
+            return control;
+        },
+        _setup: function(mbMap) {
+            this.mapModel = mbMap.getModel();
+            this.control = this._createControl();
             this.container = $('<div/>');
             this.total = $('<div/>').appendTo(this.container);
             this.segments = $('<ul/>').appendTo(this.container);
@@ -58,12 +59,19 @@
         defaultAction: function(callback){
             this.activate(callback);
         },
+        _toggleControl: function(state) {
+            if (state) {
+                this.mapModel.olMap.addControl(this.control);
+                this.control.activate();
+            } else {
+                this.control.deactivate();
+                this.mapModel.olMap.removeControl(this.control);
+            }
+        },
         activate: function(callback){
             this.callback = callback ? callback : null;
-            var self = this,
-                    olMap = this.mapModel.map.olMap;
-            olMap.addControl(this.control);
-            this.control.activate();
+            var self = this;
+            this._toggleControl(true);
 
             this._reset();
             if(!this.popup || !this.popup.$element){
@@ -94,9 +102,7 @@
         },
         deactivate: function(){
             this.container.detach();
-            var olMap = this.mapModel.map.olMap;
-            this.control.deactivate();
-            olMap.removeControl(this.control);
+            this._toggleControl(false);
             $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
             if(this.popup && this.popup.$element){
                 this.popup.destroy();
