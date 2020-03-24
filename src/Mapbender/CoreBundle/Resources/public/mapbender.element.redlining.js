@@ -49,7 +49,6 @@
             this._trigger('ready');
         },
         setupMapEventListeners: function() {
-            $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
         },
         defaultAction: function(callback){
@@ -327,17 +326,6 @@
                     $('.geometry-table tr[data-id="'+feature.id+'"] .geometry-name', this.element).text(label);
                     feature.layer.redraw();
                 }
-            }
-        },
-        /**
-         * Move redlining layer on top of layer stack if a source is added, i.e. by wms loader
-         * @private
-         */
-        _moveLayerToLayerStackTop: function(event, params) {
-            this._endEdit(null);
-            if (this.layer) {
-                this.map.raiseLayer(this.layer, this.map.getNumLayers());
-                this.map.resetLayersZIndex();
             }
         },
         _onSrsChange: function(event, data) {
