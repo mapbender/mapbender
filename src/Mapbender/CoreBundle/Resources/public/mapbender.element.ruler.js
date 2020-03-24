@@ -25,15 +25,16 @@
             });
         },
         _createControl4: function() {
+            var source = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer().getSource();
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
-                source: new ol.source.Vector(),
-                persist: true
+                source: source
             };
             var self = this;
             var control = new ol.interaction.Draw(controlOptions);
             control.on('drawstart', function(event) {
                 self._reset();
+                source.clear();
                 var feature = event.feature;
                 var geometry = feature.getGeometry();
                 var nVertices = geometry.getFlatCoordinates().length;
@@ -136,12 +137,16 @@
                     this.mapModel.olMap.removeControl(this.control);
                 }
             } else {
+                var elementLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
                 if (state) {
                     this.mapModel.olMap.addInteraction(this.control);
                     this.control.setActive(true);
+                    elementLayer.clear();
+                    elementLayer.show();
                 } else {
                     this.control.setActive(false);
                     this.mapModel.olMap.removeInteraction(this.control);
+                    elementLayer.hide();
                 }
             }
         },
