@@ -3,8 +3,7 @@
     $.widget("mapbender.mbRuler", {
         options: {
             target: null,
-            immediate: null,
-            persist: true,
+            immediate: false,
             type: 'line',
             precision: 2
         },
@@ -29,7 +28,6 @@
             this.mapModel = mbMap.getModel();
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
-            var immediate = this.options.immediate || false;
             this.control = new OpenLayers.Control.Measure(handler, {
                 callbacks: {
                     modify: function(point, feature, drawing){
@@ -45,8 +43,8 @@
                 // types wont fire
                 EVENT_TYPES: OpenLayers.Events.prototype.BROWSER_EVENTS
                         .concat(['measuremodify']),
-                persist: this.options.persist,
-                immediate: immediate,
+                persist: true,
+                immediate: !!this.options.immediate,
                 geodesic: true
             });
 
