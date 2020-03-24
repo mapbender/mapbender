@@ -32,6 +32,9 @@
             var control = new OpenLayers.Control.Measure(handler, {
                 persist: true,
                 immediate: !!this.options.immediate,
+                displaySystemUnits: {
+                    metric: ['m'],
+                },
                 geodesic: true
             });
 
@@ -142,7 +145,7 @@
                 return;
             }
             if (this.options.immediate) {
-                this.segments.children('li').first().html(measure);
+                this.segments.children('li').first().text(measure);
             }
         },
         _handlePartial: function(event){
@@ -152,25 +155,22 @@
                 this._reset();
                 return;
             }
-            if(this.options.type === 'area'){
-                this.segments.html($('<li/>', { html: measure }));
-            } else if(this.options.type === 'line'){
-                var measureElement = $('<li/>');
-                measureElement.html(measure);
-                this.segments.prepend(measureElement);
+            if (this.options.type === 'area') {
+                this.segments.empty();
             }
+            var measureElement = $('<li/>');
+            measureElement.text(measure);
+            this.segments.prepend(measureElement);
         },
         _handleFinal: function(event){
             var measure = this._getMeasureFromEvent(event);
             if(this.options.type === 'area'){
                 this.segments.empty();
             }
-            this.total.html('<b>'+measure+'</b>');
+            this.total.empty().append($('<b>').text(measure));
         },
         _getMeasureFromEvent: function(event){
-            var measure = event.measure,
-                    units = event.units,
-                    order = event.order;
+            var measure = event.measure;
             if (!measure) {
                 return null;
             }
@@ -179,13 +179,27 @@
                 // small) area for them. Ignore these cases.
                 return null;
             }
-
-            measure = measure.toFixed(this.options.precision) + " " + units;
-            if(order > 1){
-                measure += "<sup>" + order + "</sup>";
+            return this._formatMeasure(measure);
+        },
+        _formatMeasure: function(value) {
+            var scale = 1;
+            var unit;
+            if (this.options.type === 'area') {
+                if (value >= 10000000) {
+                    scale = 1000000;
+                    unit = 'km²';
+                } else {
+                    unit = 'm²';
+                }
+            } else {
+                if (value > 10000) {
+                    scale = 1000;
+                    unit = 'km';
+                } else {
+                    unit = 'm';
+                }
             }
-
-            return measure;
+            return [(value / scale).toFixed(this.options.precision), unit].join('');
         }
     });
 
