@@ -24,25 +24,14 @@
                 Mapbender.checkTarget("mbRuler", self.options.target);
             });
         },
+        _createControl: function() {
+            return this.control;
+        },
         _setup: function(mbMap) {
             this.mapModel = mbMap.getModel();
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
             this.control = new OpenLayers.Control.Measure(handler, {
-                callbacks: {
-                    modify: function(point, feature, drawing){
-                        // Monkey patching, so modify uses a different event than
-                        // the point handler. Sad, but true.
-                        if(drawing && this.delayedTrigger === null &&
-                                !this.handler.freehandMode(this.handler.evt)){
-                            this.measure(feature.geometry, "measuremodify");
-                        }
-                    }
-                },
-                // This, too, is part of the monkey patch - unregistered event
-                // types wont fire
-                EVENT_TYPES: OpenLayers.Events.prototype.BROWSER_EVENTS
-                        .concat(['measuremodify']),
                 persist: true,
                 immediate: !!this.options.immediate,
                 geodesic: true
