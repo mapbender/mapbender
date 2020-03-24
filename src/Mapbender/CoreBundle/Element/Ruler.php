@@ -61,8 +61,9 @@ class Ruler extends Element
     {
         return array(
             'target' => null,
-            'tooltip' => "ruler",
-            'type' => null);
+            'type' => 'line',
+            'immediate' => false,
+        );
     }
 
     /**
