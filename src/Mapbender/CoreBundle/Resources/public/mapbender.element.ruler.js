@@ -33,7 +33,7 @@
                 persist: true,
                 immediate: !!this.options.immediate,
                 displaySystemUnits: {
-                    metric: ['m'],
+                    metric: ['m']
                 },
                 geodesic: true
             });
@@ -45,6 +45,9 @@
                 },
                 'measurepartial': function(event) {
                     var nVerticesNow = event.geometry.components.length;
+                    if (nVerticesNow <= 2) {
+                        self._reset();
+                    }
                     if (nVerticesNow !== nVertices) {
                         nVertices = nVerticesNow;
                         return self._handlePartial(event);
@@ -140,8 +143,6 @@
         _handleModify: function(event){
             var measure = this._getMeasureFromEvent(event);
             if (!measure) {
-                // first point
-                this._reset();
                 return;
             }
             if (this.options.immediate) {
@@ -151,8 +152,6 @@
         _handlePartial: function(event){
             var measure = this._getMeasureFromEvent(event);
             if (!measure) {
-                // first point
-                this._reset();
                 return;
             }
             if (this.options.type === 'area') {
