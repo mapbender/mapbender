@@ -25,9 +25,6 @@
                 Mapbender.checkTarget("mbRuler", self.options.target);
             });
         },
-        /**
-         * Initializes the overview
-         */
         _setup: function(mbMap) {
             this.mapModel = mbMap.getModel();
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
