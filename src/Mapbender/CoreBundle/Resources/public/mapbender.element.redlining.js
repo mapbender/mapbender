@@ -149,6 +149,10 @@
                     this._deactivateControl();
                 }
                 var toolName = $button.attr('name');
+                if (toolName === 'text') {
+                    $('input[name=label-text]', this.element).val('');
+                    $('#redlining-text-wrapper', this.element).removeClass('hidden');
+                }
                 var control = this._controlFactory(toolName);
                 this.map.addControl(control);
                 control.activate();
@@ -197,8 +201,6 @@
                                 }
                             });
                 case 'text':
-                    $('input[name=label-text]', this.element).val('');
-                    $('#redlining-text-wrapper', this.element).removeClass('hidden');
                     return new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
                                 featureAdded: function (feature) {
