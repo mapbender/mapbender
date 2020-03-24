@@ -25,6 +25,8 @@
             });
         },
         _createControl: function() {
+            var nVertices = 1;
+            var self = this;
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
             var control = new OpenLayers.Control.Measure(handler, {
@@ -35,9 +37,18 @@
 
             control.events.on({
                 'scope': this,
-                'measure': this._handleFinal,
-                'measurepartial': this._handlePartial,
-                'measuremodify': this._handleModify
+                'measure': function(event) {
+                    self._handleFinal(event);
+                },
+                'measurepartial': function(event) {
+                    var nVerticesNow = event.geometry.components.length;
+                    if (nVerticesNow !== nVertices) {
+                        nVertices = nVerticesNow;
+                        return self._handlePartial(event);
+                    } else {
+                        return self._handleModify(event);
+                    }
+                }
             });
 
             return control;
@@ -118,30 +129,29 @@
                 this._reset();
             }
         },
-        _reset: function(){
+        _reset: function() {
             this.segments.empty();
             this.total.empty();
             this.segments.append('<li/>');
-
         },
         _handleModify: function(event){
-            if(event.measure === 0.0){
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
+                // first point
+                this._reset();
                 return;
             }
-
-            var measure = this._getMeasureFromEvent(event);
-
-            if(this.control.immediate){
+            if (this.options.immediate) {
                 this.segments.children('li').first().html(measure);
             }
         },
         _handlePartial: function(event){
-            if(event.measure === 0){// if first point
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
+                // first point
                 this._reset();
                 return;
             }
-
-            var measure = this._getMeasureFromEvent(event);
             if(this.options.type === 'area'){
                 this.segments.html($('<li/>', { html: measure }));
             } else if(this.options.type === 'line'){
@@ -161,6 +171,14 @@
             var measure = event.measure,
                     units = event.units,
                     order = event.order;
+            if (!measure) {
+                return null;
+            }
+            if (this.options.type === 'area' && event.geometry.components[0].components.length < 4) {
+                // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
+                // small) area for them. Ignore these cases.
+                return null;
+            }
 
             measure = measure.toFixed(this.options.precision) + " " + units;
             if(order > 1){
