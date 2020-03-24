@@ -420,17 +420,6 @@ containsCoordinate: function(extent, coordinate) {
 
 /**
  *
- * @param owner
- * @param uuid
- * @param style
- * @param refresh
- */
-setVectorLayerStyle: function(owner, uuid, style, refresh){
-    this.setLayerStyle('vectorLayer', owner, uuid, style);
-},
-
-/**
- *
  * @param layerType
  * @param owner
  * @param uuid
@@ -455,7 +444,7 @@ createDrawControl: function(type, owner, options){
         type: type,
         source: options.source
     };
-    var id = this.createVectorLayer(options, owner);
+    var id = this.createVectorLayer();
 
     if (type === 'Box') {
         drawOptions.geometryFunction = ol.interaction.Draw.createBox();
@@ -463,14 +452,6 @@ createDrawControl: function(type, owner, options){
     }
 
     var draw = new ol.interaction.Draw(drawOptions);
-
-    this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions || {};
-    this.vectorLayer[owner][id].interactions[id] = draw;
-
-
-    _.each(options.events, function(value, key) {
-        draw.on(key, value);
-    }.bind(this));
 
     this.olMap.addInteraction(draw);
 
@@ -514,14 +495,6 @@ deselectFeatureById: function(owner, vectorId) {
     var interaction = vectorLayer.interactions.select[vectorId];
     interaction.getFeatures().clear();
 },
-removeVectorLayer: function(owner,id){
-    var vectorLayer = this.vectorLayer[owner][id];
-    if(this.vectorLayer[owner][id].hasOwnProperty('interactions')){
-        this.removeInteractions(this.vectorLayer[owner][id].interactions);
-    }
-    this.olMap.removeLayer(vectorLayer);
-    delete this.vectorLayer[owner][id];
-},
 removeInteractions: function(controls){
     _.each(controls, function(control, index){
         this.olMap.removeInteraction(control);
@@ -530,18 +503,6 @@ removeInteractions: function(controls){
 eventFeatureWrapper: function(event, callback, args){
     var args = [event.feature].concat(args)
     return callback.apply(this,args);
-
-},
-
-
-
-onFeatureChange: function(feature, callback,obvservable, args){
-    return feature.getGeometry().on('change', function(evt) {
-        var geom = evt.target;
-        args = [geom].concat(args);
-        obvservable.value =  callback.apply(this,args);
-    });
-
 
 },
 
@@ -617,11 +578,6 @@ mbExtent: function mbExtent(extent) {
  */
 zoomToExtent: function(extent) {
     this.olMap.getView().fit(this.mbExtent(extent), this.olMap.getSize());
-},
-
-removeAllFeaturesFromLayer: function(owner, id) {
-    return this.vectorLayer[owner][id].getSource().clear();
-
 },
 
 getFeatureSize: function(feature, type) {
@@ -752,18 +708,6 @@ createTextStyle: function(options) {
     },
 
 /**
- * Set style of map cursor
- *
- * @param style
- * @returns {Mapbender.Model}
- */
-setMapCursorStyle: function (style) {
-    this.olMap.getTargetElement().style.cursor = style;
-
-    return this;
-},
-
-/**
  * Set marker on a map by provided coordinates
  *
  * @param {string[]} coordinates
@@ -886,18 +830,6 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
 
             return styleOptions;
         },
-/**
- * @param {string} orig
- * @returns {string}
- */
-rgb2hex: function(orig) {
-    var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
-    return (rgb && rgb.length === 4) ? "#" +
-        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
-},
-
 /**
  * @param {object} options
  * @returns {object}
