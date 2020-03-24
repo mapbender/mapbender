@@ -535,9 +535,6 @@ eventFeatureWrapper: function(event, callback, args){
 
 
 
-getLineStringLength: function(line){
-    return  ol.Sphere.getLength(line);
-},
 onFeatureChange: function(feature, callback,obvservable, args){
     return feature.getGeometry().on('change', function(evt) {
         var geom = evt.target;
@@ -628,32 +625,26 @@ removeAllFeaturesFromLayer: function(owner, id) {
 },
 
 getFeatureSize: function(feature, type) {
-
-    if(type === 'line'){
-        return this.getLineStringLength(feature);
+    if(type === 'line') {
+        return this.getLineStringLength(feature.getGeometry());
     }
-    if(type === 'area'){
-        return   this.getPolygonArea(feature);
+    if(type === 'area') {
+        return this.getPolygonArea(feature.getGeometry());
     }
-
-
-
-
-
 },
-
-getGeometryCoordinates: function (geom) {
-
-    return geom.getFlatCoordinates();
-
+getPolygonArea: function (polygonGeometry) {
+    if (polygonGeometry.getFlatCoordinates().length < 3) {
+        return null;
+    } else {
+        return ol.Sphere.getArea(polygonGeometry);
+    }
 },
-
-
-
-
-
-getPolygonArea: function (polygon){
-    return  ol.Sphere.getArea(polygon);
+getLineStringLength: function(lineGeometry){
+    if (lineGeometry.getFlatCoordinates().length < 2) {
+        return null;
+    } else {
+        return ol.Sphere.getLength(lineGeometry);
+    }
 },
 
 createTextStyle: function(options) {
@@ -813,11 +804,6 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
         getCurrentExtentArray: function() {
             return this.olMap.getView().calculateExtent();
         },
-
-getGeomFromFeature: function(feature) {
-    'use strict';
-    return feature.getGeometry();
-},
 
         /**
          * Extract RGB color from CSS / SVG color rule value and normalize to six-digit hex string (with leading '#')

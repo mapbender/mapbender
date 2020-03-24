@@ -89,10 +89,14 @@
          */
         activate: function(callback){
             this.callback = callback ? callback : null;
-            var self = this,
-                    olMap = this.mapModel.map.olMap;
-            olMap.addControl(this.control);
-            this.control.activate();
+            var self = this;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.mapModel.olMap.addControl(this.control);
+                this.control.activate();
+            } else {
+                this.mapModel.olMap.addInteraction(this.control);
+                this.control.setActive(true);
+            }
 
             this._reset();
             if(!this.popup || !this.popup.$element){
@@ -159,55 +163,54 @@
 
         },
         _handleModify: function(event){
-            if(event.measure === 0.0){
+            var measure = this._getMeasureFromEvent(event);
+
+            if (this.options.immediate && measure) {
+                this.segments.children('li').first().text(measure);
+            }
+        },
+        _handlePartial: function(event) {
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
                 return;
             }
 
-            var measure = this._getMeasureFromEvent(event);
-
-            if(this.control.immediate){
-                this.segments.children('li').first().html(measure);
-            }
-        },
-        _handlePartial: function(measure) {
-            measure = this.formatLength(measure);
-            if(!this.options.immediate && this.featureVeriticesLength <= this.typeMap[this.options.type].startVertices + this.typeMap[this.options.type].increase) {
-                return false;
-            }
-
-            var measure = this._getMeasureFromEvent(event);
             if(this.options.type === 'area'){
-                this.segments.html($('<li/>', { html: measure }));
+                this.segments.html($('<li/>').text(measure));
             } else if(this.options.type === 'line'){
                 var measureElement = $('<li/>');
-                measureElement.html(measure);
+                measureElement.text(measure);
                 this.segments.prepend(measureElement);
             }
         },
-        _handleFinal: function(measure) {
-            if(this.options.type === 'area') {
-                this.segments.empty();
-                var measureElement = $('<li/>');
-                measureElement.text(this.formatLength(measure));
-                this.segments.prepend(measureElement);
+        _handleFinal: function(event){
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
+                return;
             }
-            this.segments.children().first().wrap('<b>');
-            this.total.html('<b>'+measure+'</b>');
+            if(this.options.type === 'area'){
+                this.segments.empty();
+            }
+            this.total.empty().append($('<b>').text(measure));
         },
         _getMeasureFromEvent: function(event){
-            var measure = event.measure,
-                    units = event.units,
-                    order = event.order;
-
-            measure = measure.toFixed(this.options.precision) + " " + units;
-            if(order > 1){
-                measure += "<sup>" + order + "</sup>";
+            var order = (this.options.type === 'line' && 1) || 2;
+            var measure, units;
+            if (!event.measure && event.feature) {
+                measure = this.mapModel.getFeatureSize(event.feature, this.options.type);
+                units = 'km';
+            } else {
+                measure = event.measure;
+                units = event.units;
             }
-            return measure;
-        },
-        formatLength: function(length) {
-            var unit = (this.options.type === 'line') ? ' km' : ' km²';
-            return (length / 1000).toFixed(this.options.precision) + unit;
+            if (!measure) {
+                return null;
+            }
+
+            if (order === 2) {
+                units = units + '²';
+            }
+            return (measure / 1000).toFixed(this.options.precision) + units;
         }
     });
 
