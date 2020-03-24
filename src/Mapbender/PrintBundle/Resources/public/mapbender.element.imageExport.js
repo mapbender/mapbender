@@ -255,7 +255,7 @@
                 olLayer.getLayersArray(layersFlat);
             });
             var vectorLayers = layersFlat.filter(function (olLayer) {
-                return olLayer instanceof ol.layer.Vector;
+                return (olLayer instanceof ol.layer.Vector) && olLayer.getVisible();
             });
             var dataOut = [];
             for (var li = 0; li < vectorLayers.length; ++li) {
@@ -266,13 +266,6 @@
                     var feature = features[fi];
                     // @todo: no private access
                     var formattedFeature = Mapbender.Model._geojsonFormat.writeFeatureObject(feature).geometry;
-                    // @todo: extract style
-                    formattedFeature.style = {
-                        fillColor: '#ff00ff',
-                        fillOpacity: 1.0,
-                        strokeColor: '#00ff00',
-                        pointRadius: 27
-                    };
                     formattedFeature.style = this.map.model.extractSvgFeatureStyle(layer, feature);
                     layerFeatureData.push(formattedFeature);
                 }
