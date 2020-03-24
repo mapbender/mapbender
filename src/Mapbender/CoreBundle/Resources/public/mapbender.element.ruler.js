@@ -104,10 +104,6 @@
             }else{
                 this.popup.open("");
             }
-
-            (this.options.type === 'line') ?
-                    $("#linerulerButton").parent().addClass("toolBarItemActive") :
-                    $("#arearulerButton").parent().addClass("toolBarItemActive");
         },
         deactivate: function(){
             this.container.detach();
