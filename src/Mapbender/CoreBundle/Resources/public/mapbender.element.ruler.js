@@ -34,11 +34,6 @@
          */
         _setup: function(mbMap) {
             this.mapModel = mbMap.getModel();
-            var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
-                'default': this.options.style
-            });
-            var styleMap = new OpenLayers.StyleMap(sm);
-
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
             var immediate = this.options.immediate || false;
@@ -57,12 +52,6 @@
                 // types wont fire
                 EVENT_TYPES: OpenLayers.Events.prototype.BROWSER_EVENTS
                         .concat(['measuremodify']),
-                handlerOptions: {
-                    layerOptions: {
-                        styleMap: styleMap,
-                        name: 'rulerlayer'
-                    }
-                },
                 persist: this.options.persist,
                 immediate: immediate,
                 geodesic: true
