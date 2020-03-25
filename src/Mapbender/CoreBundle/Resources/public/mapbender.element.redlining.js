@@ -42,9 +42,6 @@
             // @todo: remove direct access to OpenLayers 2 map
             this.map = this.mbMap.map.olMap;
             this.rowTemplate = $('tr', $geomTable).remove();
-            if(this.options.auto_activate || this.options.display_type === 'element'){
-                this.activate();
-            }
             $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
@@ -56,6 +53,9 @@
             this.setupMapEventListeners();
 
             this._trigger('ready');
+            if (this.options.auto_activate || this.options.display_type === 'element') {
+                this.activate();
+            }
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
