@@ -92,7 +92,7 @@
         },
         deactivate: function(){
             this._deactivateControl();
-            this._endEdit(null);
+            this._endEdit();
             // end popup, if any
             this._close();
             if (this.options.deactivate_on_close) {
@@ -244,11 +244,9 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
-        _endEdit: function(nextControl) {
+        _endEdit: function() {
             $('input[name=label-text]', this.element).off('keyup');
-            if (this.editControl && nextControl !== this.editControl) {
-                this.editControl.deactivate();
-            }
+            this.editControl.deactivate();
         },
         _deactivateControl: function(){
             if (this.activeControl !== null) {
@@ -284,7 +282,7 @@
             var $tr = $(e.target).closest('tr');
             var eventFeature = $tr.data('feature');
             if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
-                this._endEdit(null);
+                this._endEdit();
             }
             this._removeFeature(eventFeature);
             $tr.remove();
@@ -294,7 +292,7 @@
             var $row = $(e.target).closest('tr');
             var eventFeature = $row.data('feature');
             this._deactivateControl();
-            this._endEdit(this.editControl);
+            this._endEdit();
             var label = this._getFeatureLabel(eventFeature);
             if (label) {
                 $('input[name=label-text]', this.element).val(label);
@@ -330,7 +328,7 @@
             feature.layer.redraw();
         },
         _onSrsChange: function(event, data) {
-            this._endEdit(null);
+            this._endEdit();
             this._deactivateControl();
             if (this.layer) {
                 (this.layer.features || []).map(function(feature) {
