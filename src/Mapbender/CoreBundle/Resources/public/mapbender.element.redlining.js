@@ -178,6 +178,9 @@
                 this.popup = null;
             }
         },
+        _toolRequiresLabel: function(toolName) {
+            return toolName === 'text';
+        },
         _onToolButtonClick: function($button) {
             this._endEdit();
             if ($button.hasClass('active')) {
@@ -187,7 +190,7 @@
                     this._deactivateControl();
                 }
                 var toolName = $button.attr('name');
-                if (toolName === 'text') {
+                if (this._toolRequiresLabel(toolName)) {
                     $('input[name=label-text]', this.element).val('');
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
                     this.requireText_ = true;
@@ -212,10 +215,23 @@
         },
         _controlFactory: function(toolName){
             var self = this;
-            function featureAdded(feature) {
+            var featureAdded;
+            function featureAddedCommon(feature) {
                 self._setFeatureAttribute(feature, 'toolName', toolName);
                 self._addToGeomList(feature);
             }
+            if (this._toolRequiresLabel(toolName)) {
+                featureAdded = function(feature) {
+                    var textInput = $('input[name=label-text]', self.element);
+                    var text = textInput.val().trim();
+                    self._updateFeatureLabel(feature, text);
+                    featureAddedCommon(feature);
+                    textInput.val('');
+                }
+            } else {
+                featureAdded = featureAddedCommon;
+            }
+
             switch(toolName) {
                 case 'point':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
@@ -243,13 +259,7 @@
                     });
                 case 'text':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
-                        featureAdded: function(feature) {
-                            var textInput = $('input[name=label-text]', self.element);
-                            var text = textInput.val().trim();
-                            self._updateFeatureLabel(feature, text);
-                            featureAdded(feature);
-                            textInput.val('');
-                        }
+                        featureAdded: featureAdded
                     });
             }
         },
@@ -290,7 +300,7 @@
         _getGeomLabel: function(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var typeLabel = this.toolLabels[toolName];
-            if (toolName === 'text') {
+            if (this._toolRequiresLabel(toolName)) {
                 var featureLabel = this._getFeatureLabel(feature);
                 return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
             } else {
@@ -319,9 +329,8 @@
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit();
-            var label = this._getFeatureLabel(eventFeature);
-            if (label) {
-                $('input[name=label-text]', this.element).val(label);
+            if (this._toolRequiresLabel(this._getFeatureAttribute(eventFeature, 'toolName'))) {
+                $('input[name=label-text]', this.element).val(this._getFeatureLabel(eventFeature));
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
                 $('input[name=label-text]', this.element).on('keyup', function() {
                     var text = $(this).val().trim();
