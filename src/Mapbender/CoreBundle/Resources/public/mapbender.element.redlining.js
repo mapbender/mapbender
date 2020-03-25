@@ -189,65 +189,65 @@
             }
             return false;
         },
+        _validateText: function() {
+            if (!$('input[name=label-text]', this.element).val().trim()) {
+                Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                return false;
+            } else {
+                return true;
+            }
+        },
         _controlFactory: function(toolName){
             var self = this;
+            function featureAdded(feature) {
+                self._setFeatureAttribute(feature, 'toolName', toolName);
+                self._addToGeomList(feature);
+            }
+            var textHandlers = {
+                sketchcomplete: this._validateText,
+                scope: this
+            };
+            if (toolName === 'text') {
+                this.layer.events.on(textHandlers);
+            } else {
+                this.layer.events.un(textHandlers);
+            }
+
             switch(toolName) {
                 case 'point':
-                    return new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.Point, {
-                                featureAdded: function(feature){
-                                    feature.attributes.toolName = toolName;
-                                    self._addToGeomList(feature);
-                                }
-                            });
+                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
+                        featureAdded: featureAdded
+                    });
                 case 'line':
-                    return new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.Path, {
-                                featureAdded: function(feature){
-                                    feature.attributes.toolName = toolName;
-                                    self._addToGeomList(feature);
-                                }
-                            });
+                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Path, {
+                        featureAdded: featureAdded
+                    });
                 case 'polygon':
-                    return new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.Polygon, {
-                                handlerOptions: {
-                                    handleRightClicks: false
-                                },
-                                featureAdded: function(feature) {
-                                    feature.attributes.toolName = toolName;
-                                    self._addToGeomList(feature);
-                                }
-                            });
+                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Polygon, {
+                        featureAdded: featureAdded,
+                        handlerOptions: {
+                            handleRightClicks: false
+                        }
+                    });
                 case 'rectangle':
-                    return new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.RegularPolygon, {
-                                handlerOptions: {
-                                    sides: 4,
-                                    irregular: true,
-                                    rightClick: false
-                                },
-                                featureAdded: function(feature) {
-                                    feature.attributes.toolName = toolName;
-                                    self._addToGeomList(feature);
-                                }
-                            });
+                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.RegularPolygon, {
+                        featureAdded: featureAdded,
+                        handlerOptions: {
+                            sides: 4,
+                            irregular: true,
+                            rightClick: false
+                        }
+                    });
                 case 'text':
-                    return new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.Point, {
-                                featureAdded: function (feature) {
-                                    feature.attributes.toolName = toolName;
-                                    var text = $('input[name=label-text]', self.element).val().trim();
-                                    if (!text) {
-                                        Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                                        self._removeFeature(feature);
-                                    } else {
-                                        self._addToGeomList(feature);
-                                        self._updateFeatureLabel(feature, text);
-                                        $('input[name=label-text]', self.element).val('');
-                                    }
-                                }
-                            });
+                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
+                        featureAdded: function(feature) {
+                            var textInput = $('input[name=label-text]', self.element);
+                            var text = textInput.val().trim();
+                            self._updateFeatureLabel(feature, text);
+                            featureAdded(feature);
+                            textInput.val();
+                        }
+                    });
             }
         },
         _removeFeature: function(feature){
@@ -276,7 +276,7 @@
         },
         
         _getGeomLabel: function(feature, typeLabel) {
-            if (feature.attributes.toolName === 'text') {
+            if (this._getFeatureAttribute(feature, 'toolName') === 'text') {
                 var featureLabel = this._getFeatureLabel(feature);
                 return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
             } else {
@@ -334,11 +334,30 @@
             this.mbMap.getModel().zoomToFeature(feature);
         },
         _getFeatureLabel: function(feature) {
-            return feature.attributes.label || '';
+            return this._getFeatureAttribute(feature, 'label') || '';
         },
         _updateFeatureLabel: function(feature, label) {
-            feature.attributes.label = label;
+            this._setFeatureAttribute(feature, 'label', label);
             feature.layer.redraw();
+        },
+        /**
+         * @param {*} feature
+         * @param {String} name
+         * @private
+         * engine-specific
+         */
+        _getFeatureAttribute: function(feature, name) {
+            return feature.attributes[name];
+        },
+        /**
+         * @param {*} feature
+         * @param {String} name
+         * @param {*} value
+         * @private
+         * engine-specific
+         */
+        _setFeatureAttribute: function(feature, name, value) {
+            feature.attributes[name] = value;
         },
         _onSrsChange: function(event, data) {
             this._endEdit();
