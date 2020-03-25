@@ -247,7 +247,8 @@
         
         _getGeomLabel: function(feature, typeLabel, featureType){
             if(featureType === 'text') {
-                return typeLabel + (feature.style && feature.style.label ? ' (' + feature.style.label + ')' : '');
+                var featureLabel = this._getFeatureLabel(feature);
+                return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
             } else {
                 return typeLabel + ' ' + (++this.geomCounter);
             }
@@ -275,9 +276,10 @@
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit(this.editControl);
-            if (eventFeature.style && eventFeature.style.label) {
+            var label = this._getFeatureLabel(eventFeature);
+            if (label) {
                 eventFeature.style = this._setTextEdit(eventFeature.style);
-                $('input[name=label-text]', this.element).val(eventFeature.style.label);
+                $('input[name=label-text]', this.element).val(label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
                 $('input[name=label-text]', this.element).on('keyup', function() {
                     var text = $(this).val().trim();
@@ -319,6 +321,9 @@
         _setTextEdit: function(style){
             style.fillColor = style.strokeColor = style.fontColor = 'blue';
             return style;
+        },
+        _getFeatureLabel: function(feature) {
+            return feature.style.label;
         },
         _updateFeatureLabel: function(feature, label) {
             feature.style.label = label;
