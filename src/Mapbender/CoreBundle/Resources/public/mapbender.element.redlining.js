@@ -19,7 +19,15 @@
         activeControl: null,
         geomCounter: 0,
         rowTemplate: null,
+        toolLabels: {},
         _create: function() {
+            Object.assign(this.toolLabels, {
+                'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
+                'line': Mapbender.trans('mb.core.redlining.geometrytype.line'),
+                'polygon': Mapbender.trans('mb.core.redlining.geometrytype.polygon'),
+                'rectangle': Mapbender.trans('mb.core.redlining.geometrytype.rectangle'),
+                'text': Mapbender.trans('mb.core.redlining.geometrytype.text.label')
+            });
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self.mbMap = mbMap;
@@ -187,15 +195,17 @@
                 case 'point':
                     return new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
-                                featureAdded: function(e){
-                                    self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.point'));
+                                featureAdded: function(feature){
+                                    feature.attributes.toolName = toolName;
+                                    self._addToGeomList(feature);
                                 }
                             });
                 case 'line':
                     return new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Path, {
-                                featureAdded: function(e){
-                                    self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.line'));
+                                featureAdded: function(feature){
+                                    feature.attributes.toolName = toolName;
+                                    self._addToGeomList(feature);
                                 }
                             });
                 case 'polygon':
@@ -204,8 +214,9 @@
                                 handlerOptions: {
                                     handleRightClicks: false
                                 },
-                                featureAdded: function(e){
-                                    self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.polygon'));
+                                featureAdded: function(feature) {
+                                    feature.attributes.toolName = toolName;
+                                    self._addToGeomList(feature);
                                 }
                             });
                 case 'rectangle':
@@ -216,20 +227,22 @@
                                     irregular: true,
                                     rightClick: false
                                 },
-                                featureAdded: function(e){
-                                    self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.rectangle'));
+                                featureAdded: function(feature) {
+                                    feature.attributes.toolName = toolName;
+                                    self._addToGeomList(feature);
                                 }
                             });
                 case 'text':
                     return new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
                                 featureAdded: function (feature) {
+                                    feature.attributes.toolName = toolName;
                                     var text = $('input[name=label-text]', self.element).val().trim();
                                     if (!text) {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                                         self._removeFeature(feature);
                                     } else {
-                                        self._addToGeomList(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
+                                        self._addToGeomList(feature);
                                         self._updateFeatureLabel(feature, text);
                                         $('input[name=label-text]', self.element).val('');
                                     }
@@ -262,19 +275,19 @@
             $('.redlining-tool', this.element).removeClass('active');
         },
         
-        _getGeomLabel: function(feature, typeLabel, featureType){
-            if(featureType === 'text') {
+        _getGeomLabel: function(feature, typeLabel) {
+            if (feature.attributes.toolName === 'text') {
                 var featureLabel = this._getFeatureLabel(feature);
                 return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
             } else {
                 return typeLabel + ' ' + (++this.geomCounter);
             }
         },
-        _addToGeomList: function(feature, typeLabel){
-            var activeTool = $('.redlining-tool.active', this.element).attr('name');
+        _addToGeomList: function(feature) {
+            var typeLabel = this.toolLabels[feature.attributes.toolName];
             var row = this.rowTemplate.clone();
             row.data('feature', feature);
-            $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
+            $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
         },
