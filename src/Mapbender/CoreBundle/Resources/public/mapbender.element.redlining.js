@@ -20,6 +20,7 @@
         geomCounter: 0,
         rowTemplate: null,
         toolLabels: {},
+        requireText_: false,
         _create: function() {
             Object.assign(this.toolLabels, {
                 'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
@@ -91,6 +92,9 @@
                 this.map.addLayer(this.layer);
                 this.editControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true, active: false});
                 this.map.addControl(this.editControl);
+                this.layer.events.on({
+                    sketchcomplete: this._validateText.bind(this)
+                });
             }
             if (this.options.display_type === 'dialog'){
                 this._open();
@@ -180,6 +184,9 @@
                 if (toolName === 'text') {
                     $('input[name=label-text]', this.element).val('');
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
+                    this.requireText_ = true;
+                } else {
+                    this.requireText_ = false;
                 }
                 var control = this._controlFactory(toolName);
                 this.map.addControl(control);
@@ -190,7 +197,7 @@
             return false;
         },
         _validateText: function() {
-            if (!$('input[name=label-text]', this.element).val().trim()) {
+            if (this.requireText_ && !$('input[name=label-text]', this.element).val().trim()) {
                 Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                 return false;
             } else {
@@ -203,16 +210,6 @@
                 self._setFeatureAttribute(feature, 'toolName', toolName);
                 self._addToGeomList(feature);
             }
-            var textHandlers = {
-                sketchcomplete: this._validateText,
-                scope: this
-            };
-            if (toolName === 'text') {
-                this.layer.events.on(textHandlers);
-            } else {
-                this.layer.events.un(textHandlers);
-            }
-
             switch(toolName) {
                 case 'point':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
