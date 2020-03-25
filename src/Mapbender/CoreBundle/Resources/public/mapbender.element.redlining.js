@@ -51,6 +51,8 @@
             });
 
             this.setupMapEventListeners();
+            this.layer = this._createLayer(this.mbMap);
+            this.editControl = this._createEditControl(this.mbMap, this.layer);
 
             this._trigger('ready');
             if (this.options.auto_activate || this.options.display_type === 'element') {
@@ -63,39 +65,43 @@
         defaultAction: function(callback){
             this.activate(callback);
         },
+        _createLayer: function(mbMap) {
+            var labelStyles = {
+                label: '${label}',
+                labelAlign: 'lm',
+                labelXOffset: 10
+            };
+            var valueCallbacks = {
+                label: function(feature) {
+                    return feature.attributes.label || ''
+                }
+            };
+            var customDefaultStyles = this.options.paintstyles;
+            var styles = {};
+            ['default', 'select', 'temporary'].forEach(function(intent) {
+                var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], labelStyles);
+                if (intent === 'default') {
+                    Object.assign(styleOptions, customDefaultStyles);
+                }
+                styles[intent] = new OpenLayers.Style(styleOptions, {
+                    context: valueCallbacks
+                });
+            });
+            var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
+            var layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
+            mbMap.model.olMap.addLayer(layer);
+            layer.events.on({
+                sketchcomplete: this._validateText.bind(this)
+            });
+            return layer;
+        },
+        _createEditControl: function(mbMap, olLayer) {
+            var control = new OpenLayers.Control.ModifyFeature(olLayer, {standalone: true, active: false});
+            mbMap.model.olMap.addControl(control);
+            return control;
+        },
         activate: function(callback){
             this.callback = callback ? callback : null;
-            if (!this.layer) {
-                var labelStyles = {
-                    label: '${label}',
-                    labelAlign: 'lm',
-                    labelXOffset: 10
-                };
-                var valueCallbacks = {
-                    label: function(feature) {
-                        return feature.attributes.label || ''
-                    }
-                };
-                var customDefaultStyles = this.options.paintstyles;
-                var styles = {};
-                ['default', 'select', 'temporary'].forEach(function(intent) {
-                    var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], labelStyles);
-                    if (intent === 'default') {
-                        Object.assign(styleOptions, customDefaultStyles);
-                    }
-                    styles[intent] = new OpenLayers.Style(styleOptions, {
-                        context: valueCallbacks
-                    });
-                });
-                var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
-                this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
-                this.map.addLayer(this.layer);
-                this.editControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true, active: false});
-                this.map.addControl(this.editControl);
-                this.layer.events.on({
-                    sketchcomplete: this._validateText.bind(this)
-                });
-            }
             if (this.options.display_type === 'dialog'){
                 this._open();
             } else {
@@ -254,6 +260,15 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
+        /**
+         * @param {*} feature
+         * @private
+         * engine-specific
+         */
+        _startEdit: function(feature) {
+            this.editControl.selectFeature(feature);
+            this.editControl.activate();
+        },
         _endEdit: function() {
             $('input[name=label-text]', this.element).off('keyup');
             this.editControl.deactivate();
@@ -319,12 +334,7 @@
                     }
                 });
             }
-            this.editControl.activate();
-            this.editControl.selectFeature(eventFeature);
-            // This might seem redundant, but without a second activate, the first edit in the session
-            // just does not work; Style changes, vertices are displayed, but you can't pull them.
-            // Second call to activate() fixes this.
-            this.editControl.activate();
+            this._startEdit(eventFeature);
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
