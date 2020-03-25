@@ -57,8 +57,28 @@
         activate: function(callback){
             this.callback = callback ? callback : null;
             if (!this.layer) {
-                var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], this.options.paintstyles));
-                var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
+                var labelStyles = {
+                    label: '${label}',
+                    labelAlign: 'lm',
+                    labelXOffset: 10
+                };
+                var valueCallbacks = {
+                    label: function(feature) {
+                        return feature.attributes.label || ''
+                    }
+                };
+                var customDefaultStyles = this.options.paintstyles;
+                var styles = {};
+                ['default', 'select', 'temporary'].forEach(function(intent) {
+                    var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], labelStyles);
+                    if (intent === 'default') {
+                        Object.assign(styleOptions, customDefaultStyles);
+                    }
+                    styles[intent] = new OpenLayers.Style(styleOptions, {
+                        context: valueCallbacks
+                    });
+                });
+                var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
                 this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
                 this.map.addLayer(this.layer);
                 this.editControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true, active: false});
@@ -209,7 +229,6 @@
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                                         self._removeFeature(feature);
                                     } else {
-                                        feature.style = self._generateTextStyle();
                                         self._addToGeomList(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
                                         self._updateFeatureLabel(feature, text);
                                         $('input[name=label-text]', self.element).val('');
@@ -278,7 +297,6 @@
             this._endEdit(this.editControl);
             var label = this._getFeatureLabel(eventFeature);
             if (label) {
-                eventFeature.style = this._setTextEdit(eventFeature.style);
                 $('input[name=label-text]', this.element).val(label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
                 $('input[name=label-text]', this.element).on('keyup', function() {
@@ -304,29 +322,11 @@
             var feature = $(e.target).closest('tr').data('feature');
             this.mbMap.getModel().zoomToFeature(feature);
         },
-        _generateTextStyle: function() {
-            var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
-            style.labelAlign = 'lm';
-            style.labelXOffset = 10;
-            style.pointRadius = 6;
-            style.fillOpacity = 0.4;
-            style.strokeOpacity = 1;
-            style.strokeWidth = 2;
-            return this._setTextDefault(style);
-        },
-        _setTextDefault: function(style){
-            style.fillColor = style.strokeColor = style.fontColor = 'red';
-            return style;
-        },
-        _setTextEdit: function(style){
-            style.fillColor = style.strokeColor = style.fontColor = 'blue';
-            return style;
-        },
         _getFeatureLabel: function(feature) {
-            return feature.style.label;
+            return feature.attributes.label || '';
         },
         _updateFeatureLabel: function(feature, label) {
-            feature.style.label = label;
+            feature.attributes.label = label;
             feature.layer.redraw();
         },
         _onSrsChange: function(event, data) {
