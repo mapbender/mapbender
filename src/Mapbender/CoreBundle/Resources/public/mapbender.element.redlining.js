@@ -272,8 +272,10 @@
             $('.redlining-tool', this.element).removeClass('active');
         },
         
-        _getGeomLabel: function(feature, typeLabel) {
-            if (this._getFeatureAttribute(feature, 'toolName') === 'text') {
+        _getGeomLabel: function(feature) {
+            var toolName = this._getFeatureAttribute(feature, 'toolName');
+            var typeLabel = this.toolLabels[toolName];
+            if (toolName === 'text') {
                 var featureLabel = this._getFeatureLabel(feature);
                 return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
             } else {
@@ -281,10 +283,9 @@
             }
         },
         _addToGeomList: function(feature) {
-            var typeLabel = this.toolLabels[feature.attributes.toolName];
             var row = this.rowTemplate.clone();
             row.data('feature', feature);
-            $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel));
+            $('.geometry-name', row).text(this._getGeomLabel(feature));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
         },
@@ -313,7 +314,7 @@
                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                     } else {
                         self._updateFeatureLabel(eventFeature, text);
-                        var label = self._getGeomLabel(eventFeature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
+                        var label = self._getGeomLabel(eventFeature);
                         $('.geometry-name', $row).text(label);
                     }
                 });
