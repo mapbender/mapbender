@@ -245,7 +245,7 @@
                             var text = textInput.val().trim();
                             self._updateFeatureLabel(feature, text);
                             featureAdded(feature);
-                            textInput.val();
+                            textInput.val('');
                         }
                     });
             }
