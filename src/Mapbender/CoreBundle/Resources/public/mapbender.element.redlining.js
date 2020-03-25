@@ -213,25 +213,18 @@
                 return true;
             }
         },
-        _controlFactory: function(toolName){
-            var self = this;
-            var featureAdded;
-            function featureAddedCommon(feature) {
-                self._setFeatureAttribute(feature, 'toolName', toolName);
-                self._addToGeomList(feature);
-            }
+        _onFeatureAdded: function(toolName, feature) {
+            this._setFeatureAttribute(feature, 'toolName', toolName);
             if (this._toolRequiresLabel(toolName)) {
-                featureAdded = function(feature) {
-                    var textInput = $('input[name=label-text]', self.element);
-                    var text = textInput.val().trim();
-                    self._updateFeatureLabel(feature, text);
-                    featureAddedCommon(feature);
-                    textInput.val('');
-                }
-            } else {
-                featureAdded = featureAddedCommon;
+                var textInput = $('input[name=label-text]', self.element);
+                var text = textInput.val().trim();
+                this._updateFeatureLabel(feature, text);
+                textInput.val('');
             }
-
+            this._addToGeomList(feature);
+        },
+        _controlFactory: function(toolName){
+            var featureAdded = this._onFeatureAdded.bind(this, toolName);
             switch(toolName) {
                 case 'point':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
