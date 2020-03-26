@@ -112,6 +112,7 @@
             } else {
                 this.element.removeClass('hidden');
             }
+            this._moveLayerToLayerStackTop();
         },
         deactivate: function(){
             this._deactivateControl();
@@ -375,6 +376,15 @@
          */
         _setFeatureAttribute: function(feature, name, value) {
             feature.attributes[name] = value;
+        },
+        /**
+         * engine-specific
+         */
+        _moveLayerToLayerStackTop: function() {
+            if (this.layer) {
+                this.map.raiseLayer(this.layer, this.map.getNumLayers());
+                this.map.resetLayersZIndex();
+            }
         },
         _onSrsChange: function(event, data) {
             this._endEdit();
