@@ -21,6 +21,7 @@
         rowTemplate: null,
         toolLabels: {},
         requireText_: false,
+        editing_: null,
         _create: function() {
             Object.assign(this.toolLabels, {
                 'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
@@ -89,9 +90,13 @@
             });
             var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
             var layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
+            var self = this;
             mbMap.model.olMap.addLayer(layer);
             layer.events.on({
-                sketchcomplete: this._validateText.bind(this)
+                sketchcomplete: this._validateText.bind(this),
+                afterfeaturemodified: function() {
+                    self.editing_ = null;
+                }
             });
             return layer;
         },
@@ -271,10 +276,12 @@
         _startEdit: function(feature) {
             this.editControl.selectFeature(feature);
             this.editControl.activate();
+            this.editing_ = feature;
         },
         _endEdit: function() {
             $('input[name=label-text]', this.element).off('keyup');
             this.editControl.deactivate();
+            this.editing_ = null;
         },
         _deactivateControl: function(){
             if (this.activeControl !== null) {
@@ -309,11 +316,11 @@
         },
         _removeFromGeomList: function(e){
             var $tr = $(e.target).closest('tr');
-            var eventFeature = $tr.data('feature');
-            if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
+            var feature = $tr.data('feature');
+            if (feature === this.editing_) {
                 this._endEdit();
             }
-            this._removeFeature(eventFeature);
+            this._removeFeature(feature);
             $tr.remove();
         },
         _modifyFeature: function(e) {
