@@ -3,12 +3,7 @@
     $.widget("mapbender.mbRuler", {
         options: {
             target: null,
-            click: undefined,
-            icon: undefined,
-            label: true,
-            group: undefined,
-            immediate: null,
-            persist: true,
+            immediate: false,
             type: 'line',
             precision: 2
         },
@@ -29,52 +24,60 @@
                 Mapbender.checkTarget("mbRuler", self.options.target);
             });
         },
-        /**
-         * Initializes the overview
-         */
-        _setup: function(mbMap) {
-            this.mapModel = mbMap.getModel();
-            var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
-                'default': this.options.style
-            });
-            var styleMap = new OpenLayers.StyleMap(sm);
+        _createControl: function() {
+            var nVertices = 1;
+            var self = this;
+            var handlerClass, validateEventGeometry;
+            if (this.options.type === 'area') {
+                handlerClass = OpenLayers.Handler.Polygon;
+                validateEventGeometry = function(event) {
+                    // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
+                    // small) area for them. Ignore these cases.
+                    return event.geometry.components[0].components.length >= 4;
+                }
+            } else {
+                handlerClass = OpenLayers.Handler.Path;
+                validateEventGeometry = function(event) {
+                    return event.geometry.components.length >= 2;
+                }
+            }
 
-            var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
-                    OpenLayers.Handler.Polygon);
-            var immediate = this.options.immediate || false;
-            this.control = new OpenLayers.Control.Measure(handler, {
-                callbacks: {
-                    modify: function(point, feature, drawing){
-                        // Monkey patching, so modify uses a different event than
-                        // the point handler. Sad, but true.
-                        if(drawing && this.delayedTrigger === null &&
-                                !this.handler.freehandMode(this.handler.evt)){
-                            this.measure(feature.geometry, "measuremodify");
-                        }
-                    }
+            var control = new OpenLayers.Control.Measure(handlerClass, {
+                persist: true,
+                immediate: !!this.options.immediate,
+                displaySystemUnits: {
+                    metric: ['m']
                 },
-                // This, too, is part of the monkey patch - unregistered event
-                // types wont fire
-                EVENT_TYPES: OpenLayers.Events.prototype.BROWSER_EVENTS
-                        .concat(['measuremodify']),
-                handlerOptions: {
-                    layerOptions: {
-                        styleMap: styleMap,
-                        name: 'rulerlayer'
-                    }
-                },
-                persist: this.options.persist,
-                immediate: immediate,
                 geodesic: true
             });
 
-            this.control.events.on({
+            control.events.on({
                 'scope': this,
-                'measure': this._handleFinal,
-                'measurepartial': this._handlePartial,
-                'measuremodify': this._handleModify
+                'measure': function(event) {
+                    self._handleFinal(event);
+                },
+                'measurepartial': function(event) {
+                    if (!validateEventGeometry(event)) {
+                        return;
+                    }
+                    var nVerticesNow = event.geometry.components.length;
+                    if (nVerticesNow <= 2) {
+                        self._reset();
+                    }
+                    if (nVerticesNow !== nVertices) {
+                        nVertices = nVerticesNow;
+                        return self._handlePartial(event);
+                    } else {
+                        return self._handleModify(event);
+                    }
+                }
             });
 
+            return control;
+        },
+        _setup: function(mbMap) {
+            this.mapModel = mbMap.getModel();
+            this.control = this._createControl();
             this.container = $('<div/>');
             this.total = $('<div/>').appendTo(this.container);
             this.segments = $('<ul/>').appendTo(this.container);
@@ -89,15 +92,19 @@
         defaultAction: function(callback){
             this.activate(callback);
         },
-        /**
-         * This activates this button and will be called on click
-         */
+        _toggleControl: function(state) {
+            if (state) {
+                this.mapModel.olMap.addControl(this.control);
+                this.control.activate();
+            } else {
+                this.control.deactivate();
+                this.mapModel.olMap.removeControl(this.control);
+            }
+        },
         activate: function(callback){
             this.callback = callback ? callback : null;
-            var self = this,
-                    olMap = this.mapModel.map.olMap;
-            olMap.addControl(this.control);
-            this.control.activate();
+            var self = this;
+            this._toggleControl(true);
 
             this._reset();
             if(!this.popup || !this.popup.$element){
@@ -125,20 +132,10 @@
             }else{
                 this.popup.open("");
             }
-
-            (this.options.type === 'line') ?
-                    $("#linerulerButton").parent().addClass("toolBarItemActive") :
-                    $("#arearulerButton").parent().addClass("toolBarItemActive");
         },
-        /**
-         * This deactivates this button and will be called if another button of
-         * this group is activated.
-         */
         deactivate: function(){
             this.container.detach();
-            var olMap = this.mapModel.map.olMap;
-            this.control.deactivate();
-            olMap.removeControl(this.control);
+            this._toggleControl(false);
             $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
             if(this.popup && this.popup.$element){
                 this.popup.destroy();
@@ -154,56 +151,65 @@
                 this._reset();
             }
         },
-        _reset: function(){
+        _reset: function() {
             this.segments.empty();
             this.total.empty();
             this.segments.append('<li/>');
-
         },
         _handleModify: function(event){
-            if(event.measure === 0.0){
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
                 return;
             }
-
-            var measure = this._getMeasureFromEvent(event);
-
-            if(this.control.immediate){
-                this.segments.children('li').first().html(measure);
+            if (this.options.immediate) {
+                this.segments.children('li').first().text(measure);
             }
         },
         _handlePartial: function(event){
-            if(event.measure === 0){// if first point
-                this._reset();
+            var measure = this._getMeasureFromEvent(event);
+            if (!measure) {
                 return;
             }
-
-            var measure = this._getMeasureFromEvent(event);
-            if(this.options.type === 'area'){
-                this.segments.html($('<li/>', { html: measure }));
-            } else if(this.options.type === 'line'){
-                var measureElement = $('<li/>');
-                measureElement.html(measure);
-                this.segments.prepend(measureElement);
+            if (this.options.type === 'area') {
+                this.segments.empty();
             }
+            var measureElement = $('<li/>');
+            measureElement.text(measure);
+            this.segments.prepend(measureElement);
         },
         _handleFinal: function(event){
             var measure = this._getMeasureFromEvent(event);
             if(this.options.type === 'area'){
                 this.segments.empty();
             }
-            this.total.html('<b>'+measure+'</b>');
+            this.total.empty().append($('<b>').text(measure));
         },
         _getMeasureFromEvent: function(event){
-            var measure = event.measure,
-                    units = event.units,
-                    order = event.order;
-
-            measure = measure.toFixed(this.options.precision) + " " + units;
-            if(order > 1){
-                measure += "<sup>" + order + "</sup>";
+            var measure = event.measure;
+            if (!measure) {
+                return null;
             }
-
-            return measure;
+            return this._formatMeasure(measure);
+        },
+        _formatMeasure: function(value) {
+            var scale = 1;
+            var unit;
+            if (this.options.type === 'area') {
+                if (value >= 10000000) {
+                    scale = 1000000;
+                    unit = 'km²';
+                } else {
+                    unit = 'm²';
+                }
+            } else {
+                if (value > 10000) {
+                    scale = 1000;
+                    unit = 'km';
+                } else {
+                    unit = 'm';
+                }
+            }
+            return [(value / scale).toFixed(this.options.precision), unit].join('');
         }
     });
 

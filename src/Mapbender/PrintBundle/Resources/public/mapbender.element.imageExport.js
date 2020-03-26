@@ -99,12 +99,12 @@
                 width: imageSize.w,
                 height: imageSize.h,
                 center: {
-                    x: mapExtent.getCenterLonLat().lon,
-                    y: mapExtent.getCenterLonLat().lat
+                    x: Math.min(mapExtent.left, mapExtent.right) + 0.5 * Math.abs(mapExtent.right - mapExtent.left),
+                    y: Math.min(mapExtent.bottom, mapExtent.top) + 0.5 * Math.abs(mapExtent.top - mapExtent.bottom)
                 },
                 extent: {
-                    width: Math.abs(mapExtent.getWidth()),
-                    height: Math.abs(mapExtent.getHeight())
+                    width: Math.abs(mapExtent.right - mapExtent.left),
+                    height: Math.abs(mapExtent.top - mapExtent.bottom)
                 }
             };
         },
