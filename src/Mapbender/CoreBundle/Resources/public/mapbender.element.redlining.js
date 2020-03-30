@@ -52,8 +52,15 @@
             });
 
             this.setupMapEventListeners();
-            this.layer = this._createLayer(this.mbMap);
-            this.editControl = this._createEditControl(this.mbMap, this.layer);
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.layerBridge = this._createLayer(this.mbMap);
+                this.layer = this.layerBridge.getNativeLayer();
+                this.editControl = this._createEditControl(this.mbMap, this.layer);
+            } else {
+                this.layerBridge = this._createLayer4(this.mbMap);
+                this.layer = this.layerBridge.getNativeLayer();
+                this.editControl = this._createEditControl4(this.mbMap, this.layer);
+            }
 
             this._trigger('ready');
             if (this.options.auto_activate || this.options.display_type === 'element') {
@@ -67,6 +74,7 @@
             this.activate(callback);
         },
         _createLayer: function(mbMap) {
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             var labelStyles = {
                 label: '${label}',
                 labelAlign: 'lm',
@@ -89,21 +97,27 @@
                 });
             });
             var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
-            var layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
+            var layer = layerBridge.getNativeLayer();
+            layer.styleMap = styleMap;
             var self = this;
-            mbMap.model.olMap.addLayer(layer);
             layer.events.on({
                 sketchcomplete: this._validateText.bind(this),
                 afterfeaturemodified: function() {
                     self.editing_ = null;
                 }
             });
-            return layer;
+            return layerBridge;
+        },
+        _createLayer4: function(mbMap) {
+            return Mapbender.vectorLayerPool.getElementLayer(this, 0);
         },
         _createEditControl: function(mbMap, olLayer) {
             var control = new OpenLayers.Control.ModifyFeature(olLayer, {standalone: true, active: false});
             mbMap.model.olMap.addControl(control);
             return control;
+        },
+        _createEditControl4: function(mbMap, olLayer) {
+            return null;
         },
         activate: function(callback){
             this.callback = callback ? callback : null;
@@ -381,10 +395,7 @@
          * engine-specific
          */
         _moveLayerToLayerStackTop: function() {
-            if (this.layer) {
-                this.map.raiseLayer(this.layer, this.map.getNumLayers());
-                this.map.resetLayersZIndex();
-            }
+            Mapbender.vectorLayerPool.raiseElementGroup(this);
         },
         _onSrsChange: function(event, data) {
             this._endEdit();
