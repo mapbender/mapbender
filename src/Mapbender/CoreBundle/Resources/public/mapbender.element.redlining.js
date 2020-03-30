@@ -251,10 +251,22 @@
                     break;
                 case 'text':
                     console.warn("No text label styling for 'text'");
-                    this.layerBridge.draw('point');
+                    this._monkeyPatchLabelCondition(this.layerBridge.draw('point', featureAdded));
                     break;
                 default:
                     throw new Error("No implementation for tool name " + toolName);
+            }
+        },
+        _monkeyPatchLabelCondition: function(interaction) {
+            // OpenLayers 4 only. OpenLayers 2 handles this via map-global sketchcomplete event
+            // Condition cannot be set via public API after creation. So we patch the private attribute 'condition_'
+            if (interaction.condition_ && !interaction.monkeyPatchedLabelCondition) {
+                var self = this;
+                interaction.condition_ = function(event) {
+                    // invoke original default handler
+                    var original = ol.events.condition.noModifierKeys(event);
+                    return original && self._validateText();
+                };
             }
         },
         _controlFactory: function(toolName){
@@ -390,7 +402,10 @@
         },
         _updateFeatureLabel: function(feature, label) {
             this._setFeatureAttribute(feature, 'label', label);
-            feature.layer.redraw();
+            // OpenLayers 2 only
+            if (feature.layer) {
+                feature.layer.redraw();
+            }
         },
         /**
          * @param {*} feature
