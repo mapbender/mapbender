@@ -118,14 +118,8 @@
         activate: function(callback){
             this.callback = callback ? callback : null;
             if (!this.layer) {
-                //var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.paintstyles));
-                //var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
-                // this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
                 this.defaultStyle = this.model.createStyle(this.options.defaultStyle);
                 this.selectStyle = this.model.createStyle(this.options.selectStyle);
-                // this.layerStyle = this.model.createVectorLayerStyle();
-                //var drawLayerId = this.model.createVectorLayer({}, this.layerStyle, this.element.attr('id'));
-                //this.map.addLayer(this.layer);
             }
             if (this.options.display_type === 'dialog'){
                 this._open();
@@ -313,24 +307,9 @@
             }
         },
         _deactivateControl: function(){
-            // if(this.selectedFeature) {
-                // this.activeControl.unselectFeature(this.selectedFeature);
-                // if (this.selectedFeature.style && this.selectedFeature.style.label) {
-                //     $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
-                //     this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
-                //     this.layer.redraw();
-                // }
-                // this.selectedFeature = null;
-            // }
             if(this.selectedFeature) {
                 this.model.deselectFeatureById(this.element.attr('id'), this.activeControlId);
             }
-            // if(this.activeControl !== null) {
-            //     this.activeControl.deactivate();
-            //     this.activeControl.destroy();
-            //     this.map.removeControl(this.activeControl);
-            //     this.activeControl = null;
-            // }
             if(this.activeControlId){
                 this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions);
             }
@@ -378,17 +357,6 @@
             var $tr = $(e.target).parents('tr:first');
             this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
             this.activeControlId = this.model.createModifyInteraction(this.element.attr('id'), this.selectStyle, $tr.attr('data-layer-id'), $tr.attr('data-id'));
-            // this.selectedFeature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
-            // if(this.selectedFeature.style && this.selectedFeature.style.label) {
-            //     this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
-            //     $('input[name=label-text]', this.element).val(this.selectedFeature.style.label);
-            //     $('#redlining-text-wrapper', this.element).removeClass('hidden');
-            //     $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this));
-            // }
-            // this.activeControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true});
-            // this.map.addControl(this.activeControl);
-            // this.activeControl.selectFeature(this.selectedFeature);
-            // this.activeControl.activate();
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
