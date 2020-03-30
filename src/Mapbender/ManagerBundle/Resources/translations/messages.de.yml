@@ -137,6 +137,9 @@ mb:
           title: 'URL Titel'
         description: Beschreibung
         template: Vorlage
+        map_engine_code: Karten-Engine
+        map_engine_code.ol2: OpenLayers 2
+        map_engine_code.ol4: OpenLayers 4
       applications: Anwendungen
     source:
       serviceurl: Dienst-URL
