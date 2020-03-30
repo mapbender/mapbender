@@ -60,7 +60,54 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 feature.setStyle(this.markerStyle_);
             }
             return feature;
-        }
+        },
+        createDraw_: function(type) {
+            var source = this.wrappedLayer_.getSource();
+            switch (type) {
+                case 'point':
+                    return new ol.interaction.Draw({
+                        type: 'Point',
+                        source: source
+                    });
+                case 'line':
+                    return new ol.interaction.Draw({
+                        type: 'LineString',
+                        source: source
+                    });
+                case 'polygon':
+                    return new ol.interaction.Draw({
+                        type: 'Polygon',
+                        source: source
+                    });
+                case 'circle':
+                    return new ol.interaction.Draw({
+                        type: 'Circle',
+                        source: source
+                    });
+                case 'rectangle':
+                    return new ol.interaction.Draw({
+                        type: 'Circle',
+                        geometryFunction: ol.interaction.Draw.createBox(),
+                        source: source
+                    });
+                default:
+                    throw new Error("No such type " + type);
+            }
+        },
+        activateDraw_: function(interaction, featureCallback) {
+            var currentListeners = interaction.getListeners(ol.interaction.DrawEventType.DRAWEND) || [];
+            for (var i = 0; i < currentListeners.length; ++i) {
+                interaction.removeEventListener(ol.interaction.DrawEventType.DRAWEND, currentListeners[i]);
+            }
+            interaction.addEventListener(ol.interaction.DrawEventType.DRAWEND, function(e) {
+                featureCallback(e.feature);
+            });
+            this.olMap.addInteraction(interaction);
+        },
+        endDraw_: function(interaction) {
+            this.olMap.removeInteraction(interaction);
+        },
+        dummy_: null
     });
     return VectorLayerBridgeOl4;
 }());

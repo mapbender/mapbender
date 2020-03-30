@@ -217,10 +217,7 @@
                 } else {
                     this.requireText_ = false;
                 }
-                var control = this._controlFactory(toolName);
-                this.map.addControl(control);
-                control.activate();
-                this.activeControl = control;
+                this._startDraw(toolName);
                 $button.addClass('active');
             }
             return false;
@@ -242,6 +239,23 @@
                 textInput.val('');
             }
             this._addToGeomList(feature);
+        },
+        _startDraw: function(toolName) {
+            var featureAdded = this._onFeatureAdded.bind(this, toolName);
+            switch(toolName) {
+                case 'point':
+                case 'line':
+                case 'polygon':
+                case 'rectangle':
+                    this.layerBridge.draw(toolName, featureAdded);
+                    break;
+                case 'text':
+                    console.warn("No text label styling for 'text'");
+                    this.layerBridge.draw('point');
+                    break;
+                default:
+                    throw new Error("No implementation for tool name " + toolName);
+            }
         },
         _controlFactory: function(toolName){
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
@@ -277,11 +291,15 @@
             }
         },
         _removeFeature: function(feature){
-            this.layer.destroyFeatures([feature]);
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.layer.destroyFeatures([feature]);
+            } else {
+                this.layer.getSource().removeFeature(feature);
+            }
         },
         _removeAllFeatures: function(){
             $('.geometry-table tr', this.element).remove();
-            this.layer.removeAllFeatures();
+            this.layerBridge.clear();
         },
         /**
          * @param {*} feature
@@ -295,7 +313,9 @@
         },
         _endEdit: function() {
             $('input[name=label-text]', this.element).off('keyup');
-            this.editControl.deactivate();
+            if (this.editControl) {
+                this.editControl.deactivate();
+            }
             this.editing_ = null;
         },
         _deactivateControl: function(){
@@ -379,7 +399,11 @@
          * engine-specific
          */
         _getFeatureAttribute: function(feature, name) {
-            return feature.attributes[name];
+            if (Mapbender.mapEngine.code === 'ol2') {
+                return feature.attributes[name];
+            } else {
+                return feature.get(name);
+            }
         },
         /**
          * @param {*} feature
@@ -389,7 +413,11 @@
          * engine-specific
          */
         _setFeatureAttribute: function(feature, name, value) {
-            feature.attributes[name] = value;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                feature.attributes[name] = value;
+            } else {
+                feature.set(name, value);
+            }
         },
         /**
          * engine-specific
