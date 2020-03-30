@@ -269,35 +269,6 @@
                 };
             }
         },
-        _controlFactory: function(toolName){
-            var featureAdded = this._onFeatureAdded.bind(this, toolName);
-            switch(toolName) {
-                case 'point':
-                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
-                        featureAdded: featureAdded
-                    });
-                case 'line':
-                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Path, {
-                        featureAdded: featureAdded
-                    });
-                case 'polygon':
-                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Polygon, {
-                        featureAdded: featureAdded
-                    });
-                case 'rectangle':
-                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.RegularPolygon, {
-                        featureAdded: featureAdded,
-                        handlerOptions: {
-                            sides: 4,
-                            irregular: true
-                        }
-                    });
-                case 'text':
-                    return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point, {
-                        featureAdded: featureAdded
-                    });
-            }
-        },
         _removeFeature: function(feature){
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.layer.destroyFeatures([feature]);

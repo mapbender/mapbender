@@ -51,6 +51,36 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
         getMarkerFeature_: function(lon, lat) {
             var geometry = new OpenLayers.Geometry.Point(lon, lat);
             return new OpenLayers.Feature.Vector(geometry, null, this.markerStyle_ || null);
+        },
+        createDraw_: function(type) {
+            var layer = this.wrappedLayer_;
+            switch (type) {
+                case 'point':
+                    return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point);
+                case 'line':
+                    return  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
+                case 'polygon':
+                    return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
+                case 'rectangle':
+                    return  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
+                        handlerOptions: {
+                            sides: 4,
+                            irregular: true
+                        }
+                    });
+                default:
+                    throw new Error("No such type " + type);
+            }
+        },
+        activateDraw_: function(control, featureCallback) {
+            if (-1 === this.wrappedLayer_.map.controls.indexOf(control)) {
+                this.wrappedLayer_.map.addControl(control);
+            }
+            control.activate();
+            control.featureAdded = featureCallback;
+        },
+        endDraw_: function(control) {
+            control.deactivate();
         }
     });
     return VectorLayerBridgeOl2;
