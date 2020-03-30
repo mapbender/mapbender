@@ -10,6 +10,15 @@ window.Mapbender.VectorLayerPoolOl4 = (function() {
     VectorLayerPoolOl4.prototype = Object.create(Mapbender.VectorLayerPool.prototype);
     Object.assign(VectorLayerPoolOl4.prototype, {
         constructor: VectorLayerPoolOl4,
+        raiseElementGroup: function(owner) {
+            var group = this.findElementLayerGroup_(owner);
+            if (!group) {
+                throw new Error("No such element layer group");
+            }
+            var elementGroupsNative = this.nativeElementLayerGroup_.getLayers();
+            elementGroupsNative.remove(group.nativeGroup);
+            elementGroupsNative.push(group.nativeGroup);
+        },
         createBridgeLayer_: function(olMap) {
             return new window.Mapbender.VectorLayerBridgeOl4(olMap);
         },
