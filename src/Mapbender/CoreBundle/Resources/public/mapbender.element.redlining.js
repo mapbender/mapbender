@@ -282,18 +282,14 @@
                     });
                 case 'polygon':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Polygon, {
-                        featureAdded: featureAdded,
-                        handlerOptions: {
-                            handleRightClicks: false
-                        }
+                        featureAdded: featureAdded
                     });
                 case 'rectangle':
                     return new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.RegularPolygon, {
                         featureAdded: featureAdded,
                         handlerOptions: {
                             sides: 4,
-                            irregular: true,
-                            rightClick: false
+                            irregular: true
                         }
                     });
                 case 'text':
