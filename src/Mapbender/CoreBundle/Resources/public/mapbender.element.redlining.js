@@ -75,32 +75,15 @@
         },
         _createLayer: function(mbMap) {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            var labelStyles = {
-                label: '${label}',
+            var self = this;
+            layerBridge.customizeStyle(Object.assign({}, this.options.paintstyles, {
+                label: function(feature) {
+                    return self._getFeatureAttribute(feature, 'label') || '';
+                },
                 labelAlign: 'lm',
                 labelXOffset: 10
-            };
-            var valueCallbacks = {
-                label: function(feature) {
-                    return feature.attributes.label || ''
-                }
-            };
-            var customDefaultStyles = this.options.paintstyles;
-            var styles = {};
-            ['default', 'select', 'temporary'].forEach(function(intent) {
-                var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], labelStyles);
-                if (intent === 'default') {
-                    Object.assign(styleOptions, customDefaultStyles);
-                }
-                styles[intent] = new OpenLayers.Style(styleOptions, {
-                    context: valueCallbacks
-                });
-            });
-            var styleMap = new OpenLayers.StyleMap(styles, {extendDefault: true});
-            var layer = layerBridge.getNativeLayer();
-            layer.styleMap = styleMap;
-            var self = this;
-            layer.events.on({
+            }));
+            layerBridge.getNativeLayer().events.on({
                 sketchcomplete: this._validateText.bind(this),
                 afterfeaturemodified: function() {
                     self.editing_ = null;

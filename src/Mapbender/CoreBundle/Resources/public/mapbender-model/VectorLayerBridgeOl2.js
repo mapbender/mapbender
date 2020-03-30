@@ -48,6 +48,36 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
                     break;
             }
         },
+        customizeStyle: function(styles) {
+            var stylesPerIntent = {};
+            var valueCallbacks = {};
+            var globalLiterals = {};
+            var defaultLiterals = {};
+            var keys = Object.keys(styles);
+            // detect callables
+            for (var i = 0; i < keys.length; ++i) {
+                var key = keys[i], value = styles[key];
+                if (typeof value === 'function') {
+                    var expr = ['${', key, '}'].join('');
+                    valueCallbacks[key] = value;
+                    globalLiterals[key] = expr;
+                    defaultLiterals[key] = expr;
+                } else {
+                    defaultLiterals[key] = value;
+                }
+            }
+            ['default', 'select', 'temporary'].forEach(function(intent) {
+                var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], globalLiterals);
+                if (intent === 'default') {
+                    Object.assign(styleOptions, defaultLiterals);
+                }
+                stylesPerIntent[intent] = new OpenLayers.Style(styleOptions, {
+                    context: valueCallbacks
+                });
+            });
+            var styleMap = new OpenLayers.StyleMap(stylesPerIntent, {extendDefault: true});
+            this.wrappedLayer_.styleMap = styleMap;
+        },
         getMarkerFeature_: function(lon, lat) {
             var geometry = new OpenLayers.Geometry.Point(lon, lat);
             return new OpenLayers.Feature.Vector(geometry, null, this.markerStyle_ || null);
