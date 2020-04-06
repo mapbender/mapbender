@@ -814,7 +814,7 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
 
             /** @var {(ol.style.Text|null)} text */
             var text = olStyle.getText();
-            var label = text && text.getLabel();
+            var label = text && text.getText();
             if (label) {
                 styleOptions['label'] = label;
                 styleOptions['fontColor'] = this._normalizeCssRgb(text.getFill().getColor());
@@ -824,8 +824,9 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
                 styleOptions['labelOutlineOpacity'] = this._normalizeCssAlpha(textStroke.getColor());
                 styleOptions['labelOutlineWidth'] = textStroke.getWidth();
 
-                // @todo: properly interpret label alignment. See https://openlayers.org/en/v4.6.5/examples/vector-labels.html
-                styleOptions['labelAlign'] = 'cm';
+                styleOptions['labelAlign'] = [text.getTextAlign().slice(0, 1), text.getTextBaseline().slice(0, 1)].join('');
+                styleOptions['labelXOffset'] = text.getOffsetX();
+                styleOptions['labelYOffset'] = text.getOffsetY();
             }
 
             return styleOptions;
