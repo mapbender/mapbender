@@ -52,6 +52,42 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     break;
             }
         },
+        customizeStyle: function(styles) {
+            var svgWithDefaults = Mapbender.StyleUtil.addSvgDefaults(styles);
+            var defaultFn = ol.style.Style.defaultFunction;
+            // default style function ignores feature + resolution arguments, fortunately
+            var defaultStyle = (defaultFn())[0].clone();
+            var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'fillColor', 'fillOpacity')});
+            var baseStroke = new ol.style.Stroke({color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'strokeColor', 'strokeOpacity')});
+            defaultStyle.setFill(baseFill);
+            defaultStyle.setStroke(baseStroke);
+
+            var labelCallback = this._prepareLabelCallback(styles);
+            var textStyle = labelCallback && this._prepareTextStyle(svgWithDefaults);
+            // we know that the default style function does not populate a text style, so we do not need to merge anything
+            if (textStyle) {
+                defaultStyle.setText(textStyle);
+            }
+            var pointImageStyle = new ol.style.Circle({
+                radius: svgWithDefaults.pointRadius,
+                fill: baseFill,
+                stroke: baseStroke
+            });
+            var customFeatureStyleFn = function(feature, resolution) {
+                var style = defaultStyle.clone();
+                if (labelCallback) {
+                    var textStyle = defaultStyle.getText().clone();
+                    textStyle.setText((labelCallback)(feature, resolution));
+                    style.setText(textStyle);
+                }
+                style.setImage(pointImageStyle);
+                return style;
+            };
+            var customLayerStyleFn = function(feature, resolution) {
+                return [customFeatureStyleFn(feature, resolution)];
+            };
+            this.wrappedLayer_.setStyle(customLayerStyleFn);
+        },
         getMarkerFeature_: function(lon, lat) {
             var feature = new ol.Feature({
                 geometry: new ol.geom.Point([lon, lat])
@@ -106,6 +142,73 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         },
         endDraw_: function(interaction) {
             this.olMap.removeInteraction(interaction);
+        },
+        _prepareLabelCallback: function(svgStyles) {
+            var labelCallback, labelLiteral;
+            switch (typeof (svgStyles['label'])) {
+                case 'undefined':
+                    break;
+                case 'function':
+                    labelCallback = svgStyles['label'];
+                    break;
+                default:
+                    labelLiteral = svgStyles['label'].toString();
+                    labelCallback = function() {
+                        return labelLiteral;
+                    };
+                    break;
+            }
+            return labelCallback;
+        },
+        _prepareTextStyle: function(svgStyles) {
+            var baseline, align;
+            switch (svgStyles.labelAlign) {
+                default:
+                case 'cm':
+                case 'cb':
+                case 'ct':
+                    align = 'center';
+                    break;
+                case 'lm':
+                case 'lb':
+                case 'lt':
+                    align = 'left';
+                    break;
+                case 'rm':
+                case 'rb':
+                case 'rt':
+                    align = 'right';
+                    break;
+            }
+            switch (svgStyles.labelAlign) {
+                default:
+                case 'cm':
+                case 'lm':
+                case 'rm':
+                    baseline = 'middle';
+                    break;
+                case 'ct':
+                case 'lt':
+                case 'rt':
+                    baseline = 'top';
+                    break;
+                case 'cb':
+                case 'lb':
+                case 'rb':
+                    baseline = 'bottom';
+                    break;
+            }
+            return new ol.style.Text({
+                fill: new ol.style.Fill({color: Mapbender.StyleUtil.parseSvgColor(svgStyles, 'fontColor', 'fontOpacity')}),
+                stroke: new ol.style.Stroke({
+                    color: Mapbender.StyleUtil.parseSvgColor(svgStyles, 'labelOutlineColor', 'labelOutlineOpacity'),
+                    width: svgStyles.labelOutlineWidth
+                }),
+                textAlign: align,
+                textBaseline: baseline,
+                offsetX: svgStyles.labelXOffset,
+                offsetY: svgStyles.labelYOffset
+            });
         },
         dummy_: null
     });

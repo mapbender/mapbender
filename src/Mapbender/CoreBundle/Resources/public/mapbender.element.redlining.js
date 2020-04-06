@@ -92,7 +92,16 @@
             return layerBridge;
         },
         _createLayer4: function(mbMap) {
-            return Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            var self = this;
+            layerBridge.customizeStyle(Object.assign({}, this.options.paintstyles, {
+                label: function(feature) {
+                    return self._getFeatureAttribute(feature, 'label') || '';
+                },
+                labelAlign: 'lm',
+                labelXOffset: 10
+            }));
+            return layerBridge;
         },
         _createEditControl: function(mbMap, olLayer) {
             var control = new OpenLayers.Control.ModifyFeature(olLayer, {standalone: true, active: false});
