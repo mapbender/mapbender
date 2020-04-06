@@ -748,48 +748,6 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
         getCurrentExtentArray: function() {
             return this.olMap.getView().calculateExtent();
         },
-
-        /**
-         * Extract RGB color from CSS / SVG color rule value and normalize to six-digit hex string (with leading '#')
-         * @param {String} rule possible forms: 'rgba(<int>,<int>,<int>,float)', 'rgb(<int>,<int>,<int>)', '#123', '#102030'
-         * @return {String}
-         * @private
-         */
-        _normalizeCssRgb: function(rule) {
-            if (/^#[a-z0-9]{3,6}$/i.test(rule)) {
-                if (rule.length === 4) {
-                    // short form, e.g. '#9cf', expand to six digits
-                    return ['#', rule[1], rule[1], rule[2], rule[2], rule[3], rule[3]].join('');
-                }
-                return rule;
-            }
-            var matches = (rule || '').match(/^rgba\((\d+),(\d+),(\d+),.*\)$/);
-            if (!matches) {
-                matches = (rule || '').match(/^rgb\((\d+),(\d+),(\d+)\)$/);
-            }
-            if (matches) {
-                var components = [matches[1], matches[2], matches[3]].map(function(component) {
-                    // expand to two-digit hex by prepending a zero, then slicing
-                    return ['0', parseInt(component).toString(16)].join('').slice(-2);
-                });
-                return ['#', components.join('')].join('');
-            }
-            throw new Error("Unrecognized color input format " + rule);
-        },
-        /**
-         * Extract opacity from CSS / SVG color rule value and normalize to float
-         * @param {String} rule possible forms: 'rgba(<int>,<int>,<int>,float)', 'rgb(<int>,<int>,<int>)', '#123', '#102030'
-         * @return {Number}
-         * @private
-         */
-        _normalizeCssAlpha: function(rule) {
-            var matches = (rule || '').match(/^rgba\(\d+,\d+,\d+,(\d*\.\d*)\)$/);
-            if (matches) {
-                return parseFloat(matches[1]);
-            } else {
-                return 1.0;
-            }
-        },
         extractSvgFeatureStyle: function(olLayer, feature, resolution) {
             // @todo: monolithic; split
             var styleOptions = {};
@@ -800,11 +758,10 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
             var image = olStyle.getImage();
-            styleOptions['fillColor'] = this._normalizeCssRgb(fill.getColor());
-            styleOptions['fillOpacity'] = this._normalizeCssAlpha(fill.getColor());
-
-            styleOptions['strokeColor'] = this._normalizeCssRgb(stroke.getColor());
-            styleOptions['strokeOpacity'] = this._normalizeCssAlpha(stroke.getColor());
+            Object.assign(styleOptions,
+                Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'),
+                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity')
+            );
             styleOptions['strokeWidth'] = stroke.getWidth();
 
             styleOptions['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
@@ -817,11 +774,11 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
             var label = text && text.getText();
             if (label) {
                 styleOptions['label'] = label;
-                styleOptions['fontColor'] = this._normalizeCssRgb(text.getFill().getColor());
-                styleOptions['fontOpacity'] = this._normalizeCssAlpha(text.getFill().getColor());
                 var textStroke = text.getStroke();
-                styleOptions['labelOutlineColor'] = this._normalizeCssRgb(textStroke.getColor());
-                styleOptions['labelOutlineOpacity'] = this._normalizeCssAlpha(textStroke.getColor());
+                Object.assign(styleOptions,
+                    Mapbender.StyleUtil.cssColorToSvgRules(text.getFill().getColor(), 'fontColor', 'fontOpacity'),
+                    Mapbender.StyleUtil.cssColorToSvgRules(text.getStroke().getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                );
                 styleOptions['labelOutlineWidth'] = textStroke.getWidth();
 
                 styleOptions['labelAlign'] = [text.getTextAlign().slice(0, 1), text.getTextBaseline().slice(0, 1)].join('');

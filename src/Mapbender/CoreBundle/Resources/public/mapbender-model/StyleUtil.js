@@ -90,9 +90,10 @@ window.Mapbender.StyleUtil = (function() {
          * @return {String}
          */
         _componentsToHexRgbRule: function(components) {
-            return '#' + components.slice(0, 3).map(function(component) {
-                return component.toString(16);
+            var digitPairs = components.slice(0, 3).map(function(component) {
+                return ('0' + component.toString(16)).slice(-2);
             });
+            return ['#', digitPairs.join('')].join('');
         },
         /**
          * @param {Array<Number>} components
@@ -136,7 +137,7 @@ window.Mapbender.StyleUtil = (function() {
                     return parseInt(hexPair, 16);
                 });
             } else {
-                var matches = (rule || '').match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.\d*)\)$/);
+                var matches = (rule || '').match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*((?:\d*\.\d+)|(?:\d+(?:\.\d*)?))\)$/);
                 if (!matches) {
                     matches = (rule || '').match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
                 }
