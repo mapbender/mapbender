@@ -749,44 +749,60 @@ setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
             return this.olMap.getView().calculateExtent();
         },
         extractSvgFeatureStyle: function(olLayer, feature, resolution) {
-            // @todo: monolithic; split
             var styleOptions = {};
             var layerStyleFn = olLayer.getStyleFunction();
             /** @var {ol.style.Style} olStyle */
             var olStyle = layerStyleFn(feature, resolution)[0];
-
-            var fill = olStyle.getFill();
-            var stroke = olStyle.getStroke();
-            var image = olStyle.getImage();
-            Object.assign(styleOptions,
-                Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'),
-                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity')
-            );
-            styleOptions['strokeWidth'] = stroke.getWidth();
-
-            styleOptions['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
-            if (image && (image instanceof ol.style.RegularShape)) {
-                styleOptions['pointRadius'] = image.getRadius() || 6;
-            }
-
-            /** @var {(ol.style.Text|null)} text */
+            Object.assign(styleOptions, this._extractSvgGeometryStyle(olStyle));
             var text = olStyle.getText();
             var label = text && text.getText();
             if (label) {
-                styleOptions['label'] = label;
-                var textStroke = text.getStroke();
-                Object.assign(styleOptions,
-                    Mapbender.StyleUtil.cssColorToSvgRules(text.getFill().getColor(), 'fontColor', 'fontOpacity'),
-                    Mapbender.StyleUtil.cssColorToSvgRules(text.getStroke().getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
-                );
-                styleOptions['labelOutlineWidth'] = textStroke.getWidth();
-
-                styleOptions['labelAlign'] = [text.getTextAlign().slice(0, 1), text.getTextBaseline().slice(0, 1)].join('');
-                styleOptions['labelXOffset'] = text.getOffsetX();
-                styleOptions['labelYOffset'] = text.getOffsetY();
+                Object.assign(styleOptions, this._extractSvgLabelStyle(text), {
+                    label: label
+                });
             }
-
             return styleOptions;
+        },
+        /**
+         * @param {ol.style.Style} olStyle
+         * @return {Object}
+         * @private
+         */
+        _extractSvgGeometryStyle: function(olStyle) {
+            var style = {};
+            var fill = olStyle.getFill();
+            var stroke = olStyle.getStroke();
+            var image = olStyle.getImage();
+            Object.assign(style,
+                Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'),
+                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity')
+            );
+            style['strokeWidth'] = stroke.getWidth();
+
+            style['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
+            if (image && (image instanceof ol.style.RegularShape)) {
+                style['pointRadius'] = image.getRadius() || 6;
+            }
+            return style;
+        },
+        /**
+         * @param {ol.style.Text} olTextStyle
+         * @return {Object}
+         * @private
+         */
+        _extractSvgLabelStyle: function(olTextStyle) {
+            var style = {};
+            var stroke = olTextStyle.getStroke();
+            Object.assign(style,
+                Mapbender.StyleUtil.cssColorToSvgRules(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity'),
+                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+            );
+            style['labelOutlineWidth'] = stroke.getWidth();
+
+            style['labelAlign'] = [olTextStyle.getTextAlign().slice(0, 1), olTextStyle.getTextBaseline().slice(0, 1)].join('');
+            style['labelXOffset'] = olTextStyle.getOffsetX();
+            style['labelYOffset'] = olTextStyle.getOffsetY();
+            return style;
         },
 /**
  * @param {object} options
