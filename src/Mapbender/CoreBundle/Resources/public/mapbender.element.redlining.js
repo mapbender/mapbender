@@ -242,7 +242,6 @@
                     this.layerBridge.draw(toolName, featureAdded);
                     break;
                 case 'text':
-                    console.warn("No text label styling for 'text'");
                     this._monkeyPatchLabelCondition(this.layerBridge.draw('point', featureAdded));
                     break;
                 default:
@@ -259,6 +258,7 @@
                     var original = ol.events.condition.noModifierKeys(event);
                     return original && self._validateText();
                 };
+                interaction.monkeyPatchedLabelCondition = true;
             }
         },
         _removeFeature: function(feature){
