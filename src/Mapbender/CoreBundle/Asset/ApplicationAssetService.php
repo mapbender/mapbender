@@ -169,6 +169,7 @@ class ApplicationAssetService
             case 'ol2-js':
                 $commonAssets = array(
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
                     '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
@@ -203,6 +204,7 @@ class ApplicationAssetService
                     $proj4js,
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
