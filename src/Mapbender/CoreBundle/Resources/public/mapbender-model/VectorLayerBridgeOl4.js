@@ -57,9 +57,9 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             var defaultFn = ol.style.Style.defaultFunction;
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
-            var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'fillColor', 'fillOpacity')});
+            var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'fillColor', 'fillOpacity')});
             var baseStroke = new ol.style.Stroke({
-                color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'strokeColor', 'strokeOpacity'),
+                color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'strokeColor', 'strokeOpacity'),
                 width: svgWithDefaults.strokeWidth
             });
             defaultStyle.setFill(baseFill);
@@ -202,9 +202,9 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     break;
             }
             return new ol.style.Text({
-                fill: new ol.style.Fill({color: Mapbender.StyleUtil.parseSvgColor(svgStyles, 'fontColor', 'fontOpacity')}),
+                fill: new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'fontColor', 'fontOpacity')}),
                 stroke: new ol.style.Stroke({
-                    color: Mapbender.StyleUtil.parseSvgColor(svgStyles, 'labelOutlineColor', 'labelOutlineOpacity'),
+                    color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'labelOutlineColor', 'labelOutlineOpacity'),
                     width: svgStyles.labelOutlineWidth
                 }),
                 textAlign: align,
