@@ -58,7 +58,10 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
             var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'fillColor', 'fillOpacity')});
-            var baseStroke = new ol.style.Stroke({color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'strokeColor', 'strokeOpacity')});
+            var baseStroke = new ol.style.Stroke({
+                color: Mapbender.StyleUtil.parseSvgColor(svgWithDefaults, 'strokeColor', 'strokeOpacity'),
+                width: svgWithDefaults.strokeWidth
+            });
             defaultStyle.setFill(baseFill);
             defaultStyle.setStroke(baseStroke);
 
