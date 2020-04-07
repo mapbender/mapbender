@@ -32,6 +32,8 @@ $(function () {
         form.addEventListener('reset', function() {
             $('.dropdown > .dropdownValue', form).each(function() {
                 var $wrapper = $(this).parent('.dropdown');
+                // reset html select
+                $('select', $wrapper).prop('selectedIndex',0);
                 if ($('select', $wrapper).length) {
                     fixOptions($wrapper);
                     updateValueDisplay($wrapper);
