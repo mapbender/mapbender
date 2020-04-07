@@ -176,6 +176,8 @@
          * Reset current search form
          */
         _reset: function() {
+            $("input", this.element).removeClass("input-required");
+            $(".dropdown", this.element ).removeClass("input-required");
             $('select#search_routes_route', this.element).change();
             this.currentFeature = null;
         },
@@ -269,6 +271,14 @@
             $.each($(':input[required]', form), function() {
                 if('' === $(this).val()) {
                     valid = false;
+                    $(this).addClass("input-required");
+                    
+                    if ($(this).parent().hasClass('dropdown')){
+                      $(this).parent().addClass("input-required");
+                    }
+                }else{
+                    $(this).removeClass("input-required");
+                    $(this).parent().removeClass("input-required");
                 }
             });
 
