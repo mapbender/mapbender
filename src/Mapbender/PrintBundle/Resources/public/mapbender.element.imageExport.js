@@ -264,6 +264,11 @@
                 var layerFeatureData = [];
                 for (var fi = 0; fi < features.length; ++fi) {
                     var feature = features[fi];
+                    // printclient support HACK
+                    // @todo: implement filterFeature properly for dual-engine support
+                    if (this.feature && this.feature === feature) {
+                        continue;
+                    }
                     // @todo: no private access
                     var formattedFeature = Mapbender.Model._geojsonFormat.writeFeatureObject(feature).geometry;
                     formattedFeature.style = this.map.model.extractSvgFeatureStyle(layer, feature);
