@@ -7,7 +7,7 @@ window.Mapbender.VectorLayerPoolOl2 = (function() {
     VectorLayerPoolOl2.prototype = Object.create(Mapbender.VectorLayerPool.prototype);
     Object.assign(VectorLayerPoolOl2.prototype, {
         constructor: VectorLayerPoolOl2,
-        raiseElementGroup: function(owner) {
+        raiseElementLayers: function(owner) {
             var group = this.findElementLayerGroup_(owner);
             if (!group) {
                 throw new Error("No such element layer group");

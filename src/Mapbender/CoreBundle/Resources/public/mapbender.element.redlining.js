@@ -405,7 +405,7 @@
          * engine-specific
          */
         _moveLayerToLayerStackTop: function() {
-            Mapbender.vectorLayerPool.raiseElementGroup(this);
+            Mapbender.vectorLayerPool.raiseElementLayers(this);
         },
         _onSrsChange: function(event, data) {
             this._endEdit();

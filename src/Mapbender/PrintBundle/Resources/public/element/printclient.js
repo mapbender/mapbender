@@ -94,7 +94,7 @@
         _activateSelection: function(reset) {
             var self = this;
             this._getTemplateSize().then(function() {
-                Mapbender.vectorLayerPool.raiseElementGroup(self);
+                Mapbender.vectorLayerPool.raiseElementLayers(self);
                 Mapbender.vectorLayerPool.showElementLayers(self);
                 var control = self._getSelectionDragControl();
                 self.map.map.olMap.addControl(control);
