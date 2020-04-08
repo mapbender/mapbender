@@ -16,7 +16,6 @@
         mbMap: null,
         map: null,
         layer: null,
-        activeControl: null,
         geomCounter: 0,
         rowTemplate: null,
         toolLabels: {},
@@ -278,31 +277,40 @@
          * engine-specific
          */
         _startEdit: function(feature) {
-            this.editControl.selectFeature(feature);
-            this.editControl.activate();
             this.editing_ = feature;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.editControl.selectFeature(feature);
+                this.editControl.activate();
+            } else {
+                // OpenLayer 4 edit control does not support re-selecting a single feature
+                // => Always create a new one
+                this.editControl = new ol.interaction.Modify({
+                    features: new ol.Collection([feature])
+                });
+                this.mbMap.getModel().olMap.addInteraction(this.editControl);
+            }
         },
         _endEdit: function() {
             $('input[name=label-text]', this.element).off('keyup');
             if (this.editControl) {
-                this.editControl.deactivate();
+                if (Mapbender.mapEngine.code === 'ol2') {
+                    this.editControl.deactivate();
+                } else {
+                    this.mbMap.getModel().olMap.removeInteraction(this.editControl);
+                    this.editControl.dispose();
+                    this.editControl = null;
+                }
             }
             this.editing_ = null;
         },
-        _deactivateControl: function(){
-            if (this.activeControl !== null) {
-                this.activeControl.deactivate();
-                this.activeControl.destroy();
-                this.map.removeControl(this.activeControl);
-                this.activeControl = null;
-            }
+        _deactivateControl: function() {
+            this.layerBridge.endDraw();
             $('#redlining-text-wrapper', this.element).addClass('hidden');
             this._deactivateButton();
         },
         _deactivateButton: function(){
             $('.redlining-tool', this.element).removeClass('active');
         },
-        
         _getGeomLabel: function(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var typeLabel = this.toolLabels[toolName];
