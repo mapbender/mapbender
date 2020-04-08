@@ -503,6 +503,8 @@
             return true;
         },
         _collectOverview: function() {
+            // @todo: collect overview properly, use mbOverview widget, use Source objects
+            return null;
             // overview map
             var self = this;
             var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
