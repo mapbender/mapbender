@@ -533,12 +533,24 @@
         _collectJobData: function() {
             var jobData = this._super();
             var overview = this._collectOverview();
-            var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
-                return {
-                    x: component.x,
-                    y: component.y
-                };
-            });
+            var extentFeature;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                extentFeature = this.feature.geometry.components[0].components.map(function(component) {
+                    return {
+                        x: component.x,
+                        y: component.y
+                    };
+                });
+            } else {
+                var flatCoords = this.feature.getGeometry().getFlatCoordinates();
+                extentFeature = [];
+                for (var c = 0; c < flatCoords.length; c += 2) {
+                    extentFeature.push({
+                        x: flatCoords[c],
+                        y: flatCoords[c + 1]
+                    });
+                }
+            }
             var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {
                 overview: overview,
