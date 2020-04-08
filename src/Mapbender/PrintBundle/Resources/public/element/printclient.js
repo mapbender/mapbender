@@ -67,6 +67,7 @@
                 }
             });
             this._super();
+            this.layer = this._initializeSelectionLayer();
         },
 
         open: function(callback){
@@ -93,9 +94,9 @@
         _activateSelection: function(reset) {
             var self = this;
             this._getTemplateSize().then(function() {
-                var layer = self._getSelectionLayer();
+                Mapbender.vectorLayerPool.raiseElementGroup(self);
+                Mapbender.vectorLayerPool.showElementLayers(self);
                 var control = self._getSelectionDragControl();
-                self.map.map.olMap.addLayer(layer);
                 self.map.map.olMap.addControl(control);
                 self.selectionActive = true;
                 control.activate();
@@ -114,9 +115,7 @@
                 this.control.deactivate();
                 this.map.map.olMap.removeControl(this.control);
             }
-            if (wasActive && this.layer) {
-                this.map.map.olMap.removeLayer(this.layer);
-            }
+            Mapbender.vectorLayerPool.hideElementLayers(this);
             $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
@@ -227,22 +226,20 @@
             this.control.setFeature(this.feature, {rotation: -rotation});
         },
         _redrawSelectionFeatures: function(features) {
-            var layer = this._getSelectionLayer();
-            layer.removeAllFeatures();
-            layer.addFeatures(features);
-            layer.redraw();
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            layerBridge.clear();
+            layerBridge.addNativeFeatures(features);
         },
         /**
-         * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
-         * for the rest of the session.
+         * Creates the layer on which the selection feature is drawn.
          *
-         * @return {OpenLayers.Layer.Vector}
+         * @return {OpenLayers.Layer.Vector|ol.layer.Vector}
          */
-        _getSelectionLayer: function() {
-            if (!this.layer) {
+        _initializeSelectionLayer: function() {
+            var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer();
+            if (Mapbender.mapEngine.code === 'ol2') {
                 var self = this;
-                this.layer = new OpenLayers.Layer.Vector("Print", {
-                    styleMap: new OpenLayers.StyleMap({
+                layer.styleMap = new OpenLayers.StyleMap({
                         'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
                         'transform': new OpenLayers.Style({
                             display: '${getDisplay}',
@@ -285,10 +282,9 @@
                                 }
                             }
                         })
-                    })
                 });
             }
-            return this.layer;
+            return layer;
         },
         /**
          * Gets the drag control used to rotate and
@@ -299,7 +295,7 @@
         _getSelectionDragControl: function() {
             var self = this;
             if (!this.control) {
-                this.control = new OpenLayers.Control.TransformFeature(this._getSelectionLayer(), {
+                this.control = new OpenLayers.Control.TransformFeature(this.layer, {
                     renderIntent: 'transform',
                     rotationHandleSymbolizer: 'rotate'
                 });
