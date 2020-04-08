@@ -252,9 +252,15 @@
             var bounds = this._getPrintBounds(center.lon, center.lat, scale);
 
             if (Mapbender.mapEngine.code === 'ol2') {
-                this.control.unsetFeature();
-                this.feature = new OpenLayers.Feature.Vector(bounds.toGeometry());
-                this.feature.geometry.rotate(-this.currentRotation_, new OpenLayers.Geometry.Point(center.lon, center.lat));
+                var geometry = bounds.toGeometry();
+                geometry.rotate(-this.currentRotation_, new OpenLayers.Geometry.Point(center.lon, center.lat));
+                if (this.control) {
+                    this.control.unsetFeature();
+                }
+                this.feature = new OpenLayers.Feature.Vector(geometry);
+                if (this.control) {
+                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
+                }
                 this._redrawSelectionFeatures([this.feature]);
             } else {
                 var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
@@ -367,7 +373,9 @@
             }
             // activation
             if (Mapbender.mapEngine.code === 'ol2') {
-                this.control.setFeature(this.feature, {rotation: -rotation});
+                if (this.feature) {
+                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
+                }
                 this.control.activate();
             } else {
                 this.control.setActive(true);
