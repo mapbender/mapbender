@@ -57,6 +57,9 @@ $searchRouterInputWidth: 100%;
     text-align: right;
     margin-bottom: 2px;
   }
+  .input-required {
+    border: solid 1px $errorColor;
+  }
 }
 
 // ui-autocomplete ui-front ui-menu ui-widget ui-widget-content search-router
