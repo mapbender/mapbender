@@ -19,7 +19,7 @@
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
-        "mapbender/vis-ui.js": "dev-master-keep-backward-compatibility as 0.2.83",
+        "mapbender/vis-ui.js": "*",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "wheregroup/open-sans": "1.x",
