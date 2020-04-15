@@ -113,11 +113,42 @@
                 this.activate();
             }
         },
+        /**
+         * @param {(*|GeolocationPosition)} position see https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
+         * @private
+         */
+        _handleGeolocationPosition: function(position) {
+            var newProj = this.map.map.olMap.getProjectionObject(),
+                p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
 
+            p.transform(this.internalProjection, newProj);
+
+            // Averaging: Building a queue...
+            this.stack.push(p);
+            if (this.stack.length > this.options.average) {
+                this.stack.splice(0, 1);
+            }
+
+            // ...and reducing it.
+            var nEntries = this.stack.length;
+            p = _.reduce(this.stack, function (memo, p) {
+                memo.lon += p.lon / nEntries;
+                memo.lat += p.lat / nEntries;
+                return memo;
+            }, new OpenLayers.LonLat(0, 0));
+
+            this._showLocation(p, position.coords.accuracy);
+        },
+        /**
+         * @param {(*|GeolocationPositionError)} gle see https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPositionError
+         * @private
+         */
+        _handleGeolocationError: function(gle) {
+            Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
+            this.deactivate();
+        },
         /**
          * Activate GPS positioning
-         *
-         * @returns {object}
          */
         activate: function () {
             var widget = this;
@@ -127,38 +158,16 @@
             if (navigator.geolocation && !this.observer) {
                 this.firstPosition = true;
                 this.observer = navigator.geolocation.watchPosition(function success(position) {
-                    var newProj = olmap.getProjectionObject(),
-                        p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
-
-                    p.transform(widget.internalProjection, newProj);
-
-                    // Averaging: Building a queue...
-                    widget.stack.push(p);
-                    if (widget.stack.length > widget.options.average) {
-                        widget.stack.splice(0, 1);
-                    }
-
-                    // ...and reducing it.
-                    p = _.reduce(widget.stack, function (memo, p) {
-                        memo.lon += p.lon / widget.stack.length;
-                        memo.lat += p.lat / widget.stack.length;
-                        return memo;
-                    }, new OpenLayers.LonLat(0, 0));
-
-                    widget._showLocation(p, position.coords.accuracy);
-
-                }, function error(msg) {
-                    Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
-                    widget.deactivate();
+                    widget._handleGeolocationPosition(position);
+                }, function error(gle) {
+                    widget._handleGeolocationError(gle);
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
                 $(widget.element).parent().addClass("toolBarItemActive");
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
-            return widget;
         },
-
         /**
          * Deactivate GPS positioning
          * @returns {object}
