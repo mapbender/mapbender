@@ -118,10 +118,7 @@
          * @private
          */
         _handleGeolocationPosition: function(position) {
-            var newProj = this.map.map.olMap.getProjectionObject(),
-                p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
-
-            p.transform(this.internalProjection, newProj);
+            var p = this._transformCoordinate(position.coords.longitude, position.coords.latitude);
 
             // Averaging: Building a queue...
             this.stack.push(p);
@@ -146,6 +143,13 @@
         _handleGeolocationError: function(gle) {
             Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
             this.deactivate();
+        },
+        _transformCoordinate: function(lon, lat) {
+            var newProj = this.map.map.olMap.getProjectionObject(),
+                p = new OpenLayers.LonLat(lon, lat);
+
+            p.transform(this.internalProjection, newProj);
+            return p;
         },
         /**
          * Activate GPS positioning
@@ -201,11 +205,7 @@
                 olmap.addLayer(this.layer);
                 this.firstPosition = true;
                 navigator.geolocation.getCurrentPosition(function success(position) {
-                    var newProj = olmap.getProjectionObject(),
-                        p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
-
-                    p.transform(widget.internalProjection, newProj);
-
+                    var p = widget._transformCoordinate(position.coords.longitude, position.coords.latitude);
                     widget._showLocation(p, position.coords.accuracy);
 
                     if (typeof callback === 'function') {
