@@ -28,6 +28,8 @@
                 return;
             }
             this.geolocationProvider_ = navigator.geolocation || null;
+            // Uncomment to use mock data
+            // this.geolocationProvider_ = window.Mapbender.GeolocationMock;
             if (!this.geolocationProvider_) {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
                 throw new Error("No geolocation support");
