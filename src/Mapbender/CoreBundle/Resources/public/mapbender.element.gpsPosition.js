@@ -21,10 +21,16 @@
         layer: null,
         internalProjection: null,
         metricProjection: null,
+        geolocationProvider_: null,
 
         _create: function () {
             if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
                 return;
+            }
+            this.geolocationProvider_ = navigator.geolocation || null;
+            if (!this.geolocationProvider_) {
+                Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
+                throw new Error("No geolocation support");
             }
 
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
@@ -159,17 +165,19 @@
             var olmap = widget.map.map.olMap;
             olmap.addLayer(this.layer);
 
-            if (navigator.geolocation && !this.observer) {
-                this.firstPosition = true;
-                this.observer = navigator.geolocation.watchPosition(function success(position) {
-                    widget._handleGeolocationPosition(position);
-                }, function error(gle) {
-                    widget._handleGeolocationError(gle);
-                }, { enableHighAccuracy: true, maximumAge: 0 });
+            if (!this.observer) {
+                if (this.geolocationProvider_) {
+                    this.firstPosition = true;
+                    this.observer = this.geolocationProvider_.watchPosition(function success(position) {
+                        widget._handleGeolocationPosition(position);
+                    }, function error(gle) {
+                        widget._handleGeolocationError(gle);
+                    }, { enableHighAccuracy: true, maximumAge: 0 });
 
-                $(widget.element).parent().addClass("toolBarItemActive");
-            } else {
-                Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
+                    $(widget.element).parent().addClass("toolBarItemActive");
+                } else {
+                    Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
+                }
             }
         },
         /**
@@ -178,7 +186,7 @@
          */
         deactivate: function() {
             if (this.observer) {
-                navigator.geolocation.clearWatch(this.observer);
+                this.geolocationProvider_.clearWatch(this.observer);
                 this.observer = null;
             }
             $(this.element).parent().removeClass("toolBarItemActive");
@@ -197,14 +205,14 @@
             var widget = this;
             var olmap = widget.map.map.olMap;
 
-            if (navigator.geolocation) {
+            if (this.geolocationProvider_) {
                 if (this.observer) {
-                    navigator.geolocation.clearWatch(this.observer);
+                    this.geolocationProvider_.clearWatch(this.observer);
                     this.observer = null;
                 }
                 olmap.addLayer(this.layer);
                 this.firstPosition = true;
-                navigator.geolocation.getCurrentPosition(function success(position) {
+                this.geolocationProvider_.getCurrentPosition(function success(position) {
                     var p = widget._transformCoordinate(position.coords.longitude, position.coords.latitude);
                     widget._showLocation(p, position.coords.accuracy);
 
@@ -219,8 +227,6 @@
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
-
-            return widget;
         }
     });
 
