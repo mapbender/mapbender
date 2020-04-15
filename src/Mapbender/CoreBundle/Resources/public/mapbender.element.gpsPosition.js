@@ -60,10 +60,10 @@
             }
             if ((this.firstPosition && this.options.centerOnFirstPosition) || this.options.follow) {
                 if (features.circle && this.options.zoomToAccuracyOnFirstPosition && this.firstPosition) {
-                    olmap.zoomToExtent(features.circle.geometry.getBounds());
+                    this.map.getModel().zoomToFeature(features.circle);
                 } else {
                     if (this.firstPosition || !olmap.getExtent().containsLonLat(position)) {
-                        olmap.panTo(position);
+                        olmap.panTo(new OpenLayers.LonLat(position.lon, position.lat));
                     }
                 }
             }
@@ -133,16 +133,16 @@
             if (this.stack.length > this.options.average) {
                 this.stack.splice(0, 1);
             }
-
-            // ...and reducing it.
+            var averaged = {
+                lon: 0,
+                lat: 0
+            };
             var nEntries = this.stack.length;
-            p = _.reduce(this.stack, function (memo, p) {
-                memo.lon += p.lon / nEntries;
-                memo.lat += p.lat / nEntries;
-                return memo;
-            }, new OpenLayers.LonLat(0, 0));
-
-            this._showLocation(p, position.coords.accuracy);
+            for (var i = 0; i < nEntries; ++i) {
+                averaged.lon += this.stack[i].lon / nEntries;
+                averaged.lat += this.stack[i].lat / nEntries;
+            }
+            this._showLocation(averaged, position.coords.accuracy);
         },
         /**
          * @param {(*|GeolocationPositionError)} gle see https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPositionError
@@ -157,7 +157,10 @@
                 p = new OpenLayers.LonLat(lon, lat);
 
             p.transform(this.internalProjection, newProj);
-            return p;
+            return {
+                lon: p.lon,
+                lat: p.lat
+            };
         },
         /**
          * Activate GPS positioning
