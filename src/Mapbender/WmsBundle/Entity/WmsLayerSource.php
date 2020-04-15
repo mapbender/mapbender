@@ -29,7 +29,7 @@ use Mapbender\WmsBundle\Component\Style;
 class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrlTarget
 {
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
+     * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers", cascade={"persist"}))
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $source;
