@@ -42,7 +42,7 @@ class GpsPosition extends Element implements ConfigMigrationInterface
                 '@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:gpsposition.json.twig',
+                'mb.core.gpsposition.*',
             ),
         );
     }
