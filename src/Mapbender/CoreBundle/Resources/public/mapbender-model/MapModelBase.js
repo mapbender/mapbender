@@ -743,13 +743,16 @@ window.Mapbender.MapModelBase = (function() {
          * resolution (which is not known here), to minimize the total amount of requests.
          *
          * @param sourceOrLayer
-         * @param scale
-         * @param extent
+         * @param {Number} scale
+         * @param {Object} extent
+         * @property {Number} extent.left
+         * @property {Number} extent.right
+         * @property {Number} extent.top
+         * @property {Number} extent.bottom
          * @return {Array<Model~SingleLayerPrintConfig>}
          */
         getPrintConfigEx: function(sourceOrLayer, scale, extent) {
             var source = this.getMbConfig(sourceOrLayer, true, true);
-            var extent_ = extent || this.getMapExtent();
             var dataOut = [];
             var commonLayerData = {
                 type: source.configuration.type,
@@ -758,7 +761,7 @@ window.Mapbender.MapModelBase = (function() {
             };
             if (typeof source.getMultiLayerPrintConfig === 'function') {
                 var srsName = this.getCurrentProjectionCode();
-                var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, srsName);
+                var mlPrintConfigs = source.getMultiLayerPrintConfig(extent, scale, srsName);
                 mlPrintConfigs.map(function(pc) {
                     dataOut.push($.extend({}, commonLayerData, pc));
                 });
