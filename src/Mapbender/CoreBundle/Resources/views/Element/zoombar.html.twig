@@ -23,14 +23,6 @@
         <span class="rotate-ccw hover-highlight-effect" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
       </div>
 {%- endif -%}
-  {%- if 'pan' in configuration.components -%}
-  <div><div class="pan">
-    <span class="panUp iconTop" title="{{ "mb.core.zoombar.panup" | trans }}"></span>
-    <span class="panRight iconRight" title="{{ "mb.core.zoombar.panright" | trans }}"></span>
-    <span class="panDown iconDown" title="{{ "mb.core.zoombar.pandown" | trans }}"></span>
-    <span class="panLeft iconLeft" title="{{ "mb.core.zoombar.panleft" | trans }}"></span>
-  </div></div>
-  {%- endif -%}
   <ul class="toolPane">
     {% if 'history' in configuration.components %}
       <li class="history">

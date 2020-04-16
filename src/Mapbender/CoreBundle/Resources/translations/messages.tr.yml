@@ -243,10 +243,6 @@ mb:
       contextmenu:
         nooption: 'Katmanın menü seçeneği yok'
     zoombar:
-      panup: 'Kaydır'
-      panright: 'Sağa kaydır'
-      pandown: 'Aşağı kaydır'
-      panleft: 'Sola kaydırıldı'
       goback: 'Geri dön'
       goforward: 'İleri git'
       zoombybox: 'Çizilen alana yakınlaştır'

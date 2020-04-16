@@ -244,10 +244,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      panup: 'Mover arriba'
-      panright: 'Mover derecha'
-      pandown: 'Mover abajo'
-      panleft: 'Mover izquierda'
       goback: Atrás
       goforward: Adelante
       zoombybox: 'Acercamiento por recuadro'

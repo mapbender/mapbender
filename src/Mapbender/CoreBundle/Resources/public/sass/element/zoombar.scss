@@ -22,22 +22,6 @@
     }
   }
 
-  /**
-  * Map navigation buttons
-  */
-  .pan {
-    display: inline-block;  // for centering against (even wider) rotation blob
-    height: 49px;
-    width: 49px;
-    position:relative;
-    @include border-radius(50%,50%);
-
-
-    .iconTop{@include absolute(1px '' '' 18px);}
-    .iconRight{@include absolute(15px 6px '' '');}
-    .iconDown{@include absolute('' '' 1px 18px);}
-    .iconLeft{@include absolute(15px '' '' 7px);}
-  }
   &.right-top, &.right-bottom {
     .move-icon-wrap {
       text-align: right;

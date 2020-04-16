@@ -26,7 +26,6 @@ $.widget("mapbender.mbZoomBar", {
         var self = this;
         this._setupSlider();
         this._setupZoomButtons();
-        this._setupPanButtons();
         $(document).on('mbmapzoomchanged', function(e, data) {
             if (data.mbMap === self.mbMap) {
                 self._zoom2Slider();
@@ -147,33 +146,6 @@ $.widget("mapbender.mbZoomBar", {
             self._worldZoom();
         });
     },
-    _setupPanButtons: function() {
-        var self = this;
-        this.element.on('click', '.panUp', function() {
-            self._pan(0, -1);
-        });
-        this.element.on('click', '.panRight', function() {
-            self._pan(1, 0);
-        });
-        this.element.on('click', '.panDown', function() {
-            self._pan(0, 1);
-        });
-        this.element.on('click', '.panLeft', function() {
-            self._pan(-1, 0);
-        });
-    },
-    _pan: function(stepsX, stepsY) {
-        var stepSize = {
-            x: parseInt(this.options.stepSize),
-            y: parseInt(this.options.stepSize)
-        };
-        if (this.options.stepByPixel) {
-            this.mbMap.getModel().panByPixels(stepsX * stepSize.x, stepsY * stepSize.y);
-        } else {
-            this.mbMap.getModel().panByPercent(stepsX * Math.min(stepSize.x, 100), stepsY * Math.min(stepSize.y, 100));
-        }
-    },
-
     /**
      * Set slider to reflect map zoom level
      */

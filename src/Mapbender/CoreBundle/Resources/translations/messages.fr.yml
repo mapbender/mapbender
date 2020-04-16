@@ -244,10 +244,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      panup: 'Déplacer vers le haut'
-      panright: 'Déplacer vers la droite'
-      pandown: 'Déplacer vers le bas'
-      panleft: 'Déplacer vers la gauche'
       goback: 'Avancer'
       goforward: 'Reculer'
       zoombybox: 'Zoomer sur la boite'

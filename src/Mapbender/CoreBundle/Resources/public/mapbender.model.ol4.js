@@ -222,24 +222,6 @@ window.Mapbender.MapModelOl4 = (function() {
     getCurrentZoomLevel: function() {
         return this.olMap.getView().getZoom();
     },
-    panByPixels: function(dx, dy) {
-        var view = this.olMap.getView();
-        var centerCoord = view.getCenter();
-        var centerPixel = this.olMap.getPixelFromCoordinate(centerCoord);
-        centerPixel[0] += dx;
-        centerPixel[1] += dy;
-        var targetCenterCoord = this.olMap.getCoordinateFromPixel(centerPixel);
-        view.animate({
-            center: view.constrainCenter(targetCenterCoord),
-            duration: 300
-        });
-    },
-    panByPercent: function(dx, dy) {
-        var mapSize = this.olMap.getSize();
-        var pixelDx = (dx / 100.0) * mapSize[0];
-        var pixelDy = (dy / 100.0) * mapSize[1];
-        this.panByPixels(pixelDx, pixelDy);
-    },
     zoomIn: function() {
         this.setZoomLevel(this.getCurrentZoomLevel() + 1, true);
     },

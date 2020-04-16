@@ -564,15 +564,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     getCurrentZoomLevel: function() {
         return this.map.olMap.getZoom();
     },
-    panByPixels: function(dx, dy) {
-        this.map.olMap.pan(dx, dy);
-    },
-    panByPercent: function(dx, dy) {
-        var mapSize = this.map.olMap.getSize();
-        var pixelDx = (dx / 100.0) * mapSize.w;
-        var pixelDy = (dy / 100.0) * mapSize.h;
-        this.panByPixels(pixelDx, pixelDy);
-    },
     getViewPort: function() {
         return this.map.olMap.viewPortDiv;
     },

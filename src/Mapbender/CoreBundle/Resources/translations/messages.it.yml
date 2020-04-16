@@ -244,10 +244,6 @@ mb:
       contextmenu:
         nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
-      panup: 'Muovi verso l''alto'
-      panright: 'Muovi a destra'
-      pandown: 'Muovi verso il basso'
-      panleft: 'Muovi a sinistra'
       goback: 'Ritorna indietro'
       goforward: 'Vai avanti'
       zoombybox: 'Fai zoom sul riquadro'

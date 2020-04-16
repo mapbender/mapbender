@@ -245,10 +245,6 @@ mb:
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      panup: 'Pan up'
-      panright: 'Pan right'
-      pandown: 'Pan down'
-      panleft: 'Pan left'
       goback: 'Go back'
       goforward: 'Go forward'
       zoombybox: 'Zoom by box'

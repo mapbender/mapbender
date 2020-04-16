@@ -246,10 +246,6 @@ mb:
       contextmenu:
         nooption: 'Layer verfügt über keine Kontextmenü-Option'
     zoombar:
-      panup: 'Nach oben verschieben'
-      panright: 'Nach rechts verschieben'
-      pandown: 'Nach unten verschieben'
-      panleft: 'Nach links verschieben'
       goback: Zurück
       goforward: Vor
       zoombybox: 'Ausschnitt aufziehen'

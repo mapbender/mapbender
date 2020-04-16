@@ -55,7 +55,14 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     {
         return array(
             'target' => null,
-            'components' => array("rotation", "pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
+            'components' => array(
+                "rotation",
+                "history",
+                "zoom_box",
+                "zoom_max",
+                "zoom_in_out",
+                "zoom_slider",
+            ),
             'anchor' => 'left-top',
             'stepSize' => 50,
             'stepByPixel' => false,
