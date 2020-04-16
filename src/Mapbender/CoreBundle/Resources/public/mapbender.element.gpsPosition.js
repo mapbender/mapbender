@@ -111,9 +111,10 @@
                 if (features.circle && this.options.zoomToAccuracyOnFirstPosition && this.firstPosition) {
                     this.map.getModel().zoomToFeature(features.circle);
                 } else {
-                    if (this.firstPosition || !olmap.getExtent().containsLonLat(position)) {
-                        olmap.panTo(new OpenLayers.LonLat(position.lon, position.lat));
-                    }
+                    this.map.getModel().panToFeature(features.point, {
+                        center: this.firstPosition,
+                        buffer: 100
+                    });
                 }
             }
             this.firstPosition = false;
