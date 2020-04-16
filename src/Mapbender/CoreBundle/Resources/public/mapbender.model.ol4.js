@@ -354,55 +354,6 @@ addVectorFeatures: function(olLayer, features) {
 
 /**
  *
- * @param coordinate
- * @param opt_projection
- * @returns {ol.Coordinate}
- */
-toLonLat: function (coordinate, opt_projection) {
-    return ol.proj.toLonLat(coordinate,opt_projection);
-},
-
-/**
- *
- * @param owner
- * @returns {*}
- */
-getVectorLayerByNameId: function getVectorLayerByNameId(owner, id) {
-    var vectorLayer = this.vectorLayer;
-    return  vectorLayer[owner][id];
-},
-
-/**
- *
- * @param center
- * @returns {*|void}
- */
-setCenter: function setCenter(center) {
-    return this.olMap.getView().setCenter(center);
-},
-
-/**
- *
- * @param extent1
- * @param extent2
- * @returns {*|boolean}
- */
-containsExtent: function(extent1, extent2) {
-    return ol.extent.containsExtent(extent1, extent2);
-},
-
-/**
- *
- * @param extent
- * @param coordinate
- * @returns {*}
- */
-containsCoordinate: function(extent, coordinate) {
-    return ol.extent.containsCoordinate(extent, coordinate);
-},
-
-/**
- *
  * @param layerType
  * @param owner
  * @param uuid

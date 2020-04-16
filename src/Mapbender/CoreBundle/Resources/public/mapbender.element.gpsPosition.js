@@ -84,16 +84,6 @@
             return features;
         },
 
-        _centerMap: function (position) {
-            var extent = this.map.model.getMapExtent();
-            var coordinate = [position.lon, position.lat];
-
-            if (!this.map.model.containsCoordinate(extent, coordinate)) {
-                if (this.options.follow || (this.firstPosition && this.options.centerOnFirstPosition)) {
-                    this.map.model.centerXy(position.lon, position.lat);
-                }
-            }
-        },
         _showLocation: function (position, accuracy) {
             var olmap = this.map.map.olMap;
             var features;
@@ -158,36 +148,6 @@
             }
             return features;
         },
-        _zoomMap: function (position, accuracy) {
-            if (!accuracy) {
-                return; // no accurancy
-            }
-
-            if (!this.options.zoomToAccuracy && !(this.options.zoomToAccuracyOnFirstPosition && this.firstPosition)) {
-                return;
-            }
-
-            var olmap = this.map,
-                positionProj = 'EPSG:4326',
-                metersProj = 'EPSG:3857',
-                currentProj = olmap.model.getCurrentProjectionCode(),
-                pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
-                calLon = pointInMeters[0] - (accuracy / 2),
-                calLat = pointInMeters[1] - (accuracy / 2),
-                calLonPlus = pointInMeters[0] + (accuracy / 2),
-                calLatPlus = pointInMeters[1] + (accuracy / 2),
-                min = olmap.model.transformCoordinate([calLon,calLat], metersProj, currentProj),
-                max = olmap.model.transformCoordinate([calLonPlus,calLatPlus], metersProj, currentProj);
-            var extent = {
-                left: min[0],
-                bottom: min[1],
-                right: max[0],
-                top: max[1]
-            };
-
-            olmap.model.zoomToExtent(extent);
-        },
-
         /**
          * Toggle GPS positioning
          *
