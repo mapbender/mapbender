@@ -37,6 +37,8 @@ class GpsPosition extends Element implements ConfigMigrationInterface
         return array(
             'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.gpsPosition.js',
+                // Uncomment to enable Geolocation API mock
+                // '@MapbenderCoreBundle/Resources/public/GeolocationMock.js',
             ),
             'css'   => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss',
