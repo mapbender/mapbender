@@ -45,17 +45,12 @@
         _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.layer = new OpenLayers.Layer.Vector();
-            this.metricProjection = new OpenLayers.Projection('EPSG:900913');
-            this.internalProjection = new OpenLayers.Projection("EPSG:4326");
             if (this.options.autoStart === true) {
                 this.activate();
             }
         },
         _createMarker: function (position, accuracy) {
             var model = this.map.model,
-                positionProj = 'EPSG:4326',
-                currentProj = model.getCurrentProjectionCode(),
-                transPositionCurrentProj = model.transformCoordinate(position,positionProj,currentProj),
                 upm = model.getProjectionUnitsPerMeter()
             ;
             var markerStyle = new ol.style.Style({
@@ -78,35 +73,27 @@
                 })
             });
             var features = {
-                point: new ol.Feature(new ol.geom.Point(transPositionCurrentProj))
+                point: new ol.Feature(new ol.geom.Point([position.lon, position.lat]))
             };
             features.point.setStyle(markerStyle);
 
             if (accuracy) {
                 var radius = accuracy * (upm / 2.);
-                features.circle = new ol.Feature(new ol.geom.Circle(transPositionCurrentProj, radius));
+                features.circle = new ol.Feature(new ol.geom.Circle([position.lon, position.lat], radius));
                 features.circle.setStyle(circleStyle);
             }
             return features;
         },
 
         _centerMap: function (position) {
-            var olmap = this.map,
-                extent = olmap.model.getMapExtent(),
-                positionProj = 'EPSG:4326',
-                currentProj = olmap.model.getCurrentProjectionCode(),
-                transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj);
+            var extent = this.map.model.getMapExtent();
+            var coordinate = [position.lon, position.lat];
 
-            if (olmap.model.containsCoordinate(extent, transPositionCurrentProj) === false) // point is in extent?
-            {
-                if (this.options.follow) {
-                    olmap.model.setCenter(transPositionCurrentProj);
-                } else if (this.firstPosition && this.options.centerOnFirstPosition) {
-                    olmap.model.setCenter(transPositionCurrentProj);
+            if (!this.map.model.containsCoordinate(extent, coordinate)) {
+                if (this.options.follow || (this.firstPosition && this.options.centerOnFirstPosition)) {
+                    this.map.model.centerXy(position.lon, position.lat);
                 }
             }
-            this.firstPosition = false;
-            this.layer.redraw();
         },
         _showLocation: function (position, accuracy) {
             var olmap = this.map.map.olMap;
@@ -147,15 +134,16 @@
                 })
             };
             if (accuracy) {
+                var metricProjection = new OpenLayers.Projection('EPSG:900913');
                 var currentProj = this.map.map.olMap.getProjectionObject();
-                var metricOrigin = centerPoint.clone().transform(currentProj, this.metricProjection);
+                var metricOrigin = centerPoint.clone().transform(currentProj, metricProjection);
                 var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(
                     metricOrigin,
                     accuracy / 2,
                     40,
                     0
                 );
-                circleGeom = circleGeom.transform(this.metricProjection, currentProj);
+                circleGeom = circleGeom.transform(metricProjection, currentProj);
 
                 features.circle = new OpenLayers.Feature.Vector(circleGeom, null, {
                     fillColor: '#FFF',
@@ -240,13 +228,15 @@
             this.deactivate();
         },
         _transformCoordinate: function(lon, lat) {
-            var newProj = this.map.map.olMap.getProjectionObject(),
-                p = new OpenLayers.LonLat(lon, lat);
-
-            p.transform(this.internalProjection, newProj);
+            var xy = {
+                x: lon,
+                y: lat
+            };
+            var targetSrsName = this.map.model.getCurrentProjectionCode();
+            var xyTransformed = Mapbender.mapEngine.transformCoordinate(xy, 'EPSG:4326', targetSrsName);
             return {
-                lon: p.lon,
-                lat: p.lat
+                lon: xyTransformed.x,
+                lat: xyTransformed.y
             };
         },
         /**

@@ -345,32 +345,6 @@ addVectorFeatures: function(olLayer, features) {
 
 /**
  *
- * @param array
- * @param deltaArray
- * @returns {ol.coordinate.add}
- */
-addCoordinate: function (array, deltaArray) {
-    if (!deltaArray) {
-        deltaArray = [0, 0];
-    }
-
-    return new ol.coordinate.add(array, deltaArray);
-},
-
-/**
- *
- * @param coordinate
- * @param source
- * @param destination
- * @returns {ol.Coordinate}
- */
-
-transformCoordinate: function(coordinate, source, destination) {
-    return ol.proj.transform(coordinate, source, destination);
-},
-
-/**
- *
  * @param coordinate
  * @param opt_projection
  * @returns {ol.Coordinate}
