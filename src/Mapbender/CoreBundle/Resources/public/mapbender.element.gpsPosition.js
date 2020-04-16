@@ -44,7 +44,7 @@
 
         _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-            this.layer = new OpenLayers.Layer.Vector();
+            this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (this.options.autoStart === true) {
                 this.activate();
             }
@@ -98,10 +98,10 @@
         _showLocation: function (position, accuracy) {
             var olmap = this.map.map.olMap;
             var features = this._getMarkerFeatures(position, accuracy);
-            this.layer.removeAllFeatures();
-            this.layer.addFeatures([features.point]);
+            this.layer.clear();
+            this.layer.addNativeFeatures([features.point]);
             if (features.circle) {
-                this.layer.addFeatures([features.circle]);
+                this.layer.addNativeFeatures([features.circle]);
             }
             if ((this.firstPosition && this.options.centerOnFirstPosition) || this.options.follow) {
                 if (features.circle && this.options.zoomToAccuracyOnFirstPosition && this.firstPosition) {
@@ -113,7 +113,6 @@
                 }
             }
             this.firstPosition = false;
-            this.layer.redraw();
         },
         /**
          *
@@ -244,8 +243,8 @@
          */
         activate: function () {
             var widget = this;
-            var olmap = widget.map.map.olMap;
-            olmap.addLayer(this.layer);
+            this.layer.show();
+            Mapbender.vectorLayerPool.raiseElementLayers(this);
 
             if (!this.observer) {
                 if (this.geolocationProvider_) {
@@ -272,27 +271,18 @@
                 this.observer = null;
             }
             $(this.element).parent().removeClass("toolBarItemActive");
-
-            var olmap = this.map.map.olMap;
-            if (this.layer) {
-                try {
-                    olmap.removeLayer(this.layer);
-                } catch (e) {
-                    // unholy POI connection may cause multiple removal of layer
-                }
-            }
+            this.layer.hide();
         },
 
         getGPSPosition: function(callback) {
             var widget = this;
-            var olmap = widget.map.map.olMap;
 
             if (this.geolocationProvider_) {
                 if (this.observer) {
                     this.geolocationProvider_.clearWatch(this.observer);
                     this.observer = null;
                 }
-                olmap.addLayer(this.layer);
+                this.layer.show();
                 this.firstPosition = true;
                 this.geolocationProvider_.getCurrentPosition(function success(position) {
                     var p = widget._transformCoordinate(position.coords.longitude, position.coords.latitude);
