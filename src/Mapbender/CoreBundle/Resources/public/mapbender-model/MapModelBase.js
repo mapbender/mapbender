@@ -780,6 +780,13 @@ window.Mapbender.MapModelBase = (function() {
         displayPoi: function(layer, poi) {
             layer.addMarker(poi.x, poi.y);
         },
+        /**
+         * Legacy alias for getCurrentExtent
+         * @return {mmFlexibleExtent}
+         */
+        getMapExtent: function() {
+            return this.getCurrentExtent();
+        },
         _getBufferedFeatureBounds: function(feature, buffer) {
             var engine = Mapbender.mapEngine;
             var bounds = engine.getFeatureBounds(feature);

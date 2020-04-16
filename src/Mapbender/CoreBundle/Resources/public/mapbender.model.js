@@ -326,9 +326,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
-    getMapExtent: function() {
-        return this.map.olMap.getExtent();
-    },
     getMapState: function() {
         var proj = this.map.olMap.getProjectionObject();
         var ext = this.map.olMap.getExtent();

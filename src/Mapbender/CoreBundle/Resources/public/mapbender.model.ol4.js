@@ -322,13 +322,6 @@ window.Mapbender.MapModelOl4 = (function() {
 
     return style;
 },
-/**
- *
- * @returns {*|OpenLayers.Bounds}
- */
-getMapExtent: function () {
-    return this.olMap.getView().calculateExtent();
-},
 
 createVectorLayer: function() {
     if (arguments.length) {
