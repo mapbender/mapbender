@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 
 /**
@@ -14,7 +13,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element implements ConfigMigrationInterface
+class ZoomBar extends Element
 {
 
     /**
@@ -64,9 +63,8 @@ class ZoomBar extends Element implements ConfigMigrationInterface
                 "zoom_slider",
             ),
             'anchor' => 'left-top',
-            'stepSize' => 50,
-            'stepByPixel' => false,
-            'draggable' => true);
+            'draggable' => true,
+        );
     }
 
     /**
@@ -80,38 +78,6 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
-    }
-
-    public static function updateEntityConfig(Entity\Element $entity)
-    {
-        $defaults = static::getDefaultConfiguration();
-        $config = $entity->getConfiguration();
-        // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
-        // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
-        if (empty($config['stepSize'])) {
-            if (!empty($config['stepsize'])) {
-                $config['stepSize'] = $config['stepsize'];
-            } else {
-                $config['stepSize'] = $defaults['stepSize'];
-            }
-        }
-        if (!isset($config['stepByPixel'])) {
-            if (isset($config['stepbypixel'])) {
-                $config['stepByPixel'] = $config['stepbypixel'];
-            } else {
-                $config['stepByPixel'] = $defaults['stepByPixel'];
-            }
-        }
-        // Fix weird mis-treatment of boolean 'stepByPixel' as string (it's a dropdown!)
-        if ($config['stepByPixel'] === 'false') {
-            $config['stepByPixel'] = false;
-        } else {
-            // coerce all other values (including string "true") to boolean regularly
-            $config['stepByPixel'] = !!$config['stepByPixel'];
-        }
-        unset($config['stepsize']);
-        unset($config['stepbypixel']);
-        $entity->setConfiguration($config);
     }
 
     /**

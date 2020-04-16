@@ -3,8 +3,6 @@
 $.widget("mapbender.mbZoomBar", {
     options: {
         target: null,
-        stepSize: 50,
-        stepByPixel: false,
         draggable: true
     },
 

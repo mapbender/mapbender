@@ -45,14 +45,6 @@ class ZoomBarAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('stepSize', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
-            ->add('stepByPixel', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'choices' => array(
-                    'true' => 'true',
-                    'false' => 'false',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 "choices" => array(
