@@ -49,14 +49,13 @@
                 this.activate();
             }
         },
-        _createMarker: function (position, accuracy) {
+        _getMarkerFeatures4: function (position, accuracy) {
             var model = this.map.model,
                 upm = model.getProjectionUnitsPerMeter()
             ;
             var markerStyle = new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 10,
-                    fill: null,
                     stroke: new ol.style.Stroke({
                         color: 'rgba(255, 0, 0, 1)',
                         width: 3
@@ -97,7 +96,12 @@
         },
         _showLocation: function (position, accuracy) {
             var olmap = this.map.map.olMap;
-            var features = this._getMarkerFeatures(position, accuracy);
+            var features;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                features = this._getMarkerFeatures(position, accuracy);
+            } else {
+                features = this._getMarkerFeatures4(position, accuracy);
+            }
             this.layer.clear();
             this.layer.addNativeFeatures([features.point]);
             if (features.circle) {
