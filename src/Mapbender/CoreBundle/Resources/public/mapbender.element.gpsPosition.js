@@ -12,32 +12,12 @@
             follow: false,
             average: 1,
             centerOnFirstPosition: true,
-            accurancyStyle: {
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(255,255,255, 1)',
-                    width: 1
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,255,255, 0.5)'
-                })
-            },
-            circleStyle: {
-                radius: 10,
-                fill: null,
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(255, 0, 0, 1)',
-                    width: 3,
-                    lineCap: 'butt'
-                })
-            },
             zoomToAccuracyOnFirstPosition: true
         },
         map: null,
-        model: null,
         observer: null,
         firstPosition: true,
         stack: [],
-        olGeolocation: null,
         geolocationAccuracyId: null,
         geolocationMarkerId: null,
         layer: null,
@@ -72,26 +52,37 @@
             }
         },
         _createMarker: function (position, accuracy) {
-            var self = this,
-                mbMap = self.map,
-                markerId = self.geolocationMarkerId,
-                accuracyId = self.geolocationAccuracyId,
+            var model = this.map.model,
                 positionProj = 'EPSG:4326',
                 metersProj = 'EPSG:3857',
-                currentProj = mbMap.model.getCurrentProjectionCode(),
-                transPositionCurrentProj = mbMap.model.transformCoordinate(position,positionProj,currentProj),
-                currentUnit = mbMap.model.getCurrentProjectionUnits(),
-                mpu = mbMap.model.getMeterPersUnit(currentUnit),
-                pointInMeters = mbMap.model.transformCoordinate(position,positionProj,metersProj),
+                currentProj = model.getCurrentProjectionCode(),
+                transPositionCurrentProj = model.transformCoordinate(position,positionProj,currentProj),
+                currentUnit = model.getCurrentProjectionUnits(),
+                mpu = model.getMeterPersUnit(currentUnit),
+                pointInMeters = model.transformCoordinate(position,positionProj,metersProj),
                 accuracyOrgPoint,
-                differancePerUnit,
-                accurancyStyleParams = self.options.accurancyStyle,
-                circleStyleParams = self.options.circleStyle
+                differancePerUnit
             ;
-
             var markerStyle = new ol.style.Style({
-                image: new ol.style.Circle(circleStyleParams)
+                image: new ol.style.Circle({
+                    radius: 10,
+                    fill: null,
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 0, 0, 1)',
+                        width: 3
+                    })
+                })
             });
+            var accurancyStyle = new ol.styyle.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255,255,255, 1)',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,255,255, 0.5)'
+                })
+            });
+
 
             // add an empty iconFeature to the source of the layer
             var iconFeature = new ol.Feature(
@@ -102,26 +93,19 @@
             });
 
             // check vectorlayer and set an new Source
-            if (markerId){
-                var markerVectorLayer = mbMap.model.getVectorLayerByNameId('Position',markerId);
+            if (this.geolocationMarkerId){
+                var markerVectorLayer = model.getVectorLayerByNameId('Position', this.geolocationMarkerId);
                 markerVectorLayer.setSource(markersSource);
             }else {
-                markerId = mbMap.model.createVectorLayer({
+                this.geolocationMarkerId = model.createVectorLayer({
                     source: markersSource,
                     style: markerStyle
                 }, 'Position');
             }
 
-            // set geolocationMarkerId
-            this.geolocationMarkerId = markerId;
-
-
-            // Accurancy
             if (!accuracy) {
                 return;
             }
-
-            var accurancyStyle = new ol.style.Style(accurancyStyleParams);
 
             accuracyOrgPoint = [pointInMeters[0] + (accuracy / 2), pointInMeters[1] + (accuracy / 2)];
             differancePerUnit = (accuracyOrgPoint[0] - pointInMeters[0]) / mpu;
@@ -134,22 +118,15 @@
             });
 
             // check vectorlayer and set an new Source
-            if (accuracyId) {
-                var accuracyVectorLayer = mbMap.model.getVectorLayerByNameId('Accuracy', accuracyId);
+            if (this.geolocationAccuracyId) {
+                var accuracyVectorLayer = model.getVectorLayerByNameId('Accuracy', this.geolocationAccuracyId);
                 accuracyVectorLayer.setSource(accurancySource);
             }else{
-                accuracyId = mbMap.model.createVectorLayer({
+                this.geolocationAccuracyId = model.createVectorLayer({
                     source: accurancySource,
                     style : accurancyStyle
                 },'Accuracy');
             }
-
-            // set geolocationMarkerId
-            this.geolocationAccuracyId = accuracyId;
-
-            // create console messages
-            console.log('GPS-Position: '+ transPositionCurrentProj + ' with Accuracy: '+ accuracy);
-
         },
 
         _centerMap: function (position) {
