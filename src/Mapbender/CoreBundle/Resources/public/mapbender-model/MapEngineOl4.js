@@ -194,7 +194,12 @@ window.Mapbender.MapEngineOl4 = (function() {
             olMap.getLayerGroup().setLayers(new ol.Collection(nativeLayerArray, {unique: true}));
         },
         getFeatureBounds: function(olFeature) {
-            return this.boundsFromArray(olFeature.getGeometry().getExtent());
+            var geometry = olFeature && olFeature.getGeometry();
+            if (!geometry) {
+                console.error("Empty feature or empty feature geometry", olFeature);
+                throw new Error("Empty feature or empty feature geometry");
+            }
+            return this.boundsFromArray(geometry.getExtent());
         },
         getFeatureProperties: function(olFeature) {
             return olFeature.getProperties();

@@ -167,28 +167,19 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         this.olMap.getView().fit(bounds);
     },
+    /**
+     * @param {ol.Feature} feature
+     * @param {Object} [options]
+     * @param {number=} options.buffer in meters
+     * @param {number=} options.minScale
+     * @param {number=} options.maxScale
+     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+     *      just keeps feature in view
+     */
     zoomToFeature: function(feature, options) {
-        var geometry = feature && feature.getGeometry();
-        if (!geometry) {
-            console.error("Empty feature or empty feature geometry", feature);
-            return;
-        }
-        var center_;
-        if (options) {
-            center_ = options.center || typeof options.center === 'undefined';
-        } else {
-            center_ = true;
-        }
-        var engine = Mapbender.mapEngine;
-        var bounds = engine.getFeatureBounds(feature);
-        if (options && options.buffer) {
-            var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-            var bufferNative = options.buffer * unitsPerMeter;
-            bounds.left -= bufferNative;
-            bounds.right += bufferNative;
-            bounds.top += bufferNative;
-            bounds.bottom -= bufferNative;
-        }
+        var center_ = !options || (options.center || typeof options.center === 'undefined');
+        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+
         var view = this.olMap.getView();
         var zoom0 = Math.floor(view.getZoomForResolution(view.getResolutionForExtent(bounds)));
         var zoom = this._adjustZoom(zoom0, options);

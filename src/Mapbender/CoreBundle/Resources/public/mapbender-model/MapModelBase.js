@@ -780,6 +780,19 @@ window.Mapbender.MapModelBase = (function() {
         displayPoi: function(layer, poi) {
             layer.addMarker(poi.x, poi.y);
         },
+        _getBufferedFeatureBounds: function(feature, buffer) {
+            var engine = Mapbender.mapEngine;
+            var bounds = engine.getFeatureBounds(feature);
+            if (buffer) {
+                var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+                var bufferNative = buffer * unitsPerMeter;
+                bounds.left -= bufferNative;
+                bounds.right += bufferNative;
+                bounds.top += bufferNative;
+                bounds.bottom -= bufferNative;
+            }
+            return bounds;
+        },
         _comma_dangle_dummy: null
     });
 

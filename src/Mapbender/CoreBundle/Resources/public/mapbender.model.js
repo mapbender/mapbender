@@ -523,26 +523,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      *      just keeps feature in view
      */
     zoomToFeature: function(feature, options) {
-        if (!feature || !feature.geometry) {
-            console.error("Empty feature or empty feature geometry", feature);
-            return;
-        }
-        var center_;
-        if (options) {
-            center_ = options.center || typeof options.center === 'undefined';
-        } else {
-            center_ = true;
-        }
-        var engine = Mapbender.mapEngine;
-        var bounds = engine.getFeatureBounds(feature);
-        if (options && options.buffer) {
-            var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-            var bufferNative = options.buffer * unitsPerMeter;
-            bounds.left -= bufferNative;
-            bounds.right += bufferNative;
-            bounds.top += bufferNative;
-            bounds.bottom -= bufferNative;
-        }
+        var center_ = !options || (options.center || typeof options.center === 'undefined');
+        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+
         var zoom0 = this.map.olMap.getZoomForExtent(bounds, false);
         var zoom = this._adjustZoom(zoom0, options);
         var zoomNow = this.getCurrentZoomLevel();
