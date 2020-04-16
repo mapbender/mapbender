@@ -191,6 +191,24 @@ window.Mapbender.MapModelOl4 = (function() {
             this.setZoomLevel(zoom, false);
         }
     },
+    /**
+     * @param {ol.Feature} feature
+     * @param {Object} [options]
+     * @param {number=} options.buffer in meters
+     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+     *      just keeps feature in view
+     */
+    panToFeature: function(feature, options) {
+        var center_ = !options || (options.center || typeof options.center === 'undefined');
+        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+
+        var view = this.olMap.getView();
+        var viewExtent = view.calculateExtent();
+        var featureInView = ol.extent.intersects(viewExtent, bounds);
+        if (center_ || !featureInView) {
+            view.setCenter(ol.extent.getCenter(bounds));
+        }
+    },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
         if (_level !== this.getCurrentZoomLevel()) {

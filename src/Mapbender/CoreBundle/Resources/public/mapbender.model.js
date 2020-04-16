@@ -535,6 +535,23 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this.map.olMap.setCenter(centerLl, zoom);
         }
     },
+    /**
+     * @param {OpenLayers.Feature.Vector} feature
+     * @param {Object} [options]
+     * @param {number=} options.buffer in meters
+     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+     *      just keeps feature in view
+     */
+    panToFeature: function(feature, options) {
+        var center_ = !options || (options.center || typeof options.center === 'undefined');
+        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+
+        var featureInView = this.olMap.getExtent().containsBounds(bounds);
+        if (center_ || !featureInView) {
+            var centerLl = bounds.getCenterLonLat();
+            this.map.olMap.setCenter(centerLl);
+        }
+    },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
         if (_level !== this.getCurrentZoomLevel()) {
