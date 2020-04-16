@@ -54,14 +54,9 @@
         _createMarker: function (position, accuracy) {
             var model = this.map.model,
                 positionProj = 'EPSG:4326',
-                metersProj = 'EPSG:3857',
                 currentProj = model.getCurrentProjectionCode(),
                 transPositionCurrentProj = model.transformCoordinate(position,positionProj,currentProj),
-                currentUnit = model.getCurrentProjectionUnits(),
-                mpu = model.getMeterPersUnit(currentUnit),
-                pointInMeters = model.transformCoordinate(position,positionProj,metersProj),
-                accuracyOrgPoint,
-                differancePerUnit
+                upm = model.getProjectionUnitsPerMeter()
             ;
             var markerStyle = new ol.style.Style({
                 image: new ol.style.Circle({
@@ -73,7 +68,7 @@
                     })
                 })
             });
-            var accurancyStyle = new ol.styyle.Style({
+            var circleStyle = new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: 'rgba(255,255,255, 1)',
                     width: 1
@@ -82,51 +77,17 @@
                     color: 'rgba(255,255,255, 0.5)'
                 })
             });
+            var features = {
+                point: new ol.Feature(new ol.geom.Point(transPositionCurrentProj))
+            };
+            features.point.setStyle(markerStyle);
 
-
-            // add an empty iconFeature to the source of the layer
-            var iconFeature = new ol.Feature(
-                new ol.geom.Point(transPositionCurrentProj)
-            );
-            var markersSource = new ol.source.Vector({
-                features: [iconFeature]
-            });
-
-            // check vectorlayer and set an new Source
-            if (this.geolocationMarkerId){
-                var markerVectorLayer = model.getVectorLayerByNameId('Position', this.geolocationMarkerId);
-                markerVectorLayer.setSource(markersSource);
-            }else {
-                this.geolocationMarkerId = model.createVectorLayer({
-                    source: markersSource,
-                    style: markerStyle
-                }, 'Position');
+            if (accuracy) {
+                var radius = accuracy * (upm / 2.);
+                features.circle = new ol.Feature(new ol.geom.Circle(transPositionCurrentProj, radius));
+                features.circle.setStyle(circleStyle);
             }
-
-            if (!accuracy) {
-                return;
-            }
-
-            accuracyOrgPoint = [pointInMeters[0] + (accuracy / 2), pointInMeters[1] + (accuracy / 2)];
-            differancePerUnit = (accuracyOrgPoint[0] - pointInMeters[0]) / mpu;
-
-            var accurancyFeature = new ol.Feature(
-                new ol.geom.Circle(transPositionCurrentProj, differancePerUnit)
-            );
-            var accurancySource = new ol.source.Vector({
-                features: [accurancyFeature]
-            });
-
-            // check vectorlayer and set an new Source
-            if (this.geolocationAccuracyId) {
-                var accuracyVectorLayer = model.getVectorLayerByNameId('Accuracy', this.geolocationAccuracyId);
-                accuracyVectorLayer.setSource(accurancySource);
-            }else{
-                this.geolocationAccuracyId = model.createVectorLayer({
-                    source: accurancySource,
-                    style : accurancyStyle
-                },'Accuracy');
-            }
+            return features;
         },
 
         _centerMap: function (position) {
