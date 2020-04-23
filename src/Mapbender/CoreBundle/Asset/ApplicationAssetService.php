@@ -190,7 +190,11 @@ class ApplicationAssetService
                 $commonAssets = array();
                 break;
             case 'ol4-js':
-                if (!$this->debug) {
+                // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
+                // Currently known missing:
+                // * ol.proj.getTransformFromProjections
+                // * ol.style.Style.defaultFunction
+                if (false && !$this->debug) {
                     $ol4 = '/components/openlayers/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
                 } else {
