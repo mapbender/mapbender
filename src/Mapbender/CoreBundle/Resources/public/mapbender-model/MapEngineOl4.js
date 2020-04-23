@@ -143,7 +143,7 @@ window.Mapbender.MapEngineOl4 = (function() {
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
             var to = this._getProj(toProj, true);
-            var transformFn = ol.proj.getTransformFromProjections(from, to);
+            var transformFn = ol.proj.getTransform(from, to);
             var transformed = ol.extent.applyTransform(bounds, transformFn);
             return this.boundsFromArray(transformed);
         },
