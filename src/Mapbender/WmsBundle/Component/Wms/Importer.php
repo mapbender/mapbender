@@ -140,6 +140,7 @@ class Importer extends RefreshableSourceLoader
             $this->entityManager->remove($target->getContact());
         }
         $target->setContact($contact);
+        $this->entityManager->remove($reloaded->getContact());
 
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
@@ -242,6 +243,8 @@ class Importer extends RefreshableSourceLoader
                 }
                 $lay = $this->cloneLayer($subItemNew, $target);
                 $lay->setPriority($priorityOriginal + $num);
+
+                $this->entityManager->remove($subItemNew);
             }
         }
     }
