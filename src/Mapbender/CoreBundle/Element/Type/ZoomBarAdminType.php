@@ -30,7 +30,6 @@ class ZoomBarAdminType extends AbstractType
                 'choices' => array(
                     "Rotation" => "rotation",
                     "History" => "history",
-                    "Zoom box" => "zoom_box",
                     "zoom to max extent" => "zoom_max",
                     "Zoom in/out" => "zoom_in_out",
                     "Zoom slider" => "zoom_slider",

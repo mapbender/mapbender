@@ -115,19 +115,6 @@ $.widget("mapbender.mbZoomBar", {
     _setupZoomButtons: function() {
         var self = this;
         var model = this.mbMap.getModel();
-        this.element.find('.zoomBox').bind('click', function() {
-            $(this).toggleClass('activeZoomIcon');
-            if($(this).hasClass('activeZoomIcon')) {
-                model.zoomBoxOn();
-            } else {
-                model.zoomBoxOff();
-            }
-        });
-        $(document).bind('mbmapafterzoombox', function(evt, data) {
-            if (data.mbMap === self.mbMap) {
-                $('.zoomBox', self.element).removeClass('activeZoomIcon');
-            }
-        });
         this.element.find(".history .historyPrev").bind("click", function() {
             self.mbMap.getModel().historyBack();
         });
