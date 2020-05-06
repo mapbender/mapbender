@@ -532,6 +532,9 @@
         },
         _collectJobData: function() {
             var jobData = this._super();
+            // Remove upstream rotation value. We have this as a top-level input field. Backend may get confused
+            // when we submit both
+            delete jobData['rotation'];
             var overview = this._collectOverview();
             var extentFeature;
             if (Mapbender.mapEngine.code === 'ol2') {
