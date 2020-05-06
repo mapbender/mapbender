@@ -81,8 +81,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.options = {
             dpi: this.mbMap.options.dpi
         };
-        this._patchNavigationControl();
-
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
@@ -174,17 +172,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
         this.olMap.addControl(this.historyControl);
-    },
-    _patchNavigationControl: function() {
-        var self = this;
-        var zbZoomBoxMethodOriginal = OpenLayers.Control.ZoomBox.prototype.zoomBox;
-
-        function zbZoomBoxMethodPatched(position) {
-            console.warn("Monkey-patched zoomBoxControl.zoomBox", this, arguments);
-            zbZoomBoxMethodOriginal.apply(this, arguments);
-            self._afterZoomBox(this.map);
-        }
-        OpenLayers.Control.ZoomBox.prototype.zoomBox = zbZoomBoxMethodPatched;
     },
     _setupNavigationControl: function() {
         this._navigationControl = this.map.olMap.getControlsByClass('OpenLayers.Control.Navigation')[0];
@@ -383,29 +370,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             }
         }
         return null;
-    },
-    /**
-     * Enables the zoom selection box immediately without requiring a key combination (default: SHIFT)
-     * to be held.
-     */
-    zoomBoxOn: function() {
-        $(this.getViewPort()).css({cursor: 'crosshair'});
-        this._navigationDragHandler.keyMask = OpenLayers.Handler.MOD_NONE;
-    },
-    /**
-     * Reenables the keymask for drawing a zoom box
-     */
-    zoomBoxOff: function() {
-        $(this.getViewPort()).css({cursor: ''});
-        this._navigationDragHandler.keyMask = this._initialDragHandlerKeyMask;
-    },
-    _afterZoomBox: function(map) {
-        if (map === this.map.olMap) {
-            this.zoomBoxOff();
-            $(this.mbMap.element).trigger('mbmapafterzoombox', {
-                mbMap: this.mbMap
-            });
-        }
     },
     _afterZoom: function() {
         var scales = this._getScales();
