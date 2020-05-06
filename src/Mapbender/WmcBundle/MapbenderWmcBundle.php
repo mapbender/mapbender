@@ -18,9 +18,9 @@ class MapbenderWmcBundle extends MapbenderBundle
     public function getElements()
     {
         return array(
-            'Mapbender\WmcBundle\Element\WmcLoader',
-            'Mapbender\WmcBundle\Element\WmcList',
-            'Mapbender\WmcBundle\Element\WmcEditor',
+//            'Mapbender\WmcBundle\Element\WmcLoader',
+//            'Mapbender\WmcBundle\Element\WmcList',
+//            'Mapbender\WmcBundle\Element\WmcEditor',
             'Mapbender\WmcBundle\Element\SuggestMap',
         );
     }
