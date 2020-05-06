@@ -30,7 +30,12 @@ class TargetElementSubscriber implements EventSubscriberInterface
         $this->application = $application;
         $this->matchingElements = $this->application->getElements()->filter(function($element) use ($targetClassName) {
             /** @var Element $element */
-            return is_a($element->getClass(), $targetClassName, true);
+            try {
+                return is_a($element->getClass(), $targetClassName, true);
+            } catch (\ErrorException $e) {
+                // thrown by debug mode class loader on Symfony 3.4+
+                return false;
+            }
         });
     }
 
