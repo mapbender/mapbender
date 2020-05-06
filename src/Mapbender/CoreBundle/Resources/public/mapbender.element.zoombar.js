@@ -114,7 +114,6 @@ $.widget("mapbender.mbZoomBar", {
     },
     _setupZoomButtons: function() {
         var self = this;
-        var model = this.mbMap.getModel();
         this.element.find(".history .historyPrev").bind("click", function() {
             self.mbMap.getModel().historyBack();
         });
