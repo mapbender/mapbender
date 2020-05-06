@@ -34,7 +34,6 @@
                 default:
                     throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
             }
-            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             this._trigger('ready');
         },
         _setupOl4: function() {
@@ -71,13 +70,6 @@
 
             this.scalebar = new OpenLayers.Control.ScaleLine(controlOptions);
             this.mbMap.getModel().map.olMap.addControl(this.scalebar);
-        },
-        _changeSrs: function(event, srs) {
-            if (typeof this.scalebar.update === 'function') {
-                this.scalebar.update();
-            } else {
-                console.warn("Implement me: scalebar refresh on srs change", this);
-            }
         }
     });
 
