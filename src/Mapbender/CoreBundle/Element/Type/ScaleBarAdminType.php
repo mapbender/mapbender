@@ -43,7 +43,6 @@ class ScaleBarAdminType extends AbstractType
             ))
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
-                'multiple' => true,
                 'choices' => array(
                     'kilometer' => 'km',
                     'mile' => 'ml',

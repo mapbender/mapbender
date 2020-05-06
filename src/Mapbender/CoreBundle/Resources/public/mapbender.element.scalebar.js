@@ -42,13 +42,8 @@
                 target: this.element.attr('id'),
                 'minWidth': '64',
                 geodesic: true,
-                'units': 'metric'
+                units: this.options.units === 'ml' ? 'imperial' : 'metric'
             };
-            if (this.options.units.indexOf('ml') !== -1) {
-                controlOptions.units = 'imperial';
-            } else {
-                controlOptions.units = 'metric';
-            }
             this.scalebar = new ol.control.ScaleLine(controlOptions);
             this.mbMap.getModel().olMap.addControl(this.scalebar);
         },
@@ -57,20 +52,25 @@
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,
                 geodesic: true,
-                topOutUnits: "km",
-                topInUnits: "m",
-                bottomOutUnits: "mi",
-                bottomInUnits: "ft"
+                // Disable simultaneous dual-display. Use only "bottom" units.
+                topOutUnits: '',
+                topInUnits: ''
             };
+            switch (this.options.units) {
+                default:
+                case 'km':
+                    controlOptions.bottomOutUnits = 'km';
+                    controlOptions.bottomInUnits = 'm';
+                    break;
+                case 'ml':
+                    controlOptions.bottomOutUnits = 'mi';
+                    controlOptions.bottomInUnits = 'ft';
+                    break;
+            }
+
+
             this.scalebar = new OpenLayers.Control.ScaleLine(controlOptions);
             this.mbMap.getModel().map.olMap.addControl(this.scalebar);
-
-            if($.inArray("km", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineTop').css({display: 'none'});
-            }
-            if($.inArray("ml", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineBottom').css({display: 'none'});
-            }
         },
         _changeSrs: function(event, srs) {
             if (typeof this.scalebar.update === 'function') {
