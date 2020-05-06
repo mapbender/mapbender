@@ -4,8 +4,6 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 
 /**
- * Map's overview element
- *
  * @author Paul Schmidt
  */
 class ScaleBar extends Element
