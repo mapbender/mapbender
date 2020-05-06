@@ -173,21 +173,6 @@ mb:
       tag:
         overview: обзор
         map: карта
-    sketch:
-      circle:
-        radius:
-          label: Радиус
-          error: 'Радиус не верный'
-        form:
-          button:
-            'yes': Да
-            cancel: Отмена
-      class:
-        title: Эскиз
-        description: 'Добавление векторного слоя на карте и рисование геометрических объектов.'
-      tag:
-        sketch: эскиз
-        circle: круг
     metadata:
       popup:
         title: Метаданные

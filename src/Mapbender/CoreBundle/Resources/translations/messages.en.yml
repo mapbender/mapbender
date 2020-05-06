@@ -174,21 +174,6 @@ mb:
       tag:
         overview: overview
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Radius is not valid'
-        form:
-          button:
-            'yes': 'Yes'
-            cancel: Cancel
-      class:
-        title: Sketch
-        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
-      tag:
-        sketch: sketch
-        circle: circle
     metadata:
       popup:
         title: Metadata

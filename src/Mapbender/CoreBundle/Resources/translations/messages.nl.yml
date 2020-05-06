@@ -172,21 +172,6 @@ mb:
       tag:
         overview: overzicht
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Straal
-          error: 'Straal is niet valide'
-        form:
-          button:
-            'yes': Ja
-            cancel: Annuleren
-      class:
-        title: Schets
-        description: 'Voegt een vector-laag toe aan de kaart waarop geometrische objecten getekend kunnen worden.'
-      tag:
-        sketch: schets
-        circle: cirkel
     metadata:
       popup:
         title: Metadata

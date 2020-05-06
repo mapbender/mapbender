@@ -173,21 +173,6 @@ mb:
       tag:
         overview: overview
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Rayon
-          error: 'Le rayon est invalide'
-        form:
-          button:
-            'yes': 'Oui'
-            cancel: Annuler
-      class:
-        title: Esquisse
-        description: 'Ajoute une couche vectorielle à la carte et permet de dessiner des géométries'
-      tag:
-        sketch: sketch
-        circle: circle
     metadata:
       popup:
         title: Metadonnées

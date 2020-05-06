@@ -173,21 +173,6 @@ mb:
       tag:
         overview: panoramica
         map: mappa
-    sketch:
-      circle:
-        radius:
-          label: Raggio
-          error: 'Raggio è invalido'
-        form:
-          button:
-            'yes': Si
-            cancel: Cancella
-      class:
-        title: Sketch
-        description: 'Aggiungi un vettore nella mappa e consenti di disegnare gli oggetti geometrici.'
-      tag:
-        sketch: sketch
-        circle: cerchio
     metadata:
       popup:
         title: Metadata

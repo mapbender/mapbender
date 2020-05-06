@@ -174,21 +174,6 @@ mb:
       tag:
         overview: Übersicht
         map: 'Karte (overview)'
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Der Radius ist nicht gültig.'
-        form:
-          button:
-            'yes': Übernehmen
-            cancel: Abbrechen
-      class:
-        title: Skizzen
-        description: 'Es wird eine Vektorebene in der Karte hinzugefügt, über die Geometrieobjekte temporär gezeichnet werden.'
-      tag:
-        sketch: Skizzen
-        circle: Kreis
     metadata:
       popup:
         title: Metadaten
