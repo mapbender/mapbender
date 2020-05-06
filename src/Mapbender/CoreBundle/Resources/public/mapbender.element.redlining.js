@@ -416,7 +416,10 @@
                         feature.geometry.transform(data.from, data.to);
                     }
                 });
-                this.layer.redraw();
+                // OpenLayers 2 only
+                if (typeof this.layer.redraw === 'function') {
+                    this.layer.redraw();
+                }
             }
         }
     });
