@@ -104,6 +104,7 @@
                 layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.width,
                 height: imageSize.height,
+                rotation: -this._getViewRotation(),
                 center: {
                     x: Math.min(mapExtent.left, mapExtent.right) + 0.5 * Math.abs(mapExtent.right - mapExtent.left),
                     y: Math.min(mapExtent.bottom, mapExtent.top) + 0.5 * Math.abs(mapExtent.top - mapExtent.bottom)
@@ -346,6 +347,22 @@
                 return false;
             } else {
                 return urlOut;
+            }
+        },
+        /**
+         * Returns current view rotation in degrees
+         * @returns {Number}
+         * @private
+         */
+        _getViewRotation: function() {
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    return 0;
+                case 'ol4':
+                    var radians = this.map.model.olMap.getView().getRotation();
+                    return radians * 180 / Math.PI;
+                default:
+                    throw new Error("Unsupported map engine " + Mapbender.mapEngine.code);
             }
         },
         _noDanglingCommaDummy: null
