@@ -44,6 +44,10 @@
                 units: this.options.units === 'ml' ? 'imperial' : 'metric'
             };
             this.scalebar = new ol.control.ScaleLine(controlOptions);
+            // Todo: work around upstream bug in display calculations on non-metric SRS
+            // This bug has been fixed only after v4 maintenance stopped
+            // See https://github.com/openlayers/openlayers/pull/7700
+            // See https://github.com/openlayers/openlayers/pull/7908
             this.mbMap.getModel().olMap.addControl(this.scalebar);
         },
         _setupOl2: function() {
