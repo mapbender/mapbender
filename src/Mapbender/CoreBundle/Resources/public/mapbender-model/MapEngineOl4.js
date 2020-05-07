@@ -10,7 +10,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             var _tileSize = mapOptions && mapOptions.tileSize && parseInt(mapOptions.tileSize);
             var _dpi = mapOptions && mapOptions.dpi && parseInt(mapOptions.dpi);
             if (_tileSize) {
-                // todo: apply tile size globally?
+                ol.DEFAULT_TILE_SIZE = _tileSize;
             }
             if (_dpi) {
                 // todo: apply dpi globally?
