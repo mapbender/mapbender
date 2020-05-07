@@ -70,7 +70,7 @@ class ScaleBar extends Element implements ConfigMigrationInterface
      */
     public function getAssets()
     {
-        return array(
+        $assets = array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scalebar.js',
             ),
@@ -78,6 +78,10 @@ class ScaleBar extends Element implements ConfigMigrationInterface
                 '@MapbenderCoreBundle/Resources/public/sass/element/scalebar.scss',
             ),
         );
+        if ($this->entity->getApplication()->getMapEngineCode() === Entity\Application::MAP_ENGINE_OL4) {
+            $assets['js'][] = '@MapbenderCoreBundle/Resources/public/ol.control.ScaleLinePatched.js';
+        }
+        return $assets;
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
