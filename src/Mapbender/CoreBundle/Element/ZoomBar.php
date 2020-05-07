@@ -101,6 +101,7 @@ class ZoomBar extends Element
             switch ($application->getMapEngineCode()) {
                 case Entity\Application::MAP_ENGINE_OL2:
                     $blackList[] = 'rotation';
+                    $blackList[] = 'history';   // disabled for consistency with OL4
                     break;
                 case Entity\Application::MAP_ENGINE_OL4:
                     $blackList[] = 'history';
