@@ -140,6 +140,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
             this.setZoomLevel(zoom, false);
         }
+
+        // Force-initialize map's layerContainerOrigin, minPx and maxPx properties. This avoids collateral errors
+        // when converting between pixels and projected coordinates, e.g. implicitly in print.
+        this.olMap.setCenter(this.olMap.getCenter(), this.olMap.getZoom(), false, true);
+
         this._setupHistoryControl();
         this._setupNavigationControl();
         this._initEvents(this.olMap, this.mbMap);
