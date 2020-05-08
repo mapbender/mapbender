@@ -741,7 +741,9 @@
             Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
             this.feature = null;
             if (this.selectionActive) {
+                this._endDrag();
                 this._updateGeometry();
+                this._startDrag();
             }
         },
 
