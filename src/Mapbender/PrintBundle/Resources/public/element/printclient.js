@@ -391,8 +391,8 @@
                 }
                 this.control.activate();
             } else {
-                this.control.select(this.feature);
                 this.control.setActive(true);
+                this.control.select(this.feature);
             }
             return this.control;
         },
