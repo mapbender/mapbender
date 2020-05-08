@@ -413,6 +413,20 @@
                 var rad2deg = 360. / (2 * Math.PI);
                 self._forwardRotation(-Math.round(rad2deg * data.angle));
             });
+            // Adjust styling
+            // Interaction can repeatedly call setDefaultStyle, patching once is not enough
+            // setDefaultStyle also ends in a call to drawSketch_
+            // To reliably influence style, we need to monkey-patch drawSketch_ itself
+            /** @this {ol.interaction.Transform} */
+            interaction.drawSketch_ = function(center) {
+                // Disable center point translate handle marker ("bigpt").
+                this.style.default[0].setImage(null);
+                this.style.translate[0].setImage(null);
+                this.style.rotate0[0].setImage(null);
+                //this.style.default = styleDefault;
+                //this.style.translate = styleTranslate;
+                ol.interaction.Transform.prototype.drawSketch_.call(this, center);
+            };
             return interaction;
         },
         _getPrintScale: function() {
