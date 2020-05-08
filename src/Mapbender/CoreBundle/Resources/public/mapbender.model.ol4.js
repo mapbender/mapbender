@@ -47,12 +47,30 @@ window.Mapbender.MapModelOl4 = (function() {
             view: view,
             target: this.mbMap.element.attr('id')
         });
+        this._patchNavigation(this.olMap);
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
         this.setExtent(options.startExtent || options.maxExtent);
         this.initializeSourceLayers();
         this.processUrlParams();
+    },
+    /**
+     * @param {ol.Map} olMap
+     * @private
+     */
+    _patchNavigation: function(olMap) {
+        var interactions = olMap.getInteractions().getArray();
+        for (var i = 0; i < interactions.length; ++i) {
+            var interaction = interactions[i];
+            if (interaction instanceof ol.interaction.MouseWheelZoom) {
+                // Reign in built-in trackpad specialization for better stability on high-resolution pads
+                /** @type {(ol.interaction.MouseWheelZoom)} */ interaction;
+                interaction.constrainResolution_ = true;    // disable transient touchpad zoom overshooting (inconsistent with wheel)
+                interaction.trackpadEventGap_ = 60;         // discrete event debounce milliseconds; reduced from original 400
+                interaction.trackpadDeltaPerZoom_ = 2000;   // increased from original 300
+            }
+        }
     },
     _initEvents: function(olMap, mbMap) {
         var self = this;
