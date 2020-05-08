@@ -348,40 +348,18 @@
          * Implicitly creates the selection layer, too, if not yet done.
          */
         _startDrag: function() {
-            var self = this;
-            // creation
             if (Mapbender.mapEngine.code === 'ol2' && !this.control) {
-                this.control = new OpenLayers.Control.TransformFeature(this.layer, {
-                    renderIntent: 'transform',
-                    rotationHandleSymbolizer: 'rotate'
-                });
-                this.control.events.on({
-                    'transformcomplete': function() {
-                        var userRotation = 360 - this.rotation;
-                        if (userRotation > 180) {
-                            userRotation -= 360;
-                        }
-                        self._forwardRotation(userRotation);
-                    }
-                });
-                self.map.map.olMap.addControl(this.control);
+                // OpenLayers 2 control can be reused once created
+                this.control = this._createDragRotateControlOl2();
+                this.map.map.olMap.addControl(this.control);
             } else if (Mapbender.mapEngine.code !== 'ol2') {
+                // OpenLayers 4 control needs disposing + recreation
                 if (this.control) {
                     this.control.setActive(false);
                     this.map.getModel().olMap.removeInteraction(this.control);
                     this.control.dispose();
                 }
-                this.control = new ol.interaction.Transform({
-                    translate: true,
-                    rotate: true,
-                    translateFeature: true,
-                    stretch: false,
-                    scale: false
-                });
-                this.control.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
-                    var rad2deg = 360. / (2 * Math.PI);
-                    self._forwardRotation(-Math.round(rad2deg * data.angle));
-                });
+                this.control = this._createDragRotateControlOl4();
                 this.map.getModel().olMap.addInteraction(this.control);
             }
             // activation
@@ -405,7 +383,38 @@
                 }
             }
         },
-
+        _createDragRotateControlOl2: function() {
+            var self = this;
+            var control = new OpenLayers.Control.TransformFeature(this.layer, {
+                renderIntent: 'transform',
+                rotationHandleSymbolizer: 'rotate'
+            });
+            control.events.on({
+                'transformcomplete': function() {
+                    var userRotation = 360 - this.rotation;
+                    if (userRotation > 180) {
+                        userRotation -= 360;
+                    }
+                    self._forwardRotation(userRotation);
+                }
+            });
+            return control;
+        },
+        _createDragRotateControlOl4: function() {
+            var self = this;
+            var interaction = new ol.interaction.Transform({
+                translate: true,
+                rotate: true,
+                translateFeature: true,
+                stretch: false,
+                scale: false
+            });
+            interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
+                var rad2deg = 360. / (2 * Math.PI);
+                self._forwardRotation(-Math.round(rad2deg * data.angle));
+            });
+            return interaction;
+        },
         _getPrintScale: function() {
             return $('select[name="scale_select"]', this.$form).val();
         },
