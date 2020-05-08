@@ -68,6 +68,9 @@
             });
             this._super();
             this.layer = this._initializeSelectionLayer();
+            this.map.element.on('mbmapsrschanged', function() {
+                self._onSrsChanged();
+            });
         },
 
         open: function(callback){
@@ -733,6 +736,13 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+        _onSrsChanged: function() {
+            Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
+            this.feature = null;
+            if (this.selectionActive) {
+                this._updateGeometry();
+            }
         },
 
         _initJobList: function($jobListPanel) {
