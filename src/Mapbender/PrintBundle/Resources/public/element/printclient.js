@@ -368,9 +368,12 @@
                     this.map.getModel().olMap.removeInteraction(this.control);
                     this.control.dispose();
                 }
-                this.control = new ol.interaction.Translate({
-                    layers: [self.layer],
-                    features: new ol.Collection([self.feature])
+                this.control = new ol.interaction.Transform({
+                    translate: true,
+                    rotate: true,
+                    translateFeature: true,
+                    stretch: false,
+                    scale: false
                 });
                 this.map.getModel().olMap.addInteraction(this.control);
             }
@@ -381,6 +384,7 @@
                 }
                 this.control.activate();
             } else {
+                this.control.select(this.feature);
                 this.control.setActive(true);
             }
             return this.control;
