@@ -338,6 +338,9 @@
             }
             return layer;
         },
+        _forwardRotation: function(degrees) {
+            $('input[name="rotation"]', this.$form).val(degrees);
+        },
         /**
          * Gets the drag control used to rotate and
          * move the selection feature around over the map.
@@ -358,7 +361,7 @@
                         if (userRotation > 180) {
                             userRotation -= 360;
                         }
-                        $('input[name="rotation"]', self.$form).val(userRotation);
+                        self._forwardRotation(userRotation);
                     }
                 });
                 self.map.map.olMap.addControl(this.control);
@@ -374,6 +377,10 @@
                     translateFeature: true,
                     stretch: false,
                     scale: false
+                });
+                this.control.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
+                    var rad2deg = 360. / (2 * Math.PI);
+                    self._forwardRotation(-Math.round(rad2deg * data.angle));
                 });
                 this.map.getModel().olMap.addInteraction(this.control);
             }
