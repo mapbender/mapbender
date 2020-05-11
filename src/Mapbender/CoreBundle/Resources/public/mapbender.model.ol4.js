@@ -9,6 +9,7 @@ window.Mapbender.MapModelOl4 = (function() {
     function MapModelOl4(mbMap) {
         Mapbender.MapModelBase.apply(this, arguments);
         this._geojsonFormat = new ol.format.GeoJSON();
+        this._wktFormat = new ol.format.WKT();
         this._initMap();
         window.Mapbender.vectorLayerPool = window.Mapbender.VectorLayerPool.factory(Mapbender.mapEngine, this.olMap);
         this.displayPois(this._poiOptions);
@@ -261,6 +262,24 @@ window.Mapbender.MapModelOl4 = (function() {
         } else {
             return this._startProj;
         }
+    },
+    /**
+     * Parses a single (E)WKT feature from text. Returns the engine-native feature.
+     *
+     * @param {String} text
+     * @param {String} [sourceSrsName]
+     * @return {OpenLayers.Feature.Vector}
+     */
+    parseWktFeature: function(text, sourceSrsName) {
+        var ewktMatch = text.match(/^SRID=([^;]*);(.*)$/);
+        if (ewktMatch) {
+            return this.parseWktFeature(ewktMatch[2], ewktMatch[1]);
+        }
+        var targetSrsName = this.olMap.getView().getProjection().getCode();
+        return this._wktFormat.readFeatureFromText(text, {
+            dataProjection: sourceSrsName || null,
+            featureProjection: targetSrsName
+        });
     },
     parseGeoJsonFeature: function(data) {
         return this._geojsonFormat.readFeature(data);

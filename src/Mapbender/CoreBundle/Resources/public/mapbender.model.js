@@ -719,6 +719,33 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this._initLayerEvents(olLayer, source, i);
         }
     },
+    /**
+     * Parses a single (E)WKT feature from text. Returns the engine-native feature.
+     *
+     * @param {String} text
+     * @param {String} [sourceSrsName]
+     * @return {OpenLayers.Feature.Vector}
+     */
+    parseWktFeature: function(text, sourceSrsName) {
+        var ewktMatch = text.match(/^SRID=([^;]*);(.*)$/);
+        if (ewktMatch) {
+            return this.parseWktFeature(ewktMatch[2], ewktMatch[1]);
+        }
+        var targetSrsName = this.olMap.getProjection();
+        this._wktReader.externalProjection = sourceSrsName || null;
+        this._wktReader.internalProjection = targetSrsName;
+        var feature = this._wktReader.read(text);
+        if (Array.isArray(feature)) {
+            // Fix geometrycollection parse result to maintain API expectations
+            // OpenLayers does something similar internally in a different path,
+            /** @see OpenLayers.Geometry.fromWKT */
+            var geom = new OpenLayers.Geometry.Collection(feature.map(function(f) {
+                return f.geometry;
+            }));
+            feature = new OpenLayers.Feature.Vector(geom);
+        }
+        return feature;
+    },
     parseGeoJsonFeature: function(data) {
         return this._geoJsonReader.read(data)[0];
     },
