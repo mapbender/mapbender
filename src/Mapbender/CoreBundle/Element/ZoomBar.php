@@ -56,7 +56,6 @@ class ZoomBar extends Element
             'target' => null,
             'components' => array(
                 "rotation",
-                "history",
                 "zoom_max",
                 "zoom_in_out",
                 "zoom_slider",
@@ -101,13 +100,9 @@ class ZoomBar extends Element
             switch ($application->getMapEngineCode()) {
                 case Entity\Application::MAP_ENGINE_OL2:
                     $blackList[] = 'rotation';
-                    $blackList[] = 'history';   // disabled for consistency with OL4
-                    break;
-                case Entity\Application::MAP_ENGINE_OL4:
-                    $blackList[] = 'history';
                     break;
                 default:
-                    throw new \RuntimeException("Unsupported map engine " . print_r($application->getMapEngineCode(), true));
+                    break;
             }
         }
         return $blackList;

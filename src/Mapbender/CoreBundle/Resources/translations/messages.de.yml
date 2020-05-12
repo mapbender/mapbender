@@ -231,8 +231,6 @@ mb:
       contextmenu:
         nooption: 'Layer verfügt über keine Kontextmenü-Option'
     zoombar:
-      goback: Zurück
-      goforward: Vor
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
       zoomin: Hineinzoomen

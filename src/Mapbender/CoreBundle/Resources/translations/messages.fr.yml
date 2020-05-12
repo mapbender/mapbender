@@ -229,8 +229,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      goback: 'Avancer'
-      goforward: 'Reculer'
       zoombybox: 'Zoomer sur la boite'
       zoombyworld: 'Zoomer sur l''étendue globale'
       zoomin: ~

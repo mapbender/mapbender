@@ -229,8 +229,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      goback: Atrás
-      goforward: Adelante
       zoombybox: 'Acercamiento por recuadro'
       zoombyworld: 'Acercamiento global'
       zoomin: Acercar

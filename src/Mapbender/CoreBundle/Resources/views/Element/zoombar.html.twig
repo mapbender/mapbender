@@ -24,12 +24,6 @@
       </div>
 {%- endif -%}
   <ul class="toolPane">
-    {% if 'history' in configuration.components %}
-      <li class="history">
-        <span class="historyPrev" title="{{ "mb.core.zoombar.goback" | trans }}"><i class="fa fas fa-angle-double-left"></i></span>
-        <span class="historyNext" title="{{ "mb.core.zoombar.goforward" | trans }}"><i class="fa fas fa-angle-double-right"></i></span>
-      </li>
-    {% endif %}
     {% if 'zoom_max' in configuration.components %}
       <li class="zoomWorld">
         <span class="iconZoomMin iconBig" title="{{ "mb.core.zoombar.zoombyworld" | trans }}"></span>

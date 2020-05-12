@@ -229,8 +229,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      goback: Voltar
-      goforward: Adiante
       zoombybox: 'Caixa de ampliar'
       zoombyworld: 'Mostrar toda extensão'
       zoomin: Ampliar

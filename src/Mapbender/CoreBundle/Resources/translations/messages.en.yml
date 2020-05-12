@@ -230,8 +230,6 @@ mb:
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      goback: 'Go back'
-      goforward: 'Go forward'
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'
       zoomin: Zoom in

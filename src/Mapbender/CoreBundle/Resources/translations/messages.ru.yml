@@ -229,8 +229,6 @@ mb:
       contextmenu:
         nooption: 'Слой не имеет опциий в контекст-меню'
     zoombar:
-      goback: Вернуться
-      goforward: Вперед
       zoombybox: Масштаб
       zoombyworld: Кругозор
       zoomin: Приблизить

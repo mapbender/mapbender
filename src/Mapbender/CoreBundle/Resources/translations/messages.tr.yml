@@ -228,8 +228,6 @@ mb:
       contextmenu:
         nooption: 'Katmanın menü seçeneği yok'
     zoombar:
-      goback: 'Geri dön'
-      goforward: 'İleri git'
       zoombybox: 'Çizilen alana yakınlaştır'
       zoombyworld: 'Tüm dünyayı göster'
       zoomin: 'Yakınlaştır'

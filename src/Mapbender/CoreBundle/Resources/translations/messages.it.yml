@@ -229,8 +229,6 @@ mb:
       contextmenu:
         nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
-      goback: 'Ritorna indietro'
-      goforward: 'Vai avanti'
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'
       zoomin: Ingrandisci

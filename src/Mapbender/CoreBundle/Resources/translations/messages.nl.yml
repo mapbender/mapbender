@@ -228,8 +228,6 @@ mb:
       contextmenu:
         nooption: 'Laag heeft geen contekst menu optie'
     zoombar:
-      goback: 'ga terug'
-      goforward: 'ga vooruit'
       zoombybox: 'zoom in via rechthoek'
       zoombyworld: 'zoom uit'
       zoomin: 'zoom in'
