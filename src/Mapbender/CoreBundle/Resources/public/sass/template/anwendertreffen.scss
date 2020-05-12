@@ -1,0 +1,162 @@
+.toolBar {
+  color: #222;
+  &.top {
+    background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    font-size: 1.6rem;
+    line-height: 1;
+    .toolBarItem {
+      line-height: inherit;
+      span {
+        line-height: 1;
+      }
+      [class^="icon"], [class*=" icon"] {
+        vertical-align: initial;
+      }
+      .iconBig {
+        font-size: inherit;
+        &:before {
+          font-size: inherit
+        }
+      }
+    }
+  }
+  &.bottom {
+    background: linear-gradient(0deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
+    box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
+    font-size: 1.2rem;
+  }
+}
+.toolBar.top {
+  .toolBarItem {
+    border-radius: 2 * $radius;
+    &.logoContainer {
+      border-radius: 0;
+    }
+  }
+  .toolBarItem + .toolBarItem {
+    margin-left: 1.5em;
+  }
+}
+
+
+.toolBar.top .toolBarItem.logoContainer {
+    position: unset;
+  z-index: unset;
+  background: unset;
+  margin: unset;
+  display: unset;
+  padding: 0; // use padding pixels for more of the logo
+}
+.logo {
+  max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
+}
+.sidePane.left {
+  float: none;
+}
+.map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  .map-overlay-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    div.toolBar {
+      flex: 0;
+    }
+    div.sidePane {
+      flex: 1;
+    }
+    div.toolBar {
+      position: initial;
+    }
+    div.sidePane {
+      // undo position: absolute completely
+      // We need relative though for sliding in / out (is done with left: -350px + transition)
+      position: relative;
+      top: unset;
+      bottom: unset;
+      left: unset;
+      right: unset;
+    }
+    > * {
+      pointer-events: initial;
+    }
+  }
+}
+
+.map-overlay, .map-overlay-column {
+  pointer-events: none;
+}
+
+.sidePane {
+  width: initial;
+  max-width: 450px;
+  &:after {
+    clear: both;
+  }
+  .sideContent {
+    display: inline-block;
+    position: unset;
+  }
+  .toggleSideBar {
+    position: absolute;
+    left: 350px;
+    top: 0;
+    font-size: 1.5rem;
+    display: inline-block;
+    background: #777;
+    padding: 5px;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+  }
+  background: linear-gradient(0deg, rgba(33, 33, 33, 0.85), rgba(33, 33, 33, 0.95));
+  color: #fff;
+  // Make Legend and maybe other images visible against inverted background
+  img {
+    background: rgba(192, 192, 192, 0.85);
+    padding: $radius;
+    border-radius: $radius;
+  }
+}
+
+html .layer-menu .layer-slider-bar .layer-slider-handle {
+  background: #777;
+}
+html .accordionContainer .accordion {
+  background-color: #777;
+  color: #ddd;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  border-color: #444;
+  &.active {
+    color: #fff;
+    &:hover {
+      background-color: #888;
+    }
+  }
+  &:hover {
+    background-color: #888;
+  }
+  &.active, &:hover, &.active:hover {
+    background-color: #888;
+  }
+  > div {
+    border-radius: 2 * $radius;
+    border-width: 2px;
+  }
+}
+
+html .labelCheck {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+html .mb-element-layertree {
+  font-size: 1.1rem;
+}

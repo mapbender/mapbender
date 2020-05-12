@@ -47,6 +47,7 @@ class Fullscreen extends Template
             case 'css':
                 return array(
                     '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/template/anwendertreffen.scss',
                 );
             case 'js':
                 return array(
@@ -72,6 +73,6 @@ class Fullscreen extends Template
 
     public function getTwigTemplate()
     {
-        return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+        return 'MapbenderCoreBundle:Template:anwendertreffen.html.twig';
     }
 }

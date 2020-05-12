@@ -20,7 +20,6 @@
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
-.logoContainer{background-image:url($headPatternUrl);}
 .toolBar {
   @include frontendContainerStyle();
   .toolBarItem {
@@ -28,10 +27,10 @@
     display: inline-block;
     text-wrap: avoid;
     white-space: nowrap;
-    color: fade-out($lightFontColor, .3);
+    color: fade-out($toolBarFontColor, .3);
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     &:hover {
-      color: $lightFontColor;
+      color: inherit;
     }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
@@ -42,8 +41,8 @@
     }
   }
   .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: $contentColor;
-    color:$firstColor;
+    background-color: fade-out($toolBarFontColor, .3);
+    color: #eee;
   }
   margin: 0;
   padding:$space/4 $space/2 $space/4 $space/2;
@@ -72,11 +71,12 @@
       margin-bottom: $inputHeight;
     }
   }
-  &.itemsRight{
+
+  .itemsRight{
     text-align:right;
     .toolBarItem{padding-left:$space/4;}
   }
-  &.itemsCenter{
+  .itemsCenter{
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }

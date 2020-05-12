@@ -311,10 +311,10 @@ form {
 
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar {
+  font-size: 11px;
   z-index: 4;
   label, span {
     font-weight: normal;
-    font-size: 11px;
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */

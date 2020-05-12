@@ -52,7 +52,6 @@
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
     }
     .leaveContainer{
       margin-left:-6px;
@@ -68,7 +67,6 @@
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
     }
 
     // show only layers which are toggled
@@ -133,6 +131,7 @@
 
 $layer-slider-bar-height: 5px;
 .layer-menu {
+  color: #222;
   position: absolute;
   right: 0;
   top: 1.5em;

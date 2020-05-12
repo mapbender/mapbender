@@ -5,4 +5,7 @@
   input[type="checkbox"] {
     display: none;
   }
+  & + .labelCheck {
+    margin-left: 0.25em;
+  }
 }
