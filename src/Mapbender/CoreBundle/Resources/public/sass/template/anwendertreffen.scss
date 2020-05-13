@@ -90,7 +90,7 @@
 .map-overlay, .map-overlay-column, .overlay-fill {
   pointer-events: none;
 }
-.overlay-fill > * {
+.overlay-fill > *, .toolBar {
   pointer-events: initial;
 }
 
