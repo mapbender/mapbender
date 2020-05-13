@@ -63,6 +63,11 @@
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.element_inventory.service" />
         </service>
+        <service id="mapbender.twig.element_markup" class="Mapbender\CoreBundle\Extension\ElementMarkupExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.presenter.application.service" />
+            <argument type="service" id="templating" />
+        </service>
 
         <service id="mapbender.twig.sitelinks" class="Mapbender\CoreBundle\Extension\SitelinksExtension">
             <tag name="twig.extension"/>
