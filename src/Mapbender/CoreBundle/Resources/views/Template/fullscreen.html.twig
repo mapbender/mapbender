@@ -2,56 +2,50 @@
 
 {% block frontend_content %}
   {% set sidePaneClosed = region_props.sidepane.properties.closed|default(false) %}
-  <div id="templateWrapper" class="templateWrapper {% if sidePaneClosed == false %}sidePaneOpened{% endif %}">
-    {% if fom.server_logo is defined %}
-      <div class="logoContainer">
-        {% block logo %}
-          <img class="logo" height="40" src="{{ asset(fom.server_logo) }}"/>
-        {% endblock %}
-      </div>
-    {% endif %}
+  <div id="templateWrapper" class="templateWrapper">
+    <div id="content" class="contentPane">
+      {{ map_markup(application) | raw }}
+      {{ unanchored_content_elements(application) | raw }}
+    </div>
+    <div class="map-overlay">
+      <div class="map-overlay-column sidePaneOpened">
+        <div class="toolBar top">
+          <ul id="toolbar" class="itemsRight">
+                <li class="toolBarItem logoContainer">
+                  {% block logo %}
+                    <img class="logo" src="{{ asset(fom.server_logo) }}"/>
+                  {% endblock %}
+                </li>
+              {% for element in application.elements('toolbar') %}
+                <li class="toolBarItem">{{ element.render() | raw }}</li>
+              {% endfor %}
+          </ul>
+        </div>
+        <div class="overlay-fill">
+          <div class="anchored-element-wrap anchored-element-wrap-lt">{{ anchored_content_elements(application, 'left-top') | raw }}</div>
+          <div class="anchored-element-wrap anchored-element-wrap-rt">{{ anchored_content_elements(application, 'right-top') | raw }}</div>
+          <div class="anchored-element-wrap anchored-element-wrap-lb">{{ anchored_content_elements(application, 'left-bottom') | raw }}</div>
+          <div class="anchored-element-wrap anchored-element-wrap-rb">{{ anchored_content_elements(application, 'right-bottom') | raw }}</div>
 
-    {% if application.elements.toolbar is defined %}
-    <ul id="toolbar" class="toolBar itemsRight top">
-        {% for element in application.elements('toolbar') %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+        {% if application.elements['sidepane'] is defined %}
+          {% set properties = region_props['sidepane'].properties|default({}) %}
 
-    {# Right sidepane definition #}
-    {% set name = 'sidepane' %}
-    {% if application.elements[name] is defined %}
-      {% set region = application.elements[name] %}
-      {% set properties = region_props[name].properties|default({}) %}
-      {% set align = properties.align|default('left') %}
-      {% set isRegionClosed = properties.closed|default('false') %}
-
-      <div id="{{ name }}"
-           data-closed="{{ isRegionClosed }}"
-           class="clear sidePane {{ align }}"
-        {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}
-      >
-        <ul class="sidePaneTabs">
-          <li class="sidePaneTabItem toggleSideBar"></li>
-        </ul>
-        <div class="sideContent">
-          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': name } %}
+        <div class="sidePane left flex-fill" data-closed="{{ properties.closed | default('false') }}">
+          <div class="sideContent">
+            {{ region_content(application, 'sidepane') | raw }}
+          </div>
+          <span class="toggleSideBar"><i class="fa fas fa-bars"></i></span>
+        </div>
+        {% endif %}{# sidepane #}
+        </div>
+        <div class="toolBar bottom">
+          <ul class="itemsRight">
+          {% for element in application.elements('footer')%}
+            <li class="toolBarItem">{{ element.render() | raw }}</li>
+          {% endfor %}
+          </ul>
         </div>
       </div>
-    {% endif %}
-
-    <div id="content" class="contentPane">
-      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
-
-    {% if application.elements.footer is defined %}
-    <ul id="footer" class="toolBar itemsRight bottom">
-        {% for element in application.elements('footer')%}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
   </div>
-
 {% endblock %}
