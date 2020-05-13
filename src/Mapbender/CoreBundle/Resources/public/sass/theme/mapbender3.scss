@@ -116,14 +116,11 @@
   &.right{border-left:1px solid darken(white, 30%);}
   .sideContent{
     padding:$space;
-    display: none;
-    width: 100%;
     height: 100%;
   }
 }
 .sidePaneOpened{
   .sideContent{
-    display:block;
     overflow: auto;
   }
   .sidePaneTabItem{@extend .iconClose;}

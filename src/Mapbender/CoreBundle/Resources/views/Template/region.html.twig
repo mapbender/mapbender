@@ -31,7 +31,6 @@
           {{ element.render() | raw }}
         {% endfor %}
       {% endif %}
-    {#% endfor %#}
   {% else %}
     {% for element in application.elements[region] %}
       {{ element.render() | raw }}

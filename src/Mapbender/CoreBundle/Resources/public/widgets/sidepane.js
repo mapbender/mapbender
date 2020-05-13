@@ -55,7 +55,6 @@ $(function() {
                 complete: function() {
                     templateWrapper.removeClass("sidePaneOpened");
                     sidePane.data('isOpened', !isOpened);
-                    sidePane.find('.sideContent').css('display', 'none');
                     sidePane.trigger("animate");
                     sidePane.trigger("switchSidepane");
                 }
@@ -63,7 +62,6 @@ $(function() {
         } else {
             templateWrapper.addClass("sidePaneOpened");
             animation[align] = "0px";
-            sidePane.find(".sideContent").css('display', 'block');
             sidePane.animate(animation, {
                 duration: speed,
                 progress: onProgress,

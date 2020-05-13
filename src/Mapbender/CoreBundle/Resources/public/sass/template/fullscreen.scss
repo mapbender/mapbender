@@ -275,20 +275,12 @@ form {
 
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar {
-  font-size: 11px;
   z-index: 4;
   label, span {
-    font-weight: normal;
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
     user-select: none;          /* Likely future */
-  }
-  &.top {
-    position: relative;
-  }
-  &.bottom {
-    @include absolute('' 0 0 0);
   }
 }
 
@@ -298,11 +290,9 @@ $tabSize: 32px;
   width: $tabSize;
   height: $tabSize;
   @include absolute(40% '' '' '');
-  /*@include transition(all 0.3s ease-in-out);*/
 }
 
 .sidePane {
-  width: 10px;
   z-index: 20;
   display: none;
 
@@ -420,14 +410,9 @@ $tabSize: 32px;
 }
 
 .sidePane {
-  width: initial;
   max-width: 450px;
   &:after {
     clear: both;
-  }
-  .sideContent {
-    display: inline-block;
-    position: unset;
   }
   .toggleSideBar {
     position: absolute;
