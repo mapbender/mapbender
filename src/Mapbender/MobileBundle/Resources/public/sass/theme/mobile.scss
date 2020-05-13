@@ -505,12 +505,6 @@ fieldset{
   }
 }
 /* ------------------------------------------------------------- SCALEDISPLAY */
-.contentPane{
-  .mb-element-scaledisplay{
-    padding:$space/4 $space/2;
-    @include frontendContainerStyle();
-  }
-}
 .toolBar{
   .mb-element-scaleline{
     position: relative;
