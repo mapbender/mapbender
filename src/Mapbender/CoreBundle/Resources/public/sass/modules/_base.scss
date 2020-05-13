@@ -75,13 +75,13 @@ p{margin:0;}
 .anchored-element-wrap {
   position: absolute;
   &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
-    left: $space;
+    left: $space * 2;
   }
   &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
-    right: $space;
+    right: $space * 2;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
-    top: $space;
+    top: $space * 2;
   }
   &.anchored-element-wrap-lb, &.anchored-element-wrap-rb {
     bottom: $space;
