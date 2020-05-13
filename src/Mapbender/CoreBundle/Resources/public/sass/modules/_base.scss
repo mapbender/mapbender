@@ -60,3 +60,13 @@ p{margin:0;}
     width: 100%;
   }
 }
+
+.flex-fill {
+  flex-grow: 1;
+}
+
+.overlay-fill {
+  flex-grow: 1;
+  display: inline-flex;
+  flex-direction: column;
+}

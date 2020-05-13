@@ -20,17 +20,18 @@
               {% endfor %}
           </ul>
         </div>
+        <div class="overlay-fill">
         {% if application.elements['sidepane'] is defined %}
           {% set properties = region_props['sidepane'].properties|default({}) %}
 
-        <div class="sidePane left" data-closed="{{ properties.closed | default('false') }}">
+        <div class="sidePane left flex-fill" data-closed="{{ properties.closed | default('false') }}">
           <div class="sideContent">
             {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'application': application, 'region': 'sidepane' } %}
           </div>
           <span class="toggleSideBar"><i class="fa fas fa-bars"></i></span>
         </div>
-
         {% endif %}{# sidepane #}
+        </div>
         <div class="toolBar bottom">
           <ul class="itemsRight">
           {% for element in application.elements('footer')%}

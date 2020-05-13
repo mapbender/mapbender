@@ -84,14 +84,14 @@
       left: unset;
       right: unset;
     }
-    > * {
-      pointer-events: initial;
-    }
   }
 }
 
-.map-overlay, .map-overlay-column {
+.map-overlay, .map-overlay-column, .overlay-fill {
   pointer-events: none;
+}
+.overlay-fill > * {
+  pointer-events: initial;
 }
 
 .sidePane {
