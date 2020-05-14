@@ -17,6 +17,7 @@ $.widget('mapbender.mbSimpleSearch', {
             icon_url: null,
             icon_offset: null
         },
+        sourceSrs: 'EPSG:4326',
         delay: 0
     },
 
@@ -61,6 +62,9 @@ $.widget('mapbender.mbSimpleSearch', {
             }
             evt.preventDefault();
         });
+        this.mbMap.element.on('mbmapsrschanged', function(event, data) {
+            self.layer.retransform(data.from, data.to);
+        });
 
         // On item selection in autocomplete, parse data and set map bbox
         searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
@@ -68,9 +72,9 @@ $.widget('mapbender.mbSimpleSearch', {
     _parseFeature: function(doc) {
         switch ((this.options.geom_format || '').toUpperCase()) {
             case 'WKT':
-                return this.mbMap.getModel().parseWktFeature(doc);
+                return this.mbMap.getModel().parseWktFeature(doc, this.options.sourceSrs);
             case 'GEOJSON':
-                return this.mbMap.getModel().parseGeoJsonFeature(doc);
+                return this.mbMap.getModel().parseGeoJsonFeature(doc, this.options.sourceSrs);
             default:
                 throw new Error("Invalid geom_format " + this.options.geom_format);
         }

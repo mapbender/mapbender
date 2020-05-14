@@ -746,8 +746,21 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return feature;
     },
-    parseGeoJsonFeature: function(data) {
-        return this._geoJsonReader.read(data)[0];
+    /**
+     * @param {*} data
+     * @param {String} [sourceSrsName]
+     * @return {*}
+     */
+    parseGeoJsonFeature: function(data, sourceSrsName) {
+        var feature = this._geoJsonReader.read(data)[0];
+
+        if (feature && feature.geometry && sourceSrsName) {
+            var targetSrsName = this.olMap.getProjection();
+            if (targetSrsName !== sourceSrsName) {
+                feature.geometry.transform(sourceSrsName, targetSrsName);
+            }
+        }
+        return feature;
     },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;

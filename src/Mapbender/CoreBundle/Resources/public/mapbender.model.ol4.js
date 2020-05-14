@@ -281,8 +281,19 @@ window.Mapbender.MapModelOl4 = (function() {
             featureProjection: targetSrsName
         });
     },
-    parseGeoJsonFeature: function(data) {
-        return this._geojsonFormat.readFeature(data);
+    /**
+     * @param {*} data
+     * @param {String} [sourceSrsName]
+     * @return {*}
+     */
+    parseGeoJsonFeature: function(data, sourceSrsName) {
+        var feature = this._geojsonFormat.readFeature(data);
+        var geometry = feature && feature.getGeometry();
+        if (geometry && sourceSrsName) {
+            var targetSrsName = this.olMap.getView().getProjection().getCode();
+            geometry.transform(sourceSrsName, targetSrsName);
+        }
+        return feature;
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called

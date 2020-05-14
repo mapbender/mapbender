@@ -51,6 +51,8 @@ class SimpleSearch extends Element
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
+            // @todo: add form field
+            'sourceSrs' => 'EPSG:4326',
         );
     }
 
