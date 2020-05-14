@@ -90,7 +90,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var olMap = this.mbMap.getModel().olMap;
         var self = this;
 
-        var bounds = feature.geometry.getBounds();
+        var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
 
         // Add marker
         if(self.options.result.icon_url) {
