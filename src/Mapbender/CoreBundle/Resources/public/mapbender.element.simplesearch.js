@@ -23,8 +23,16 @@ $.widget('mapbender.mbSimpleSearch', {
     marker: null,
     layer: null,
     iconStyle: null,
+    mbMap: null,
 
     _create: function() {
+        var self = this;
+        Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            self.mbMap = mbMap;
+            self._setup();
+        });
+    },
+    _setup: function() {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
@@ -50,10 +58,6 @@ $.widget('mapbender.mbSimpleSearch', {
         // On item selection in autocomplete, parse data and set map bbox
         searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
     },
-    _getMbMap: function() {
-        // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
-        return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
-    },
     _parseFeature: function(doc) {
         switch ((this.options.geom_format || '').toUpperCase()) {
             case 'WKT':
@@ -70,19 +74,18 @@ $.widget('mapbender.mbSimpleSearch', {
             return;
         }
         var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
-        var mbMap = this._getMbMap();
 
         var zoomToFeatureOptions = this.options.result && {
             maxScale: parseInt(this.options.result.maxscale) || null,
             minScale: parseInt(this.options.result.minscale) || null,
             buffer: parseInt(this.options.result.buffer) || null
         };
-        mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
+        this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
         this._setFeatureMarker(feature);
     },
     _setFeatureMarker: function(feature) {
-        var olMap = this._getMbMap().getModel().map.olMap;
+        var olMap = this.mbMap.getModel().olMap;
         var self = this;
 
         var bounds = feature.geometry.getBounds();
