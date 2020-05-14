@@ -24,7 +24,6 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     iconStyle: null,
     mbMap: null,
-    iconPromise: null,
 
     _create: function() {
         var self = this;
@@ -37,7 +36,13 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
-        this.iconPromise = Mapbender.Util.preloadImageAsset(this.options.result.icon_url);
+        this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+        if (this.options.result.icon_url) {
+            var offset = (this.options.result.icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
+                return parseInt(x) || 0;
+            });
+            this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result.icon_url, offset[0], offset[1]);
+        }
 
         // Set up autocomplete
         this.autocomplete = new Mapbender.Autocomplete(searchInput, {
@@ -87,44 +92,22 @@ $.widget('mapbender.mbSimpleSearch', {
         this._setFeatureMarker(feature);
     },
     _setFeatureMarker: function(feature) {
-        var olMap = this.mbMap.getModel().olMap;
-        var self = this;
-
+        Mapbender.vectorLayerPool.raiseElementLayers(this);
+        var layer = this.layer;
+        // @todo: add feature center / centroid api
         var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
-
-        // Add marker
-        if(self.options.result.icon_url) {
-            if(!self.marker) {
-                this.iconPromise.then(function(image) {
-                    var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
-                    var x = parseInt(offset[0]);
-
-                    var size = {
-                        'w': image.naturalWidth,
-                        'h': image.naturalHeight
-                    };
-
-                    var y = parseInt(offset[1]);
-
-                    offset = {
-                        'x': !isNaN(x) ? x : 0,
-                        'y': !isNaN(y) ? y : 0
-                    };
-
-                    // 4
-                    self.iconStyle = self.model.createIconStyle({src: image.src, size: [size.w, size.h], offset: [offset.x, offset.y]});
-                    self.layer = self.model.setMarkerOnCoordinates(center, self.element.attr('id'), self.layer, self.iconStyle);
-                    // 2
-                    var icon = new OpenLayers.Icon(image.src, size, offset);
-                    self.marker = new OpenLayers.Marker(bounds.getCenterLonLat(), icon);
-                    self.layer = new OpenLayers.Layer.Markers();
-                    olMap.addLayer(self.layer);
-                    self.layer.addMarker(self.marker);
-                });
-            } else {
-                var newPx = olMap.getLayerPxFromLonLat(bounds.getCenterLonLat());
-                self.marker.moveTo(newPx);
-            }
+        var center = {
+            lon: .5 * (bounds.left + bounds.right),
+            lat: .5 * (bounds.top + bounds.bottom)
+        };
+        // fallback for broken icon: render a simple point geometry
+        var onMissingIcon = function() {
+            layer.addMarker(center.lon, center.lat);
+        };
+        if (this.options.result.icon_url) {
+            layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
+        } else {
+            onMissingIcon();
         }
     },
 

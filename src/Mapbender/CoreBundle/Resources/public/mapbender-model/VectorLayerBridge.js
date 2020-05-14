@@ -3,13 +3,36 @@ window.Mapbender.VectorLayerBridge = (function() {
     function VectorLayerBridge(olMap) {
         this.olMap = olMap;
         this.drawControls_ = {};
+        this.customIconMarkerStyles_ = {};
     }
     Object.assign(VectorLayerBridge.prototype, {
         getNativeLayer: function() {
             return this.wrappedLayer_;
         },
         addMarker: function(lon, lat) {
-            this.addNativeFeatures([this.getMarkerFeature_(lon, lat)]);
+            this.addNativeFeatures([this.getMarkerFeature_(lon, lat, this.markerStyle_ || null)]);
+        },
+        /**
+         * @param {String} iconStyleName
+         * @param {Number} lon
+         * @param {Number} lat
+         */
+        addIconMarker: function(iconStyleName, lon, lat) {
+            if (!(iconStyleName && this.customIconMarkerStyles_[iconStyleName])) {
+                throw new Error("Undefined named icon marker style " + iconStyleName);
+            }
+            var self = this;
+            return this.customIconMarkerStyles_[iconStyleName].then(function(nativeStyle) {
+                var feature = self.getMarkerFeature_(lon, lat, nativeStyle);
+                self.addNativeFeatures([feature]);
+                return feature;
+            });
+        },
+        addCustomIconMarkerStyle: function(name, iconUrl, offsetX, offsetY) {
+            var self = this;
+            this.customIconMarkerStyles_[name] = Mapbender.Util.preloadImageAsset(iconUrl).then(function(img) {
+                return self.imageToMarkerStyle_(img, offsetX, offsetY);
+            });
         },
         draw: function(type, featureCallback) {
             if (!this.drawControls_[type]) {

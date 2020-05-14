@@ -88,9 +88,25 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
             var styleMap = new OpenLayers.StyleMap(stylesPerIntent, {extendDefault: true});
             this.wrappedLayer_.styleMap = styleMap;
         },
-        getMarkerFeature_: function(lon, lat) {
+        getMarkerFeature_: function(lon, lat, nativeStyle) {
             var geometry = new OpenLayers.Geometry.Point(lon, lat);
-            return new OpenLayers.Feature.Vector(geometry, null, this.markerStyle_ || null);
+            return new OpenLayers.Feature.Vector(geometry, null, nativeStyle || null);
+        },
+        /**
+         * @param {HTMLImageElement} img
+         * @param {Number} offsetX
+         * @param {Number} offsetY
+         */
+        imageToMarkerStyle_: function(img, offsetX, offsetY) {
+            return {
+                fillOpacity: 0.0,
+                graphicOpacity: 1.0,
+                externalGraphic: img.src,
+                graphicWidth: img.naturalWidth,
+                graphicHeight: img.naturalHeight,
+                graphicXOffset: offsetX || 0,
+                graphicYOffset: offsetY || 0
+            };
         },
         createDraw_: function(type) {
             var layer = this.wrappedLayer_;

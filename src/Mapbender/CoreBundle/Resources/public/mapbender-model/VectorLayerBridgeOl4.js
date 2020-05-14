@@ -99,14 +99,31 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             };
             this.wrappedLayer_.setStyle(customLayerStyleFn);
         },
-        getMarkerFeature_: function(lon, lat) {
+        getMarkerFeature_: function(lon, lat, nativeStyle) {
             var feature = new ol.Feature({
                 geometry: new ol.geom.Point([lon, lat])
             });
-            if (this.markerStyle_) {
-                feature.setStyle(this.markerStyle_);
+            if (nativeStyle) {
+                feature.setStyle(nativeStyle);
             }
             return feature;
+        },
+        /**
+         * @param {HTMLImageElement} img
+         * @param {Number} offsetX
+         * @param {Number} offsetY
+         */
+        imageToMarkerStyle_: function(img, offsetX, offsetY) {
+            return new ol.style.Style({
+                image: new ol.style.Icon({
+                    src: img.src,
+                    imgSize: [img.naturalWidth, img.naturalHeight],
+                    anchor: [-offsetX, -offsetY],
+                    anchorOrigin: ol.style.IconOrigin.TOP_LEFT,
+                    anchorXUnits: ol.style.IconAnchorUnits.PIXELS,
+                    anchorYUnits: ol.style.IconAnchorUnits.PIXELS
+                })
+            });
         },
         createDraw_: function(type) {
             var source = this.wrappedLayer_.getSource();
