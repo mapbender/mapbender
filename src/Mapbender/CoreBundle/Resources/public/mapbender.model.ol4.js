@@ -356,10 +356,6 @@ destroyVectorLayer: function(olLayer) {
     this.olMap.removeLayer(olLayer);
 },
 
-clearVectorLayer: function(olLayer) {
-    olLayer.getSource().clear();
-},
-
 addVectorFeatures: function(olLayer, features) {
     olLayer.getSource().addFeatures(features);
 },

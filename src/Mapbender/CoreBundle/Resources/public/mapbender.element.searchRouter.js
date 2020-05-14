@@ -51,11 +51,10 @@
          */
         removeLastResults: function(){
             if (this.highlightLayer) {
-                this.mbMap.getModel().clearVectorLayer(this.highlightLayer);
+                this.highlightLayer.clear();
             }
             this.currentFeature = null;
         },
-
         _setup: function() {
             var widget = this;
             var element = widget.element;
@@ -102,13 +101,14 @@
                 });
             }
 
+            this.highlightLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
-            routeSelect.trigger('change');
+            this._trigger('ready');
             if (this.options.autoOpen) {
                 this.open();
             }
-            this._trigger('ready');
+            routeSelect.trigger('change');
         },
 
         defaultAction: function(callback){
@@ -194,6 +194,12 @@
             });
 
             $('.search-results', this.element).empty();
+            var route = this.getCurrentRoute();
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.highlightLayer.getNativeLayer().styleMap = this._createStyleMap(route.results.styleMap);
+            } else {
+                this.featureStyles = this._createStyleMap4(route.results.styleMap);
+            }
         },
 
         /**
@@ -365,24 +371,22 @@
         /**
          * Rebuilds result table with search result data.
          *
-         * @param {Array} results
+         * @param {Array} features
          */
-        _searchResultsTable: function(results){
+        _searchResultsTable: function(features) {
             var currentRoute = this.getCurrentRoute();
             var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true),
                 self = this;
 
             $('tbody', table).remove();
-            this.mbMap.model.clearVectorLayer(layer);
-            var features = [];
+            this.removeLastResults();
 
-            if(results.length > 0) $('.no-results', this.element).hide();
+            if (features.length > 0) $('.no-results', this.element).hide();
 
-            for (var i = 0; i < results.length; ++i) {
-                var feature = results[i];
+            for (var i = 0; i < features.length; ++i) {
+                var feature = features[i];
                 var row = $('<tr/>');
                 row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
@@ -393,12 +397,10 @@
                 });
 
                 tbody.append(row);
-
-                features.push(feature);
             }
 
             table.append(tbody);
-            this.mbMap.model.addVectorFeatures(layer, features);
+            this.highlightLayer.addNativeFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
@@ -426,10 +428,11 @@
             }
             if (Mapbender.mapEngine.code === 'ol2') {
                 if (feature.layer) {
+                    // use built-in named "renderIntent" mechanism
                     feature.layer.drawFeature(feature, style);
                 }
             } else {
-                feature.setStyle(this.styleMap[style]);
+                feature.setStyle(this.featureStyles[style]);
             }
         },
         _showResultState: function(results) {
@@ -476,17 +479,13 @@
                 temporary: _createSingleStyle(temporaryStyleOptions)
             }
         },
-        _createStyleMap: function(styles, options) {
-            var o = _.defaults({}, options, {
-                extendDefault: true,
-                defaultBase: OpenLayers.Feature.Vector.style['default']
-            });
+        _createStyleMap: function(styles) {
             var s = styles || OpenLayers.Feature.Vector.style;
 
-            _.defaults(s['default'], o.defaultBase);
+            _.defaults(s['default'], OpenLayers.Feature.Vector.style['default']);
 
             return new OpenLayers.StyleMap(s, {
-                extendDefault: o.extendDefault
+                extendDefault: true
             });
         },
 
@@ -497,26 +496,6 @@
          */
         getCurrentRoute: function() {
             return this.selected && this.options.routes[this.selected] || null;
-        },
-
-        /**
-         * Get highlight layer. Will construct one if neccessary.
-         *
-         * @return OpenLayers.Layer.Vector Highlight layer
-         */
-        _getLayer: function(forceRebuild) {
-            var widget = this;
-            var model = this.mbMap.getModel();
-            if (forceRebuild && this.highlightLayer) {
-                model.destroyVectorLayer(this.highlightLayer);
-                this.highlightLayer = null;
-            }
-            if (!this.highlightLayer) {
-                var route = widget.getCurrentRoute();
-                this.styleMap = this._createStyleMap4(route.results.styleMap || {});
-                this.highlightLayer = model.createVectorLayer();
-            }
-            return this.highlightLayer;
         },
 
         /**
