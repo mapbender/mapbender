@@ -404,7 +404,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     getMaxExtentArray: function(srsName) {
         var targetSrs = srsName || this.getCurrentProjectionCode();
-        var extentObj = this._transformExtent(this.mapMaxExtent.extent, this._configProj, targetSrs);
+        var extentObj = this._transformExtent(this.mapMaxExtent, this._configProj, targetSrs);
         return extentObj.toArray();
     },
     zoomIn: function() {

@@ -50,17 +50,29 @@
                 return self._onToolButtonClick($(this));
             });
 
-            this.setupMapEventListeners();
-            if (Mapbender.mapEngine.code === 'ol2') {
-                this.layerBridge = this._createLayer(this.mbMap);
-                this.layer = this.layerBridge.getNativeLayer();
-                this.editControl = this._createEditControl(this.mbMap, this.layer);
-            } else {
-                this.layerBridge = this._createLayer4(this.mbMap);
-                this.layer = this.layerBridge.getNativeLayer();
-                this.editControl = this._createEditControl4(this.mbMap, this.layer);
-            }
+            this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            this.layer.customizeStyle(Object.assign({}, this.options.paintstyles, {
+                label: function(feature) {
+                    return self._getFeatureAttribute(feature, 'label') || '';
+                },
+                labelAlign: 'lm',
+                labelXOffset: 10
+            }));
 
+            if (Mapbender.mapEngine.code === 'ol2') {
+                // OpenLayers 2: keep reusing single edit control
+                this.editControl = this._createEditControl(this.layer.getNativeLayer());
+                // Native "sketchcomplete" event is OpenLayers 2 only
+                this.layer.getNativeLayer().events.on({
+                    sketchcomplete: this._validateText.bind(this),
+                    afterfeaturemodified: function() {
+                        self.editing_ = null;
+                    }
+                });
+            } else {
+                this.editControl = null;
+            }
+            this.setupMapEventListeners();
             this._trigger('ready');
             if (this.options.auto_activate || this.options.display_type === 'element') {
                 this.activate();
@@ -72,43 +84,10 @@
         defaultAction: function(callback){
             this.activate(callback);
         },
-        _createLayer: function(mbMap) {
-            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            var self = this;
-            layerBridge.customizeStyle(Object.assign({}, this.options.paintstyles, {
-                label: function(feature) {
-                    return self._getFeatureAttribute(feature, 'label') || '';
-                },
-                labelAlign: 'lm',
-                labelXOffset: 10
-            }));
-            layerBridge.getNativeLayer().events.on({
-                sketchcomplete: this._validateText.bind(this),
-                afterfeaturemodified: function() {
-                    self.editing_ = null;
-                }
-            });
-            return layerBridge;
-        },
-        _createLayer4: function(mbMap) {
-            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            var self = this;
-            layerBridge.customizeStyle(Object.assign({}, this.options.paintstyles, {
-                label: function(feature) {
-                    return self._getFeatureAttribute(feature, 'label') || '';
-                },
-                labelAlign: 'lm',
-                labelXOffset: 10
-            }));
-            return layerBridge;
-        },
-        _createEditControl: function(mbMap, olLayer) {
+        _createEditControl: function(olLayer) {
             var control = new OpenLayers.Control.ModifyFeature(olLayer, {standalone: true, active: false});
-            mbMap.model.olMap.addControl(control);
+            olLayer.map.addControl(control);
             return control;
-        },
-        _createEditControl4: function(mbMap, olLayer) {
-            return null;
         },
         activate: function(callback){
             this.callback = callback ? callback : null;
@@ -238,10 +217,10 @@
                 case 'line':
                 case 'polygon':
                 case 'rectangle':
-                    this.layerBridge.draw(toolName, featureAdded);
+                    this.layer.draw(toolName, featureAdded);
                     break;
                 case 'text':
-                    this._monkeyPatchLabelCondition(this.layerBridge.draw('point', featureAdded));
+                    this._monkeyPatchLabelCondition(this.layer.draw('point', featureAdded));
                     break;
                 default:
                     throw new Error("No implementation for tool name " + toolName);
@@ -262,14 +241,14 @@
         },
         _removeFeature: function(feature){
             if (Mapbender.mapEngine.code === 'ol2') {
-                this.layer.destroyFeatures([feature]);
+                this.layer.getNativeLayer().destroyFeatures([feature]);
             } else {
-                this.layer.getSource().removeFeature(feature);
+                this.layer.getNativeLayer().getSource().removeFeature(feature);
             }
         },
         _removeAllFeatures: function(){
             $('.geometry-table tr', this.element).remove();
-            this.layerBridge.clear();
+            this.layer.clear();
         },
         /**
          * @param {*} feature
@@ -304,7 +283,7 @@
             this.editing_ = null;
         },
         _deactivateControl: function() {
-            this.layerBridge.endDraw();
+            this.layer.endDraw();
             $('#redlining-text-wrapper', this.element).addClass('hidden');
             this._deactivateButton();
         },
@@ -411,15 +390,7 @@
             this._endEdit();
             this._deactivateControl();
             if (this.layer) {
-                (this.layer.features || []).map(function(feature) {
-                    if (feature.geometry && feature.geometry.transform) {
-                        feature.geometry.transform(data.from, data.to);
-                    }
-                });
-                // OpenLayers 2 only
-                if (typeof this.layer.redraw === 'function') {
-                    this.layer.redraw();
-                }
+                this.layer.retransform(data.from, data.to);
             }
         }
     });
