@@ -87,20 +87,33 @@ class SearchRouter extends Element
                         "buffer" => 1000,
                         "minScale" => null,
                         "maxScale" => null
-                    )
-                )
+                    ),
+                ),
+                "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
-            "styleMap" => array(
-                "default" => array(
-                    "strokeColor" => "#33CCFF",
-                    "fillColor" => "#33CCFF",
-                    "fillOpacity" => 0.8
-                ),
-                "select"  => array(
-                    "strokeColor" => "#ff0000",
-                    "fillColor" => "#ff0000",
-                    "fillOpacity" => 0.8
-                ),
+        );
+    }
+
+    protected function getDefaultStyleMapOptions()
+    {
+        return array(
+            "default" => array(
+                "strokeColor" => "#dd0000",
+                "fillColor" => "#ee2222",
+                "fillOpacity" => 0.4,
+                "strokeOpacity" => 0.8,
+            ),
+            "select" => array(
+                "strokeColor" => "#dd0000",
+                "fillColor" => "#ee2222",
+                "fillOpacity" => 0.8,
+                "strokeOpacity" => 1.0,
+            ),
+            "temporary" => array(
+                "strokeColor" => "#ee8822",
+                "fillColor" => "#ee8800",
+                "fillOpacity" => 0.8,
+                "strokeOpacity" => 1.0,
             ),
         );
     }
