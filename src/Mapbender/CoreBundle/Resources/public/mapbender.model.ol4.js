@@ -342,39 +342,6 @@ window.Mapbender.MapModelOl4 = (function() {
     return style;
 },
 
-createVectorLayer: function() {
-    if (arguments.length) {
-        console.error("Arguments passed to createVectorLayer", arguments);
-        throw new Error("Arguments passed to createVectorLayer");
-    }
-    return new ol.layer.Vector({
-        map: this.olMap,
-        source: new ol.source.Vector({wrapX: false})
-    });
-},
-destroyVectorLayer: function(olLayer) {
-    this.olMap.removeLayer(olLayer);
-},
-
-addVectorFeatures: function(olLayer, features) {
-    olLayer.getSource().addFeatures(features);
-},
-
-/**
- *
- * @param layerType
- * @param owner
- * @param uuid
- * @param style
- * @param refresh
- */
-setLayerStyle: function(layerType, owner, uuid, style, refresh){
-    this.vectorLayer[owner][uuid].setLayerStyle(new ol.style.Style(style));
-    if(refresh){
-        this.vectorLayer[owner][uuid].refresh();
-    }
-
-},
 createDrawControl: function(type, owner, options){
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
@@ -386,8 +353,6 @@ createDrawControl: function(type, owner, options){
         type: type,
         source: options.source
     };
-    var id = this.createVectorLayer();
-
     if (type === 'Box') {
         drawOptions.geometryFunction = ol.interaction.Draw.createBox();
         drawOptions.type = 'Circle';
@@ -396,9 +361,6 @@ createDrawControl: function(type, owner, options){
     var draw = new ol.interaction.Draw(drawOptions);
 
     this.olMap.addInteraction(draw);
-
-    return id;
-
 },
 createModifyInteraction: function(owner, style, vectorId, featureId, events) {
     var vectorLayer = this.vectorLayer[owner][vectorId];
@@ -437,18 +399,6 @@ deselectFeatureById: function(owner, vectorId) {
     var interaction = vectorLayer.interactions.select[vectorId];
     interaction.getFeatures().clear();
 },
-removeInteractions: function(controls){
-    _.each(controls, function(control, index){
-        this.olMap.removeInteraction(control);
-    }.bind(this));
-},
-eventFeatureWrapper: function(event, callback, args){
-    var args = [event.feature].concat(args)
-    return callback.apply(this,args);
-
-},
-
-
 /**
  *
  * @param owner
@@ -459,67 +409,6 @@ eventFeatureWrapper: function(event, callback, args){
 getFeatureById: function(owner, vectorId, featureId) {
     var source = this.vectorLayer[owner][vectorId].getSource();
     return source.getFeatureById(featureId);
-},
-
-/**
- *
- * @param owner
- * @param vectorId
- * @param featureId
- */
-removeFeatureById: function(owner, vectorId, featureId) {
-    var source = this.vectorLayer[owner][vectorId].getSource();
-    var feature = source.getFeatureById(featureId);
-    source.removeFeature(feature);
-},
-
-/**
- * Promote input extent into "universally understood" extent.
- *
- * Monkey-patch attributes 'left', 'bottom', 'right', 'top' onto
- * a coordinate array, or convert a pure object extent with those
- * attributes into a monkey-patched Array of numbers.
- *
- * Also force coordinate values to float.
- *
- * @param {(Array.<number>|Object.<string, number>)} extent
- * @returns {Array.<number>}
- * @static
- */
-mbExtent: function mbExtent(extent) {
-    if (Array.isArray(extent)) {
-        if (extent.length !== 4) {
-            console.error("Extent coordinate length mismatch", extent);
-            throw new Error("Extent coordinate length mismatch");
-        }
-        if (typeof extent.left !== 'undefined') {
-            // already patched, return same object (idempotence, no copy)
-            return extent;
-        }
-        _.each(["left","bottom", "right","top"], function(value, index){
-            extent[index] = parseFloat(extent[index]);
-            extent[value] = extent[index];
-        });
-        return extent;
-    } else if (typeof extent.left !== 'undefined') {
-        return Mapbender.Model.mbExtent([
-            extent.left,
-            extent.bottom,
-            extent.right,
-            extent.top
-            ]);
-    } else {
-        console.error("Unsupported extent format", extent);
-        throw new Error("Unsupported extent format");
-    }
-},
-
-/**
- *
- * @param mbExtent
- */
-zoomToExtent: function(extent) {
-    this.olMap.getView().fit(this.mbExtent(extent), this.olMap.getSize());
 },
 
 getFeatureSize: function(feature, type) {
@@ -543,26 +432,6 @@ getLineStringLength: function(lineGeometry){
     } else {
         return ol.Sphere.getLength(lineGeometry);
     }
-},
-
-createTextStyle: function(options) {
-    var textStyle = new ol.style.Text();
-
-    if(options['text']) {
-        var text = new ol.style.Text(options['text']);
-        textStyle.setText(text);
-    }
-
-    if(options['fill']) {
-        var fill = new ol.style.Fill(options['fill']);
-        textStyle.setFill(fill);
-    }
-
-    if(options['stroke']) {
-        var stroke = new ol.style.Stroke(options['stroke']);
-        textStyle.setStroke(stroke);
-    }
-    return new ol.style.Text(options);
 },
 
     _changeLayerProjection: function(olLayer, newProj) {
@@ -648,41 +517,6 @@ createTextStyle: function(options) {
             self._checkSource(source, false);
         });
     },
-
-/**
- * Set marker on a map by provided coordinates
- *
- * @param {string[]} coordinates
- * @param {string} owner Element id
- * @param {string} vectorLayerId
- * @param {ol.style} style
- * @returns {string} vectorLayerId
- */
-setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
-
-    if (typeof coordinates === 'undefined') {
-        throw new Error("Coordinates are not defined!");
-    }
-
-    var feature = new ol.Feature({
-        geometry: new ol.geom.Point(coordinates)
-    });
-    if (style) {
-        feature.setStyle(style);
-    }
-
-    if (typeof vectorLayerId === 'undefined' || null === vectorLayerId) {
-
-        vectorLayerId = this.createVectorLayer({
-            source: new ol.source.Vector({wrapX: false}),
-        }, owner);
-
-        this.olMap.addLayer(this.vectorLayer[owner][vectorLayerId]);
-    }
-    var layer = this.vectorLayer[owner][vectorLayerId];
-    layer.getSource().addFeature(feature);
-    return vectorLayerId;
-},
 
         /**
          * @return {Array<Number>}
@@ -773,27 +607,6 @@ initializeViewOptions: function(options) {
     return viewOptions;
 },
 
-/**
- * Create style for icon
- *
- * @param {*} options
- * @return {ol.style.Style}
- */
-createIconStyle: function(options) {
-    var defaultOptions = {
-        anchor: [0.5, 46],
-        anchorXUnits: 'fraction',
-        anchorYUnits: 'pixels',
-    };
-
-    var options_ = $.extend({}, options, defaultOptions);
-
-    var iconStyle = new ol.style.Style({
-        image: new ol.style.Icon(options_)
-    });
-
-    return iconStyle;
-}
 
     });
 
