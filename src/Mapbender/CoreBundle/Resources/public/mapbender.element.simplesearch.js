@@ -24,6 +24,7 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     iconStyle: null,
     mbMap: null,
+    iconPromise: null,
 
     _create: function() {
         var self = this;
@@ -36,6 +37,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+        this.iconPromise = Mapbender.Util.preloadImageAsset(this.options.result.icon_url);
 
         // Set up autocomplete
         this.autocomplete = new Mapbender.Autocomplete(searchInput, {
@@ -93,7 +95,7 @@ $.widget('mapbender.mbSimpleSearch', {
         // Add marker
         if(self.options.result.icon_url) {
             if(!self.marker) {
-                var addMarker = function() {
+                this.iconPromise.then(function(image) {
                     var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
                     var x = parseInt(offset[0]);
 
@@ -118,12 +120,7 @@ $.widget('mapbender.mbSimpleSearch', {
                     self.layer = new OpenLayers.Layer.Markers();
                     olMap.addLayer(self.layer);
                     self.layer.addMarker(self.marker);
-                };
-
-                var image = new Image();
-                image.src = self.options.result.icon_url;
-                image.onload = addMarker;
-                image.onerror = addMarker;
+                });
             } else {
                 var newPx = olMap.getLayerPxFromLonLat(bounds.getCenterLonLat());
                 self.marker.moveTo(newPx);

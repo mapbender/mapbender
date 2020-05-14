@@ -681,4 +681,30 @@ Mapbender.Util.removeSignature = function(url) {
     return url;
 };
 
+/**
+ *
+ * @param {String} url
+ * @returns {Promise<HTMLImageElement>}
+ */
+Mapbender.Util.preloadImageAsset = function(url) {
+    var fullUrl;
+    if (/^(\/)|([\w-]*:?\/\/)/.test(url)) {
+        fullUrl = url;
+    } else {
+        // amend relative url with asset base path
+        fullUrl = [Mapbender.configuration.application.urls.asset.replace(/\/$/, ''), url].join('/');
+    }
+
+    var deferred = $.Deferred();
+    var image = new Image();
+    image.onload = function() {
+        deferred.resolveWith(null, [image]);
+    };
+    image.onerror = function() {
+        deffered.reject();
+    };
+    image.src = fullUrl;
+    return deferred.promise();
+};
+
 /* load application configuration see application.config.loader.js.twig */
