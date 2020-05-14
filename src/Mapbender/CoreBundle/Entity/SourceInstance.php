@@ -9,12 +9,12 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @author Karim Malhas
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository")
  * @ORM\Table(name="mb_core_sourceinstance")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  */
-abstract class SourceInstance
+abstract class SourceInstance extends SourceInstanceAssignment
 {
     /**
      * @var integer $id
@@ -31,24 +31,6 @@ abstract class SourceInstance
     protected $title;
 
     /**
-     * @var Layerset|null
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $layerset;
-
-    /**
-     * @var integer $weight The sorting weight for display
-     * @ORM\Column(type="integer")
-     */
-    protected $weight;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $enabled = true;
-
-    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $basesource = false;
@@ -57,6 +39,17 @@ abstract class SourceInstance
      * @var Source
      */
     protected $source;
+
+    /**
+     * @var ReusableSourceInstanceAssignment[]|Collection
+     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="instance", orphanRemoval=true, cascade={"remove"})
+     */
+    protected $reusableassignments;
+
+    final public function getInstance()
+    {
+        return $this;
+    }
 
     /**
      * @return integer
@@ -105,29 +98,6 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets a weight
-     *
-     * @param integer $weight
-     * @return $this
-     */
-    public function setWeight($weight)
-    {
-        $this->weight = $weight;
-
-        return $this;
-    }
-
-    /**
-     * Returns a weight
-     *
-     * @return integer
-     */
-    public function getWeight()
-    {
-        return $this->weight;
-    }
-
-    /**
      * @param Layerset|null $layerset
      * @return $this
      */
@@ -143,29 +113,6 @@ abstract class SourceInstance
     public function getLayerset()
     {
         return $this->layerset;
-    }
-
-    /**
-     * Sets an enabled
-     *
-     * @param  integer        $enabled
-     * @return SourceInstance SourceInstance
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * Returns an enabled
-     *
-     * @return integer
-     */
-    public function getEnabled()
-    {
-        return $this->enabled;
     }
 
     /**

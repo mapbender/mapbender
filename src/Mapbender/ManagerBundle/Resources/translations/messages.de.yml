@@ -26,6 +26,8 @@ mb:
       create:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
+    sourceinstance:
+      embedded_in_applications: '{0} Diese Instanz ist keiner Applikation zugewiesen|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Instanz ist %count% Applikationen zugewiesen'
     admin:
       sources: Datenquellen
       source:

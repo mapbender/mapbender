@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -143,13 +144,15 @@ class Importer extends RefreshableSourceLoader
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
+            $application->setUpdated(new \DateTime('now'));
+            $this->entityManager->persist($application);
+        }
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);
-            // @todo reusable source instances: update affected applications without assuming instance => layerset ownership
-            $application = $instance->getLayerset()->getApplication();
-            $application->setUpdated(new \DateTime('now'));
-            $this->entityManager->persist($application);
             $this->entityManager->persist($instance);
         }
     }

@@ -110,6 +110,30 @@ class WmsInstance extends SourceInstance
         $this->vendorspecifics = array();
     }
 
+    private function __getLayersRecursive(WmsInstanceLayer $layer)
+    {
+        /** @var WmsInstanceLayer $layer */
+        $sublayers = $layer->getSublayer()->getValues();
+        $sublayerlists = array_merge(array($sublayers), array_map(array($this, '__getLayersRecursive'), $sublayers));
+        return \call_user_func_array('\array_merge', $sublayerlists);
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->setId(null);
+            $rootLayer = clone $this->getRootlayer();
+            $rootLayer->setSourceInstance($this);
+            $clonedLayers = array($rootLayer);
+            foreach ($this->__getLayersRecursive($rootLayer) as $extraLayer) {
+                /** @var WmsInstanceLayer $extraLayer */
+                $extraLayer->setSourceInstance($this);
+                $clonedLayers[] = $extraLayer;
+            }
+            $this->setLayers(new ArrayCollection($clonedLayers));
+        }
+    }
+
     /**
      * Returns dimensions
      *

@@ -10,8 +10,10 @@ use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
@@ -496,7 +498,6 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list", methods={"GET"})
      *
      * @param string $slug of Application
@@ -520,6 +521,60 @@ class ApplicationController extends WelcomeController
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $sources,
+            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+                'title' => 'ASC',
+                'id' => 'ASC',
+            )),
+        ));
+    }
+
+    /**
+     * @ManagerRoute("/instance/{instance}/copy-into-layerset/{layerset}", methods={"GET"})
+     * @param Request $request
+     * @param SourceInstance $instance
+     * @param Layerset $layerset
+     * @return Response
+     */
+    public function sharedinstancecopyAction(Request $request, SourceInstance $instance, Layerset $layerset)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Instance is already owned by a Layerset");
+        }
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $instanceCopy = clone $instance;
+        $em->persist($instanceCopy);
+        $instanceCopy->setLayerset($layerset);
+        $instanceCopy->setWeight(-1);
+        $layerset->addInstance($instanceCopy);
+        /**
+         * remove original shared instance from layerset
+         * @todo: finding the right assignment requires more information than is currently passed on by
+         * @see RepositoryController::instanceAction. We simply remove all assignments of the instance.
+         */
+        $reusablePartitions = $layerset->getReusableInstanceAssignments()->partition(function($_, $assignment) use ($instance) {
+            /** @var SourceInstanceAssignment $assignment */
+            return $assignment->getInstance() !== $instance;
+        });
+        foreach ($reusablePartitions[1] as $removableAssignment) {
+            /** @var SourceInstanceAssignment $removableAssignment */
+            $em->remove($removableAssignment);
+            $assignmentWeight = $removableAssignment->getWeight();
+            if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
+                $instanceCopy->setWeight($assignmentWeight);
+            }
+        }
+        $layerset->setReusableInstanceAssignments($reusablePartitions[0]);
+        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
+        $em->persist($layerset);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        $em->flush();
+        $this->addFlash('success', 'Eine nun wieder private Kopie der geteilten Instanz wurde der Applikation hinzugefügt');
+        return $this->redirectToRoute('mapbender_manager_repository_instance', array(
+            "slug" => $application->getSlug(),
+            "instanceId" => $instanceCopy->getId(),
         ));
     }
 
@@ -536,8 +591,7 @@ class ApplicationController extends WelcomeController
     public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
         $entityManager = $this->getEntityManager();
-        /** @var Application|null $application */
-        $application = $entityManager->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+        $application = $this->getDbApplicationRepository()->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {
@@ -573,6 +627,46 @@ class ApplicationController extends WelcomeController
     }
 
     /**
+     * @ManagerRoute("/instance/{instance}/attach/{layerset}")
+     * @param Request $request
+     * @param Layerset $layerset
+     * @param SourceInstance $instance
+     * @return Response
+     */
+    public function attachreusableinstanceAction(Request $request, Layerset $layerset, SourceInstance $instance)
+    {
+        if ($instance->getLayerset()) {
+            throw new \LogicException("Keine freie Instanz");
+        }
+        $em = $this->getEntityManager();
+        $application = $layerset->getApplication();
+        $assignment = new ReusableSourceInstanceAssignment();
+        $assignment->setLayerset($layerset);
+        $assignment->setInstance($instance);
+        $assignment->setWeight(0);
+
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
+            /** @var SourceInstanceAssignment $otherAssignment */
+            $otherAssignment->setWeight($index + 1);
+        }
+
+        $layerset->getReusableInstanceAssignments()->add($assignment);
+        $em->persist($assignment);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($layerset);
+        // sanity
+        $instance->setLayerset(null);
+        $em->flush();
+        // @todo: translate flash message
+        $this->addFlash('success', 'Die freie Instanz wurde der Applikation zugewiesen');
+        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
+            "slug" => $application->getSlug(),
+            "instanceId" => $instance->getId(),
+        ));
+    }
+
+    /**
      * Delete a source instance from a layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete", methods={"POST"})
      *
@@ -585,8 +679,7 @@ class ApplicationController extends WelcomeController
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
         $em = $this->getEntityManager();
-        /** @var Application|null $application */
-        $application = $em->getRepository('MapbenderCoreBundle:Application')->findOneBy(array(
+        $application = $this->getDbApplicationRepository()->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {
@@ -609,6 +702,40 @@ class ApplicationController extends WelcomeController
         $em->flush();
         $this->addFlash('success', 'Your source instance has been deleted');
         return new Response();  // ???
+    }
+
+    /**
+     * Remove a reusable source instance assigment
+     *
+     * @ManagerRoute("/layerset/{layerset}/instance-assignment/{assignmentId}/detach", methods={"POST"})
+     * @param Layerset $layerset
+     * @param string $assignmentId
+     * @return Response
+     */
+    public function detachinstanceAction(Layerset $layerset, $assignmentId)
+    {
+        $application = $layerset->getApplication();
+        $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getId() == $assignmentId;
+        })->first();
+        if (!$assignment || !$application) {
+            throw $this->createNotFoundException();
+        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $layerset->getReusableInstanceAssignments()->removeElement($assignment);
+        $em->remove($assignment);
+        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($application);
+        $em->persist($layerset);
+        $em->flush();
+        $this->addFlash('success', 'Your reusable source instance assignment has been deleted');
+        $params = array(
+            'slug' => $application->getSlug(),
+        );
+        return $this->redirectToRoute('mapbender_manager_application_edit', $params, Response::HTTP_SEE_OTHER);
     }
 
     /**
