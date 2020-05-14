@@ -54,14 +54,22 @@ $.widget('mapbender.mbSimpleSearch', {
         // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
         return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
     },
+    _parseFeature: function(doc) {
+        switch ((this.options.geom_format || '').toUpperCase()) {
+            case 'WKT':
+                return this.mbMap.getModel().parseWktFeature(doc);
+            case 'GEOJSON':
+                return this.mbMap.getModel().parseGeoJsonFeature(doc);
+            default:
+                throw new Error("Invalid geom_format " + this.options.geom_format);
+        }
+    },
     _onAutocompleteSelected: function(evt, evtData) {
-        var format = new OpenLayers.Format[this.options.geom_format]();
         if(!evtData.data[this.options.geom_attribute]) {
             $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
             return;
         }
-
-        var feature = format.read(evtData.data[this.options.geom_attribute]);
+        var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
         var mbMap = this._getMbMap();
 
         var zoomToFeatureOptions = this.options.result && {
