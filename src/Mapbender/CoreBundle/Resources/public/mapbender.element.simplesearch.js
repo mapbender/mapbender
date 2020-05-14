@@ -92,6 +92,7 @@ $.widget('mapbender.mbSimpleSearch', {
         this._setFeatureMarker(feature);
     },
     _setFeatureMarker: function(feature) {
+        this.layer.clear();
         Mapbender.vectorLayerPool.raiseElementLayers(this);
         var layer = this.layer;
         // @todo: add feature center / centroid api
