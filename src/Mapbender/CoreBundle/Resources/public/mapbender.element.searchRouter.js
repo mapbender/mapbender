@@ -10,30 +10,6 @@
         highlightLayer: null,
         popup: null,
         mbMap: null,
-        defaultStyle: {
-            radius: 5,
-            color: 'rgba(255,0,0,0.8)',
-            stroke: {
-                color: 'rgba(255,0,0,1)',
-                width: 2
-            }
-        },
-        selectStyle: {
-            radius: 5,
-            color: 'rgba(255,170,0,0.8)',
-            stroke: {
-                color: 'rgba(255,170,0,1)',
-                width: 2
-            }
-        },
-        temporaryStyle: {
-            radius: 5,
-            color: 'rgba(128,255,0,0.8)',
-            stroke: {
-                color: 'rgba(255,170,0,1)',
-                width: 2
-            }
-        },
 
         _create: function(){
             var self = this;
@@ -457,26 +433,28 @@
             }
         },
         _createStyleMap4: function(styles) {
-            var defaultStyleOptions = styles.default || this.defaultStyle;
-            var selectStyleOptions = styles.select || this.selectStyle;
-            var temporaryStyleOptions = styles.temporary || this.temporaryStyle;
             function _createSingleStyle(options) {
-                var fill = new ol.style.Fill({color: options.color});
-                var stroke = new ol.style.Stroke(options.stroke);
+                var fill = new ol.style.Fill({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
+                });
+                var stroke = new ol.style.Stroke({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
+                    width: options.strokeWidth || 2
+                });
                 return new ol.style.Style({
                     image: new ol.style.Circle({
                         fill: fill,
                         stroke: stroke,
-                        radius: options.radius || 5
+                        radius: options.pointRadius || 5
                     }),
                     fill: fill,
                     stroke: stroke
                 });
             }
             return {
-                default: _createSingleStyle(defaultStyleOptions),
-                select: _createSingleStyle(selectStyleOptions),
-                temporary: _createSingleStyle(temporaryStyleOptions)
+                default: _createSingleStyle(styles.default),
+                select: _createSingleStyle(styles.select),
+                temporary: _createSingleStyle(styles.temporary)
             }
         },
         _createStyleMap: function(styles) {
