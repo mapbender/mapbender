@@ -20,6 +20,14 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         hide: function() {
             this.wrappedLayer_.setVisible(false);
         },
+        retransform: function(fromSrsName, toSrsName) {
+            this.wrappedLayer_.getSource().forEachFeature(/** @param {ol.Feature} feature */ function(feature) {
+                var geometry = feature.getGeometry();
+                if (geometry) {
+                    geometry.transform(fromSrsName, toSrsName);
+                }
+            });
+        },
         /**
          * @param {Array<ol.Feature>} features
          */

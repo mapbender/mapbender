@@ -522,12 +522,7 @@
         },
         _onSrsChange: function(event, data) {
             if (this.highlightLayer) {
-                (this.highlightLayer.features || []).map(function(feature) {
-                    if (feature.geometry && feature.geometry.transform) {
-                        feature.geometry.transform(data.from, data.to);
-                    }
-                });
-                this.highlightLayer.redraw();
+                this.highlightLayer.retransform(data.from, data.to);
             }
         },
         _getFormValues: function(form) {

@@ -679,13 +679,10 @@ window.Mapbender.MapModelBase = (function() {
                 mbMap: this.mbMap
             });
             this._changeProjectionInternal(srsNameBefore, srsName);
-            this.mbMap.fireModelEvent({
-                name: 'srschanged',
-                value: {
-                    from: srsNameBefore,
-                    to: srsName,
-                    mbMap: this.mbMap
-                }
+            this.mbMap.element.trigger('mbmapsrschanged', {
+                from: srsNameBefore,
+                to: srsName,
+                mbMap: this.mbMap
             });
             for (var i = 0; i < this.sourceTree.length; ++i) {
                 var source = this.sourceTree[i];

@@ -17,6 +17,16 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
         hide: function() {
             this.wrappedLayer_.setVisibility(false);
         },
+        retransform: function(fromSrsName, toSrsName) {
+            var features = this.wrappedLayer_.features;
+            for (var i = 0; i < features.length; ++i) {
+                var geometry = features[i].geometry;
+                if (geometry) {
+                    geometry.transform(fromSrsName, toSrsName);
+                }
+            }
+            this.wrappedLayer_.redraw();
+        },
         /**
          * @param {Array<OpenLayers.Feature>} features
          */
