@@ -243,6 +243,7 @@
                 return;
             }
             if (this.options.type === 'area'){
+                this._updateAreaLabel(event.feature, measure);
                 this.segments.empty();
             }
             var mostRecent = this.segments.children('li').first();
@@ -278,6 +279,30 @@
                     // fall through to area
                 case 'area':
                     return ol.Sphere.getArea(geometry, calcOptions);
+            }
+        },
+        /**
+         * @param {ol.Feature} feature
+         * @param {String} text
+         * @private
+         */
+        _updateAreaLabel: function(feature, text) {
+            if (Mapbender.mapEngine.code === 'ol2') {
+                // @todo
+            } else {
+                var style = feature.getStyle();
+                if (!style) {
+                    // grab current layer default style and bind it to the feature
+                    var styleFn = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer().getStyleFunction();
+                    style = styleFn(feature)[0];
+                    feature.setStyle(style);
+                }
+                // Style object may start with null text property, create one
+                if (!style.getText()) {
+                    style.setText(new ol.style.Text());
+                }
+                // actual label update
+                style.getText().setText(text);
             }
         },
         _formatMeasure: function(value) {
