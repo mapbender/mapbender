@@ -12,6 +12,7 @@
         total: null,
         container: null,
         popup: null,
+        layer: null,
         mapModel: null,
 
         _create: function(){
@@ -26,7 +27,7 @@
             });
         },
         _createControl4: function() {
-            var source = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer().getSource();
+            var source = this.layer.getNativeLayer().getSource();
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source
@@ -36,6 +37,7 @@
             control.on('drawstart', function(event) {
                 self._reset();
                 source.clear();
+                /** @var {ol.Feature} */
                 var feature = event.feature;
                 var geometry = feature.getGeometry();
                 var nVertices = geometry.getFlatCoordinates().length;
@@ -109,6 +111,7 @@
         },
         _setup: function(mbMap) {
             this.mapModel = mbMap.getModel();
+            this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.control = this._createControl();
             } else {
@@ -133,21 +136,29 @@
                 if (state) {
                     this.mapModel.olMap.addControl(this.control);
                     this.control.activate();
+                    this.layer.customizeStyle({
+                        fontSize: 9,
+                        labelAlign: 'cm',
+                        labelXOffset: 10,
+                        label: function(feature) {
+                            return feature.attributes['area'];
+                        }
+                    });
+                    this.control.handler.layer.styleMap = this.layer.getNativeLayer().styleMap;
                 } else {
                     this.control.deactivate();
                     this.mapModel.olMap.removeControl(this.control);
                 }
             } else {
-                var elementLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
                 if (state) {
                     this.mapModel.olMap.addInteraction(this.control);
                     this.control.setActive(true);
-                    elementLayer.clear();
-                    elementLayer.show();
+                    this.layer.clear();
+                    this.layer.show();
                 } else {
                     this.control.setActive(false);
                     this.mapModel.olMap.removeInteraction(this.control);
-                    elementLayer.hide();
+                    this.layer.hide();
                 }
             }
         },
@@ -242,8 +253,9 @@
             if (!measure) {
                 return;
             }
-            if (this.options.type === 'area'){
-                this._updateAreaLabel(event.feature, measure);
+            if (this.options.type === 'area') {
+                var feature = event.feature || event.object.handler.polygon;
+                this._updateAreaLabel(feature, measure);
                 this.segments.empty();
             }
             var mostRecent = this.segments.children('li').first();
@@ -282,18 +294,21 @@
             }
         },
         /**
-         * @param {ol.Feature} feature
+         * @param {(ol.Feature|OpenLayers.Feature.Vector)} feature
          * @param {String} text
          * @private
          */
         _updateAreaLabel: function(feature, text) {
+            var style;
             if (Mapbender.mapEngine.code === 'ol2') {
-                // @todo
+                feature.attributes['area'] = text;
+                feature.layer.redraw();
             } else {
-                var style = feature.getStyle();
+                /** @var {ol.style.Style|null} */
+                style = feature.getStyle();
                 if (!style) {
                     // grab current layer default style and bind it to the feature
-                    var styleFn = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer().getStyleFunction();
+                    var styleFn = this.layer.getNativeLayer().getStyleFunction();
                     style = styleFn(feature)[0];
                     feature.setStyle(style);
                 }
