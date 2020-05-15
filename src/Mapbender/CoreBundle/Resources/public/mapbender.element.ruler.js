@@ -236,10 +236,10 @@
             }
             this.total.empty().append($('<b>').text(measure));
         },
-        _getMeasureFromEvent: function(event){
+        _getMeasureFromEvent: function(event) {
             var measure;
             if (!event.measure && event.feature) {
-                measure = this.mapModel.getFeatureSize(event.feature, this.options.type);
+                measure = this._calculateFeatureSizeOl4(event.feature, this.options.type);
             } else {
                 measure = event.measure;
             }
@@ -247,6 +247,22 @@
                 return null;
             }
             return this._formatMeasure(measure);
+        },
+        _calculateFeatureSizeOl4: function(feature, type) {
+            /** @type {ol.geom.Geometry} */
+            var geometry = feature.getGeometry();
+            var calcOptions = {
+                projection: this.mapModel.getCurrentProjectionCode()
+            };
+            switch (type) {
+                case 'line':
+                    return ol.Sphere.getLength(geometry, calcOptions);
+                default:
+                    console.warn("Unsupported geometry type in measure calculation", type, feature);
+                    // fall through to area
+                case 'area':
+                    return ol.Sphere.getArea(geometry, calcOptions);
+            }
         },
         _formatMeasure: function(value) {
             var scale = 1;

@@ -422,29 +422,6 @@ getFeatureById: function(owner, vectorId, featureId) {
     return source.getFeatureById(featureId);
 },
 
-getFeatureSize: function(feature, type) {
-    if(type === 'line') {
-        return this.getLineStringLength(feature.getGeometry());
-    }
-    if(type === 'area') {
-        return this.getPolygonArea(feature.getGeometry());
-    }
-},
-getPolygonArea: function (polygonGeometry) {
-    if (polygonGeometry.getFlatCoordinates().length < 3) {
-        return null;
-    } else {
-        return ol.Sphere.getArea(polygonGeometry);
-    }
-},
-getLineStringLength: function(lineGeometry){
-    if (lineGeometry.getFlatCoordinates().length < 2) {
-        return null;
-    } else {
-        return ol.Sphere.getLength(lineGeometry);
-    }
-},
-
     _changeLayerProjection: function(olLayer, newProj) {
         var nativeSource = olLayer.getSource();
         if (nativeSource) {
