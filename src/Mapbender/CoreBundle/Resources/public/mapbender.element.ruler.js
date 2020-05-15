@@ -13,6 +13,7 @@
         container: null,
         popup: null,
         mapModel: null,
+        lastMeasure: null,
         _create: function(){
             var self = this;
             if(this.options.type !== 'line' && this.options.type !== 'area'){
@@ -203,6 +204,7 @@
         _reset: function() {
             this.segments.empty();
             this.total.empty();
+            this.lastMeasure = null;
             this.segments.append('<li/>');
         },
         _handleModify: function(event){
@@ -219,20 +221,32 @@
             if (!measure) {
                 return;
             }
+            var doUpdate;
             if (this.options.type === 'area') {
                 this.segments.empty();
+                doUpdate = true;
+            } else {
+                doUpdate = (this.lastMeasure === null) || (this.lastMeasure !== measure);
             }
-            var measureElement = $('<li/>');
-            measureElement.text(measure);
-            this.segments.prepend(measureElement);
+            if (doUpdate) {
+                var measureElement = $('<li/>');
+                measureElement.text(measure);
+                this.segments.prepend(measureElement);
+                this.lastMeasure = measure;
+            }
         },
         _handleFinal: function(event){
             var measure = this._getMeasureFromEvent(event);
             if (!measure) {
                 return;
             }
-            if(this.options.type === 'area'){
+            if (this.options.type === 'area'){
                 this.segments.empty();
+            } else {
+                if (this.lastMeasure === measure) {
+                    // remove first text entry node, presumably with identical text to final measure
+                    this.segments.children('li').first().remove();
+                }
             }
             this.total.empty().append($('<b>').text(measure));
         },
