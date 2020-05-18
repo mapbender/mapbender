@@ -425,8 +425,8 @@ $tabSize: 32px;
     border-top-right-radius: $radius;
     border-bottom-right-radius: $radius;
   }
-  background: linear-gradient(0deg, rgba(33, 33, 33, 0.85), rgba(33, 33, 33, 0.95));
-  color: #fff;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
+  color: #222;
   // Make Legend and maybe other images visible against inverted background
   img {
     background: rgba(192, 192, 192, 0.85);
