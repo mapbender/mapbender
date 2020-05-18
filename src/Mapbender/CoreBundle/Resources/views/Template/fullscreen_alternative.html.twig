@@ -16,7 +16,7 @@
       {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
       <div id="sidepane" class="clear sidePane right">
         <ul class="sidePaneTabs">
-          <li class="sidePaneTabItem toggleSideBar"></li>
+          <li class="sidePaneTabItem toggleSideBar collapse-toggle"></li>
         </ul>
         <div class="sideContent">
           {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}

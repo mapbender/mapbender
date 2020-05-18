@@ -409,6 +409,11 @@ $tabSize: 32px;
   pointer-events: initial;
 }
 
+.collapse-toggle {
+  color: #444;
+  background: #ccc;
+}
+
 .sidePane {
   max-width: 450px;
   &:after {
@@ -420,7 +425,6 @@ $tabSize: 32px;
     top: 0;
     font-size: 1.5rem;
     display: inline-block;
-    background: #777;
     padding: 5px;
     border-top-right-radius: $radius;
     border-bottom-right-radius: $radius;

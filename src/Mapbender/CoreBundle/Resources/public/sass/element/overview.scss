@@ -5,12 +5,7 @@
   user-select: none; /* Likely future */
 
   .toggleOverview {
-    $buttonFirstColor: #6fb536;
-    $buttonSecondColor: #5fa229;
-
     padding: 0 6px;
-    color: $lightFontColor;
-    background-color: $buttonFirstColor;
 
     @extend .iconClose;
     @extend .buttonCore;
