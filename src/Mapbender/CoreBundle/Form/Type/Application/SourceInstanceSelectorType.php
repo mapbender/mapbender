@@ -68,11 +68,11 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         $instances = array();
         /** @var Application $parentObject */
         foreach ($parentObject->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances(true) as $instance) {
                 $instances[$instance->getId()] = $instance;
             }
         }
-        ksort($instances);
+        // ksort($instances);
         return $instances;
     }
 
@@ -103,7 +103,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     {
         $map = array();
         foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances(true) as $instance) {
                 $map[$instance->getId()] = $layerset;
             }
         }

@@ -69,7 +69,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
     {
         $sourceInstanceIds = array();
         foreach ($this->getLayersetsFromMapId($application, $mapId) as $layerset) {
-            foreach ($layerset->getInstances() as $sourceInstance) {
+            foreach ($layerset->getInstances(true) as $sourceInstance) {
                 $sourceInstanceIds[] = $sourceInstance->getId();
             }
         }
