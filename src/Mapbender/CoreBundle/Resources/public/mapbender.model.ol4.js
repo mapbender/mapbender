@@ -40,7 +40,7 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         this.options = options;
 
-        this.viewOptions_ = this.initializeViewOptions(options);
+        this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, options.maxExtent, options.dpi);
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
@@ -461,30 +461,18 @@ getFeatureById: function(owner, vectorId, featureId) {
         // DO NOT use currentView.getProjection().getExtent() here!
         // Going back and forth between SRSs, there is extreme drift in the
         // calculated values. Always start from the configured maxExtent.
-        var newMaxExtent = Mapbender.mapEngine.transformBounds(this.options.maxExtent, this._configProj, srsNameTo);
+        var newMaxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsNameTo);
+        var zoomLevel = this.getCurrentZoomLevel();
 
-        var viewPortSize = this.olMap.getSize();
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
 
-        // Recalculate resolution and allowed resolution steps
-        var resolutionFactor =
-            Mapbender.mapEngine.getProjectionUnitsPerMeter(srsNameTo)
-            /
-            Mapbender.mapEngine.getProjectionUnitsPerMeter(srsNameFrom)
-        ;
-        var newResolution = resolutionFactor * currentView.getResolution();
-        var newResolutions = this.viewOptions_.resolutions.map(function(r) {
-            return r*resolutionFactor;
-        });
-        // Amend this.viewOptions_, we need the applied values for the next SRS switch
-        var newViewOptions = $.extend(this.viewOptions_, {
+        var mbMapOptions = this.mbMap.options;
+        var resolutionOptions = this.calculateViewOptions_(srsNameTo, mbMapOptions.scales, newMaxExtent, mbMapOptions.dpi);
+        var newViewOptions = Object.assign({}, this.viewOptions_, resolutionOptions, {
             projection: srsNameTo,
-            resolutions: newResolutions,
             center: newCenter,
-            size: viewPortSize,
-            resolution: newResolution,
-            extent: newMaxExtent
+            zoom: zoomLevel
         });
 
         var newView = new ol.View(newViewOptions);
@@ -568,34 +556,33 @@ getFeatureById: function(owner, vectorId, featureId) {
             style['labelYOffset'] = olTextStyle.getOffsetY();
             return style;
         },
-/**
- * @param {object} options
- * @returns {object}
- */
-initializeViewOptions: function(options) {
-    var viewOptions = {
-        projection: options.srs
-    };
-    if (options.maxExtent) {
-        viewOptions.extent = options.maxExtent;
-    }
-
-    if (options.scales && options.scales.length) {
-        // Sometimes, the units are empty -.-
-        // this seems to happen predominantely with "degrees" SRSs, so...
-        var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(options.srs);
-        var dpi = options.dpi || 72;
-        var inchesPerMetre = 39.37;
-        viewOptions['resolutions'] = options.scales.map(function(scale) {
-            return scale * upm / (inchesPerMetre * dpi);
-        }.bind(this));
-    } else {
-        viewOptions.zoom = 7; // hope for the best
-    }
-    return viewOptions;
-},
-
-
+        /**
+         * @param {String} srsName
+         * @param {Array<Number>}scales
+         * @param {Array<Number>=} [maxExtent]
+         * @param {Number=} [dpi]
+         * @return {{}}
+         * @private
+         */
+        calculateViewOptions_: function(srsName, scales, maxExtent, dpi) {
+            var viewOptions = {
+                projection: srsName
+            };
+            if (scales && scales.length) {
+                var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName);
+                var inchesPerMetre = 39.37;
+                var dpi_ = dpi || 72;
+                viewOptions['resolutions'] = scales.map(function(scale) {
+                    return scale * upm / (inchesPerMetre * dpi_);
+                });
+            } else {
+                viewOptions.zoom = 7; // hope for the best
+            }
+            if (maxExtent) {
+                viewOptions.extent = maxExtent;
+            }
+            return viewOptions;
+        }
     });
 
     return MapModelOl4;
