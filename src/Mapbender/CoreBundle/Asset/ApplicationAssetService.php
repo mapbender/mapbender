@@ -209,6 +209,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',

@@ -4,7 +4,7 @@
  * @copyright 08.06.17 by WhereGroup GmbH & Co. KG
  */
 
-(function addAxisOrder($) {
+(function addAxisOrder() {
 
     'use strict';
 
@@ -1897,15 +1897,23 @@
         "EPSG:31469": yxTrue,
         "EPSG:31700": yxTrue
     };
-    var previousDefaults = $.extend({}, OpenLayers.Projection.defaults);
-    var previousKeys = Object.keys(previousDefaults);
-    // this will replace all definitions wholesale
-    $.extend(OpenLayers.Projection.defaults, codes);
-    // Merge back the now missing properties of the (grand total of 3) predefined OpenLayers defaults
-    // This is 5+ times faster than deep-merging the whole set
-    for (var i = 0; i < previousKeys.length; ++i) {
-        var projCode = previousKeys[i];
-        OpenLayers.Projection.defaults[projCode] = $.extend(true, {}, previousDefaults[projCode], codes[projCode] || {});
+    if (window.OpenLayers && OpenLayers.Projection) {
+        var previousDefaults = Object.assign({}, OpenLayers.Projection.defaults);
+        var previousKeys = Object.keys(previousDefaults);
+        // this will replace all definitions wholesale
+        Object.assign(OpenLayers.Projection.defaults, codes);
+        // Merge back the now missing properties of the (grand total of 3) predefined OpenLayers defaults
+        // This is 5+ times faster than deep-merging the whole set
+        for (var i = 0; i < previousKeys.length; ++i) {
+            var projCode = previousKeys[i];
+            OpenLayers.Projection.defaults[projCode] = Object.assign({}, previousDefaults[projCode], codes[projCode] || {});
+        }
     }
 
-})(jQuery);
+    window.Mapbender = Mapbender || {};
+    window.Mapbender.Projection = Object.assign(window.Mapbender.Projection || {}, {
+        projectionHasNeuAxis: function(code) {
+            return typeof (codes[code]) !== 'undefined';
+        }
+    });
+})();

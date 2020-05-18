@@ -20,6 +20,11 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
             }
             var code = def.code || def.name;
             var definition = def.definition;
+            if (!/\+axis=\w+/.test(definition) && Mapbender.Projection.projectionHasNeuAxis(code)) {
+                console.warn("Amending missing +axis=neu on srs definition", code, definition);
+                definition = ['+axis=neu', definition].join(' ');
+            }
+
             if (window.Proj4js) {
                 old = Proj4js.defs[code];
                 if (!old || !keep) {
@@ -80,5 +85,5 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
                 throw new Error("SRS + " + srs + ' is not supported!');
             }
         }
-    },
+    }
 });
