@@ -207,10 +207,11 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
          */
         foreach ($config['layersets'] as &$layerList) {
             foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (in_array($layerId, $controlledSourceIds['active'])) {
+                foreach ($layerMap as &$layerDef) {
+                    
+                    if (in_array($layerDef['origId'], $controlledSourceIds['active'])) {
                         $setActive = true;
-                    } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
+                    } elseif (in_array($layerDef['origId'], $controlledSourceIds['inactive'])) {
                         $setActive = false;
                     } else {
                         // layer is not controllable through BSS, leave its config alone

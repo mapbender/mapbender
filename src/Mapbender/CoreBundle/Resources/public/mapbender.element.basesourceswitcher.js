@@ -71,14 +71,17 @@
                         return;
                     }
 
-                    source = model.getSourceById(sourcesId);
-
-                    if (!source) {
-                        Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
-                            .replace('%id%', sourcesId), {'id': sourcesId});
-                    } else {
-                        model.setSourceVisibility(source, visibility);
-                        switched = true;
+                    var wmsSourceObjs = $.grep(model.sourceTree, function(obj){ return obj.origId == sourcesId; });
+                    if (wmsSourceObjs.length > 0) {
+                        var id = wmsSourceObjs[0].id;
+                        source = model.getSourceById(id);
+                        if (!source) {
+                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
+                                .replace('%id%', id), {'id': id});
+                        } else {
+                            model.setSourceVisibility(source, visibility);
+                            switched = true;
+                        }
                     }
                 });
             });
