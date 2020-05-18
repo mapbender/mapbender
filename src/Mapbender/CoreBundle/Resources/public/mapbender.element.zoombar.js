@@ -32,14 +32,7 @@ $.widget("mapbender.mbZoomBar", {
         this._zoom2Slider();
 
         if (this.options.draggable === true) {
-            this.element.draggable({
-                containment: this.element.closest('.region'),
-                start: function() {
-                    // draggable operates by modifying 'left' css property
-                    // disable any 'right' property value (from anchor-top-right) to keep width constant
-                    self.element.css({right: 'initial'});
-                }
-            });
+            this.element.draggable();
         }
         this._initRotation();
         this._trigger('ready');
