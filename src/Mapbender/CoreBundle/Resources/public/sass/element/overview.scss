@@ -58,6 +58,9 @@
   &.left-bottom .toggleOverview {
     @include absolute('' -25px 0 '');
   }
+  .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
+    vertical-align: bottom;
+  }
 }
 
 .olControlOverviewMapExtentRectangle, .ol-overviewmap-box {

@@ -106,7 +106,8 @@ class ElementMarkupExtension extends AbstractExtension
     {
         $this->updateBuffers($application);
         if (!empty($this->anchoredContentElements[$anchorValue])) {
-            return $this->renderComponents($this->anchoredContentElements[$anchorValue]);
+            $glue = '<div class="element-wrapper">';
+            return $this->renderComponents($this->anchoredContentElements[$anchorValue], null, $glue);
         } else {
             return '';
         }
@@ -115,11 +116,15 @@ class ElementMarkupExtension extends AbstractExtension
     /**
      * @param Component\Element[] $components
      * @param string|null $regionName
+     * @param string|null $glue HTML opening tag
      * @return string
      */
-    protected function renderComponents($components, $regionName = null)
+    protected function renderComponents($components, $regionName = null, $glue = null)
     {
         if ($regionName) {
+            if ($glue) {
+                throw new \LogicException("Can't evaluate glue when combined with explicit region name");
+            }
             $skin = '@MapbenderCore/Template/region.html.twig';
             $vars = array(
                 'application' => array(
@@ -132,10 +137,22 @@ class ElementMarkupExtension extends AbstractExtension
             );
             return $this->templatingEngine->render($skin, $vars);
         }
+        $glueParts = array('', '');
+        if ($glue) {
+            $pattern = '#^<(\w+)[^/>]*>$#i';
+            $matches = array();
+            preg_match($pattern, $glue, $matches);
+            if (!$matches) {
+                throw new \RuntimeException("Invalid glue " . print_r($glue, true));
+            }
+            $glueParts = array($glue, "</{$matches[1]}>");
+        }
 
         $markupFragments = array();
         foreach ($components as $component) {
+            $markupFragments[] = $glueParts[0];
             $markupFragments[] = $component->render();
+            $markupFragments[] = $glueParts[1];
         }
         return implode('', $markupFragments);
     }

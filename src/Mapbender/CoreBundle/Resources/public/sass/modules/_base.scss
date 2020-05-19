@@ -74,11 +74,27 @@ p{margin:0;}
 
 .anchored-element-wrap {
   position: absolute;
+  .element-wrapper {
+    // must be non-inline to stack vertically
+    display: block;
+    > div.mb-element {
+      // must be inline to automatically shrink to real content size, and
+      // align left / right as a whole
+      display: inline-block;
+    }
+    // support "absolute"-positioned content
+    position: relative;
+  }
+  .element-wrapper + .element-wrapper {
+    margin-top: 0.5rem;
+  }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
     left: $space * 2;
+    text-align: left;
   }
   &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
     right: $space * 2;
+    text-align: right;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
     top: $space * 2;

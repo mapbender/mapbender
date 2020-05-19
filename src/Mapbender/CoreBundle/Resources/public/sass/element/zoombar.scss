@@ -1,12 +1,11 @@
-.mb-element-zoombar{
+.mb-element-zoombar {
   text-align: center; // support automatic centering of children
-
+  .component + .component {
+    margin-top: 0.7rem;
+  }
   .pan, .toolPane {
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
-  }
-  .pan, .toolPane, .move-icon-wrap {
-    margin-bottom: $space / 2;
   }
   .pan > span {
     &:hover {
@@ -81,8 +80,7 @@
     }
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
-    margin-bottom: $space / 2;
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     width: 60px;
     height: 60px;

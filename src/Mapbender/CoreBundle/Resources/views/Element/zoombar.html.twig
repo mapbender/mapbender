@@ -12,17 +12,20 @@
 {% spaceless %}
 <div id="{{ id }}" class="mb-element mb-element-zoombar {{configuration.anchor}}">
     {% if configuration.draggable is defined and configuration.draggable %}
-      <div class="move-icon-wrap">
+      <div class="move-icon-wrap component">
           <span class="iconMove"></span>
       </div>
     {% endif %}
 {%- if 'rotation' in configuration.components -%}
+    <div class="component">
       <div class="rotation">
         <span class="rotate-cw hover-highlight-effect" data-degrees="45">{{ block('quarter_circle_arrow_svg') }}</span>
         <span class="reset-rotation hover-highlight-effect" data-rotation-bias="-45"><i class="fa fa-location-arrow default-rotate-left-45"></i></span>
         <span class="rotate-ccw hover-highlight-effect" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
       </div>
+    </div>
 {%- endif -%}
+    <div class="component">
   <ul class="toolPane">
     {% if 'zoom_max' in configuration.components %}
       <li class="zoomWorld">
@@ -43,5 +46,6 @@
       </li>
     {% endif %}
   </ul>
+    </div>
 </div>
 {% endspaceless %}
