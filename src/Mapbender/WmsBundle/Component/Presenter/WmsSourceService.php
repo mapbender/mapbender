@@ -51,6 +51,20 @@ class WmsSourceService extends SourceService
         return 'OGC WMS';
     }
 
+    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    {
+        /** @var WmsInstance $sourceInstance */
+        $rootLayer = $sourceInstance->getRootlayer();
+        return parent::isInstanceEnabled($sourceInstance) && $rootLayer && $rootLayer->getActive();
+    }
+
+    public function canDeactivateLayer(SourceInstanceItem $layer)
+    {
+        /** @var WmsInstanceLayer $layer */
+        // dissallow breaking entire instance by removing root layer
+        return $layer->getSourceInstance()->getRootlayer() !== $layer;
+    }
+
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */

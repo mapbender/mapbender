@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
 
 /**
@@ -25,7 +26,7 @@ use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePas
  * This should be done in a DI compiler pass (extending service definition via XML / YAML does not work across bundles)
  * @see RegisterWmsSourceServicePass for a working example
  */
-class TypeDirectoryService implements SourceInstanceFactory
+class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInformationInterface
 {
     /** @var SourceService[] */
     protected $configServices = array();
@@ -210,5 +211,15 @@ class TypeDirectoryService implements SourceInstanceFactory
     public function getFormTemplate(SourceInstance $instance)
     {
         return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
+    }
+
+    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    {
+        return $this->getSourceService($sourceInstance)->isInstanceEnabled($sourceInstance);
+    }
+
+    public function canDeactivateLayer(SourceInstanceItem $layer)
+    {
+        return $this->getSourceService($layer->getSourceInstance())->canDeactivateLayer($layer);
     }
 }

@@ -37,5 +37,9 @@
             <tag name="form.type" alias="application_template_choice" />
             <argument>%kernel.bundles%</argument>
         </service>
+        <service id="mabender.form_type.source_instance_item" class="Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType">
+            <tag name="form.type" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+        </service>
     </services>
 </container>

@@ -27,6 +27,11 @@ class WmtsSourceService extends SourceService
         return 'OGC WMTS / TMS';
     }
 
+    public function canDeactivateLayer(SourceInstanceItem $layer)
+    {
+        return true;
+    }
+
     /**
      * @param SourceInstance $sourceInstance
      * @return array|mixed[]|null

@@ -128,6 +128,10 @@ class ConfigService
                     // @todo: throw?
                     continue;
                 }
+                // @todo: move check into prefilter (get service twice?)
+                if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+                    continue;
+                }
                 $conf = $sourceService->getConfiguration($assignment->getInstance());
                 if (!$conf) {
                     // @todo: throw?
