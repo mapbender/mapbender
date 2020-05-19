@@ -62,7 +62,6 @@ class Ruler extends Element
         return array(
             'target' => null,
             'type' => 'line',
-            'immediate' => false,
         );
     }
 

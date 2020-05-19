@@ -3,7 +3,6 @@
     $.widget("mapbender.mbRuler", {
         options: {
             target: null,
-            immediate: false,
             type: 'line',
             precision: 2
         },
@@ -78,7 +77,7 @@
 
             var control = new OpenLayers.Control.Measure(handlerClass, {
                 persist: true,
-                immediate: !!this.options.immediate,
+                immediate: true,
                 displaySystemUnits: {
                     metric: ['m']
                 },
@@ -218,9 +217,7 @@
             this.segments.append('<li/>');
         },
         _handleModify: function(event){
-            if (this.options.immediate) {
-                this._handleFinal(event);
-            }
+            this._handleFinal(event);
         },
         _handlePartial: function(event) {
             if (this.options.type === 'area') {
