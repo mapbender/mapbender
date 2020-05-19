@@ -27,11 +27,16 @@
         },
         _createControl4: function() {
             var source = this.layer.getNativeLayer().getSource();
+            var defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
+            var self = this;
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
-                source: source
+                source: source,
+                style: function(feature, resolution) {
+                    var style = defaultStyleFn(feature, resolution);
+                    return self._extendStyles(style, feature);
+                }
             };
-            var self = this;
             var control = new ol.interaction.Draw(controlOptions);
             control.on('drawstart', function(event) {
                 self._reset();
@@ -53,7 +58,7 @@
                 });
             });
             control.on('drawend', function(event) {
-                self._handleFinal(event);
+                self._handleFinal({feature: event.feature});
             });
             return control;
         },
@@ -109,11 +114,20 @@
             return control;
         },
         _setup: function(mbMap) {
+            var self = this;
             this.mapModel = mbMap.getModel();
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.control = this._createControl();
             } else {
+                /** @var {ol.layer.Vector} nativeLayer */
+                var nativeLayer = this.layer.getNativeLayer();
+                var defaultStyleFn = nativeLayer.getStyleFunction() || ol.style.Style.defaultFunction;
+                var customStyleFn = function(feature, resolution) {
+                    var styles = defaultStyleFn(feature, resolution);
+                    return self._extendStyles(styles, feature);
+                };
+                nativeLayer.setStyle(customStyleFn);
                 this.control = this._createControl4();
             }
             this.container = $('<div/>');
@@ -296,26 +310,28 @@
          * @private
          */
         _updateAreaLabel: function(feature, text) {
-            var style;
             if (Mapbender.mapEngine.code === 'ol2') {
                 feature.attributes['area'] = text;
                 feature.layer.redraw();
             } else {
-                /** @var {ol.style.Style|null} */
-                style = feature.getStyle();
-                if (!style) {
-                    // grab current layer default style and bind it to the feature
-                    var styleFn = this.layer.getNativeLayer().getStyleFunction();
-                    style = styleFn(feature)[0];
-                    feature.setStyle(style);
-                }
-                // Style object may start with null text property, create one
+                feature.set('area', text);
+            }
+        },
+        /**
+         * Openlayers 4 only
+         * @param {Array<ol.style.Style>} styles
+         * @param {ol.Feature} feature
+         * @private
+         */
+        _extendStyles: function(styles, feature) {
+            var label = feature.get('area') || '';
+            styles.forEach(function(style) {
                 if (!style.getText()) {
                     style.setText(new ol.style.Text());
                 }
-                // actual label update
-                style.getText().setText(text);
-            }
+                style.getText().setText(label);
+            });
+            return styles;
         },
         _formatMeasure: function(value) {
             var scale = 1;
