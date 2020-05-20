@@ -187,6 +187,27 @@ window.Mapbender.MapModelOl4 = (function() {
         this.olMap.getView().fit(bounds);
     },
     /**
+     * @param {Number} x projected
+     * @param {Number} y projected
+     * @param {Object} [options]
+     * @param {Number} [options.minScale]
+     * @param {Number} [options.maxScale]
+     * @param {Number|String} [options.zoom]
+     */
+    centerXy: function(x, y, options) {
+        var geom = new ol.geom.Point([x, y]);
+        var zoom = null;
+        var ztfOptions = options && Object.assign({}, options) || undefined;
+        if (options && (options.zoom || parseInt(options.zoom) === 0)) {
+            zoom = this._clampZoomLevel(parseInt(options.zoom));
+            delete ztfOptions['zoom'];
+            var scales = this._getScales();
+            ztfOptions.minScale = scales[zoom];
+            ztfOptions.maxScale = scales[zoom];
+        }
+        this.zoomToFeature(new ol.Feature(geom), ztfOptions);
+    },
+    /**
      * @param {ol.Feature} feature
      * @param {Object} [options]
      * @param {number=} options.buffer in meters
