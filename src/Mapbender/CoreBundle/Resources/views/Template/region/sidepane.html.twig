@@ -1,4 +1,4 @@
-<div class="{{ ('sidePane flex-fill ' ~ region_class) | trim }}" data-closed="{{ properties.closed | default('false') }}">
+<div class="{{ ('sidePane flex-fill ' ~ (alignment_class | default('left'))) | trim }}">
   <div class="sideContent">
     {% if region_props.name == 'tabs' %}
       <div class="tabContainerAlt">

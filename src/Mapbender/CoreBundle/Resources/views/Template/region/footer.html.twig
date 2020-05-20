@@ -1,5 +1,6 @@
-<div class="toolBar bottom">
-  <ul class="itemsRight">
-    {{ region_content(application, region_name) | raw }}
-  </ul>
-</div>
+{% extends 'MapbenderCoreBundle:Template:region/toolbar.html.twig' %}
+{% block region_wrapper %}
+  {% set position_class = position_class | default('bottom') %}
+  {% set alignment_class = alignment_class | default('itemsRight') %}
+  {{ parent() }}
+{% endblock %}

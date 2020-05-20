@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
+use Mapbender\CoreBundle\Entity\RegionProperties;
 
 /**
  * Defines twig template and asset dependencies and regions for an Application template.
@@ -60,7 +61,6 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
         return array(
             'region_props' => $regionProps,
-            'region_class' => '',
         );
     }
 
@@ -109,6 +109,17 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
             self::OVERLAY_ANCHOR_LEFT_BOTTOM,
             self::OVERLAY_ANCHOR_RIGHT_BOTTOM,
         );
+    }
+
+    /**
+     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param string $regionName
+     * @return array
+     */
+    protected static function extractRegionProperties(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    {
+        $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
+        return $propsObject->getProperties() ?: array();
     }
 }
 

@@ -20,13 +20,16 @@ class FullscreenAlternative extends Fullscreen
 
     public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
     {
-        $upstream = parent::getRegionTemplateVars($application, $regionName);
+        $vars = parent::getRegionTemplateVars($application, $regionName);
         switch ($regionName) {
             default:
-                return $upstream;
+                return $vars;
             case 'sidepane':
-                return array_replace($upstream, array(
-                    'region_class' => 'right',
+                $vars['alignment_class'] = str_replace('left', 'right', $vars['alignment_class']);
+                return $vars;
+            case 'toolbar':
+                return array_replace($vars, array(
+                    'alignment_class' => 'itemsLeft',
                 ));
         }
     }

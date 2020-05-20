@@ -6,11 +6,8 @@ $(function() {
 
     var switchButton = $(".toggleSideBar");
     var sidePane = switchButton.closest("div.sidePane");
-    var templateWrapper = $('.templateWrapper');
     var speed = 300;
     var animation = {};
-
-    sidePane.data('isOpened', true);
 
     sidePane.css({
         '-webkit-transition': 'none !important',
@@ -23,54 +20,40 @@ $(function() {
     // closing bugfix
     sidePane.width(sidePane.width());
 
-    if(sidePane.data('closed')) {
-        sidePane.data('isOpened', false);
-        sidePane.find('.sideContent').css('display', 'none');
+    if (sidePane.hasClass('closed')) {
         sidePane.css({
             'transition': 'none'
         });
 
-        if(sidePane.hasClass("right")) {
+        if (sidePane.hasClass("right")) {
             sidePane.css({right: (sidePane.outerWidth(true) * -1) + "px"});
         } else {
             sidePane.css({left: (sidePane.outerWidth(true) * -1) + "px"});
         }
-
     }
     sidePane.width(sidePane.width());
     sidePane.show(0);
 
     switchButton.on('click', function() {
-        var isOpened = sidePane.data('isOpened');
+        var wasOpen = !sidePane.hasClass('closed');
         var align = sidePane.hasClass('right') ? 'right' : 'left';
         var onProgress = function(now, fx) {
             sidePane.trigger("animate");
         };
-        if(isOpened) {
+        if (wasOpen) {
             animation[align] = "-" + sidePane.outerWidth(true) + "px"; //, "swing"];
-
-            sidePane.animate(animation, {
-                duration: speed,
-                progress: onProgress,
-                complete: function() {
-                    templateWrapper.removeClass("sidePaneOpened");
-                    sidePane.data('isOpened', !isOpened);
-                    sidePane.trigger("animate");
-                    sidePane.trigger("switchSidepane");
-                }
-            });
         } else {
-            templateWrapper.addClass("sidePaneOpened");
             animation[align] = "0px";
-            sidePane.animate(animation, {
-                duration: speed,
-                progress: onProgress,
-                complete: function() {
-                    sidePane.data('isOpened', !isOpened);
-                    sidePane.trigger("animate");
-                    sidePane.trigger("switchSidepane");
-                }
-            });
         }
+
+        sidePane.animate(animation, {
+            duration: speed,
+            progress: onProgress,
+            complete: function() {
+                sidePane.toggleClass('closed', wasOpen);
+                sidePane.trigger("animate");
+                sidePane.trigger("switchSidepane");
+            }
+        });
     });
 });

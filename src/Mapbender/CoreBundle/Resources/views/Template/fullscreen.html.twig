@@ -1,14 +1,13 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
 {% block frontend_content %}
-  {% set sidePaneClosed = region_props.sidepane.properties.closed|default(false) %}
   <div id="templateWrapper" class="templateWrapper">
     <div id="content" class="contentPane">
       {{ map_markup(application) | raw }}
       {{ unanchored_content_elements(application) | raw }}
     </div>
     <div class="map-overlay">
-      <div class="map-overlay-column sidePaneOpened">
+      <div class="map-overlay-column">
         {{ region_markup(application, 'toolbar', false) | raw }}
         <div class="overlay-fill">
           <div class="anchored-element-wrap anchored-element-wrap-lt">{{ anchored_content_elements(application, 'left-top') | raw }}</div>

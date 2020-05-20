@@ -294,7 +294,6 @@ $tabSize: 32px;
 
 .sidePane {
   z-index: 20;
-  display: none;
 
   &.notCollapsable {
     .sidePaneTabs {
@@ -303,21 +302,15 @@ $tabSize: 32px;
   }
 
   &.left {
-    @include absolute(120px '' $space*3 0);
     .sidePaneTabs {
       right: -$tabSize;
     }
   }
   &.right {
-    @include absolute(80px 0 $space*3 '');
     .sidePaneTabs {
       left: -$tabSize;
     }
   }
-}
-
-.sidePaneOpened .sidePane {
-  width: 350px;
 }
 
 .toolBar {
@@ -366,9 +359,6 @@ $tabSize: 32px;
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
-.sidePane.left {
-  float: none;
-}
 .map-overlay {
   position: fixed;
   top: 0;
@@ -390,15 +380,6 @@ $tabSize: 32px;
     div.toolBar {
       position: initial;
     }
-    div.sidePane {
-      // undo position: absolute completely
-      // We need relative though for sliding in / out (is done with left: -350px + transition)
-      position: relative;
-      top: unset;
-      bottom: unset;
-      left: unset;
-      right: unset;
-    }
   }
 }
 
@@ -418,16 +399,6 @@ $tabSize: 32px;
   max-width: 450px;
   &:after {
     clear: both;
-  }
-  .toggleSideBar {
-    position: absolute;
-    left: 350px;
-    top: 0;
-    font-size: 1.5rem;
-    display: inline-block;
-    padding: 5px;
-    border-top-right-radius: $radius;
-    border-bottom-right-radius: $radius;
   }
   background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
   color: #222;
