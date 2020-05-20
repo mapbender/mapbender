@@ -53,4 +53,9 @@ class Mobile extends Template
     {
         return 'MapbenderMobileBundle:Template:mobile.html.twig';
     }
+
+    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    {
+        return 'mobile-template';
+    }
 }

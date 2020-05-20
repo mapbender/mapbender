@@ -175,6 +175,7 @@ class ApplicationController extends ApplicationControllerBase
         $vars = array_replace($templateObj->getTemplateVars($application), array(
             'application' => $application,
             'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
+            'body_class' => $templateObj->getBodyClass($application),
         ));
         return $this->renderView($twigTemplate, $vars);
     }

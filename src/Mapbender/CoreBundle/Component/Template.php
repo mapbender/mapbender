@@ -121,5 +121,10 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
         return $propsObject->getProperties() ?: array();
     }
+
+    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    {
+        return '';
+    }
 }
 

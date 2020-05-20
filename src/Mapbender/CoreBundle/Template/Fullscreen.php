@@ -102,4 +102,9 @@ class Fullscreen extends Template
     {
         return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
     }
+
+    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    {
+        return 'fullscreen-template';
+    }
 }

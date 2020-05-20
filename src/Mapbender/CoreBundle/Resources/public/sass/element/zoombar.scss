@@ -103,4 +103,11 @@
       transform: rotate(-45deg);
     }
   }
+  .mobile-template & {
+    // Hide rotation icons in mobile to make rotation reset easier to hit
+    // We expect mobile users to prefer pinch rotation
+    .rotate-cw, .rotate-ccw {
+      display: none;
+    }
+  }
 }
