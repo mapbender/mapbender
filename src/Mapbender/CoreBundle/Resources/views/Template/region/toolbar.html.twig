@@ -1,0 +1,10 @@
+<div class="toolBar top">
+  <ul id="toolbar" class="itemsRight">
+        <li class="toolBarItem logoContainer">
+          {% block logo %}
+            <img class="logo" src="{{ asset(fom.server_logo) }}"/>
+          {% endblock %}
+        </li>
+    {{ region_content(application, region_name) | raw }}
+  </ul>
+</div>

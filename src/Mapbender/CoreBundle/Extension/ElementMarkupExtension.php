@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Extension;
 
 use Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Element\Map;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -53,6 +54,7 @@ class ElementMarkupExtension extends AbstractExtension
     public function getFunctions()
     {
         return array(
+            'region_markup' => new TwigFunction('region_markup', array($this, 'region_markup')),
             'region_content' => new TwigFunction('region_content', array($this, 'region_content')),
             'anchored_content_elements' => new TwigFunction('anchored_content_elements', array($this, 'anchored_content_elements')),
             'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', array($this, 'unanchored_content_elements')),
@@ -72,6 +74,37 @@ class ElementMarkupExtension extends AbstractExtension
 
     /**
      * @param Component\Application|Application $application
+     * @param $regionName
+     * @param bool $suppressEmptyRegion
+     * @return string
+     */
+    public function region_markup($application, $regionName, $suppressEmptyRegion = true)
+    {
+        if (false !== strpos($regionName, 'content')) {
+            throw new \LogicException("No support for 'content' region in region_markup");
+        }
+        if (!empty($this->nonContentRegionMap[$regionName])) {
+            $elements = $this->nonContentRegionMap[$regionName];
+        } else {
+            $elements = array();
+        }
+        if ($elements || !$suppressEmptyRegion) {
+            $application = $this->normalizeApplication($application);
+            $template = $this->getTemplateDescriptor($application);
+            $skin = $template->getRegionTemplate($application, $regionName);
+            $vars = array_replace($template->getRegionTemplateVars($application, $regionName), array(
+                'elements' => $elements,
+                'region_name' => $regionName,
+                'application' => $application,
+            ));
+            return $this->templatingEngine->render($skin, $vars);
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @param Component\Application|Application $application
      * @param string $regionName
      * @return string
      */
@@ -81,7 +114,8 @@ class ElementMarkupExtension extends AbstractExtension
         if ($regionName === 'content') {
             return $this->unanchored_content_elements($application);
         } elseif (!empty($this->nonContentRegionMap[$regionName])) {
-            return $this->renderComponents($this->nonContentRegionMap[$regionName], $regionName);
+            $glue = $this->getGlueTag($regionName);
+            return $this->renderComponents($this->nonContentRegionMap[$regionName], $glue);
         } else {
             return '';
         }
@@ -99,15 +133,23 @@ class ElementMarkupExtension extends AbstractExtension
 
     /**
      * @param Component\Application|Application $application
-     * @param string $anchorValue one of "top-left", "top-right", "bottom-left", "bottom-right"
+     * @param string|null $anchorValue empty for everything in sequence, or one of "top-left", "top-right", "bottom-left", "bottom-right"
      * @return string
      */
-    public function anchored_content_elements($application, $anchorValue)
+    public function anchored_content_elements($application, $anchorValue = null)
     {
         $this->updateBuffers($application);
+        if (!$anchorValue) {
+            $validAnchors = Template::getValidOverlayAnchors();
+            $parts = array();
+            foreach ($validAnchors as $anchorValue) {
+                $parts[] = $this->anchored_content_elements($application, $anchorValue);
+            }
+            return implode('', $parts);
+        }
         if (!empty($this->anchoredContentElements[$anchorValue])) {
             $glue = '<div class="element-wrapper">';
-            return $this->renderComponents($this->anchoredContentElements[$anchorValue], null, $glue);
+            return $this->renderComponents($this->anchoredContentElements[$anchorValue], $glue);
         } else {
             return '';
         }
@@ -115,28 +157,11 @@ class ElementMarkupExtension extends AbstractExtension
 
     /**
      * @param Component\Element[] $components
-     * @param string|null $regionName
      * @param string|null $glue HTML opening tag
      * @return string
      */
-    protected function renderComponents($components, $regionName = null, $glue = null)
+    protected function renderComponents($components, $glue = null)
     {
-        if ($regionName) {
-            if ($glue) {
-                throw new \LogicException("Can't evaluate glue when combined with explicit region name");
-            }
-            $skin = '@MapbenderCore/Template/region.html.twig';
-            $vars = array(
-                'application' => array(
-                    'elements' => array(
-                        $regionName => $components,
-                    ),
-                ),
-                'region_props' => $this->regionProperties,
-                'region' => $regionName,
-            );
-            return $this->templatingEngine->render($skin, $vars);
-        }
         $glueParts = array('', '');
         if ($glue) {
             $pattern = '#^<(\w+)[^/>]*>$#i';
@@ -162,9 +187,7 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function updateBuffers($application)
     {
-        if ($application instanceof Component\Application) {
-            $application = $application->getEntity();
-        }
+        $application = $this->normalizeApplication($application);
         $hash = spl_object_hash($application);
         if ($this->bufferedHash !== $hash) {
             $this->initializeBuffers($application);
@@ -215,5 +238,84 @@ class ElementMarkupExtension extends AbstractExtension
             // @todo: use a more specific ~configuration error exception
             throw new \RuntimeException("Invalid application: missing map element");
         }
+    }
+
+    /**
+     * Extract and return Application entity when passed an Application component, or pass
+     * Application entity through directly.
+     *
+     * @param Component\Application|Application $application
+     * @return Application
+     * @throws \LogicException if argument is neither Application component nor Application entity
+     */
+    protected static function normalizeApplication($application)
+    {
+        if ($application instanceof Component\Application) {
+            return $application->getEntity();
+        } elseif (!$application || !($application instanceof Application)) {
+            $type = ($application && \is_object($application)) ? get_class($application) : gettype($application);
+            throw new \LogicException("Bad type {$type} passed as Application");
+        } else {
+            return $application;
+        }
+    }
+
+    /**
+     * @param string $regionName
+     * @return string
+     */
+    protected static function normalizeRegionName($regionName)
+    {
+        // Legacy lenience in patterns: allow postfixes / prefixes around region names, e.g.
+        // "some-custom-project-footer"
+        if (false !== strpos($regionName, 'footer')) {
+            return 'footer';
+        } elseif (false !== strpos($regionName, 'toolbar')) {
+            return 'toolbar';
+        } elseif (false !== strpos($regionName, 'sidepane')) {
+            return 'sidepane';
+        } elseif (false !== strpos($regionName, 'content')) {
+            return 'content';
+        } else {
+            // fingers crossed
+            return $regionName;
+        }
+    }
+
+    /**
+     * Detect appropriate Element markup wrapping tag for a named region.
+     *
+     * @param string $regionName
+     * @return string|null
+     */
+    protected static function getGlueTag($regionName)
+    {
+        switch (static::normalizeRegionName($regionName)) {
+            case 'footer':
+            case 'toolbar':
+                return '<li class="toolBarItem">';
+            case 'sidepane':
+                // @todo: unify this
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * @param Application|Component\Application $application
+     * @return Template
+     */
+    protected static function getTemplateDescriptor($application)
+    {
+        $application = static::normalizeApplication($application);
+        /** @var string|Template $templateCls */
+        $templateCls = $application->getTemplate();
+        /** @var Template $templateObj */
+        $templateObj = new $templateCls();
+        if (!($templateObj instanceof Template)) {
+            throw new \LogicException("Invalid template class " . get_class($templateObj));
+        }
+        return $templateObj;
     }
 }

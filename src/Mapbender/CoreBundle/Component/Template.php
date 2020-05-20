@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines twig template and asset dependencies and regions for an Application template.
@@ -14,22 +13,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class Template implements IApplicationTemplateInterface, IApplicationTemplateAssetDependencyInterface
 {
-    protected $container;
+    const OVERLAY_ANCHOR_LEFT_TOP = 'left-top';
+    const OVERLAY_ANCHOR_RIGHT_TOP = 'right-top';
+    const OVERLAY_ANCHOR_LEFT_BOTTOM = 'left-bottom';
+    const OVERLAY_ANCHOR_RIGHT_BOTTOM = 'right-bottom';
 
-    /** @var Application */
-    protected $application;
-
-    /**
-     * Template constructor.
-     *
-     * @param ContainerInterface $container
-     * @param Application        $application
-     */
-    public function __construct(ContainerInterface $container, Application $application)
-    {
-        $this->container    = $container;
-        $this->application  = $application;
-    }
+    // pure descriptor class
+    final public function __construct() {}
 
     /**
      * {@inheritdoc}
@@ -44,6 +34,34 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
+    }
+
+    public function getRegionTemplate(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    {
+        switch ($regionName) {
+            case 'sidepane':
+                return '@MapbenderCore/Template/region/sidepane.html.twig';
+            case 'toolbar':
+                return '@MapbenderCore/Template/region/toolbar.html.twig';
+            case 'footer':
+                return '@MapbenderCore/Template/region/footer.html.twig';
+            default:
+                return '@MapbenderCore/Template/region/generic.html.twig';
+        }
+    }
+
+    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    {
+        $allRegionProps = $application->getNamedRegionProperties();
+        if (!empty($allRegionProps[$regionName])) {
+            $regionProps = $allRegionProps[$regionName]->getProperties() ?: array();
+        } else {
+            $regionProps = array();
+        }
+        return array(
+            'region_props' => $regionProps,
+            'region_class' => '',
+        );
     }
 
     /**
@@ -61,31 +79,10 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    /**
-     * Render the application
-     *
-     * @param string $format Output format, defaults to HTML
-     * @param boolean $html Whether to render the HTML itself
-     * @param boolean $css  Whether to include the CSS links
-     * @param boolean $js   Whether to include the JavaScript
-     * @return string $html The rendered HTML
-     */
-    public function render($format = 'html', $html = true, $css = true, $js = true)
+    public function getTemplateVars(\Mapbender\CoreBundle\Entity\Application $application)
     {
-        $application       = $this->application;
-        $applicationEntity = $application->getEntity();
-        $templateRender    = $this->container->get('templating');
-        $uploadsDir = Application::getAppWebDir($this->container, $this->application->getSlug());
-
-        return $templateRender->render($this->getTwigTemplate(), array(
-                'html'                 => $html,
-                'css'                  => $css,
-                'js'                   => $js,
-                'application'          => $application,
-                'region_props'         => $applicationEntity->getNamedRegionProperties(),
-                'default_region_props' => static::getRegionsProperties(),
-                'uploads_dir' => $uploadsDir,
-            )
+        return array(
+            'region_props' => $application->getNamedRegionProperties(),
         );
     }
 
@@ -103,5 +100,15 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
      * @return string TWIG template path
      */
     abstract public function getTwigTemplate();
+
+    final public static function getValidOverlayAnchors()
+    {
+        return array(
+            self::OVERLAY_ANCHOR_LEFT_TOP,
+            self::OVERLAY_ANCHOR_RIGHT_TOP,
+            self::OVERLAY_ANCHOR_LEFT_BOTTOM,
+            self::OVERLAY_ANCHOR_RIGHT_BOTTOM,
+        );
+    }
 }
 

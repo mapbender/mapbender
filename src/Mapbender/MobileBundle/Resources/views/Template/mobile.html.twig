@@ -10,28 +10,26 @@
   <div id="templateWrapper" class="templateWrapper">
       <div id="splash-screen" class="splashScreenWrapper" data-state="active">
         <div class="splashScreen">
-          <img class="app-screenshot" src="{{ asset(uploads_dir ~ '/' ~application.entity.screenshot) }}" alt="{{ application.title }}" title="{{ application.description }}">
+          <img class="app-screenshot" src="{{ asset(uploads_dir ~ '/' ~application.screenshot) }}" alt="{{ application.title }}" title="{{ application.description }}">
           <p class="app-title" title="{{ application.description }}">{{ application.title }}</p>
         </div>
       </div>
 
       <div id="content" class="contentPane">
-        {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'application': application, 'region': 'content' }%}
+          {{ map_markup(application) | raw }}
+          {{ anchored_content_elements(application) | raw }}
+          {{ unanchored_content_elements(application) | raw }}
       </div>
 
       <ul id="footer" class="toolBar itemsCenter bottom">
-        {% if application.elements.footer is defined %}
-          {% for element in application.elements.footer %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-          {% endfor %}
-        {% endif %}
+          {{ region_content(application, 'footer') | raw }}
       </ul>
 
       <div id="mobilePane" class="mobilePane" data-state="">
           <i id="mobilePaneClose" class="mobileClose"></i>
           <h2 class="contentTitle">Feature info</h2>
           <div class="mobileContent">
-          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'application': application, 'region': 'mobilePane' }%}
+              {{ region_content(application, 'mobilePane') | raw }}
           </div>
       </div>
   </div>

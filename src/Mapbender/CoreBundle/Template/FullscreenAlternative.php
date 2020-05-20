@@ -18,26 +18,16 @@ class FullscreenAlternative extends Fullscreen
         return 'Fullscreen alternative';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAssets($type)
+    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
     {
-        switch ($type) {
-            case 'css':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen_alternative.scss',
-                );
-            case 'js':
-            case 'trans':
+        $upstream = parent::getRegionTemplateVars($application, $regionName);
+        switch ($regionName) {
             default:
-                return parent::getAssets($type);
+                return $upstream;
+            case 'sidepane':
+                return array_replace($upstream, array(
+                    'region_class' => 'right',
+                ));
         }
     }
-
-    public function getTwigTemplate()
-    {
-        return 'MapbenderCoreBundle:Template:fullscreen_alternative.html.twig';
-    }
-
 }

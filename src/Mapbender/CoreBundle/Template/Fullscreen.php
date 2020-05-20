@@ -38,6 +38,19 @@ class Fullscreen extends Template
         return 'Fullscreen';
     }
 
+    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    {
+        $upstream = parent::getRegionTemplateVars($application, $regionName);
+        switch ($regionName) {
+            default:
+                return $upstream;
+            case 'sidepane':
+                return array_replace($upstream, array(
+                    'region_class' => 'left',
+                ));
+        }
+    }
+
     /**
      * @inheritdoc
      */
