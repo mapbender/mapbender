@@ -215,13 +215,9 @@ class PrintClient extends Element
         return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleHttpRequest(Request $request)
     {
-        /** @var Request $request */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action = $request->attributes->get('action');
         $bridgeService = $this->getServiceBridge();
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
