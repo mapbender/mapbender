@@ -105,6 +105,6 @@ class Fullscreen extends Template
 
     public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
     {
-        return 'fullscreen-template';
+        return 'desktop-template';
     }
 }
