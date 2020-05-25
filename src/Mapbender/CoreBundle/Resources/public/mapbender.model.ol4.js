@@ -538,8 +538,12 @@ getFeatureById: function(owner, vectorId, featureId) {
         extractSvgFeatureStyle: function(olLayer, feature, resolution) {
             var styleOptions = {};
             var layerStyleFn = olLayer.getStyleFunction();
+            var featureStyleFn = feature.getStyleFunction();
+            var olStyle = (featureStyleFn || layerStyleFn)(feature, resolution);
+            if (Array.isArray(olStyle)) {
+                olStyle = olStyle[0];
+            }
             /** @var {ol.style.Style} olStyle */
-            var olStyle = layerStyleFn(feature, resolution)[0];
             Object.assign(styleOptions, this._extractSvgGeometryStyle(olStyle));
             var text = olStyle.getText();
             var label = text && text.getText();
@@ -560,15 +564,31 @@ getFeatureById: function(owner, vectorId, featureId) {
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
             var image = olStyle.getImage();
-            Object.assign(style,
-                Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'),
-                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity')
-            );
-            style['strokeWidth'] = stroke.getWidth();
-
-            style['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
+            if (fill) {
+                Object.assign(style, Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'))
+            }
+            if (stroke) {
+                Object.assign(style, Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity'));
+                style['strokeWidth'] = stroke.getWidth();
+                style['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
+            }
             if (image && (image instanceof ol.style.RegularShape)) {
                 style['pointRadius'] = image.getRadius() || 6;
+            }
+            if (image && (image instanceof ol.style.Icon)) {
+                var anchor = image.getAnchor();
+                var iconElement = image.getImage(1);
+                var iconUrl = iconElement && iconElement.src;
+                if (anchor !== null && iconUrl) {
+                    var size = image.getSize() || [iconElement.naturalWidth, iconElement.naturalHeight];
+                    Object.assign(style, {
+                        externalGraphic: iconUrl,
+                        graphicXOffset: -anchor[0],
+                        graphicYOffset: -anchor[1],
+                        graphicWidth: size[0],
+                        graphicHeight: size[1]
+                    });
+                }
             }
             return style;
         },
