@@ -7,6 +7,8 @@ use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Element\Map;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\Exception\Application\MissingMapElementException;
+use Mapbender\Exception\Application\MultipleMapElementsException;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -17,6 +19,8 @@ class ElementMarkupExtension extends AbstractExtension
     protected $appService;
     /** @var TwigEngine */
     protected $templatingEngine;
+    /** @var bool */
+    protected $debug;
     /** @var string */
     protected $bufferedHash;
     /** @var Map */
@@ -33,11 +37,15 @@ class ElementMarkupExtension extends AbstractExtension
     /**
      * @param Component\Presenter\ApplicationService $appService
      * @param TwigEngine $templatingEngine
+     * @param bool $debug
      */
-    public function __construct(Component\Presenter\ApplicationService $appService, $templatingEngine)
+    public function __construct(Component\Presenter\ApplicationService $appService,
+                                $templatingEngine,
+                                $debug)
     {
         $this->appService = $appService;
         $this->templatingEngine = $templatingEngine;
+        $this->debug = $debug;
     }
 
     /**
@@ -69,6 +77,14 @@ class ElementMarkupExtension extends AbstractExtension
     public function map_markup($application)
     {
         $this->updateBuffers($application);
+        if (!$this->mapElement) {
+            if ($this->debug) {
+                throw new MissingMapElementException("Invalid application: missing map element");
+            } else {
+                return '';
+            }
+        }
+
         return $this->renderComponents(array($this->mapElement));
     }
 
@@ -210,8 +226,7 @@ class ElementMarkupExtension extends AbstractExtension
             $region = $elementEntity->getRegion();
             if ($elementComponent instanceof Map) {
                 if ($this->mapElement) {
-                    // @todo: use a more specific ~configuration error exception
-                    throw new \RuntimeException("Invalid application: multiple map elements");
+                    throw new MultipleMapElementsException("Invalid application: multiple map elements");
                 }
                 $this->mapElement = $elementComponent;
             } elseif ($region !== 'content') {
@@ -234,10 +249,6 @@ class ElementMarkupExtension extends AbstractExtension
             }
         }
         $this->regionProperties = $application->getNamedRegionProperties();
-        if (!$this->mapElement) {
-            // @todo: use a more specific ~configuration error exception
-            throw new \RuntimeException("Invalid application: missing map element");
-        }
     }
 
     /**
