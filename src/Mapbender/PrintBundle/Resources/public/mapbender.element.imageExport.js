@@ -193,19 +193,15 @@
         /**
          * Extracts and preprocesses the geometry from a feature for export backend consumption.
          *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @param {OpenLayers.Feature.Vector} feature
-         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (native Openlayers format!)
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer|ol.layer.Vector} layer
+         * @param {OpenLayers.Feature.Vector|ol.Feature} feature
+         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (Openlayers 2-native svg format!)
          * @private
+         * engine-agnostic
          */
         _extractFeatureGeometry: function(layer, feature) {
-            var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style) {
-                // stringify => decode: makes a deep copy of the style at the moment of capture
-                geometry.style = JSON.parse(JSON.stringify(feature.style));
-            } else {
-                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
-            }
+            var geometry = this.map.model.featureToGeoJsonGeometry(feature);
+            geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
                 geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
             }
@@ -270,10 +266,7 @@
                     if (this.feature && this.feature === feature) {
                         continue;
                     }
-                    // @todo: no private access
-                    var formattedFeature = Mapbender.Model._geojsonFormat.writeFeatureObject(feature).geometry;
-                    formattedFeature.style = this.map.model.extractSvgFeatureStyle(layer, feature);
-                    layerFeatureData.push(formattedFeature);
+                    layerFeatureData.push(this._extractFeatureGeometry(layer, feature));
                 }
                 dataOut.push({
                     "type": "GeoJSON+Style",

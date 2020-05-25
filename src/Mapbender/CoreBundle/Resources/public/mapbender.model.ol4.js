@@ -316,6 +316,14 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         return feature;
     },
+    /**
+     *
+     * @param {ol.Feature} feature
+     * @return {Object}
+     */
+    featureToGeoJsonGeometry: function(feature) {
+        return this._geojsonFormat.writeFeatureObject(feature).geometry;
+    },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
         var view = this.olMap.getView();
@@ -521,6 +529,12 @@ getFeatureById: function(owner, vectorId, featureId) {
         getCurrentExtentArray: function() {
             return this.olMap.getView().calculateExtent();
         },
+        /**
+         * @param {ol.layer.Vector} olLayer
+         * @param {ol.Feature} feature
+         * @param {Number} resolution
+         * @return {Object}
+         */
         extractSvgFeatureStyle: function(olLayer, feature, resolution) {
             var styleOptions = {};
             var layerStyleFn = olLayer.getStyleFunction();

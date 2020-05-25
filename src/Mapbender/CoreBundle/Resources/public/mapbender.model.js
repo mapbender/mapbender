@@ -762,6 +762,26 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return feature;
     },
+    /**
+     * @param {OpenLayers.Feature.Vector} feature
+     */
+    featureToGeoJsonGeometry: function(feature) {
+        var gj = this._geoJsonReader.extract.feature.call(this._geoJsonReader, feature);
+        return gj.geometry;
+    },
+    /**
+     * @param {OpenLayers.Layer.Vector} olLayer
+     * @param {OpenLayers.Feature.Vector} feature
+     * @return {Object}
+     */
+    extractSvgFeatureStyle: function(olLayer, feature) {
+        if (feature.style) {
+            // stringify => decode: makes a deep copy of the style at the moment of capture
+            return JSON.parse(JSON.stringify(feature.style));
+        } else {
+            return olLayer.styleMap.createSymbolizer(feature, feature.renderIntent);
+        }
+    },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;
         var engine = Mapbender.mapEngine;
