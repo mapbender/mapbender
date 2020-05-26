@@ -54,6 +54,8 @@ class KeywordUpdater
                 $keywordNew->setValue($keyword->getValue());
                 $keywordNew->setReferenceObject($componentOld);
                 $componentOld->addKeyword($keywordNew);
+
+                $entityManager->remove($keyword);
             }
         }
     }
