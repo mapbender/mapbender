@@ -1,3 +1,19 @@
+## dev-release/3.0.7 @ a458fea41
+- Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
+- Fix bad ordering of Wms instance "allow toggle" checkboxes if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
+- Fix POI coordinate rounding
+- Fix excessive Ruler output with type `line` and `immediate` enabled
+- Fix SearchRouter Symfony 3.4 incompatibility with common configs
+- Fix encoding errors in Gps error messages
+- Fix translations of login errors
+- Fix multiple-emission of icon CSS rules depending on Application content
+- Fix Symfony 3.4 debug-mode backend errors when working with Applications containing unknown Element classes
+- Replace PrintClient `type` configuration with auto-detection of containing sidepane
+- Update "map-click" demo element
+- Misc fixes to jQueryUI standard / theme css compatibility
+- Client-side Popup now supports opening without any buttons
+- Removed ineffective legacy configuration fields ZoomBar `position`, PrintClient `type`
+
 ## v3.0.8.5
 ### Regression fixes
 - Fix broken layerset order saving in Map administration
@@ -72,7 +88,6 @@
 *NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
 - Dropped legacy joii library dependency
 - Replaced `eslider/sasscb` dependency with two new dependencies ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
-- Added `
 - Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
 - Moved owsproxy dependency back to stable / tagged version releases
 ### Other changes
