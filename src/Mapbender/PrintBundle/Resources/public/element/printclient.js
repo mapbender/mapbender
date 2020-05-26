@@ -103,6 +103,7 @@
             this._getTemplateSize().then(function() {
                 self.selectionActive = true;
                 self._setScale();
+                self._updateGeometry();
                 self._startDrag();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
@@ -166,7 +167,7 @@
             }
 
             /** implicitly calls _updateGeometry */
-            select.val(selectValue).trigger('change');
+            select.val(selectValue).trigger('dropdown.changevisual');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             if (Mapbender.mapEngine.code !== 'ol2') {
