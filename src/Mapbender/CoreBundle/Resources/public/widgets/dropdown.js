@@ -92,7 +92,7 @@ $(function () {
     $('.dropdown').each(function () {
         initDropdown.call(this);
     });
-    $(document).on('change', '.dropdown > select.hiddenDropdown', function() {
+    $(document).on('change, dropdown.changevisual', '.dropdown > select.hiddenDropdown', function() {
         updateValueDisplay($(this).parent('.dropdown'));
     });
     window.initDropdown = initDropdown;
