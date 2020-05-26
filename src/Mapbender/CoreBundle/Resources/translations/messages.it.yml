@@ -173,21 +173,6 @@ mb:
       tag:
         overview: panoramica
         map: mappa
-    sketch:
-      circle:
-        radius:
-          label: Raggio
-          error: 'Raggio è invalido'
-        form:
-          button:
-            'yes': Si
-            cancel: Cancella
-      class:
-        title: Sketch
-        description: 'Aggiungi un vettore nella mappa e consenti di disegnare gli oggetti geometrici.'
-      tag:
-        sketch: sketch
-        circle: cerchio
     metadata:
       popup:
         title: Metadata
@@ -244,12 +229,6 @@ mb:
       contextmenu:
         nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
-      panup: 'Muovi verso l''alto'
-      panright: 'Muovi a destra'
-      pandown: 'Muovi verso il basso'
-      panleft: 'Muovi a sinistra'
-      goback: 'Ritorna indietro'
-      goforward: 'Vai avanti'
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'
       zoomin: Ingrandisci

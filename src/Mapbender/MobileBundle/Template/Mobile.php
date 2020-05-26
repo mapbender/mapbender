@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\MobileBundle\Template;
 
-use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Template;
 
 /**
@@ -10,43 +9,53 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Mobile extends Template
 {
-    /** @var string Application title */
-    protected static $title = 'Mapbender Mobile template';
-
-    /** @var string Application TWIG template path */
-    protected $twigTemplate = 'MapbenderMobileBundle:Template:mobile.html.twig';
-
-    /** @var array Late assets */
-    protected $lateAssets = array(
-        'js'    => array(),
-        'css'   => array(
-            '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
-        ),
-        'trans' => array(),
-    );
-
-    protected static $js  = array(
-        '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-        '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
-        '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-    );
-
-    /**  @var array Region names */
-    protected static $regions = array('footer', 'content', 'mobilePane');
-
-    /**
-     * @inheritdoc
-     */
-    public function render($format = 'html', $html = true, $css = true, $js = true)
+    public static function getTitle()
     {
-        $templateEngine = $this->container->get('templating');
-        return $templateEngine->render($this->twigTemplate, array(
-                'html'        => $html,
-                'css'         => $css,
-                'js'          => $js,
-                'application' => $this->application,
-                'uploads_dir' => Application::getAppWebDir($this->container, $this->application->getSlug())
-            )
+        return 'Mapbender Mobile template';
+    }
+
+    public static function getRegions()
+    {
+        return array(
+            'footer',
+            'content',
+            'mobilePane',
         );
+    }
+
+    public function getLateAssets($type)
+    {
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
+                );
+            default:
+                return parent::getLateAssets($type);
+        }
+    }
+
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'js':
+                return array(
+                    '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
+                    '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
+                    '@MapbenderMobileBundle/Resources/public/js/mobile.js',
+                );
+            default:
+                return parent::getAssets($type);
+        }
+    }
+
+    public function getTwigTemplate()
+    {
+        return 'MapbenderMobileBundle:Template:mobile.html.twig';
+    }
+
+    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    {
+        return 'mobile-template';
     }
 }

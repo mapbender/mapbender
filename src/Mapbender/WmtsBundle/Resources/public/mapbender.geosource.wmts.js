@@ -7,42 +7,58 @@ window.Mapbender.WmtsSource = (function() {
     $.extend(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
+            if (Mapbender.mapEngine.code === 'ol4') {
+                return this._ol4LayerFactory(compatibleLayer, srsName);
+            }
             var matrixSet = compatibleLayer.getMatrixSet();
-            var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, srsName), {
+            var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
+            Object.assign(options, {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
-                style: compatibleLayer.options.style,
-                name: compatibleLayer.options.title,
-                url: compatibleLayer.options.tileUrls,
-                format: compatibleLayer.options.format
+                matrixSet: matrixSet.identifier,
+                matrixIds: matrixSet.tilematrices.map(function(matrix) {
+                    if (matrix.topLeftCorner) {
+                        return $.extend({}, matrix, {
+                            topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
+                        });
+                    } else {
+                        return $.extend({}, matrix);
+                    }
+                })
             });
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
         },
-        _getNativeLayerOptions: function(matrixSet, compatibleLayer, srsName) {
-            var parentValues = Mapbender.WmtsTmsBaseSource.prototype._getNativeLayerOptions.apply(this, arguments);
-            var matrixOptions = this._getMatrixOptions(matrixSet);
-            return $.extend(parentValues, matrixOptions);
-        },
-        /**
-         * @param {WmtsTileMatrixSet} matrixSet
-         * @return {{matrixSet: string, matrixIds: any[]}}
-         * @private
-         */
-        _getMatrixOptions: function(matrixSet) {
-            var matrixIds = matrixSet.tilematrices.map(function(matrix) {
-                if (matrix.topLeftCorner) {
-                    return $.extend({}, matrix, {
-                        topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
-                    });
-                } else {
-                    return $.extend({}, matrix);
-                }
-            });
-            return {
-                matrixSet: matrixSet.identifier,
-                matrixIds: matrixIds
+        _ol4LayerFactory: function(layer, srsName) {
+            var matrixSet = layer.getMatrixSet();
+            var self = this;
+            var gridOpts = {
+                origin: matrixSet.origin,
+                resolutions: matrixSet.tilematrices.map(function(tileMatrix) {
+                    return self._getMatrixResolution(tileMatrix, srsName);
+                }),
+                matrixIds: matrixSet.tilematrices.map(function(matrix) {
+                    return matrix.identifier;
+                }),
+                extent: layer.getBounds(srsName, true)
             };
+
+            var sourceOpts = {
+                version: this.configuration.version,
+                requestEncoding: 'REST',
+                urls: layer.options.tileUrls.map(function(tileUrlTemplate) {
+                    return tileUrlTemplate.replace('{TileMatrixSet}', matrixSet.identifier);
+                }),
+                format: layer.options.format,
+                style: layer.options.style,
+                projection: srsName,
+                tileGrid: new ol.tilegrid.WMTS(gridOpts)
+            };
+            var layerOpts = {
+                opacity: this.configuration.options.opacity,
+                source: new ol.source.WMTS(sourceOpts)
+            };
+            return new ol.layer.Tile(layerOpts);
         },
         /**
          * @param {WmtsTileMatrix} tileMatrix
@@ -51,9 +67,10 @@ window.Mapbender.WmtsSource = (function() {
          * @private
          */
         _getMatrixResolution: function(tileMatrix, srsName) {
+            var engine = Mapbender.mapEngine;
             // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
             // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel
-            var metersPerUnit = 1.0 / Mapbender.Model.getProjectionUnitsPerMeter(srsName);
+            var metersPerUnit = 1.0 / engine.getProjectionUnitsPerMeter(srsName);
             var unitsPerPixel = 0.00028 / metersPerUnit;
             return tileMatrix.scaleDenominator * unitsPerPixel;
         },

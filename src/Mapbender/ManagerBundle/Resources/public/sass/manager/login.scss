@@ -31,7 +31,7 @@
 
   .loginBox {
     padding: $space;
-    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
+    background: lighten($contentColor, 2%);
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;

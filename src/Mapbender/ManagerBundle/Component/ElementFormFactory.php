@@ -6,7 +6,6 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -64,9 +63,6 @@ class ElementFormFactory extends BaseElementFactory
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array('application' => $element->getApplication());
-        if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
-            $options['element'] = $element;
-        }
 
         if ($configurationType === null) {
             $configurationType = $this->getFallbackConfigurationFormType($element);

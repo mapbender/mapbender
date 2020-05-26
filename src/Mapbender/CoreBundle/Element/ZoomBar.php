@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 
 /**
@@ -14,7 +13,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element implements ConfigMigrationInterface
+class ZoomBar extends Element
 {
 
     /**
@@ -55,11 +54,15 @@ class ZoomBar extends Element implements ConfigMigrationInterface
     {
         return array(
             'target' => null,
-            'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
+            'components' => array(
+                "rotation",
+                "zoom_max",
+                "zoom_in_out",
+                "zoom_slider",
+            ),
             'anchor' => 'left-top',
-            'stepSize' => 50,
-            'stepByPixel' => false,
-            'draggable' => true);
+            'draggable' => true,
+        );
     }
 
     /**
@@ -75,38 +78,6 @@ class ZoomBar extends Element implements ConfigMigrationInterface
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
-    {
-        $defaults = static::getDefaultConfiguration();
-        $config = $entity->getConfiguration();
-        // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
-        // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
-        if (empty($config['stepSize'])) {
-            if (!empty($config['stepsize'])) {
-                $config['stepSize'] = $config['stepsize'];
-            } else {
-                $config['stepSize'] = $defaults['stepSize'];
-            }
-        }
-        if (!isset($config['stepByPixel'])) {
-            if (isset($config['stepbypixel'])) {
-                $config['stepByPixel'] = $config['stepbypixel'];
-            } else {
-                $config['stepByPixel'] = $defaults['stepByPixel'];
-            }
-        }
-        // Fix weird mis-treatment of boolean 'stepByPixel' as string (it's a dropdown!)
-        if ($config['stepByPixel'] === 'false') {
-            $config['stepByPixel'] = false;
-        } else {
-            // coerce all other values (including string "true") to boolean regularly
-            $config['stepByPixel'] = !!$config['stepByPixel'];
-        }
-        unset($config['stepsize']);
-        unset($config['stepbypixel']);
-        $entity->setConfiguration($config);
-    }
-
     /**
      * @param Entity\Element $entity
      * @param string[] $componentList
@@ -117,7 +88,24 @@ class ZoomBar extends Element implements ConfigMigrationInterface
         if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
             $componentList[] = 'zoom_in_out';
         }
+        $componentList = array_values(array_diff($componentList, static::getComponentBlacklist($entity)));
         return $componentList;
+    }
+
+    protected static function getComponentBlacklist(Entity\Element $entity)
+    {
+        $blackList = array();
+        $application = $entity->getApplication();
+        if ($application) {
+            switch ($application->getMapEngineCode()) {
+                case Entity\Application::MAP_ENGINE_OL2:
+                    $blackList[] = 'rotation';
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $blackList;
     }
 
     public function getConfiguration()

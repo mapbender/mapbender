@@ -5,6 +5,7 @@ namespace Mapbender\PrintBundle\Element;
 use Doctrine\Common\Collections\Collection;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
@@ -45,7 +46,7 @@ class PrintClient extends Element
      */
     public function getAssets()
     {
-        return array(
+        $assets = array(
             'js' => array(
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
@@ -60,6 +61,10 @@ class PrintClient extends Element
                 'mb.print.imageexport.info.*',
             ),
         );
+        if ($this->entity->getApplication()->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
+            array_unshift($assets['js'], '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js');
+        }
+        return $assets;
     }
 
     /**
@@ -210,13 +215,9 @@ class PrintClient extends Element
         return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleHttpRequest(Request $request)
     {
-        /** @var Request $request */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action = $request->attributes->get('action');
         $bridgeService = $this->getServiceBridge();
         $configuration = $this->entity->getConfiguration();
         switch ($action) {

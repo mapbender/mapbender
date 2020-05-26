@@ -6,9 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -173,12 +172,11 @@ class WmsLoader extends Element
 
     protected function loadWms(Request $request)
     {
-        $wmsSource = $this->getWmsSource($request);
+        $source = $this->getSource($request);
+        $instance = $this->getSourceTypeDirectory()->createInstance($source);
 
-        $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
-        $wmsInstance = $wmsSourceEntityHandler->createInstance();
-        $sourceService = $this->getSourceService($wmsInstance);
-        $layerConfiguration = $sourceService->getConfiguration($wmsInstance);
+        $sourceService = $this->getSourceService($instance);
+        $layerConfiguration = $sourceService->getConfiguration($instance);
         $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
@@ -199,17 +197,15 @@ class WmsLoader extends Element
      * @return \Mapbender\WmsBundle\Entity\WmsSource
      * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
      */
-    protected function getWmsSource($request)
+    protected function getSource($request)
     {
-        $requestUrl = $request->get("url");
-        $requestUserName = $request->get("username");
-        $requestPassword = $request->get("password");
-        $onlyValid = false;
-
-        $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
+        $origin = new HttpOriginModel();
+        $origin->setOriginUrl($request->get("url"));
+        $origin->setUsername($request->get("username"));
+        $origin->setPassword($request->get("password"));
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
-        $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
+        $importerResponse = $importer->evaluateServer($origin, false);
 
         return $importerResponse->getWmsSourceEntity();
     }
@@ -252,14 +248,19 @@ class WmsLoader extends Element
         return $instanceConfigs;
     }
 
+    protected function getSourceTypeDirectory()
+    {
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        return $directory;
+    }
+
     /**
      * @param SourceInstance $instance
      * @return \Mapbender\CoreBundle\Component\Presenter\SourceService|null
      */
     protected function getSourceService($instance)
     {
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        return $directory->getSourceService($instance);
+        return $this->getSourceTypeDirectory()->getSourceService($instance);
     }
 }

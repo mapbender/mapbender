@@ -2,6 +2,13 @@
   .iconCoordinates {
     cursor:default;
   }
+  // Openlayers 4 mouse position control creates a div as the display area. This is hardcoded and cannot be prevented.
+  // see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/mouseposition.js#L30
+  // We want to display inline though.
+  // We solve this by passing 'inline' as 'className' option, which is OL4 attaches to the div.
+  div.inline {
+    display: inline;
+  }
 }
 
 .contentPane{
@@ -13,6 +20,6 @@
 .toolBar {
   .mb-element-coordsdisplay {
     text-align: left;
-    min-width: 160px;
+    min-width: 15em;
   }
 }

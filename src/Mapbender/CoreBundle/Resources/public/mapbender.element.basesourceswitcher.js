@@ -70,7 +70,6 @@
                     if (sourcesId.length === 0) {
                         return;
                     }
-
                     source = model.getSourceById(sourcesId);
 
                     if (!source) {

@@ -13,7 +13,6 @@
 @import "modules/popup_dialog";
 @import "modules/tab_navigator";
 @import "modules/result_table";
-@import "modules/digitizing_tool_set";
 
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
@@ -21,7 +20,6 @@
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
-.logoContainer{background-image:url($headPatternUrl);}
 .toolBar {
   @include frontendContainerStyle();
   .toolBarItem {
@@ -29,10 +27,10 @@
     display: inline-block;
     text-wrap: avoid;
     white-space: nowrap;
-    color: fade-out($lightFontColor, .3);
+    color: fade-out($toolBarFontColor, .3);
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     &:hover {
-      color: $lightFontColor;
+      color: inherit;
     }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
@@ -43,8 +41,8 @@
     }
   }
   .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: $contentColor;
-    color:$firstColor;
+    background-color: fade-out($toolBarFontColor, .3);
+    color: #eee;
   }
   margin: 0;
   padding:$space/4 $space/2 $space/4 $space/2;
@@ -73,11 +71,12 @@
       margin-bottom: $inputHeight;
     }
   }
-  &.itemsRight{
+
+  .itemsRight{
     text-align:right;
     .toolBarItem{padding-left:$space/4;}
   }
-  &.itemsCenter{
+  .itemsCenter{
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
@@ -102,34 +101,55 @@
   @extend .iconOpen;
   @extend .buttonCore;
 }
-.sidePane{
+.sidePane {
+  &.left, &.right {
+    // undo historical float classes
+    float: none;
+  }
+  height: 100%;
   overflow: visible;
   background-color: $contentColor;
-  background-image: url($contentPatternUrl);
-  border-top:1px solid darken(white, 30%);
+  width: 350px;
+
   border-bottom:1px solid darken(white, 30%);
-//  @include transition(all 0.4s ease-in-out);
+  .toggleSideBar {
+    font-size: 1.5rem;
+    display: inline-block;
+    padding: 5px;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+  }
 
   // style for the left side pane
-  &.left{border-right:1px solid darken(white, 30%);}
+  &.left {
+    position: absolute;
+    left: 0;
+    border-right:1px solid darken(white, 30%);
+    .toggleSideBar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-left: 100%;
+    }
+  }
 
   // style for the right side pane
-  &.right{border-left:1px solid darken(white, 30%);}
+  &.right {
+    position: absolute;
+    right: 0;
+    border-left:1px solid darken(white, 30%);
+    .toggleSideBar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin-right: 100%;
+    }
+  }
   .sideContent{
     padding:$space;
-    display: none;
-    width: 100%;
     height: 100%;
   }
 }
-.sidePaneOpened{
-  .sideContent{
-    display:block;
-    overflow: auto;
-  }
-  .sidePaneTabItem{@extend .iconClose;}
-}
-
 .metadataDialog{
   .popupContent {
     height: 100%;
@@ -194,4 +214,9 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     font-weight: normal;
     line-height: inherit;
   }
+}
+
+.collapse-toggle {
+  background: $buttonFirstColor;
+  color: $lightFontColor;
 }

@@ -18,14 +18,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchRouter extends Element
 {
-    const FEATURE_DEFAULT_COLOR   = "#33CCFF";
-    const FEATURE_SELECT_COLOR    = "#ff0000";
-    const FEATURE_OPACITY         = 0.8;
-    const FEATURE_BUFFER          = 1000;
-    const GEOM_FIELD_NAME         = "geom";
-    const DEFAULT_SEARCH_ENGINE   = "Mapbender\\CoreBundle\\Component\\SQLSearchEngine";
-    const DEFAULT_CONNECTION_NAME = "default";
-    const DEFAULT_ROUTE_TITLE     = "mb.core.searchrouter.tag.search";
 
     public static function getClassTitle()
     {
@@ -72,45 +64,59 @@ class SearchRouter extends Element
     protected $forms;
 
     /**
-     * Default route configuration
-     *
-     * @var array
+     * @return array
      */
-    protected static $defaultRouteConfiguration = array(
-        "title"         => self::DEFAULT_ROUTE_TITLE,
-        "class"         => self::DEFAULT_SEARCH_ENGINE,
-        "class_options" => array(
-            "connection"         => self::DEFAULT_CONNECTION_NAME,
-            "relation"           => "geometries",
-            "attributes"         => array("*"),
-            "geometry_attribute" => self::GEOM_FIELD_NAME,
-        ),
-        "results"       => array(
-            "view"     => "table",
-            "count"    => "true",
-            "headers"  => array(),
-            "callback" => array(
-                "event"   => "click",
-                "options" => array(
-                    "buffer"   => self::FEATURE_BUFFER,
-                    "minScale" => null,
-                    "maxScale" => null
-                )
-            )
-        ),
-        "styleMap"      => array(
+    protected function getDefaultRouteConfiguration()
+    {
+        return array(
+            "title" => "mb.core.searchrouter.tag.search",
+            "class" => 'Mapbender\CoreBundle\Component\SQLSearchEngine',
+            "class_options" => array(
+                "connection" => 'default',
+                "relation" => "geometries",
+                "attributes" => array("*"),
+                "geometry_attribute" => "geom",
+            ),
+            "results" => array(
+                "view" => "table",
+                "count" => "true",
+                "headers" => array(),
+                "callback" => array(
+                    "event" => "click",
+                    "options" => array(
+                        "buffer" => 1000,
+                        "minScale" => null,
+                        "maxScale" => null
+                    ),
+                ),
+                "styleMap" => $this->getDefaultStyleMapOptions(),
+            ),
+        );
+    }
+
+    protected function getDefaultStyleMapOptions()
+    {
+        return array(
             "default" => array(
-                "strokeColor" => self::FEATURE_DEFAULT_COLOR,
-                "fillColor"   => self::FEATURE_DEFAULT_COLOR,
-                "fillOpacity" => self::FEATURE_OPACITY
+                "strokeColor" => "#dd0000",
+                "fillColor" => "#ee2222",
+                "fillOpacity" => 0.4,
+                "strokeOpacity" => 0.8,
             ),
-            "select"  => array(
-                "strokeColor" => self::FEATURE_SELECT_COLOR,
-                "fillColor"   => self::FEATURE_SELECT_COLOR,
-                "fillOpacity" => self::FEATURE_OPACITY
+            "select" => array(
+                "strokeColor" => "#dd0000",
+                "fillColor" => "#ee2222",
+                "fillOpacity" => 0.8,
+                "strokeOpacity" => 1.0,
             ),
-        )
-    );
+            "temporary" => array(
+                "strokeColor" => "#ee8822",
+                "fillColor" => "#ee8800",
+                "fillOpacity" => 0.8,
+                "strokeOpacity" => 1.0,
+            ),
+        );
+    }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
@@ -318,7 +324,7 @@ class SearchRouter extends Element
         if (empty($config['routes'][$categoryId])) {
             return null;
         } else {
-            $defaults = static::$defaultRouteConfiguration;
+            $defaults = $this->getDefaultRouteConfiguration();
             return array_replace_recursive($defaults, $config['routes'][$categoryId]);
         }
     }

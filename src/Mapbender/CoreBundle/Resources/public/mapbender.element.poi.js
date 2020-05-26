@@ -96,24 +96,13 @@
         },
         _setPoiMarker: function(lon, lat) {
             if (!this.poiMarkerLayer) {
-                this.poiMarkerLayer = new OpenLayers.Layer.Markers();
-                this.mbMap.map.olMap.addLayer(this.poiMarkerLayer);
+                this.poiMarkerLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             }
 
-            this.poiMarkerLayer.clearMarkers();
-
-            var poiMarker = new OpenLayers.Marker({lon: lon, lat: lat}, new OpenLayers.Icon(
-                Mapbender.configuration.application.urls.asset +
-                this.mbMap.options.poiIcon.image, {
-                    w: this.mbMap.options.poiIcon.width,
-                    h: this.mbMap.options.poiIcon.height
-                }, {
-                    x: this.mbMap.options.poiIcon.xoffset,
-                    y: this.mbMap.options.poiIcon.yoffset
-                })
-            );
-
-            this.poiMarkerLayer.addMarker(poiMarker);
+            this.poiMarkerLayer.clear();
+            this.poiMarkerLayer.setBuiltinMarkerStyle('poiIcon');
+            this.poiMarkerLayer.addMarker(lon, lat);
+            this.poiMarkerLayer.show();
         },
         _getPopupOptions: function() {
             var self = this;
@@ -165,10 +154,7 @@
             }
 
             if (this.poiMarkerLayer) {
-                this.poiMarkerLayer.clearMarkers();
-                this.mbMap.map.olMap.removeLayer(this.poiMarkerLayer);
-                this.poiMarkerLayer.destroy();
-                this.poiMarkerLayer = null;
+                this.poiMarkerLayer.hide();
             }
             if (this.popup) {
                 this.popup.close();

@@ -3,7 +3,7 @@
   .leave {
     // for absolute menu positioning
     position: relative;
-    margin-left: 1em;
+    margin-left: calc(1em + 5px)
   }
 
   .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper, .checkWrapper.selectedWrapper {
@@ -15,7 +15,7 @@
     // pre-flex
     width: 1em;
   }
-  .checkWrapper {
+  .checkWrapper + .featureInfoWrapper {
     margin-left: 5px;
   }
   .checkWrapper.sourceVisibilityWrapper {
@@ -47,12 +47,14 @@
   .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
   .leave.invisible {visibility: visible;}
   .themeContainer{
-    border-left:dotted 1px black;
+    // border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
+      .iconFolder + .checkWrapper {
+        margin-left: 5px;
+      }
     }
     .leaveContainer{
       margin-left:-6px;
@@ -62,13 +64,15 @@
     &.showLeaves > .layers{display:block;}
   }
   .serviceContainer, .groupContainer{
-    border-left:dotted 1px black;
+    // border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
 
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
+      .iconFolder + .checkWrapper {
+        margin-left: 5px;
+      }
     }
 
     // show only layers which are toggled
@@ -81,8 +85,6 @@
         display: block;
         height:5px;
         width:5px;
-        border-top:dotted 1px black;
-        @include absolute(10px '' '' -10px);
       }
     }
     .leave.groupContainer:before {
@@ -133,6 +135,7 @@
 
 $layer-slider-bar-height: 5px;
 .layer-menu {
+  color: #222;
   position: absolute;
   right: 0;
   top: 1.5em;

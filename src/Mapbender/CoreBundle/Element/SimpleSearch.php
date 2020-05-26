@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Simple Search - Just type, select and show result
@@ -50,6 +51,8 @@ class SimpleSearch extends Element
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
+            // @todo: add form field
+            'sourceSrs' => 'EPSG:4326',
         );
     }
 
@@ -77,14 +80,9 @@ class SimpleSearch extends Element
         );
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleHttpRequest(Request $request)
     {
         $configuration = $this->getConfiguration();
-        $request       = $this->container->get('request_stack')->getCurrentRequest();
         $q             = $request->get('term', '');
         $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
         $kernel        = $this->container->get('kernel');

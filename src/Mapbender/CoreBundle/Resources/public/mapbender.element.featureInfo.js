@@ -100,9 +100,10 @@
                 id: this.element.attr('id')
             });
             var self = this;
+            var model = this.target.getModel();
             this.queries = {};
-            $.each(this.target.getModel().getSources(), function(idx, src) {
-                var url = src.getPointFeatureInfoUrl(x, y, self.options.maxCount);
+            $.each(model.getSources(), function(idx, src) {
+                var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
                     self.queries[src.mqlid] = url;
                     self._setInfo(src, url);

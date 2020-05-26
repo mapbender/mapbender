@@ -61,9 +61,7 @@ window.Mapbender.Source = (function() {
         destroyLayers: function() {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
-                    olLayer.clearGrid();
-                    olLayer.removeBackBuffer();
-                    olLayer.destroy(false);
+                    Mapbender.mapEngine.destroyLayer(olLayer);
                 });
             }
             this.nativeLayers = [];
@@ -82,13 +80,6 @@ window.Mapbender.Source = (function() {
             }
             return layer;
         },
-        getPrintConfigLegacy: function(bounds) {
-            console.error("Legacy print config not implemented");
-            return {
-                type: this.type,
-                url: 'http://invalid.invalid.invalid/'
-            };
-        },
         /**
          * @param {string} id
          * @return {SourceLayer}
@@ -103,6 +94,9 @@ window.Mapbender.Source = (function() {
                 }
             });
             return foundLayer;
+        },
+        getRootLayer: function() {
+            return this.configuration.children[0];
         },
         supportsMetadata: function() {
             return !(this.wmsloader || isNaN(parseInt(this.origId)));
@@ -166,7 +160,7 @@ window.Mapbender.Source = (function() {
             });
         },
         _bboxArrayToBounds: function(bboxArray, projCode) {
-            return OpenLayers.Bounds.fromArray(bboxArray);
+            return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
@@ -229,6 +223,9 @@ window.Mapbender.SourceLayer = (function() {
             }
             return r;
         },
+        getParent: function() {
+            return this.parent;
+        },
         rewriteChildIds: function(parentId) {
             if (!this.options.origId) {
                 this.options.origId = this.options.id;
@@ -242,6 +239,19 @@ window.Mapbender.SourceLayer = (function() {
                 this.options.origId = this.options.id;
             }
         },
+        remove: function() {
+            var index = this.siblings.indexOf(this);
+            if (index !== -1) {
+                this.siblings.splice(index, 1);
+                if (!this.siblings.length && this.parent) {
+                    return this.parent.remove();
+                } else {
+                    return this.options.id;
+                }
+            } else {
+                return null;
+            }
+        },
         getBounds: function(projCode, inheritFromParent) {
             var bboxMap = this.options.bbox;
             var srsOrder = [projCode].concat(Object.keys(bboxMap));
@@ -250,7 +260,7 @@ window.Mapbender.SourceLayer = (function() {
                 var bboxArray = bboxMap[srsName];
                 if (bboxArray) {
                     var bounds = this.source._bboxArrayToBounds(bboxArray, srsName);
-                    return Mapbender.Model._transformExtent(bounds, srsName, projCode);
+                    return Mapbender.mapEngine.transformBounds(bounds, srsName, projCode);
                 }
             }
             var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');

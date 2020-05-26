@@ -18,7 +18,7 @@
 }
 
 .mb-element-map {
-  .olHandlerBoxZoomBox {
+  .olHandlerBoxZoomBox, .ol-box {
     border: 2px solid $firstColor;
     background-color: white;
     @include opacity(.6);

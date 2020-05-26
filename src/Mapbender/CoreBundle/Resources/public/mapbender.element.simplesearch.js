@@ -17,16 +17,33 @@ $.widget('mapbender.mbSimpleSearch', {
             icon_url: null,
             icon_offset: null
         },
+        sourceSrs: 'EPSG:4326',
         delay: 0
     },
 
     marker: null,
     layer: null,
+    iconStyle: null,
+    mbMap: null,
 
     _create: function() {
         var self = this;
+        Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            self.mbMap = mbMap;
+            self._setup();
+        });
+    },
+    _setup: function() {
+        var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+        this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+        if (this.options.result.icon_url) {
+            var offset = (this.options.result.icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
+                return parseInt(x) || 0;
+            });
+            this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result.icon_url, offset[0], offset[1]);
+        }
 
         // Set up autocomplete
         this.autocomplete = new Mapbender.Autocomplete(searchInput, {
@@ -45,73 +62,57 @@ $.widget('mapbender.mbSimpleSearch', {
             }
             evt.preventDefault();
         });
+        this.mbMap.element.on('mbmapsrschanged', function(event, data) {
+            self.layer.retransform(data.from, data.to);
+        });
 
         // On item selection in autocomplete, parse data and set map bbox
         searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
     },
-    _getMbMap: function() {
-        // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
-        return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
+    _parseFeature: function(doc) {
+        switch ((this.options.geom_format || '').toUpperCase()) {
+            case 'WKT':
+                return this.mbMap.getModel().parseWktFeature(doc, this.options.sourceSrs);
+            case 'GEOJSON':
+                return this.mbMap.getModel().parseGeoJsonFeature(doc, this.options.sourceSrs);
+            default:
+                throw new Error("Invalid geom_format " + this.options.geom_format);
+        }
     },
     _onAutocompleteSelected: function(evt, evtData) {
-        var format = new OpenLayers.Format[this.options.geom_format]();
         if(!evtData.data[this.options.geom_attribute]) {
             $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
             return;
         }
-
-        var feature = format.read(evtData.data[this.options.geom_attribute]);
-        var mbMap = this._getMbMap();
+        var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
 
         var zoomToFeatureOptions = this.options.result && {
             maxScale: parseInt(this.options.result.maxscale) || null,
             minScale: parseInt(this.options.result.minscale) || null,
             buffer: parseInt(this.options.result.buffer) || null
         };
-        mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
+        this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
         this._setFeatureMarker(feature);
     },
     _setFeatureMarker: function(feature) {
-        var olMap = this._getMbMap().getModel().map.olMap;
-        var self = this;
-
-        var bounds = feature.geometry.getBounds();
-
-        // Add marker
-        if(self.options.result.icon_url) {
-            if(!self.marker) {
-                var addMarker = function() {
-                    var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
-                    var x = parseInt(offset[0]);
-
-                    var size = {
-                        'w': image.naturalWidth,
-                        'h': image.naturalHeight
-                    };
-
-                    var y = parseInt(offset[1]);
-
-                    offset = {
-                        'x': !isNaN(x) ? x : 0,
-                        'y': !isNaN(y) ? y : 0
-                    };
-
-                    var icon = new OpenLayers.Icon(image.src, size, offset);
-                    self.marker = new OpenLayers.Marker(bounds.getCenterLonLat(), icon);
-                    self.layer = new OpenLayers.Layer.Markers();
-                    olMap.addLayer(self.layer);
-                    self.layer.addMarker(self.marker);
-                };
-
-                var image = new Image();
-                image.src = self.options.result.icon_url;
-                image.onload = addMarker;
-                image.onerror = addMarker;
-            } else {
-                var newPx = olMap.getLayerPxFromLonLat(bounds.getCenterLonLat());
-                self.marker.moveTo(newPx);
-            }
+        this.layer.clear();
+        Mapbender.vectorLayerPool.raiseElementLayers(this);
+        var layer = this.layer;
+        // @todo: add feature center / centroid api
+        var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
+        var center = {
+            lon: .5 * (bounds.left + bounds.right),
+            lat: .5 * (bounds.top + bounds.bottom)
+        };
+        // fallback for broken icon: render a simple point geometry
+        var onMissingIcon = function() {
+            layer.addMarker(center.lon, center.lat);
+        };
+        if (this.options.result.icon_url) {
+            layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
+        } else {
+            onMissingIcon();
         }
     },
 

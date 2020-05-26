@@ -1,9 +1,0 @@
-.mb-element-scaleline {
-    position: absolute;
-    font-size: 10px;
-    z-index: 1009;
-}
-
-.mb-element-scaleline.inline {
-    position: static;
-}

@@ -1,0 +1,11 @@
+{% block region_wrapper %}
+<div class="{{ ('toolBar ' ~ (position_class | default('top'))) | trim }}">
+    {% block item_list %}
+    <ul class="{{ alignment_class | default('itemsRight') }}">
+        {% block item_list_body %}
+          {{ region_content(application, region_name) | raw }}
+        {% endblock %}
+    </ul>
+    {% endblock item_list %}
+</div>
+{% endblock region_wrapper %}

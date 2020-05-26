@@ -112,7 +112,11 @@ class ApplicationYAMLMapper
         if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
-
+        
+        if (isset($definition['mapEngineCode'])) {
+            $application->setMapEngineCode($definition['mapEngineCode']);
+        }
+ 
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }

@@ -68,7 +68,7 @@
                 }
             }
             var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-            this.mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr));
+            this.mbMap.getModel().setExtent(boundsAr);
             this._addStateToMap(wmcid, state);
         },
         _addStateToMap: function(wmcid, state){

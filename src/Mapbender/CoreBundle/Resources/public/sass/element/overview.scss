@@ -5,12 +5,7 @@
   user-select: none; /* Likely future */
 
   .toggleOverview {
-    $buttonFirstColor: #6fb536;
-    $buttonSecondColor: #5fa229;
-
     padding: 0 6px;
-    color: $lightFontColor;
-    background-color: $buttonFirstColor;
 
     @extend .iconClose;
     @extend .buttonCore;
@@ -19,15 +14,33 @@
 
   .olMap, .ol-overviewmap-map {
     background-color: white;
-    @include transition(width .2s linear);
+    @include transition(all .2s linear);
     .ol-viewport, .olMapViewport {
       border: 1px solid $thirdColor;
     }
   }
-  &.closed {
-    .olMap {
-      width: 0 !important;
+  .ol-overviewmap {
+    button {
+      // OL4: renders a toggle button, which we delegate to for visibility
+      //      toggling, but we don't want to show it
+      width: 0;
+      padding: 0;
+      border: 0;
+      font-size: 0;
+      overflow-x: hidden;
     }
+    // prevent weird vertical displacement of map relative to toggle button
+    font-size: 0;
+    line-height: 0;
+  }
+  &.closed {
+    .olMap, .ol-overviewmap-map {
+      width: 0 !important;
+      height: 0;
+      opacity: 0;
+      border: 0;
+    }
+
     .toggleOverview {
       @extend .iconOpen;
     }
@@ -44,6 +57,9 @@
   }
   &.left-bottom .toggleOverview {
     @include absolute('' -25px 0 '');
+  }
+  .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
+    vertical-align: bottom;
   }
 }
 

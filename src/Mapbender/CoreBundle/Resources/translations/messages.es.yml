@@ -173,21 +173,6 @@ mb:
       tag:
         overview: overview
         map: mapa
-    sketch:
-      circle:
-        radius:
-          label: Radio
-          error: 'Radio no es válido'
-        form:
-          button:
-            'yes': Si
-            cancel: Cancelar
-      class:
-        title: Sketch
-        description: 'Añadir una capa vector en el mapa y habilitar los objetos geometría para dibujar.'
-      tag:
-        sketch: sketch
-        circle: circulo
     metadata:
       popup:
         title: Metadata
@@ -244,12 +229,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      panup: 'Mover arriba'
-      panright: 'Mover derecha'
-      pandown: 'Mover abajo'
-      panleft: 'Mover izquierda'
-      goback: Atrás
-      goforward: Adelante
       zoombybox: 'Acercamiento por recuadro'
       zoombyworld: 'Acercamiento global'
       zoomin: Acercar

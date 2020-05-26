@@ -32,27 +32,85 @@
             this.element.addClass(this.options.anchor);
             if (!this.options.maximized) {
                 this.element.addClass("closed");
-            } else {
+            } else if (!this.element.hasClass('closed')) {
+                // if we start closed, wait with initialization until opened
                 this._initOverview();
             }
             $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
             this._trigger('ready');
         },
         _initOverview: function() {
-            this.overview = this._createOverviewControl();
-            if (this.overview) {
-                this.mbMap.map.olMap.addControl(this.overview);
-                $(document).on('mbmapsrschanged', $.proxy(this._onMbMapSrsChanged, this));
-            }
-        },
-        _createOverviewControl: function() {
             var layers = this._createLayers();
             if (!layers.length){
                 Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
                 return false;
             }
+
+            switch (Mapbender.mapEngine.code) {
+                case 'ol4':
+                    this._initAsOl4Control(layers);
+                    break;
+                case 'ol2':
+                    this._initAsOl2Control(layers);
+                    break;
+                default:
+                    throw new Error("Unhandled engine code " + Mapbender.mapEngine.code);
+            }
+            $(this.mbMap.element).bind('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
+        },
+        _initAsOl4Control: function(layers) {
+            var viewportId = 'mb-overview-' + this.element.attr('id') + '-viewport';
+            var $viewport = $('.overviewContainer', this.element);
+            $('.toggleOverview', this.element).on('click', function() {
+                $('button', $viewport).click();
+            });
+            $viewport.attr('id', viewportId);
+            // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
+
+            var mainMapModel = this.mbMap.model;
+            var center = mainMapModel.olMap.getView().getCenter();
+
+            var viewOptions = {
+                projection: mainMapModel.getCurrentProjectionCode(),
+                center: center
+            };
+            if (this.options.fixed) {
+                var maxExtent = mainMapModel.getMaxExtent();
+                var projectedWidth = Math.abs(maxExtent.right - maxExtent.left);
+                var projectedHeight = Math.abs(maxExtent.top - maxExtent.bottom);
+                var resolutionH = projectedWidth / this.options.width;
+                var resolutionV = projectedHeight / this.options.height;
+                var resolution = Math.max(resolutionH, resolutionV);
+                viewOptions.resolutions = [resolution];
+            }
+            var controlOptions = {
+                collapsible: true,
+                collapsed: false,
+                target: viewportId,
+                layers: layers,
+                view: new ol.View(viewOptions)
+            };
+            this.overview = new ol.control.OverviewMap(controlOptions);
+
+            mainMapModel.olMap.addControl(this.overview);
+            $('.ol-overviewmap-map', $viewport)
+                .width(this.options.width)
+                .height(this.options.height)
+            ;
+            this.overview.ovmap_.updateSize();
+        },
+        _initAsOl2Control: function(layers) {
+            this.overview = this._createOverviewControl(layers);
+            if (this.overview) {
+                this.mbMap.map.olMap.addControl(this.overview);
+            }
+        },
+        _createOverviewControl: function(layers) {
             var projection = this.mbMap.getModel().getCurrentProjectionCode();
             var maxExtent = this.mbMap.map.olMap.maxExtent;
+            if (layers.length) {
+                layers[0].setIsBaseLayer(true);
+            }
 
             var options = {
                 layers: layers,
@@ -94,23 +152,9 @@
                 var source = instanceDefs[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
                 //        of the root layer with non-empty names, ignores every other layer
-                var activatedLayers = source.getActivatedLeaves();
-                var nonEmptyLayerNames = activatedLayers.map(function(sourceLayer) {
-                    return sourceLayer.options.name;
-                }).filter(function(layerName) {
-                    return !!layerName;
-                });
-                if (nonEmptyLayerNames.length) {
-                    layers = layers.concat(source.createNativeLayers(srsName).map(function(nativeLayer) {
-                        nativeLayer.mergeNewParams({
-                            LAYERS: nonEmptyLayerNames
-                        });
-                        return nativeLayer;
-                    }));
+                if (source.hasVisibleLayers(srsName)) {
+                    layers = layers.concat(source.createNativeLayers(srsName));
                 }
-            }
-            if (layers.length) {
-                layers[0].setIsBaseLayer(true);
             }
             return layers;
         },
@@ -122,42 +166,44 @@
             $(this.element).toggleClass('closed');
             window.setTimeout(function(){
                 if (!$(self.element).hasClass('closed')) {
-                    if (self.overview === null) {
+                    if (!self.overview) {
                         self._initOverview();
-                    } else if (self.overview && self.overview.ovmap) {
-                        self.overview.ovmap.updateSize();
+                    } else {
+                        if (self.overview && self.overview.ovmap) {
+                            self.overview.ovmap.updateSize();
+                        }
                     }
                 }
             }, 300);
         },
-        /**
-         * Cahnges the overview srs
-         */
         _onMbMapSrsChanged: function(event, data) {
-            if (data.mbMap !== this.mbMap) {
-                return;
+            try {
+                switch (Mapbender.mapEngine.code) {
+                    case 'ol2':
+                        this._changeSrs2(event, data);
+                        break;
+                    case 'ol4':
+                        this._changeSrs4(event, data);
+                        break;
+                    default:
+                        throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
+                }
+            } catch (e) {
+                console.error("Overview srs change failed", e);
             }
-            var oldProj = this.overview.ovmap.getProjectionObject();
-            if (oldProj.projCode === data.to.projCode) {
-                return;
-            }
-            var newCenter = this.overview.ovmap.getCenter().clone().transform(oldProj, data.to);
+        },
+        _changeSrs2: function(event, data) {
+            /**
+             * @type {null|OpenLayers.Map}
+             */
+            var ovMap = this.overview.ovmap;
+            var oldProj = ovMap.getProjectionObject();
+            var newCenter = ovMap.getCenter().clone().transform(oldProj, data.to);
             // NOTE: this extent is already transformed
             var newMaxExtent = this.mbMap.model.map.olMap.maxExtent || null;
             if (newMaxExtent) {
                 newMaxExtent = newMaxExtent.clone();
             }
-            try {
-                this._changeSrs(data.to.projCode, newCenter, newMaxExtent);
-            } catch (e) {
-                console.error("Overview srs change failed", e);
-            }
-        },
-        _changeSrs: function(srsCode, newCenter, newMaxExtent) {
-            /**
-             * @type {null|OpenLayers.Map}
-             */
-            var ovMap = this.overview.ovmap;
 
             var baseLayer = ovMap.layers[0];
             var layerUpdateOrder = ovMap.layers.filter(function(l) {
@@ -171,7 +217,7 @@
                 }
             }));
             var layerOptions = {
-                projection: srsCode
+                projection: data.to
             };
             if (newMaxExtent) {
                 layerOptions.maxExtent = newMaxExtent;
@@ -190,6 +236,17 @@
             } catch (e) {
                 console.error("Overview srs change failed", e);
             }
+        }
+        ,
+        _changeSrs4: function(event, data) {
+            var properties = this.overview.ovmap_.getProperties();
+            properties.view = new ol.View({
+              projection: data.to,
+              center: this.mbMap.model.olMap.getView().getCenter(),
+              extent: this.mbMap.model.getMaxExtent(),
+              resolution: this.mbMap.model.olMap.getView().getResolution()
+            });
+            this.overview.ovmap_.setProperties(properties);
         }
     });
 

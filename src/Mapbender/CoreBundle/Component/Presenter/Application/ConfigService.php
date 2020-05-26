@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -121,19 +122,31 @@ class ConfigService
             $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
             $layerSets     = array();
 
-            foreach ($this->filterActiveSourceInstances($layerSet) as $layer) {
-                $sourceService = $this->getSourceService($layer);
+            foreach ($this->filterActiveSourceInstanceAssignments($layerSet) as $assignment) {
+                $sourceService = $this->getSourceService($assignment->getInstance());
                 if (!$sourceService) {
                     // @todo: throw?
                     continue;
                 }
-                $conf = $sourceService->getConfiguration($layer);
+                // @todo: move check into prefilter (get service twice?)
+                if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+                    continue;
+                }
+                $conf = $sourceService->getConfiguration($assignment->getInstance());
                 if (!$conf) {
                     // @todo: throw?
                     continue;
                 }
+                if ($assignment->getInstance()->getLayerset()) {
+                    $assignmentId = 'bound' . $assignment->getInstance()->getId();
+                } else {
+                    $assignmentId = 'shared' . $assignment->getId();
+                }
+                // HACK: rewrite ids to fix massive JavaScript-side confusion about duplicate "source" ids
+                $conf['id'] = $assignmentId;
+
                 $layerSets[] = array(
-                    $layer->getId() => $conf,
+                    $assignmentId => $conf,
                 );
             }
 
@@ -187,18 +200,18 @@ class ConfigService
      * Extracts active source instances from given Layerset entity.
      *
      * @param Layerset $entity
-     * @return SourceInstance[]
+     * @return SourceInstanceAssignment[]
      */
-    protected static function filterActiveSourceInstances(Layerset $entity)
+    protected static function filterActiveSourceInstanceAssignments(Layerset $entity)
     {
         $isYamlApp = $entity->getApplication()->isYamlBased();
-        $activeInstances = array();
-        foreach ($entity->getInstances() as $instance) {
-            if ($isYamlApp || $instance->getEnabled()) {
-                $activeInstances[] = $instance;
+        $active = array();
+        foreach ($entity->getCombinedInstanceAssignments() as $assignment) {
+            if ($isYamlApp || $assignment->getEnabled()) {
+                $active[] = $assignment;
             }
         }
-        return $activeInstances;
+        return $active;
     }
 
     /**

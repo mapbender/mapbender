@@ -27,13 +27,10 @@ h4, .h4, .bigText {
 }
 
 .title{
-  font-weight:normal;
-  color:$darkFontColor;
   @extend .bigText;
 }
 .subTitle{
-  font-size:$fontSize;
-  color:$ciColor;
+  font-size: 1rem;
 }
 .labelInput, .labelText, .labelCheck{
   @extend .smallText;
@@ -49,17 +46,11 @@ h4, .h4, .bigText {
     color:$errorColor;
   }
 }
-.labelCheck{
-  color:$middleFontColor;
-  margin-left:$space/4;
-}
 /** a.labelText appears in certain FOM templates (User listing). Must respecify rule to defeat global a { color:inherit } */
 .labelText, a.labelText {
   color: $ciColor;
 }
-
 .description{
-  color:$middleFontColor;
   font-style:italic;
   @extend .smallText;
 }

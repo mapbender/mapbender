@@ -87,6 +87,16 @@ class ApplicationType extends AbstractType
                 'mapped' => false,
                 'data' => $options['screenshotHeight'],
             ))
+            ->add('map_engine_code', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'choices' => array(
+                    'mb.manager.admin.application.map_engine_code.ol2' => Application::MAP_ENGINE_OL2,
+                    'mb.manager.admin.application.map_engine_code.ol4' => Application::MAP_ENGINE_OL4,
+                ),
+                'choices_as_values' => true,
+                'label' => 'mb.manager.admin.application.map_engine_code',
+                'required' => true,
+                'empty_data' => Application::MAP_ENGINE_OL2,
+            ))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))

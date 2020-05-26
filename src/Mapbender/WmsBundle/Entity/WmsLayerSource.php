@@ -885,7 +885,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
 
     /**
      * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
-     * This is used by the *EntityHandler machinery frontend config generation.
+     * This is used in frontend config generation.
      *
      * @return BoundingBox[]
      */

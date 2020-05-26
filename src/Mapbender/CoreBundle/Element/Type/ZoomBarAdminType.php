@@ -28,9 +28,7 @@ class ZoomBarAdminType extends AbstractType
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    "Pan" => "pan",
-                    "History" => "history",
-                    "Zoom box" => "zoom_box",
+                    "Rotation" => "rotation",
                     "zoom to max extent" => "zoom_max",
                     "Zoom in/out" => "zoom_in_out",
                     "Zoom slider" => "zoom_slider",
@@ -44,14 +42,6 @@ class ZoomBarAdminType extends AbstractType
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
-            ))
-            ->add('stepSize', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
-            ->add('stepByPixel', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'choices' => array(
-                    'true' => 'true',
-                    'false' => 'false',
-                ),
-                'choices_as_values' => true,
             ))
             ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,

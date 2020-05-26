@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
- * in-memory, or from a given WmsOrigin (which is just url + username + password).
+ * in-memory, or from a given HttpOriginInterface
  * WmsSource is bundled in a Response class with validation errors. This is done because validation exceptions
  * can be optionally suppressed ("onlyValid"=false). In that case, the Response will contain the exception, if
  * any. By default, validation exceptions are thrown.
@@ -125,9 +126,8 @@ class Importer extends RefreshableSourceLoader
      * @param Source $target
      * @param Source $reloaded
      * @throws \Exception
-     * @internal, public only for legacy EntityHandler access
      */
-    public function updateSource(Source $target, Source $reloaded)
+    protected function updateSource(Source $target, Source $reloaded)
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
@@ -145,13 +145,15 @@ class Importer extends RefreshableSourceLoader
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
+            $application->setUpdated(new \DateTime('now'));
+            $this->entityManager->persist($application);
+        }
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);
-            // @todo reusable source instances: update affected applications without assuming instance => layerset ownership
-            $application = $instance->getLayerset()->getApplication();
-            $application->setUpdated(new \DateTime('now'));
-            $this->entityManager->persist($application);
             $this->entityManager->persist($instance);
         }
     }

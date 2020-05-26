@@ -37,10 +37,6 @@ class RulerAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('immediate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'Immediate',
-            ))
         ;
     }
 

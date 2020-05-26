@@ -172,21 +172,6 @@ mb:
       tag:
         overview: overzicht
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Straal
-          error: 'Straal is niet valide'
-        form:
-          button:
-            'yes': Ja
-            cancel: Annuleren
-      class:
-        title: Schets
-        description: 'Voegt een vector-laag toe aan de kaart waarop geometrische objecten getekend kunnen worden.'
-      tag:
-        sketch: schets
-        circle: cirkel
     metadata:
       popup:
         title: Metadata
@@ -243,12 +228,6 @@ mb:
       contextmenu:
         nooption: 'Laag heeft geen contekst menu optie'
     zoombar:
-      panup: 'schuif omhoog'
-      panright: 'schuif naar rechts'
-      pandown: 'schuif omlaag'
-      panleft: 'schuif naar links'
-      goback: 'ga terug'
-      goforward: 'ga vooruit'
       zoombybox: 'zoom in via rechthoek'
       zoombyworld: 'zoom uit'
       zoomin: 'zoom in'

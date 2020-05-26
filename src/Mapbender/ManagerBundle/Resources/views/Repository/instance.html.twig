@@ -20,11 +20,23 @@
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
 {% endblock %}
+{%- set _is_reusable_instance = not form.vars.data.layerset %}
 
 {% block heading %}
     <div class="contentTitle">
         <h1><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ _h1_text | default(title) }}<div class="clear"></div></h1>
-        <p>{{ _h1_subtext }}</p>
+        <p class="clear">{% if _is_reusable_instance %}<span class="badge badge-info badge pull-right">Geteilte Dienstinstanz</span>{% endif %}{{ _h1_subtext }}<span class="clear"></span></p>
+        <div class="clear">
+            <div class="pull-right">
+                {%- if _is_reusable_instance and layerset is defined and layerset -%}
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;In private Instanz in dieser Anwendung umwandeln</a>
+                {%- endif -%}
+                {%- if not _is_reusable_instance -%}
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;In freie Instanz umwandeln</a>
+                {%- endif -%}
+            </div>
+            <div class="clearContainer"></div>
+        </div>
     </div>
 {% endblock heading %}
 
@@ -32,16 +44,20 @@
 <div class="instanceContainer">
   {{ form_start(form) }}
 
-    <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.actions.save"|trans}}" />
-    {% if app.request.attributes.get('slug') %}
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
-    {% endif %}
+    <div class="form-group">
+        <div class="right">
+          <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.actions.save"|trans}}" />
+        {% if app.request.attributes.get('slug') %}
+          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% elseif layerset is defined and layerset %}
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% endif %}
+        </div>
+        <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
+        <a class="linkButton origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
+        <div class="clear"></div>
     </div>
 
-    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-    <a class="linkButton origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
-    <div class="clear"></div>
 
     <div class="row">
       {% block form_main %}
@@ -62,10 +78,12 @@
     {% block form_layers %}
     {% endblock form_layers %}
     <div class="button-group">
-      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
-    {% if app.request.attributes.get('slug') %}
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
-    {% endif %}
+      <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
+        {% if app.request.attributes.get('slug') %}
+          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% elseif layerset is defined and layerset %}
+            <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
+        {% endif %}
     </div>
     {{ form_row(form._token) }}
   {# suppress visible post-form 'dimensions' collection'; @todo: fix dimensions integration into form #}

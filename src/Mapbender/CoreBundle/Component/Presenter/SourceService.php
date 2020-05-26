@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter;
 
+use Mapbender\CoreBundle\Component\Source\SourceInstanceInformationInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -15,7 +16,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
  * Base class for atm the only shipping concrete implementation: @see WmsSourceService
  *
  */
-abstract class SourceService
+abstract class SourceService implements SourceInstanceInformationInterface
 {
     /** @var UrlProcessor */
     protected $urlProcessor;
@@ -35,6 +36,11 @@ abstract class SourceService
      */
     abstract public function getTypeCode();
 
+
+    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    {
+        return $sourceInstance->getEnabled();
+    }
 
     /**
      * @param SourceInstance $sourceInstance

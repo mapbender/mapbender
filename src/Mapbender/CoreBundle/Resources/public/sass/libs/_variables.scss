@@ -2,8 +2,6 @@
 $rootPath:  "bundles/mapbendercore/"; // !default;
 $imageBasePath: $rootPath + "image";
 $iconBasePath: $rootPath + "fonts";
-$contentPatternUrl: '';
-$managerContentPatternUrl: '';
 $headPatternUrl: $imageBasePath + "/head.png";
 
 //------------------------------------------------------------------font
@@ -34,6 +32,8 @@ $warningColor:#cece2a; // yellow
 $darkFontColor:#3f3f3f; // darker gray
 $middleFontColor:#707070; // lighter gray
 $lightFontColor:#fff; // white
+$toolBarFontColor: #222;
+
 
 // the holy colors
 $ciColor:#5b932a; // green

@@ -1,4 +1,5 @@
 (function($){
+    'use strict';
 
     /**
      * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~export
@@ -7,7 +8,6 @@
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
-        _geometryToGeoJson: null,
         $form: null,
 
         _create: function(){
@@ -16,12 +16,9 @@
             }
             this.$form = $('form', this.element);
             $(this.element).show();
-
-            var olGeoJson = new OpenLayers.Format.GeoJSON();
-            this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
-        _setup: function(){
+        _setup: function() {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.$form.on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
@@ -67,7 +64,13 @@
             return null;
         },
         _getExportExtent: function() {
-            return this.map.map.olMap.getExtent();
+            var lbrt = this.map.model.getCurrentExtentArray();
+            return {
+                left: lbrt[0],
+                bottom: lbrt[1],
+                right: lbrt[2],
+                top: lbrt[3]
+            };
         },
         _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
@@ -78,26 +81,30 @@
 
             for (var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
-                var olLayer = this.map.model.getNativeLayer(sourceDef);
-                var extra = {
-                    opacity: sourceDef.configuration.options.opacity,
-                    changeAxis: this._changeAxis(olLayer)
-                };
-                _.forEach(this.map.model.getPrintConfigEx(sourceDef, scale, extent), function(printConfig) {
-                    dataOut.push($.extend({}, printConfig, extra));
-                });
+                dataOut.push.apply(dataOut, this.map.model.getPrintConfigEx(sourceDef, scale, extent));
             }
             return dataOut;
         },
         _collectJobData: function() {
             var mapExtent = this._getExportExtent();
-            var imageSize = this.map.map.olMap.getCurrentSize();
+            var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryAndMarkerLayers();
+            var geometryLayers;
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    geometryLayers = this._collectGeometryAndMarkerLayers();
+                    break;
+                case 'ol4':
+                    geometryLayers = this._collectGeometryLayers4();
+                    break;
+                default:
+                    throw new Error("Unsupported map engine " + Mapbender.mapEngine.code);
+            }
             return {
                 layers: rasterLayers.concat(geometryLayers),
-                width: imageSize.w,
-                height: imageSize.h,
+                width: imageSize.width,
+                height: imageSize.height,
+                rotation: -this._getViewRotation(),
                 center: {
                     x: Math.min(mapExtent.left, mapExtent.right) + 0.5 * Math.abs(mapExtent.right - mapExtent.left),
                     y: Math.min(mapExtent.bottom, mapExtent.top) + 0.5 * Math.abs(mapExtent.top - mapExtent.bottom)
@@ -186,19 +193,15 @@
         /**
          * Extracts and preprocesses the geometry from a feature for export backend consumption.
          *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @param {OpenLayers.Feature.Vector} feature
-         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (native Openlayers format!)
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer|ol.layer.Vector} layer
+         * @param {OpenLayers.Feature.Vector|ol.Feature} feature
+         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (Openlayers 2-native svg format!)
          * @private
+         * engine-agnostic
          */
         _extractFeatureGeometry: function(layer, feature) {
-            var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style) {
-                // stringify => decode: makes a deep copy of the style at the moment of capture
-                geometry.style = JSON.parse(JSON.stringify(feature.style));
-            } else {
-                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
-            }
+            var geometry = this.map.model.featureToGeoJsonGeometry(feature);
+            geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
                 geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
             }
@@ -242,6 +245,36 @@
                 opacity: 1,
                 geometries: geometries
             };
+        },
+        _collectGeometryLayers4: function() {
+            var layersFlat = [];
+            this.map.model.olMap.getLayers().getArray().forEach(function (olLayer) {
+                olLayer.getLayersArray(layersFlat);
+            });
+            var vectorLayers = layersFlat.filter(function (olLayer) {
+                return (olLayer instanceof ol.layer.Vector) && olLayer.getVisible();
+            });
+            var dataOut = [];
+            for (var li = 0; li < vectorLayers.length; ++li) {
+                var layer = vectorLayers[li];
+                var features = layer.getSource().getFeatures();
+                var layerFeatureData = [];
+                for (var fi = 0; fi < features.length; ++fi) {
+                    var feature = features[fi];
+                    // printclient support HACK
+                    // @todo: implement filterFeature properly for dual-engine support
+                    if (this.feature && this.feature === feature) {
+                        continue;
+                    }
+                    layerFeatureData.push(this._extractFeatureGeometry(layer, feature));
+                }
+                dataOut.push({
+                    "type": "GeoJSON+Style",
+                    "opacity": layer.getOpacity(),
+                    "geometries": layerFeatureData
+                });
+            }
+            return dataOut;
         },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
@@ -310,24 +343,21 @@
             }
         },
         /**
-         * Check BBOX format inversion
-         *
-         * @param {OpenLayers.Layer.HTTPRequest} layer
-         * @returns {boolean}
+         * Returns current view rotation in degrees
+         * @returns {Number}
          * @private
          */
-        _changeAxis: function(layer) {
-            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
-
-            if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
-                    return true;
-                }
+        _getViewRotation: function() {
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    return 0;
+                case 'ol4':
+                    var radians = this.map.model.olMap.getView().getRotation();
+                    return radians * 180 / Math.PI;
+                default:
+                    throw new Error("Unsupported map engine " + Mapbender.mapEngine.code);
             }
-
-            return false;
         },
-
         _noDanglingCommaDummy: null
     });
 

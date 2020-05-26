@@ -15,7 +15,6 @@ use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -52,6 +51,20 @@ class WmsSourceService extends SourceService
         return 'OGC WMS';
     }
 
+    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    {
+        /** @var WmsInstance $sourceInstance */
+        $rootLayer = $sourceInstance->getRootlayer();
+        return parent::isInstanceEnabled($sourceInstance) && $rootLayer && $rootLayer->getActive();
+    }
+
+    public function canDeactivateLayer(SourceInstanceItem $layer)
+    {
+        /** @var WmsInstanceLayer $layer */
+        // dissallow breaking entire instance by removing root layer
+        return $layer->getSourceInstance()->getRootlayer() !== $layer;
+    }
+
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */
@@ -73,7 +86,6 @@ class WmsSourceService extends SourceService
             'url' => $this->getUrlOption($sourceInstance),
             'opacity' => ($sourceInstance->getOpacity() / 100),
             'proxy' => $this->useProxy($sourceInstance),
-            'visible' => $sourceInstance->getVisible(),
             'version' => $sourceInstance->getSource()->getVersion(),
             'format' => $sourceInstance->getFormat(),
             'info_format' => $sourceInstance->getInfoformat(),
@@ -232,8 +244,9 @@ class WmsSourceService extends SourceService
             $originHasCredentials = !!\parse_url($originUrl, PHP_URL_USER);
             $getMapHasCredentials = !!\parse_url($url, PHP_URL_USER);
             if ($originHasCredentials && !$getMapHasCredentials) {
-                $origin = new WmsOrigin($originUrl, null, null);
-                $url = UrlUtil::addCredentials($url, $origin->getUsername(), $origin->getPassword(), true);
+                $username = \urldecode(\parse_url($originUrl, PHP_URL_USER));
+                $password = \urldecode(\parse_url($originUrl, PHP_URL_PASS) ?: '');
+                $url = UrlUtil::addCredentials($url, $username, $password);
             }
         }
         $userToken = $this->tokenStorage->getToken();

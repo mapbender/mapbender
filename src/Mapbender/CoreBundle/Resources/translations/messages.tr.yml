@@ -172,21 +172,6 @@ mb:
       tag:
         overview: 'Genel görünüm'
         map: 'Harita'
-    sketch:
-      circle:
-        radius:
-          label: 'Yarıçap'
-          error: 'Yarıçap geçerli değil'
-        form:
-          button:
-            'yes': 'Evet'
-            cancel: 'Vazgeç'
-      class:
-        title: 'Kroki'
-        description: 'Haritaya bir vektör katmanı ekler ve geometrik şekiller çizilmesini sağlar.'
-      tag:
-        sketch: 'Kroki'
-        circle: 'Çember'
     metadata:
       popup:
         title: 'Üstveri (MetaData)'
@@ -243,12 +228,6 @@ mb:
       contextmenu:
         nooption: 'Katmanın menü seçeneği yok'
     zoombar:
-      panup: 'Kaydır'
-      panright: 'Sağa kaydır'
-      pandown: 'Aşağı kaydır'
-      panleft: 'Sola kaydırıldı'
-      goback: 'Geri dön'
-      goforward: 'İleri git'
       zoombybox: 'Çizilen alana yakınlaştır'
       zoombyworld: 'Tüm dünyayı göster'
       zoomin: 'Yakınlaştır'

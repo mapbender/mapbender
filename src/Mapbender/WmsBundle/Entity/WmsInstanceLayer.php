@@ -113,6 +113,22 @@ class WmsInstanceLayer extends SourceInstanceItem
         $this->style = "";
     }
 
+    public function __clone()
+    {
+        if ($this->id) {
+            $sublayers = $this->getSublayer()->getValues();
+            $newSublayers = array();
+            $this->setId(null);
+            foreach ($sublayers as $layer) {
+                /** @var static $layer */
+                $layerClone = clone $layer;
+                $layerClone->setParent($this);
+                $newSublayers[] = $layerClone;
+            }
+            $this->sublayer = new ArrayCollection($newSublayers);
+        }
+    }
+
     /**
      * @ORM\PostLoad()
      */

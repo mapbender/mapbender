@@ -173,21 +173,6 @@ mb:
       tag:
         overview: 'Visão geral'
         map: 'Mapa (visão geral)'
-    sketch:
-      circle:
-        radius:
-          label: Raio
-          error: 'Raio inválido'
-        form:
-          button:
-            'yes': Assumir
-            cancel: Cancelar
-      class:
-        title: Esboços
-        description: 'Adiciona uma camada de vetor ao mapa, sobre o que pode-se desenhar um objeto geométrico. '
-      tag:
-        sketch: Esboços
-        circle: Círculo
     metadata:
       popup:
         title: Metadados
@@ -244,12 +229,6 @@ mb:
       contextmenu:
         nooption: ~
     zoombar:
-      panup: 'Mover para cima'
-      panright: 'Mover à direita'
-      pandown: 'Mover para baixo'
-      panleft: 'Mover à esquerda'
-      goback: Voltar
-      goforward: Adiante
       zoombybox: 'Caixa de ampliar'
       zoombyworld: 'Mostrar toda extensão'
       zoomin: Ampliar

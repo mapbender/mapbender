@@ -4,14 +4,30 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 class SourceInstanceItemType extends AbstractType
 {
+
+    /** @var TypeDirectoryService */
+    protected $typeDirectory;
+
+    /**
+     * SourceInstanceItemType constructor.
+     * @param TypeDirectoryService $typeDirectory
+     */
+    public function __construct(TypeDirectoryService $typeDirectory)
+    {
+        $this->typeDirectory = $typeDirectory;
+    }
+
     public function getBlockPrefix()
     {
         return 'source_instance_item';
@@ -24,10 +40,6 @@ class SourceInstanceItemType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
             ))
-            ->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
-            ))
             ->add('allowselected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc",
@@ -37,6 +49,27 @@ class SourceInstanceItemType extends AbstractType
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
             ))
         ;
+        $type = $this;
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $e) use ($type) {
+            $type->addActiveField($e->getForm(), $e->getData());
+        });
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param SourceInstanceItem|null $data
+     */
+    protected function addActiveField(FormInterface $form, $data)
+    {
+        $disabled = !$data || !$this->typeDirectory->canDeactivateLayer($data);
+        if ($form->has('active')) {
+            $form->remove('active');
+        }
+        $form->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            'required' => false,
+            'disabled' => $disabled,
+            'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
+        ));
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options)

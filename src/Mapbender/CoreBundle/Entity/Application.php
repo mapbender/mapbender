@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @UniqueEntity("title")
  * @UniqueEntity("slug")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
@@ -33,6 +33,7 @@ class Application
     const SOURCE_DB = 2;
 
     const MAP_ENGINE_OL2 = 'ol2';
+    const MAP_ENGINE_OL4 = 'ol4';
 
     /** @var array YAML roles */
     protected $yamlRoles;
@@ -72,6 +73,12 @@ class Application
      * @ORM\Column(length=1024, nullable=false)
      */
     protected $template;
+
+    /**
+     * @ORM\Column(type="string", length=15, nullable=false, options={"default": "ol2"})
+     * @var string|null
+     */
+    protected $map_engine_code = self::MAP_ENGINE_OL2;
 
     /**
      * @var RegionProperties[]|ArrayCollection
@@ -129,6 +136,7 @@ class Application
         $this->elements         = new ArrayCollection();
         $this->layersets        = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
+        $this->map_engine_code = self::MAP_ENGINE_OL2;
     }
 
     /**
@@ -358,15 +366,16 @@ class Application
     /**
      * Read-only informative pseudo-relation
      *
+     * @param bool $includeUnowned
      * @return ArrayCollection|SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances($includeUnowned = false)
     {
         // @todo: figure out if there's an appropriate ORM annotation that can do this without
         //        writing code
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances($includeUnowned) as $instance) {
                 $instances->add($instance);
             }
         }
@@ -626,16 +635,23 @@ class Application
 
     /**
      * Get the map engine code as a string. Currently only 'ol2'...
+     * ... 'ol4' work in progress
      *
      * @return string
      */
     public function getMapEngineCode()
     {
-        // HACK: return constant
-        /**
-         * @todo: provide db column + expose in form
-         */
-        return self::MAP_ENGINE_OL2;
+        return $this->map_engine_code;
+    }
+
+    /**
+     * @param string $mapEngineCode
+     * @return $this
+     */
+    public function setMapEngineCode($mapEngineCode)
+    {
+        $this->map_engine_code = $mapEngineCode;
+        return $this;
     }
 
     /**

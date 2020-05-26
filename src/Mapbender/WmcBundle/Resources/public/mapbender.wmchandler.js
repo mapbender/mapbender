@@ -35,44 +35,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     this.addToMap = function(wmcid, state){
         var model = this.mapWidget.getModel();
-        var mapProj = model.map.olMap.getProjectionObject(),
-            toKeepSources = {};
-        var source, i;
-        if (this.options.keepSources === 'basesources'){
-            for (i = 0; i < model.sourceTree.length; i++){
-                source = model.sourceTree[i];
-                if(source.configuration.isBaseSource)
-                    toKeepSources[source.id] = {sourceId: source.id};
-            }
-        } else if (this.options.keepSources === 'allsources'){
-            for (i = 0; i < model.sourceTree.length; i++){
-                source = model.sourceTree[i];
-                toKeepSources[source.id] = {sourceId: source.id};
-            }
-        }
-        this.mapWidget.removeSources(toKeepSources);
-        if (state.extent.srs !== mapProj.projCode) {
-            try {
-                this.mapWidget.changeProjection(state.extent.srs);
-            } catch (e) {
-                Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
-                console.error("Projection change failed", e);
-                return;
-            }
-        }
-        if(!this.options.keepExtent){
-            var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-            this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
-        }
-        this._addWmcToMap(state.sources);
-    };
-    
-    this.removeFromMap = function(){
-        this.mapWidget.fireModelEvent({
-            name: 'contextremovestart',
-            value: null
-        });
-        var model = this.mapWidget.getModel();
+        var mapProj = model.map.olMap.getProjectionObject();
         if (this.options.keepSources !== 'allsources') {
             var toKeepSources = {};
             if (this.options.keepSources === 'basesources') {
@@ -84,13 +47,22 @@ Mapbender.WmcHandler = function(mapWidget, options){
             }
             this.mapWidget.removeSources(toKeepSources);
         }
-
-        this.mapWidget.fireModelEvent({
-            name: 'contextremoveend',
-            value: null
-        });
+        if (state.extent.srs !== mapProj.projCode) {
+            try {
+                this.mapWidget.changeProjection(state.extent.srs);
+            } catch (e) {
+                Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
+                console.error("Projection change failed", e);
+                return;
+            }
+        }
+        if(!this.options.keepExtent){
+            var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
+            this.mapWidget.getModel().setExtent(boundsAr);
+        }
+        this._addWmcToMap(state.sources);
     };
-
+    
     this._addWmcToMap = function(sources){
         this.mapWidget.fireModelEvent({
             name: 'contextaddstart',

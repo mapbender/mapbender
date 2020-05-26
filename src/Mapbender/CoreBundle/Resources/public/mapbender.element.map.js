@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            srsDefs: [],
             layersets: []
         },
         elementUrl: null,
@@ -20,20 +21,18 @@
         _create: function(){
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = Mapbender.Model;
-            this.model.init(this);
-            $.extend(this.options, {
-                layerDefs: [],
-                poiIcon: this.options.poiIcon
-            });
+            this.model = Mapbender.mapEngine.mapModelFactory(this);
+            // HACK: place the model instance globally at Mapbender.Model
+            if (window.Mapbender.Model) {
+                console.error("Mapbender.Model already set", window.Mapbender.Model);
+                throw new Error("Can't globally reassing window.Mapbender.Model");
+            }
+            window.Mapbender.Model = this.model;
             this.map = this.model.map;
             self._trigger('ready');
         },
         getMapState: function(){
             return this.model.getMapState();
-        },
-        sourceById: function(idObject){
-            return this.model.getSource(idObject);
         },
         /**
          *
@@ -41,14 +40,6 @@
         addSource: function(sourceDef, mangleIds) {
             // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
             this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
-        },
-        /**
-         *
-         */
-        removeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx) {
-                this.model.removeSource(toChangeObj);
-            }
         },
         /**
          *
@@ -65,8 +56,7 @@
          * options.value.tochange - for a "tochange" object
          * options.value.changed -  for a "changed" object
          */
-        fireModelEvent: function(options){
-//            window.console && console.log(options.name, options.value);
+        fireModelEvent: function(options) {
             this._trigger(options.name, null, options.value);
         },
         /**
@@ -79,7 +69,7 @@
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.options.srsDefs;
         },
         /**
          * Reterns the model
@@ -131,28 +121,12 @@
             this.model.zoomToFullExtent();
         },
         /**
-         * Zooms the map to extent
-         */
-        zoomToExtent: function(extent, closest){
-            if(typeof closest === 'undefined')
-                closest = true;
-            this.map.olMap.zoomToExtent(extent, closest);
-        },
-        /**
          * Zooms the map to scale
          * @deprecated
          */
         zoomToScale: function(scale, closest) {
             console.warn("Deprecated zoomToScale call, use engine-independent Model.pickZoomForScale + Model.setZoomLevel");
             this.map.olMap.zoomToScale.apply(this.map.olMap, arguments);
-        },
-        /**
-         * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
-         * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
-         * @deprecated
-         */
-        setMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
-            this.getModel().replaceInitialMaxExtent(newMaxExtent, newMaxExtentSrs);
         },
         /**
          * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model

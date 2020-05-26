@@ -1,12 +1,11 @@
-.mb-element-zoombar{
+.mb-element-zoombar {
   text-align: center; // support automatic centering of children
-
+  .component + .component {
+    margin-top: 0.7rem;
+  }
   .pan, .toolPane {
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
-  }
-  .pan, .toolPane, .move-icon-wrap {
-    margin-bottom: $space / 2;
   }
   .pan > span {
     &:hover {
@@ -22,21 +21,6 @@
     }
   }
 
-  /**
-  * Map navigation buttons
-  */
-  .pan{
-    height: 49px;
-    width: 49px;
-    position:relative;
-    @include border-radius(50%,50%);
-
-
-    .iconTop{@include absolute(1px '' '' 18px);}
-    .iconRight{@include absolute(15px 6px '' '');}
-    .iconDown{@include absolute('' '' 1px 18px);}
-    .iconLeft{@include absolute(15px '' '' 7px);}
-  }
   &.right-top, &.right-bottom {
     .move-icon-wrap {
       text-align: right;
@@ -60,9 +44,6 @@
     .zoomSlider > ul {
       margin:3px 0;
     }
-    .historyNext {
-      margin-left:5px;
-    }
   }
   .toolPane {
     > li {
@@ -84,5 +65,49 @@
       margin-bottom: -1px;
     }
   }
-  
+
+  .rotation {
+    svg {
+      height: 2.5em;
+      width: auto;
+      // we only have one icon :)
+    }
+    .rotate-cw {
+      transform: scaleY(-1);
+    }
+    .rotate-ccw {
+      transform: scale(-1, -1);
+    }
+    @include frontendContainerStyle();
+    color: fade-out($lightFontColor, .3);
+    display: inline-flex;
+    flex-direction: row;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    padding: 4px;
+    text-align: justify;
+    line-height: 54px;
+    .reset-rotation {
+      flex: 1 1 auto;
+      text-align: center;
+      display: inline-block;
+      font-size: 179%;
+    }
+    .rotate-cw, .rotate-ccw {
+      flex: 0 0 auto;
+      position: relative;
+      bottom: 0.6em;
+    }
+    .default-rotate-left-45 {
+      transform: rotate(-45deg);
+    }
+  }
+  .mobile-template & {
+    // Hide rotation icons in mobile to make rotation reset easier to hit
+    // We expect mobile users to prefer pinch rotation
+    .rotate-cw, .rotate-ccw {
+      display: none;
+    }
+  }
 }

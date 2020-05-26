@@ -28,6 +28,12 @@ mb:
       plural: Instances
       typed:
         singular: '%type% instance'
+      reusable:
+        singular: Shared instance
+        plural: Shared instances
+      bound:
+        singular: Bound instance
+        plural: Bound instances
   states:
     active: active
     inactive: inactive
@@ -174,21 +180,6 @@ mb:
       tag:
         overview: overview
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Radius is not valid'
-        form:
-          button:
-            'yes': 'Yes'
-            cancel: Cancel
-      class:
-        title: Sketch
-        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
-      tag:
-        sketch: sketch
-        circle: circle
     metadata:
       popup:
         title: Metadata
@@ -245,12 +236,6 @@ mb:
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      panup: 'Pan up'
-      panright: 'Pan right'
-      pandown: 'Pan down'
-      panleft: 'Pan left'
-      goback: 'Go back'
-      goforward: 'Go forward'
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'
       zoomin: Zoom in

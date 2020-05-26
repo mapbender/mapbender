@@ -5,7 +5,6 @@
             autoOpen:                 true,
             target:                   null,
             elementType:              "dialog",
-            displayType:              "list",
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedLayerTitle: true
@@ -36,7 +35,7 @@
          */
         _setup: function(mbMap) {
             this.mbMap = mbMap;
-            $(document).one('mbmapsourceloadend', $.proxy(this.onMapLoaded, this));
+            this.onMapLoaded();
             this._trigger('ready');
         },
 
@@ -53,9 +52,15 @@
                     this.open();
                 }
             }
+            var rerenderOn = [
+                'mbmapsourceadded',
+                'mbmapsourcechanged',
+                'mbmapsourcemoved',
+                'mbmapsourcesreordered',
+                'mbmapsourcelayerremoved'
+            ];
 
-            $(document)
-                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved mbmapsourcesreordered', $.proxy(this.onMapLayerChanges, this))
+            $(document).bind(rerenderOn.join(' '), $.proxy(this.onMapLayerChanges, this));
         },
 
         /**

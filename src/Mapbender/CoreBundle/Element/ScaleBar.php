@@ -2,13 +2,13 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
- * Map's overview element
- *
  * @author Paul Schmidt
  */
-class ScaleBar extends Element
+class ScaleBar extends Element implements ConfigMigrationInterface
 {
 
     /**
@@ -37,9 +37,7 @@ class ScaleBar extends Element
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
-            'units' => array(
-                "km",
-            ),
+            'units' => "km",
         );
     }
 
@@ -72,7 +70,7 @@ class ScaleBar extends Element
      */
     public function getAssets()
     {
-        return array(
+        $assets = array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scalebar.js',
             ),
@@ -80,6 +78,10 @@ class ScaleBar extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/scalebar.scss',
             ),
         );
+        if ($this->entity->getApplication()->getMapEngineCode() === Entity\Application::MAP_ENGINE_OL4) {
+            $assets['js'][] = '@MapbenderCoreBundle/Resources/public/ol.control.ScaleLinePatched.js';
+        }
+        return $assets;
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
@@ -100,4 +102,20 @@ class ScaleBar extends Element
         ));
     }
 
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $config = $entity->getConfiguration();
+        if (!empty($config['units'])) {
+            // demote legacy multi-units array to scalar
+            if (\is_array($config['units'])) {
+                // use first value
+                $vals = \array_values($config['units']);
+                $config['units'] = $vals[0];
+            }
+        } else {
+            // Drop falsy / empty array values. Defaults will be used automatically.
+            unset($config['units']);
+        }
+        $entity->setConfiguration($config);
+    }
 }

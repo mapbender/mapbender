@@ -67,6 +67,10 @@
                 }
             });
             this._super();
+            this.layer = this._initializeSelectionLayer();
+            this.map.element.on('mbmapsrschanged', function() {
+                self._onSrsChanged();
+            });
         },
 
         open: function(callback){
@@ -93,30 +97,25 @@
         _activateSelection: function(reset) {
             var self = this;
             this._getTemplateSize().then(function() {
-                var layer = self._getSelectionLayer();
-                var control = self._getSelectionDragControl();
-                self.map.map.olMap.addLayer(layer);
-                self.map.map.olMap.addControl(control);
+                Mapbender.vectorLayerPool.raiseElementLayers(self);
+                Mapbender.vectorLayerPool.showElementLayers(self);
                 self.selectionActive = true;
-                control.activate();
                 if (reset) {
                     self._setScale();
                 } else {
                     self._updateGeometry();
                 }
+                self._startDrag();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
         _deactivateSelection: function() {
             var wasActive = !!this.selectionActive;
             this.selectionActive = false;
-            if (wasActive && this.control) {
-                this.control.deactivate();
-                this.map.map.olMap.removeControl(this.control);
+            if (wasActive) {
+                this._endDrag();
             }
-            if (wasActive && this.layer) {
-                this.map.map.olMap.removeLayer(this.layer);
-            }
+            Mapbender.vectorLayerPool.hideElementLayers(this);
             $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
@@ -178,6 +177,19 @@
             select.val(selectValue).trigger('change');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
+            if (Mapbender.mapEngine.code !== 'ol2') {
+                // OpenLayers 4
+                // @todo: geodesic aspect ratio
+                var pupm = this.map.getModel().getProjectionUnitsPerMeter();
+                var projectedWidth = this.width * scale * pupm;
+                var projectedHeight = this.height * scale * pupm;
+                return {
+                    left: centerX - projectedWidth,
+                    right: centerX + projectedWidth,
+                    bottom: centerY - projectedHeight,
+                    top: centerY + projectedHeight
+                };
+            }
             // adjust for geodesic pixel aspect ratio so
             // a) our print region selection rectangle appears with ~the same visual aspect ratio as
             //    the main map region in the template, for any projection
@@ -196,10 +208,39 @@
             return new OpenLayers.Bounds.fromArray([x0, y0, x1, y1]);
         },
         _printBoundsFromFeature: function(feature, scale) {
-            var featureCenter = this.feature.geometry.getBounds().getCenterLonLat();
-            return this._getPrintBounds(featureCenter.lon, featureCenter.lat, scale);
+            if (Mapbender.mapEngine.code === 'ol2') {
+                var featureCenter = this.feature.geometry.getBounds().getCenterLonLat();
+                return this._getPrintBounds(featureCenter.lon, featureCenter.lat, scale);
+            } else {
+                var featureCenterCoords = ol.extent.getCenter(this.feature.getGeometry().getExtent());
+                return this._getPrintBounds(featureCenterCoords[0], featureCenterCoords[1], scale);
+            }
         },
-
+        /**
+         * @param {boolean} reset
+         * @return {Object} with properties 'lon' and 'lat'
+         * @private
+         */
+        _getFeatureCenter: function(reset) {
+            if (Mapbender.mapEngine.code === 'ol2') {
+                if (reset || !this.feature) {
+                    return this.map.map.olMap.getCenter();
+                } else {
+                    return this.feature.geometry.getBounds().getCenterLonLat();
+                }
+            } else {
+                var centerCoords;
+                if (reset || !this.feature) {
+                    centerCoords = this.map.getModel().olMap.getView().getCenter();
+                } else {
+                    centerCoords = ol.extent.getCenter(this.feature.getGeometry().getExtent());
+                }
+                return {
+                    lon: centerCoords[0],
+                    lat: centerCoords[1]
+                };
+            }
+        },
         _updateGeometry: function(reset) {
             var scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]', this.$form);
@@ -208,41 +249,49 @@
                 return;
             }
             scale = parseInt(scale);
+            this.currentRotation_ = parseInt(rotationField.val()) || 0;
 
-            var rotation = parseInt(rotationField.val()) || 0;
-
-            this.control.unsetFeature();
-
-            var center;
-            if (reset || !this.feature) {
-                center = this.map.map.olMap.getCenter();
-            } else {
-                center = this.feature.geometry.getBounds().getCenterLonLat();
-            }
+            var center = this._getFeatureCenter(reset);
             var bounds = this._getPrintBounds(center.lon, center.lat, scale);
-            this.feature = new OpenLayers.Feature.Vector(bounds.toGeometry());
 
-            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this._redrawSelectionFeatures([this.feature]);
-            this.control.setFeature(this.feature, {rotation: -rotation});
+            if (Mapbender.mapEngine.code === 'ol2') {
+                var geometry = bounds.toGeometry();
+                geometry.rotate(-this.currentRotation_, new OpenLayers.Geometry.Point(center.lon, center.lat));
+                if (this.control) {
+                    this.control.unsetFeature();
+                }
+                this.feature = new OpenLayers.Feature.Vector(geometry);
+                if (this.control) {
+                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
+                }
+                this._redrawSelectionFeatures([this.feature]);
+            } else {
+                var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+                var deg2rad = 2 * Math.PI / 360;
+                geom.rotate(-this.currentRotation_ * deg2rad, [center.lon, center.lat]);
+                if (this.feature) {
+                    this.feature.setGeometry(geom);
+                } else {
+                    this.feature = new ol.Feature(geom);
+                }
+                this._redrawSelectionFeatures([this.feature]);
+            }
         },
         _redrawSelectionFeatures: function(features) {
-            var layer = this._getSelectionLayer();
-            layer.removeAllFeatures();
-            layer.addFeatures(features);
-            layer.redraw();
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            layerBridge.clear();
+            layerBridge.addNativeFeatures(features);
         },
         /**
-         * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
-         * for the rest of the session.
+         * Creates the layer on which the selection feature is drawn.
          *
-         * @return {OpenLayers.Layer.Vector}
+         * @return {OpenLayers.Layer.Vector|ol.layer.Vector}
          */
-        _getSelectionLayer: function() {
-            if (!this.layer) {
+        _initializeSelectionLayer: function() {
+            var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer();
+            if (Mapbender.mapEngine.code === 'ol2') {
                 var self = this;
-                this.layer = new OpenLayers.Layer.Vector("Print", {
-                    styleMap: new OpenLayers.StyleMap({
+                layer.styleMap = new OpenLayers.StyleMap({
                         'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
                         'transform': new OpenLayers.Style({
                             display: '${getDisplay}',
@@ -269,7 +318,7 @@
                         }, {
                             context: {
                                 getPointRadius: function(feature) {
-                                    var mapScale = self.map.getModel().getScale();
+                                    var mapScale = self.map.getModel().getCurrentScale();
                                     var printScale = self._getPrintScale();
                                     // Make the point smaller for high ratios of mapScale / printScale
                                     // so it doesn't start to obscure the print rectangle.
@@ -285,10 +334,12 @@
                                 }
                             }
                         })
-                    })
                 });
             }
-            return this.layer;
+            return layer;
+        },
+        _forwardRotation: function(degrees) {
+            $('input[name="rotation"]', this.$form).val(degrees);
         },
         /**
          * Gets the drag control used to rotate and
@@ -296,26 +347,88 @@
          * Control is created on first call, then reused.
          * Implicitly creates the selection layer, too, if not yet done.
          */
-        _getSelectionDragControl: function() {
-            var self = this;
-            if (!this.control) {
-                this.control = new OpenLayers.Control.TransformFeature(this._getSelectionLayer(), {
-                    renderIntent: 'transform',
-                    rotationHandleSymbolizer: 'rotate'
-                });
-                this.control.events.on({
-                    'transformcomplete': function() {
-                        var userRotation = 360 - this.rotation;
-                        if (userRotation > 180) {
-                            userRotation -= 360;
-                        }
-                        $('input[name="rotation"]', self.$form).val(userRotation);
-                    }
-                });
+        _startDrag: function() {
+            if (Mapbender.mapEngine.code === 'ol2' && !this.control) {
+                // OpenLayers 2 control can be reused once created
+                this.control = this._createDragRotateControlOl2();
+                this.map.map.olMap.addControl(this.control);
+            } else if (Mapbender.mapEngine.code !== 'ol2') {
+                // OpenLayers 4 control needs disposing + recreation
+                if (this.control) {
+                    this.control.setActive(false);
+                    this.map.getModel().olMap.removeInteraction(this.control);
+                    this.control.dispose();
+                }
+                this.control = this._createDragRotateControlOl4();
+                this.map.getModel().olMap.addInteraction(this.control);
+            }
+            // activation
+            if (Mapbender.mapEngine.code === 'ol2') {
+                if (this.feature) {
+                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
+                }
+                this.control.activate();
+            } else {
+                this.control.setActive(true);
+                this.control.select(this.feature);
             }
             return this.control;
         },
-
+        _endDrag: function() {
+            if (this.control) {
+                if (Mapbender.mapEngine.code === 'ol2') {
+                    this.control.deactivate();
+                } else {
+                    this.control.setActive(false);
+                }
+            }
+        },
+        _createDragRotateControlOl2: function() {
+            var self = this;
+            var control = new OpenLayers.Control.TransformFeature(this.layer, {
+                renderIntent: 'transform',
+                rotationHandleSymbolizer: 'rotate'
+            });
+            control.events.on({
+                'transformcomplete': function() {
+                    var userRotation = 360 - this.rotation;
+                    if (userRotation > 180) {
+                        userRotation -= 360;
+                    }
+                    self._forwardRotation(userRotation);
+                }
+            });
+            return control;
+        },
+        _createDragRotateControlOl4: function() {
+            var self = this;
+            var interaction = new ol.interaction.Transform({
+                translate: true,
+                rotate: true,
+                translateFeature: true,
+                stretch: false,
+                scale: false
+            });
+            interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
+                var rad2deg = 360. / (2 * Math.PI);
+                self._forwardRotation(-Math.round(rad2deg * data.angle));
+            });
+            // Adjust styling
+            // Interaction can repeatedly call setDefaultStyle, patching once is not enough
+            // setDefaultStyle also ends in a call to drawSketch_
+            // To reliably influence style, we need to monkey-patch drawSketch_ itself
+            /** @this {ol.interaction.Transform} */
+            interaction.drawSketch_ = function(center) {
+                // Disable center point translate handle marker ("bigpt").
+                this.style.default[0].setImage(null);
+                this.style.translate[0].setImage(null);
+                this.style.rotate0[0].setImage(null);
+                //this.style.default = styleDefault;
+                //this.style.translate = styleTranslate;
+                ol.interaction.Transform.prototype.drawSketch_.call(this, center);
+            };
+            return interaction;
+        },
         _getPrintScale: function() {
             return $('select[name="scale_select"]', this.$form).val();
         },
@@ -350,8 +463,7 @@
                 var source = sources[i];
                 var rootLayer = source.configuration.children[0];
                 var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
-                var gsHandler = this.map.model.getGeoSourceHandler(source);
-                var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
+                var leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 var sourceLegendList = [];
                 _.forEach(leafInfo, function(activeLeaf) {
                     if (activeLeaf.state.visibility) {
@@ -428,6 +540,8 @@
             return true;
         },
         _collectOverview: function() {
+            // @todo: collect overview properly, use mbOverview widget, use Source objects
+            return null;
             // overview map
             var self = this;
             var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
@@ -455,13 +569,28 @@
         },
         _collectJobData: function() {
             var jobData = this._super();
+            // Remove upstream rotation value. We have this as a top-level input field. Backend may get confused
+            // when we submit both
+            delete jobData['rotation'];
             var overview = this._collectOverview();
-            var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
-                return {
-                    x: component.x,
-                    y: component.y
-                };
-            });
+            var extentFeature;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                extentFeature = this.feature.geometry.components[0].components.map(function(component) {
+                    return {
+                        x: component.x,
+                        y: component.y
+                    };
+                });
+            } else {
+                var flatCoords = this.feature.getGeometry().getFlatCoordinates();
+                extentFeature = [];
+                for (var c = 0; c < flatCoords.length; c += 2) {
+                    extentFeature.push({
+                        x: flatCoords[c],
+                        y: flatCoords[c + 1]
+                    });
+                }
+            }
             var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {
                 overview: overview,
@@ -641,6 +770,15 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+        _onSrsChanged: function() {
+            Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
+            this.feature = null;
+            if (this.selectionActive) {
+                this._endDrag();
+                this._updateGeometry();
+                this._startDrag();
+            }
         },
 
         _initJobList: function($jobListPanel) {
