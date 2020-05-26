@@ -28,7 +28,7 @@ class WmsInstance extends SourceInstance
      * @var WmsInstanceLayer[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove", "refresh"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
-     * @ORM\OrderBy({"priority" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
     protected $layers;
 
