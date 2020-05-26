@@ -94,17 +94,15 @@
                 this.activate();
             }
         },
-        _activateSelection: function(reset) {
+        _activateSelection: function() {
+            this.feature = null;
+            Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
+            Mapbender.vectorLayerPool.raiseElementLayers(this);
+            Mapbender.vectorLayerPool.showElementLayers(this);
             var self = this;
             this._getTemplateSize().then(function() {
-                Mapbender.vectorLayerPool.raiseElementLayers(self);
-                Mapbender.vectorLayerPool.showElementLayers(self);
                 self.selectionActive = true;
-                if (reset) {
-                    self._setScale();
-                } else {
-                    self._updateGeometry();
-                }
+                self._setScale();
                 self._startDrag();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
@@ -115,13 +113,14 @@
             if (wasActive) {
                 this._endDrag();
             }
+            Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
             Mapbender.vectorLayerPool.hideElementLayers(this);
+            this.feature = null;
             $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
             if (this.useDialog_ || this.$selectionFrameToggle.data('active')) {
-                var resetScale = !this._isSelectionOnScreen();
-                this._activateSelection(resetScale);
+                this._activateSelection();
             }
             if (this.jobList) {
                 this.jobList.resume();
@@ -142,14 +141,6 @@
                 }
             }
             this._super();
-        },
-        _isSelectionOnScreen: function() {
-            if (this.feature && this.feature.geometry) {
-                var viewGeometry = this.map.map.olMap.getExtent().toGeometry();
-                return viewGeometry.intersects(this.feature.geometry);
-            } else {
-                return false;
-            }
         },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
@@ -174,6 +165,7 @@
                 selectValue = scales[scales.length-1];
             }
 
+            /** implicitly calls _updateGeometry */
             select.val(selectValue).trigger('change');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
@@ -217,20 +209,19 @@
             }
         },
         /**
-         * @param {boolean} reset
          * @return {Object} with properties 'lon' and 'lat'
          * @private
          */
-        _getFeatureCenter: function(reset) {
+        _getFeatureCenter: function() {
             if (Mapbender.mapEngine.code === 'ol2') {
-                if (reset || !this.feature) {
+                if (!this.feature) {
                     return this.map.map.olMap.getCenter();
                 } else {
                     return this.feature.geometry.getBounds().getCenterLonLat();
                 }
             } else {
                 var centerCoords;
-                if (reset || !this.feature) {
+                if (!this.feature) {
                     centerCoords = this.map.getModel().olMap.getView().getCenter();
                 } else {
                     centerCoords = ol.extent.getCenter(this.feature.getGeometry().getExtent());
@@ -241,7 +232,7 @@
                 };
             }
         },
-        _updateGeometry: function(reset) {
+        _updateGeometry: function() {
             var scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]', this.$form);
 
@@ -251,7 +242,7 @@
             scale = parseInt(scale);
             this.currentRotation_ = parseInt(rotationField.val()) || 0;
 
-            var center = this._getFeatureCenter(reset);
+            var center = this._getFeatureCenter();
             var bounds = this._getPrintBounds(center.lon, center.lat, scale);
 
             if (Mapbender.mapEngine.code === 'ol2') {
