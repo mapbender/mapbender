@@ -72,7 +72,6 @@
 *NOTE*: see [UPGRADING.md](./UPGRADING.md) for guidance on all package dependency changes
 - Dropped legacy joii library dependency
 - Replaced `eslider/sasscb` dependency with two new dependencies ([PR#1219](https://github.com/mapbender/mapbender/pull/1219))
-- Added `
 - Add missing `sensio/generator-bundle` dependency declaration (required by `mapbender:generate:element` command)
 - Moved owsproxy dependency back to stable / tagged version releases
 ### Other changes
