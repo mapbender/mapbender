@@ -184,10 +184,10 @@
                 var projectedWidth = this.width * scale * pupm;
                 var projectedHeight = this.height * scale * pupm;
                 return {
-                    left: centerX - projectedWidth,
-                    right: centerX + projectedWidth,
-                    bottom: centerY - projectedHeight,
-                    top: centerY + projectedHeight
+                    left: centerX - .5 * projectedWidth,
+                    right: centerX + .5 * projectedWidth,
+                    bottom: centerY - .5 * projectedHeight,
+                    top: centerY + .5 * projectedHeight
                 };
             }
             // adjust for geodesic pixel aspect ratio so
