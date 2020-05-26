@@ -247,10 +247,10 @@
                     this.control.unsetFeature();
                 }
                 this.feature = new OpenLayers.Feature.Vector(geometry);
+                this._redrawSelectionFeatures([this.feature]);
                 if (this.control) {
                     this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
                 }
-                this._redrawSelectionFeatures([this.feature]);
             } else {
                 var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
                 var deg2rad = 2 * Math.PI / 360;
