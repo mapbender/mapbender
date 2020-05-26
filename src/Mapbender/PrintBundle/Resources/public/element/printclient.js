@@ -143,31 +143,25 @@
             }
             this._super();
         },
-        _setScale: function() {
-            var select = $("select[name='scale_select']", this.$form);
+        _pickScale: function() {
             var scales = this.options.scales;
             var currentScale = Math.round(this.map.getModel().getCurrentScale());
-            var selectValue;
-
-            $.each(scales, function(idx, scale) {
-                if(scale == currentScale){
-                    selectValue = scales[idx];
-                    return false;
-                }
-                if(scale > currentScale){
-                    selectValue = scales[idx-1];
-                    return false;
+            // sort by absolute difference to current scale
+            var sorted = scales.sort(function(a, b) {
+                var deltaA = Math.abs(a - currentScale);
+                var deltaB = Math.abs(b - currentScale);
+                if (deltaA === deltaB) {
+                    return 0;
+                } else {
+                    return (deltaA > deltaB) * 2 - 1;
                 }
             });
-            if(currentScale <= scales[0]){
-                selectValue = scales[0];
-            }
-            if(currentScale > scales[scales.length-1]){
-                selectValue = scales[scales.length-1];
-            }
-
-            /** implicitly calls _updateGeometry */
-            select.val(selectValue).trigger('dropdown.changevisual');
+            return sorted[0];
+        },
+        _setScale: function() {
+            var select = $("select[name='scale_select']", this.$form);
+            var scale = this._pickScale();
+            select.val(scale).trigger('dropdown.changevisual');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             if (Mapbender.mapEngine.code !== 'ol2') {
