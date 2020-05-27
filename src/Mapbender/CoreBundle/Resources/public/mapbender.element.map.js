@@ -77,15 +77,6 @@
         getModel: function(){
             return this.model;
         },
-        /**
-         * Emulation shim for old-style MapQuery.Map.prototype.center.
-         * See https://github.com/mapbender/mapquery/blob/1.0.2/src/jquery.mapquery.core.js#L298
-         * @param {Object} options
-         * @deprecated
-         */
-        setCenter: function(options){
-            this.getModel().setCenterMapqueryish(options);
-        },
         /*
          * Changes the map's projection.
          */
