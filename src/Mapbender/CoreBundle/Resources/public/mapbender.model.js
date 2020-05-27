@@ -770,6 +770,15 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return gj.geometry;
     },
     /**
+     * Centered feature rotation (counter-clockwise)
+     *
+     * @param {OpenLayers.Feature.Vector} feature
+     * @param {Number} degrees
+     */
+    rotateFeature: function(feature, degrees) {
+        feature.geometry.rotate(degrees, feature.geometry.getCentroid(false));
+    },
+    /**
      * @param {OpenLayers.Layer.Vector} olLayer
      * @param {OpenLayers.Feature.Vector} feature
      * @return {Object}

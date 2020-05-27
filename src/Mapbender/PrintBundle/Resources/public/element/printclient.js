@@ -290,21 +290,14 @@
             var entry = this._getFeatureEntry(feature);
             var appliedRotation = entry && entry.appliedRotation || 0;
             var delta = degrees - appliedRotation;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                var featureOnControl = this.control && this.control.feature === feature;
-                if (featureOnControl) {
-                    this._endDrag();
-                }
-                feature.geometry.rotate(-delta, feature.geometry.getCentroid(false));
-                this._redrawSelectionFeatures();
-                if (featureOnControl) {
-                    this._startDrag(feature, degrees);
-                }
-            } else {
-                var deg2rad = 2 * Math.PI / 360;
-                var center = ol.extent.getCenter(feature.getGeometry().computeExtent());
-                feature.getGeometry().rotate(-delta * deg2rad, center);
-                this._redrawSelectionFeatures();
+            var fixDragOl2 = Mapbender.mapEngine.code === 'ol2' && this.control && this.control.feature === feature;
+            if (fixDragOl2) {
+                this._endDrag();
+            }
+            this.map.getModel().rotateFeature(feature, -delta);
+            this._redrawSelectionFeatures();
+            if (fixDragOl2) {
+                this._startDrag(feature, degrees);
             }
             if (entry) {
                 entry.appliedRotation = degrees;

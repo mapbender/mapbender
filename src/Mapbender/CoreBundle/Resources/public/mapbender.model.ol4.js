@@ -324,6 +324,18 @@ window.Mapbender.MapModelOl4 = (function() {
     featureToGeoJsonGeometry: function(feature) {
         return this._geojsonFormat.writeFeatureObject(feature).geometry;
     },
+    /**
+     * Centered feature rotation (counter-clockwise)
+     *
+     * @param {ol.Feature} feature
+     * @param {Number} degrees
+     */
+    rotateFeature: function(feature, degrees) {
+        var geometry = feature.getGeometry();
+        var deg2rad = 2 * Math.PI / 360;
+        var center = ol.extent.getCenter(geometry.computeExtent());
+        geometry.rotate(degrees * deg2rad, center);
+    },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
         var view = this.olMap.getView();
