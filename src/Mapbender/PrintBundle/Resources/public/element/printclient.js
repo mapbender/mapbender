@@ -1,5 +1,9 @@
 (function($) {
-
+    /**
+     * @typedef {Object} mbPrintClientSelectionEntry
+     * @property {Object} feature
+     * @property {Number} appliedRotation
+     */
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
             locale: null,
@@ -16,7 +20,6 @@
         layer: null,
         control: null,
         feature: null,
-        lastRotation: null,
         width: null,
         height: null,
         overwriteTemplates: false,
@@ -29,6 +32,9 @@
         // for the same template(s) within the same session
         _templateSizeCache: {},
         selectionActive: false,
+        inputRotation_: 0,
+        /** @type {Array<mbPrintClientSelectionEntry>} */
+        selectionFeatures_: [],
 
         _setup: function(){
             var self = this;
@@ -39,10 +45,16 @@
             }
 
             $('select[name="scale_select"]', this.$form).on('change', function() {
-                self._updateGeometry();
+                if (self.selectionActive) {
+                    self._resetSelectionFeature();
+                }
             });
             $('input[name="rotation"]', this.$form).on('keyup', function() {
-                self._updateGeometry();
+                /** @this {HTMLInputElement} */
+                self.inputRotation_ = parseInt($(this).val()) || 0;
+                if (self.selectionActive && self.feature) {
+                    self._applyRotation(self.feature, self.inputRotation_);
+                }
             });
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
@@ -95,7 +107,7 @@
             }
         },
         _activateSelection: function() {
-            this.feature = null;
+            this._clearFeature(this.feature);
             Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
             Mapbender.vectorLayerPool.raiseElementLayers(this);
             Mapbender.vectorLayerPool.showElementLayers(this);
@@ -104,7 +116,6 @@
                 self.selectionActive = true;
                 self._setScale();
                 self._updateGeometry();
-                self._startDrag();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
@@ -116,7 +127,8 @@
             }
             Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
             Mapbender.vectorLayerPool.hideElementLayers(this);
-            this.feature = null;
+            this._clearFeature(this.feature);
+            this.selectionFeatures_ = [];
             $('input[type="submit"]', this.$form).addClass('hidden');
         },
         activate: function() {
@@ -196,75 +208,113 @@
         },
         _printBoundsFromFeature: function(feature, scale) {
             if (Mapbender.mapEngine.code === 'ol2') {
-                var featureCenter = this.feature.geometry.getBounds().getCenterLonLat();
+                var featureCenter = feature.geometry.getBounds().getCenterLonLat();
                 return this._getPrintBounds(featureCenter.lon, featureCenter.lat, scale);
             } else {
-                var featureCenterCoords = ol.extent.getCenter(this.feature.getGeometry().getExtent());
+                var featureCenterCoords = ol.extent.getCenter(feature.getGeometry().getExtent());
                 return this._getPrintBounds(featureCenterCoords[0], featureCenterCoords[1], scale);
             }
         },
         /**
-         * @return {Object} with properties 'lon' and 'lat'
+         * @return {{lon: Number lat: Number}}
          * @private
          */
-        _getFeatureCenter: function() {
+        _getMapCenter: function() {
+            // @todo Model: provide an API method for this
             if (Mapbender.mapEngine.code === 'ol2') {
-                if (!this.feature) {
-                    return this.map.map.olMap.getCenter();
-                } else {
-                    return this.feature.geometry.getBounds().getCenterLonLat();
-                }
+                return this.map.getModel().olMap.getCenter();
             } else {
-                var centerCoords;
-                if (!this.feature) {
-                    centerCoords = this.map.getModel().olMap.getView().getCenter();
-                } else {
-                    centerCoords = ol.extent.getCenter(this.feature.getGeometry().getExtent());
-                }
+                var centerCoords = this.map.getModel().olMap.getView().getCenter();
                 return {
                     lon: centerCoords[0],
                     lat: centerCoords[1]
                 };
             }
         },
-        _updateGeometry: function() {
-            var scale = this._getPrintScale(),
-                rotationField = $('input[name="rotation"]', this.$form);
-
-            if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
-                return;
-            }
-            scale = parseInt(scale);
-            this.currentRotation_ = parseInt(rotationField.val()) || 0;
-
-            var center = this._getFeatureCenter();
-            var bounds = this._getPrintBounds(center.lon, center.lat, scale);
-
+        /**
+         * @param {ol.Feature|OpenLayers.Feature.Vector} feature
+         * @return {{lon: Number lat: Number}}
+         * @private
+         */
+        _getFeatureCenter: function(feature) {
+            // @todo Model: provide an API method for this
             if (Mapbender.mapEngine.code === 'ol2') {
-                var geometry = bounds.toGeometry();
-                geometry.rotate(-this.currentRotation_, new OpenLayers.Geometry.Point(center.lon, center.lat));
-                if (this.control) {
-                    this.control.unsetFeature();
-                }
-                this.feature = new OpenLayers.Feature.Vector(geometry);
-                this._redrawSelectionFeatures([this.feature]);
-                if (this.control) {
-                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
-                }
+                return feature.geometry.getBounds().getCenterLonLat();
             } else {
-                var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
-                var deg2rad = 2 * Math.PI / 360;
-                geom.rotate(-this.currentRotation_ * deg2rad, [center.lon, center.lat]);
-                if (this.feature) {
-                    this.feature.setGeometry(geom);
-                } else {
-                    this.feature = new ol.Feature(geom);
-                }
-                this._redrawSelectionFeatures([this.feature]);
+                var centerCoords = ol.extent.getCenter(feature.getGeometry().getExtent());
+                return {
+                    lon: centerCoords[0],
+                    lat: centerCoords[1]
+                };
             }
         },
-        _redrawSelectionFeatures: function(features) {
+        _resetSelectionFeature: function() {
+            this._endDrag();
+            var previous = this.feature;
+            this.feature = this._createFeature(this._getPrintScale(), previous && this._getFeatureCenter(previous) || this._getMapCenter());
+            this._clearFeature(previous);
+            this._updateGeometry();
+        },
+        _updateGeometry: function() {
+            if (!this.feature) {
+                this.feature = this._createFeature(this._getPrintScale(), this._getMapCenter());
+            }
+            this._applyRotation(this.feature, this.inputRotation_);
+            this._startDrag(this.feature, this.inputRotation_);
+        },
+        /**
+         * @param scale
+         * @param {Object} center
+         * @property {Number} center.lon
+         * @property {Number} center.lat
+         * @return {ol.Feature|OpenLayers.Feature.Vector}
+         * @private
+         */
+        _createFeature: function(scale, center) {
+            var bounds = this._getPrintBounds(center.lon, center.lat, scale);
+            var feature;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                var geometry = bounds.toGeometry();
+                feature = new OpenLayers.Feature.Vector(geometry);
+            } else {
+                var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+                feature = new ol.Feature(geom);
+            }
+            this.selectionFeatures_.push({
+                feature: feature,
+                appliedRotation: 0
+            });
+            return feature;
+        },
+        _applyRotation: function(feature, degrees) {
+            var entry = this._getFeatureEntry(feature);
+            var appliedRotation = entry && entry.appliedRotation || 0;
+            var delta = degrees - appliedRotation;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                var featureOnControl = this.control && this.control.feature === feature;
+                if (featureOnControl) {
+                    this._endDrag();
+                }
+                feature.geometry.rotate(-delta, feature.geometry.getCentroid(false));
+                this._redrawSelectionFeatures();
+                if (featureOnControl) {
+                    this._startDrag(feature, degrees);
+                }
+            } else {
+                var deg2rad = 2 * Math.PI / 360;
+                var center = ol.extent.getCenter(feature.getGeometry().computeExtent());
+                feature.getGeometry().rotate(-delta * deg2rad, center);
+                this._redrawSelectionFeatures();
+            }
+            if (entry) {
+                entry.appliedRotation = degrees;
+            }
+        },
+        _redrawSelectionFeatures: function() {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            var features = this.selectionFeatures_.map(function(entry) {
+                return entry.feature;
+            });
             layerBridge.clear();
             layerBridge.addNativeFeatures(features);
         },
@@ -324,45 +374,57 @@
             }
             return layer;
         },
-        _forwardRotation: function(degrees) {
+        /**
+         * @param {Number} degrees
+         * @private
+         */
+        _handleControlRotation: function(degrees) {
             $('input[name="rotation"]', this.$form).val(degrees);
+            this.inputRotation_ = degrees;
+            var entry = this._getFeatureEntry(this.feature);
+            if (entry) {
+                entry.appliedRotation = degrees;
+            }
         },
         /**
          * Gets the drag control used to rotate and
          * move the selection feature around over the map.
-         * Control is created on first call, then reused.
-         * Implicitly creates the selection layer, too, if not yet done.
          */
-        _startDrag: function() {
-            if (Mapbender.mapEngine.code === 'ol2' && !this.control) {
-                // OpenLayers 2 control can be reused once created
+        _startDrag: function(feature, degrees) {
+            // Neither ol2 nor ol4 controls do not properly support outside feature updates.
+            // They have APIs for this, but they are buggy in different ways
+            // => for both engines, always dispose and recreate
+            this._endDrag();
+            if (Mapbender.mapEngine.code === 'ol2') {
+                if (this.control) {
+                    // dispose
+                    this.map.map.olMap.removeControl(this.control);
+                }
+                // create and activate
                 this.control = this._createDragRotateControlOl2();
                 this.map.map.olMap.addControl(this.control);
-            } else if (Mapbender.mapEngine.code !== 'ol2') {
-                // OpenLayers 4 control needs disposing + recreation
+                this.control.setFeature(feature, {rotation: -degrees});
+                this.control.activate();
+            } else {
                 if (this.control) {
-                    this.control.setActive(false);
+                    // dispose
                     this.map.getModel().olMap.removeInteraction(this.control);
                     this.control.dispose();
                 }
+                // create and activate
                 this.control = this._createDragRotateControlOl4();
                 this.map.getModel().olMap.addInteraction(this.control);
-            }
-            // activation
-            if (Mapbender.mapEngine.code === 'ol2') {
-                if (this.feature) {
-                    this.control.setFeature(this.feature, {rotation: -this.currentRotation_});
-                }
-                this.control.activate();
-            } else {
                 this.control.setActive(true);
-                this.control.select(this.feature);
+                this.control.select(feature);
             }
-            return this.control;
         },
         _endDrag: function() {
             if (this.control) {
                 if (Mapbender.mapEngine.code === 'ol2') {
+                    // Call twice to work around incomplete unsetFeature cleanup when
+                    // control is still active
+                    this.control.unsetFeature();
+                    this.control.unsetFeature();
                     this.control.deactivate();
                 } else {
                     this.control.setActive(false);
@@ -373,15 +435,17 @@
             var self = this;
             var control = new OpenLayers.Control.TransformFeature(this.layer, {
                 renderIntent: 'transform',
-                rotationHandleSymbolizer: 'rotate'
+                rotationHandleSymbolizer: 'rotate',
+                layer: this.layer
             });
             control.events.on({
                 'transformcomplete': function() {
+                    /** @this {OpenLayers.Control.TransformFeature} */
                     var userRotation = 360 - this.rotation;
                     if (userRotation > 180) {
                         userRotation -= 360;
                     }
-                    self._forwardRotation(userRotation);
+                    self._handleControlRotation(userRotation);
                 }
             });
             return control;
@@ -397,7 +461,7 @@
             });
             interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
                 var rad2deg = 360. / (2 * Math.PI);
-                self._forwardRotation(-Math.round(rad2deg * data.angle));
+                self._handleControlRotation(-Math.round(rad2deg * data.angle));
             });
             // Adjust styling
             // Interaction can repeatedly call setDefaultStyle, patching once is not enough
@@ -416,7 +480,7 @@
             return interaction;
         },
         _getPrintScale: function() {
-            return $('select[name="scale_select"]', this.$form).val();
+            return parseInt($('select[name="scale_select"]', this.$form).val());
         },
         /**
          * Alias to hook into imgExport base class raster layer processing
@@ -427,7 +491,7 @@
             return this._getPrintScale();
         },
         _getExportExtent: function() {
-            var scale = parseInt(this._getPrintScale());
+            var scale = this._getPrintScale();
             if (!scale) {
                 throw new Error("Invalid scale " + scale.toString());
             }
@@ -621,7 +685,7 @@
             var self = this;
             this._getTemplateSize().then(function() {
                 if (self.selectionActive) {
-                    self._updateGeometry();
+                    self._resetSelectionFeature();
                 }
             });
         },
@@ -759,14 +823,29 @@
         },
         _onSrsChanged: function() {
             Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
-            this.feature = null;
+            this._clearFeature(this.feature);
             if (this.selectionActive) {
-                this._endDrag();
-                this._updateGeometry();
-                this._startDrag();
+                this._resetSelectionFeature();
             }
         },
-
+        /**
+         * @param {ol.Feature|OpenLayers.Feature.Vector} feature
+         * @return {mbPrintClientSelectionEntry|null}
+         * @private
+         */
+        _getFeatureEntry: function(feature) {
+            return (this.selectionFeatures_.filter(function(entry) {
+                return entry.feature === feature;
+            })[0]) || null;
+        },
+        _clearFeature: function(feature) {
+            this.selectionFeatures_ = this.selectionFeatures_.filter(function(o) {
+                return o.feature !== feature;
+            });
+            if (this.feature === feature) {
+                this.feature = null;
+            }
+        },
         _initJobList: function($jobListPanel) {
             var jobListOptions = {
                 url: this.elementUrl + 'queuelist',
