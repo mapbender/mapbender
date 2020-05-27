@@ -215,63 +215,30 @@
                 return this._getPrintBounds(featureCenterCoords[0], featureCenterCoords[1], scale);
             }
         },
-        /**
-         * @return {{lon: Number lat: Number}}
-         * @private
-         */
-        _getMapCenter: function() {
-            // @todo Model: provide an API method for this
-            if (Mapbender.mapEngine.code === 'ol2') {
-                return this.map.getModel().olMap.getCenter();
-            } else {
-                var centerCoords = this.map.getModel().olMap.getView().getCenter();
-                return {
-                    lon: centerCoords[0],
-                    lat: centerCoords[1]
-                };
-            }
-        },
-        /**
-         * @param {ol.Feature|OpenLayers.Feature.Vector} feature
-         * @return {{lon: Number lat: Number}}
-         * @private
-         */
-        _getFeatureCenter: function(feature) {
-            // @todo Model: provide an API method for this
-            if (Mapbender.mapEngine.code === 'ol2') {
-                return feature.geometry.getBounds().getCenterLonLat();
-            } else {
-                var centerCoords = ol.extent.getCenter(feature.getGeometry().getExtent());
-                return {
-                    lon: centerCoords[0],
-                    lat: centerCoords[1]
-                };
-            }
-        },
         _resetSelectionFeature: function() {
             this._endDrag();
             var previous = this.feature;
-            this.feature = this._createFeature(this._getPrintScale(), previous && this._getFeatureCenter(previous) || this._getMapCenter());
+            var model = this.map.getModel();
+            var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
+            this.feature = this._createFeature(this._getPrintScale(), center);
             this._clearFeature(previous);
             this._updateGeometry();
         },
         _updateGeometry: function() {
             if (!this.feature) {
-                this.feature = this._createFeature(this._getPrintScale(), this._getMapCenter());
+                this.feature = this._createFeature(this._getPrintScale(), this.map.getModel().getCurrentMapCenter());
             }
             this._applyRotation(this.feature, this.inputRotation_);
             this._startDrag(this.feature, this.inputRotation_);
         },
         /**
-         * @param scale
-         * @param {Object} center
-         * @property {Number} center.lon
-         * @property {Number} center.lat
+         * @param {Number} scale
+         * @param {Array<Number>} center
          * @return {ol.Feature|OpenLayers.Feature.Vector}
          * @private
          */
         _createFeature: function(scale, center) {
-            var bounds = this._getPrintBounds(center.lon, center.lat, scale);
+            var bounds = this._getPrintBounds(center[0], center[1], scale);
             var feature;
             if (Mapbender.mapEngine.code === 'ol2') {
                 var geometry = bounds.toGeometry();

@@ -733,6 +733,15 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         feature.geometry.rotate(degrees, feature.geometry.getCentroid(false));
     },
     /**
+     * Returns the center coordinate of the given feature as an array, ordered x, y (aka lon, lat)
+     * @param {OpenLayers.Feature.Vector} feature
+     * @returns {Array<Number>}
+     */
+    getFeatureCenter: function(feature) {
+        var center = feature.geometry.getBounds().getCenterLonLat();
+        return [center.lon, center.lat];
+    },
+    /**
      * @param {OpenLayers.Layer.Vector} olLayer
      * @param {OpenLayers.Feature.Vector} feature
      * @return {Object}
@@ -768,6 +777,14 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 source: source
             });
         });
+    },
+    /**
+     * Returns the center coordinate of the current map view as an array, ordered x, y (aka lon, lat)
+     * @return {Array<Number>}
+     */
+    getCurrentMapCenter: function() {
+        var centerNative = this.olMap.getCenter();
+        return [centerNative.lon, centerNative.lat];
     },
     /**
      * @return {Array<Number>}

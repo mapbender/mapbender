@@ -333,8 +333,16 @@ window.Mapbender.MapModelOl4 = (function() {
     rotateFeature: function(feature, degrees) {
         var geometry = feature.getGeometry();
         var deg2rad = 2 * Math.PI / 360;
-        var center = ol.extent.getCenter(geometry.computeExtent());
+        var center = ol.extent.getCenter(geometry.getExtent());
         geometry.rotate(degrees * deg2rad, center);
+    },
+    /**
+     * Returns the center coordinate of the given feature as an array, ordered x, y (aka lon, lat)
+     * @param {ol.Feature} feature
+     * @returns {Array<Number>}
+     */
+    getFeatureCenter: function(feature) {
+        return ol.extent.getCenter(feature.getGeometry().getExtent());
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
@@ -535,6 +543,13 @@ getFeatureById: function(owner, vectorId, featureId) {
         });
     },
 
+        /**
+         * Returns the center coordinate of the current map view as an array, ordered x, y (aka lon, lat)
+         * @return {Array<Number>}
+         */
+        getCurrentMapCenter: function() {
+            return this.olMap.getView().getCenter();
+        },
         /**
          * @return {Array<Number>}
          */
