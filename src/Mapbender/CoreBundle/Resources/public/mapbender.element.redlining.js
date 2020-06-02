@@ -59,8 +59,20 @@
                 label: function(feature) {
                     return self._getFeatureAttribute(feature, 'label') || '';
                 },
-                labelAlign: 'lm',
-                labelXOffset: 10
+                labelAlign: function(feature) {
+                    if (-1 !== ['point', 'text'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
+                        return 'lm';
+                    } else {
+                        return 'cm';
+                    }
+                },
+                labelXOffset: function(feature) {
+                    if (-1 !== ['point', 'text'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
+                        return 10;
+                    } else {
+                        return 0;
+                    }
+                }
             }));
 
             if (Mapbender.mapEngine.code === 'ol2') {

@@ -72,9 +72,9 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             });
             defaultStyle.setFill(baseFill);
             defaultStyle.setStroke(baseStroke);
+            var textCallbacks = this._prepareTextStyleCallbacks(styles);
 
-            var labelCallback = this._prepareLabelCallback(styles);
-            var textStyle = labelCallback && this._prepareTextStyle(svgWithDefaults);
+            var textStyle = textCallbacks['setText'] && this._prepareTextStyle(svgWithDefaults);
             // we know that the default style function does not populate a text style, so we do not need to merge anything
             if (textStyle) {
                 defaultStyle.setText(textStyle);
@@ -86,11 +86,15 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             });
             var customFeatureStyleFn = function(feature, resolution) {
                 var style = defaultStyle.clone();
-                if (labelCallback) {
-                    var textStyle = defaultStyle.getText().clone();
-                    textStyle.setText((labelCallback)(feature, resolution));
-                    style.setText(textStyle);
+                var setterNames = Object.keys(textCallbacks);
+                var textStyle = defaultStyle.getText();
+                for (var i = 0; i < setterNames.length; ++i) {
+                    var setterName = setterNames[i];
+                    var callback = textCallbacks[setterName];
+                    var value = callback(feature, resolution);
+                    textStyle[setterName](value);
                 }
+                style.setText(textStyle);
                 style.setImage(pointImageStyle);
                 return style;
             };
@@ -171,26 +175,43 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         endDraw_: function(interaction) {
             this.olMap.removeInteraction(interaction);
         },
-        _prepareLabelCallback: function(svgStyles) {
-            var labelCallback, labelLiteral;
+        _prepareTextStyleCallbacks: function(svgStyles) {
+            var self = this;
+            var callbacks = {};
             switch (typeof (svgStyles['label'])) {
                 case 'undefined':
                     break;
                 case 'function':
-                    labelCallback = svgStyles['label'];
+                    callbacks.setText = svgStyles['label'];
                     break;
                 default:
-                    labelLiteral = svgStyles['label'].toString();
-                    labelCallback = function() {
+                    var labelLiteral = svgStyles['label'].toString();
+                    callbacks.setText = function() {
                         return labelLiteral;
                     };
                     break;
             }
-            return labelCallback;
+            if (svgStyles.labelAlign && typeof svgStyles.labelAlign === 'function') {
+                callbacks.setTextAlign = function(feature, resolution) {
+                    var alignBaseline = self._translateTextAlignment(svgStyles.labelAlign(feature, resolution));
+                    return alignBaseline.align;
+                };
+                callbacks.setTextBaseline = function(feature, resolution) {
+                    var alignBaseline = self._translateTextAlignment(svgStyles.labelAlign(feature, resolution));
+                    return alignBaseline.baseline;
+                };
+            }
+            if (svgStyles.labelXOffset && typeof svgStyles.labelXOffset === 'function') {
+                callbacks.setOffsetX = svgStyles.labelXOffset;
+            }
+            if (svgStyles.labelYOffset && typeof svgStyles.labelYOffset === 'function') {
+                callbacks.setOffsetY = svgStyles.labelYOffset;
+            }
+            return callbacks;
         },
-        _prepareTextStyle: function(svgStyles) {
+        _translateTextAlignment: function(svgLabelAlign) {
             var baseline, align;
-            switch (svgStyles.labelAlign) {
+            switch (svgLabelAlign) {
                 default:
                 case 'cm':
                 case 'cb':
@@ -208,7 +229,7 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     align = 'right';
                     break;
             }
-            switch (svgStyles.labelAlign) {
+            switch (svgLabelAlign) {
                 default:
                 case 'cm':
                 case 'lm':
@@ -226,14 +247,21 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     baseline = 'bottom';
                     break;
             }
+            return {
+                align: align,
+                baseline: baseline
+            };
+        },
+        _prepareTextStyle: function(svgStyles) {
+            var alignBaseline = this._translateTextAlignment(svgStyles.labelAlign);
             return new ol.style.Text({
                 fill: new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'fontColor', 'fontOpacity')}),
                 stroke: new ol.style.Stroke({
                     color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'labelOutlineColor', 'labelOutlineOpacity'),
                     width: svgStyles.labelOutlineWidth
                 }),
-                textAlign: align,
-                textBaseline: baseline,
+                textAlign: alignBaseline.align,
+                textBaseline: alignBaseline.baseline,
                 offsetX: svgStyles.labelXOffset,
                 offsetY: svgStyles.labelYOffset
             });
