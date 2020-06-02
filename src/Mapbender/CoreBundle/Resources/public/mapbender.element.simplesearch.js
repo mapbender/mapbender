@@ -21,9 +21,7 @@ $.widget('mapbender.mbSimpleSearch', {
         delay: 0
     },
 
-    marker: null,
     layer: null,
-    iconStyle: null,
     mbMap: null,
 
     _create: function() {
