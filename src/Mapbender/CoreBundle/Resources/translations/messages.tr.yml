@@ -43,11 +43,6 @@ mb:
       class:
         title: 'Detay bilgisi'
         description: 'Detay bilgisi'
-      tag:
-        featureinfo: 'Detay bilgisi'
-        feature: 'Detay'
-        info: 'Bilgi'
-        dialog: 'İletişim'
     aboutdialog:
       content:
         versionprefix: v.
@@ -95,10 +90,6 @@ mb:
       class:
         title: 'İlgi noktası (POI)'
         description: 'Paylaşmak için İlgi noktası (POI) oluştur'
-      tag:
-        poi: 'İlgi noktası (POI)'
-        point: 'Nokta'
-        interest: 'İlgi'
       label:
         text: 'Metin'
     basesourceswitcher:
@@ -107,23 +98,15 @@ mb:
       class:
         title: 'Altlık değiştirici'
         Description: 'Haritanın altlık kaynağını değiştirin.'
-      tag:
-        base: 'Altlık'
-        source: 'Kaynak'
-        switcher: 'Değiştirici (Switcher)'
       form:
         mesage: 'Altlık kaynağı ayarı tanımlanmadı.'
     legend:
-      nolegend: 'Lejant'
       popup:
         btn:
           ok: 'Kapat'
       class:
         title: 'Lejant'
         description: 'Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir'
-      tag:
-        layer: 'Katman'
-        legend: 'Lejant'
     ruler:
       popup:
         btn:
@@ -221,12 +204,6 @@ mb:
       class:
         title: 'Katman ağacı'
         description: 'Haritanın katman ağacı'
-      tag:
-        layertree: 'Katman ağacı'
-        layer: 'Katman'
-        tree: 'Ağaç'
-      contextmenu:
-        nooption: 'Katmanın menü seçeneği yok'
     zoombar:
       zoombybox: 'Çizilen alana yakınlaştır'
       zoombyworld: 'Tüm dünyayı göster'

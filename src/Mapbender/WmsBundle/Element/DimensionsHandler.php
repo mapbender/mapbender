@@ -66,7 +66,6 @@ class DimensionsHandler extends Element implements BoundConfigMutator
                 '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
             'trans' => array(
-                'MapbenderWmsBundle:Element:dimensionshandler.json.twig',
             ),
         );
     }

@@ -44,11 +44,6 @@ mb:
       class:
         title: Инфосвойства
         description: Инфосвойства
-      tag:
-        featureinfo: Инфосвойства
-        feature: характеристика
-        info: инфо
-        dialog: Раздел
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +91,6 @@ mb:
       class:
         title: POI
         description: 'Создать POI для обмена'
-      tag:
-        poi: poi
-        point: точка
-        interest: интереса
       label:
         text: Текст
     basesourceswitcher:
@@ -108,23 +99,15 @@ mb:
       class:
         title: 'Базовый источник коммутатор'
         Description: 'Изменить фоновые источники  карты '
-      tag:
-        base: Основа
-        source: источник
-        switcher: переключение
       form:
         mesage: 'Нет исходного набора.'
     legend:
-      nolegend: 'Никакая легенда не доступна'
       popup:
         btn:
           ok: Закрыть
       class:
         title: Легенда
         description: 'Легенда показывает легенды слоев карты'
-      tag:
-        layer: слой
-        legend: легенда
     ruler:
       popup:
         btn:
@@ -222,12 +205,6 @@ mb:
       class:
         title: 'Дерево слоев'
         description: 'Дерево слоев карты'
-      tag:
-        layertree: 'дерево слоев'
-        layer: слой
-        tree: дерево
-      contextmenu:
-        nooption: 'Слой не имеет опциий в контекст-меню'
     zoombar:
       zoombybox: Масштаб
       zoombyworld: Кругозор

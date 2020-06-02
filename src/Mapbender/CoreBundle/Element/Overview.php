@@ -83,6 +83,9 @@ class Overview extends Element
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/overview.scss',
             ),
+            'trans' => array(
+                'mb.core.overview.nolayer',
+            ),
         );
     }
 

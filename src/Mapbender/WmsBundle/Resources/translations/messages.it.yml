@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formati
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Torna alla Lista Servizi'
             metadata: Metadati
@@ -134,25 +132,9 @@ mb:
               description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nome del Layer'
             style: Stile
-        new:
-          label:
-            addservice: 'Aggiungi Servizio'
-        instancelayer:
-          title:
-            servicerepository: 'Repository del Servizio'
-          label:
-            wmsinstancelayers: 'Instanze per layers WMS'
-          btn:
-            save: Salva
-        form:
-          label:
-            onlyvalid: 'solo valido'
       class:
         title: 'loader WMS'
         description: 'Carica un WMS attraverso la getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader
       admin:
         label:
           autoopen: 'Apertura automatica'

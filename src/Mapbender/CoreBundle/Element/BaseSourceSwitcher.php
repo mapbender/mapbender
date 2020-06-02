@@ -79,7 +79,7 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
                 '@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:basesourceswitcher.json.twig',
+                'mb.core.basesourceswitcher.error.*',
             ),
         );
     }

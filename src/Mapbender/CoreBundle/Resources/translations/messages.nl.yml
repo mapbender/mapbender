@@ -43,11 +43,6 @@ mb:
       class:
         title: 'Object informatie'
         description: 'Object informatie'
-      tag:
-        featureinfo: 'Object informatie'
-        feature: Object
-        info: info
-        dialog: dialoog
     aboutdialog:
       content:
         versionprefix: v.
@@ -95,10 +90,6 @@ mb:
       class:
         title: POI
         description: 'Maak een bijzondere plaats (POI) aan om te delen'
-      tag:
-        poi: poi
-        point: punt
-        interest: bijzonder
       label:
         text: Tekst
     basesourceswitcher:
@@ -107,23 +98,15 @@ mb:
       class:
         title: 'Achtergrond-bron wisselaar'
         Description: 'Wijzig de achtergrond-bronnen'
-      tag:
-        base: Basis
-        source: Bron
-        switcher: Wisselaar
       form:
         mesage: 'Geen basis-bron set is gedefinieerd.'
     legend:
-      nolegend: 'Geen legenda beschikbaar'
       popup:
         btn:
           ok: Sluit
       class:
         title: Legenda
         description: 'Toon de legenda van de kaartlagen'
-      tag:
-        layer: laag
-        legend: legenda
     ruler:
       popup:
         btn:
@@ -221,12 +204,6 @@ mb:
       class:
         title: 'Lagenboom'
         description: 'Mappen-structuur (LayerTree) van kaartlagen'
-      tag:
-        layertree: Lagenboom
-        layer: laag
-        tree: boom
-      contextmenu:
-        nooption: 'Laag heeft geen contekst menu optie'
     zoombar:
       zoombybox: 'zoom in via rechthoek'
       zoombyworld: 'zoom uit'

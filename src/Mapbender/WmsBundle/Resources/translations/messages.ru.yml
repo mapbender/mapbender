@@ -17,8 +17,6 @@ mb:
           label:
             formats: Формиат
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Назад к списку услуг'
             metadata: Метаданные
@@ -46,12 +44,6 @@ mb:
             state: Государство
             postcode: 'Почтовые индекс'
             country: Страна
-        form:
-          label:
-            onlyvalid: 'Валидировать'
-        new:
-          label:
-            addservice: 'Добавить сервис'
         instance:
           btn:
             save: Сохранить
@@ -80,13 +72,6 @@ mb:
 
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
-        instancelayer:
-          title:
-            servicerepository: 'Обслуживание репозитория'
-          label:
-            wmsinstancelayers: 'Слои WMS экземпляра'
-          btn:
-            save: Сохранить
         preview:
           title:
             servicerepository: 'Обслуживание репозитория'
@@ -153,9 +138,6 @@ mb:
       class:
         title: 'WMS loader'
         description: 'Загружает WMS через GetCapabilities-Request'
-      tag:
-        wms: WMS
-        loader: загрузчик
     dimensionsets:
       no_dimension: 'нет размерность'
     dimhandler:

@@ -44,11 +44,6 @@ mb:
       class:
         title: Informação
         description: Informação
-      tag:
-        featureinfo: Informação
-        feature: Objeto
-        info: Info
-        dialog: Diálogo
     aboutdialog:
       content:
         versionprefix: Versão
@@ -96,10 +91,6 @@ mb:
       class:
         title: 'Ponto de encontro (POI)'
         description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
-      tag:
-        poi: 'Ponto de encontro (POI)'
-        point: Ponto
-        interest: Interesse
       label:
         text: ~
     basesourceswitcher:
@@ -108,23 +99,15 @@ mb:
       class:
         title: 'Mudar o segundo plano'
         Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Segundo plano não existe.'
     legend:
-      nolegend: 'Legenda não disponível.'
       popup:
         btn:
           ok: Fechar
       class:
         title: Legenda
         description: 'Mostra a leganda sobre os temas ativos. '
-      tag:
-        layer: Temas
-        legend: Legenda
     ruler:
       popup:
         btn:
@@ -222,12 +205,6 @@ mb:
       class:
         title: 'Árvore de camadas'
         description: 'Árvore de camadas de mapa'
-      tag:
-        layertree: 'Árvore de camadas'
-        layer: Camada
-        tree: Árvore
-      contextmenu:
-        nooption: ~
     zoombar:
       zoombybox: 'Caixa de ampliar'
       zoombyworld: 'Mostrar toda extensão'

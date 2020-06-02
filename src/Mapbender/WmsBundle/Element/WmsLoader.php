@@ -106,7 +106,8 @@ class WmsLoader extends Element
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
             ),
             'trans' => array(
-                'MapbenderWmsBundle:Element:wmsloader.json.twig',
+                'mb.wms.wmsloader.error.*',
+                'mb.wms.wmsloader.dialog.*',    // @todo: use standard add / cancel action labels for popup buttons
             ),
         );
         $config = $this->entity->getConfiguration();

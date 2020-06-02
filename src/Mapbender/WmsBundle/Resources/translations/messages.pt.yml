@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formatos
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Back to Service List'
             metadata: Metadados
@@ -131,27 +129,9 @@ mb:
               description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Nome
             style: Estilo
-        new:
-          label:
-            addservice: 'Adicionar serviço'
-        instancelayer:
-          title:
-            servicerepository: 'Repository de serviços'
-          label:
-            wmsinstancelayers: 'Camade de WMS instância'
-          btn:
-            save: Guardar
-        form:
-          label:
-            onlyvalid: 'only valid'
-          message:
-            cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
       class:
         title: 'Carregar WMS'
         description: 'Carrega um WMS sobre getCapabilities-Request '
-      tag:
-        wms: WMS
-        loader: carregar
       admin:
         label:
           autoopen: 'Abrir automaticamente'

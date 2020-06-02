@@ -75,8 +75,8 @@ class SimpleSearch extends Element
                 "@MapbenderManagerBundle/Resources/public/sass/element/simple_search.scss"
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:simple_search.json.twig'
-            )
+                'mb.core.simplesearch.error.*',
+            ),
         );
     }
 

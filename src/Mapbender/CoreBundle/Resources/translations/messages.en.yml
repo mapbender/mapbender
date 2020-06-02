@@ -50,11 +50,6 @@ mb:
       class:
         title: FeatureInfo
         description: FeatureInfo
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: dialog
     aboutdialog:
       content:
         versionprefix: v.
@@ -103,10 +98,6 @@ mb:
       class:
         title: POI
         description: 'Create a POI for sharing'
-      tag:
-        poi: poi
-        point: point
-        interest: interest
       label:
         text: Text
     basesourceswitcher:
@@ -115,23 +106,15 @@ mb:
       class:
         title: 'Base source switcher'
         Description: 'Change the map''s background sources.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'No basesource set is defined.'
     legend:
-      nolegend: 'No legend available.'
       popup:
         btn:
           ok: Close
       class:
         title: Legend
         description: 'The legend shows the legend of the map''s layers'
-      tag:
-        layer: layer
-        legend: legend
     ruler:
       popup:
         btn:
@@ -229,12 +212,6 @@ mb:
       class:
         title: 'Layer tree'
         description: 'Tree of map''s layers'
-      tag:
-        layertree: layertree
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: 'Layer has no context menu option'
     zoombar:
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'

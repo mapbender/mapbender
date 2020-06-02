@@ -44,11 +44,6 @@ mb:
       class:
         title: Identifier
         description: Identifier l'objet cliqué sur la carte
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: dialog
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +91,6 @@ mb:
       class:
         title: POI
         description: 'Permet de créer un POI (point d''intérêt) pour le partager'
-      tag:
-        poi: poi
-        point: point
-        interest: interest
       label:
         text: Text
     basesourceswitcher:
@@ -108,23 +99,15 @@ mb:
       class:
         title: 'Sélectionneur de fond de carte'
         Description: 'Permet de sélectionner la couche de fond de la carte.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Aucun fond de carte n''est défini.'
     legend:
-      nolegend: 'Aucune légende n''est disponible.'
       popup:
         btn:
           ok: Fermer
       class:
         title: Légende
         description: 'Affiche la légende de la carte'
-      tag:
-        layer: layer
-        legend: legend
     ruler:
       popup:
         btn:
@@ -222,12 +205,6 @@ mb:
       class:
         title: 'Arborescence des couches'
         description: 'Arborescence des couches de la carte'
-      tag:
-        layertree: layertree
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: ~
     zoombar:
       zoombybox: 'Zoomer sur la boite'
       zoombyworld: 'Zoomer sur l''étendue globale'

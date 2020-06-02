@@ -48,7 +48,8 @@ class Redlining extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/redlining.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:redlining.json.twig',
+                'mb.core.redlining.*',
+                'mb.core.redlining.dialog.btn.cancel',  // @todo: use standard cancel label
             ),
         );
     }

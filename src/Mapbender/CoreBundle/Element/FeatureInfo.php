@@ -99,7 +99,8 @@ class FeatureInfo extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:featureinfo.json.twig',
+                'mb.core.featureinfo.popup.*',  // @todo: use standard ok / print action labels
+                'mb.core.featureinfo.error.*',
             ),
         );
     }

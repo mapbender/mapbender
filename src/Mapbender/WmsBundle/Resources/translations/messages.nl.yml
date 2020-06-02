@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formaten
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Terug naar Service List'
             metadata: Metadata
@@ -131,25 +129,9 @@ mb:
               description: 'Instantie Laag Id in de vorm: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Laag naam'
             style: Stijl
-        new:
-          label:
-            addservice: 'Voeg Service toe'
-        instancelayer:
-          title:
-            servicerepository: 'Service Repository'
-          label:
-            wmsinstancelayers: 'WMS Instantie Lagen'
-          btn:
-            save: Bewaar
-        form:
-          label:
-            onlyvalid: 'alleen geldig'
       class:
         title: 'WMS lader'
         description: 'Laad een WMS via de getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: lader
       admin:
         label:
           autoopen: 'Auto open'

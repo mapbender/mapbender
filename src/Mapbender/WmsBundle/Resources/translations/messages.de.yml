@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formate
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: Zurück zu Datenquellen
             metadata: Metadaten
@@ -134,25 +132,9 @@ mb:
               description: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Name
             style: Style
-        new:
-          label:
-            addservice: 'Dienst hinzufügen'
-        instancelayer:
-          title:
-            servicerepository: 'Dienste Repository'
-          label:
-            wmsinstancelayers: 'WMS Instanz Layer'
-          btn:
-            save: Speichern
-        form:
-          label:
-            onlyvalid: 'Nur valid'
       class:
         title: 'WMS laden'
         description: 'Lädt einen WMS per getCapabilities-Request'
-      tag:
-        wms: WMS
-        loader: laden
       admin:
         label:
           autoopen: 'Automatisch öffnen'

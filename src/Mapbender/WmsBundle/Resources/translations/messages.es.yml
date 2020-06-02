@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formatos
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Regresar al Listado de Servicio'
             metadata: Metadata
@@ -131,25 +129,9 @@ mb:
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nombre de las Capas'
             style: Estilo
-        new:
-          label:
-            addservice: 'Agregar Servicio'
-        instancelayer:
-          title:
-            servicerepository: 'Repositorio de Servicio'
-          label:
-            wmsinstancelayers: 'WMS Capa de Instancia'
-          btn:
-            save: Guardar
-        form:
-          label:
-            onlyvalid: 'Only valid'
       class:
         title: 'WMS cargador'
         description: 'Cargar un WMS via getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: cargar
       admin:
         label:
           autoopen: 'Auto abrir'

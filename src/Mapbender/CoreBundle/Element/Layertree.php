@@ -60,7 +60,8 @@ class Layertree extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:layertree.json.twig',
+                'mb.core.layertree.*',
+                'mb.core.metadata.*',
             ),
         );
         return $assets;

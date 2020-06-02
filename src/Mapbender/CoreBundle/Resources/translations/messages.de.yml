@@ -50,11 +50,6 @@ mb:
       class:
         title: Information
         description: Information
-      tag:
-        featureinfo: Information
-        feature: Objekt
-        info: Info
-        dialog: Dialog
     aboutdialog:
       content:
         versionprefix: Version
@@ -103,10 +98,6 @@ mb:
       class:
         title: 'MeetingPoint (POI)'
         description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
-      tag:
-        poi: 'MeetingPoint (POI)'
-        point: Punkt
-        interest: Interessse
       label:
         text: 'Bearbeiten Sie den Text'
     basesourceswitcher:
@@ -115,23 +106,15 @@ mb:
       class:
         title: 'Hintergrund wechseln'
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
     legend:
-      nolegend: 'Keine Legende verfügbar.'
       popup:
         btn:
           ok: Schließen
       class:
         title: Legende
         description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
-      tag:
-        layer: Themen
-        legend: Legende
     ruler:
       popup:
         btn:
@@ -230,12 +213,6 @@ mb:
       class:
         title: Ebenenbaum
         description: 'Baum der Karten-Ebenen'
-      tag:
-        layertree: Ebenenbaum
-        layer: Ebenen
-        tree: Baum
-      contextmenu:
-        nooption: 'Layer verfügt über keine Kontextmenü-Option'
     zoombar:
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'

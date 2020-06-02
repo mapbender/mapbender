@@ -137,7 +137,9 @@ class SearchRouter extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:search_router.json.twig',
+                'mb.core.searchrouter.result_counter',
+                'mb.core.searchrouter.no_results',
+                'mb.core.searchrouter.popup.*', // @todo: use standard action labels for popup buttons
             ),
         );
     }

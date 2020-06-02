@@ -42,7 +42,7 @@ class Legend extends Element implements ConfigMigrationInterface
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:legend.json.twig',
+                'mb.core.legend.popup.*',   // @todo: use standard close action label for popup
             ),
         );
     }

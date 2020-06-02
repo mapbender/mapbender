@@ -44,11 +44,6 @@ mb:
       class:
         title: FeatureInfo
         description: FeatureInfo
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: diálogo
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +91,6 @@ mb:
       class:
         title: POI
         description: 'Crear un POI para compartir'
-      tag:
-        poi: poi
-        point: punto
-        interest: interés
       label:
         text: Texto
     basesourceswitcher:
@@ -108,23 +99,15 @@ mb:
       class:
         title: ~
         Description: 'Change the map''s background sources'
-      tag:
-        base: base
-        source: destino
-        switcher: switcher
       form:
         mesage: 'No fuentebase seteada esta definida.'
     legend:
-      nolegend: 'No hay leyenda disponible'
       popup:
         btn:
           ok: Cerrar
       class:
         title: Leyenda
         description: 'La leyenda muestra la leyenda de las capas del mapa'
-      tag:
-        layer: capa
-        legend: leyenda
     ruler:
       popup:
         btn:
@@ -222,12 +205,6 @@ mb:
       class:
         title: 'Árbol de capa'
         description: 'Árbol de las capas del mapa'
-      tag:
-        layertree: árbolcapas
-        layer: capa
-        tree: árbol
-      contextmenu:
-        nooption: ~
     zoombar:
       zoombybox: 'Acercamiento por recuadro'
       zoombyworld: 'Acercamiento global'

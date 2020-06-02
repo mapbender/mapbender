@@ -44,11 +44,6 @@ mb:
       class:
         title: Informazioni
         description: Informazioni
-      tag:
-        featureinfo: Informazione
-        feature: feature
-        info: informazione
-        dialog: 'finestra di dialogo'
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +91,6 @@ mb:
       class:
         title: POI
         description: 'Crea un POI per la condivisione'
-      tag:
-        poi: poi
-        point: punto
-        interest: interesse
       label:
         text: Text
     basesourceswitcher:
@@ -108,23 +99,15 @@ mb:
       class:
         title: 'Switcher per la risorsa di base'
         Description: 'Cambia la risorsa dello sfondo'
-      tag:
-        base: base
-        source: risorsa
-        switcher: switcher
       form:
         mesage: 'Nessun set per la risorsa di base è definito.'
     legend:
-      nolegend: 'Nessuna legenda disponibile.'
       popup:
         btn:
           ok: Chiudi
       class:
         title: Legenda
         description: 'Mostra la legenda dei layers della mappa'
-      tag:
-        layer: layer
-        legend: legenda
     ruler:
       popup:
         btn:
@@ -222,12 +205,6 @@ mb:
       class:
         title: 'Layer tree'
         description: 'Tree dei layers della mappa'
-      tag:
-        layertree: 'layer per tree'
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'

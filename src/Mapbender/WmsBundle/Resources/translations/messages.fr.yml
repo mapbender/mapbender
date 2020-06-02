@@ -17,8 +17,6 @@ mb:
           label:
             formats: Formats
         view:
-          title:
-            wms: WMS
           label:
             backtoservicelist: 'Retour à la liste des services'
             metadata: Metadonnées
@@ -131,25 +129,9 @@ mb:
               description: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nom de la couche'
             style: Style
-        new:
-          label:
-            addservice: 'Ajouter un service'
-        instancelayer:
-          title:
-            servicerepository: 'Répertoire du service'
-          label:
-            wmsinstancelayers: 'Couches de l''instance WMS'
-          btn:
-            save: Sauvegarder
-        form:
-          label:
-            onlyvalid: 'Valide seulement'
       class:
         title: 'Chargeur de WMS'
         description: 'Charge un service WMS via une requête ''getCapabilities'''
-      tag:
-        wms: wms
-        loader: loader
       admin:
         label:
           autoopen: 'Ouverture automatique'
