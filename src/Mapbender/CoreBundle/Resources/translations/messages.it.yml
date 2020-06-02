@@ -351,8 +351,7 @@ mb:
         polygon: Poligono
         rectangle: Rettangolo
         circle: Cerchio
-        text:
-          label: Testo
+        text: Testo
       error:
         notext: 'Testo necessario'
       geometry:

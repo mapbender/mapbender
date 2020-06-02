@@ -30,7 +30,7 @@
                 'polygon': Mapbender.trans('mb.core.redlining.geometrytype.polygon'),
                 'rectangle': Mapbender.trans('mb.core.redlining.geometrytype.rectangle'),
                 'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
-                'text': Mapbender.trans('mb.core.redlining.geometrytype.text.label')
+                'text': Mapbender.trans('mb.core.redlining.geometrytype.text')
             });
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$labelInput_ = $('input[name="label-text"]', this.element);

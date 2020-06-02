@@ -350,8 +350,7 @@ mb:
         polygon: Polygoon
         rectangle: Rechthoek
         circle: Cirkel
-        text:
-          label: Tekst
+        text: Tekst
       geometry:
         action:
           remove: 'Verwijder geometrie'

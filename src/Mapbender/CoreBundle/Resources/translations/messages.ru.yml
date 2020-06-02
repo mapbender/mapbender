@@ -351,8 +351,7 @@ mb:
         polygon: Полигон
         rectangle: Прямоугольник
         circle: Круг
-        text:
-          label: Текст
+        text: Текст
       error:
         notext: ~
       geometry:

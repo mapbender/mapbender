@@ -351,8 +351,7 @@ mb:
         polygon: Polígono
         rectangle: Retângulo
         circle: Circulo
-        text:
-          label: Texto
+        text: Texto
       error:
         notext: ~
       geometry:

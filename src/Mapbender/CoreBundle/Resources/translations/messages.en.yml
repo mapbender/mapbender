@@ -359,8 +359,7 @@ mb:
         polygon: Polygon
         rectangle: Rectangle
         circle: Circle
-        text:
-          label: Text
+        text: Text
       error:
         notext: 'Text required'
       geometry:

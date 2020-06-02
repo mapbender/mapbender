@@ -360,8 +360,7 @@ mb:
         polygon: Polygon
         rectangle: Rechteck
         circle: Kreis
-        text:
-          label: Text
+        text: Text
       error:
         notext: 'Kein Text eingetragen'
       geometry:
