@@ -113,7 +113,7 @@
             } else {
                 this.element.removeClass('hidden');
             }
-            Mapbender.vectorLayerPool.raiseElementLayers(this);
+            Mapbender.vectorLayerPool.showElementLayers(this, true);
         },
         deactivate: function(){
             this._deactivateControl();
@@ -121,7 +121,7 @@
             // end popup, if any
             this._close();
             if (this.options.deactivate_on_close) {
-                this._removeAllFeatures();
+                Mapbender.vectorLayerPool.hideElementLayers(this);
             }
             if (this.callback) {
                 (this.callback)();
@@ -256,10 +256,6 @@
             } else {
                 this.layer.getNativeLayer().getSource().removeFeature(feature);
             }
-        },
-        _removeAllFeatures: function(){
-            $('.geometry-table tr', this.element).remove();
-            this.layer.clear();
         },
         /**
          * @param {*} feature

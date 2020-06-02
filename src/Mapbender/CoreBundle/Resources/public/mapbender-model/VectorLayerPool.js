@@ -49,7 +49,14 @@ window.Mapbender.VectorLayerPool = (function() {
             }
             this.hideGroup_(group);
         },
-        showElementLayers: function showElementLayers(owner) {
+        /**
+         * @param {*} owner
+         * @param {Boolean} [raise]
+         */
+        showElementLayers: function showElementLayers(owner, raise) {
+            if (raise) {
+                this.raiseElementLayers(owner);
+            }
             var group = this.findElementLayerGroup_(owner);
             if (!group || !group.bridgeLayers.length) {
                 console.error("Given owner has no assigned vector layers", owner, this.elementLayerGroups_);
