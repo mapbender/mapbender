@@ -49,11 +49,11 @@ class RedliningAdminType extends AbstractType
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(
-                    'Point' => 'point',
-                    'Line' => 'line',
-                    'Polygon' => 'polygon',
-                    'Rectangle' => 'rectangle',
-                    'Text' => 'text',
+                    'mb.core.redlining.geometrytype.point' => 'point',
+                    'mb.core.redlining.geometrytype.line' => 'line',
+                    'mb.core.redlining.geometrytype.polygon' => 'polygon',
+                    'mb.core.redlining.geometrytype.rectangle' => 'rectangle',
+                    'mb.core.redlining.geometrytype.text.label' => 'text',
                 ),
                 'choices_as_values' => true,
             ))
