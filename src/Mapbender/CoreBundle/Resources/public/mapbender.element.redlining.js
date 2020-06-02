@@ -183,6 +183,7 @@
                 if (this.activeControl) {
                     this._deactivateControl();
                 }
+                $('.redlining-tool', this.element).not($button).removeClass('active');
                 var toolName = $button.attr('name');
                 if (this._toolRequiresLabel(toolName)) {
                     this.$labelInput_.val('')
@@ -289,9 +290,6 @@
         _deactivateControl: function() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
-            this._deactivateButton();
-        },
-        _deactivateButton: function(){
             $('.redlining-tool', this.element).removeClass('active');
         },
         _getGeomLabel: function(feature) {
