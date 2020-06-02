@@ -21,6 +21,8 @@
         toolLabels: {},
         requireText_: false,
         editing_: null,
+        $labelInput_: null,
+
         _create: function() {
             Object.assign(this.toolLabels, {
                 'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
@@ -30,6 +32,7 @@
                 'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
                 'text': Mapbender.trans('mb.core.redlining.geometrytype.text.label')
             });
+            this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self.mbMap = mbMap;
@@ -182,7 +185,8 @@
                 }
                 var toolName = $button.attr('name');
                 if (this._toolRequiresLabel(toolName)) {
-                    $('input[name=label-text]', this.element).val('').prop('disabled', false);
+                    this.$labelInput_.val('')
+                    this.$labelInput_.prop('disabled', false);
                     this.requireText_ = true;
                 } else {
                     this.requireText_ = false;
@@ -193,7 +197,7 @@
             return false;
         },
         _validateText: function() {
-            if (this.requireText_ && !$('input[name=label-text]', this.element).val().trim()) {
+            if (this.requireText_ && !this.$labelInput_.val().trim()) {
                 Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                 return false;
             } else {
@@ -203,10 +207,9 @@
         _onFeatureAdded: function(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
             if (this._toolRequiresLabel(toolName)) {
-                var textInput = $('input[name=label-text]', self.element);
-                var text = textInput.val().trim();
+                var text = this.$labelInput_.val().trim();
                 this._updateFeatureLabel(feature, text);
-                textInput.val('');
+                this.$labelInput_.val('');
             }
             this._addToGeomList(feature);
         },
@@ -271,7 +274,7 @@
             }
         },
         _endEdit: function() {
-            $('input[name=label-text]', this.element).off('keyup');
+            this.$labelInput_.off('keyup');
             if (this.editControl) {
                 if (Mapbender.mapEngine.code === 'ol2') {
                     this.editControl.deactivate();
@@ -285,7 +288,7 @@
         },
         _deactivateControl: function() {
             this.layer.endDraw();
-            $('input[name=label-text]', this.element).prop('disabled', true);
+            this.$labelInput_.prop('disabled', true);
             this._deactivateButton();
         },
         _deactivateButton: function(){
@@ -324,10 +327,9 @@
             this._deactivateControl();
             this._endEdit();
             if (this._toolRequiresLabel(this._getFeatureAttribute(eventFeature, 'toolName'))) {
-                // @todo: fold selector repetition
-                $('input[name=label-text]', this.element).val(this._getFeatureLabel(eventFeature));
-                $('input[name=label-text]', this.element).prop('disabled', false);
-                $('input[name=label-text]', this.element).on('keyup', function() {
+                this.$labelInput_.val(this._getFeatureLabel(eventFeature));
+                this.$labelInput_.prop('disabled', false);
+                this.$labelInput_.on('keyup', function() {
                     var text = $(this).val().trim();
                     if (!text) {
                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
