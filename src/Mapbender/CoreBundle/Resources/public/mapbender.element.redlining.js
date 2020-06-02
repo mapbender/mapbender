@@ -100,7 +100,7 @@
             } else {
                 this.element.removeClass('hidden');
             }
-            this._moveLayerToLayerStackTop();
+            Mapbender.vectorLayerPool.raiseElementLayers(this);
         },
         deactivate: function(){
             this._deactivateControl();
@@ -383,12 +383,6 @@
             } else {
                 feature.set(name, value);
             }
-        },
-        /**
-         * engine-specific
-         */
-        _moveLayerToLayerStackTop: function() {
-            Mapbender.vectorLayerPool.raiseElementLayers(this);
         },
         _onSrsChange: function(event, data) {
             this._endEdit();
