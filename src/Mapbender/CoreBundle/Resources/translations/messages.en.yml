@@ -360,6 +360,8 @@ mb:
         rectangle: Rectangle
         circle: Circle
         text: Text
+      inputs:
+        label: Label
       error:
         notext: 'Text required'
       geometry:

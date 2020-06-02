@@ -361,6 +361,8 @@ mb:
         rectangle: Rechteck
         circle: Kreis
         text: Text
+      inputs:
+        label: Beschriftung
       error:
         notext: 'Kein Text eingetragen'
       geometry:
