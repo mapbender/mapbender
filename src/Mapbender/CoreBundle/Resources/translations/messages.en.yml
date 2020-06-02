@@ -369,9 +369,6 @@ mb:
           remove: 'Remove geometry'
           edit: 'Edit geometry'
           zoom: 'Zoom to geometry'
-      dialog:
-        btn:
-          cancel: Close
       class:
         title: Redlining
         description: 'Redlining tool'

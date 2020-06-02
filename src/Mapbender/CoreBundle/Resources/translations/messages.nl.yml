@@ -356,9 +356,6 @@ mb:
           remove: 'Verwijder geometrie'
           edit: 'Bewerk geometrie'
           zoom: 'Zoom naar geometrie'
-      dialog:
-        btn:
-          cancel: Sluiten
       class:
         title: Tekenen
         description: 'Tekentool (Redlining)'

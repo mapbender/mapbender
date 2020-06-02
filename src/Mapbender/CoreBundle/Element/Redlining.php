@@ -49,7 +49,6 @@ class Redlining extends Element
             ),
             'trans' => array(
                 'mb.core.redlining.*',
-                'mb.core.redlining.dialog.btn.cancel',  // @todo: use standard cancel label
             ),
         );
     }

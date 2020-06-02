@@ -357,9 +357,6 @@ mb:
           remove: 'Supprimer la géométrie'
           edit: 'Modifier la géometrie'
           zoom: 'Zoomer sur la géométrie'
-      dialog:
-        btn:
-          cancel: Fermer
       class:
         title: Annotation
         description: 'Outil d''annotation'

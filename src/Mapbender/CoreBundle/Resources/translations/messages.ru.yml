@@ -359,9 +359,6 @@ mb:
           remove: 'Удалить геометрию'
           edit: 'Редактировать геометрию'
           zoom: 'Показать геометрию'
-      dialog:
-        btn:
-          cancel: Закрыть
       class:
         title: Redlining
         description: 'Redlining инструмент'

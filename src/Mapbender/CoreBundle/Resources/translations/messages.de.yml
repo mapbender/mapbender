@@ -370,9 +370,6 @@ mb:
           remove: 'Entfernen der Geometrie'
           edit: 'Editieren der Geometrie'
           zoom: 'Zoom auf die Geometrie'
-      dialog:
-        btn:
-          cancel: Schließen
       class:
         title: Redlining
         description: 'Redlining Werkzeug'

@@ -162,7 +162,7 @@
                     height: 380,
                     buttons: {
                         'cancel': {
-                            label: Mapbender.trans('mb.core.redlining.dialog.btn.cancel'),
+                            label: Mapbender.trans('mb.actions.close'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.deactivate();

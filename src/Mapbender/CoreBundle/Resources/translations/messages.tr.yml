@@ -357,9 +357,6 @@ mb:
           remove: 'Geometriyi kaldır'
           edit: 'Geometriyi düzenle'
           zoom: 'Geometriye yakınlaştır'
-      dialog:
-        btn:
-          cancel: 'Kapat'
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'

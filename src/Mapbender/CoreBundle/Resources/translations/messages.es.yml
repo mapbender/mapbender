@@ -359,9 +359,6 @@ mb:
           remove: ~
           edit: ~
           zoom: ~
-      dialog:
-        btn:
-          cancel: ~
       class:
         title: ~
         description: ~

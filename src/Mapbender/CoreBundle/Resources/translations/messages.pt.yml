@@ -359,9 +359,6 @@ mb:
           remove: 'Tirar geometria'
           edit: 'Editar geometria'
           zoom: 'Ampliar em cima de geometria'
-      dialog:
-        btn:
-          cancel: Fechar
       class:
         title: Redlining
         description: 'Ferramenta: Redlining'
