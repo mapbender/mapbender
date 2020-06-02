@@ -361,8 +361,8 @@ mb:
         circle: Circle
         text:
           label: Text
-          error:
-            notext: 'Text required'
+      error:
+        notext: 'Text required'
       geometry:
         action:
           remove: 'Remove geometry'

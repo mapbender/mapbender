@@ -353,8 +353,8 @@ mb:
         circle: Круг
         text:
           label: Текст
-          error:
-            notext: 'Text required'
+      error:
+        notext: ~
       geometry:
         action:
           remove: 'Удалить геометрию'

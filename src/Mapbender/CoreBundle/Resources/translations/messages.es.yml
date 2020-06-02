@@ -353,8 +353,8 @@ mb:
         circle: Circulo
         text:
           label: ~
-          error:
-            notext: ~
+      error:
+        notext: ~
       geometry:
         action:
           remove: ~

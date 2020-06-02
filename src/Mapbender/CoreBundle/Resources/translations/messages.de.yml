@@ -362,8 +362,8 @@ mb:
         circle: Kreis
         text:
           label: Text
-          error:
-            notext: 'Kein Text eingetragen'
+      error:
+        notext: 'Kein Text eingetragen'
       geometry:
         action:
           remove: 'Entfernen der Geometrie'

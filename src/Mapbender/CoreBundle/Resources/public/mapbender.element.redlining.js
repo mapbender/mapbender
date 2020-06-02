@@ -207,7 +207,7 @@
         },
         _validateText: function() {
             if (this.requireText_ && !this.$labelInput_.val().trim()) {
-                Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                Mapbender.info(Mapbender.trans('mb.core.redlining.error.notext'));
                 return false;
             } else {
                 return true;

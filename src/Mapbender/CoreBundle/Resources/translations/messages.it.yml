@@ -353,8 +353,8 @@ mb:
         circle: Cerchio
         text:
           label: Testo
-          error:
-            notext: 'Testo necessario'
+      error:
+        notext: 'Testo necessario'
       geometry:
         action:
           remove: 'Rimuovi la geometria'
