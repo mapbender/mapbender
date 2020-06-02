@@ -257,6 +257,11 @@ class ApplicationAssetService
                     '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
+            case 'trans':
+                return array(
+                    'mb.actions.*',
+                    'mb.terms.*',
+                );
             default:
                 return array();
         }
