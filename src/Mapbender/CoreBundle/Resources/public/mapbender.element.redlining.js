@@ -27,6 +27,7 @@
                 'line': Mapbender.trans('mb.core.redlining.geometrytype.line'),
                 'polygon': Mapbender.trans('mb.core.redlining.geometrytype.polygon'),
                 'rectangle': Mapbender.trans('mb.core.redlining.geometrytype.rectangle'),
+                'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
                 'text': Mapbender.trans('mb.core.redlining.geometrytype.text.label')
             });
             var self = this;
@@ -215,6 +216,7 @@
             switch(toolName) {
                 case 'point':
                 case 'line':
+                case 'circle':
                 case 'polygon':
                 case 'rectangle':
                     this.layer.draw(toolName, featureAdded);

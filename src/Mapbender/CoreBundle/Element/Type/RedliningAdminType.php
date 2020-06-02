@@ -53,6 +53,7 @@ class RedliningAdminType extends AbstractType
                     'mb.core.redlining.geometrytype.line' => 'line',
                     'mb.core.redlining.geometrytype.polygon' => 'polygon',
                     'mb.core.redlining.geometrytype.rectangle' => 'rectangle',
+                    'mb.core.redlining.geometrytype.circle' => 'circle',
                     'mb.core.redlining.geometrytype.text.label' => 'text',
                 ),
                 'choices_as_values' => true,
