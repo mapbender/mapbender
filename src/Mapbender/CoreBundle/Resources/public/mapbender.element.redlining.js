@@ -3,7 +3,6 @@
     $.widget("mapbender.mbRedlining", $.mapbender.mbBaseElement, {
         options: {
             target: null,
-            display_type: 'dialog',
             auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
@@ -22,6 +21,7 @@
         requireText_: false,
         editing_: null,
         $labelInput_: null,
+        useDialog_: false,
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -32,6 +32,7 @@
                 'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
                 'text': Mapbender.trans('mb.core.redlining.geometrytype.text.label')
             });
+            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
@@ -90,7 +91,7 @@
             }
             this.setupMapEventListeners();
             this._trigger('ready');
-            if (this.options.auto_activate || this.options.display_type === 'element') {
+            if (this.useDialog_ && this.options.auto_activate) {
                 this.activate();
             }
         },
@@ -107,7 +108,7 @@
         },
         activate: function(callback){
             this.callback = callback ? callback : null;
-            if (this.options.display_type === 'dialog'){
+            if (this.useDialog_) {
                 this._open();
             } else {
                 this.element.removeClass('hidden');

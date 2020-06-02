@@ -29,14 +29,6 @@ class RedliningAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('display_type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                'choices' => array(
-                    'Dialog' => 'dialog',
-                    'Element' => 'element',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('auto_activate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.redlining.label.auto_activate',
