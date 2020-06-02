@@ -350,8 +350,8 @@ mb:
         line: 'Hat'
         polygon: 'Çokgen'
         rectangle: 'Dikdörtgen'
+        circle: Çember
         text:
-          title: 'Metin'
           label: 'Metin'
       geometry:
         action:

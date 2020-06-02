@@ -350,8 +350,8 @@ mb:
         line: Ligne
         polygon: Polygone
         rectangle: Rectangle
+        circle: Cercle
         text:
-          title: Texte
           label: Texte
       geometry:
         action:

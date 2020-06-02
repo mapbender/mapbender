@@ -350,8 +350,8 @@ mb:
         line: Linea
         polygon: Poligono
         rectangle: Rettangolo
+        circle: Cerchio
         text:
-          title: Testo
           label: Testo
           error:
             notext: 'Testo necessario'

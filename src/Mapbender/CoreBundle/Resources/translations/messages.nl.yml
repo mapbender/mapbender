@@ -349,8 +349,8 @@ mb:
         line: Lijn
         polygon: Polygoon
         rectangle: Rechthoek
+        circle: Cirkel
         text:
-          title: Titel
           label: Tekst
       geometry:
         action:

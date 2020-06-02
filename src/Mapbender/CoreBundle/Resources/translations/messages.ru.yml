@@ -350,8 +350,8 @@ mb:
         line: Линия
         polygon: Полигон
         rectangle: Прямоугольник
+        circle: Круг
         text:
-          title: Текст
           label: Текст
           error:
             notext: 'Text required'

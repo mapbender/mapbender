@@ -358,8 +358,8 @@ mb:
         line: Line
         polygon: Polygon
         rectangle: Rectangle
+        circle: Circle
         text:
-          title: Text
           label: Text
           error:
             notext: 'Text required'

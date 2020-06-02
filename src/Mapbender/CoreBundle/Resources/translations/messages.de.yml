@@ -359,8 +359,8 @@ mb:
         line: Linie
         polygon: Polygon
         rectangle: Rechteck
+        circle: Kreis
         text:
-          title: Text
           label: Text
           error:
             notext: 'Kein Text eingetragen'

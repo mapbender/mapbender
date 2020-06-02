@@ -350,8 +350,8 @@ mb:
         line: Linha
         polygon: Polígono
         rectangle: Retângulo
+        circle: Circulo
         text:
-          title: Texto
           label: Texto
           error:
             notext: ~
