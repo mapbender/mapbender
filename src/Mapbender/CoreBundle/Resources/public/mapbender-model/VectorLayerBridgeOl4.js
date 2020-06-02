@@ -34,6 +34,15 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         addNativeFeatures: function(features) {
             this.wrappedLayer_.getSource().addFeatures(features);
         },
+        /**
+         * @param {Array<ol.Feature>} features
+         */
+        removeNativeFeatures: function(features) {
+            var source = this.wrappedLayer_.getSource();
+            for (var i = 0; i < features.length; ++i) {
+                source.removeFeature(features[i]);
+            }
+        },
         setBuiltinMarkerStyle: function(name) {
             switch (name) {
                 default:

@@ -250,13 +250,6 @@
                 interaction.monkeyPatchedLabelCondition = true;
             }
         },
-        _removeFeature: function(feature){
-            if (Mapbender.mapEngine.code === 'ol2') {
-                this.layer.getNativeLayer().destroyFeatures([feature]);
-            } else {
-                this.layer.getNativeLayer().getSource().removeFeature(feature);
-            }
-        },
         /**
          * @param {*} feature
          * @private
@@ -317,7 +310,7 @@
             if (feature === this.editing_) {
                 this._endEdit();
             }
-            this._removeFeature(feature);
+            this.layer.removeNativeFeatures([feature]);
             $tr.remove();
         },
         _modifyFeature: function(e) {
