@@ -16,13 +16,11 @@
     {% endif %}
     {% if 'text' in configuration.geometrytypes %}
         <input type="button" class="redlining-tool button" name="text" value="{{ "mb.core.redlining.geometrytype.text.label"|trans}}">
-        <div id="redlining-text-wrapper" class="text-wrapper hidden">
-            <label class="labelInput" for="loadWmsUrl">{{ "mb.core.redlining.geometrytype.text.label"|trans}}:</label>
-            <div class="inputWrapper">
-                <input name="label-text" class="input" type="text" />
-            </div>
-        </div>
     {% endif %}
+    <div class="form-group">
+        <label for="label-text" class="labelInput">{{ "mb.core.redlining.geometrytype.text.label"|trans}}</label>
+        <input name="label-text" type="text" class="form-control" disabled="disabled">
+    </div>
     <table class="geometry-table">
         <tr class="geometry-item" data-id="">
             <td class="geometry-name"></td>

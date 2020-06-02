@@ -182,8 +182,7 @@
                 }
                 var toolName = $button.attr('name');
                 if (this._toolRequiresLabel(toolName)) {
-                    $('input[name=label-text]', this.element).val('');
-                    $('#redlining-text-wrapper', this.element).removeClass('hidden');
+                    $('input[name=label-text]', this.element).val('').prop('disabled', false);
                     this.requireText_ = true;
                 } else {
                     this.requireText_ = false;
@@ -286,7 +285,7 @@
         },
         _deactivateControl: function() {
             this.layer.endDraw();
-            $('#redlining-text-wrapper', this.element).addClass('hidden');
+            $('input[name=label-text]', this.element).prop('disabled', true);
             this._deactivateButton();
         },
         _deactivateButton: function(){
@@ -325,8 +324,9 @@
             this._deactivateControl();
             this._endEdit();
             if (this._toolRequiresLabel(this._getFeatureAttribute(eventFeature, 'toolName'))) {
+                // @todo: fold selector repetition
                 $('input[name=label-text]', this.element).val(this._getFeatureLabel(eventFeature));
-                $('#redlining-text-wrapper', this.element).removeClass('hidden');
+                $('input[name=label-text]', this.element).prop('disabled', false);
                 $('input[name=label-text]', this.element).on('keyup', function() {
                     var text = $(this).val().trim();
                     if (!text) {
