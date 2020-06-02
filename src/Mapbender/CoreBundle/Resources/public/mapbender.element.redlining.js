@@ -177,21 +177,16 @@
         },
         _onToolButtonClick: function($button) {
             this._endEdit();
+            $('.redlining-tool', this.element).not($button).removeClass('active');
             if ($button.hasClass('active')) {
                 this._deactivateControl();
             } else {
                 if (this.activeControl) {
                     this._deactivateControl();
                 }
-                $('.redlining-tool', this.element).not($button).removeClass('active');
                 var toolName = $button.attr('name');
-                if (this._toolRequiresLabel(toolName)) {
-                    this.$labelInput_.val('')
-                    this.$labelInput_.prop('disabled', false);
-                    this.requireText_ = true;
-                } else {
-                    this.requireText_ = false;
-                }
+                this.$labelInput_.prop('disabled', false);
+                this.requireText_ = this._toolRequiresLabel(toolName);
                 this._startDraw(toolName);
                 $button.addClass('active');
             }
@@ -207,11 +202,9 @@
         },
         _onFeatureAdded: function(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
-            if (this._toolRequiresLabel(toolName)) {
-                var text = this.$labelInput_.val().trim();
-                this._updateFeatureLabel(feature, text);
-                this.$labelInput_.val('');
-            }
+            var text = this.$labelInput_.val().trim();
+            this._updateFeatureLabel(feature, text);
+            this.$labelInput_.val('');
             this._addToGeomList(feature);
         },
         _startDraw: function(toolName) {
@@ -295,9 +288,9 @@
         _getGeomLabel: function(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var typeLabel = this.toolLabels[toolName];
-            if (this._toolRequiresLabel(toolName)) {
-                var featureLabel = this._getFeatureLabel(feature);
-                return typeLabel + (featureLabel && ('(' + featureLabel + ')') || '');
+            var featureLabel = this._getFeatureLabel(feature);
+            if (featureLabel) {
+                return typeLabel + (featureLabel && (' (' + featureLabel + ')') || '');
             } else {
                 return typeLabel + ' ' + (++this.geomCounter);
             }
@@ -324,20 +317,16 @@
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit();
-            if (this._toolRequiresLabel(this._getFeatureAttribute(eventFeature, 'toolName'))) {
-                this.$labelInput_.val(this._getFeatureLabel(eventFeature));
-                this.$labelInput_.prop('disabled', false);
-                this.$labelInput_.on('keyup', function() {
+            this.$labelInput_.val(this._getFeatureLabel(eventFeature));
+            this.$labelInput_.prop('disabled', false);
+            this.$labelInput_.on('keyup', function() {
+                if (self._validateText()) {
                     var text = $(this).val().trim();
-                    if (!text) {
-                        Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                    } else {
-                        self._updateFeatureLabel(eventFeature, text);
-                        var label = self._getGeomLabel(eventFeature);
-                        $('.geometry-name', $row).text(label);
-                    }
-                });
-            }
+                    self._updateFeatureLabel(eventFeature, text);
+                    var label = self._getGeomLabel(eventFeature);
+                    $('.geometry-name', $row).text(label);
+                }
+            });
             this._startEdit(eventFeature);
         },
         _zoomToFeature: function(e){
