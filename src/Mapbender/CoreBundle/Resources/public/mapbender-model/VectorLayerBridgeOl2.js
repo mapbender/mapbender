@@ -117,6 +117,13 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
                     return  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
                 case 'polygon':
                     return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
+                case 'circle':
+                    return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
+                        handlerOptions: {
+                            sides: 64,
+                            irregular: false
+                        }
+                    });
                 case 'rectangle':
                     return  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
                         handlerOptions: {
