@@ -335,8 +335,8 @@ mb:
           deactivate_on_close: 'Deactiveer bij sluiten'
     htmlelement:
       class:
-        title: Titel
-        description: Beschrijving
+        title: ~
+        description: ~
     entity:
       app:
         screenshotfile:
