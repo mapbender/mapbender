@@ -6,6 +6,7 @@
             useTheme: false,
             target: null,
             showBaseSource: true,
+            allowReorder: true,
             hideNotToggleable: false,
             hideSelect: false,
             hideInfo: false,
@@ -92,7 +93,9 @@
             $targetList.append($toAdd);
         },
         _reset: function() {
-            this._createSortable();
+            if (this.options.allowReorder) {
+                this._createSortable();
+            }
             $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
             this._setSourcesCount();
         },
@@ -155,29 +158,31 @@
         },
         _createSortable: function() {
             var self = this;
+            var onUpdate = function(event, ui) {
+                var $elm = $(ui.item);
+                var type = $elm.attr('data-type');
+                switch (type) {
+                    case 'theme':
+                    case 'root':
+                        self._updateSourceOrder();
+                        break;
+                    case 'simple':
+                    case 'group':
+                        self._updateSource($elm.closest('.serviceContainer'));
+                        break;
+                    default:
+                        console.warn("Warning: unhandled element in layertree sorting", type, $elm);
+                        break;
+                }
+            };
+
             $("ul.layers", this.element).each(function() {
                 $(this).sortable({
                     axis: 'y',
-                    items: "> li:not(.notreorder)",
+                    items: "> li",
                     distance: 6,
                     cursor: "move",
-                    update: function(event, ui) {
-                        var $elm = $(ui.item);
-                        var type = $elm.attr('data-type');
-                        switch (type) {
-                            case 'theme':
-                            case 'root':
-                                self._updateSourceOrder();
-                                break;
-                            case 'simple':
-                            case 'group':
-                                self._updateSource($elm.closest('.serviceContainer'));
-                                break;
-                            default:
-                                console.warn("Warning: unhandled element in layertree sorting", type, $elm);
-                                break;
-                        }
-                    }
+                    update: onUpdate
                 });
             });
         },

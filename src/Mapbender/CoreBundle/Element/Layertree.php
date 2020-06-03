@@ -93,7 +93,8 @@ class Layertree extends Element
             "hideInfo" => false,
             "menu" => array(),
             "useTheme" => false,
-            'themes' => array()
+            'allowReorder' => true,
+            'themes' => array(),
         );
     }
 
