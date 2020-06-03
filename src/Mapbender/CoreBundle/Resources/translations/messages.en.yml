@@ -346,8 +346,6 @@ mb:
       class:
         title: HTML
         description: 'Add some HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
@@ -373,9 +371,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining tool'
-      tag:
-        redlining: redlining
-        geometry: geometry
   geosource:
     image_error:
       datails: 'The map cannot be displayed.'

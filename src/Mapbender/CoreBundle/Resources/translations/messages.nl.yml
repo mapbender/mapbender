@@ -337,8 +337,6 @@ mb:
       class:
         title: Titel
         description: Beschrijving
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
@@ -359,9 +357,6 @@ mb:
       class:
         title: Tekenen
         description: 'Tekentool (Redlining)'
-      tag:
-        redlining: tekenen
-        geometry: geometrie
   geosource:
     image_error:
       datails: 'De kaart kan niet getoond worden.'

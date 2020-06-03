@@ -338,8 +338,6 @@ mb:
       class:
         title: HTML
         description: 'Ajouter du code HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
@@ -360,9 +358,6 @@ mb:
       class:
         title: Annotation
         description: 'Outil d''annotation'
-      tag:
-        redlining: redlining
-        geometry: geometry
   geosource:
     image_error:
       datails: 'La carte ne peut pas être affichée.'

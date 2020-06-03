@@ -338,8 +338,6 @@ mb:
       class:
         title: 'HTML'
         description: 'HTML kodu ekle'
-      tag:
-        html: 'HTML'
     entity:
       app:
         screenshotfile:
@@ -360,9 +358,6 @@ mb:
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
-      tag:
-        redlining: 'İşaretleme'
-        geometry: 'Geometri'
   geosource:
     image_error:
       datails: 'Harita Görüntülenemiyor.'

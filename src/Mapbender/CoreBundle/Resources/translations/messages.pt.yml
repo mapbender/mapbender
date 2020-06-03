@@ -338,8 +338,6 @@ mb:
       class:
         title: HTML
         description: 'Adicionar HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
@@ -362,9 +360,6 @@ mb:
       class:
         title: Redlining
         description: 'Ferramenta: Redlining'
-      tag:
-        redlining: redlining
-        geometry: geometria
   geosource:
     image_error:
       datails: 'Não pode mostra o mapa.'

@@ -338,8 +338,6 @@ mb:
       class:
         title: ~
         description: ~
-      tag:
-        html: html
     entity:
       app:
         screenshotfile:
@@ -362,9 +360,6 @@ mb:
       class:
         title: ~
         description: ~
-      tag:
-        redlining: redlining
-        geometry: geometry
   geosource:
     image_error:
       datails: 'El mapa no puede ser presentado.'

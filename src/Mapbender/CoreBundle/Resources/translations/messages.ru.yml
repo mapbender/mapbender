@@ -338,8 +338,6 @@ mb:
       class:
         title: HTML
         description: 'Добавить тэги HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
@@ -362,9 +360,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining инструмент'
-      tag:
-        redlining: redlining
-        geometry: Геометрия
   geosource:
     image_error:
       datails: 'Карта не отображается'
