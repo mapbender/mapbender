@@ -1,22 +1,26 @@
 <div id="{{ id }}" class="mb-element mb-element-redlining hidden" data-title="{{ title|trans }}">
-    {% if 'point' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="point" value="{{ "mb.core.redlining.geometrytype.point"|trans}}">
-    {% endif %}
-    {% if 'line' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="line" value="{{ "mb.core.redlining.geometrytype.line"|trans}}">
-    {% endif %}
-    {% if 'polygon' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="polygon" value="{{ "mb.core.redlining.geometrytype.polygon"|trans}}">
-    {% endif %}
-    {% if 'rectangle' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="rectangle" value="{{ "mb.core.redlining.geometrytype.rectangle"|trans}}">
-    {% endif %}
-    {% if 'circle' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="circle" value="{{ "mb.core.redlining.geometrytype.circle"|trans}}">
-    {% endif %}
-    {% if 'text' in configuration.geometrytypes %}
-        <input type="button" class="redlining-tool button" name="text" value="{{ "mb.core.redlining.geometrytype.text"|trans}}">
-    {% endif %}
+    <div class="form-group">
+        <div class="btn-group btn-group-sm">
+        {% if 'point' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="point" title="{{ "mb.core.redlining.geometrytype.point"|trans }}" class="btn btn-default redlining-tool"><i class="icon-draw-point"></i></button>
+        {% endif %}
+        {% if 'line' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="line" title="{{ "mb.core.redlining.geometrytype.line"|trans }}" class="btn btn-default redlining-tool"><i class="icon-draw-line"></i></button>
+        {% endif %}
+        {% if 'polygon' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="polygon" title="{{ "mb.core.redlining.geometrytype.polygon"|trans }}" class="btn btn-default redlining-tool"><i class="icon-draw-polygon"></i></button>
+        {% endif %}
+        {% if 'rectangle' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="rectangle" title="{{ "mb.core.redlining.geometrytype.rectangle"|trans }}" class="btn btn-default redlining-tool"><i class="icon-draw-rectangle"></i></button>
+        {% endif %}
+        {% if 'circle' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="circle" title="{{ "mb.core.redlining.geometrytype.circle"|trans }}" class="btn btn-default redlining-tool"><i class="icon-draw-circle"></i></button>
+        {% endif %}
+        {% if 'text' in configuration.geometrytypes %}
+            <button type="button" data-tool-name="text" title="{{ "mb.core.redlining.geometrytype.text"|trans }}" class="btn btn-default redlining-tool"><i class="fa fas fa-font"></i></button>
+        {% endif %}
+        </div>
+    </div>
     <div class="form-group">
         <label for="label-text" class="labelInput">{{ "mb.core.redlining.inputs.label"|trans}}</label>
         <input name="label-text" type="text" class="form-control" disabled="disabled">

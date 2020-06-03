@@ -194,10 +194,7 @@
             if ($button.hasClass('active')) {
                 this._deactivateControl();
             } else {
-                if (this.activeControl) {
-                    this._deactivateControl();
-                }
-                var toolName = $button.attr('name');
+                var toolName = $button.attr('data-tool-name');
                 this.$labelInput_.prop('disabled', false);
                 this.requireText_ = this._toolRequiresLabel(toolName);
                 this._startDraw(toolName);
