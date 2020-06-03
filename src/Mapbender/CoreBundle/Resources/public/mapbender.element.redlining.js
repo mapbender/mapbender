@@ -305,6 +305,7 @@
             var $tr = $(e.target).closest('tr');
             var feature = $tr.data('feature');
             if (feature === this.editing_) {
+                this.$labelInput_.val('');
                 this._endEdit();
             }
             this.layer.removeNativeFeatures([feature]);
