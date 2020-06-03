@@ -197,7 +197,6 @@ class WmsSourceService extends SourceService
                 "info" => $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
                 "toggle" => $hasChildren ? $instanceLayer->getAllowtoggle() : null,
-                "reorder" => $instanceLayer->getAllowreorder(),
             ),
         );
     }
