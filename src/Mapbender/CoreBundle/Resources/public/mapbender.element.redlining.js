@@ -54,6 +54,9 @@
             $('.redlining-tool', this.element).on('click', function() {
                 return self._onToolButtonClick($(this));
             });
+            $('.redlining-tool-off', this.element).on('click', function() {
+                self._deactivateControl();
+            });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             this.layer.customizeStyle(Object.assign({}, this.options.paintstyles, {
@@ -219,6 +222,7 @@
         },
         _startDraw: function(toolName) {
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
+            $('.redlining-tool-off', this.element).prop('disabled', false);
             switch(toolName) {
                 case 'point':
                 case 'line':
@@ -282,6 +286,7 @@
         _deactivateControl: function() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
+            $('.redlining-tool-off', this.element).prop('disabled', true);
             $('.redlining-tool', this.element).removeClass('active');
         },
         _getGeomLabel: function(feature) {

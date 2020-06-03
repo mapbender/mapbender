@@ -369,6 +369,7 @@ mb:
           remove: 'Remove geometry'
           edit: 'Edit geometry'
           zoom: 'Zoom to geometry'
+          stop_drawing: Stop drawing
       class:
         title: Redlining
         description: 'Redlining tool'
