@@ -3,7 +3,6 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
     function VectorLayerBridgeOl4(olMap) {
         window.Mapbender.VectorLayerBridge.call(this, olMap);
         this.wrappedLayer_ = new ol.layer.Vector({
-            map: olMap,
             source: new ol.source.Vector({wrapX: false})
         });
         this.markerStyle_ = null;
