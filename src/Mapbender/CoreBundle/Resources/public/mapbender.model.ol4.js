@@ -46,6 +46,7 @@ window.Mapbender.MapModelOl4 = (function() {
         delete this.viewOptions_['zoom'];
         this.olMap = new ol.Map({
             view: view,
+            controls: [],
             target: this.mbMap.element.attr('id')
         });
         this._patchNavigation(this.olMap);
