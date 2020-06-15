@@ -45,6 +45,11 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
                 }
             }
         }
+        if (window.proj4 && (((window.ol || {}).proj || {}).proj4 || {}).register) {
+            // OpenLayers 6 special
+            // https://github.com/openlayers/openlayers/blob/v6.3.1/changelog/upgrade-notes.md#changes-in-proj4-integration
+            ol.proj.proj4.register(window.proj4);
+        }
     },
 
     /**
