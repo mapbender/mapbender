@@ -23,4 +23,19 @@
     background-color: white;
     @include opacity(.6);
   }
+
+  // Minimal selection / event rules from original Openlayers 6 css to allow
+  // map interactions to properly receive events.
+  .ol-viewport, .ol-unselectable {
+    user-select: none;
+  }
+  .ol-overlaycontainer, .ol-overlaycontainer-stopevent {
+    pointer-events: none;
+  }
+  .ol-overlaycontainer > *, .ol-overlaycontainer-stopevent > * {
+    pointer-events: auto;
+  }
+  .ol-selectable {
+    user-select: text;
+  }
 }
