@@ -1,4 +1,15 @@
 !(function() {
+    if (((window.ol || {}).style || {}).Style && !ol.style.Style.defaultFunction) {
+        ol.style.Style.defaultFunction = ol.style.Style.createDefaultStyle;
+    }
+    if ((window.ol || {}).interaction && !ol.interaction.DrawEventType) {
+        // enum not exported at all in Openlayers 6 => provide it
+        ol.interaction.DrawEventType = {
+            DRAWSTART: 'drawstart',
+            DRAWEND: 'drawend'
+        };
+    }
+
     /**
      * @todo: determine if we need to keep this, remove if possible
      *
