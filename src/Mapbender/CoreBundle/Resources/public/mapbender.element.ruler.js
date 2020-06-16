@@ -27,7 +27,17 @@
         },
         _createControl4: function() {
             var source = this.layer.getNativeLayer().getSource();
-            var defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
+            var defaultStyleFn;
+            if (ol.interaction.Draw.getDefaultStyleFunction) {
+                defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
+            } else {
+                // Openlayers 6 special
+                var editingStyles = ol.style.Style.createEditingStyle();
+                defaultStyleFn = function(feature) {
+                    return editingStyles[feature.getGeometry().getType()];
+                };
+            }
+
             var self = this;
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
@@ -294,14 +304,16 @@
             var calcOptions = {
                 projection: this.mapModel.getCurrentProjectionCode()
             };
+            // Openlayers 6 special: ol.Sphere namespace renamed to lowercase ol.sphere
+            var sphereNamespace = (ol.Sphere || ol.sphere);
             switch (type) {
                 case 'line':
-                    return ol.Sphere.getLength(geometry, calcOptions);
+                    return sphereNamespace.getLength(geometry, calcOptions);
                 default:
                     console.warn("Unsupported geometry type in measure calculation", type, feature);
                     // fall through to area
                 case 'area':
-                    return ol.Sphere.getArea(geometry, calcOptions);
+                    return sphereNamespace.getArea(geometry, calcOptions);
             }
         },
         /**
