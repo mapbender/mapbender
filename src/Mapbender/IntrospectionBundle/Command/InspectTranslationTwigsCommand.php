@@ -100,6 +100,7 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
 
     protected function collectElementResourcePaths()
     {
+        $dummyApplication = new Application();
         $twigPaths = array();
         /** @var ElementInventoryService $service */
         $service = $this->getContainer()->get('mapbender.element_inventory.service');
@@ -107,7 +108,7 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
         $factory = $this->getContainer()->get('mapbender.element_factory.service');
         $classNames = $service->getRawInventory();
         foreach ($classNames as $className) {
-            $element = $factory->newEntity($className, 'content');
+            $element = $factory->newEntity($className, 'content', $dummyApplication);
             $componentDummy = $factory->componentFromEntity($element);
             $assetDependencies = $componentDummy->getAssets();
             if (!empty($assetDependencies['trans'])) {
