@@ -99,6 +99,7 @@ class ElementMarkupExtension extends AbstractExtension
         if (false !== strpos($regionName, 'content')) {
             throw new \LogicException("No support for 'content' region in region_markup");
         }
+        $this->updateBuffers($application);
         if (!empty($this->nonContentRegionMap[$regionName])) {
             $elements = $this->nonContentRegionMap[$regionName];
         } else {
