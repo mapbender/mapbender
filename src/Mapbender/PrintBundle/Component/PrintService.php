@@ -199,17 +199,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         $tplidx = $pdf->importPage(1);
-        $hasTransparentBg = $this->checkPdfBackground($pdf);
-        if (!$hasTransparentBg){
-            $pdf->useTemplate($tplidx);
-        }
+        $pdf->useTemplate($tplidx);
         $this->addMapImage($pdf, $mapImageName, $templateData);
         unlink($mapImageName);
 
-        if ($hasTransparentBg) {
-            $pdf->useTemplate($tplidx);
-        }
-
+        // @todo: reimplement "transparent background pdf" logic? (purpose / testability unknown)
         $this->afterMainMap($pdf, $templateData, $jobData);
 
         return $pdf;
@@ -714,20 +708,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     public static function dotsToMm($dots, $dpi)
     {
         return $dots * 25.4 / $dpi;
-    }
-
-    private function checkPdfBackground($pdf) {
-        $pdfArray = (array) $pdf;
-        $pdfFile = $pdfArray['currentFilename'];
-        $pdfSubArray = (array) $pdfArray['parsers'][$pdfFile];
-        $prefix = chr(0) . '*' . chr(0);
-        $pdfSubArray2 = $pdfSubArray[$prefix . '_root'][1][1];
-
-        if (sizeof($pdfSubArray2) > 0 && !array_key_exists('/Outlines', $pdfSubArray2)) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
