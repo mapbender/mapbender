@@ -2,7 +2,9 @@
 
 namespace Mapbender\PrintBundle\Component;
 
-class PDF_Extensions extends \FPDI
+use setasign\Fpdi\Fpdi;
+
+class PDF_Extensions extends Fpdi
 {
 
     /**

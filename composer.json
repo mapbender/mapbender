@@ -17,7 +17,7 @@
         "sensio/generator-bundle": "^2 || ^3",
 
         "setasign/fpdf": "^1.8",
-        "setasign/fpdi": "^1.6.2",
+        "setasign/fpdi": "^2",
 
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
