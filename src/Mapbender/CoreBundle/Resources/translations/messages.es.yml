@@ -174,8 +174,6 @@ mb:
         position: posición
         button: botón
     layertree:
-      confirm:
-        allremove: '¿Realmente borrar todas las fuentes?'
       popup:
         btn:
           ok: Cerrar
@@ -195,7 +193,6 @@ mb:
         zoomtolayer: 'Aumento a la capa'
         metadata: Metadata
         sources: Fuentes
-        deleteallsources: 'Quitar todas las fuentes'
         legend: Leyenda
         kmlexport: 'Exportar Kml'
         dimension_onoff: ~

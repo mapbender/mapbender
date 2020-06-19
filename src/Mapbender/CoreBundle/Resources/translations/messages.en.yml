@@ -181,8 +181,6 @@ mb:
         position: position
         button: button
     layertree:
-      confirm:
-        allremove: 'Really all sources delete?'
       popup:
         btn:
           ok: Close
@@ -202,7 +200,6 @@ mb:
         zoomtolayer: 'Zoom to layer'
         metadata: Metadata
         sources: Sources
-        deleteallsources: 'Remove all sources'
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'

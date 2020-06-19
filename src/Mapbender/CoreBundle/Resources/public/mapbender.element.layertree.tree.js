@@ -105,7 +105,6 @@
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
@@ -642,16 +641,6 @@
         _setSourcesCount: function() {
             var num = this._getUniqueSourceIds().length;
             $(this.element).find('#counter').text(num);
-        },
-        _removeAllSources: function(e) {
-            var sourceIds, i, n;
-            if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
-                sourceIds = this._getUniqueSourceIds();
-                for (i = 0, n = sourceIds.length; i < n; ++i) {
-                    this.model.removeSourceById(sourceIds[i]);
-                }
-            }
-            this._setSourcesCount();
         },
         /**
          * Default action for mapbender element

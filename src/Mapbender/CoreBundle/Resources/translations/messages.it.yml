@@ -174,8 +174,6 @@ mb:
         position: Posizione
         button: Pulsante
     layertree:
-      confirm:
-        allremove: 'Vuoi veramente cancellare tutte le risorse?'
       popup:
         btn:
           ok: Chiudi
@@ -195,7 +193,6 @@ mb:
         zoomtolayer: 'Fai zoom sul layer'
         metadata: Metadata
         sources: Risorse
-        deleteallsources: 'Rimuovere tutti le risorse'
         legend: Legenda
         kmlexport: 'esporta KML'
         dimension_onoff: 'On/Off Dimensione'

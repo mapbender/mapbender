@@ -173,8 +173,6 @@ mb:
         position: 'Konum'
         button: 'Buton'
     layertree:
-      confirm:
-        allremove: 'Bütün kaynaklar silinsin mi?'
       popup:
         btn:
           ok: 'Kapat'
@@ -194,7 +192,6 @@ mb:
         zoomtolayer: 'Katmana yakınlaştır'
         metadata: ' Üstveri (Metadata)'
         sources: 'Kaynaklar'
-        deleteallsources: 'Tüm kaynakları kaldır'
         legend: 'Lejant'
         kmlexport: 'KML formatında dışa aktar (Export)'
         dimension_onoff: 'Boyutlar Açık/Kapalı'

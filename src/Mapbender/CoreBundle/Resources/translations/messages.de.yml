@@ -181,8 +181,6 @@ mb:
         position: Position
         button: Button
     layertree:
-      confirm:
-        allremove: 'Sollen wirklich alle Dienste gelöscht werden?'
       popup:
         btn:
           ok: Schließen
@@ -202,7 +200,6 @@ mb:
         zoomtolayer: 'Zoom auf Ebene'
         metadata: Metadaten
         sources: Quellen
-        deleteallsources: 'Alle Dienste entfernen'
         legend: Legende
         kmlexport: 'KML Export'
         dimensions: Dimensions

@@ -174,8 +174,6 @@ mb:
         position: положение
         button: кнопка
     layertree:
-      confirm:
-        allremove: 'Действительно удалить все источники?'
       popup:
         btn:
           ok: Закрыть
@@ -195,7 +193,6 @@ mb:
         zoomtolayer: 'Масштаб по слоюr'
         metadata: Метаданные
         sources: Источники
-        deleteallsources: 'Удалить все источники'
         legend: Легенда
         kmlexport: 'Kml экспорт'
         dimension_onoff: 'Вкл/Выкл Измерение'

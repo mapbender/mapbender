@@ -173,8 +173,6 @@ mb:
         position: positie
         button: knop
     layertree:
-      confirm:
-        allremove: 'Wilt u werkelijk alle bronnen verwijderen?'
       popup:
         btn:
           ok: Sluit
@@ -194,7 +192,6 @@ mb:
         zoomtolayer: 'Zoom naar laag'
         metadata: Metadata
         sources: Bronnen
-        deleteallsources: 'Verwijder alle bronnen'
         legend: Legenda
         kmlexport: 'Kml export'
         dimension_onoff: 'Dimensie Aan/Uit'
