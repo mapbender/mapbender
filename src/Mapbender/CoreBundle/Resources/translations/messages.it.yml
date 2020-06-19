@@ -318,7 +318,6 @@ mb:
             opened: aperto
             activate: 'Abilita Aggiunta/Rimozione Layer'
             useTheme: 'Mostra tema'
-            sourceVisibility: 'Tema: visibilità della risorsa'
             label: 'nome del tema'
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideselect: 'Nascondi la visibilità per le cartelle'

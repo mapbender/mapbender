@@ -317,7 +317,6 @@ mb:
             opened: geopend
             activate: 'Voeg activatie-knop toe'
             useTheme: 'Gebruik thema'
-            sourceVisibility: 'Thema: bron-zichtbaarheid'
             label: 'thema naam'
           hidenottoggleable: 'Verberg niet-schakelbaar'
           hideselect: 'Verberg kiesbaar'

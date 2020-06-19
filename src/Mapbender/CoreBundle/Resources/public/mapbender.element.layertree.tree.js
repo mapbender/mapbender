@@ -183,16 +183,6 @@
                 });
             });
         },
-        _isThemeVisible: function(layerset) {
-            for (var i = 0; i < layerset.content.length; i++) {
-                for (id in layerset.content[i]) {
-                    if (layerset.content[i][id].configuration.children[0].options.treeOptions.selected) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        },
         _createThemeNode: function(layerset, theme) {
             var $li = this.themeTemplate.clone();
             $('ul.layers:first', this.element).append($li);
@@ -200,12 +190,6 @@
             $li.toggleClass('showLeaves', theme.opened);
             $('.iconFolder', $li).toggleClass('iconFolderActive', theme.opened);
             $('span.layer-title:first', $li).text(layerset.title);
-            if (!theme.sourceVisibility) {
-                $('div.sourceVisibilityWrapper', $li).remove();
-            } else {
-                $('div.sourceVisibilityWrapper input[name="sourceVisibility"]', $li).prop('checked',
-                    this._isThemeVisible(layerset));
-            }
             return $li;
         },
         _createLayerNode: function(layer) {

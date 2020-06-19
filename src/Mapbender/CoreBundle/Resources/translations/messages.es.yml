@@ -318,7 +318,6 @@ mb:
             opened: opened
             activate: ~
             useTheme: ~
-            sourceVisibility: ~
             label: ~
           hidenottoggleable: ~
           hideselect: ~

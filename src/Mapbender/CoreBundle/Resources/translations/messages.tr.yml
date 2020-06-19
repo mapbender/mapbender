@@ -318,7 +318,6 @@ mb:
             opened: 'Açıldı'
             activate: 'Katman ekle/kaldır aracını ekler'
             useTheme: 'Temaları göster'
-            sourceVisibility: 'Kaynak görünürlüğü'
             label: 'Tema isimleri'
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'

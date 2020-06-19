@@ -318,7 +318,6 @@ mb:
             opened: 'Вкл/Выкл Рубрику'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Показать рубрики'
-            sourceVisibility: 'Рубрика: Сервисы'
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'

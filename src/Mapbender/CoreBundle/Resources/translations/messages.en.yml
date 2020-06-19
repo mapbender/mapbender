@@ -326,7 +326,6 @@ mb:
             opened: opened
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
             label: 'theme name'
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'

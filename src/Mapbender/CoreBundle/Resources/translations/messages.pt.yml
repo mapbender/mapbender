@@ -318,7 +318,6 @@ mb:
             opened: 'Tema aberto/fechado'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Camada temática'
-            sourceVisibility: 'Tema: Visibilidade de serviços'
             label: 'Nome do tema'
           hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
           hideselect: 'Ocultar visibilidade de arquivos'

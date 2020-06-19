@@ -327,7 +327,6 @@ mb:
             opened: 'Thema geöffnet/geschlossen'
             activate: 'Aktivieren von Layers hinzufügen/entfernen'
             useTheme: 'Thema anzeigen'
-            sourceVisibility: 'Thema: Dienste-Sichtbarkeit'
             label: Themenname
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
