@@ -204,7 +204,6 @@ mb:
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
       class:
         title: 'Layer tree'
         description: 'Tree of map''s layers'
@@ -328,7 +327,6 @@ mb:
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Theme show'
             sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
             label: 'theme name'
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'

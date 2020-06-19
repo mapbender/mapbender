@@ -197,7 +197,6 @@ mb:
         dimension_onoff: 'On/Off Dimensione'
         dimension: Dimensione
         sourcevisibility_onoff: 'Mostra risorsa'
-        allvisibility_on: 'Mostra tutti i layers'
       class:
         title: 'Layer tree'
         description: 'Tree dei layers della mappa'
@@ -320,7 +319,6 @@ mb:
             activate: 'Abilita Aggiunta/Rimozione Layer'
             useTheme: 'Mostra tema'
             sourceVisibility: 'Tema: visibilità della risorsa'
-            allSelected: 'Tema: visibilità del layer'
             label: 'nome del tema'
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideselect: 'Nascondi la visibilità per le cartelle'

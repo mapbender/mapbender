@@ -205,7 +205,6 @@ mb:
         dimension_onoff: 'An/Aus Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
-        allvisibility_on: 'Alle Layer anzeigen'
       class:
         title: Ebenenbaum
         description: 'Baum der Karten-Ebenen'
@@ -329,7 +328,6 @@ mb:
             activate: 'Aktivieren von Layers hinzufügen/entfernen'
             useTheme: 'Thema anzeigen'
             sourceVisibility: 'Thema: Dienste-Sichtbarkeit'
-            allSelected: 'Thema: Layer-Sichtbarkeit'
             label: Themenname
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'

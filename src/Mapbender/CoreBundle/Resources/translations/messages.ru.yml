@@ -197,7 +197,6 @@ mb:
         dimension_onoff: 'Вкл/Выкл Измерение'
         dimension: Измерение
         sourcevisibility_onoff: 'Вкл/Выкл Сервисы'
-        allvisibility_on: 'Показать все слой'
       class:
         title: 'Дерево слоев'
         description: 'Дерево слоев карты'
@@ -320,7 +319,6 @@ mb:
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Показать рубрики'
             sourceVisibility: 'Рубрика: Сервисы'
-            allSelected: 'Рубрика:  Слой'
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'

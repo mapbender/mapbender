@@ -197,7 +197,6 @@ mb:
         dimension_onoff: ~
         dimension: ~
         sourcevisibility_onoff: ~
-        allvisibility_on: ~
       class:
         title: 'Árbol de capa'
         description: 'Árbol de las capas del mapa'
@@ -320,7 +319,6 @@ mb:
             activate: ~
             useTheme: ~
             sourceVisibility: ~
-            allSelected: ~
             label: ~
           hidenottoggleable: ~
           hideselect: ~

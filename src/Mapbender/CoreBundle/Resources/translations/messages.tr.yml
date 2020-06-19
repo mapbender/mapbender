@@ -196,7 +196,6 @@ mb:
         dimension_onoff: 'Boyutlar Açık/Kapalı'
         dimension: 'Boyut'
         sourcevisibility_onoff: 'Kaynaklari göster'
-        allvisibility_on: 'Bütün Katmanlari göster'
       class:
         title: 'Katman ağacı'
         description: 'Haritanın katman ağacı'
@@ -320,7 +319,6 @@ mb:
             activate: 'Katman ekle/kaldır aracını ekler'
             useTheme: 'Temaları göster'
             sourceVisibility: 'Kaynak görünürlüğü'
-            allSelected: 'Katman görünürlüğü'
             label: 'Tema isimleri'
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'

@@ -197,7 +197,6 @@ mb:
         dimension_onoff: 'Dimensão ligada/desligada'
         dimension: Dimensão
         sourcevisibility_onoff: 'Visibilidade ligada/desligada'
-        allvisibility_on: 'Mostrar todas as camadas'
       class:
         title: 'Árvore de camadas'
         description: 'Árvore de camadas de mapa'
@@ -320,7 +319,6 @@ mb:
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Camada temática'
             sourceVisibility: 'Tema: Visibilidade de serviços'
-            allSelected: 'Tema: Visibilidade de camadas'
             label: 'Nome do tema'
           hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
           hideselect: 'Ocultar visibilidade de arquivos'

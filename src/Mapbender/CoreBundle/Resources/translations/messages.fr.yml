@@ -197,7 +197,6 @@ mb:
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Afficher les sources'
-        allvisibility_on: 'Afficher toutes les couches'
       class:
         title: 'Arborescence des couches'
         description: 'Arborescence des couches de la carte'
@@ -320,7 +319,6 @@ mb:
             activate: 'Permettre la suppression/l''ajout de couches'
             useTheme: 'Afficher le thème'
             sourceVisibility: 'Thème: visibilité de la source'
-            allSelected: 'Thème: visibilité de la source'
             label: 'nom du thème'
           hidenottoggleable: 'Ne pas afficher les couches non-basculables'
           hideselect: 'Ne pas afficher la visiblité pour les dossiers'

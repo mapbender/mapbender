@@ -196,7 +196,6 @@ mb:
         dimension_onoff: 'Dimensie Aan/Uit'
         dimension: Dimensie
         sourcevisibility_onoff: 'Toon Bronnen'
-        allvisibility_on: 'Toon alle Lagen'
       class:
         title: 'Lagenboom'
         description: 'Mappen-structuur (LayerTree) van kaartlagen'
@@ -319,7 +318,6 @@ mb:
             activate: 'Voeg activatie-knop toe'
             useTheme: 'Gebruik thema'
             sourceVisibility: 'Thema: bron-zichtbaarheid'
-            allSelected: 'Thema: alles geselecteerd'
             label: 'thema naam'
           hidenottoggleable: 'Verberg niet-schakelbaar'
           hideselect: 'Verberg kiesbaar'

@@ -90,7 +90,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
                         'title' => $layerset->getTitle(),
                         'useTheme' => true,
                         'sourceVisibility' => false,
-                        'allSelected' => false);
+                    );
                 }
             }
         }

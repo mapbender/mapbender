@@ -105,7 +105,6 @@
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-            this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
             });
@@ -201,9 +200,6 @@
             $li.toggleClass('showLeaves', theme.opened);
             $('.iconFolder', $li).toggleClass('iconFolderActive', theme.opened);
             $('span.layer-title:first', $li).text(layerset.title);
-            if (!theme.allSelected) {
-                $('div.selectAll', $li).remove();
-            }
             if (!theme.sourceVisibility) {
                 $('div.sourceVisibilityWrapper', $li).remove();
             } else {
@@ -411,23 +407,6 @@
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
             }
-            return false;
-        },
-        _selectAll: function(e) {
-            var self = this;
-            var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
-                var $srcLi = $(srcLi);
-                var sourceId = $srcLi.attr('data-sourceid');
-                var source = sourceId && self.model.getSourceById(sourceId);
-                if (source) {
-                    Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
-                        layer.options.treeOptions.selected = layer.options.treeOptions.allow.selected;
-                    });
-                    self.model.updateSource(source);
-                }
-            });
             return false;
         },
         _toggleSelected: function(e) {
