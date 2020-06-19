@@ -18,10 +18,6 @@
   .checkWrapper + .featureInfoWrapper {
     margin-left: 5px;
   }
-  .checkWrapper.sourceVisibilityWrapper {
-    margin-left: 2px;
-  }
-
   .iconFolder{
     display:none;
   }
@@ -101,14 +97,6 @@
         }
       }
     }
-  }
-  .checkWrapper.sourceVisibilityWrapper:before{
-    content: "\f10c";
-    font-family: 'FontAwesome';
-  }
-  .checkWrapper.sourceVisibilityWrapper.iconCheckboxActive:before{
-    content: "\f05d" !important;
-    font-family: 'FontAwesome';
   }
   [data-state="loading"]{
     @include opacity(.7);
