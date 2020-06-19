@@ -192,7 +192,6 @@ mb:
         opacity: Opacité
         zoomtolayer: ~
         metadata: Metadonnées
-        sources: Sources
         legend: Légende
         kmlexport: 'Exporter en KML'
         dimension_onoff: 'On/Off Dimension'
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Afficher les fonds de carte'
           autoopen: Autoopen
-          showheader: 'Afficher l''entête'
           showlayerremove: 'Afficher l''option de supression de couche'
           usetheme: 'Couche thématique'
           themes: Themes

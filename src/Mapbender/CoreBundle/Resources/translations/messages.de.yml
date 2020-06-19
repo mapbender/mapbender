@@ -199,7 +199,6 @@ mb:
         opacity: Deckkraft
         zoomtolayer: 'Zoom auf Ebene'
         metadata: Metadaten
-        sources: Quellen
         legend: Legende
         kmlexport: 'KML Export'
         dimensions: Dimensions
@@ -322,7 +321,6 @@ mb:
         label:
           showbasesources: 'BaseSources anzeigen'
           autoopen: 'Automatisches Öffnen'
-          showheader: 'Header anzeigen'
           showlayerremove: '"Layer entfernen" anzeigen'
           usetheme: 'Thematischer Layer'
           themes: Themen

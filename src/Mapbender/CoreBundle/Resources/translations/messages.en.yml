@@ -199,7 +199,6 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
         metadata: Metadata
-        sources: Sources
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
@@ -321,7 +320,6 @@ mb:
         label:
           showbasesources: 'Show base sources'
           autoopen: Autoopen
-          showheader: 'Show header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes

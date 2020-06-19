@@ -191,7 +191,6 @@ mb:
         opacity: 'Opaklık'
         zoomtolayer: 'Katmana yakınlaştır'
         metadata: ' Üstveri (Metadata)'
-        sources: 'Kaynaklar'
         legend: 'Lejant'
         kmlexport: 'KML formatında dışa aktar (Export)'
         dimension_onoff: 'Boyutlar Açık/Kapalı'
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Altlık kaynaklarını göster'
           autoopen: 'Otomatik aç'
-          showheader: 'Başlığı göster'
           showlayerremove: 'Katman kaldır aracını göster'
           usetheme: 'Tematik katman'
           themes: 'Temalar'

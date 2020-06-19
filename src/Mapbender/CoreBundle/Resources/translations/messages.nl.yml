@@ -191,7 +191,6 @@ mb:
         opacity: Doorzichtigheid
         zoomtolayer: 'Zoom naar laag'
         metadata: Metadata
-        sources: Bronnen
         legend: Legenda
         kmlexport: 'Kml export'
         dimension_onoff: 'Dimensie Aan/Uit'
@@ -312,7 +311,6 @@ mb:
         label:
           showbasesources: 'Toon basis-bronnen'
           autoopen: 'Automatisch openen'
-          showheader: 'Toon koptekst'
           showlayerremove: 'Toon verwijder-laag knop'
           usetheme: 'Gebruik thema'
           themes: Themas

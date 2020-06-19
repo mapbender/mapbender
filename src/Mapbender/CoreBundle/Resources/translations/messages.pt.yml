@@ -192,7 +192,6 @@ mb:
         opacity: Dimensão
         zoomtolayer: 'Ampliar em cima de camada'
         metadata: Metadados
-        sources: Origem
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'Dimensão ligada/desligada'
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Mostrar BaseSources'
           autoopen: 'Abrir automaticamente'
-          showheader: 'Mostrar header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Mostrar o tema'
           themes: Temas

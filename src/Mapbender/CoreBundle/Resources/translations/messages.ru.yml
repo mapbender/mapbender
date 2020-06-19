@@ -192,7 +192,6 @@ mb:
         opacity: Прозрачность
         zoomtolayer: 'Масштаб по слоюr'
         metadata: Метаданные
-        sources: Источники
         legend: Легенда
         kmlexport: 'Kml экспорт'
         dimension_onoff: 'Вкл/Выкл Измерение'
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Показать базу источника'
           autoopen: Авто-открытие
-          showheader: 'Показать заголовок'
           showlayerremove: 'Показать удаление слоя'
           usetheme: 'Тематический слой'
           themes: Темы

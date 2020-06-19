@@ -192,7 +192,6 @@ mb:
         opacity: Opacità
         zoomtolayer: 'Fai zoom sul layer'
         metadata: Metadata
-        sources: Risorse
         legend: Legenda
         kmlexport: 'esporta KML'
         dimension_onoff: 'On/Off Dimensione'
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Mostra la risorsa di base'
           autoopen: 'Apertura automatica'
-          showheader: 'Mostra header'
           showlayerremove: 'Mostra i layer rimossi'
           usetheme: 'Layer tematico'
           themes: Temi

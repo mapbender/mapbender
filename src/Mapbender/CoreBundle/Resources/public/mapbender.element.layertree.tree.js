@@ -97,7 +97,6 @@
                 this._createSortable();
             }
             $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
-            this._setSourcesCount();
         },
         _createEvents: function() {
             var self = this;
@@ -359,7 +358,6 @@
                 if ($theme.length && $theme.find('.serviceContainer').length === 0){
                     $theme.remove();
                 }
-                this._setSourcesCount();
             }
         },
         _getSourceNode: function(sourceId) {
@@ -616,7 +614,6 @@
             var sourceId = $node.attr('data-sourceid');
             if (layerId && sourceId) {
                 this.model.removeLayer(sourceId, layerId);
-                this._setSourcesCount();
             }
         },
         _zoomToLayer: function(e) {
@@ -630,17 +627,6 @@
         _showMetadata: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             Mapbender.Metadata.call(null, null, layer);
-        },
-        _getUniqueSourceIds: function() {
-            var sourceIds = [];
-            $('.serviceContainer[data-sourceid]', this.element).each(function() {
-                sourceIds.push($(this).attr('data-sourceid'));
-            });
-            return _.uniq(sourceIds);
-        },
-        _setSourcesCount: function() {
-            var num = this._getUniqueSourceIds().length;
-            $(this.element).find('#counter').text(num);
         },
         /**
          * Default action for mapbender element

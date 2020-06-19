@@ -192,7 +192,6 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Aumento a la capa'
         metadata: Metadata
-        sources: Fuentes
         legend: Leyenda
         kmlexport: 'Exportar Kml'
         dimension_onoff: ~
@@ -313,7 +312,6 @@ mb:
         label:
           showbasesources: 'Mostar fuentes bases'
           autoopen: Autoabrir
-          showheader: 'Mostrar encabezado'
           showlayerremove: 'Mostrar quitar capa'
           usetheme: ~
           themes: ~

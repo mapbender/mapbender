@@ -87,7 +87,6 @@ class Layertree extends Element
             "type" => null,
             "autoOpen" => false,
             "showBaseSource" => true,
-            "showHeader" => false,
             "hideNotToggleable" => false,
             "hideSelect" => false,
             "hideInfo" => false,
