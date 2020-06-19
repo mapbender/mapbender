@@ -194,18 +194,12 @@ window.Mapbender.SourceLayer = (function() {
         if (!this.options.origId && this.options.id) {
             this.options.origId = this.options.id;
         }
-        if (definition.children && definition.children.length) {
-            var self = this, i;
-            this.children = definition.children.map(function(childDef) {
-                return SourceLayer.factory(childDef, source, self);
-            });
-            for (i = 0; i < this.children.length; ++i) {
-                this.children[i].siblings = this.children;
-            }
-        } else {
-            // Weird hack because not all places that check for child layers do so
-            // by checking children && children.length, but only do a truthiness test
-            this.children = null;
+        var self = this, i;
+        this.children = (definition.children || []).map(function(childDef) {
+            return SourceLayer.factory(childDef, source, self);
+        });
+        for (i = 0; i < this.children.length; ++i) {
+            this.children[i].siblings = this.children;
         }
         this.siblings = [this];
     }

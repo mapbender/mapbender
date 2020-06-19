@@ -226,7 +226,7 @@
             if (this.options.hideInfo || layer.children) {
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
             }
-            if (layer.children) {
+            if (layer.children && layer.children.length) {
                 var treeOptions = layer.options.treeOptions;
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
