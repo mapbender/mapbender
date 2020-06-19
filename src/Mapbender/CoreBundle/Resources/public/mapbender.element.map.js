@@ -153,18 +153,6 @@
          */
         zoomToLayer: function(options){
             this.model.zoomToLayer(options);
-        },
-        /**
-         * Turns on the highlight layer at map
-         */
-        highlightOn: function(features, options){
-            this.model.highlightOn(features, options);
-        },
-        /**
-         * Turns off the highlight layer at map
-         */
-        highlightOff: function(features){
-            this.model.highlightOff(features);
         }
     });
 

@@ -73,7 +73,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
 
     map: null,
-    _highlightLayer: null,
     _geoJsonReader: null,
     _wktReader: null,
     _initMap: function _initMap() {
@@ -502,63 +501,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         });
     },
 
-    /**
-     * @param {Array<OpenLayers.Feature>} features
-     * @param {Object} options
-     * @property {boolean} [options.clearFirst]
-     * @property {boolean} [options.goto]
-     */
-    highlightOn: function(features, options) {
-        if (!this._highlightLayer) {
-            this._highlightLayer = new OpenLayers.Layer.Vector('Highlight');
-            var self = this;
-            var selectControl = new OpenLayers.Control.SelectFeature(this._highlightLayer, {
-                hover: true,
-                onSelect: function(feature) {
-                    // wrong event name, legacy
-                    self.mbMap._trigger('highlighthoverin', null, {feature: feature});
-                    // correct event name
-                    self.mbMap._trigger('highlightselected', null, {feature: feature});
-                },
-                onUnselect: function(feature) {
-                    // wrong event name, legacy
-                    self.mbMap._trigger('highlighthoverout', null, {feature: feature});
-                    // correct event name
-                    self.mbMap._trigger('highlightunselected', null, {feature: feature});
-                }
-            });
-            selectControl.handlers.feature.stopDown = false;
-            this.map.olMap.addControl(selectControl);
-            selectControl.activate();
-        }
-        if (!this._highlightLayer.map) {
-            this.map.olMap.addLayer(this._highlightLayer);
-        }
-
-        // Remove existing features if requested
-        if (!options || typeof options.clearFirst === 'undefined' || options.clearFirst) {
-            this._highlightLayer.removeAllFeatures();
-        }
-        // Add new highlight features
-        this._highlightLayer.addFeatures(features);
-        // Goto features if requested
-        if (!options || typeof options.goto === 'undefined' || options.goto) {
-            var bounds = this._highlightLayer.getDataExtent();
-            if (bounds !== null) {
-                this.setExtent(bounds);
-            }
-        }
-    },
-    /**
-     *
-     */
-    highlightOff: function(features) {
-        if (!features && this._highlightLayer && this._highlightLayer.map) {
-            this._highlightLayer.map.removeLayer(this._highlightLayer);
-        } else if (features && this.highlightLayer) {
-            this._highlightLayer.removeFeatures(features);
-        }
-    },
     /**
      * @param {OpenLayers.Layer} olLayer
      * @param {OpenLayers.Projection} newProj
