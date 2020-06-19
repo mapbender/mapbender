@@ -21,7 +21,6 @@ class MapbenderWmcBundle extends MapbenderBundle
 //            'Mapbender\WmcBundle\Element\WmcLoader',
 //            'Mapbender\WmcBundle\Element\WmcList',
 //            'Mapbender\WmcBundle\Element\WmcEditor',
-            'Mapbender\WmcBundle\Element\SuggestMap',
         );
     }
 

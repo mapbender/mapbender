@@ -1,12 +1,5 @@
 mb:
   wmc:
-    suggestmap:
-      class:
-        title: 'Suggereer kaart'
-        description: 'Suggereer een kaart'
-      tag:
-        suggest: suggereer
-        map: kaart
     wmceditor:
       class:
         title: 'WMC editor'
@@ -72,16 +65,6 @@ mb:
       delete_wmc: 'Verwijder WMC'
       no_wmc: 'Geen WMC toegevoegd.'
     element:
-      suggestmap:
-        error_srs: 'Projectie (SRS) "%state.extent.srs%" wordt niet ondersteund bij deze applicatie.'
-        popup:
-          btn:
-            ok: Sluiten
-        content:
-          email: 'Als e-mail'
-          twitter: Twitter
-          facebook: Facebook
-          google+: Google+
       wmceditor:
         popup:
           btn:

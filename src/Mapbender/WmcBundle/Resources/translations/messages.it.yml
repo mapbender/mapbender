@@ -1,12 +1,5 @@
 mb:
   wmc:
-    suggestmap:
-      class:
-        title: 'Suggerisci mappa'
-        description: 'Suggerisci una mappa'
-      tag:
-        suggest: suggerisci
-        map: mappa
     wmceditor:
       class:
         title: 'Editor per WMC'
@@ -72,16 +65,6 @@ mb:
       delete_wmc: 'Elimina WMC'
       no_wmc: 'Nessun WMC aggiunto.'
     element:
-      suggestmap:
-        error_srs: 'L''SRS "%state.extent.srs%" non è supportato per questa applicazione.'
-        popup:
-          btn:
-            ok: Chiudi
-        content:
-          email: 'Come e-mail'
-          twitter: 'A Twitter'
-          facebook: 'A Facebook'
-          google+: 'A Google+'
       wmceditor:
         popup:
           btn:

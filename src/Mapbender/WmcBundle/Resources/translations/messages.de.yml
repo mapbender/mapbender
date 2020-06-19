@@ -1,12 +1,5 @@
 mb:
   wmc:
-    suggestmap:
-      class:
-        title: 'Karte weiterempfehlen'
-        description: 'Kartenkontext wird weiterempfohlen.'
-      tag:
-        suggest: Empfehlen
-        map: Karte
     wmceditor:
       class:
         title: 'WMC Editor'
@@ -72,16 +65,6 @@ mb:
       delete_wmc: 'WMC löschen'
       no_wmc: 'Kein WMC hinzugefügt.'
     element:
-      suggestmap:
-        error_srs: 'SRS "%state.extent.srs%" wird von dieser Applikation nicht unterstützt.'
-        popup:
-          btn:
-            ok: Schließen
-        content:
-          email: 'Als E-Mail'
-          twitter: 'Auf Twitter'
-          facebook: 'Auf Facebook'
-          google+: 'Bei Google+'
       wmceditor:
         popup:
           btn:
