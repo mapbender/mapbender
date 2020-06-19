@@ -560,17 +560,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     *
-     */
-    removeSources: function(keepSources) {
-        for (var i = 0; i < this.sourceTree.length; i++) {
-            var source = this.sourceTree[i];
-            if (!keepSources[source.id]) {
-                this.removeSourceById(source.id);
-            }
-        }
-    },
-    /**
      * @param {OpenLayers.Layer} olLayer
      * @param {OpenLayers.Projection} newProj
      * @param {OpenLayers.Bounds} [newMaxExtent]

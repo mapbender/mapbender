@@ -37,15 +37,12 @@ Mapbender.WmcHandler = function(mapWidget, options){
         var model = this.mapWidget.getModel();
         var mapProj = model.map.olMap.getProjectionObject();
         if (this.options.keepSources !== 'allsources') {
-            var toKeepSources = {};
-            if (this.options.keepSources === 'basesources') {
-                for(var i = 0; i < model.sourceTree.length; i++){
-                    var source = model.sourceTree[i];
-                    if(source.configuration.isBaseSource)
-                        toKeepSources[source.id] = {sourceId: source.id};
+            for (var i = 0; i < model.sourceTree.length; i++) {
+                var source = model.sourceTree[i];
+                if (!source.configuration.isBaseSource || this.options.keepSources !== 'basesources') {
+                    model.removeSource(source);
                 }
             }
-            this.mapWidget.removeSources(toKeepSources);
         }
         if (state.extent.srs !== mapProj.projCode) {
             try {

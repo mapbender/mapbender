@@ -476,20 +476,20 @@ window.Mapbender.MapModelBase = (function() {
                 });
             }
         },
-        removeSourceById: function(sourceId) {
-            var source = this.getSourceById(sourceId);
-            if (source) {
-                var stIndex = this.sourceTree.indexOf(source);
-                Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
-                if (stIndex) {
-                    this.sourceTree.splice(stIndex, 1);
-                }
-                var fakeMqId = source.mqlid;
-                delete(this.map.layersList[fakeMqId]);
-                $(this.mbMap.element).trigger('mbmapsourceremoved', {
-                    source: source
-                });
+        removeSource: function(source) {
+            var stIndex = this.sourceTree.indexOf(source);
+            Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
+            if (stIndex !== -1) {
+                this.sourceTree.splice(stIndex, 1);
             }
+            var fakeMqId = source.mqlid;
+            delete(this.map.layersList[fakeMqId]);
+            $(this.mbMap.element).trigger('mbmapsourceremoved', {
+                source: source
+            });
+        },
+        removeSourceById: function(sourceId) {
+            this.removeSource(this.getSourceById(sourceId));
         },
         /**
          * @param {OpenLayers.Layer.HTTPRequest|Object} source

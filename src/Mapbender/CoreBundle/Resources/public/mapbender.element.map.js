@@ -42,12 +42,6 @@
             this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
         },
         /**
-         *
-         */
-        removeSources: function(keepSources){
-            this.model.removeSources(keepSources);
-        },
-        /**
          * Triggers an event from the model.
          * options.name - name of the event,
          * options.value - parameter in the form of:
