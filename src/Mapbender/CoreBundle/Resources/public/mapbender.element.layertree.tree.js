@@ -221,7 +221,7 @@
             var nodeType;
             $li.attr('data-title', layer.options.title);
             var $childList = $('ul.layers', $li);
-            if (this.options.hideInfo || layer.children) {
+            if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
             }
             if (layer.children && layer.children.length) {
