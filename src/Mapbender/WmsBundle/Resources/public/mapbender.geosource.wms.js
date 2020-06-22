@@ -25,7 +25,7 @@ window.Mapbender.WmsSource = (function() {
     WmsSource.prototype = Object.create(Mapbender.Source.prototype);
     WmsSource.prototype.constructor = WmsSource;
     Mapbender.Source.typeMap['wms'] = WmsSource;
-    $.extend(WmsSource.prototype, {
+    Object.assign(WmsSource.prototype, {
         // We must remember custom params for serialization in getMapState()...
         customParams: {},
         // ... but we will not remember the following ~standard WMS params the same way
