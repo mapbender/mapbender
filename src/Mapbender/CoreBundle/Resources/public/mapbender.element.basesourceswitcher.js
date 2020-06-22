@@ -3,8 +3,6 @@
 
     $.widget("mapbender.mbBaseSourceSwitcher", {
         options: {},
-        loadStarted: [],
-        contextAddStart: false,
 
         _create: function () {
             if (!Mapbender.checkTarget("mbBaseSourceSwitcher", this.options.target)) {
@@ -23,11 +21,6 @@
             $('.basesourcegroup', this.element).on('mouseleave', $.proxy(this._hideMenu, this));
 
             this._showActive();
-
-            $(document).on('mbmapcontextaddstart', $.proxy(this._onContextAddStart, this));
-            $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
-            $(document).on('mbmapsourceloadend', $.proxy(this._removeSourceFromLoad, this));
-            $(document).on('mbmapsourceloaderror', $.proxy(this._removeSourceFromLoad, this));
         },
 
         _showMenu: function(e) {
@@ -109,48 +102,7 @@
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
 
-        _onSourceLoadStart: function (event, option) {
-            var position = this.loadStarted.indexOf(option.source.id);
-
-            if (this.contextAddStart && option.source && position < 0) {
-                this.loadStarted.push(option.source.id);
-            }
-        },
-
-        _removeSourceFromLoad : function (event, option) {
-            var position = this.loadStarted.indexOf(option.source.id);
-
-            if (option.source && position >= 0) {
-                this.loadStarted.splice(position, 1);
-                this._checkReset();
-            }
-        },
-
-        _onContextAddStart: function () {
-            this.contextAddStart = true;
-
-            $(document).on('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
-            $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
-            $(document).on('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
-        },
-
-        _onContextAddEnd: function () {
-            this._checkReset();
-        },
-
-        _checkReset: function () {
-            if (this.loadStarted.length > 0) {
-                return;
-            }
-
-            this.contextAddStart = false;
-
-            $(document).off('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
-            $(document).off('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
-            $(document).off('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
-
-            $('.basesourcesetswitch[data-state="active"]:not(.basesourcegroup)', this.element).click();
-        }
+        _dummy_: null
     });
 
 })(jQuery);
