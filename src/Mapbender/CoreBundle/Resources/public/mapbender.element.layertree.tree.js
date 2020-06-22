@@ -59,38 +59,25 @@
             var sources = this.model.getSources();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
-                    var li_s = this._createSourceTree(sources[i]);
-                    this._addNode(li_s, sources[i]);
+                    var source = sources[i];
+                    var $sourceNode = this._createSourceTree(sources[i]);
+                    var themeOptions = this.options.useTheme && this._getThemeOptions(source.layerset);
+                    if (themeOptions) {
+                        var $themeNode = this._findThemeNode(source.layerset);
+                        if (!$themeNode.length) {
+                            $themeNode = this._createThemeNode(source.layerset, themeOptions);
+                            $('ul.layers:first', this.element).append($themeNode);
+                        }
+                        $('ul.layers:first', $themeNode).append($sourceNode);
+                    } else {
+                        $("ul.layers:first", this.element).append($sourceNode);
+                    }
                     this._resetSourceAtTree(sources[i]);
                 }
             }
 
             this._reset();
             this.created = true;
-        },
-        _addNode: function($toAdd, source) {
-            var $targetList = $("ul.layers:first", this.element);
-            if (this.options.useTheme) {
-                // Collect layerset <=> theme relations
-                // @todo: knowing the layerset should not need "finding", we should iterate through displayable layersets,
-                //        then through source instances in the layerset, so the layerset is already known
-                // @todo 3.1.0: this should happen server-side
-                var layerset = this._findLayersetWithSource(source);
-                var theme = {};
-                $.each(this.options.themes, function(idx, item) {
-                    if (item.id === layerset.id)
-                        theme = item;
-                });
-                if (theme.useTheme) {
-                    var $themeNode = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
-                    if (!$themeNode.length) {
-                        $themeNode = this._createThemeNode(layerset, theme);
-                        $themeNode.attr('data-layersetid', layerset.id);
-                    }
-                    $targetList = $("ul.layers:first", $themeNode);
-                }
-            }
-            $targetList.append($toAdd);
         },
         _reset: function() {
             if (this.options.allowReorder) {
@@ -188,14 +175,27 @@
                 });
             });
         },
-        _createThemeNode: function(layerset, theme) {
+        _createThemeNode: function(layerset, options) {
             var $li = this.themeTemplate.clone();
-            $('ul.layers:first', this.element).append($li);
-            $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
-            $li.toggleClass('showLeaves', theme.opened);
-            $('.iconFolder', $li).toggleClass('iconFolderActive', theme.opened);
-            $('span.layer-title:first', $li).text(layerset.title);
+            $li.attr('data-type', this.consts.theme);
+            $li.attr('data-layersetid', layerset.id);
+            $li.toggleClass('showLeaves', options.opened);
+            $('.iconFolder', $li).toggleClass('iconFolderActive', options.opened);
+            $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             return $li;
+        },
+        _getThemeOptions: function(layerset) {
+            var matches =  (this.options.themes || []).filter(function(item) {
+                 return item.id === layerset.id;
+            });
+            if (!matches.length || !matches[0].useTheme) {
+                return null;
+            } else {
+                return matches[0];
+            }
+        },
+        _findThemeNode: function(layerset) {
+            return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
         },
         _createLayerNode: function(layer) {
             var $li = this.template.clone();
@@ -204,7 +204,6 @@
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
             var nodeType;
-            $li.attr('data-title', layer.options.title);
             var $childList = $('ul.layers', $li);
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
@@ -644,27 +643,6 @@
                 (this.callback)();
                 this.callback = null;
             }
-        },
-        _findLayersetWithSource: function(source) {
-            var layerset = null;
-            Mapbender.Util.SourceTree.iterateLayersets(function(layersetDef, layersetId) {
-                for (var i = 0; i < layersetDef.length; i++) {
-                    var entries = Object.entries(layersetDef[i]);
-                    for (var j = 0; j < entries.length; ++j) {
-                        var entry = entries[j][1];
-                        if (entry.origId.toString() === source.origId.toString()) {
-                            layerset = {
-                                id: layersetId,
-                                title: Mapbender.configuration.layersetmap[layersetId],
-                                content: layersetDef
-                            };
-                            // stop iteration
-                            return false;
-                        }
-                    }
-                }
-            });
-            return layerset;
         },
         _destroy: $.noop
     });
