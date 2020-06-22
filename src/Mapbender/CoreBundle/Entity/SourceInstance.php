@@ -173,14 +173,4 @@ abstract class SourceInstance extends SourceInstanceAssignment
     {
         return (string)$this->getId();
     }
-
-    /**
-     * @return bool
-     * @deprecated remove on master branch; legacy attribute with no discernable purpose
-     *      Client-side usages should access options.treeOptions.selected on the source instance's root layer instead.
-     */
-    final public function getVisible()
-    {
-        return true;
-    }
 }
