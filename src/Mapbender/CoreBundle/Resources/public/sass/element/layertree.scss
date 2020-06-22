@@ -3,6 +3,8 @@
   .leave {
     // for absolute menu positioning
     position: relative;
+  }
+  .leave .leave, .themeContainer .leave {
     margin-left: calc(1em + 5px)
   }
 
