@@ -4,7 +4,8 @@ window.Mapbender.TmsSource = (function() {
         Mapbender.WmtsTmsBaseSource.apply(this, arguments);
     }
     TmsSource.prototype = Object.create(Mapbender.WmtsTmsBaseSource.prototype);
-    $.extend(TmsSource.prototype, {
+    Mapbender.Source.typeMap['tms'] = TmsSource;
+    Object.assign(TmsSource.prototype, {
         constructor: TmsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
             var matrixSet = compatibleLayer.getMatrixSet();
@@ -54,6 +55,5 @@ window.Mapbender.TmsSource = (function() {
         }
 
     });
-    Mapbender.Source.typeMap['tms'] = TmsSource;
     return TmsSource;
 }());

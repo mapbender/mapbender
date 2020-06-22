@@ -3,8 +3,9 @@ window.Mapbender.WmtsSource = (function() {
     function WmtsSource(definition) {
         Mapbender.WmtsTmsBaseSource.apply(this, arguments);
     }
+    Mapbender.Source.typeMap['wmts'] = WmtsSource;
     WmtsSource.prototype = Object.create(Mapbender.WmtsTmsBaseSource.prototype);
-    $.extend(WmtsSource.prototype, {
+    Object.assign(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
             var matrixSet = compatibleLayer.getMatrixSet();
@@ -71,6 +72,5 @@ window.Mapbender.WmtsSource = (function() {
             ;
         }
     });
-    Mapbender.Source.typeMap['wmts'] = WmtsSource;
     return WmtsSource;
 }());

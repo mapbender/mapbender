@@ -53,7 +53,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         });
     }
     WmtsTmsBaseSource.prototype = Object.create(Mapbender.Source.prototype);
-    $.extend(WmtsTmsBaseSource.prototype, {
+    Object.assign(WmtsTmsBaseSource.prototype, {
         constructor: WmtsTmsBaseSource,
         currentActiveLayer: null,
         autoDisabled: null,
@@ -274,7 +274,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         Mapbender.SourceLayer.apply(this, arguments);
     }
     WmtsTmsBaseSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
-    $.extend(WmtsTmsBaseSourceLayer.prototype, {
+    Object.assign(WmtsTmsBaseSourceLayer.prototype, {
         constructor: WmtsTmsBaseSourceLayer,
         getMatrixSet: function() {
             return this.source.getMatrixSetByIdent(this.options.tilematrixset);
