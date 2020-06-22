@@ -3,9 +3,14 @@ window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
         Mapbender.SourceLayer.apply(this, arguments);
     }
-    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
-    WmsSourceLayer.prototype.constructor = WmsSourceLayer;
     Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
+    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
+    Object.assign(WmsSourceLayer.prototype, {
+        constructor: WmsSourceLayer,
+        getSelected: function() {
+            return this.options.treeOptions.selected;
+        }
+    });
     return WmsSourceLayer;
 }());
 window.Mapbender.WmsSource = (function() {
@@ -32,6 +37,10 @@ window.Mapbender.WmsSource = (function() {
         _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
         createNativeLayers: function(srsName) {
             return [Mapbender.mapEngine.createWmsLayer(this)];
+        },
+        getSelected: function() {
+            // delegate to root layer
+            return this.configuration.children[0].getSelected();
         },
         addParams: function(params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {

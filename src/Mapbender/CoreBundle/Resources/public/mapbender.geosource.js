@@ -40,22 +40,18 @@ Mapbender.Geo.SourceHandler = {
             var layerId = layer.options.id;
             var outOfScale = !self.isLayerInScale(layer, scale);
             var outOfBounds = !self.isLayerWithinBounds(layer, extent);
-            var enabled = !!layer.options.treeOptions.selected;
-            var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
-            parents.map(function(p) {
-                var parentEnabled = p.options.treeOptions.selected;
-                enabled = enabled && parentEnabled;
-                featureInfo = featureInfo && parentEnabled;
-            });
+            // @todo: integrate OOS / OOB checks directly
+            var enabled = layer.getActive();
             var visibility = enabled && !(outOfScale || outOfBounds);
+            // no feature info if layer turned off or out of scale
+            var featureInfo = visibility && layer.options.treeOptions.info;
             infoMap[layerId] = {
                 layer: layer,
                 state: {
                     outOfScale: outOfScale,
                     outOfBounds: outOfBounds,
                     visibility: visibility,
-                    // no feature info if layer turned off or out of scale
-                    info: featureInfo && visibility
+                    info: featureInfo
                 },
                 order: order,
                 parents: parents

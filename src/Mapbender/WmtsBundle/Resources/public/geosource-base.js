@@ -65,6 +65,10 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
+        getSelected: function() {
+            var fakeRootLayer = this.configuration.children[0];
+            return fakeRootLayer.options.treeOptions.selected;
+        },
         createNativeLayers: function(srsName) {
             var compatibleLayer = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];

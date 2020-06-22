@@ -222,23 +222,25 @@ window.Mapbender.Source = (function() {
 
 window.Mapbender.SourceLayer = (function() {
     function SourceLayer(definition, source, parent) {
+        Mapbender.LayerGroup.call(this, ((definition || {}).options || {}).title || '', parent)
         this.options = definition.options || {};
         this.state = definition.state || {};
-        this.parent = parent;
         this.source = source;
         if (!this.options.origId && this.options.id) {
             this.options.origId = this.options.id;
         }
-        var self = this, i;
-        this.children = (definition.children || []).map(function(childDef) {
-            return SourceLayer.factory(childDef, source, self);
-        });
-        for (i = 0; i < this.children.length; ++i) {
-            this.children[i].siblings = this.children;
+        var childDefs = definition.children || [];
+        var i, child, childDef;
+        for (i = 0; i < childDefs.length; ++i) {
+            childDef = childDefs[i];
+            child = SourceLayer.factory(childDef, source, this);
+            child.siblings = this.children;
+            this.children.push(child);
         }
         this.siblings = [this];
     }
-    SourceLayer.prototype = {
+    SourceLayer.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(SourceLayer.prototype, {
         constructor: SourceLayer,
         // need custom toJSON for getMapState call
         toJSON: function() {
@@ -298,7 +300,7 @@ window.Mapbender.SourceLayer = (function() {
             }
             return null;
         }
-    };
+    });
     SourceLayer.typeMap = {};
     SourceLayer.factory = function(definition, source, parent) {
         var typeClass = SourceLayer.typeMap[source.type];
