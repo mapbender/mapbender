@@ -103,7 +103,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var fakeRootLayer = this.configuration.children[0];
             var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
             var engine = Mapbender.mapEngine;
-            var targetVisibility = !!layerIdent && fakeRootLayer.state.visibility;
+            var targetVisibility = !!layerIdent && fakeRootLayer.state.visibility && this.layerset.getSelected();
             var olLayer = this.getNativeLayer(0);
             if (!olLayer) {
                 return;

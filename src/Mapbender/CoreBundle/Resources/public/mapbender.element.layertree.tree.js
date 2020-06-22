@@ -401,15 +401,13 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-            var self = this;
             var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
-                var $item = $(item);
-                var $chkSource = $('input[name="selected"]:first', $item);
-                var active = $chkSource.prop('checked') && $sourceVsbl.prop('checked');
-                self.model.setSourceVisibility($item.attr('data-sourceid'), active);
-            });
+            var $themeNode = $sourceVsbl.closest('.themeContainer');
+            var themeId = $themeNode.attr('data-layersetid');
+            var theme = Mapbender.layersets.filter(function(x) {
+                return x.id === themeId;
+            })[0];
+            this.model.controlTheme(theme, $sourceVsbl.prop('checked'));
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
             }

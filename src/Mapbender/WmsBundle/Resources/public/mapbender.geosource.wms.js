@@ -14,6 +14,7 @@ window.Mapbender.WmsSourceLayer = (function() {
     return WmsSourceLayer;
 }());
 window.Mapbender.WmsSource = (function() {
+    // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
     function WmsSource(definition) {
         Mapbender.Source.apply(this, arguments);
         var customParams = {};
@@ -77,7 +78,7 @@ window.Mapbender.WmsSource = (function() {
                 }
             });
             var engine = Mapbender.mapEngine;
-            var targetVisibility = !!layers.length;
+            var targetVisibility = !!layers.length && this.layerset.getSelected();
             var olLayer = this.getNativeLayer(0);
             var visibilityChanged = targetVisibility !== engine.getLayerVisibility(olLayer);
             var paramsChanged = engine.compareWmsParams(olLayer, layers, styles);

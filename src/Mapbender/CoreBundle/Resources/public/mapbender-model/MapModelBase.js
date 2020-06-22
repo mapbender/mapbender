@@ -230,6 +230,18 @@ window.Mapbender.MapModelBase = (function() {
             return id;
         },
         /**
+         * @param {Mapbender.Layerset} theme
+         * @param {Boolean} state
+         */
+        controlTheme: function(theme, state) {
+            theme.selected = state;
+            var instances = theme.children;
+            for (var i = 0; i < instances.length; ++i) {
+                var instance = instances[i];
+                this.updateSource(instance);
+            }
+        },
+        /**
          * @param {string|Object} sourceOrId
          * @property {string} sourceOrId.id
          * @param state
@@ -533,13 +545,14 @@ window.Mapbender.MapModelBase = (function() {
             // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
             // Do not use .reverse on centrally shared values without making your own copy
             $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-                if(!Mapbender.configuration.layersets[layersetId]) {
-                    return;
+                var theme = Mapbender.layersets.filter(function(x) {
+                    return x.id === layersetId || ('' + x.id === '' + layersetId);
+                })[0];
+                if (!theme) {
+                    throw new Error("No layerset with id " + layersetId);
                 }
-                $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
-                    $.each(defArr, function(idx, sourceDef) {
-                        self.addSourceFromConfig(sourceDef, false);
-                    });
+                theme.children.slice().reverse().map(function(instance) {
+                    self.addSourceFromConfig(instance, false);
                 });
             });
         },
