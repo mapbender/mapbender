@@ -68,7 +68,7 @@ Mapbender.Geo.SourceHandler = {
      * @param [extent] currently not used; @todo: implement outOfBounds checking
      * @return {boolean}
      */
-    updateLayerStates: function applyLayerStates(source, scale, extent) {
+    updateLayerStates: function(source, scale, extent) {
         var stateMap = _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
             return item.state;
         });
