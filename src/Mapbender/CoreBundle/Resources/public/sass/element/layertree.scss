@@ -77,17 +77,6 @@
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
 
-    .leave{
-      &:before{
-        content:'';
-        display: block;
-        height:5px;
-        width:5px;
-      }
-    }
-    .leave.groupContainer:before {
-      left: -13px;    // ~= font size
-    }
     .leaveContainer{
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
