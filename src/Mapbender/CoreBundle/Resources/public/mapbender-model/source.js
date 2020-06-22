@@ -7,15 +7,48 @@
  */
 
 window.Mapbender = Mapbender || {};
+
+window.Mapbender.LayerGroup = (function() {
+    function LayerGroup(title, parent) {
+        this.title_ = title;
+        this.parent = parent || null;
+        this.children = [];
+        this.siblings = [this];
+    }
+    Object.assign(LayerGroup.prototype, {
+        getTitle: function() {
+            return this.title_;
+        },
+        getActive: function() {
+            var active = this.getSelected();
+            var parent = this.parent;
+            while (parent && active) {
+                active = active && parent.getSelected();
+                parent = parent.parent;
+            }
+            return active;
+        },
+        /**
+         * @return Boolean
+         * @abstract
+         */
+        getSelected: function() {
+            throw new Error("Invoked abstract LayerGroup.getSelected_");
+        }
+    });
+    return LayerGroup;
+})();
+
+
 window.Mapbender.Source = (function() {
     function Source(definition) {
+        Mapbender.LayerGroup.call(this, definition.title, null);
         if (definition.id || definition.id === 0) {
             this.id = '' + definition.id;
         }
         if (definition.origId || definition.origId === 0) {
             this.origId = '' + definition.origId;
         }
-        this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
         this.wmsloader = definition.wmsloader;
@@ -23,6 +56,7 @@ window.Mapbender.Source = (function() {
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
+        this.children = this.configuration.children;
     }
     Source.typeMap = {};
     Source.factory = function(definition) {
@@ -32,7 +66,8 @@ window.Mapbender.Source = (function() {
         }
         return new typeClass(definition);
     };
-    Source.prototype = {
+    Source.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(Source.prototype, {
         constructor: Source,
         createNativeLayers: function(srsName) {
             console.error("Layer creation not implemented", this);
@@ -174,7 +209,7 @@ window.Mapbender.Source = (function() {
                 configuration: this.configuration
             };
         }
-    };
+    });
     Object.defineProperty(Source.prototype, 'ollid', {
         enumerable: true,
         get: function() {
