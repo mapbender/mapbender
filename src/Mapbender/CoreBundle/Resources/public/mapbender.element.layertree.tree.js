@@ -104,9 +104,17 @@
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
+            this.element.on('mousedown mousemove', '.layer-menu', function(e) {
+                e.stopPropagation();
+            });
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
+            });
+            this.element.on('click', '.layer-remove-btn', function() {
+                var $node = $(this).closest('li.leave');
+                var layer = $node.data('layer');
+                self.model.removeLayer(layer);
             });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
@@ -267,8 +275,9 @@
             this._resetSourceAtTree(data.source);
         },
         _onSourceLayerRemoved: function(event, data) {
-            var layerId = data.layerId;
-            var sourceId = data.source.id;
+            var layer = data.layer;
+            var layerId = layer.options.id;
+            var sourceId = layer.source.id;
             var $node = $('[data-sourceid="' + sourceId + '"][data-id="' + layerId + '"]', this.element);
             $node.remove();
         },
@@ -414,19 +423,14 @@
             this.model.controlLayer(layer, null, $(e.target).prop('checked'));
         },
         _initMenu: function($layerNode) {
+            var self = this;
             var layer = $layerNode.data('layer');
             var source = layer.source;
-            var atLeastOne;
             var menu = $(this.menuTemplate.clone());
             if (layer.getParent()) {
                 $('.layer-control-root-only', menu).remove();
             }
-            var removeButton = menu.find('.layer-remove-btn');
-            menu.on('mousedown mousemove', function(e) {
-                e.stopPropagation();
-            });
-            atLeastOne = removeButton.length > 0;
-            removeButton.on('click', $.proxy(this._removeSource, this));
+            var atLeastOne = !!$('.layer-remove-btn', menu).length;
 
             // element must be added to dom and sized before Dragdealer init...
             $('.leaveContainer:first', $layerNode).after(menu);
@@ -434,7 +438,6 @@
             var $opacityControl = $('.layer-control-opacity', menu);
             if ($opacityControl.length) {
                 atLeastOne = true;
-                var self = this;
                 var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
                 new Dragdealer($('.layer-opacity-bar', $opacityControl).get(0), {
@@ -568,14 +571,6 @@
         },
         _setOpacity: function(source, opacity) {
             this.model.setOpacity(source, opacity);
-        },
-        _removeSource: function(e) {
-            var $node = $(e.currentTarget).closest('li.leave');
-            var layerId = $node.attr('data-id');
-            var sourceId = $node.attr('data-sourceid');
-            if (layerId && sourceId) {
-                this.model.removeLayer(sourceId, layerId);
-            }
         },
         _zoomToLayer: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');

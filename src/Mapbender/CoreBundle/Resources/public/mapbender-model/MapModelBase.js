@@ -462,30 +462,22 @@ window.Mapbender.MapModelBase = (function() {
                 console.error("Unuspported options, ignoring", addOptions);
             }
         },
-        removeLayer: function(sourceId, layerId) {
-            var source = this.getSourceById(sourceId);
-            var layer = source && source.getLayerById(layerId);
-            var removedLayerId = null;
-            if (layer) {
-                if (!layer.parent) {
-                    this.removeSourceById(sourceId);
-                    return;
+        removeLayer: function(layer) {
+            if (!layer.parent) {
+                this.removeSource(layer.source);
+            } else {
+                var topMostRemovedLayerId = layer.remove();
+                var rootLayerId = layer.source.getRootLayer().options.id;
+                if (topMostRemovedLayerId === rootLayerId) {
+                    this.removeSource(layer.source);
+                } else {
+                    this._checkSource(layer.source, false);
+                    this.mbMap.element.trigger('mbmapsourcelayerremoved', {
+                        layer: layer,
+                        source: layer.source,
+                        mbMap: this.mbMap
+                    });
                 }
-                var rootLayerId = '' + source.getRootLayer().options.id;
-                removedLayerId = layer.remove();
-                var wasRootLayer = removedLayerId && (('' + removedLayerId) === rootLayerId);
-                if (wasRootLayer) {
-                    this.removeSourceById(sourceId);
-                    return;
-                }
-            }
-            if (removedLayerId) {
-                this._checkSource(source, false);
-                $(this.mbMap.element).trigger('mbmapsourcelayerremoved', {
-                    layerId: removedLayerId,
-                    source: source,
-                    mbMap: this.mbMap
-                });
             }
         },
         removeSource: function(source) {
@@ -499,9 +491,6 @@ window.Mapbender.MapModelBase = (function() {
             $(this.mbMap.element).trigger('mbmapsourceremoved', {
                 source: source
             });
-        },
-        removeSourceById: function(sourceId) {
-            this.removeSource(this.getSourceById(sourceId));
         },
         /**
          * @param {OpenLayers.Layer.HTTPRequest|Object} source
