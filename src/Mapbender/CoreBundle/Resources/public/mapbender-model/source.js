@@ -39,6 +39,22 @@ window.Mapbender.LayerGroup = (function() {
     return LayerGroup;
 })();
 
+window.Mapbender.Layerset = (function() {
+    function Layerset(title, id) {
+        Mapbender.LayerGroup.call(this, title, null);
+        this.id = id;
+        // layersets always start out enabled
+        this.selected = true;
+    }
+    Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(Layerset.prototype, {
+        constructor: Layerset,
+        getSelected: function() {
+            return this.selected;
+        }
+    });
+    return Layerset;
+})();
 
 window.Mapbender.Source = (function() {
     function Source(definition) {

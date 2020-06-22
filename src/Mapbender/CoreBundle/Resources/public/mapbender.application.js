@@ -250,20 +250,31 @@ Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 
 $.extend(Mapbender, (function($) {
     'use strict';
-    function _initLayersets(config) {
+    function _initLayersets(config, layersetTitleMap) {
+        var layersets = [];
         var lsKeys = Object.keys(config);
+        var lsTitles = layersetTitleMap || Mapbender.configuration.layersetmap || {};
         for (var i = 0; i < lsKeys.length; ++i) {
-            var layerSet = config[lsKeys[i]];
-            for (var j = 0; j < layerSet.length; ++j) {
-                var instanceWrapper = layerSet[j];
+            var lsId = lsKeys[i];
+            var lsConfig = config[lsId];
+            var layerset = new Mapbender.Layerset(lsTitles[lsId], lsId);
+            layerset.siblings = layersets;
+
+            for (var j = 0; j < lsConfig.length; ++j) {
+                var instanceWrapper = lsConfig[j];
                 var instanceKeys = Object.keys(instanceWrapper);
                 for (var k = 0; k < instanceKeys.length; ++k) {
                     var instanceKey = instanceKeys[k];
                     var instanceDef = instanceWrapper[instanceKey];
-                    instanceWrapper[instanceKey] = Mapbender.Source.factory(instanceDef);
+                    var instance = Mapbender.Source.factory(instanceDef);
+                    instanceWrapper[instanceKey] = instance;
+                    instance.layerset = layerset;
+                    layerset.children.push(instance);
                 }
             }
+            layersets.push(layerset);
         }
+        return layersets;
     }
 
     function _getElementInitInfo(initName) {
@@ -352,7 +363,8 @@ $.extend(Mapbender, (function($) {
 
     function setup() {
         window.Mapbender.mapEngine = Mapbender.MapEngine.factory(Mapbender.configuration.application.mapEngineCode);
-        _initLayersets(Mapbender.configuration.layersets || {});
+        var layersets = _initLayersets(Mapbender.configuration.layersets || {}, Mapbender.configuration.layersetmap);
+        window.Mapbender.layersets = layersets;
 
         // Mark all elements for elementRegistry tracking before calling the constructors.
         // This is necessary to correctly record ready events of elements that become
