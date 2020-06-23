@@ -195,7 +195,7 @@
                 dataType: 'json',
                 success: function(response) {
                     (response.success || []).map(function(sourceDef) {
-                        if (!self.mbMap.model.getSource({id: sourceDef.id})) {
+                        if (!self.mbMap.model.getSourceById(sourceDef)) {
                             self.mbMap.addSource(sourceDef, false);
                         }
                     });

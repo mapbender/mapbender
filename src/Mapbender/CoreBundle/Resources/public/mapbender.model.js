@@ -351,30 +351,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return state;
     },
-    /**
-     * Returns a source from a sourceTree
-     * @param {Object} idObject in form of:
-     * - source id -> {id: MYSOURCEID}
-     * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
-     * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
-     * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @returns {Model~SourceTreeish|null}
-     */
-    getSource: function(idObject) {
-        var key;
-        for (key in idObject) {
-            break;
-        }
-        if (key) {
-            for (var i = 0; i < this.sourceTree.length; i++) {
-                if (this.sourceTree[i][key] && idObject[key]
-                    && this.sourceTree[i][key].toString() === idObject[key].toString()) {
-                    return this.sourceTree[i];
-                }
-            }
-        }
-        return null;
-    },
     _afterZoom: function() {
         var scales = this._getScales();
         var zoom = this.getCurrentZoomLevel();
