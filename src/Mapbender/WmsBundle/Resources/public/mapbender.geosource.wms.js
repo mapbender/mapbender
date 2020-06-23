@@ -78,7 +78,7 @@ window.Mapbender.WmsSource = (function() {
                 }
             });
             var engine = Mapbender.mapEngine;
-            var targetVisibility = !!layers.length && this.layerset.getSelected();
+            var targetVisibility = !!layers.length && this.getActive();
             var olLayer = this.getNativeLayer(0);
             var visibilityChanged = targetVisibility !== engine.getLayerVisibility(olLayer);
             var paramsChanged = engine.compareWmsParams(olLayer, layers, styles);

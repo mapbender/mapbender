@@ -93,6 +93,11 @@ window.Mapbender.Source = (function() {
             this.nativeLayers = this.createNativeLayers(srsName);
             return this.nativeLayers;
         },
+        getActive: function() {
+            var upstream = Mapbender.LayerGroup.prototype.getActive.call(this);
+            // NOTE: (only) WmsLoader sources don't have a layerset
+            return upstream && (!this.layerset || this.layerset.getSelected());
+        },
         id: null,
         origId: null,
         mqlid: null,
