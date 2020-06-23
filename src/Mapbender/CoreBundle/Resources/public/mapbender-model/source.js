@@ -179,30 +179,6 @@ window.Mapbender.Source = (function() {
             }
             return null;
         },
-        /**
-         * @param {string} layerId
-         * @param {boolean} [inheritFromParent] from parent layers; default true
-         * @param {boolean} [inheritFromSource] from source; default true
-         * @returns {null|Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair; null if completely unrestricted
-         */
-        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
-            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
-            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
-            var sourceLayer = this.getLayerById(layerId);
-            var boundsMap = null;
-            while (sourceLayer && !boundsMap) {
-                boundsMap = this._reduceBboxMap(sourceLayer.options.bbox);
-                if (inheritParent_) {
-                    sourceLayer = sourceLayer.parent
-                } else {
-                    break;
-                }
-            }
-            if (!boundsMap && inheritSource_) {
-                boundsMap = this._reduceBboxMap(this.configuration.options.bbox);
-            }
-            return boundsMap;
-        },
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layer;
             if (layerId) {
@@ -328,6 +304,16 @@ window.Mapbender.SourceLayer = (function() {
                 return this.parent.getBounds(projCode, true);
             }
             return null;
+        },
+        hasBounds: function() {
+            var layer = this;
+            do {
+                if (Object.keys(layer.options.bbox).length) {
+                    return true;
+                }
+                layer = layer.parent;
+            } while (layer);
+            return false;
         }
     });
     SourceLayer.typeMap = {};

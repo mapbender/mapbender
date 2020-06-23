@@ -13,16 +13,6 @@ Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = {
     /**
-     * Gets a layer extent, or the source extent as a fallback
-     *
-     * @param {object} source config object
-     * @param {string} layerId
-     * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
-     */
-    getLayerExtents: function (source, layerId) {
-        return source.getLayerExtentConfigMap(layerId, true, true);
-    },
-    /**
      * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
      * (but they are not!), together with references to the layer definition and its parents.
      *

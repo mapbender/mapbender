@@ -451,7 +451,7 @@
                 });
             }
             var $zoomControl = $('.layer-zoom', menu);
-            if ($zoomControl.length && this.model.getLayerExtents({sourceId: source.id, layerId: layer.options.id})) {
+            if ($zoomControl.length && layer.hasBounds()) {
                 atLeastOne = true;
                 $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
             } else {

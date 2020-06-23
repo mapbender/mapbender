@@ -200,23 +200,6 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
-         * Gets a mapping of all defined extents for a layer, keyed on SRS
-         * @param {Object} options
-         * @property {String} options.sourceId
-         * @property {String} options.layerId
-         * @return {Object<String, Array<Number>>}
-         * engine-agnostic
-         */
-        getLayerExtents: function(options) {
-            var source = this.getSourceById(options.sourceId);
-            if (source) {
-                return source.getLayerExtentConfigMap(options.layerId, true, true);
-            } else {
-                console.warn("Source not found", options);
-                return null;
-            }
-        },
-        /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
          * engine-agnostic
