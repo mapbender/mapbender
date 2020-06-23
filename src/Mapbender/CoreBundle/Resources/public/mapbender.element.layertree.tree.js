@@ -444,9 +444,10 @@
                     steps: 100,
                     handleClass: "layer-opacity-handle",
                     animationCallback: function(x, y) {
-                        var percentage = Math.round(x * 100);
+                        var opacity = Math.max(0.0, Math.min(1.0, x));
+                        var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
-                        self._setOpacity(source, percentage / 100.0);
+                        source.setOpacity(opacity);
                     }
                 });
             }
@@ -564,9 +565,6 @@
                 source.removeParams([paramName]);
             }
             return true;
-        },
-        _setOpacity: function(source, opacity) {
-            this.model.setOpacity(source, opacity);
         },
         _zoomToLayer: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');

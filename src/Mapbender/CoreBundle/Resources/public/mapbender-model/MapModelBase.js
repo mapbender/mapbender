@@ -123,25 +123,6 @@ window.Mapbender.MapModelBase = (function() {
             });
         },
         /**
-         * @param {Source} source
-         * @param {number} opacity float in [0;1]
-         * engine-agnostic
-         */
-        setOpacity: function(source, opacity) {
-            // unchecked findSource in layertree may pass undefined for source
-            if (source) {
-                var opacity_ = parseFloat(opacity);
-                if (isNaN(opacity_)) {
-                    opacity_ = 1.0;
-                }
-                opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
-                if (opacity_ !== opacity) {
-                    console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
-                }
-                source.setOpacity(opacity_);
-            }
-        },
-        /**
          * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
          *
          * @param {Mapbender.SourceLayer} layer
