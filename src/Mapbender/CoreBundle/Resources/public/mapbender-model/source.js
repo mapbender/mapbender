@@ -33,7 +33,15 @@ window.Mapbender.LayerGroup = (function() {
          * @abstract
          */
         getSelected: function() {
-            throw new Error("Invoked abstract LayerGroup.getSelected_");
+            throw new Error("Invoked abstract LayerGroup.getSelected");
+        },
+        removeChild: function(child) {
+            [this.children, this.siblings].forEach(function(list) {
+                var index = list.indexOf(child);
+                if (-1 !== index) {
+                    list.splice(index, 1);
+                }
+            });
         }
     });
     return LayerGroup;

@@ -486,6 +486,9 @@ window.Mapbender.MapModelBase = (function() {
             if (stIndex !== -1) {
                 this.sourceTree.splice(stIndex, 1);
             }
+            if (source.layerset) {
+                source.layerset.removeChild(source);
+            }
             var fakeMqId = source.mqlid;
             delete(this.map.layersList[fakeMqId]);
             $(this.mbMap.element).trigger('mbmapsourceremoved', {
