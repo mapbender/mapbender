@@ -246,7 +246,7 @@ class WmtsSourceService extends SourceService
      */
     protected function urnToSrsCode($urnOrCode)
     {
-        return preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
+        return preg_replace('#^urn:.*?:([A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
     }
 
     /**
