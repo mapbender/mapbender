@@ -196,10 +196,8 @@
                 var sourceDef = sourceDefs[i];
                 var sourceId = srcIdPrefix + '-' + (this.loadedSourcesCount++);
                 sourceDef.id = sourceId;
-                sourceDef.origId = sourceId;
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
-                sourceDef.wmsloader = true;
                 this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
                 this.mbMap.model.addSourceFromConfig(sourceDef);

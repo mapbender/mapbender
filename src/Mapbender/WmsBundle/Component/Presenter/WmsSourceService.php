@@ -174,11 +174,33 @@ class WmsSourceService extends SourceService
             "maxScale" => $instanceLayer->getMaxScale(true),
             "bbox" => $this->getLayerBboxConfiguration($sourceItem),
             "treeOptions" => $this->getTreeOptionsLayerConfig($instanceLayer),
+            'metadataUrl' => $this->getMetadataUrl($instanceLayer),
         );
         $configuration += array_filter(array(
             'legend' => $this->getLegendConfig($instanceLayer),
         ));
         return $configuration;
+    }
+
+    /**
+     * @param WmsInstanceLayer $instanceLayer
+     * @return string|null
+     */
+    protected function getMetadataUrl(WmsInstanceLayer $instanceLayer)
+    {
+        // no metadata for unpersisted instances (WmsLoader)
+        if (!$instanceLayer->getId()) {
+            return null;
+        }
+        $layerset = $instanceLayer->getSourceInstance()->getLayerset();
+        if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
+            return null;
+        }
+        $router = $this->urlProcessor->getRouter();
+        return $router->generate('mapbender_core_application_metadata', array(
+            'instance' => $instanceLayer->getSourceInstance(),
+            'layerId' => $instanceLayer->getId(),
+        ));
     }
 
     /**

@@ -75,7 +75,6 @@ window.Mapbender.Source = (function() {
         }
         this.type = definition.type;
         this.configuration = definition.configuration;
-        this.wmsloader = definition.wmsloader;
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
@@ -153,9 +152,6 @@ window.Mapbender.Source = (function() {
         },
         getRootLayer: function() {
             return this.configuration.children[0];
-        },
-        supportsMetadata: function() {
-            return !this.wmsloader;
         },
         _reduceBboxMap: function(bboxMap, projCode) {
             if (bboxMap && Object.keys(bboxMap).length) {

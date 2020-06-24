@@ -167,4 +167,12 @@ class UrlProcessor
     {
         return $this->router->generate($this->proxyRouteName, $params, $refType);
     }
+
+    /**
+     * @return RouterInterface
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
 }

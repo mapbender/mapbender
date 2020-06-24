@@ -100,6 +100,9 @@
                 var layer = $node.data('layer');
                 self.model.removeLayer(layer);
             });
+            this.element.on('click', '.layer-metadata', function(evt) {
+                self._showMetadata(evt);
+            });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -413,7 +416,6 @@
             this.model.controlLayer(layer, null, $(e.target).prop('checked'));
         },
         _initMenu: function($layerNode) {
-            var self = this;
             var layer = $layerNode.data('layer');
             var source = layer.source;
             var menu = $(this.menuTemplate.clone());
@@ -452,13 +454,12 @@
             } else {
                 $zoomControl.remove();
             }
-            var $metadataControl = $('.layer-metadata', menu);
-            if ($metadataControl.length && source.supportsMetadata()) {
+            if (layer.options.metadataUrl && $('.layer-metadata', menu).length) {
                 atLeastOne = true;
-                $metadataControl.on('click', $.proxy(this._showMetadata, this));
             } else {
-                $metadataControl.remove();
+                $('.layer-metadata', menu).remove();
             }
+
             var dims = source.configuration.options.dimensions || [];
             var $dimensionsControl = $('.layer-control-dimensions', menu);
             if (dims.length && $dimensionsControl.length) {
@@ -570,7 +571,34 @@
         },
         _showMetadata: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
-            Mapbender.Metadata.call(null, null, layer);
+            var url = layer.options.metadataUrl;
+            $.ajax(url)
+                .then(function(response) {
+                    var metadataPopup = new Mapbender.Popup2({
+                        title: Mapbender.trans("mb.core.metadata.popup.title"),
+                        cssClass: 'metadataDialog',
+                        modal: false,
+                        resizable: true,
+                        draggable: true,
+                        content: $(response),
+                        destroyOnClose: true,
+                        width: 850,
+                        height: 600,
+                        buttons: [{
+                            label: Mapbender.trans('mb.core.metadata.popup.btn.ok'),
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function() {
+                                this.close();
+                            }
+                        }]
+                    });
+                    if (initTabContainer) {
+                        initTabContainer(metadataPopup.$element);
+                    }
+                }, function(jqXHR, textStatus, errorThrown) {
+                    Mapbender.error(errorThrown);
+                })
+            ;
         },
         /**
          * Default action for mapbender element

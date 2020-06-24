@@ -203,9 +203,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return foundLayer;
         },
-        supportsMetadata: function() {
-            return false;
-        },
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layerId_;
             var fakeRootLayer = this.configuration.children[0];
