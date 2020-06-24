@@ -180,10 +180,16 @@ class LayerRendererWms extends LayerRenderer
      */
     protected function preprocessUrl($layerDef, $canvas, Box $extent)
     {
+        $serviceParams = array(
+            'SERVICE' => 'WMS',
+            'REQUEST' => 'GetMap',
+            'TRANSPARENT' => 'true',
+        );
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
         $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
-        $url = UrlUtil::validateUrl($layerDef['url'], $params);
+        $url = UrlUtil::validateUrl($layerDef['url'], $params + $serviceParams);
         $symbolParams = $this->getSymbolizationParams($canvas, $url);
+
         return UrlUtil::validateUrl($url, $symbolParams);
     }
 
