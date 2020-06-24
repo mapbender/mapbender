@@ -7,7 +7,6 @@ window.Mapbender.NotMapQueryMap = (function() {
     // The OpenLayers Map is simply passed in.
     function NotMapQueryMap($element, olMap) {
         this.idCounter = 0;
-        this.layersList = {};
         this.element = $element;
         $element.data('mapQuery', this);
         this.olMap = olMap;
@@ -49,15 +48,6 @@ window.Mapbender.NotMapQueryMap = (function() {
     }());
     NotMapQueryMap.prototype = {
         constructor: NotMapQueryMap,
-        trackMqLayer: function(mqLayer) {
-            this.layersList[mqLayer.id] = mqLayer;
-        },
-        trackSource: function(source) {
-            var id = this._createId();
-            var fakeLayer = new NotMapQueryMap.FakeSourceLayer(id, source, this);
-            this.trackMqLayer(fakeLayer);
-            return fakeLayer;
-        },
         layers: function(layerOptions) {
             if (arguments.length !== 1 || Array.isArray(layerOptions) || layerOptions.type !== 'vector') {
                 console.error("Unsupported MapQueryish layers call", arguments);
@@ -68,7 +58,6 @@ window.Mapbender.NotMapQueryMap = (function() {
             var layerName = layerOptions.label || fakeId;
             var olLayer = new OpenLayers.Layer.Vector(layerName);
             var fakeMqLayer = new NotMapQueryMap.FakeVectorLayer(fakeId, olLayer, this);
-            this.trackMqLayer(fakeMqLayer);
             this.olMap.addLayer(olLayer);
             return fakeMqLayer;
         },

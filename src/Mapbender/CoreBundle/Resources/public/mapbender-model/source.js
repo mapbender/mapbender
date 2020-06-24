@@ -108,7 +108,6 @@ window.Mapbender.Source = (function() {
         },
         id: null,
         origId: null,
-        mqlid: null,
         title: null,
         type: null,
         configuration: {},
@@ -196,7 +195,6 @@ window.Mapbender.Source = (function() {
             return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
         // Custom toJSON for mbMap.getMapState()
-        // Drops runtime-specific ollid and mqlid
         // Drops nativeLayers to avoid circular references
         toJSON: function() {
             return {
@@ -206,13 +204,6 @@ window.Mapbender.Source = (function() {
                 type: this.type,
                 configuration: this.configuration
             };
-        }
-    });
-    Object.defineProperty(Source.prototype, 'ollid', {
-        enumerable: true,
-        get: function() {
-            console.warn("Calling shimmed .ollid property accessor on source object", this);
-            return (this.nativeLayers[0] || {}).id || null;
         }
     });
     return Source;

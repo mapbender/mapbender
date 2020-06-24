@@ -415,8 +415,6 @@ window.Mapbender.MapModelBase = (function() {
             if (source.layerset) {
                 source.layerset.removeChild(source);
             }
-            var fakeMqId = source.mqlid;
-            delete(this.map.layersList[fakeMqId]);
             $(this.mbMap.element).trigger('mbmapsourceremoved', {
                 source: source
             });
@@ -499,7 +497,6 @@ window.Mapbender.MapModelBase = (function() {
             }
             var projCode = this.getCurrentProjectionCode();
 
-            sourceDef.mqlid = this.map.trackSource(sourceDef).id;
             var olLayers = sourceDef.initializeLayers(projCode);
             for (i = 0; i < olLayers.length; ++i) {
                 var olLayer = olLayers[i];

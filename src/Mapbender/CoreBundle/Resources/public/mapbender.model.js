@@ -54,7 +54,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {string} id
      * @property {string} origId
      * @property {string} type
-     * @property {string} ollid
      */
     /**
      * @typedef Model~SingleLayerPrintConfig
@@ -107,10 +106,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         this.olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
         // Use a faked, somewhat compatible-ish surrogate for MapQuery Map
-        // @todo: eliminate MapQuery method / property access completely
-        // * accesses to 'layersList'
-        // * layer lookup via 'mqlid' on source definitions
-
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         // monkey-patch zoom interactions
