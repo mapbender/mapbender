@@ -199,29 +199,12 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
-         * @param {string|Object} sourceOrId
-         * @property {string} sourceOrId.id
-         * @param state
+         * @param {Mapbender.Source} source
+         * @param {boolean} state
          * engine-agnostic
          */
-        setSourceVisibility: function(sourceOrId, state) {
-            var source;
-            if (typeof sourceOrId === 'object') {
-                if (sourceOrId instanceof Mapbender.Source) {
-                    source = sourceOrId;
-                } else {
-                    source = this.getSourceById(sourceOrId.id);
-                }
-            } else {
-                source = this.getSourceById(sourceOrId);
-            }
-            var rootLayer = source.configuration.children[0];
-            var selected0 = rootLayer.options.treeOptions.selected;
-            var selected = state && rootLayer.options.treeOptions.allow.selected && !source.autoDisabled;
-            rootLayer.options.treeOptions.selected = selected;
-            if (selected0 !== selected) {
-                this.updateSource(source);
-            }
+        setSourceVisibility: function(source, state) {
+            this.controlLayer(source.getRootLayer(), state);
         },
         /**
          * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
