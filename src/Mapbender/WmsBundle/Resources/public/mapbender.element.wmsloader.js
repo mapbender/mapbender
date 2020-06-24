@@ -212,8 +212,7 @@
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
-                // Need to pre-generate layer ids now because layer activation only works if layers
-                // already have ids
+                // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.wmsloader = true;
                 var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);

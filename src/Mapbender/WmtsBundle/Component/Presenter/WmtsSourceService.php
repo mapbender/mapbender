@@ -124,7 +124,6 @@ class WmtsSourceService extends SourceService
         $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
         $configuration   = array(
             "id" => $layerId,
-            "origId" => $layerId,
             'tileUrls' => array(),
             'format' => null,
             "title" => $instanceLayer->getTitle(),

@@ -165,7 +165,6 @@ class WmsSourceService extends SourceService
         $sourceItem = $instanceLayer->getSourceItem();
         $configuration = array(
             "id" => strval($instanceLayer->getId()),
-            "origId" => strval($instanceLayer->getId()),
             "priority" => $instanceLayer->getPriority(),
             "name" => strval($sourceItem->getName()),
             "title" => $instanceLayer->getTitle() ?: $sourceItem->getTitle(),

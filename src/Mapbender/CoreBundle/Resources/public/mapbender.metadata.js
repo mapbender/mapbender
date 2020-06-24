@@ -10,7 +10,7 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layer) {
         url: Mapbender.configuration.application.urls['metadata'],
         data: {
             sourceId: layer.source.origId,
-            layerId: layer.options.origId || null
+            layerId: layer.options.id || null
         },
         dataType: 'html',
         error: function(jqXHR, textStatus, errorThrown) {

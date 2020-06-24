@@ -255,7 +255,8 @@ window.Mapbender.Util.SourceTree = (function() {
          * Generates and assigns string ids for layers corresponding to source or parent node id + sibling index
          * within each level. Nodes deeper down the tree get longer ids as a result.
          *
-         * The generated ids are stored in each layer node's options.id AND options.origId (same value).
+         * The generated ids are stored in each layer node's options.id. Used only for dynamically added (WmsLoader)
+         * layers which never have database-generated ids.
          *
          * @param {object} sourceDef
          * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [chainCallback] - called on each node
@@ -270,7 +271,6 @@ window.Mapbender.Util.SourceTree = (function() {
                 // concat running sibling index either to parent's options.id or, if root layer, to source id
                 var layerId = ((parents[0] || {}).options || sourceDef).id + '-' + index;
                 layer.options.id = layerId;
-                layer.options.origId = layerId;
                 if (chainCallback) {
                     chainCallback(layer, index, parents);
                 }

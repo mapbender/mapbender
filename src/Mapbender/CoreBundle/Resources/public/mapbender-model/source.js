@@ -155,7 +155,7 @@ window.Mapbender.Source = (function() {
             return this.configuration.children[0];
         },
         supportsMetadata: function() {
-            return !(this.wmsloader || isNaN(parseInt(this.origId)));
+            return !this.wmsloader;
         },
         _reduceBboxMap: function(bboxMap, projCode) {
             if (bboxMap && Object.keys(bboxMap).length) {
@@ -215,9 +215,6 @@ window.Mapbender.SourceLayer = (function() {
         this.options = definition.options || {};
         this.state = definition.state || {};
         this.source = source;
-        if (!this.options.origId && this.options.id) {
-            this.options.origId = this.options.id;
-        }
         var childDefs = definition.children || [];
         var i, child, childDef;
         for (i = 0; i < childDefs.length; ++i) {
