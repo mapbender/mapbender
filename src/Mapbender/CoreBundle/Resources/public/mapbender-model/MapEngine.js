@@ -24,6 +24,21 @@ window.Mapbender.MapEngine = (function() {
                 default:
                     throw new Error("Unsupported map engine code " + this.code);
             }
+        },
+        getWmsBaseUrl: function(nativeLayer, srsName, removeProxy) {
+            var removeProxy_ = removeProxy || (typeof removeProxy === 'undefined');
+            var url = this.getWmsBaseUrlInternal_(nativeLayer, srsName);
+            var removeParams = [
+                '_olsalt',
+                'WIDTH',
+                'HEIGHT',
+                'BBOX'
+            ];
+            if (removeProxy_) {
+                removeParams.push('_signature');
+                url = Mapbender.Util.removeProxy(url);
+            }
+            return Mapbender.Util.removeUrlParams(url, removeParams, false);
         }
     };
     MapEngine.typeMap = {};

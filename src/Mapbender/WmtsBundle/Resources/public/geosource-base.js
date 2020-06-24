@@ -168,19 +168,26 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
             return [];
         },
-        getMultiLayerPrintConfig: function(bounds, scale, srsName) {
+        /**
+         * @param {*} bounds
+         * @param {Number} scale
+         * @param {String} srsName
+         * @return {Array<Object>}
+         */
+        getPrintConfigs: function(bounds, scale, srsName) {
             var layerDef = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!fakeRootLayer.state.visibility || !layerDef) {
                 return [];
             }
             var matrix = this._getMatrix(layerDef, scale, srsName);
+            var commonOptions = this._getPrintBaseOptions();
             return [
-                {
+                Object.assign({}, commonOptions, {
                     url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
-                    matrix: $.extend({}, matrix),
+                    matrix: Object.assign({}, matrix),
                     resolution: this._getMatrixResolution(matrix, srsName)
-                }
+                })
             ];
         },
         getLayerById: function(id) {

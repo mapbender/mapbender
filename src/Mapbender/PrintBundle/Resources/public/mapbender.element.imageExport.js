@@ -54,11 +54,13 @@
             }
         },
         /**
-         * @returns {Array<Object>} sourceTreeish configuration objects
+         * @returns {Array<Mapbender.Source>}
          * @private
          */
-        _getRasterSourceDefs: function() {
-            return this.map.getSourceTree();
+        _getRasterSources: function() {
+            return this.map.getModel().getSources().filter(function(x) {
+                return x.getActive();
+            });
         },
         _getExportScale: function() {
             return null;
@@ -73,15 +75,17 @@
             };
         },
         _collectRasterLayerData: function() {
-            var sources = this._getRasterSourceDefs();
+            var sources = this._getRasterSources();
             var scale = this._getExportScale();
             var extent = this._getExportExtent();
+            var srsName = this.map.model.getCurrentProjectionCode();
 
             var dataOut = [];
 
             for (var i = 0; i < sources.length; i++) {
-                var sourceDef = sources[i];
-                dataOut.push.apply(dataOut, this.map.model.getPrintConfigEx(sourceDef, scale, extent));
+                var source = sources[i];
+                var sourcePrintData = source.getPrintConfigs(extent, scale, srsName);
+                dataOut.push.apply(dataOut, sourcePrintData);
             }
             return dataOut;
         },

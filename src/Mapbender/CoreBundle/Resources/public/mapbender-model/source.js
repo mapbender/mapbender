@@ -194,6 +194,14 @@ window.Mapbender.Source = (function() {
         _bboxArrayToBounds: function(bboxArray, projCode) {
             return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
+        _getPrintBaseOptions: function() {
+            return {
+                type: this.configuration.type,
+                sourceId: this.id,
+                // @todo: use live native layer opacity?
+                opacity: this.configuration.options.opacity
+            };
+        },
         // Custom toJSON for mbMap.getMapState()
         // Drops nativeLayers to avoid circular references
         toJSON: function() {

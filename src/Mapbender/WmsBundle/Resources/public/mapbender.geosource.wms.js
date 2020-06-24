@@ -167,21 +167,26 @@ window.Mapbender.WmsSource = (function() {
             }
             return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
         },
-        getMultiLayerPrintConfig: function(bounds, scale, srsName) {
-            var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName);
+        /**
+         * @param {*} bounds
+         * @param {Number} scale
+         * @param {String} srsName
+         * @return {Array<Object>}
+         */
+        getPrintConfigs: function(bounds, scale, srsName) {
+            var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName, true);
             var extraParams = {
-                SERVICE: 'WMS',
-                REQUEST: 'GetMap',
                 VERSION: this.configuration.options.version,
                 FORMAT: this.configuration.options.format || 'image/png'
             };
-            baseUrl = Mapbender.Util.removeProxy(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(this, scale, bounds);
             var resFromScale = function(scale) {
                 return (scale && Mapbender.Model.scaleToResolution(scale, undefined, srsName)) || null;
             };
-            var changeAxis = this._isBboxFlipped(srsName);
+            var commonOptions = Object.assign({}, this._getPrintBaseOptions(), {
+                changeAxis: this._isBboxFlipped(srsName)
+            });
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     var replaceParams = Object.assign({}, extraParams, {
@@ -189,13 +194,12 @@ window.Mapbender.WmsSource = (function() {
                         STYLES: item.layer.options.style || ''
                     });
                     var layerUrl = Mapbender.Util.replaceUrlParams(baseUrl, replaceParams, false);
-                    dataOut.push({
+                    dataOut.push(Object.assign({}, commonOptions, {
                         url: layerUrl,
                         minResolution: resFromScale(item.layer.options.minScale),
                         maxResolution: resFromScale(item.layer.options.maxScale),
-                        changeAxis: changeAxis,
                         order: item.order
-                    });
+                    }));
                 }
             });
             return dataOut.sort(function(a, b) {

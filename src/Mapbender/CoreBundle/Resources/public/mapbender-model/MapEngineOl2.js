@@ -173,7 +173,7 @@ window.Mapbender.MapEngineOl2 = (function() {
          * @param {OpenLayers.Layer.WMS} olLayer
          * @return {String}
          */
-        getWmsBaseUrl: function(olLayer) {
+        getWmsBaseUrlInternal_: function(olLayer) {
             var bounds = new OpenLayers.Bounds(0, 0, 0, 0);
             return olLayer.getURL(bounds);
         },
