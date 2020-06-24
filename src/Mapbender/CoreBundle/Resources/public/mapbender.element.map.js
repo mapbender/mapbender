@@ -35,13 +35,6 @@
             return this.model.getMapState();
         },
         /**
-         *
-         */
-        addSource: function(sourceDef, mangleIds) {
-            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
-            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
-        },
-        /**
          * Triggers an event from the model.
          * options.name - name of the event,
          * options.value - parameter in the form of:

@@ -195,8 +195,8 @@
                 dataType: 'json',
                 success: function(response) {
                     (response.success || []).map(function(sourceDef) {
-                        if (!self.mbMap.model.getSourceById(sourceDef)) {
-                            self.mbMap.addSource(sourceDef, false);
+                        if (!self.mbMap.model.getSourceById(sourceDef.id)) {
+                            self.mbMap.addSourceFromConfig(sourceDef, false);
                         }
                     });
                 },
@@ -222,7 +222,7 @@
                 self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive);
 
                 if (!mergeCandidate) {
-                    self.mbMap.addSource(sourceDef, false);
+                    self.mbMap.addSourceFromConfig(sourceDef, false);
                 } else {
                     self.mbMap.model.updateSource(mergeCandidate);
                 }

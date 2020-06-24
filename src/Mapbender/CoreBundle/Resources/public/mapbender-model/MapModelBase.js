@@ -251,20 +251,6 @@ window.Mapbender.MapModelBase = (function() {
             return this.sourceTree;
         },
         /**
-         * Returns the source's position
-         * engine-agnostic
-         */
-        getSourcePos: function(source) {
-            if (source) {
-                for (var i = 0; i < this.sourceTree.length; i++) {
-                    if (this.sourceTree[i].id.toString() === source.id.toString()) {
-                        return i;
-                    }
-                }
-            } else
-                return null;
-        },
-        /**
          * @param {string} [srsName] default: current
          * @return {mmFlexibleExtent}
          */
@@ -409,23 +395,6 @@ window.Mapbender.MapModelBase = (function() {
 
     // Deprecated old-style APIs
     Object.assign(MapModelBase.prototype, {
-        /**
-         * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
-         *  {add: {sourceDef: <x>}}
-         *
-         * @param {object} addOptions
-         * @returns {object} source defnition (unraveled but same ref)
-         * @deprecated, call addSourceFromConfig directly
-         * engine-agnostic
-         */
-        addSource: function(addOptions) {
-            if (addOptions.add && addOptions.add.sourceDef) {
-                // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
-                return this.addSourceFromConfig(addOptions.add.sourceDef, true);
-            } else {
-                console.error("Unuspported options, ignoring", addOptions);
-            }
-        },
         removeLayer: function(layer) {
             if (!layer.parent) {
                 this.removeSource(layer.source);
