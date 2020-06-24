@@ -17,7 +17,6 @@
         model: null,
         popup: null,
         context: null,
-        queries: {},
         state: null,
         contentManager: null,
         mobilePane: null,
@@ -45,9 +44,7 @@
             widget._trigger('ready');
         },
         _contentElementId: function(source) {
-            // @todo: stop using mapqueryish stuff
-            var id0 = source.id;
-            var id = this._getContentManager().contentId(id0);
+            var id = this._getContentManager().contentId(source.id);
             // verify element is in DOM
             if ($('#' + id, this._getContext()).length) {
                 return id;
@@ -90,14 +87,10 @@
             }
             var self = this;
             var model = this.target.getModel();
-            this.queries = {};
             $.each(model.getSources(), function(idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
-                    self.queries[src.id] = url;
                     self._setInfo(src, url);
-                } else {
-                    self._removeContent(src.id);
                 }
             });
         },
@@ -137,7 +130,7 @@
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     // @todo: stop using mapquery-specific stuff
-                    self._removeContent(source.id);
+                    self._removeContent(source);
                 } else if (self.options.showOriginal) {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
@@ -146,7 +139,7 @@
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                this._removeContent(source.id);
+                this._removeContent(source);
             });
         },
         _isDataValid: function(data, mimetype) {
@@ -171,14 +164,13 @@
         },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
-            var layerId = source.id;
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     this._open();
                     var iframe = $(this._getIframeDeclaration(null, null));
-                    self._addContent(layerId, layerTitle, iframe);
+                    self._addContent(source, layerTitle, iframe);
                     var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
                         if (Mapbender.Util.addDispatcher) {
@@ -193,7 +185,7 @@
                     break;
                 case 'text/plain':
                 default:
-                    this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
+                    this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
                     this._triggerHaveResult(source);
                     this._open();
                     break;
@@ -307,22 +299,17 @@
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-        _removeContent: function(layerId) {
+        _removeContent: function(source) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            $(this._selectorSelfAndSub(manager.headerId(layerId), manager.headerContentSel), $context).remove();
-            $(this._selectorSelfAndSub(manager.contentId(layerId), manager.contentContentSel), $context).remove();
-            delete(this.queries[layerId]);
-            if (!Object.keys(this.queries).length) {
-                $(manager.headerSel, this.element).remove();
-                $(manager.contentSel, this.element).remove();
-            }
+            $(this._selectorSelfAndSub(manager.headerId(source.id), manager.headerContentSel), $context).remove();
+            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), $context).remove();
          },
-        _addContent: function(layerId, layerTitle, content) {
+        _addContent: function(source, layerTitle, content) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            var headerId = manager.headerId(layerId);
-            var contentId = manager.contentId(layerId);
+            var headerId = manager.headerId(source.id);
+            var contentId = manager.contentId(source.id);
             var $header = $('#' + headerId, $context);
             if ($header.length === 0) {
                 $header = manager.$header.clone();
