@@ -153,6 +153,8 @@
             }
         },
         _triggerHaveResult: function(source) {
+            // only used for mobile hacks
+            // @todo: add mobile hacks here, remove event
             var eventData = {
                 action: "haveresult",
                 title: this.element.attr('title'),

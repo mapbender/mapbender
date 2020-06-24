@@ -35,24 +35,6 @@
             return this.model.getMapState();
         },
         /**
-         * Triggers an event from the model.
-         * options.name - name of the event,
-         * options.value - parameter in the form of:
-         * options.value.mapquerylayer - for a MapQuery.Layer,
-         * options.value.source - for a source from the model.sourceTree,
-         * options.value.tochange - for a "tochange" object
-         * options.value.changed -  for a "changed" object
-         */
-        fireModelEvent: function(options) {
-            this._trigger(options.name, null, options.value);
-        },
-        /**
-         * Returns a sourceTree from model.
-         **/
-        getSourceTree: function(){
-            return this.model.sourceTree;
-        },
-        /**
          * Returns all defined srs
          */
         getAllSrs: function(){

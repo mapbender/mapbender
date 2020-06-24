@@ -220,7 +220,7 @@ window.Mapbender.MapModelBase = (function() {
             });
         },
         /**
-         * @return {Array<Source>}
+         * @return {Array<Mapbender.Source>}
          * engine-agnostic
          */
         getSources: function() {
