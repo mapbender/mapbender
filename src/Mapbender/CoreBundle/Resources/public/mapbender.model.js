@@ -52,7 +52,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {Object} configuration
      * @property {Array<Model~LayerDef>} configuration.children
      * @property {string} id
-     * @property {string} origId
      * @property {string} type
      */
     /**

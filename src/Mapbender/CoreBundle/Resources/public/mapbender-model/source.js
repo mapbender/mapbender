@@ -70,9 +70,6 @@ window.Mapbender.Source = (function() {
         if (definition.id || definition.id === 0) {
             this.id = '' + definition.id;
         }
-        if (definition.origId || definition.origId === 0) {
-            this.origId = '' + definition.origId;
-        }
         this.type = definition.type;
         this.configuration = definition.configuration;
         var sourceArg = this;
@@ -106,7 +103,6 @@ window.Mapbender.Source = (function() {
             return upstream && (!this.layerset || this.layerset.getSelected());
         },
         id: null,
-        origId: null,
         title: null,
         type: null,
         configuration: {},
@@ -203,7 +199,6 @@ window.Mapbender.Source = (function() {
         toJSON: function() {
             return {
                 id: this.id,
-                origId: this.origId,
                 title: this.title,
                 type: this.type,
                 configuration: this.configuration

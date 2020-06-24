@@ -55,7 +55,6 @@ abstract class SourceService implements SourceInstanceInformationInterface
             'title'         => $sourceInstance->getTitle(),
             'configuration' => $innerConfig,
             'id'            => strval($sourceInstance->getId()),
-            'origId'        => strval($sourceInstance->getId()),
         );
         return $wrappedConfig;
     }
