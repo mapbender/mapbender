@@ -245,10 +245,6 @@
         },
         _createSourceTree: function(source) {
             var li = this._createLayerNode(source.configuration.children[0]);
-            if (source.configuration.status !== 'ok') {
-                li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                    source.configuration.status);
-            }
             return li;
         },
         _onSourceAdded: function(event, options) {

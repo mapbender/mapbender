@@ -129,7 +129,6 @@ abstract class SourceService implements SourceInstanceInformationInterface
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
-        $configuration['status'] = 'ok';    // for initial layertree visual; 'error' can only be produced client-side
         return $configuration;
     }
 

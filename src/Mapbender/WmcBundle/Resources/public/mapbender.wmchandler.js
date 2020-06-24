@@ -61,20 +61,11 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     
     this._addWmcToMap = function(sources){
-        this.mapWidget.fireModelEvent({
-            name: 'contextaddstart',
-            value: null
-        });
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
-                source.configuration.status = source.configuration.status ? source.configuration.status : 'ok';
                 this.mapWidget.addSourceFromConfig(source, true);
             }
         }
-        this.mapWidget.fireModelEvent({
-            name: 'contextaddend',
-            value: null
-        });
     };
 };
