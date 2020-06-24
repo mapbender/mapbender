@@ -1,5 +1,7 @@
 .mb-element-scaleselector {
-  &.dropdown {
-    width: 100px;
+  min-width: 100px;
+  .dropdown {
+    // @todo: this should be the default globally
+    width: 100%;
   }
 }

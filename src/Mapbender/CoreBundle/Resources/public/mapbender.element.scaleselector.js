@@ -47,7 +47,7 @@
             this.$select.change($.proxy(this._zoomToScale, this));
             this.$select.val(model.getCurrentScale());
 
-            initDropdown.call(this.element.get(0));
+            initDropdown.call(this.$select.parent());
 
             this._updateScale();
             $(document).on('mbmapzoomchanged', function(e, data) {
@@ -77,7 +77,7 @@
          */
         _updateScale: function() {
             var scale = this.mbMap.getModel().getCurrentScale();
-            this.$select.val(scale).trigger('change');
+            this.$select.val(scale).trigger('dropdown.changevisual');
         },
 
         _destroy: $.noop
