@@ -46,7 +46,7 @@
         },
         _contentElementId: function(source) {
             // @todo: stop using mapqueryish stuff
-            var id0 = source.mqlid;
+            var id0 = source.id;
             var id = this._getContentManager().contentId(id0);
             // verify element is in DOM
             if ($('#' + id, this._getContext()).length) {
@@ -65,12 +65,6 @@
             this.isActive = true;
         },
         deactivate: function() {
-            this._trigger('featureinfo', null, {
-                action: "deactivate",
-                title: this.element.attr('title'),
-                id: this.element.attr('id')
-            });
-
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
 
@@ -94,21 +88,16 @@
             if (!this.isActive) {
                 return;
             }
-            this._trigger('featureinfo', null, {
-                action: "clicked",
-                title: this.element.attr('title'),
-                id: this.element.attr('id')
-            });
             var self = this;
             var model = this.target.getModel();
             this.queries = {};
             $.each(model.getSources(), function(idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
-                    self.queries[src.mqlid] = url;
+                    self.queries[src.id] = url;
                     self._setInfo(src, url);
                 } else {
-                    self._removeContent(src.mqlid);
+                    self._removeContent(src.id);
                 }
             });
         },
@@ -148,7 +137,7 @@
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     // @todo: stop using mapquery-specific stuff
-                    self._removeContent(source.mqlid);
+                    self._removeContent(source.id);
                 } else if (self.options.showOriginal) {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
@@ -157,7 +146,7 @@
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                this._removeContent(source.mqlid);
+                this._removeContent(source.id);
             });
         },
         _isDataValid: function(data, mimetype) {
@@ -178,18 +167,11 @@
                 source: source,
                 id: this.element.attr('id')
             };
-            Object.defineProperty(eventData, 'mqlid', {
-                enumerable: true,
-                get: function() {
-                    console.warn("You are accessing the legacy .mqlid property on feature info event data. Please access the also provided source object instead")
-                    return this.source.mqlid;
-                }
-            });
             this._trigger('featureinfo', null, eventData);
         },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
-            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
+            var layerId = source.id;
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -218,9 +200,7 @@
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
-            // @todo: stop using mapquery-specific stuff
-            var layerId = source.mqlid;
-            this._addContent(layerId, layerTitle, data);
+            this._addContent(source.id, layerTitle, data);
             this._triggerHaveResult(source);
             this._open();
         },
