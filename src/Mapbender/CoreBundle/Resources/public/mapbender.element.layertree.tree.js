@@ -247,14 +247,12 @@
             var li = this._createLayerNode(source.configuration.children[0]);
             return li;
         },
-        _onSourceAdded: function(event, options) {
-            if (!this.created || !options.added)
-                return;
-            var added = options.added;
-            if (added.source.configuration.baseSource && !this.options.showBaseSource) {
+        _onSourceAdded: function(event, data) {
+            var source = data.source;
+            if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            var li_s = this._createSourceTree(added.source);
+            var li_s = this._createSourceTree(source);
             var first_li = $(this.element).find('ul.layers:first li:first');
             if (first_li && first_li.length !== 0) {
                 first_li.before(li_s);

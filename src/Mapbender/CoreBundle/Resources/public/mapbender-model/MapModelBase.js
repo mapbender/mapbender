@@ -510,17 +510,7 @@ window.Mapbender.MapModelBase = (function() {
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,
-                source: sourceDef,
-                // legacy event data; @todo: remove
-                added: {
-                    source: sourceDef,
-                    // legacy: no known consumer evaluates these props,
-                    // but even if, they've historically been wrong anyway
-                    // was: "before": always last source previously in list, even though
-                    // the new source was actually added *after* that
-                    before: null,
-                    after: null
-                }
+                source: sourceDef
             });
             this._checkSource(sourceDef, false);
             return sourceDef;
