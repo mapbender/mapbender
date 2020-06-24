@@ -64,7 +64,8 @@ Mapbender.WmcHandler = function(mapWidget, options){
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
-                this.mapWidget.addSourceFromConfig(source, true);
+                source.id = ['wmc', parseInt('' + Math.random() * 10000)].join('-');
+                this.mapWidget.getModel().addSourceFromConfig(source);
             }
         }
     };

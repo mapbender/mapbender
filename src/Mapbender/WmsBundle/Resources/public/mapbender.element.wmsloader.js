@@ -196,7 +196,7 @@
                 success: function(response) {
                     (response.success || []).map(function(sourceDef) {
                         if (!self.mbMap.model.getSourceById(sourceDef.id)) {
-                            self.mbMap.addSourceFromConfig(sourceDef, false);
+                            self.mbMap.model.addSourceFromConfig(sourceDef);
                         }
                     });
                 },
@@ -222,7 +222,7 @@
                 self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive);
 
                 if (!mergeCandidate) {
-                    self.mbMap.addSourceFromConfig(sourceDef, false);
+                    self.mbMap.model.addSourceFromConfig(sourceDef);
                 } else {
                     self.mbMap.model.updateSource(mergeCandidate);
                 }

@@ -27,7 +27,6 @@ window.Mapbender.MapModelBase = (function() {
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
         this.mbMap = mbMap;
         var mapOptions = mbMap.options;
-        this.sourceBaseId_ = 0;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
         var startProj = this._startProj = mapOptions.targetsrs || mapOptions.srs;
@@ -50,7 +49,6 @@ window.Mapbender.MapModelBase = (function() {
     MapModelBase.prototype = {
         constructor: MapModelBase,
         mbMap: null,
-        sourceBaseId_: null,
         sourceTree: [],
         mapStartExtent: null,
         mapMaxExtent: null,
@@ -187,11 +185,6 @@ window.Mapbender.MapModelBase = (function() {
          */
         getSourceById: function(id) {
             return _.findWhere(this.sourceTree, {id: '' + id}) || null;
-        },
-        generateSourceId: function() {
-            var id = 'auto-src-' + (this.sourceBaseId_ + 1);
-            ++this.sourceBaseId_;
-            return id;
         },
         /**
          * @param {Mapbender.Layerset} theme
@@ -477,30 +470,21 @@ window.Mapbender.MapModelBase = (function() {
                     throw new Error("No layerset with id " + layersetId);
                 }
                 theme.children.slice().reverse().map(function(instance) {
-                    self.addSourceFromConfig(instance, false);
+                    self.addSourceFromConfig(instance);
                 });
             });
         },
         /**
          * @param {Mapbender.Source|Object} sourceOrSourceDef
-         * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
          * @returns {object} sourceDef same ref, potentially modified
          */
-        addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
+        addSourceFromConfig: function(sourceOrSourceDef) {
             var sourceDef, i, isNew = true;
             if (sourceOrSourceDef instanceof Mapbender.Source) {
                 sourceDef = sourceOrSourceDef;
             } else {
                 sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
             }
-            if (mangleIds) {
-                sourceDef.id = this.generateSourceId();
-                if (typeof sourceDef.origId === 'undefined' || sourceDef.origId === null) {
-                    sourceDef.origId = sourceDef.id;
-                }
-                sourceDef.rewriteLayerIds();
-            }
-
             // Note: do not bother with getSourcePos, checking for undefined vs null vs 0 return value
             //       is not worth the trouble
             // @todo: Layersets should be objects with a .containsSource method

@@ -115,13 +115,6 @@ window.Mapbender.Source = (function() {
         nativeLayers: [],
         recreateOnSrsSwitch: false,
         wmsloader: false,
-        rewriteLayerIds: function() {
-            if (!this.id) {
-                throw new Error("Can't rewrite layer ids with empty source id");
-            }
-            var rootLayer = this.configuration.children[0];
-            rootLayer.rewriteChildIds(this.id);
-        },
         destroyLayers: function() {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
@@ -261,19 +254,6 @@ window.Mapbender.SourceLayer = (function() {
         },
         getParent: function() {
             return this.parent;
-        },
-        rewriteChildIds: function(parentId) {
-            if (!this.options.origId) {
-                this.options.origId = this.options.id;
-            }
-            this.options.id = [parentId, '_', this.siblings.indexOf(this)].join('');
-            var nChildren = this.children && this.children.length || 0;
-            for (var chIx = 0; chIx < nChildren; ++chIx) {
-                this.children[chIx].rewriteChildIds(this.options.id);
-            }
-            if (!this.options.origId) {
-                this.options.origId = this.options.id;
-            }
         },
         remove: function() {
             var index = this.siblings.indexOf(this);
