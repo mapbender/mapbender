@@ -451,49 +451,42 @@ window.Mapbender.MapModelBase = (function() {
                     throw new Error("No layerset with id " + layersetId);
                 }
                 theme.children.slice().reverse().map(function(instance) {
-                    self.addSourceFromConfig(instance);
+                    self.addSource(instance);
                 });
             });
         },
         /**
-         * @param {Mapbender.Source|Object} sourceOrSourceDef
-         * @returns {object} sourceDef same ref, potentially modified
+         * @param {Mapbender.Source} source
          */
-        addSourceFromConfig: function(sourceOrSourceDef) {
-            var sourceDef, i, isNew = true;
-            if (sourceOrSourceDef instanceof Mapbender.Source) {
-                sourceDef = sourceOrSourceDef;
-            } else {
-                sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
-            }
-            // Note: do not bother with getSourcePos, checking for undefined vs null vs 0 return value
-            //       is not worth the trouble
-            // @todo: Layersets should be objects with a .containsSource method
-            for (i = 0; i < this.sourceTree.length; ++i) {
-                if (this.sourceTree[i].id.toString() === sourceDef.id.toString()) {
-                    isNew = false;
-                    break;
-                }
-            }
-            if (isNew) {
-                this.sourceTree.push(sourceDef);
-            }
+        addSource: function(source) {
+            this.sourceTree.push(source);
             var projCode = this.getCurrentProjectionCode();
 
-            var olLayers = sourceDef.initializeLayers(projCode);
-            for (i = 0; i < olLayers.length; ++i) {
+            var olLayers = source.initializeLayers(projCode);
+            for (var i = 0; i < olLayers.length; ++i) {
                 var olLayer = olLayers[i];
                 Mapbender.mapEngine.setLayerVisibility(olLayer, false);
             }
 
-            this._spliceLayers(sourceDef, olLayers);
+            this._spliceLayers(source, olLayers);
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,
-                source: sourceDef
+                source: source
             });
-            this._checkSource(sourceDef, false);
-            return sourceDef;
+            this._checkSource(source, false);
+        },
+        /**
+         * Creates a Mapbender.Source instance from given configuration, adds it,
+         * and returns it.
+         *
+         * @param {Object} sourceDef
+         * @returns {Mapbender.Source}
+         */
+        addSourceFromConfig: function(sourceDef) {
+            var source = Mapbender.Source.factory(sourceDef);
+            this.addSource(source);
+            return source;
         },
         /**
          * Bring the sources identified by the given ids into the given order.

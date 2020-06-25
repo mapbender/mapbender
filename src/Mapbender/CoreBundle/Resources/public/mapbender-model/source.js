@@ -79,6 +79,10 @@ window.Mapbender.Source = (function() {
         this.children = this.configuration.children;
     }
     Source.typeMap = {};
+    /**
+     * @param {*} definition
+     * @returns {Mapbender.Source}
+     */
     Source.factory = function(definition) {
         var typeClass = Source.typeMap[definition.type];
         if (!typeClass) {
