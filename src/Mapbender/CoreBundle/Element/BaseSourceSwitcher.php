@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 
@@ -12,7 +11,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends Element implements BoundConfigMutator
+class BaseSourceSwitcher extends Element
 {
 
     /**
@@ -167,71 +166,5 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
             }
         }
         return $configuration;
-    }
-
-    /**
-     * Returns an array with 'active' and 'inactive' lists of source ids, in the initial state after loading.
-     *
-     * return int[][]
-     */
-    public function getDefaultSourceVisibility()
-    {
-        $rv = array(
-            'active' => array(),
-            'inactive' => array(),
-        );
-        $config = $this->getConfiguration();
-
-        foreach ($config['groups'] as $menuEntry) {
-            switch ($menuEntry['type']) {
-                case 'item':
-                    // wrap single item as array
-                    $menuItems = array($menuEntry);
-                    break;
-                case 'group':
-                    // process submenu items
-                    $menuItems = $menuEntry['items'];
-                    break;
-                default:
-                    throw new \RuntimeException("Unexpected menu item type " . var_export($menuEntry['type'], true));
-            }
-            foreach ($menuItems as $menuItem) {
-                $destKey = (!empty($menuItem['active'])) ? 'active' : 'inactive';
-                $rv[$destKey] = array_merge($rv[$destKey], $menuItem['sources']);
-            }
-        }
-        return $rv;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function updateAppConfig($config)
-    {
-        $controlledSourceIds = $this->getDefaultSourceVisibility();
-
-        /**
-         * @todo: evaluate "target" (e.g. main map vs overview map) and only process
-         *        layers bound to that target
-         */
-        foreach ($config['layersets'] as &$layersetConfig) {
-            foreach ($layersetConfig['instances'] as &$instanceConfig) {
-                $layerId = $instanceConfig['id'];
-                if (in_array($layerId, $controlledSourceIds['active'])) {
-                    $setActive = true;
-                } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
-                    $setActive = false;
-                } else {
-                    // layer is not controllable through BSS, leave its config alone
-                    continue;
-                }
-                if (!empty($instanceConfig['configuration']['children'])) {
-                    foreach ($instanceConfig['configuration']['children'] as &$chDef) {
-                        $chDef['options']['treeOptions']['selected'] = $setActive;
-                    }
-                }
-            }
-        }
-        return $config;
     }
 }
