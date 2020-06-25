@@ -146,12 +146,7 @@ class ConfigService
                 // @todo: throw?
                 continue;
             }
-            if ($assignment->getInstance()->getLayerset()) {
-                $assignmentId = 'bound' . $assignment->getInstance()->getId();
-            } else {
-                $assignmentId = 'shared' . $assignment->getId();
-            }
-            $conf['id'] = $assignmentId;
+
             $configs[] = $conf;
         }
         return $configs;
