@@ -1,5 +1,4 @@
 <ul id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
-{% if configuration.groups is defined %}
   {% for name, opts in configuration.groups %}
     {% if opts.type == 'item' %}
     <li class="basesourcesetswitch notgroup" {% if opts.active is defined and opts.active %}data-state="active"{% endif %} data-sourceset="{% for source in opts.sources %}{% if not loop.first %},{% endif %}{% spaceless %}{{- source -}}{% endspaceless %}{% endfor %}" >{{ opts.title | trans }}</li>
@@ -14,5 +13,4 @@
     </li>
     {% endif %}
   {% endfor %}
-{% endif %}
 </ul>

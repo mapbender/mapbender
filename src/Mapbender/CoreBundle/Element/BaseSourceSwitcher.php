@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -38,7 +39,7 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
         return array(
             'tooltip' => "BaseSourceSwitcher",
             'target' => null,
-            'instancesets' => array()
+            'instancesets' => array(),
         );
     }
 
@@ -83,48 +84,46 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
             ),
         );
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
+
+    protected function mergeGroups(Entity\Element $element)
     {
-        $configuration = $confHelp = parent::getConfiguration();
-        if (isset($configuration['instancesets'])) {
-            unset($configuration['instancesets']);
+        $rawConf = $element->getConfiguration();
+        $itemsOut = array();
+        if (empty($rawConf['instancesets']) || !is_array($rawConf['instancesets'])) {
+            // @todo: throw config error if wrong type, complain about empty array
+            $itemConfigs = array();
+        } else {
+            $itemConfigs = $rawConf['instancesets'];
         }
-        $configuration['groups'] = array();
-        if (!isset($confHelp['instancesets']) || !is_array($confHelp['instancesets'])) {
-            $confHelp['instancesets'] = array();
-        }
-        foreach ($confHelp['instancesets'] as $instanceset) {
-            if (isset($instanceset['group']) && $instanceset['group'] !== '') {
-                if (!isset($configuration['groups'][$instanceset['group']])) {
-                    $configuration['groups'][$instanceset['group']] = array(
-                        'type'  => 'group',
+        foreach ($itemConfigs as $itemIn) {
+            $itemOut = array(
+                'type'    => 'item',
+                'title'   => $itemIn['title'],
+                'sources' => $itemIn['instances']
+            );
+            $isGroup = !empty($itemIn['group']);
+            if ($isGroup) {
+                $groupName = $itemIn['group'];
+                if (empty($itemsOut[$groupName])) {
+                    $itemsOut[$groupName] = array(
+                        'type' => 'group',
+                        'title' => $groupName,
                         'items' => array(),
                     );
                 }
-                $configuration['groups'][$instanceset['group']]['items'][] = array(
-                    'title'   => $instanceset['title'],
-                    'sources' => $instanceset['instances']
-                );
+                $itemsOut[$groupName]['items'][] = $itemOut;
             } else {
-                $configuration['groups'][$instanceset['title']] = array(
-                    'type'    => 'item',
-                    'title'   => $instanceset['title'],
-                    'sources' => $instanceset['instances']
-                );
+                $itemsOut[$itemIn['title']] = $itemOut;
             }
         }
-        foreach ($configuration['groups'] as &$firstGroup) {
+        foreach ($itemsOut as &$firstGroup) {
             $firstGroup['active'] = true;
             if ($firstGroup['type'] == 'group' && $firstGroup['items']) {
                 $firstGroup['items'][0]['active'] = true;
             }
             break;
         }
-        return $configuration;
+        return $itemsOut;
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
@@ -132,16 +131,26 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
         return 'MapbenderCoreBundle:Element:basesourceswitcher.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $rawConf = $this->entity->getConfiguration();
+        return array(
+            'id' => $this->entity->getId(),
+            'title' => $this->entity->getTitle(),
+            'configuration' => $rawConf + array(
+                'groups' => $this->mergeGroups($this->entity),
+            ),
+        );
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $this->getConfiguration()
-        ));
+        $template = $this->getFrontendTemplatePath();
+        $vars = $this->getFrontendTemplateVars();
+        return $this->container->get('templating')->render($template, $vars);
     }
 
     /**
