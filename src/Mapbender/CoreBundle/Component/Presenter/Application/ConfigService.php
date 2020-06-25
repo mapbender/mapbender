@@ -56,7 +56,7 @@ class ConfigService
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
-        $configuration += $this->getLayerSetConfiguration($entity);
+        $configuration['layersets'] = $this->getLayerSetConfigs($entity);
 
         // Let (active, visible) Elements update the Application config
         // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
@@ -106,56 +106,55 @@ class ConfigService
     }
 
     /**
-     * Returns layerset config. This is actually already an array with two subarrays 'layersets' (actual config)
-     * and 'layersetmap' (layer titles).
+     * Returns layerset configs.
      *
      * @param Application $entity
      * @return array[]
      */
-    public function getLayerSetConfiguration(Application $entity)
+    public function getLayerSetConfigs(Application $entity)
     {
         $configs = array();
-        $titles = array();
         foreach ($entity->getLayersets() as $layerSet) {
-            $layerId       = '' . $layerSet->getId();
-            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
-            $layerSets     = array();
-
-            foreach ($this->filterActiveSourceInstanceAssignments($layerSet) as $assignment) {
-                $sourceService = $this->getSourceService($assignment->getInstance());
-                if (!$sourceService) {
-                    // @todo: throw?
-                    continue;
-                }
-                // @todo: move check into prefilter (get service twice?)
-                if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
-                    continue;
-                }
-                $conf = $sourceService->getConfiguration($assignment->getInstance());
-                if (!$conf) {
-                    // @todo: throw?
-                    continue;
-                }
-                if ($assignment->getInstance()->getLayerset()) {
-                    $assignmentId = 'bound' . $assignment->getInstance()->getId();
-                } else {
-                    $assignmentId = 'shared' . $assignment->getId();
-                }
-                // HACK: rewrite ids to fix massive JavaScript-side confusion about duplicate "source" ids
-                $conf['id'] = $assignmentId;
-
-                $layerSets[] = array(
-                    $assignmentId => $conf,
-                );
-            }
-
-            $configs[$layerId] = $layerSets;
-            $titles[$layerId] = $layerSetTitle;
+            $configs[] = array(
+                'id' => strval($layerSet->getId()),
+                'title' => $layerSet->getTitle() ?: strval($layerSet->getId()),
+                'instances' => $this->getSourceInstanceConfigs($layerSet),
+            );
         }
-        return array(
-            'layersets' => $configs,
-            'layersetmap' => $titles,
-        );
+        return $configs;
+    }
+
+    /**
+     * @param Layerset $layerset
+     * @return array[]
+     */
+    protected function getSourceInstanceConfigs(Layerset $layerset)
+    {
+        $configs = array();
+        foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
+            $sourceService = $this->getSourceService($assignment->getInstance());
+            if (!$sourceService) {
+                // @todo: throw?
+                continue;
+            }
+            // @todo: move check into prefilter (get service twice?)
+            if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+                continue;
+            }
+            $conf = $sourceService->getConfiguration($assignment->getInstance());
+            if (!$conf) {
+                // @todo: throw?
+                continue;
+            }
+            if ($assignment->getInstance()->getLayerset()) {
+                $assignmentId = 'bound' . $assignment->getInstance()->getId();
+            } else {
+                $assignmentId = 'shared' . $assignment->getId();
+            }
+            $conf['id'] = $assignmentId;
+            $configs[] = $conf;
+        }
+        return $configs;
     }
 
     /**

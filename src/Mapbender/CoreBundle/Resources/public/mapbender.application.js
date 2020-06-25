@@ -250,27 +250,21 @@ Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 
 $.extend(Mapbender, (function($) {
     'use strict';
-    function _initLayersets(config, layersetTitleMap) {
+    function _initLayersets(configs, layersetTitleMap) {
         var layersets = [];
-        var lsKeys = Object.keys(config);
-        var lsTitles = layersetTitleMap || Mapbender.configuration.layersetmap || {};
-        for (var i = 0; i < lsKeys.length; ++i) {
-            var lsId = lsKeys[i];
-            var lsConfig = config[lsId];
-            var layerset = new Mapbender.Layerset(lsTitles[lsId], lsId);
+        for (var i = 0; i < configs.length; ++i) {
+            var lsConfig = configs[i];
+            var layerset = new Mapbender.Layerset(lsConfig.title, lsConfig.id);
             layerset.siblings = layersets;
 
-            for (var j = 0; j < lsConfig.length; ++j) {
-                var instanceWrapper = lsConfig[j];
-                var instanceKeys = Object.keys(instanceWrapper);
-                for (var k = 0; k < instanceKeys.length; ++k) {
-                    var instanceKey = instanceKeys[k];
-                    var instanceDef = instanceWrapper[instanceKey];
-                    var instance = Mapbender.Source.factory(instanceDef);
-                    instanceWrapper[instanceKey] = instance;
-                    instance.layerset = layerset;
-                    layerset.children.push(instance);
-                }
+            var instanceConfigs = lsConfig.instances;
+            for (var j = 0; j < instanceConfigs.length; ++j) {
+                var instanceDef = instanceConfigs[j];
+                var instance = Mapbender.Source.factory(instanceDef);
+                // replace original list entry
+                instanceConfigs[j] = instance;
+                instance.layerset = layerset;
+                layerset.children.push(instance);
             }
             layersets.push(layerset);
         }

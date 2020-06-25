@@ -205,21 +205,20 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
          * @todo: evaluate "target" (e.g. main map vs overview map) and only process
          *        layers bound to that target
          */
-        foreach ($config['layersets'] as &$layerList) {
-            foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (in_array($layerId, $controlledSourceIds['active'])) {
-                        $setActive = true;
-                    } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
-                        $setActive = false;
-                    } else {
-                        // layer is not controllable through BSS, leave its config alone
-                        continue;
-                    }
-                    if (!empty($layerDef['configuration']['children'])) {
-                        foreach ($layerDef['configuration']['children'] as &$chDef) {
-                            $chDef['options']['treeOptions']['selected'] = $setActive;
-                        }
+        foreach ($config['layersets'] as &$layersetConfig) {
+            foreach ($layersetConfig['instances'] as &$instanceConfig) {
+                $layerId = $instanceConfig['id'];
+                if (in_array($layerId, $controlledSourceIds['active'])) {
+                    $setActive = true;
+                } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
+                    $setActive = false;
+                } else {
+                    // layer is not controllable through BSS, leave its config alone
+                    continue;
+                }
+                if (!empty($instanceConfig['configuration']['children'])) {
+                    foreach ($instanceConfig['configuration']['children'] as &$chDef) {
+                        $chDef['options']['treeOptions']['selected'] = $setActive;
                     }
                 }
             }
