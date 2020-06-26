@@ -132,9 +132,6 @@
     };
 
     Popup.prototype = {
-        kartoffel: function() {
-            return currentModal_;
-        },
         // Reference to the created popup
         $element: null,
 
