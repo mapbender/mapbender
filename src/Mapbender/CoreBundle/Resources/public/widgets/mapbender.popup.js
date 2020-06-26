@@ -37,6 +37,19 @@
     var counter = 0;
     var currentZindex = 10000;
     var currentModal_ = null;
+    var container_ = null;
+
+    function initContainer_() {
+        if (!container_) {
+            container_ = document.body;
+            var positionRule = $(container_).css('position');
+            if (!positionRule || positionRule === 'static') {
+                $(container_).css('position', 'relative');
+            }
+        }
+        return container_;
+    }
+
     /**
      * Popup constructor.
      *
@@ -135,9 +148,6 @@
         // Reference to the created popup
         $element: null,
 
-        // Containing element
-        $container: $('body'),
-
         /**
          * Default options
          * @type {Object}
@@ -220,12 +230,13 @@
                 currentModal_ = this;
             }
 
+            var container = initContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
                     this.$modalWrap.prepend(this.$element);
-                    this.$modalWrap.appendTo(this.$container);
+                    this.$modalWrap.appendTo(container);
                 } else {
-                    this.$element.appendTo(this.$container);
+                    this.$element.appendTo(container);
                 }
             }
             if (this.options.draggable) {
