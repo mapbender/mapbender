@@ -433,6 +433,7 @@ class ApplicationController extends WelcomeController
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
+                '_fragment' => 'tabLayerset',
             ));
         }
 
