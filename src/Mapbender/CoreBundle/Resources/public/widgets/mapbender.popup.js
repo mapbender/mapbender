@@ -315,9 +315,9 @@
                 buttonset = $('.popupButtons', this.$element);
 
             $.each(buttons, function(key, conf) {
-                var button = $('<a/>', {
-                    href: '#' + self.$element.attr('id') + '/button/' + key,
-                    html: conf.label
+                var button = $('<button/>', {
+                    type: 'button',
+                    text: conf.label
                 });
 
                 if(conf.cssClass) {
