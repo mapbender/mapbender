@@ -405,21 +405,12 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId, $application);
-            $action = $this->generateUrl('mapbender_manager_application_editlayerset', array(
-                'slug' => $slug,
-                'layersetId' => $layerset->getId(),
-            ));
         } else {
             $layerset = new Layerset();
             $layerset->setApplication($application);
-            $action = $this->generateUrl('mapbender_manager_application_newlayerset', array(
-                'slug' => $slug,
-            ));
         }
 
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset, array(
-            'action' => $action,
-        ));
+        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {

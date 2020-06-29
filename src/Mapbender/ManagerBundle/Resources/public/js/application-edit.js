@@ -1,5 +1,24 @@
 $(function() {
     var popupCls = Mapbender.Popup;
+    function _formJax(options) {
+        return $.ajax(options).then(function(response) {
+            var $markup = $(response);
+            // support top-level form tag(s)
+            var forms = $markup.filter('form').get();
+            if (!forms.length) {
+                // also support form(s) wrapped in something else
+                forms = $('form', $markup).get();
+            }
+            for (var i = 0; i< forms.length; ++i) {
+                var form = forms[i];
+                if (!form.getAttribute('action')) {
+                    // amend missing "action" attribute to match url of form source
+                    form.setAttribute('action', options.url);
+                }
+            }
+            return $markup.get();
+        });
+    }
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -64,13 +83,13 @@ $(function() {
     });
 
     function startEditElement(formUrl, strings, extraButtons) {
-        $.ajax(formUrl).then(function(response) {
+        _formJax({url: formUrl}).then(function(nodes) {
             var popup = new popupCls({
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
                 cssClass: "elementPopup",
-                content: response,
+                content: [nodes],
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
@@ -81,10 +100,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function() {
-                            this.close();
-                        }
+                        cssClass: 'button buttonCancel critical popupClose'
                     }
                 ])
             });
@@ -143,13 +159,15 @@ $(function() {
         });
     }
 
-    $(".addElement").bind("click", function() {
+    $(".addElement").bind("click", function(e) {
+        e.preventDefault();
         var regionName = $('.subTitle', $(this).closest('.region')).first().text();
         startElementChooser(regionName, $(this).attr('href'));
         return false;
     });
 
-    $(".editElement").bind("click", function() {
+    $(".editElement").bind("click", function(e) {
+        e.preventDefault();
         startEditElement($(this).attr('data-url'), {});
         return false;
     });
@@ -195,17 +213,18 @@ $(function() {
     });
 
     // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset() {
+    function addOrEditLayerset(e) {
         var self = $(this);
         var isEdit = self.hasClass("editLayerset");
         var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
                                 : "mb.manager.components.popup.add_edit_layerset.title_add";
         var confirmText = isEdit ? 'mb.actions.save'
                                  : 'mb.actions.add';
-        $.ajax({url: self.attr("href")}).then(function(html) {
+        e.preventDefault();
+        _formJax({url: self.attr("href")}).then(function(nodes) {
             new popupCls({
                 title: Mapbender.trans(popupTitle),
-                content: [html],
+                content: [nodes],
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
