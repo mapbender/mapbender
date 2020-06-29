@@ -138,11 +138,12 @@ $(function() {
                     }
                 ]
             });
-            popup.$element.on('click', '.chooseElement', function() {
-                var elTypeSubtitle = $('.subTitle', this).first().text();
+            popup.$element.on('click', '.chooseElement', function(e) {
+                e.preventDefault();
+                var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
                     title: title,
-                    subTitle: ' - ' + regionName + ' - ' + elTypeSubtitle,
+                    subTitle: ' - ' + regionName + ' - ' + elementTitle,
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
@@ -263,22 +264,23 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function() {
-        var self = $(this);
-        var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
-        new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-            subTitle: " - " + layersetTitle,
-            cssClass: 'new-instance-select',
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
-            buttons: [
-                {
-                    label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical popupClose'
+    $(".addInstance").on("click", function(e) {
+        e.preventDefault();
+        var $target = $(this);
+        var layersetTitle = $target.attr('data-layerset-title');
+        $.ajax({url: $target.attr("href")}).then(function(response) {
+            new popupCls({
+                title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
+                subTitle: " - " + layersetTitle,
+                cssClass: 'new-instance-select',
+                content: response,
+                buttons: {
+                    'cancel': {
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'button buttonCancel critical popupClose'
+                    }
                 }
-            ]
+            });
         });
         return false;
     });

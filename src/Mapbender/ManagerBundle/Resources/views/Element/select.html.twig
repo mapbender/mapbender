@@ -3,7 +3,7 @@
     <ul id="listFilterElements" class="listFilterContainer">
     {% for class, meta in elements %}
         <li class="filterItem">
-            <a class="checkContainer chooseElement" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">
+            <a class="checkContainer chooseElement" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}" data-element-title="{{ meta.title }}">
                 <span class="subTitle">{{ meta.title }}</span>
                 <div class="description">{{ meta.description }}</div>
             </a>

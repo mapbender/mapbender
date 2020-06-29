@@ -17,7 +17,7 @@
               <th>{{ 'mb.manager.admin.layerset.title' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.type' | trans }}</th>
               <th class="iconColumn">
-                <a class="iconAdd hover-highlight-effect addInstance" title="{{"mb.manager.admin.instance.add"|trans}}" href="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+                <a class="iconAdd hover-highlight-effect addInstance" title="{{"mb.manager.admin.instance.add"|trans}}" href="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}" data-layerset-title="{{ layerset.title }}"></a>
                 <a class="iconEdit hover-highlight-effect editLayerset" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
                 <a class="iconRemove hover-highlight-effect removeLayerset" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
               </th>
