@@ -90,6 +90,7 @@ class SourceInstanceController extends ApplicationControllerBase
     public function createsharedAction(Request $request, Source $source)
     {
         // @todo: only act on post
+        // @todo: push translate method from ApplicationController into base class
         $em = $this->getEntityManager();
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
