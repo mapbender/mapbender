@@ -214,10 +214,7 @@ $(function() {
                         },
                         {
                             label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'button buttonCancel critical',
-                            callback: function() {
-                                this.close();
-                            }
+                            cssClass: 'button buttonCancel critical popupClose'
                         }
                     ]
                 });
@@ -317,10 +314,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical',
-                    callback: function() {
-                        this.close();
-                    }
+                    cssClass: 'button buttonCancel critical popupClose'
                 }
             ]
         };
