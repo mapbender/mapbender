@@ -97,7 +97,8 @@ class SourceInstanceController extends ApplicationControllerBase
         $instance->setLayerset(null);
         $em->persist($instance);
         $em->flush();
-        $this->addFlash('success', "Neue freie Instanz erzeugt");
+        $msg = $this->getTranslator()->trans('mb.manager.sourceinstance.created_reusable');
+        $this->addFlash('success', $msg);
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
         ));

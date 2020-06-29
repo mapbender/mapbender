@@ -571,7 +571,8 @@ class ApplicationController extends WelcomeController
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
         $em->flush();
-        $this->addFlash('success', 'Eine nun wieder private Kopie der geteilten Instanz wurde der Applikation hinzugefügt');
+        $msg = $this->translate('mb.manager.sourceinstance.converted_to_bound');
+        $this->addFlash('success', $msg);
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
@@ -658,8 +659,8 @@ class ApplicationController extends WelcomeController
         // sanity
         $instance->setLayerset(null);
         $em->flush();
-        // @todo: translate flash message
-        $this->addFlash('success', 'Die freie Instanz wurde der Applikation zugewiesen');
+        $msg = $this->translate('mb.manager.sourceinstance.reusable_assigned_to_application');
+        $this->addFlash('success', $msg);
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
             "instanceId" => $instance->getId(),

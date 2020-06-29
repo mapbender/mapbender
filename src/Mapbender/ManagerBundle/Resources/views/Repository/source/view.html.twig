@@ -1,7 +1,7 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 {% block heading %}
     <div class="contentTitle">
-        <h1><a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;Freie Instanz erzeugen</a>{{ title }}<div class="clear"></div></h1>
+        <h1><a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trnas }}</a>{{ title }}<div class="clear"></div></h1>
     </div>
 {% endblock heading %}
 

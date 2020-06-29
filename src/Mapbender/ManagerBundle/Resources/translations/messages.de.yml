@@ -27,7 +27,13 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     sourceinstance:
-      embedded_in_applications: '{0} Diese Instanz ist keiner Applikation zugewiesen|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Instanz ist %count% Applikationen zugewiesen'
+      embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
+      convert_to_reusable: In freie Instanz umwandeln
+      convert_to_bound: In private Instanz umwandeln
+      converted_to_bound: Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt
+      reusable_assigned_to_application: Die freie Instanz wurde der Anwendung hinzugefügt
+      create_reusable: Freie Instanz erzeugen
+      created_reusable: Neue freie Instanz erzeugt
     admin:
       sources: Datenquellen
       source:
@@ -44,7 +50,7 @@ mb:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
           unreachable: 'Die Datenquelle ist nicht erreichbar'
-        embedded_in_applications: '{0} Diese Datenquelle ist in keiner Applikation eingebunden|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Datenquelle ist in %count% Applikationen eingebunden'
+        embedded_in_applications: '{0} Diese Datenquelle wird von keiner Anwendung genutzt|{1} Diese Datenquelle wird von einer Anwendung genutzt|]1,Inf[ Diese Datenquelle wird in %count% Anwendungen genutzt'
       map:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'

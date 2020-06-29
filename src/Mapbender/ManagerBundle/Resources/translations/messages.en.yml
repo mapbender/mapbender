@@ -27,7 +27,13 @@ mb:
         success: A new instance has been created. Please edit it.
   manager:
     sourceinstance:
-      embedded_in_applications: '{0} This instance is not attached to any application|{1} This source is assigned to one application|]1,Inf[ This instance is attached to %count% applications'
+      embedded_in_applications: '{0} This instance is not used in any application|{1} This instance is used in one application|]1,Inf[ This instance is used in %count% applications'
+      convert_to_reusable: Convert to shared instance
+      convert_to_bound: Convert to bound instance
+      converted_to_bound: A bound copy of the shared instance has been added to the application
+      reusable_added_to_application: The shared instance has been added to the application
+      create_reusable: Create shared instance
+      created_reusable: A new shared instance has been created
     admin:
       sources: Sources
       source:
