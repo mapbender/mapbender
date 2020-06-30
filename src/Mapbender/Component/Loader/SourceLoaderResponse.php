@@ -43,16 +43,4 @@ class SourceLoaderResponse
     {
         return $this->document;
     }
-
-    /**
-     * @return DeferredValidation|XmlParseException|null
-     */
-    public function getValidationError()
-    {
-        if ($this->validationError && ($this->validationError instanceof DeferredValidation)) {
-            // evaluate validation now, replace proxy with result
-            $this->validationError = $this->validationError->run();
-        }
-        return $this->validationError;
-    }
 }
