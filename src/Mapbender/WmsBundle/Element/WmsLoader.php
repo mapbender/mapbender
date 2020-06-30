@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -196,22 +197,21 @@ class WmsLoader extends Element
 
     /**
      * @param Request $request
-     * @return \Mapbender\WmsBundle\Entity\WmsSource
-     * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
+     * @return WmsSource
      */
     protected function getWmsSource($request)
     {
         $requestUrl = $request->get("url");
         $requestUserName = $request->get("username");
         $requestPassword = $request->get("password");
-        $onlyValid = false;
 
         $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
-        $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
-
-        return $importerResponse->getWmsSourceEntity();
+        $importerResponse = $importer->evaluateServer($wmsOrigin, false);
+        /** @var WmsSource $source */
+        $source = $importerResponse->getSource();
+        return $source;
     }
 
     protected function splitLayers($layerConfiguration)
