@@ -47,7 +47,6 @@ abstract class SourceLoader
     {
         $response = $this->getResponse($origin);
         $loaderResponse = $this->parseResponseContent($response->getContent());
-        $loaderResponse->getSource()->setValid(true);
         $this->updateOrigin($loaderResponse->getSource(), $origin);
         return $loaderResponse;
     }

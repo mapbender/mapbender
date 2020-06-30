@@ -111,13 +111,10 @@ class Importer extends RefreshableSourceLoader
         if ($onlyValid) {
             $this->validate($document);
             $sourceEntity = $parser->parse();
-            $sourceEntity->setValid(true);
             $validationError = null;
         } else {
             $sourceEntity = $parser->parse();
             $validationError = new DeferredValidation($sourceEntity, $document, $this);
-            // valid attribute on WmsSource will be updated by deferred validation
-            $sourceEntity->setValid(true);
         }
         return new Importer\Response($sourceEntity, $document, $validationError);
     }

@@ -27,7 +27,6 @@ abstract class RefreshableSourceLoader extends SourceLoader
         }
         $this->updateSource($target, $reloadedSource);
         $this->updateOrigin($target, $origin);
-        $target->setValid(true);
     }
 
     abstract protected function updateSource(Source $target, Source $reloaded);

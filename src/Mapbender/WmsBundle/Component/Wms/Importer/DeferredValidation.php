@@ -39,10 +39,8 @@ class DeferredValidation
     {
         try {
             $this->service->validate($this->document);
-            $this->source->setValid(true);
             return null;
         } catch (XmlParseException $e) {
-            $this->source->setValid(false);
             return $e;
         }
     }

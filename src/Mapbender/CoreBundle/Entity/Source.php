@@ -49,12 +49,6 @@ abstract class Source implements MutableHttpOriginInterface
     protected $alias = "";
 
     /**
-     * @var boolean $valid is a source valid
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $valid = false;
-
-    /**
      * @var string $description The source description
      * @ORM\Column(type="text", nullable=true)
      */
@@ -175,26 +169,12 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * Set valid
-     *
-     * @param  boolean $valid
-     * @return $this
-     */
-    public function setValid($valid)
-    {
-        $this->valid = $valid;
-
-        return $this;
-    }
-
-    /**
-     * Get valid
-     *
      * @return boolean
+     * @deprecated always returns true
      */
     public function getValid()
     {
-        return $this->valid;
+        return true;
     }
 
     /**
