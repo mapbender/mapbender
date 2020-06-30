@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
+use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -70,7 +71,7 @@ class Importer extends RefreshableSourceLoader
     {
         $document = WmsCapabilitiesParser::createDocument($content);
         $parser = WmsCapabilitiesParser::getParser($document);
-        return new Importer\Response($parser->parse($document), $document);
+        return new SourceLoaderResponse($parser->parse($document), $document);
     }
 
     /**
@@ -79,20 +80,19 @@ class Importer extends RefreshableSourceLoader
      *
      * @param HttpOriginInterface $serviceOrigin
      * @param bool $onlyValid
-     * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
+     * @return SourceLoaderResponse
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function evaluateServer(HttpOriginInterface $serviceOrigin, $onlyValid=true)
     {
-        /** @var Importer\Response $response */
         $response = parent::evaluateServer($serviceOrigin, $onlyValid);
         if ($onlyValid) {
             $validationError = new DeferredValidation($response->getSource(), $response->getDocument(), $this);
         } else {
             $validationError = null;
         }
-        return new Importer\Response($response->getSource(), $response->getDocument(), $validationError);
+        return new SourceLoaderResponse($response->getSource(), $response->getDocument(), $validationError);
     }
 
     /**
@@ -101,7 +101,7 @@ class Importer extends RefreshableSourceLoader
      *
      * @param \DOMDocument $document
      * @param boolean $onlyValid
-     * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
+     * @return SourceLoaderResponse
      * @throws XmlParseException
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      */
@@ -116,7 +116,7 @@ class Importer extends RefreshableSourceLoader
             $sourceEntity = $parser->parse();
             $validationError = new DeferredValidation($sourceEntity, $document, $this);
         }
-        return new Importer\Response($sourceEntity, $document, $validationError);
+        return new SourceLoaderResponse($sourceEntity, $document, $validationError);
     }
 
     /**

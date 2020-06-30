@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -195,8 +196,7 @@ class WmsLoader extends Element
 
     /**
      * @param Request $request
-     * @return \Mapbender\WmsBundle\Entity\WmsSource
-     * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
+     * @return WmsSource
      */
     protected function getSource($request)
     {
@@ -207,8 +207,9 @@ class WmsLoader extends Element
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
         $importerResponse = $importer->evaluateServer($origin, false);
-
-        return $importerResponse->getWmsSourceEntity();
+        /** @var WmsSource $source */
+        $source = $importerResponse->getSource();
+        return $source;
     }
 
     protected function splitLayers($layerConfiguration)
