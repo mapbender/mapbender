@@ -487,6 +487,10 @@ class WmsInstance extends SourceInstance
 
         $newRootLayer = new WmsInstanceLayer();
         $newRootLayer->populateFromSource($this, $source->getRootlayer());
+        foreach ($this->getLayers()->getValues() as $priority => $layer) {
+            /** @var WmsInstanceLayer $layer */
+            $layer->setPriority($priority);
+        }
     }
 
     /**

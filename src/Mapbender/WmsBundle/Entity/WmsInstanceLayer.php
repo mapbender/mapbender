@@ -530,9 +530,8 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @internal
      * @param WmsInstance $instance
      * @param WmsLayerSource $layerSource
-     * @param int $priority
      */
-    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, $priority = 0)
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource)
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
@@ -543,7 +542,6 @@ class WmsInstanceLayer extends SourceInstanceItem
         $queryable = !!$layerSource->getQueryable();
         $this->setInfo($queryable);
         $this->setAllowinfo($queryable);
-        $this->setPriority($priority);
         $instance->addLayer($this);
         if ($layerSource->getSublayer()->count() > 0) {
             $this->setToggle(false);
@@ -554,7 +552,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
             $subLayerInstance = new static();
-            $subLayerInstance->populateFromSource($instance, $wmslayersourceSub, $priority);
+            $subLayerInstance->populateFromSource($instance, $wmslayersourceSub);
             $subLayerInstance->setParent($this);
             $this->addSublayer($subLayerInstance);
         }
