@@ -367,10 +367,10 @@
             var $context = this._getContext();
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var el = $('.js-content-content.active,.active .js-content-content', $context);
-            var printContent = "";
-            if ($('> iframe', el).length === 1) {
-                var a = document.getElementById($('iframe', el).attr('id'));
-                printContent = a.contentWindow.document.documentElement.innerHTML;
+            var printContent;
+            var iframe = $('iframe', el).get(0);
+            if (iframe) {
+                printContent = iframe.contentWindow.document.documentElement.innerHTML;
             } else {
                 printContent = el.html();
             }
