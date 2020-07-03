@@ -168,7 +168,7 @@ $layer-slider-bar-height: 5px;
       width: 30px;
       height: 16px;
       line-height: 16px;
-      background-color: $ciColor;
+      background-color: $sliderHandleBackgroundColor;
       font-size: 12px;
       text-align: center;
       @include border-radius(4px);

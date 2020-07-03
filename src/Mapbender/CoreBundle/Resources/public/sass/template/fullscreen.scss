@@ -1,3 +1,5 @@
+$sliderHandleBackgroundColor: #777;
+
 @import url("components/open-sans/open-sans.css");
 @import url("components/bootstrap/css/bootstrap.min.css");
 
@@ -409,9 +411,6 @@ $tabSize: 32px;
   }
 }
 
-html .layer-menu .layer-slider-bar .layer-slider-handle {
-  background: #777;
-}
 html .accordionContainer .accordion {
   background-color: #777;
   color: #ddd;
