@@ -22,6 +22,13 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     // pure descriptor class
     final public function __construct() {}
 
+    public function getVariablesAssets()
+    {
+        return array(
+            '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+        );
+    }
+
     /**
      * {@inheritdoc}
      */

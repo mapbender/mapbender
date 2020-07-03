@@ -28,6 +28,14 @@ interface IApplicationTemplateAssetDependencyInterface
      */
     public function getAssets($type);
 
+    /**
+     * Should return a list of references to asset files containing variable definitions.
+     * These references will be "compiled" first, so all further scss can see the same variable definitions and
+     * produce consistent results.
+     *
+     * @return string[]
+     */
+    public function getVariablesAssets();
 
     /**
      * Should return 'late' assets, to be loaded at the very end, particularly after all Element assets.

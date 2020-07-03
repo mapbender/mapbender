@@ -1,29 +1,18 @@
-@import "libs/variables";
 @import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
 @import "modules/checkbox";
 @import "modules/dropdown";
+@import "modules/layout";
+@import "modules/base";
+@import "modules/text";
+@import "modules/button";
+@import "modules/popup";   // from /bundles/mapbendercore
 
 .olControlZoom {
   display: none;
 }
 
-
-/* ---------------------------------------------------------------- VARIABLES */
-
-// the holy colors
-$ciColor:#0066BA; // blue
-$ciColor2:#CCC; // gray
-$ciColor3:#134271 ; // blue
-$ciColor4:#fff ; // white*/
-
-/* --------------------------------------------------------------- COMPONENTS */
-/* --------------------------------------------------------------------- BASE */
-@import "modules/base";
-/* --------------------------------------------------------------------- TEXT */
-@import "modules/text";
-@import "modules/button";
 
 fieldset{
   padding:$space;
@@ -76,10 +65,7 @@ fieldset{
   @extend .bigText;
   &:focus{outline:none;}
 }
-/* ------------------------------------------------------------------- LAYOUT */
-@import "modules/layout";
 /* -------------------------------------------------------------------- POPUP */
-@import "modules/popup";   // from /bundles/mapbendercore
 .overlay{
   @include noUserSelect();
   @include transition(opacity 0.4s ease-in-out);
@@ -334,7 +320,6 @@ fieldset{
 
 
 
-/* ------------------------------------------------------------ MOBILE SPLASH */
 /* ------------------------------------------------------- ACTIVITY INDICATOR */
 .mb-element-activityindicator{display:none;}
 .mb-activity, .mb-activity-ajax{
