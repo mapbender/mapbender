@@ -1,25 +1,14 @@
-@import "libs/mixins";
-@import "libs/normalize";
-@import "libs/icons";
-@import "modules/checkbox";
-@import "modules/dropdown";
-@import "modules/layout";
-@import "modules/base";
-@import "modules/text";
-@import "modules/button";
-@import "modules/popup";   // from /bundles/mapbendercore
-
 .olControlZoom {
   display: none;
 }
 
-
+// Purpose unknown. Special snowflake hack for Digitizer / vis-ui...?
 fieldset{
   padding:$space;
 
   legend{
     @extend .subTitle;
-    margin:0px !important;
+    margin:0 !important;
     padding:0 5px 0 5px;
   }
 }
@@ -332,7 +321,8 @@ fieldset{
 }
 /* ------------------------------------------------------ BASESOURCE SWITCHER */
 .mb-element-basesourceswitcher{
-  li{
+  li {
+    text-align: left;
     padding:$space/2;
     display:block;
     font-size: 14px;
@@ -498,10 +488,4 @@ fieldset{
   &:before {
     color: #333;
   }
-}
-
-/* ------------------------------------------------------------ BACKGROUND-SWITCHER */
-
-.mb-element-basesourceswitcher li {
-    text-align: left;
 }
