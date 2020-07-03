@@ -1,4 +1,6 @@
-## dev-release/3.0.7 @ a458fea41
+## dev-release/3.0.7 @ 8ddff3417
+- [Regression] Fix FeatureInfo print with "showOriginal" option
+- [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
 - Fix bad ordering of Wms instance "allow toggle" checkboxes if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
 - Fix POI coordinate rounding
@@ -8,11 +10,16 @@
 - Fix translations of login errors
 - Fix multiple-emission of icon CSS rules depending on Application content
 - Fix Symfony 3.4 debug-mode backend errors when working with Applications containing unknown Element classes
-- Replace PrintClient `type` configuration with auto-detection of containing sidepane
+- Fix conflicts of legacy custom dropdown widget with Bootstrap JavaScript
+- Fix login issues when embedding Mapbender in a frame
+- Fix toolbar button centering when showing only icon but no label
+- [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
+- [PrintClient]: Replace manual `type` configuration with auto-detection
 - Update "map-click" demo element
 - Misc fixes to jQueryUI standard / theme css compatibility
-- Client-side Popup now supports opening without any buttons
 - Removed ineffective legacy configuration fields ZoomBar `position`, PrintClient `type`
+- [Framework] Client-side Popup now supports opening without any buttons
+- [Framework] custom dropdown widget visual-only update can now be triggered with `dropdown.changevisual` custom event
 
 ## v3.0.8.5
 ### Regression fixes
