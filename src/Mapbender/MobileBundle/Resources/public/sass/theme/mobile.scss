@@ -177,7 +177,6 @@ fieldset{
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar {
   padding:$space/2 $space/2 $space/4 $space/2;
-  background-color: $ciColor4;
   border-top: 3px solid $ciColor2;
 
   .iconBig {
@@ -255,10 +254,10 @@ fieldset{
 }
 
 /* ------------------------------------------------------------ MOBILE SPLASH */
-.splashScreenWrapper{
+.splashScreenWrapper {
+  background-color: rgba($ciColor4, .7);
   z-index: 12;
   display: none;
-  background-color: rgba(255,255,255,.7);
   @include absolute(0 0 0 0);
 
   &[data-state="active"]{display: block;}
@@ -352,7 +351,6 @@ fieldset{
   .tabs{display:none;}
   .container{
     display:block;
-    background-color: $ciColor4;
     padding:0;
     border:none;
   }
@@ -385,9 +383,6 @@ fieldset{
       color: $darkFontColor;
       border: none !important;
 
-      &:nth-child(1n) {
-        background-color: $ciColor4;
-      }
       &:nth-child(2n) {
         background-color: lighten($ciColor2, 15%);
       }
@@ -443,7 +438,6 @@ fieldset{
   padding:$space/2;
   display:block;
   font-size: 14px;
-  &:nth-child(1n){background-color: $ciColor4;}
   &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
 }
 

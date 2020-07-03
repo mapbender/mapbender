@@ -25,7 +25,6 @@
   background-color: $toolBarBackgroundColor;
   opacity: $toolBarOpacity;
 
-  @include frontendContainerStyle();
   z-index: 4;
   user-select: none;
   .toolBarItem {
