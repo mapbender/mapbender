@@ -1,7 +1,3 @@
-.olControlZoom {
-  display: none;
-}
-
 // Purpose unknown. Special snowflake hack for Digitizer / vis-ui...?
 fieldset{
   padding:$space;
@@ -179,38 +175,24 @@ fieldset{
 
 
 /* ------------------------------------------------------------------ TOOLBAR */
-.toolBar{
-  z-index: 4;
+.toolBar {
   padding:$space/2 $space/2 $space/4 $space/2;
   background-color: $ciColor4;
   border-top: 3px solid $ciColor2;
-  color: $darkFontColor;
-  line-height: normal;
 
-  label{
-    font-weight: normal;
+  .iconBig {
+    // Make big button icons even bigger (default is 160%)
+    font-size: 230%;
   }
+
   &.itemsCenter{
     text-align:center;
   }
-  &.bottom{
-    @include absolute('' 0 0 0);
+  &.bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
-  .iconBig {
-    color: $ciColor;
-  }
-  > .toolBarItem{
-    &:hover {
-      color: fade-out($darkFontColor, 0.3);
-      .iconBig {
-        color: fade-out($ciColor, 0.3);
-      }
-    }
-  }
-}
-.toolBarItem{
-  display: inline-block;
-  margin: 0 $space/4;
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane{
@@ -326,13 +308,8 @@ fieldset{
     padding:$space/2;
     display:block;
     font-size: 14px;
-    color: $middleFontColor !important;
-    margin: 0;
     border: none;
     border-radius: 0px;
-
-    &:nth-child(1n){background-color: $ciColor4;}
-    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
 
     @extend .iconOk;
     @extend .labelCheck;
@@ -377,9 +354,6 @@ fieldset{
   &.left-top{@include absolute($space '' '' $space);}
   &.left-bottom{@include absolute('' '' $space*4 $space/2);}
   &.right-bottom{@include absolute('' $space/2 $space*4 '');}
-  div.iconBig {
-    display: block;
-  }
 }
 .contentPane{
     > .mb-element.mb-element-zoombar{
@@ -387,30 +361,9 @@ fieldset{
           border: 2px solid $ciColor2;
           padding:$space/2;
           color:$ciColor3;
-          .iconBig {
-            color: $ciColor;
-            &[title]:hover {
-              color: fade-out($ciColor, 0.3);
-            }
-          }
           background-color: $ciColor4;
-          li .iconBig {
-            margin: 0;
-          }
-          li.zoomSlider .iconBig {
-            margin: $space / 2 auto;
-          }
         }
     }
-}
-
-.iconBig {
-  font-size: 30px;
-  height: auto;
-  line-height: 100%;
-  &:before {
-    font-size: inherit;
-  }
 }
 
 /* ---------------------------------------------------------------- LAYERTREE */
@@ -483,9 +436,3 @@ fieldset{
   &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
 }
 
-/* ------------------------------------------------------------ GPS BUTTON ACTIVE */
-.toolBarItemActive .mb-gpsButton {
-  &:before {
-    color: #333;
-  }
-}
