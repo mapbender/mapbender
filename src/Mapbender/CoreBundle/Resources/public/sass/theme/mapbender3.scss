@@ -21,6 +21,10 @@
 
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBar {
+  color: $toolBarFontColor;
+  background-color: $toolBarBackgroundColor;
+  opacity: $toolBarOpacity;
+
   @include frontendContainerStyle();
   z-index: 4;
   user-select: none;
@@ -34,11 +38,7 @@
     }
     text-wrap: avoid;
     white-space: nowrap;
-    color: fade-out($toolBarFontColor, .3);
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-    &:hover {
-      color: inherit;
-    }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
     [class^="icon"], [class*=" icon"] {
@@ -47,11 +47,11 @@
       }
     }
   }
-  .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: fade-out($toolBarFontColor, .3);
-    color: #eee;
+  .toolBarItemActive {
+    // Invert background and foreground
+    background-color: $toolBarFontColor;
+    color: $toolBarBackgroundColor;
   }
-  margin: 0;
   padding:$space/4 $space/2 $space/4 $space/2;
   border-color: darken($contentColor, 20%);
 

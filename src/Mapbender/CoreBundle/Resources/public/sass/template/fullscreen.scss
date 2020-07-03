@@ -304,29 +304,30 @@ $tabSize: 32px;
 }
 
 .toolBar {
+  .mb-button, .mb-aboutButton, .mb-gpsButton {
+    opacity: .8;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  .toolBarItemActive {
+    .mb-button, .mb-aboutButton, .mb-gpsButton {
+      opacity: 1;
+    }
+  }
   &.top {
-    background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor,0.9), rgba($toolBarBackgroundColor, 0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    // scale button icons and text all to the same size, undoing .iconBig
     font-size: 1.6rem;
     .toolBarItem {
-      line-height: inherit;
-      span {
-        line-height: 1;
-      }
-      [class^="icon"], [class*=" icon"] {
-        vertical-align: initial;
-      }
       .iconBig {
         font-size: inherit;
-        &:before {
-          font-size: inherit;
-          vertical-align: initial;
-        }
       }
     }
   }
   &.bottom {
-    background: linear-gradient(0deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.7), rgba($toolBarBackgroundColor, 0.9));
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
 }
