@@ -56,7 +56,7 @@ class CssCompiler extends AssetFactoryBase
         // redefining those variables.
         // @todo: make mobile template scss work with and without squashing, then disable squashing
         //        alternatively nuke mobile template completely (Mapbender 3.1?)
-        $content = $this->squashImports($content);
+        $content = $this->deduplicateImports($content);
 
         $sass = clone $this->sassFilter;
         $sass->setStyle($debug ? 'nested' : 'compressed');
@@ -74,16 +74,21 @@ class CssCompiler extends AssetFactoryBase
      * @param $content
      * @return string
      */
-    protected function squashImports($content)
+    protected function deduplicateImports($content)
     {
-        preg_match_all('/\@import\s*\".*?;/s', $content, $imports, PREG_SET_ORDER);
-        $imports = array_map(function($item) {
-            return $item[0];
-        }, $imports);
-        $imports = array_unique($imports);
-        $content = preg_replace('/\@import\s*\".*?;/s', '', $content);
-
-        return implode($imports, "\n") . "\n" . $content;
+        $encounteredImports = array();
+        $matches = array();
+        preg_match_all('#\@import\s*[\'"]([^\'"]+)[\'"]\s*;#', $content, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $reference = $match[1][0];
+            if (!empty($encounteredImports[$reference])) {
+                $statementPosition = $match[0][1];
+                // shred the import statement into a comment while maintaining total length (and thus further offsets)
+                $content = substr_replace($content, '// ', $statementPosition, 3);
+            }
+            $encounteredImports[$reference] = true;
+        }
+        return $content;
     }
 
     /**
