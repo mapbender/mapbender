@@ -1,10 +1,9 @@
 
-.mb-element-activityindicator{display:none;}
-.mb-activity, .mb-activity-ajax{
-  .mb-element-activityindicator{
-    display: inline-block;
-    -webkit-animation:spin 1s linear infinite;
-    -moz-animation:spin 1s linear infinite;
-    animation:spin 1s linear infinite;
+.mb-element-activityindicator {
+  opacity: 0;
+}
+.mb-activity, .mb-activity-ajax {
+  .mb-element-activityindicator {
+    opacity: 1;
   }
 }
