@@ -99,11 +99,8 @@
                 self.map.map.olMap.addControl(control);
                 self.selectionActive = true;
                 control.activate();
-                if (reset) {
-                    self._setScale();
-                } else {
-                    self._updateGeometry();
-                }
+                self._setScale();
+                self._updateGeometry(true);
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
@@ -121,8 +118,7 @@
         },
         activate: function() {
             if (this.useDialog_ || this.$selectionFrameToggle.data('active')) {
-                var resetScale = !this._isSelectionOnScreen();
-                this._activateSelection(resetScale);
+                this._activateSelection(true);
             }
             if (this.jobList) {
                 this.jobList.resume();
@@ -143,14 +139,6 @@
                 }
             }
             this._super();
-        },
-        _isSelectionOnScreen: function() {
-            if (this.feature && this.feature.geometry) {
-                var viewGeometry = this.map.map.olMap.getExtent().toGeometry();
-                return viewGeometry.intersects(this.feature.geometry);
-            } else {
-                return false;
-            }
         },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
@@ -174,8 +162,7 @@
             if(currentScale > scales[scales.length-1]){
                 selectValue = scales[scales.length-1];
             }
-
-            select.val(selectValue).trigger('change');
+            select.val(selectValue).trigger('dropdown.changevisual');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             // adjust for geodesic pixel aspect ratio so
