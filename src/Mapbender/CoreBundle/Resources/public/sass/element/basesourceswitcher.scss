@@ -1,5 +1,7 @@
 .mb-element-basesourceswitcher {
-  display: table-row;
+  .toolBarItem & {
+    display: table-row;
+  }
   li {
     padding: 0 5px;
     background-color: #b5b5b5;
