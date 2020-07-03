@@ -274,17 +274,6 @@ form {
   float: left;
 }
 
-/* --------------------------------------------------------- TOOLBARS */
-.toolBar {
-  z-index: 4;
-  label, span {
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */
-  }
-}
-
 /* --------------------------------------------------------- SIDEPANE */
 $tabSize: 32px;
 .sidePaneTabs {
@@ -315,12 +304,10 @@ $tabSize: 32px;
 }
 
 .toolBar {
-  color: #222;
   &.top {
     background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     font-size: 1.6rem;
-    line-height: 1;
     .toolBarItem {
       line-height: inherit;
       span {
@@ -332,7 +319,8 @@ $tabSize: 32px;
       .iconBig {
         font-size: inherit;
         &:before {
-          font-size: inherit
+          font-size: inherit;
+          vertical-align: initial;
         }
       }
     }
@@ -340,7 +328,6 @@ $tabSize: 32px;
   &.bottom {
     background: linear-gradient(0deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
-    font-size: 1.2rem;
   }
 }
 .toolBar.top {

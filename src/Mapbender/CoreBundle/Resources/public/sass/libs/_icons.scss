@@ -6,10 +6,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   cursor: pointer;
-  display: inline;
   width: auto;
   height: auto;
-  vertical-align: top;
 }
 
 a[class^="icon"], a[class*=" icon"] {
@@ -19,11 +17,15 @@ a[class^="icon"], a[class*=" icon"] {
   text-decoration: none;
 }
 
+span[class^="icon"], span[class*=" icon"] {
+  display: inline-block;
+}
+
 .iconBig {
+  font-size: 160%;
+  vertical-align: middle;   // for proper vertical align of following inline element, if any
   &:before {
-    font-size: 20px;
     display: inline-block;
-    vertical-align: top;
   }
 }
 span.iconBig {

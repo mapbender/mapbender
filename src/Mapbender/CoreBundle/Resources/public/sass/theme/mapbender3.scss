@@ -22,9 +22,16 @@
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBar {
   @include frontendContainerStyle();
+  z-index: 4;
+  user-select: none;
   .toolBarItem {
     padding:5px;
     display: inline-block;
+    > span {
+      // amenity for buttons with ".iconBig" icons + labels
+      // inline does not get enough height to wrap contents vertically, inline-block does
+      display: inline-block;
+    }
     text-wrap: avoid;
     white-space: nowrap;
     color: fade-out($toolBarFontColor, .3);
@@ -49,18 +56,11 @@
   border-color: darken($contentColor, 20%);
 
   &.top {
-    .toolBarItem {
-      > label, > span, > a span {
-        margin-bottom: 0;
-      }
-    }
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
     .toolBarItem{
-      font-size:80%;
-
       > label{
         margin-bottom: 0;
       }
@@ -80,6 +80,8 @@
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
+  // Undo fixed-pixel line height on body
+  line-height: 1;
 }
 
 
