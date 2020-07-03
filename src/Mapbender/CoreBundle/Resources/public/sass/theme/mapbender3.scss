@@ -60,12 +60,6 @@
     border-bottom-style: solid;
   }
   &.bottom {
-    .toolBarItem{
-      > label{
-        margin-bottom: 0;
-      }
-    }
-
     .dropdownList{
       bottom:0;   // to "drop up"
       margin-bottom: $inputHeight;
@@ -82,9 +76,11 @@
   }
   // Undo fixed-pixel line height on body
   line-height: 1;
+  // Undo Bootstrap global label margin
+  label {
+    margin-bottom: 0;
+  }
 }
-
-
 
 
 
