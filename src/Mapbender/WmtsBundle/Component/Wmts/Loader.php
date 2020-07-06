@@ -41,7 +41,7 @@ class Loader extends SourceLoader
      * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
      * @throws \Mapbender\WmtsBundle\Component\Exception\WmtsException
      */
-    protected function parseResponseContent($content)
+    public function parseResponseContent($content)
     {
         try {
             $document = WmtsCapabilitiesParser::createDocument($content);
@@ -50,7 +50,7 @@ class Loader extends SourceLoader
             $document = TmsCapabilitiesParser100::createDocument($content);
             $source = TmsCapabilitiesParser100::getParser($this->proxyConfig, $document)->parse();
         }
-        return new SourceLoaderResponse($source);
+        return $source;
     }
 
     /**

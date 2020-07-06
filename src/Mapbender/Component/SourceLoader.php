@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
+use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SourceLoader
@@ -31,10 +32,10 @@ abstract class SourceLoader
 
     /**
      * @param string $content
-     * @return SourceLoaderResponse
+     * @return Source
      * @throws XmlParseException
      */
-    abstract protected function parseResponseContent($content);
+    abstract public function parseResponseContent($content);
 
     /**
      * @param string $content
@@ -51,9 +52,9 @@ abstract class SourceLoader
     public function evaluateServer(HttpOriginInterface $origin)
     {
         $response = $this->getResponse($origin);
-        $loaderResponse = $this->parseResponseContent($response->getContent());
-        $this->updateOrigin($loaderResponse->getSource(), $origin);
-        return $loaderResponse;
+        $source = $this->parseResponseContent($response->getContent());
+        $this->updateOrigin($source, $origin);
+        return new SourceLoaderResponse($source);
     }
 
     /**

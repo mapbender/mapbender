@@ -63,11 +63,11 @@ class Importer extends RefreshableSourceLoader
         return $this->capabilitiesRequest($origin);
     }
 
-    protected function parseResponseContent($content)
+    public function parseResponseContent($content)
     {
         $document = WmsCapabilitiesParser::createDocument($content);
         $parser = WmsCapabilitiesParser::getParser($document);
-        return new SourceLoaderResponse($parser->parse($document));
+        return $parser->parse($document);
     }
 
     public function validateResponseContent($content)
