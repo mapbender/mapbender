@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 8ddff3417
+## dev-release/3.0.7 @ 49f66b4f4
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
@@ -15,6 +15,7 @@
 - Fix toolbar button centering when showing only icon but no label
 - [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
 - [PrintClient]: Replace manual `type` configuration with auto-detection
+- [PrintClient]: remove comment fields from default configuration (not printable with shipping default templates)
 - Update "map-click" demo element
 - Misc fixes to jQueryUI standard / theme css compatibility
 - Removed ineffective legacy configuration fields ZoomBar `position`, PrintClient `type`
