@@ -10,14 +10,12 @@ use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -70,52 +68,14 @@ class Importer extends RefreshableSourceLoader
     {
         $document = WmsCapabilitiesParser::createDocument($content);
         $parser = WmsCapabilitiesParser::getParser($document);
-        return new SourceLoaderResponse($parser->parse($document), $document);
+        return new SourceLoaderResponse($parser->parse($document));
     }
 
-    /**
-     * Performs a GetCapabilities request against WMS at $serviceOrigin and returns a WmsSource instance and the
-     * (suppressed) XML validation error, if any, wrapped in a ImporterResponse object.
-     *
-     * @param HttpOriginInterface $serviceOrigin
-     * @param bool $onlyValid
-     * @return SourceLoaderResponse
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
-     */
-    public function evaluateServer(HttpOriginInterface $serviceOrigin, $onlyValid=true)
+    public function validateResponseContent($content)
     {
-        $response = parent::evaluateServer($serviceOrigin, $onlyValid);
-        if ($onlyValid) {
-            $validationError = new DeferredValidation($response->getSource(), $response->getDocument(), $this);
-        } else {
-            $validationError = null;
-        }
-        return new SourceLoaderResponse($response->getSource(), $response->getDocument(), $validationError);
-    }
-
-    /**
-     * Checks / evaluates a capabilities document returns a WmsSource instance and the (suppressed) XML validation error,
-     * if any, wrapped in an Importer\Response object.
-     *
-     * @param \DOMDocument $document
-     * @param boolean $onlyValid
-     * @return SourceLoaderResponse
-     * @throws XmlParseException
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     */
-    public function evaluateCapabilitiesDocument(\DOMDocument $document, $onlyValid=true)
-    {
-        $parser = WmsCapabilitiesParser::getParser($document);
-        if ($onlyValid) {
-            $this->validate($document);
-            $sourceEntity = $parser->parse();
-            $validationError = null;
-        } else {
-            $sourceEntity = $parser->parse();
-            $validationError = new DeferredValidation($sourceEntity, $document, $this);
-        }
-        return new SourceLoaderResponse($sourceEntity, $document, $validationError);
+        $document = WmsCapabilitiesParser::createDocument($content);
+        $validator = new XmlValidator($this->container);
+        $validator->validate($document);
     }
 
     /**
@@ -169,16 +129,6 @@ class Importer extends RefreshableSourceLoader
                 'VERSION' => $target->getVersion(),
             ));
         }
-    }
-
-    /**
-     * @param \DOMDocument $capsDocument
-     * @throws XmlParseException
-     */
-    public function validate(\DOMDocument $capsDocument)
-    {
-        $validator = new XmlValidator($this->container);
-        $validator->validate($capsDocument);
     }
 
     /**

@@ -25,6 +25,8 @@
 		<service id="mapbender.importer.source.wmts.service" class="%mapbender.importer.source.wmts.class%">
 			<argument type="service" id="mapbender.http_transport.service" />
 			<argument>%owsproxy.proxy%</argument>
+			<!-- exclusively for XmlValidator construction -->
+			<argument type="service" id="service_container" />
 		</service>
 	</services>
 </container>

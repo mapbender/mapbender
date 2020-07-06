@@ -2,9 +2,7 @@
 
 namespace Mapbender\Component\Loader;
 
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 
 class SourceLoaderResponse
 {
@@ -12,20 +10,14 @@ class SourceLoaderResponse
     protected $source;
     /** @var \DOMDocument */
     protected $document;
-    /** @var DeferredValidation|XmlParseException|null */
-    protected $validationError;
 
     /**
      * SourceLoaderResponse constructor.
      * @param Source $source
-     * @param \DOMDocument $document
-     * @param DeferredValidation|\Exception|null $validationError
      */
-    public function __construct(Source $source, \DOMDocument $document, $validationError = null)
+    public function __construct(Source $source)
     {
         $this->source = $source;
-        $this->document = $document;
-        $this->validationError = $validationError;
     }
 
     /**
@@ -34,25 +26,5 @@ class SourceLoaderResponse
     public function getSource()
     {
         return $this->source;
-    }
-
-    /**
-     * @return \DOMDocument
-     */
-    public function getDocument()
-    {
-        return $this->document;
-    }
-
-    /**
-     * @return DeferredValidation|XmlParseException|null
-     */
-    public function getValidationError()
-    {
-        if ($this->validationError && ($this->validationError instanceof DeferredValidation)) {
-            // evaluate validation now, replace proxy with result
-            $this->validationError = $this->validationError->run();
-        }
-        return $this->validationError;
     }
 }

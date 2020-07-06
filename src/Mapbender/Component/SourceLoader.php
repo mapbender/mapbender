@@ -37,18 +37,34 @@ abstract class SourceLoader
     abstract protected function parseResponseContent($content);
 
     /**
+     * @param string $content
+     * @throws XmlParseException
+     */
+    abstract public function validateResponseContent($content);
+
+    /**
      * @param HttpOriginInterface $origin
-     * @param bool $onlyValid
      * @return SourceLoaderResponse
      * @throws XmlParseException
      * @throws InvalidUrlException
      */
-    public function evaluateServer(HttpOriginInterface $origin, $onlyValid = true)
+    public function evaluateServer(HttpOriginInterface $origin)
     {
         $response = $this->getResponse($origin);
         $loaderResponse = $this->parseResponseContent($response->getContent());
         $this->updateOrigin($loaderResponse->getSource(), $origin);
         return $loaderResponse;
+    }
+
+    /**
+     * @param HttpOriginInterface $origin
+     * @throws XmlParseException
+     * @throws InvalidUrlException
+     */
+    public function validateServer(HttpOriginInterface $origin)
+    {
+        $response = $this->getResponse($origin);
+        $this->validateResponseContent($response->getContent());
     }
 
     /**
