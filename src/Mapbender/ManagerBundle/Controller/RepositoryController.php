@@ -294,6 +294,7 @@ class RepositoryController extends ApplicationControllerBase
                     "sourceId" => $source->getId(),
                 ));
             } catch (\Exception $e) {
+                $em->rollback();
                 $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
             }
         }

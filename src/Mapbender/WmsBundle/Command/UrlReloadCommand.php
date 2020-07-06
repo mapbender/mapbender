@@ -29,8 +29,18 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
         $origin = $this->getOrigin($input);
         $this->processOrigin($origin, $input);
         $reloaded = $this->loadSource($origin);
-        $this->getImporter()->updateSource($target, $reloaded);
-        $this->getImporter()->updateOrigin($target, $origin);
+        $em = $this->getEntityManager();
+        $em->beginTransaction();
+        try {
+            $this->getImporter()->updateSource($target, $reloaded);
+            $this->getImporter()->updateOrigin($target, $origin);
+            $em->persist($target);
+            $em->flush();
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     protected function getValidationOption(InputInterface $input)
