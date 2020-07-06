@@ -21,7 +21,6 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Password (basic auth)', '')
             ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
         ;
-        parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
