@@ -12,7 +12,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -21,7 +21,6 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -35,23 +34,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Importer extends RefreshableSourceLoader
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var XmlValidatorService */
+    protected $validator;
     /** @var EntityManager */
     protected $entityManager;
 
     /**
      * @param HttpTransportInterface $transport
      * @param EntityManager $entityManager
-     * @param ContainerInterface $container
+     * @param XmlValidatorService $validator;
      */
     public function __construct(HttpTransportInterface $transport,
                                 EntityManager $entityManager,
-                                ContainerInterface $container)
+                                XmlValidatorService $validator)
     {
         parent::__construct($transport);
         $this->entityManager = $entityManager;
-        $this->container = $container;
+        $this->validator = $validator;
     }
 
     /**
@@ -74,8 +73,7 @@ class Importer extends RefreshableSourceLoader
     public function validateResponseContent($content)
     {
         $document = WmsCapabilitiesParser::createDocument($content);
-        $validator = new XmlValidator($this->container);
-        $validator->validate($document);
+        $this->validator->validateDocument($document);
     }
 
     /**
@@ -293,7 +291,7 @@ class Importer extends RefreshableSourceLoader
             } else {
                 $instance = $target->getSourceInstance();
                 $sublayerInstance = new WmsInstanceLayer();
-                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
+                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub);
                 $sublayerInstance->setParent($target);
                 $instance->getLayers()->add($sublayerInstance);
                 $target->getSublayer()->add($sublayerInstance);

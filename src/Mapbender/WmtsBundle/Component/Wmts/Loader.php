@@ -9,30 +9,30 @@ use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Loader extends SourceLoader
 {
+    /** @var XmlValidatorService */
+    protected $validator;
     /** @var mixed[] */
     protected $proxyConfig;
-    /** @var ContainerInterface */
-    protected $container;
 
     /**
      * @param HttpTransportInterface $httpTransport
+     * @param XmlValidatorService $validator
      * @param mixed[] $proxyConfig
      */
-    public function __construct(HttpTransportInterface $httpTransport, $proxyConfig,
-                                ContainerInterface $container)
+    public function __construct(HttpTransportInterface $httpTransport, XmlValidatorService $validator,
+                                $proxyConfig)
     {
         parent::__construct($httpTransport);
+        $this->validator = $validator;
         $this->proxyConfig = $proxyConfig;
-        $this->container = $container;
     }
 
     /**
@@ -72,7 +72,6 @@ class Loader extends SourceLoader
         } catch (NoWmtsDocument $e) {
             $document = TmsCapabilitiesParser100::createDocument($content);
         }
-        $validator = new XmlValidator($this->container);
-        $validator->validate($document);
+        $this->validator->validateDocument($document);
     }
 }

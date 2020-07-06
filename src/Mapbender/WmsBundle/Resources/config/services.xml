@@ -16,7 +16,7 @@
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
             <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.xmlvalidator.service" />
         </service>
         <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
             <argument type="service" id="mapbender.source.url_processor.service" />
