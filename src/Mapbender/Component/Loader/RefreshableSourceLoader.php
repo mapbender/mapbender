@@ -29,7 +29,7 @@ abstract class RefreshableSourceLoader extends SourceLoader
         $this->updateOrigin($target, $origin);
     }
 
-    abstract protected function updateSource(Source $target, Source $reloaded);
+    abstract public function updateSource(Source $target, Source $reloaded);
 
     /**
      * @param Source $target
