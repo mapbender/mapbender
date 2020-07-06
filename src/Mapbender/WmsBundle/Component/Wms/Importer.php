@@ -79,10 +79,10 @@ class Importer extends RefreshableSourceLoader
      * @param Source $target
      * @param Source $reloaded
      * @throws \Exception
-     * @internal, public only for legacy EntityHandler access
      */
     public function updateSource(Source $target, Source $reloaded)
     {
+        $this->beforeSourceUpdate($target, $reloaded);
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
