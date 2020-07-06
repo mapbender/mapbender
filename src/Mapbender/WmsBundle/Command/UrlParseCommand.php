@@ -41,6 +41,11 @@ class UrlParseCommand extends ContainerAwareCommand
 
         $source = $this->loadSource($origin);
 
+        $this->processSource($output, $source);
+    }
+
+    protected function processSource(OutputInterface $output, WmsSource $source)
+    {
         $output->writeln("WMS source loaded and validated");
         $layerCount = count($source->getLayers());
         $output->writeln("Source describes $layerCount layers:");
