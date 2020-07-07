@@ -45,16 +45,6 @@ abstract class WmsCapabilitiesParser
     }
 
     /**
-     * Sets the resolution
-     *
-     * @param integer $resolution
-     */
-    protected function setReslolution($resolution)
-    {
-        $this->resolution = $resolution;
-    }
-
-    /**
      * Finds the value
      * @param string $xpath xpath expression
      * @param \DOMNode $contextElm the node to use as context for evaluating the

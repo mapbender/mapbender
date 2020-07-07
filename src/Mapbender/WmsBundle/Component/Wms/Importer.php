@@ -173,10 +173,8 @@ class Importer extends RefreshableSourceLoader
                 $target->getSource()->getLayers()->removeElement($layerOldSub);
             }
         }
-        $num = 0;
         /* update founded layers, add new layers */
         foreach ($updatedSubLayers as $subItemNew) {
-            $num++;
             $subItemsOld = $this->findLayer($subItemNew, $targetSubLayers);
             if (count($subItemsOld) === 1) {
                 // update single layer
