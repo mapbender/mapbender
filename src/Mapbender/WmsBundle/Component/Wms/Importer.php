@@ -99,6 +99,7 @@ class Importer extends RefreshableSourceLoader
         $this->entityManager->remove($reloaded->getContact());
 
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
+        $this->assignLayerPriorities($target->getRootlayer(), 0);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
 
@@ -179,15 +180,13 @@ class Importer extends RefreshableSourceLoader
             $subItemsOld = $this->findLayer($subItemNew, $targetSubLayers);
             if (count($subItemsOld) === 1) {
                 // update single layer
-                $subItemsOld[0]->setPriority($priorityOriginal + $num);
                 $this->updateLayer($subItemsOld[0], $subItemNew);
             } else {
                 foreach ($subItemsOld as $layerToRemove) {
                     $this->entityManager->remove($layerToRemove);
                 }
-                $lay = $this->cloneLayer($subItemNew, $target);
-                $lay->setPriority($priorityOriginal + $num);
-
+                $lay = $this->cloneLayer($subItemNew, $target->getSource());
+                $lay->setParent($target);
                 $this->entityManager->remove($subItemNew);
             }
         }
@@ -217,26 +216,25 @@ class Importer extends RefreshableSourceLoader
 
     /**
      * @param WmsLayerSource $toClone
-     * @param WmsLayerSource $cloneParent
+     * @param WmsSource $newSource
      * @return WmsLayerSource
      */
-    private function cloneLayer(WmsLayerSource $toClone, WmsLayerSource $cloneParent)
+    private function cloneLayer(WmsLayerSource $toClone, WmsSource $newSource)
     {
         $cloned = clone $toClone;
         $this->entityManager->detach($cloned);
         $cloned->setId(null);
-        $cloned->setSource($cloneParent->getSource());
-        $cloned->setParent($cloneParent);
-        $cloned->setPriority($cloneParent->getPriority());
+        $cloned->setSource($newSource);
         $cloned->setKeywords(new ArrayCollection());
-        $cloneParent->addSublayer($cloned);
         $this->copyKeywords($cloned, $toClone, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
         $this->entityManager->persist($cloned);
         if ($cloned->getSublayer()->count() > 0) {
             $children = new ArrayCollection();
             foreach ($cloned->getSublayer() as $subToClone) {
-                $subCloned = $this->cloneLayer($subToClone, $cloned);
+                $subCloned = $this->cloneLayer($subToClone, $newSource);
                 $children->add($subCloned);
+                $subCloned->setParent($cloned);
+                $cloned->addSublayer($subCloned);
             }
             $cloned->setSublayer($children);
         }
