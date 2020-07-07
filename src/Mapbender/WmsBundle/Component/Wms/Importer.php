@@ -66,7 +66,9 @@ class Importer extends RefreshableSourceLoader
     {
         $document = WmsCapabilitiesParser::createDocument($content);
         $parser = WmsCapabilitiesParser::getParser($document);
-        return $parser->parse($document);
+        $source = $parser->parse($document);
+        $this->assignLayerPriorities($source->getRootlayer(), 0);
+        return $source;
     }
 
     public function validateResponseContent($content)
@@ -154,8 +156,6 @@ class Importer extends RefreshableSourceLoader
         $priorityOriginal = $target->getPriority();
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
         EntityUtil::copyEntityFields($target, $updatedLayer, $classMeta, false);
-        // restore original priority
-        $target->setPriority($priorityOriginal);
         $this->copyKeywords($target, $updatedLayer, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
 
         /* handle sublayer- layer. Name is a unique identifier for a wms layer. */
@@ -365,6 +365,16 @@ class Importer extends RefreshableSourceLoader
     private function copyKeywords(ContainingKeyword $target, ContainingKeyword $source, $keywordClass)
     {
         KeywordUpdater::updateKeywords($target, $source, $this->entityManager, $keywordClass);
+    }
+
+    protected function assignLayerPriorities(WmsLayerSource $layer, $value)
+    {
+        $layer->setPriority($value);
+        $offset = 1;
+        foreach ($layer->getSublayer()->getValues() as $child) {
+            $offset += $this->assignLayerPriorities($child, $value + $offset);
+        }
+        return $offset;
     }
 
     /**
