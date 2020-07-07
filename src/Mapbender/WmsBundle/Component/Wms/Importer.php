@@ -247,6 +247,7 @@ class Importer extends RefreshableSourceLoader
     private function updateInstance(WmsInstance $instance)
     {
         $source = $instance->getSource();
+        $this->pruneInstanceLayers($instance);
 
         if ($getMapFormats = $source->getGetMap()->getFormats()) {
             if (!in_array($instance->getFormat(), $getMapFormats)) {
@@ -275,13 +276,6 @@ class Importer extends RefreshableSourceLoader
 
     private function updateInstanceLayer(WmsInstanceLayer $target)
     {
-        /* remove instance layers for missed layer sources */
-        foreach ($target->getSublayer() as $wmsinstlayer) {
-            if ($this->entityManager->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
-                $target->getSublayer()->removeElement($wmsinstlayer);
-                $this->entityManager->remove($wmsinstlayer);
-            }
-        }
         $sourceItem = $target->getSourceItem();
         foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findInstanceLayer($wmslayersourceSub, $target->getSublayer());
@@ -371,5 +365,54 @@ class Importer extends RefreshableSourceLoader
     private function copyKeywords(ContainingKeyword $target, ContainingKeyword $source, $keywordClass)
     {
         KeywordUpdater::updateKeywords($target, $source, $this->entityManager, $keywordClass);
+    }
+
+    /**
+     * @param WmsInstance $instance
+     * @deprecated update the doctrine schema, so the delete cascade handles this
+     */
+    protected function pruneInstanceLayers(WmsInstance $instance)
+    {
+        // This might be completely redundant on current schema. There is
+        // a delete cascade on the instance layer => source item relation.
+        // This remains only as a BC amenity for outdated schema
+        $uow = $this->entityManager->getUnitOfWork();
+        // Initialize out of modifying loop
+        do {
+            $deleted = false;
+            foreach ($instance->getLayers() as $instanceLayer) {
+                $sourceLayer = $instanceLayer->getSourceItem();
+                if ($uow->isScheduledForDelete($sourceLayer)) {
+                    $this->entityManager->remove($instanceLayer);
+                    $deleted = $this->pruneInstanceSubLayer($instance->getRootlayer(), $instanceLayer);
+                    if ($deleted) {
+                        // restart loop after modifying collection(s)
+                        break;
+                    }
+                }
+            }
+        } while ($deleted);
+    }
+
+    /**
+     * @param WmsInstanceLayer $parent
+     * @param WmsInstanceLayer $toRemove
+     * @deprecated update the doctrine schema, so the delete cascade handles this
+     * @return bool
+     */
+    protected function pruneInstanceSubLayer(WmsInstanceLayer $parent, WmsInstanceLayer $toRemove)
+    {
+        // depth first recursion
+        foreach ($parent->getSublayer() as $sublayer) {
+            if ($this->pruneInstanceSubLayer($sublayer, $toRemove)) {
+                return true;
+            }
+            if ($sublayer === $toRemove) {
+                $parent->getSublayer()->removeElement($toRemove);
+                $toRemove->getSourceInstance()->getLayers()->removeElement($toRemove);
+                return true;
+            }
+        }
+        return false;
     }
 }
