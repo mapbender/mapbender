@@ -269,7 +269,14 @@ class Importer extends RefreshableSourceLoader
             $instance->setExceptionformat(null);
         }
         $this->updateInstanceDimensions($instance);
-        $this->updateInstanceLayer($instance->getRootlayer());
+        $instanceRoot = $instance->getRootlayer();
+        if (!$instanceRoot) {
+            $instanceRoot = new WmsInstanceLayer();
+            $instanceRoot->populateFromSource($instance, $instance->getSource()->getRootlayer());
+            $instance->setLayers(new ArrayCollection(array($instanceRoot)));
+        } else {
+            $this->updateInstanceLayer($instanceRoot);
+        }
     }
 
     private function updateInstanceLayer(WmsInstanceLayer $target)
