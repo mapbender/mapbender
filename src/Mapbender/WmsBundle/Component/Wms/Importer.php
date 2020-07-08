@@ -394,7 +394,6 @@ class Importer extends RefreshableSourceLoader
         // a delete cascade on the instance layer => source item relation.
         // This remains only as a BC amenity for outdated schema
         $uow = $this->entityManager->getUnitOfWork();
-        // Initialize out of modifying loop
         do {
             $deleted = false;
             foreach ($instance->getLayers() as $instanceLayer) {

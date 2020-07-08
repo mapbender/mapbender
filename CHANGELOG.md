@@ -26,7 +26,7 @@
 - [Scripting] add `mapbender:wms:add` command to load a new WMS source
 - [Scripting] add `mapbender:wms:show` command to inspect layer structure in a persistent WMS source
 - [Scripting] add `mapbender:wms:parse:url` and `mapbender:wms:parse:file` commands to inspect layer structure in a GetCapabilities document
-- [Scripting] add `mapbender:wms:reload:url` and `mapbender:wms:parse:file` to update a persistent WMS source with a new GetCapabilities document 
+- [Scripting] add `mapbender:wms:reload:url` and `mapbender:wms:parse:file` to update a persistent WMS source with a new GetCapabilities document
 - [Framework] Client-side Popup now supports opening without any buttons
 - [Framework] custom dropdown widget visual-only update can now be triggered with `dropdown.changevisual` custom event
 
