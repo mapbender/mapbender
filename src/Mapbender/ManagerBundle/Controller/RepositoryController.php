@@ -341,6 +341,8 @@ class RepositoryController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
+            // redirect to self
+            return $this->redirectToRoute($request->attributes->get('_route'), $request->attributes->get('_route_params'));
         }
 
         return $this->render($factory->getFormTemplate($instance), array(
