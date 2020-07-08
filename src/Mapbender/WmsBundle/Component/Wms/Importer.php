@@ -273,24 +273,37 @@ class Importer extends RefreshableSourceLoader
         } else {
             $this->updateInstanceLayer($instanceRoot, $source->getRootlayer());
         }
+        $this->assignLayerPriorities($instanceRoot, 0);
     }
 
     private function updateInstanceLayer(WmsInstanceLayer $target, WmsLayerSource $sourceItem)
     {
-        foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
-            $layer = $this->findInstanceLayer($wmslayersourceSub, $target->getSublayer());
-            if ($layer) {
-                $this->updateInstanceLayer($layer, $wmslayersourceSub);
+        // reorder source layers already configured in instance to respect previous subset layer ordering
+        $sourceChildren = new ArrayCollection($sourceItem->getSublayer()->getValues());
+        $commonChildSources = new ArrayCollection();
+        $commonChildInstances = new ArrayCollection();
+        foreach ($target->getSublayer() as $instanceChild) {
+            $this->updateInstanceLayer($instanceChild, $instanceChild->getSourceItem());
+            $commonChildSources->add($instanceChild->getSourceItem());
+            $commonChildInstances->add($instanceChild);
+        }
+        $target->setSublayer(new ArrayCollection());
+        $nextReorderedSource = 0;
+        foreach ($sourceChildren as $sourceChild) {
+            $instanceChildIndex = $commonChildSources->indexOf($sourceChild);
+            if ($instanceChildIndex !== false) {
+                $target->addSublayer($commonChildInstances[$nextReorderedSource]);
+                ++$nextReorderedSource;
             } else {
                 $instance = $target->getSourceInstance();
                 $sublayerInstance = new WmsInstanceLayer();
-                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub);
+                $sublayerInstance->populateFromSource($instance, $sourceChild);
                 $instance->getLayers()->add($sublayerInstance);
                 $target->addSublayer($sublayerInstance);
                 $this->entityManager->persist($sublayerInstance);
             }
         }
-        $target->setPriority($sourceItem->getPriority());
+
         $queryable = $sourceItem->getQueryable();
         if (!$queryable) {
             if ($queryable !== null) {
@@ -308,23 +321,6 @@ class Importer extends RefreshableSourceLoader
             $target->setAllowtoggle(null);
         }
         $this->entityManager->persist($target);
-    }
-
-    /**
-     * Finds an instance layer, that is linked with a given wms source layer.
-     *
-     * @param WmsLayerSource $wmssourcelayer wms layer source
-     * @param array $instancelayerList list of instance layers
-     * @return WmsInstanceLayer|null the instance layer, otherwise null
-     */
-    private function findInstanceLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
-    {
-        foreach ($instancelayerList as $instancelayer) {
-            if ($wmssourcelayer === $instancelayer->getSourceItem()) {
-                return $instancelayer;
-            }
-        }
-        return null;
     }
 
     /**
@@ -366,7 +362,12 @@ class Importer extends RefreshableSourceLoader
         KeywordUpdater::updateKeywords($target, $source, $this->entityManager, $keywordClass);
     }
 
-    protected function assignLayerPriorities(WmsLayerSource $layer, $value)
+    /**
+     * @param WmsLayerSource|WmsInstanceLayer $layer
+     * @param integer $value
+     * @return int|mixed
+     */
+    protected function assignLayerPriorities($layer, $value)
     {
         $layer->setPriority($value);
         $offset = 1;
