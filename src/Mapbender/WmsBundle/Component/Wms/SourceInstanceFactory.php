@@ -179,7 +179,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
             ->setId($instanceLayer->getSourceItem()->getId())
             ->setSelected(!isset($data["visible"]) ? true : $data["visible"])
             ->setInfo(!isset($data["queryable"]) ? false : $data["queryable"])
-            ->setAllowinfo($instanceLayer->getInfo() !== null && $instanceLayer->getInfo() ? true : false)
+            ->setAllowinfo($instanceLayer->getInfo() !== null && $instanceLayer->getInfo())
             ->setToggle(ArrayUtil::getDefault($data, 'toggle', $instanceLayer->getParent() ? null : false))
             ->setAllowtoggle(ArrayUtil::getDefault($data, 'allowtoggle', $instanceLayer->getSourceItem()->getSublayer()->count() ? true : null))
         ;

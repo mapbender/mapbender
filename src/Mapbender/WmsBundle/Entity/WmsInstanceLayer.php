@@ -135,7 +135,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Set sublayer as array of string
      *
-     * @param array $sublayer
+     * @param ArrayCollection $sublayer
      * @return WmsInstanceLayer
      */
     public function setSublayer($sublayer)

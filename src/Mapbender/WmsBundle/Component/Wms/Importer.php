@@ -154,7 +154,6 @@ class Importer extends RefreshableSourceLoader
      */
     private function updateLayer(WmsLayerSource $target, WmsLayerSource $updatedLayer)
     {
-        $priorityOriginal = $target->getPriority();
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
         EntityUtil::copyEntityFields($target, $updatedLayer, $classMeta, false);
         $this->copyKeywords($target, $updatedLayer, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
@@ -164,8 +163,8 @@ class Importer extends RefreshableSourceLoader
         $updatedSubLayers = $updatedLayer->getSublayer();
         $targetSubLayers = $target->getSublayer();
         foreach ($targetSubLayers as $layerOldSub) {
-            $layerSublayer = $this->findLayer($layerOldSub, $updatedSubLayers);
-            if (count($layerSublayer) !== 1) {
+            $removeChild = !$this->findLayer($layerOldSub, $updatedSubLayers);
+            if ($removeChild) {
                 $this->entityManager->remove($layerOldSub);
                 // NOTE: child layer is reachable from TWO different association collections and must be
                 //       manually removed from both, or it will be rediscovered and re-saved on flush
