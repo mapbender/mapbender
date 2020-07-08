@@ -24,10 +24,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
- * in-memory, or from a given WmsOrigin (which is just url + username + password).
- * WmsSource is bundled in a Response class with validation errors. This is done because validation exceptions
- * can be optionally suppressed ("onlyValid"=false). In that case, the Response will contain the exception, if
- * any. By default, validation exceptions are thrown.
+ * in-memory, or from a given HttpOriginInterface (which contains url + username + password).
+ * WmsSource is wrapped in a Response class for legacy reasons (previously bundled with deferred-evaluation validation
+ * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */

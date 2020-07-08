@@ -8,8 +8,6 @@ class SourceLoaderResponse
 {
     /** @var Source */
     protected $source;
-    /** @var \DOMDocument */
-    protected $document;
 
     /**
      * SourceLoaderResponse constructor.
