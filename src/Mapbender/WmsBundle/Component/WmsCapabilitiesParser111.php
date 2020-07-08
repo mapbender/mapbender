@@ -422,7 +422,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         if ($tempList !== null) {
             foreach ($tempList as $item) {
                 $subwmslayer = new WmsLayerSource();
-                $subwmslayer->setParent($wmslayer);
                 $subwmslayer->setSource($wms);
                 $wmslayer->addSublayer($subwmslayer);
                 $wms->addLayer($subwmslayer);

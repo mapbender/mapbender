@@ -223,6 +223,11 @@
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
+        <service id="mapbender.xmlvalidator.service" class="Mapbender\CoreBundle\Component\XmlValidatorService">
+            <argument type="service" id="mapbender.http_transport.service" />
+            <argument>%kernel.root_dir%/../web/xmlschemas</argument>
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
         </service>

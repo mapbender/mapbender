@@ -295,6 +295,7 @@ class RepositoryController extends ApplicationControllerBase
                     "sourceId" => $source->getId(),
                 ));
             } catch (\Exception $e) {
+                $em->rollback();
                 $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
             }
         }
@@ -360,6 +361,7 @@ class RepositoryController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your instance has been updated.');
+            // redirect to self
             return $this->redirectToRoute($request->attributes->get('_route'), $request->attributes->get('_route_params'));
         }
 

@@ -146,7 +146,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Set sublayer as array of string
      *
-     * @param array $sublayer
+     * @param ArrayCollection $sublayer
      * @return WmsInstanceLayer
      */
     public function setSublayer($sublayer)
@@ -156,13 +156,12 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set sublayer as array of string
-     *
      * @param WmsInstanceLayer $sublayer
      * @return WmsInstanceLayer
      */
     public function addSublayer(WmsInstanceLayer $sublayer)
     {
+        $sublayer->setParent($this);
         $this->sublayer->add($sublayer);
         return $this;
     }
@@ -524,9 +523,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
-
-        $this->setMinScale($layerSource->getMinScale());
-        $this->setMaxScale($layerSource->getMaxScale());
 
         $queryable = !!$layerSource->getQueryable();
         $this->setInfo($queryable);

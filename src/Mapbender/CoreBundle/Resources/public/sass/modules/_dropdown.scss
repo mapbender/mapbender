@@ -19,6 +19,7 @@
   }
   .dropdownList {
     background-color: inherit;
+    margin-left: 0 !important;  // defeat icon follower margin inside .toolBar
     position: absolute;
     z-index: 10;
     display:none;

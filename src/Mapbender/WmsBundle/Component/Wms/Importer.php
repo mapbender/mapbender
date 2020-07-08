@@ -6,55 +6,50 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Mapbender\Component\Loader\RefreshableSourceLoader;
-use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
+use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
- * in-memory, or from a given HttpOriginInterface
- * WmsSource is bundled in a Response class with validation errors. This is done because validation exceptions
- * can be optionally suppressed ("onlyValid"=false). In that case, the Response will contain the exception, if
- * any. By default, validation exceptions are thrown.
+ * in-memory, or from a given HttpOriginInterface (which contains url + username + password).
+ * WmsSource is wrapped in a Response class for legacy reasons (previously bundled with deferred-evaluation validation
+ * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */
 class Importer extends RefreshableSourceLoader
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var XmlValidatorService */
+    protected $validator;
     /** @var EntityManager */
     protected $entityManager;
 
     /**
      * @param HttpTransportInterface $transport
      * @param EntityManager $entityManager
-     * @param ContainerInterface $container
+     * @param XmlValidatorService $validator;
      */
     public function __construct(HttpTransportInterface $transport,
                                 EntityManager $entityManager,
-                                ContainerInterface $container)
+                                XmlValidatorService $validator)
     {
         parent::__construct($transport);
         $this->entityManager = $entityManager;
-        $this->container = $container;
+        $this->validator = $validator;
     }
 
     /**
@@ -67,56 +62,19 @@ class Importer extends RefreshableSourceLoader
         return $this->capabilitiesRequest($origin);
     }
 
-    protected function parseResponseContent($content)
+    public function parseResponseContent($content)
     {
         $document = WmsCapabilitiesParser::createDocument($content);
         $parser = WmsCapabilitiesParser::getParser($document);
-        return new SourceLoaderResponse($parser->parse($document), $document);
+        $source = $parser->parse($document);
+        $this->assignLayerPriorities($source->getRootlayer(), 0);
+        return $source;
     }
 
-    /**
-     * Performs a GetCapabilities request against WMS at $serviceOrigin and returns a WmsSource instance and the
-     * (suppressed) XML validation error, if any, wrapped in a ImporterResponse object.
-     *
-     * @param HttpOriginInterface $serviceOrigin
-     * @param bool $onlyValid
-     * @return SourceLoaderResponse
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
-     */
-    public function evaluateServer(HttpOriginInterface $serviceOrigin, $onlyValid=true)
+    public function validateResponseContent($content)
     {
-        $response = parent::evaluateServer($serviceOrigin, $onlyValid);
-        if ($onlyValid) {
-            $validationError = new DeferredValidation($response->getSource(), $response->getDocument(), $this);
-        } else {
-            $validationError = null;
-        }
-        return new SourceLoaderResponse($response->getSource(), $response->getDocument(), $validationError);
-    }
-
-    /**
-     * Checks / evaluates a capabilities document returns a WmsSource instance and the (suppressed) XML validation error,
-     * if any, wrapped in an Importer\Response object.
-     *
-     * @param \DOMDocument $document
-     * @param boolean $onlyValid
-     * @return SourceLoaderResponse
-     * @throws XmlParseException
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     */
-    public function evaluateCapabilitiesDocument(\DOMDocument $document, $onlyValid=true)
-    {
-        $parser = WmsCapabilitiesParser::getParser($document);
-        if ($onlyValid) {
-            $this->validate($document);
-            $sourceEntity = $parser->parse();
-            $validationError = null;
-        } else {
-            $sourceEntity = $parser->parse();
-            $validationError = new DeferredValidation($sourceEntity, $document, $this);
-        }
-        return new SourceLoaderResponse($sourceEntity, $document, $validationError);
+        $document = WmsCapabilitiesParser::createDocument($content);
+        $this->validator->validateDocument($document);
     }
 
     /**
@@ -124,8 +82,9 @@ class Importer extends RefreshableSourceLoader
      * @param Source $reloaded
      * @throws \Exception
      */
-    protected function updateSource(Source $target, Source $reloaded)
+    public function updateSource(Source $target, Source $reloaded)
     {
+        $this->beforeSourceUpdate($target, $reloaded);
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
@@ -140,6 +99,7 @@ class Importer extends RefreshableSourceLoader
         $this->entityManager->remove($reloaded->getContact());
 
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
+        $this->assignLayerPriorities($target->getRootlayer(), 0);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
         /** @var ApplicationRepository $applicationRepository */
@@ -174,16 +134,6 @@ class Importer extends RefreshableSourceLoader
     }
 
     /**
-     * @param \DOMDocument $capsDocument
-     * @throws XmlParseException
-     */
-    public function validate(\DOMDocument $capsDocument)
-    {
-        $validator = new XmlValidator($this->container);
-        $validator->validate($capsDocument);
-    }
-
-    /**
      * @param HttpOriginInterface $serviceOrigin
      * @return Response
      */
@@ -206,11 +156,8 @@ class Importer extends RefreshableSourceLoader
      */
     private function updateLayer(WmsLayerSource $target, WmsLayerSource $updatedLayer)
     {
-        $priorityOriginal = $target->getPriority();
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
         EntityUtil::copyEntityFields($target, $updatedLayer, $classMeta, false);
-        // restore original priority
-        $target->setPriority($priorityOriginal);
         $this->copyKeywords($target, $updatedLayer, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
 
         /* handle sublayer- layer. Name is a unique identifier for a wms layer. */
@@ -218,8 +165,8 @@ class Importer extends RefreshableSourceLoader
         $updatedSubLayers = $updatedLayer->getSublayer();
         $targetSubLayers = $target->getSublayer();
         foreach ($targetSubLayers as $layerOldSub) {
-            $layerSublayer = $this->findLayer($layerOldSub, $updatedSubLayers);
-            if (count($layerSublayer) !== 1) {
+            $removeChild = !$this->findLayer($layerOldSub, $updatedSubLayers);
+            if ($removeChild) {
                 $this->entityManager->remove($layerOldSub);
                 // NOTE: child layer is reachable from TWO different association collections and must be
                 //       manually removed from both, or it will be rediscovered and re-saved on flush
@@ -227,22 +174,20 @@ class Importer extends RefreshableSourceLoader
                 $target->getSource()->getLayers()->removeElement($layerOldSub);
             }
         }
-        $num = 0;
         /* update founded layers, add new layers */
         foreach ($updatedSubLayers as $subItemNew) {
-            $num++;
             $subItemsOld = $this->findLayer($subItemNew, $targetSubLayers);
             if (count($subItemsOld) === 1) {
                 // update single layer
-                $subItemsOld[0]->setPriority($priorityOriginal + $num);
                 $this->updateLayer($subItemsOld[0], $subItemNew);
             } else {
                 foreach ($subItemsOld as $layerToRemove) {
                     $this->entityManager->remove($layerToRemove);
+                    $targetSubLayers->removeElement($layerToRemove);
+                    $target->getSource()->getLayers()->removeElement($layerToRemove);
                 }
-                $lay = $this->cloneLayer($subItemNew, $target);
-                $lay->setPriority($priorityOriginal + $num);
-
+                $clonedLayer = $this->cloneLayer($subItemNew, $target->getSource());
+                $target->addSublayer($clonedLayer);
                 $this->entityManager->remove($subItemNew);
             }
         }
@@ -272,28 +217,24 @@ class Importer extends RefreshableSourceLoader
 
     /**
      * @param WmsLayerSource $toClone
-     * @param WmsLayerSource $cloneParent
+     * @param WmsSource $newSource
      * @return WmsLayerSource
      */
-    private function cloneLayer(WmsLayerSource $toClone, WmsLayerSource $cloneParent)
+    private function cloneLayer(WmsLayerSource $toClone, WmsSource $newSource)
     {
         $cloned = clone $toClone;
         $this->entityManager->detach($cloned);
         $cloned->setId(null);
-        $cloned->setSource($cloneParent->getSource());
-        $cloned->setParent($cloneParent);
-        $cloned->setPriority($cloneParent->getPriority());
+        $cloned->setSource($newSource);
+        $newSource->getLayers()->add($cloned);
         $cloned->setKeywords(new ArrayCollection());
-        $cloneParent->addSublayer($cloned);
         $this->copyKeywords($cloned, $toClone, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
         $this->entityManager->persist($cloned);
-        if ($cloned->getSublayer()->count() > 0) {
-            $children = new ArrayCollection();
-            foreach ($cloned->getSublayer() as $subToClone) {
-                $subCloned = $this->cloneLayer($subToClone, $cloned);
-                $children->add($subCloned);
-            }
-            $cloned->setSublayer($children);
+
+        $cloned->setSublayer(new ArrayCollection());
+        foreach ($toClone->getSublayer() as $subToClone) {
+            $subCloned = $this->cloneLayer($subToClone, $newSource);
+            $cloned->addSublayer($subCloned);
         }
         return $cloned;
     }
@@ -302,6 +243,7 @@ class Importer extends RefreshableSourceLoader
     private function updateInstance(WmsInstance $instance)
     {
         $source = $instance->getSource();
+        $this->pruneInstanceLayers($instance);
 
         if ($getMapFormats = $source->getGetMap()->getFormats()) {
             if (!in_array($instance->getFormat(), $getMapFormats)) {
@@ -325,34 +267,53 @@ class Importer extends RefreshableSourceLoader
             $instance->setExceptionformat(null);
         }
         $this->updateInstanceDimensions($instance);
-        $this->updateInstanceLayer($instance->getRootlayer());
+        $instanceRoot = $instance->getRootlayer();
+        if (!$instanceRoot) {
+            $instanceRoot = new WmsInstanceLayer();
+            $instanceRoot->populateFromSource($instance, $instance->getSource()->getRootlayer());
+            $instance->setLayers(new ArrayCollection(array($instanceRoot)));
+        } else {
+            $this->updateInstanceLayer($instanceRoot);
+        }
+        $this->assignLayerPriorities($instanceRoot, 0);
+    }
+
+    /**
+     * @param WmsInstanceLayer $target
+     * @param ArrayCollection|WmsLayerSource[] $sourceChildren
+     */
+    protected function updateInstanceLayerChildren(WmsInstanceLayer $target, $sourceChildren)
+    {
+        // reorder source layers already configured in instance to respect previous subset layer ordering
+        $commonChildSources = new ArrayCollection();
+        $commonChildInstances = new ArrayCollection();
+        foreach ($target->getSublayer() as $instanceChild) {
+            $this->updateInstanceLayer($instanceChild);
+            $commonChildSources->add($instanceChild->getSourceItem());
+            $commonChildInstances->add($instanceChild);
+        }
+        $target->setSublayer(new ArrayCollection());
+        $nextReorderedSource = 0;
+        foreach ($sourceChildren as $sourceChild) {
+            $instanceChildIndex = $commonChildSources->indexOf($sourceChild);
+            if ($instanceChildIndex !== false) {
+                $target->addSublayer($commonChildInstances[$nextReorderedSource]);
+                ++$nextReorderedSource;
+            } else {
+                $instance = $target->getSourceInstance();
+                $sublayerInstance = new WmsInstanceLayer();
+                $sublayerInstance->populateFromSource($instance, $sourceChild);
+                $instance->getLayers()->add($sublayerInstance);
+                $target->addSublayer($sublayerInstance);
+                $this->entityManager->persist($sublayerInstance);
+            }
+        }
     }
 
     private function updateInstanceLayer(WmsInstanceLayer $target)
     {
-        /* remove instance layers for missed layer sources */
-        foreach ($target->getSublayer() as $wmsinstlayer) {
-            if ($this->entityManager->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
-                $target->getSublayer()->removeElement($wmsinstlayer);
-                $this->entityManager->remove($wmsinstlayer);
-            }
-        }
         $sourceItem = $target->getSourceItem();
-        foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
-            $layer = $this->findInstanceLayer($wmslayersourceSub, $target->getSublayer());
-            if ($layer) {
-                $this->updateInstanceLayer($layer);
-            } else {
-                $instance = $target->getSourceInstance();
-                $sublayerInstance = new WmsInstanceLayer();
-                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
-                $sublayerInstance->setParent($target);
-                $instance->getLayers()->add($sublayerInstance);
-                $target->getSublayer()->add($sublayerInstance);
-                $this->entityManager->persist($sublayerInstance);
-            }
-        }
-        $target->setPriority($sourceItem->getPriority());
+        $this->updateInstanceLayerChildren($target, $sourceItem->getSublayer());
         $queryable = $sourceItem->getQueryable();
         if (!$queryable) {
             if ($queryable !== null) {
@@ -370,23 +331,6 @@ class Importer extends RefreshableSourceLoader
             $target->setAllowtoggle(null);
         }
         $this->entityManager->persist($target);
-    }
-
-    /**
-     * Finds an instance layer, that is linked with a given wms source layer.
-     *
-     * @param WmsLayerSource $wmssourcelayer wms layer source
-     * @param array $instancelayerList list of instance layers
-     * @return WmsInstanceLayer|null the instance layer, otherwise null
-     */
-    private function findInstanceLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
-    {
-        foreach ($instancelayerList as $instancelayer) {
-            if ($wmssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
-                return $instancelayer;
-            }
-        }
-        return null;
     }
 
     /**
@@ -426,5 +370,68 @@ class Importer extends RefreshableSourceLoader
     private function copyKeywords(ContainingKeyword $target, ContainingKeyword $source, $keywordClass)
     {
         KeywordUpdater::updateKeywords($target, $source, $this->entityManager, $keywordClass);
+    }
+
+    /**
+     * @param WmsLayerSource|WmsInstanceLayer $layer
+     * @param integer $value
+     * @return int|mixed
+     */
+    protected function assignLayerPriorities($layer, $value)
+    {
+        $layer->setPriority($value);
+        $offset = 1;
+        foreach ($layer->getSublayer()->getValues() as $child) {
+            $offset += $this->assignLayerPriorities($child, $value + $offset);
+        }
+        return $offset;
+    }
+
+    /**
+     * @param WmsInstance $instance
+     * @deprecated update the doctrine schema, so the delete cascade handles this
+     */
+    protected function pruneInstanceLayers(WmsInstance $instance)
+    {
+        // This might be completely redundant on current schema. There is
+        // a delete cascade on the instance layer => source item relation.
+        // This remains only as a BC amenity for outdated schema
+        $uow = $this->entityManager->getUnitOfWork();
+        do {
+            $deleted = false;
+            foreach ($instance->getLayers() as $instanceLayer) {
+                $sourceLayer = $instanceLayer->getSourceItem();
+                if ($uow->isScheduledForDelete($sourceLayer)) {
+                    $this->entityManager->remove($instanceLayer);
+                    $deleted = $this->pruneInstanceSubLayer($instance->getRootlayer(), $instanceLayer);
+                    if ($deleted) {
+                        // restart loop after modifying collection(s)
+                        break;
+                    }
+                }
+            }
+        } while ($deleted);
+    }
+
+    /**
+     * @param WmsInstanceLayer $parent
+     * @param WmsInstanceLayer $toRemove
+     * @deprecated update the doctrine schema, so the delete cascade handles this
+     * @return bool
+     */
+    protected function pruneInstanceSubLayer(WmsInstanceLayer $parent, WmsInstanceLayer $toRemove)
+    {
+        // depth first recursion
+        foreach ($parent->getSublayer() as $sublayer) {
+            if ($this->pruneInstanceSubLayer($sublayer, $toRemove)) {
+                return true;
+            }
+            if ($sublayer === $toRemove) {
+                $parent->getSublayer()->removeElement($toRemove);
+                $toRemove->getSourceInstance()->getLayers()->removeElement($toRemove);
+                return true;
+            }
+        }
+        return false;
     }
 }
