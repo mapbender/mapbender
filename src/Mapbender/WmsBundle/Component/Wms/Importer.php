@@ -273,17 +273,16 @@ class Importer extends RefreshableSourceLoader
             $instanceRoot->populateFromSource($instance, $instance->getSource()->getRootlayer());
             $instance->setLayers(new ArrayCollection(array($instanceRoot)));
         } else {
-            $this->updateInstanceLayer($instanceRoot);
+            $this->updateInstanceLayer($instanceRoot, $source->getRootlayer());
         }
     }
 
-    private function updateInstanceLayer(WmsInstanceLayer $target)
+    private function updateInstanceLayer(WmsInstanceLayer $target, WmsLayerSource $sourceItem)
     {
-        $sourceItem = $target->getSourceItem();
         foreach ($sourceItem->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findInstanceLayer($wmslayersourceSub, $target->getSublayer());
             if ($layer) {
-                $this->updateInstanceLayer($layer);
+                $this->updateInstanceLayer($layer, $wmslayersourceSub);
             } else {
                 $instance = $target->getSourceInstance();
                 $sublayerInstance = new WmsInstanceLayer();
