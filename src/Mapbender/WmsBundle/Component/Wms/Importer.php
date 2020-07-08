@@ -323,7 +323,7 @@ class Importer extends RefreshableSourceLoader
     private function findInstanceLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
     {
         foreach ($instancelayerList as $instancelayer) {
-            if ($wmssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
+            if ($wmssourcelayer === $instancelayer->getSourceItem()) {
                 return $instancelayer;
             }
         }
