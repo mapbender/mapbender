@@ -182,9 +182,12 @@ class Importer extends RefreshableSourceLoader
             } else {
                 foreach ($subItemsOld as $layerToRemove) {
                     $this->entityManager->remove($layerToRemove);
+                    $targetSubLayers->removeElement($layerToRemove);
+                    $target->getSource()->getLayers()->removeElement($layerToRemove);
                 }
                 $lay = $this->cloneLayer($subItemNew, $target->getSource());
                 $lay->setParent($target);
+                $target->getSublayer()->add($lay);
                 $this->entityManager->remove($subItemNew);
             }
         }
@@ -223,18 +226,16 @@ class Importer extends RefreshableSourceLoader
         $this->entityManager->detach($cloned);
         $cloned->setId(null);
         $cloned->setSource($newSource);
+        $newSource->getLayers()->add($cloned);
         $cloned->setKeywords(new ArrayCollection());
         $this->copyKeywords($cloned, $toClone, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
         $this->entityManager->persist($cloned);
-        if ($cloned->getSublayer()->count() > 0) {
-            $children = new ArrayCollection();
-            foreach ($cloned->getSublayer() as $subToClone) {
-                $subCloned = $this->cloneLayer($subToClone, $newSource);
-                $children->add($subCloned);
-                $subCloned->setParent($cloned);
-                $cloned->addSublayer($subCloned);
-            }
-            $cloned->setSublayer($children);
+
+        $cloned->setSublayer(new ArrayCollection());
+        foreach ($toClone->getSublayer() as $subToClone) {
+            $subCloned = $this->cloneLayer($subToClone, $newSource);
+            $cloned->addSublayer($subCloned);
+            $subCloned->setParent($cloned);
         }
         return $cloned;
     }
