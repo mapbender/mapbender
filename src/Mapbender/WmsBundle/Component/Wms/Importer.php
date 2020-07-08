@@ -276,11 +276,13 @@ class Importer extends RefreshableSourceLoader
         $this->assignLayerPriorities($instanceRoot, 0);
     }
 
-    private function updateInstanceLayer(WmsInstanceLayer $target)
+    /**
+     * @param WmsInstanceLayer $target
+     * @param ArrayCollection|WmsLayerSource[] $sourceChildren
+     */
+    protected function updateInstanceLayerChildren(WmsInstanceLayer $target, $sourceChildren)
     {
-        $sourceItem = $target->getSourceItem();
         // reorder source layers already configured in instance to respect previous subset layer ordering
-        $sourceChildren = new ArrayCollection($sourceItem->getSublayer()->getValues());
         $commonChildSources = new ArrayCollection();
         $commonChildInstances = new ArrayCollection();
         foreach ($target->getSublayer() as $instanceChild) {
@@ -304,7 +306,12 @@ class Importer extends RefreshableSourceLoader
                 $this->entityManager->persist($sublayerInstance);
             }
         }
+    }
 
+    private function updateInstanceLayer(WmsInstanceLayer $target)
+    {
+        $sourceItem = $target->getSourceItem();
+        $this->updateInstanceLayerChildren($target, $sourceItem->getSublayer());
         $queryable = $sourceItem->getQueryable();
         if (!$queryable) {
             if ($queryable !== null) {
