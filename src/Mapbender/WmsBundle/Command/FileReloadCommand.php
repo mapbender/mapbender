@@ -3,6 +3,7 @@
 
 namespace Mapbender\WmsBundle\Command;
 
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,11 +28,14 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         $targetId = $input->getArgument('id');
         $target = $this->getSourceById($targetId);
         $reloaded = $this->getReloadSource($input->getArgument('path'), $input);
+        $initialOrigin = HttpOriginModel::extract($target);
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
             $em->persist($target);
             $this->getImporter()->updateSource($target, $reloaded);
+            // Restore origin url and credentials (source from file import produces empty values)
+            $this->getImporter()->updateOrigin($target, $initialOrigin);
             $em->flush();
             $em->commit();
         } catch (\Exception $e) {
