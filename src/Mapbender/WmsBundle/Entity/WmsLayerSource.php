@@ -210,6 +210,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function addSublayer(WmsLayerSource $sublayer)
     {
+        $sublayer->setParent($this);
         $this->sublayer->add($sublayer);
         return $this;
     }

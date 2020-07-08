@@ -150,6 +150,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function addSublayer(WmsInstanceLayer $sublayer)
     {
+        $sublayer->setParent($this);
         $this->sublayer->add($sublayer);
         return $this;
     }

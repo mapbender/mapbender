@@ -268,7 +268,6 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
 
         if ($parent) {
             $layer->setId($parent->getId() . '_' . $order);
-            $layer->setParent($parent);
             $parent->addSublayer($layer);
         } else {
             $layer->setId($source->getId() . '_' . $order);

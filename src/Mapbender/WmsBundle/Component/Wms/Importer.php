@@ -184,9 +184,8 @@ class Importer extends RefreshableSourceLoader
                     $targetSubLayers->removeElement($layerToRemove);
                     $target->getSource()->getLayers()->removeElement($layerToRemove);
                 }
-                $lay = $this->cloneLayer($subItemNew, $target->getSource());
-                $lay->setParent($target);
-                $target->getSublayer()->add($lay);
+                $clonedLayer = $this->cloneLayer($subItemNew, $target->getSource());
+                $target->addSublayer($clonedLayer);
                 $this->entityManager->remove($subItemNew);
             }
         }
@@ -234,7 +233,6 @@ class Importer extends RefreshableSourceLoader
         foreach ($toClone->getSublayer() as $subToClone) {
             $subCloned = $this->cloneLayer($subToClone, $newSource);
             $cloned->addSublayer($subCloned);
-            $subCloned->setParent($cloned);
         }
         return $cloned;
     }
@@ -287,9 +285,8 @@ class Importer extends RefreshableSourceLoader
                 $instance = $target->getSourceInstance();
                 $sublayerInstance = new WmsInstanceLayer();
                 $sublayerInstance->populateFromSource($instance, $wmslayersourceSub);
-                $sublayerInstance->setParent($target);
                 $instance->getLayers()->add($sublayerInstance);
-                $target->getSublayer()->add($sublayerInstance);
+                $target->addSublayer($sublayerInstance);
                 $this->entityManager->persist($sublayerInstance);
             }
         }
