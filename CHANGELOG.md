@@ -1,8 +1,11 @@
-## dev-release/3.0.7 @ 49f66b4f4
+## dev-release/3.0.7 @ 0a1c46d0a
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
 - Fix bad ordering of Wms instance "allow toggle" checkboxes if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
+- Fix random WMS source layer reordering on reload
+- Fix random WMS instance layer reordering on source reload
+- Fix new WMS group layers only appearing after reloading the source twice
 - Fix POI coordinate rounding
 - Fix excessive Ruler output with type `line` and `immediate` enabled
 - Fix SearchRouter Symfony 3.4 incompatibility with common configs
@@ -16,9 +19,14 @@
 - [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
 - [PrintClient]: Replace manual `type` configuration with auto-detection
 - [PrintClient]: remove comment fields from default configuration (not printable with shipping default templates)
+- [Backend] Avoid form resubmit confirmation when refreshing source instance form after saving
 - Update "map-click" demo element
 - Misc fixes to jQueryUI standard / theme css compatibility
 - Removed ineffective legacy configuration fields ZoomBar `position`, PrintClient `type`
+- [Scripting] add `mapbender:wms:add` command to load a new WMS source
+- [Scripting] add `mapbender:wms:show` command to inspect layer structure in a persistent WMS source
+- [Scripting] add `mapbender:wms:parse:url` and `mapbender:wms:parse:file` commands to inspect layer structure in a GetCapabilities document
+- [Scripting] add `mapbender:wms:reload:url` and `mapbender:wms:parse:file` to update a persistent WMS source with a new GetCapabilities document 
 - [Framework] Client-side Popup now supports opening without any buttons
 - [Framework] custom dropdown widget visual-only update can now be triggered with `dropdown.changevisual` custom event
 
