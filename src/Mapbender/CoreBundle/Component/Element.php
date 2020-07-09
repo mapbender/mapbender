@@ -34,9 +34,6 @@ abstract class Element extends MinimalBound
      */
     public static $ext_api = true;
 
-    /** @var Application Application component */
-    protected $application;
-
     /** @var ContainerInterface Symfony container */
     protected $container;
 
@@ -53,13 +50,11 @@ abstract class Element extends MinimalBound
      * Do not override or even copy this constructor into your child class.
      * This method will be made final in a future release.
      *
-     * @param Application        $application Application component
      * @param ContainerInterface $container
      * @param Entity             $entity
      */
-    public function __construct(Application $application, ContainerInterface $container, Entity $entity)
+    public function __construct(ContainerInterface $container, Entity $entity)
     {
-        $this->application    = $application;
         $this->container      = $container;
         parent::__construct($entity);
     }
