@@ -3,24 +3,6 @@
   .component + .component {
     margin-top: 0.7rem;
   }
-  .pan, .toolPane {
-    @include frontendContainerStyle();
-    color: fade-out($lightFontColor, .3);
-  }
-  .pan > span {
-    &:hover {
-      color: $lightFontColor;
-    }
-  }
-  .toolPane > li {
-    [title]:hover {
-      color: $lightFontColor;
-    }
-    &.activeZoomIcon {
-      color: $lightFontColor;
-    }
-  }
-
   &.right-top, &.right-bottom {
     .move-icon-wrap {
       text-align: right;
@@ -70,6 +52,9 @@
     svg {
       height: 2.5em;
       width: auto;
+      g {
+        fill: $toolBarFontColor;
+      }
       // we only have one icon :)
     }
     .rotate-cw {
@@ -78,8 +63,6 @@
     .rotate-ccw {
       transform: scale(-1, -1);
     }
-    @include frontendContainerStyle();
-    color: fade-out($lightFontColor, .3);
     display: inline-flex;
     flex-direction: row;
     width: 60px;

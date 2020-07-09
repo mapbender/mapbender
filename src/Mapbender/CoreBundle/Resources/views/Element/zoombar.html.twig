@@ -2,7 +2,7 @@
 {# predefine a block without initially rendering it; see https://stackoverflow.com/a/30080005 #}
 {% if false %}
     {% block quarter_circle_arrow_svg %}
-    <svg viewBox="0 40 70 200"><g fill="white"><path
+    <svg viewBox="0 40 70 200"><g><path
          d="M67.41,62.55L58.02,53c-26.94,26.47-41.77,61.84-41.77,99.6c0,11.12,1.58,27.16,5.94,40.14
             c-5.66,3.35-10.12,5.99-11,6.51c-2.06,1.22-4.12,2.43-6.26,3.7c17.87,12.64,35.65,25.22,53.62,37.94
             c-2.49-21.85-4.96-43.47-7.45-65.25c-2.02,1.2-9.28,5.49-17.07,10.1c-2.74-9.4-4.39-21.59-4.39-33.13
@@ -18,7 +18,7 @@
     {% endif %}
 {%- if 'rotation' in configuration.components -%}
     <div class="component">
-      <div class="rotation">
+      <div class="rotation toolBarColors">
         <span class="rotate-cw hover-highlight-effect" data-degrees="45">{{ block('quarter_circle_arrow_svg') }}</span>
         <span class="reset-rotation hover-highlight-effect" data-rotation-bias="-45"><i class="fa fa-location-arrow default-rotate-left-45"></i></span>
         <span class="rotate-ccw hover-highlight-effect" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
@@ -26,16 +26,16 @@
     </div>
 {%- endif -%}
     <div class="component">
-  <ul class="toolPane">
+  <ul class="toolPane toolBarColors">
     {% if 'zoom_max' in configuration.components %}
-      <li class="zoomWorld">
+      <li class="zoomWorld hover-highlight-effect">
         <span class="iconZoomMin iconBig" title="{{ "mb.core.zoombar.zoombyworld" | trans }}"></span>
       </li>
     {% endif %}
     {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="iconZoomIn iconBig" title="{{ "mb.core.zoombar.zoomin" | trans }}"></div>
+        <div class="iconZoomIn iconBig hover-highlight-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"></div>
         {% endif %}
         {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
         <ul class="zoomSliderLevels">
@@ -45,7 +45,7 @@
         </ul>
         {% endif %}
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="iconZoomOut iconBig" title="{{ "mb.core.zoombar.zoomout" | trans }}"></div>
+        <div class="iconZoomOut iconBig hover-highlight-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"></div>
         {% endif %}
       </li>
     {% endif %}

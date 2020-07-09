@@ -20,11 +20,13 @@
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
-.toolBar {
-  color: $toolBarFontColor;
+.toolBarColors, .toolBar {
   background-color: $toolBarBackgroundColor;
-  opacity: $toolBarOpacity;
+  color: $toolBarFontColor;
+}
 
+.toolBar {
+  opacity: $toolBarOpacity;
   z-index: 4;
   user-select: none;
   .toolBarItem {
