@@ -1,7 +1,9 @@
 .mb-element-scaleselector {
-  min-width: 100px;
   .dropdown {
-    // @todo: this should be the default globally
-    width: 100%;
+    min-width: 100px;
+  }
+  span + .dropdown {
+    // keep label and dropdown on one line
+    float: right;
   }
 }
