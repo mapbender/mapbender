@@ -1,17 +1,4 @@
 services:
-
-    # Element Form Types
-    #
-    # Always access form types by their fully qualified class name, not by service id.
-    # If you want to modify the behavior of an existing form type, use form type
-    # extensions. See https://symfony.com/doc/2.8/form/create_form_type_extension.html
-    # DO NOT reinject a servicy form type with a different class.
-
-    mapbender.form_type.element.htmlelement:
-        class: Mapbender\CoreBundle\Element\Type\HTMLElementAdminType
-        tags:
-            - { name: form.type }
-
     #
     # Common Form Types
     #

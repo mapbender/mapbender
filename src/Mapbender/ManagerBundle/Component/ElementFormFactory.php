@@ -88,7 +88,6 @@ class ElementFormFactory extends BaseElementFactory
      * @param Element $element
      * @return string|null
      * @throws \RuntimeException
-     * @throws ServiceNotFoundException
      */
     public function getConfigurationFormType(Element $element)
     {
@@ -101,50 +100,7 @@ class ElementFormFactory extends BaseElementFactory
             }
             return $typeName;
         }
-
-        $type = $this->getServicyConfigurationFormType($element);
-        if ($type) {
-            $this->deprecated(
-                "Detected element form type service for {$componentClassName}. Please stop relying on "
-              . "re-plugging form type services, and instead use form type extensions to transparently alter existing types. "
-              . "See https://symfony.com/doc/2.8/form/create_form_type_extension.html");
-
-            if (!($type instanceof FormTypeInterface)) {
-                throw new \RuntimeException("Invalid form type " . get_class($type) . " from " . print_r($componentClassName, true));
-            }
-            return \get_class($type);
-        }
         return null;
     }
 
-    /**
-     * Look up service-type form type for element. If the Element Component's getType return value looks like
-     * a service id (=string containing at least one dot), that service will be returned.
-     *
-     * Otherwise, looks for a service with an automatically inferred id composed of a 'mapbender.form_type.element.'
-     * prefix followed by the all-lowercased class name of the Element Component.
-     *
-     * Automatic service id inference is deprecated and will throw in strict mode.
-     *
-     * @param Element $element
-     * @return object|null
-     * @throws ServiceNotFoundException
-     */
-    protected function getServicyConfigurationFormType(Element $element)
-    {
-        $componentClassName = $this->getComponentClass($element);
-        $typeDeclaration = $componentClassName::getType();
-        if (is_string($typeDeclaration) && false !== strpos($typeDeclaration, '.')) {
-            return $this->container->get($typeDeclaration);
-        }
-        /** @todo: remove automatic service name inflection magic */
-        $classNamespaceParts = explode('\\', $componentClassName);
-        $baseName = strtolower(array_pop($classNamespaceParts));
-        $automaticServiceId = 'mapbender.form_type.element.' . $baseName;
-        $automaticService = $this->container->get($automaticServiceId, ContainerInterface::NULL_ON_INVALID_REFERENCE);
-        if ($automaticService && $typeDeclaration !== $automaticServiceId) {
-            $this->deprecated("Located undeclared servicy form type {$automaticServiceId} for {$componentClassName}; return the fully qualified class name of the form type from your element's getType instead");
-        }
-        return $automaticService; // may also be null
-    }
 }

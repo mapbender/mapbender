@@ -118,7 +118,7 @@ class PrintClient extends Element
      */
     public static function getType()
     {
-        return 'mapbender.form_type.element.printclient';
+        return 'Mapbender\PrintBundle\Element\Type\PrintClientAdminType';
     }
 
     /**
