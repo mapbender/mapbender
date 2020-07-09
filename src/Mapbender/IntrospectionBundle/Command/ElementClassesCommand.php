@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -61,10 +62,12 @@ class ElementClassesCommand extends ContainerAwareCommand
         $rows = array();
         /** @var ElementFactory $factory */
         $factory = $this->getContainer()->get('mapbender.element_factory.service');
+        $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
                 $entity = new \Mapbender\CoreBundle\Entity\Element();
                 $entity->setClass($elementName);
+                $entity->setApplication($application);
                 $instance = $factory->componentFromEntity($entity);
                 $rows[$elementName] = $this->formatElementInfo($instance);
             } catch (\Exception $e) {
