@@ -51,9 +51,7 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
      */
     protected function loadSource(HttpOriginModel $origin)
     {
-        /** @var WmsSource $source */
-        $source = $this->getImporter()->evaluateServer($origin)->getSource();
-        return $source;
+        return $this->getImporter()->evaluateServer($origin);
     }
 
     protected function processOrigin(HttpOriginModel $origin, InputInterface $input)

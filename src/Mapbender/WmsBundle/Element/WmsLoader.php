@@ -206,10 +206,7 @@ class WmsLoader extends Element
         $origin->setPassword($request->get("password"));
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
-        $importerResponse = $importer->evaluateServer($origin, false);
-        /** @var WmsSource $source */
-        $source = $importerResponse->getSource();
-        return $source;
+        return $importer->evaluateServer($origin);
     }
 
     protected function splitLayers($layerConfiguration)

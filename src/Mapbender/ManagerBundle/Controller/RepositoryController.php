@@ -113,8 +113,7 @@ class RepositoryController extends ApplicationControllerBase
             $directory = $this->getTypeDirectory();
             try {
                 $loader = $directory->getSourceLoaderByType($sourceType);
-                $importerResponse = $loader->evaluateServer($form->getData(), false);
-                $source = $importerResponse->getSource();
+                $source = $loader->evaluateServer($form->getData());
 
                 $this->setAliasForDuplicate($source);
                 $em = $this->getEntityManager();

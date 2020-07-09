@@ -30,6 +30,8 @@ use Symfony\Component\HttpFoundation\Response;
  * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
+ *
+ * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
 class Importer extends RefreshableSourceLoader
 {
