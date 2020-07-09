@@ -123,6 +123,14 @@ class SearchRouter extends Element
         return 'MapbenderCoreBundle:Element:search_router.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        return array(
+            'route_select_form' => $this->getRouteSelectForm()->createView(),
+            'search_forms' => $this->getFormViews(),
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -201,7 +209,7 @@ class SearchRouter extends Element
     /**
      * Create form for selecting search route (= search form) to display.
      *
-     * @return FormView Search route select form
+     * @return FormInterface Search route select form
      */
     public function getRouteSelectForm()
     {
@@ -214,7 +222,7 @@ class SearchRouter extends Element
             null,
             array('routes' => $configuration['routes'])
         );
-        return $form->createView();
+        return $form->get('route');
     }
 
     /**
