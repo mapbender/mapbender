@@ -64,21 +64,16 @@
                     .next('hr').hide();
             }
 
-            if(!options.asDialog) {
-                element.on('click', '.search-action-buttons a', function(event) {
-                    event.preventDefault();
-                    var target = $(event.target).attr('href');
-                    var targetBase = '#' + widget.element.attr('id') + '/button/';
-                    switch(target) {
-                        case (targetBase + 'reset'):
-                            widget._reset();
-                            break;
-                        case (targetBase + 'ok'):
-                            widget._search();
-                            break;
-                    }
-                });
-            }
+            element.on('click', '.search-action-buttons [data-action]', function() {
+                switch($(this).attr('data-action')) {
+                    case ('reset'):
+                        widget._reset();
+                        break;
+                    case ('search'):
+                        widget._search();
+                        break;
+                }
+            });
 
             this.highlightLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));

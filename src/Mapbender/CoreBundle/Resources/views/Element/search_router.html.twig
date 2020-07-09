@@ -9,9 +9,8 @@
         {% endfor %}
     </div>
     <div class="search-action-buttons hidden">
-        <a href="#{{ id }}/button/reset" class="button right">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</a>
-        <a href="#{{ id }}/button/ok" class="button right">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</a>
+        <span data-action="reset" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</span>
+        <span data-action="search" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</span>
     </div>
-    <div class="clear"></div>
     <div class="search-results"></div>
 </div>
