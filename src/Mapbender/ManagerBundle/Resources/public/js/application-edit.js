@@ -2,12 +2,13 @@ $(function() {
     var popupCls = Mapbender.Popup;
     function confirmDiscard(e) {
         var $form = $('form', $(this).closest('.popup'));
-        if ($form.data('dirty')) {
+        if ($form.data('dirty') && !$form.data('discard')) {
             // @todo: translate
             if (!confirm('Ignore Changes?')) {
                 e.stopPropagation();
                 return false;
             }
+            $form.data('discard', true);
         }
         return true;
     }
@@ -102,7 +103,9 @@ $(function() {
             });
 
             popup.$element.on('change', function() {
-                $('form', popup.$element).data('dirty', true);
+                var $form = $('form', popup.$element);
+                $form.data('dirty', true);
+                $form.data('discard', false);
             });
             popup.$element.on('close', function(event, token) {
                 if (!confirmDiscard.call(this, event)) {
@@ -186,6 +189,7 @@ $(function() {
                     body.html(data);
                     $form = $('form', body);
                     $form.data('dirty', dirty);
+                    $form.data('discard', false);
                 } else {
                     self.close();
                     window.location.reload();
