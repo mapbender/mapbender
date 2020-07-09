@@ -26,13 +26,9 @@ interface ElementInterface extends IAssetDependent, EditableInterface
     /**
      * Should return a twig-style BundleName:section:file_name.engine.twig reference to the frontend HTML template.
      *
-     * NOTE: The $suffix argument is no longer relevant. You may safely ignore it and return a hard-coded
-     * 'something.html.twig'.
-     *
-     * @param string $suffix defaults to '.html.twig'
      * @return string
      */
-    public function getFrontendTemplatePath($suffix = '.html.twig');
+    public function getFrontendTemplatePath();
 
     /**
      * Should return the variables available in the frontend twig template. By default, this

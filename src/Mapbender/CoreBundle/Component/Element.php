@@ -2,9 +2,6 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\Component\BundleUtil;
-use Mapbender\Component\ClassUtil;
-use Mapbender\Component\StringUtil;
 use Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalBound;
 use Mapbender\CoreBundle\Entity\Element as Entity;
@@ -137,14 +134,6 @@ abstract class Element extends MinimalBound
         return array(
             'configuration' => $this->getConfiguration(),
         );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return $this->getAutomaticTemplatePath($suffix);
     }
 
     /**
@@ -293,7 +282,7 @@ abstract class Element extends MinimalBound
      */
     public static function getFormTemplate()
     {
-        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin', null);
+        return null;
     }
 
     /**
@@ -351,86 +340,6 @@ abstract class Element extends MinimalBound
             'action' => $action,
         );
         return $router->generate('mapbender_core_application_element', $params, $referenceType);
-    }
-
-    ##### Automagic calculation for template paths and admin type ####
-
-    /**
-     * Generates an automatic template path for the element from its class name.
-     *
-     * The generated path is twig engine style, i.e.
-     * 'BundleClassName:section:template_name.engine-name.twig'
-     *
-     * The bundle name is auto-generated from the first two namespace components, e.g. "MabenderCoreBundle".
-     *
-     * The resource section (=subfolder in Resources/views) defaults to "Element" but can be supplied.
-     *
-     * The file name is the in-namespace class name lower-cased and & decamelized, plus the given $suffix,
-     * which defaults to '.html.twig'. E.g. "html_element.html.twig".
-     *
-     * E.g. for a Mapbender\FoodBundle\Element\LemonBomb element child class this will return
-     * "MapbenderFoodBundle:Element:lemon_bomb.html.twig".
-     * This would correspond to this file path:
-     * <mapbender-root>/src/Mapbender/FoodBundle/Resources/views/Element/lemon_bomb.html.twig
-     *
-     * @param string $suffix to be appended to the generated path (default: '.html.twig', try '.json.twig' etc)
-     * @param string|null $resourceSection if null, will use third namespace component (i.e. first non-bundle component).
-     *                    For elements in any conventional Mapbender bundle, this will be "Element".
-     *                    We also use "ElementAdmin" in certain places though.
-     * @param bool|null $inherit allow inheriting template names from parent class, excluding the (abstract)
-     *                  Element class itself; null (default) for auto-decide (blacklist controlled)
-     * @return string twig-style Bundle:Section:file_name.ext
-     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
-     *    be moved there; each Element should declare its admin template explicitly to facilitate usage searches
-     */
-    public static function getAutomaticTemplatePath($suffix = '.html.twig', $resourceSection = null, $inherit = null)
-    {
-        if ($inherit === null) {
-            return static::getAutomaticTemplatePath($suffix, $resourceSection, static::autoDetectInheritanceRule());
-        }
-
-        if ($inherit) {
-            $cls = ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
-        } else {
-            $cls = get_called_class();
-        }
-        $bundleName = BundleUtil::extractBundleNameFromClassName($cls);
-        $postBundleNamespaceParts = explode('\\', BundleUtil::getNameInsideBundleNamespace($cls));
-        $nameWithoutNamespace = implode('', array_slice($postBundleNamespaceParts, -1));
-
-        $resourceSection = $resourceSection ?: "Element";
-        $resourcePathParts = array_slice($postBundleNamespaceParts, 1, -1);   // subfolder under section, often empty
-        $resourcePathParts[] = StringUtil::camelToSnakeCase($nameWithoutNamespace);
-
-        return "{$bundleName}:{$resourceSection}:" . implode('/', $resourcePathParts) . $suffix;
-    }
-
-    /**
-     * Determines if admin type / template / frontend template will be inherited if one of the getAutomatic*
-     * methods is called with inherit = null.
-     *
-     * We do this because the intuitive default behavior (inherit everything from parent) is incompatible with
-     * a certain, small set of elements. These elements are blacklisted for inheritance here. If the calling
-     * class is one of them, or a child, we will not inherit admin type / templates (this method will return false).
-     * Otherwise we do.
-     *
-     * @return bool
-     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
-     *    be moved there
-     */
-    protected static function autoDetectInheritanceRule()
-    {
-        $inheritanceBlacklist = array(
-            'Mapbender\DataSourceBundle\Element\BaseElement',
-            'Mapbender\DigitizerBundle\Element',
-        );
-        $cls = get_called_class();
-        foreach ($inheritanceBlacklist as $noInheritClass) {
-            if (is_a($cls, $noInheritClass, true)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

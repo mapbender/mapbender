@@ -85,6 +85,11 @@ class HTMLElement extends Element
         }
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:htmlelement.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
