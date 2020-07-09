@@ -29,9 +29,6 @@ class TargetElementType extends AbstractType
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @inheritdoc
-     */
     public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
         $this->translator = $translator;

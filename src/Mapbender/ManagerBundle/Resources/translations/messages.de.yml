@@ -26,6 +26,7 @@ mb:
       create:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
+    confirm_form_discard: Änderungen verwerfen?
     sourceinstance:
       embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
       convert_to_reusable: In freie Instanz umwandeln
@@ -173,48 +174,24 @@ mb:
       popup:
         add_element:
           title: 'Element hinzufügen'
-          btn:
-            ok: Hinzufügen
-            cancel: Abbrechen
-            back: Zurück
         edit_element:
           title: 'Element editieren'
-          btn:
-            ok: Aktualisieren
-            cancel: Abbrechen
         delete_element:
-          subtitle: Element
           title: 'Löschen bestätigen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
         add_edit_layerset:
           title_edit: 'Layerset editieren'
           title_add: 'Layerset hinzufügen'
-          btn:
-            ok: Ok
-            cancel: Abbrechen
         delete_layerset:
           title: 'Layerset löschen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
         add_instance:
           title: 'Datenquelle auswählen'
-          btn:
-            cancel: Abbrechen
         delete_instance:
           title: 'Instanz löschen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
-        element_acl:
-          btn:
-            cancel: Abbrechen
-            ok: Aktualisieren
-            add: Hinzufügen
-            back: Zurück
-            remove: Entfernen
+        add_user_group:
+          title: 'Benutzer/Gruppe hinzufügen.'
+        delete_user_group:
+          title: 'Entfernen bestätigen'
+          content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
     template:
       region:
         tabs:

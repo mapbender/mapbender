@@ -161,48 +161,22 @@ mb:
       popup:
         add_element:
           title: 'Aggiungi elemento'
-          btn:
-            ok: Ok
-            cancel: Cancella
-            back: Torna
         edit_element:
           title: 'Modifica elemento'
-          btn:
-            ok: Aggiorna
-            cancel: Cancella
         delete_element:
-          subtitle: elemento
           title: 'Conferma eliminazione'
-          btn:
-            ok: Eliminaö
-            cancel: Cancella
         add_edit_layerset:
           title_edit: 'Modifica layerset'
           title_add: 'Aggiungi layerset'
-          btn:
-            ok: Ok
-            cancel: Cancella
         delete_layerset:
           title: 'Elimina layerset'
-          btn:
-            ok: Elimina
-            cancel: Cancella
         add_instance:
           title: 'Seleziona fonte'
-          btn:
-            cancel: Cancella
         delete_instance:
           title: 'Conferma eliminazione'
-          btn:
-            ok: Elimina
-            cancel: Cancella
-        element_acl:
-          btn:
-            cancel: Cancella
-            ok: Elimina
-            add: Aggiungi
-            back: Torna
-            remove: Elimina
+        delete_user_group:
+          title: 'Conferma cancellazione'
+          content: 'Cancellare davvero %userGroup%?'
     template:
       region:
         tabs:

@@ -19,6 +19,18 @@ $(function() {
             return $markup.get();
         });
     }
+    function confirmDiscard(e) {
+        var $form = $('form', $(this).closest('.popup'));
+        if ($form.data('dirty') && !$form.data('discard')) {
+            // @todo: translate
+            if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
+                e.stopPropagation();
+                return false;
+            }
+            $form.data('discard', true);
+        }
+        return true;
+    }
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -104,14 +116,15 @@ $(function() {
                     }
                 ])
             });
+
             popup.$element.on('change', function() {
-                $('form', popup.$element).data('dirty', true);
+                var $form = $('form', popup.$element);
+                $form.data('dirty', true);
+                $form.data('discard', false);
             });
             popup.$element.on('close', function(event, token) {
-                if ($('form', popup.$element).data('dirty')) {
-                    if (!confirm('Ignore Changes?')) {
-                        token.cancel = true;
-                    }
+                if (!confirmDiscard.call(this, event)) {
+                    token.cancel = true;
                 }
             });
         });
@@ -149,8 +162,10 @@ $(function() {
                     {
                         label: Mapbender.trans('mb.actions.back'),
                         cssClass: 'button buttonBack',
-                        callback: function() {
-                            startElementChooser(regionName, listUrl);
+                        callback: function(e) {
+                            if (confirmDiscard.call(e.target, e)) {
+                                startElementChooser(regionName, listUrl);
+                            }
                         }
                     }
                 ]);
@@ -192,6 +207,7 @@ $(function() {
                     body.html(data);
                     $form = $('form', body);
                     $form.data('dirty', dirty);
+                    $form.data('discard', false);
                 } else {
                     self.close();
                     window.location.reload();
@@ -206,8 +222,7 @@ $(function() {
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_element.title',
             confirm: "mb.actions.delete",
-            cancel: "mb.actions.cancel",
-            subTitle: 'mb.manager.components.popup.delete_element.subtitle'
+            cancel: "mb.actions.cancel"
         });
         return false;
     });

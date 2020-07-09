@@ -161,48 +161,22 @@ mb:
       popup:
         add_element:
           title: 'Voeg element toe'
-          btn:
-            ok: Ok
-            cancel: Annuleren
-            back: Terug
         edit_element:
           title: 'Wijzig element'
-          btn:
-            ok: Bijwerken
-            cancel: Annuleren
         delete_element:
-          subtitle: element
           title: 'Bevestig verwijderen'
-          btn:
-            ok: Verwijder
-            cancel: Annuleren
         add_edit_layerset:
           title_edit: 'Wijzig lagenset'
           title_add: 'Voeg lagenset toe'
-          btn:
-            ok: Ok
-            cancel: Annuleren
         delete_layerset:
           title: 'Verwijder lagenset'
-          btn:
-            ok: Verwijder
-            cancel: Annuleren
         add_instance:
           title: 'Kies bron'
-          btn:
-            cancel: Annuleren
         delete_instance:
           title: 'Bevestig verwijderen'
-          btn:
-            ok: Verwijder
-            cancel: Annuleren
-        element_acl:
-          btn:
-            cancel: Annuleren
-            ok: Ok
-            add: Voeg toe
-            back: Terug
-            remove: Verwijderen
+        delete_user_group:
+          title: 'Bevestig verwijderen'
+          content: '%userGroup% echt verwijderen?'
     template:
       region:
         tabs:

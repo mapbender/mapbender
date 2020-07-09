@@ -25,13 +25,7 @@
  *   - opened  - after the dialog has fully openend
  *   - focus   - after the dialog becomes an focus
  *   - close   - before closing the dialog
- *   - closed  - after the dialog has been fully closed
- *   - destroy - just before the popup is destroyed. Last dance, anyone?
  *
- * @TODOs:
- *   - CSS for following classes:
- *     - noTitle
- *     - noSubTitle
  */
 (function($) {
     var counter = 0;
@@ -294,9 +288,6 @@
             if (this.options.modal && this === currentModal_) {
                 currentModal_ = null;
             }
-            if (!this.options.destroyOnClose && this.$element) {
-                this.$element.trigger('closed'); // why?
-            }
         },
 
         /**
@@ -304,7 +295,6 @@
          */
         destroy: function() {
             if(this.$element){
-                this.$element.trigger('destroy'); // why?
                 this.$element.remove();
                 this.$element = null;
             }
@@ -326,8 +316,6 @@
 
                 if(conf.callback) {
                     button.on('click', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
                         conf.callback.call(self, event);
                         return false;
                     });
