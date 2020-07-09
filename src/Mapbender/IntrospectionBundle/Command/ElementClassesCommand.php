@@ -286,8 +286,14 @@ class ElementClassesCommand extends ContainerAwareCommand
             $th->setRows($rows);
             $th->render($output);
         } else {
-            $symfonyVersion = Kernel::VERSION;
-            throw new \RuntimeException("Table rendering support gone in Symfony $symfonyVersion");
+            foreach ($rows as $row) {
+                foreach ($headers as $cellIndex => $header) {
+                    if (array_key_exists($cellIndex, $row)) {
+                        $reflowed = preg_replace('#\n+#', '; ', $row[$cellIndex]);
+                        $output->writeln("  {$header}: {$reflowed}");
+                    }
+                }
+            }
         }
     }
 
