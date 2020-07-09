@@ -71,10 +71,10 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      * @return string
      */
-    public function map_markup($application)
+    public function map_markup(Application $application)
     {
         $this->updateBuffers($application);
         if (!$this->mapElement) {
@@ -89,12 +89,12 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      * @param $regionName
      * @param bool $suppressEmptyRegion
      * @return string
      */
-    public function region_markup($application, $regionName, $suppressEmptyRegion = true)
+    public function region_markup(Application $application, $regionName, $suppressEmptyRegion = true)
     {
         if (false !== strpos($regionName, 'content')) {
             throw new \LogicException("No support for 'content' region in region_markup");
@@ -106,7 +106,6 @@ class ElementMarkupExtension extends AbstractExtension
             $elements = array();
         }
         if ($elements || !$suppressEmptyRegion) {
-            $application = $this->normalizeApplication($application);
             $template = $this->getTemplateDescriptor($application);
             $skin = $template->getRegionTemplate($application, $regionName);
             $vars = array_replace($template->getRegionTemplateVars($application, $regionName), array(
@@ -121,11 +120,11 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      * @param string $regionName
      * @return string
      */
-    public function region_content($application, $regionName)
+    public function region_content(Application $application, $regionName)
     {
         $this->updateBuffers($application);
         if ($regionName === 'content') {
@@ -139,21 +138,21 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      * @return string
      */
-    public function unanchored_content_elements($application)
+    public function unanchored_content_elements(Application $application)
     {
         $this->updateBuffers($application);
         return $this->renderComponents($this->unanchoredContentElements);
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      * @param string|null $anchorValue empty for everything in sequence, or one of "top-left", "top-right", "bottom-left", "bottom-right"
      * @return string
      */
-    public function anchored_content_elements($application, $anchorValue = null)
+    public function anchored_content_elements(Application $application, $anchorValue = null)
     {
         $this->updateBuffers($application);
         if (!$anchorValue) {
@@ -200,11 +199,10 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Component\Application|Application $application
+     * @param Application $application
      */
-    protected function updateBuffers($application)
+    protected function updateBuffers(Application $application)
     {
-        $application = $this->normalizeApplication($application);
         $hash = spl_object_hash($application);
         if ($this->bufferedHash !== $hash) {
             $this->initializeBuffers($application);
@@ -253,26 +251,6 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * Extract and return Application entity when passed an Application component, or pass
-     * Application entity through directly.
-     *
-     * @param Component\Application|Application $application
-     * @return Application
-     * @throws \LogicException if argument is neither Application component nor Application entity
-     */
-    protected static function normalizeApplication($application)
-    {
-        if ($application instanceof Component\Application) {
-            return $application->getEntity();
-        } elseif (!$application || !($application instanceof Application)) {
-            $type = ($application && \is_object($application)) ? get_class($application) : gettype($application);
-            throw new \LogicException("Bad type {$type} passed as Application");
-        } else {
-            return $application;
-        }
-    }
-
-    /**
      * @param string $regionName
      * @return string
      */
@@ -315,12 +293,11 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
-     * @param Application|Component\Application $application
+     * @param Application $application
      * @return Template
      */
-    protected static function getTemplateDescriptor($application)
+    protected static function getTemplateDescriptor(Application $application)
     {
-        $application = static::normalizeApplication($application);
         /** @var string|Template $templateCls */
         $templateCls = $application->getTemplate();
         /** @var Template $templateObj */
