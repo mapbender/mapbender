@@ -26,6 +26,7 @@ mb:
       create:
         success: A new instance has been created. Please edit it.
   manager:
+    confirm_form_discard: Discard changes?
     admin:
       sources: Sources
       source:

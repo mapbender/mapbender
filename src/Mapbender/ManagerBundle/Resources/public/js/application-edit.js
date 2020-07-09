@@ -4,7 +4,7 @@ $(function() {
         var $form = $('form', $(this).closest('.popup'));
         if ($form.data('dirty') && !$form.data('discard')) {
             // @todo: translate
-            if (!confirm('Ignore Changes?')) {
+            if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
                 e.stopPropagation();
                 return false;
             }

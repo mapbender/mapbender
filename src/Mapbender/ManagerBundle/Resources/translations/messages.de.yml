@@ -26,6 +26,7 @@ mb:
       create:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
+    confirm_form_discard: Änderungen verwerfen?
     admin:
       sources: Datenquellen
       source:
