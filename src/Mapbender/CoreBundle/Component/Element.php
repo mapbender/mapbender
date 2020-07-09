@@ -277,7 +277,7 @@ abstract class Element extends MinimalBound
      */
     public static function getType()
     {
-        return static::getAutomaticAdminType(null);
+        return null;
     }
 
     /**
@@ -403,37 +403,6 @@ abstract class Element extends MinimalBound
         $resourcePathParts[] = StringUtil::camelToSnakeCase($nameWithoutNamespace);
 
         return "{$bundleName}:{$resourceSection}:" . implode('/', $resourcePathParts) . $suffix;
-    }
-
-    /**
-     * Generates an automatic "AdminType" class name from the element class name.
-     *
-     * E.g. for a Mapbender\FoodBundle\Element\LemonBomb element child class this will return the string
-     * "Mapbender\FoodBundle\Element\Type\LemonBombAdminType"
-     *
-     * @param bool|null $inherit allow inheriting admin type from parent class, excluding the (abstract)
-     *                  Element class itself; null (default) for auto-decide (blacklist controlled)
-     * @return string
-     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
-     *    be moved there; each Element should declare its admin type explicitly to facilitate usage searches
-     */
-    public static function getAutomaticAdminType($inherit = null)
-    {
-        if ($inherit === null) {
-            return static::getAutomaticAdminType(static::autoDetectInheritanceRule());
-        }
-        if ($inherit) {
-            $cls = ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
-        } else {
-            $cls = get_called_class();
-        }
-        $clsInfo = explode('\\', $cls);
-        $namespaceParts = array_slice($clsInfo, 0, -1);
-        // convention: AdminType classes are placed into the "<bundle>\Element\Type" namespace
-        $namespaceParts[] = "Type";
-        $bareClassName = implode('', array_slice($clsInfo, -1));
-        // convention: AdminType class name is the same as the element class name suffixed with AdminType
-        return implode('\\', $namespaceParts) . '\\' . $bareClassName . 'AdminType';
     }
 
     /**
