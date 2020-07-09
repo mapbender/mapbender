@@ -352,11 +352,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining инструмент'
-  geosource:
-    image_error:
-      datails: 'Карта не отображается'
-      exception: 'Ошибка: %exception%'
-      statuscode: HTTP-Код
 
 # Login exceptions
 "Bad credentials.": 'Ошибка аутентификации'

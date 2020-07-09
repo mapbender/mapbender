@@ -364,11 +364,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining Werkzeug'
-  geosource:
-    image_error:
-      datails: 'Die Karte kann nicht angezeigt werden.'
-      exception: 'Ausnahmefehler: %exception%'
-      statuscode: 'HTTP Statuscode'
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

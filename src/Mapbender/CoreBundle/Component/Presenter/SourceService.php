@@ -161,7 +161,7 @@ abstract class SourceService implements SourceInstanceInformationInterface
      * @see TypeDirectoryService::getAssets()
      *
      * @param Application $application
-     * @param string $type must be 'js' or 'trans'
+     * @param string $type must be 'js'
      * @return string[]
      */
     abstract public function getAssets(Application $application, $type);

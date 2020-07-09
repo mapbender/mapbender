@@ -323,10 +323,6 @@ class WmtsSourceService extends SourceService
                     '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
                     '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
                 );
-            case 'trans':
-                return array(
-                    'MapbenderCoreBundle::geosource.json.twig',
-                );
             default:
                 throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
         }

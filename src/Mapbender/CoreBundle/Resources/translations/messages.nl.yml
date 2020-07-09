@@ -349,11 +349,6 @@ mb:
       class:
         title: Tekenen
         description: 'Tekentool (Redlining)'
-  geosource:
-    image_error:
-      datails: 'De kaart kan niet getoond worden.'
-      exception: 'Foutmelding: %exception%'
-      statuscode: 'HTTP status code'
 
 # Login exceptions
 "Bad credentials.": Ongeldige inloggegevens.

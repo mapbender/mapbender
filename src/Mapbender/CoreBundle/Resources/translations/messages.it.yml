@@ -352,11 +352,6 @@ mb:
       class:
         title: Redlining
         description: 'Strumento di Redlining'
-  geosource:
-    image_error:
-      datails: 'La mappa non può essere mostrata.'
-      exception: 'Eccezione: %exception%'
-      statuscode: 'HTTP status code'
 
 # Login exceptions
 "Bad credentials.": Credentiali errate.

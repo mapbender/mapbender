@@ -307,8 +307,8 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'js':
-            case 'trans':
                 return $this->sourceTypeDirectory->getAssets($application, $type);
+            case 'trans':
             case 'css':
                 return array();
             default:

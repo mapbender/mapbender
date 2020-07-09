@@ -352,8 +352,3 @@ mb:
       class:
         title: ~
         description: ~
-  geosource:
-    image_error:
-      datails: 'El mapa no puede ser presentado.'
-      exception: 'Excepción: %exception%'
-      statuscode: 'HTTP código de estado'

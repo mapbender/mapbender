@@ -363,8 +363,3 @@ mb:
       class:
         title: Redlining
         description: 'Redlining tool'
-  geosource:
-    image_error:
-      datails: 'The map cannot be displayed.'
-      exception: 'Exception: %exception%'
-      statuscode: 'HTTP status code'

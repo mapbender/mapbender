@@ -352,8 +352,3 @@ mb:
       class:
         title: Redlining
         description: 'Ferramenta: Redlining'
-  geosource:
-    image_error:
-      datails: 'Não pode mostra o mapa.'
-      exception: 'Exceção: %exception%'
-      statuscode: 'Código de status HTTP'

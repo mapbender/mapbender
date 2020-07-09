@@ -350,9 +350,4 @@ mb:
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
-  geosource:
-    image_error:
-      datails: 'Harita Görüntülenemiyor.'
-      exception: 'Kural-dışı: %exception%'
-      statuscode: 'HTTP durum kodu'
 
