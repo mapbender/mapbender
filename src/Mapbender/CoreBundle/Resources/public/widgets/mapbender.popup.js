@@ -288,9 +288,8 @@
                 buttonset = $('.popupButtons', this.$element);
 
             $.each(buttons, function(key, conf) {
-                var button = $('<a/>', {
-                    href: '#' + self.$element.attr('id') + '/button/' + key,
-                    html: conf.label
+                var button = $('<span/>', {
+                    text: conf.label
                 });
 
                 if(conf.cssClass) {
@@ -299,8 +298,6 @@
 
                 if(conf.callback) {
                     button.on('click', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
                         conf.callback.call(self, event);
                         return false;
                     });
