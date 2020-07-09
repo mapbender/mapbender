@@ -1,5 +1,16 @@
 $(function() {
     var popupCls = Mapbender.Popup;
+    function confirmDiscard(e) {
+        var $form = $('form', $(this).closest('.popup'));
+        if ($form.data('dirty')) {
+            // @todo: translate
+            if (!confirm('Ignore Changes?')) {
+                e.stopPropagation();
+                return false;
+            }
+        }
+        return true;
+    }
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -89,14 +100,13 @@ $(function() {
                     }
                 ])
             });
+
             popup.$element.on('change', function() {
                 $('form', popup.$element).data('dirty', true);
             });
             popup.$element.on('close', function(event, token) {
-                if ($('form', popup.$element).data('dirty')) {
-                    if (!confirm('Ignore Changes?')) {
-                        token.cancel = true;
-                    }
+                if (!confirmDiscard.call(this, event)) {
+                    token.cancel = true;
                 }
             });
         });
@@ -133,8 +143,10 @@ $(function() {
                     {
                         label: Mapbender.trans('mb.actions.back'),
                         cssClass: 'button buttonBack',
-                        callback: function() {
-                            startElementChooser(regionName, listUrl);
+                        callback: function(e) {
+                            if (confirmDiscard.call(e.target, e)) {
+                                startElementChooser(regionName, listUrl);
+                            }
                         }
                     }
                 ]);
