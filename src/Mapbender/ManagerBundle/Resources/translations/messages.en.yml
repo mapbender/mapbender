@@ -164,48 +164,19 @@ mb:
       popup:
         add_element:
           title: 'Add element'
-          btn:
-            ok: Ok
-            cancel: Cancel
-            back: Back
         edit_element:
           title: 'Edit element'
-          btn:
-            ok: Update
-            cancel: Cancel
         delete_element:
-          subtitle: element
           title: 'Confirm delete'
-          btn:
-            ok: Delete
-            cancel: Cancel
         add_edit_layerset:
           title_edit: 'Edit layerset'
           title_add: 'Add layerset'
-          btn:
-            ok: Ok
-            cancel: Cancel
         delete_layerset:
           title: 'Delete layerset'
-          btn:
-            ok: Delete
-            cancel: Cancel
         add_instance:
           title: 'Select source'
-          btn:
-            cancel: Cancel
         delete_instance:
           title: 'Confirm delete'
-          btn:
-            ok: Delete
-            cancel: Cancel
-        element_acl:
-          btn:
-            cancel: Cancel
-            ok: Update
-            add: Add
-            back: Back
-            remove: Remove
     template:
       region:
         tabs:

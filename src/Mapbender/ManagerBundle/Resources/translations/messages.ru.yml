@@ -162,48 +162,19 @@ mb:
       popup:
         add_element:
           title: 'Добавить элемент'
-          btn:
-            ok: Ок
-            cancel: Отменить
-            back: Назад
         edit_element:
           title: 'Редактировать элемент'
-          btn:
-            ok: Обновить
-            cancel: Отменить
         delete_element:
-          subtitle: элемент
           title: 'Подтвердить удаление'
-          btn:
-            ok: Удалить
-            cancel: Отменить
         add_edit_layerset:
           title_edit: 'Редактировать слои'
           title_add: 'Добавить слои'
-          btn:
-            ok: Ок
-            cancel: Отменить
         delete_layerset:
           title: 'Удалить слои'
-          btn:
-            ok: Удалить
-            cancel: Отменить
         add_instance:
           title: 'Выбрать источник'
-          btn:
-            cancel: Отменить
         delete_instance:
           title: 'Подтвердить удаления'
-          btn:
-            ok: Удалить
-            cancel: Отменить
-        element_acl:
-          btn:
-            cancel: Отменить
-            ok: Обновить
-            add: Добавить
-            back: Назад
-            remove: Удалить
     template:
       region:
         tabs:

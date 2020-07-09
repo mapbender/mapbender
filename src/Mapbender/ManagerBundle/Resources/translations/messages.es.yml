@@ -162,48 +162,19 @@ mb:
       popup:
         add_element:
           title: 'Añadir elemento'
-          btn:
-            ok: Ok
-            cancel: Cancelar
-            back: Atrás
         edit_element:
           title: 'Editar elemento'
-          btn:
-            ok: Actualizar
-            cancel: Cancelar
         delete_element:
-          subtitle: elemento
           title: 'Confirma borrar'
-          btn:
-            ok: Borrar
-            cancel: Cancelar
         add_edit_layerset:
           title_edit: 'Editar conjunto de capas'
           title_add: 'Añadir conjunto de capas'
-          btn:
-            ok: Ok
-            cancel: Cancelar
         delete_layerset:
           title: 'Borrar conjunto de capas'
-          btn:
-            ok: Borrar
-            cancel: Cancelar
         add_instance:
           title: 'Seleccionar fuente'
-          btn:
-            cancel: Cancelar
         delete_instance:
           title: 'Confirmar borrar'
-          btn:
-            ok: Borrar
-            cancel: Cancelar
-        element_acl:
-          btn:
-            cancel: Cancelar
-            ok: Actualizar
-            add: Añadir
-            back: Atrás
-            remove: Remover
     template:
       region:
         tabs:

@@ -164,48 +164,19 @@ mb:
       popup:
         add_element:
           title: 'Element hinzufügen'
-          btn:
-            ok: Hinzufügen
-            cancel: Abbrechen
-            back: Zurück
         edit_element:
           title: 'Element editieren'
-          btn:
-            ok: Aktualisieren
-            cancel: Abbrechen
         delete_element:
-          subtitle: Element
           title: 'Löschen bestätigen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
         add_edit_layerset:
           title_edit: 'Layerset editieren'
           title_add: 'Layerset hinzufügen'
-          btn:
-            ok: Ok
-            cancel: Abbrechen
         delete_layerset:
           title: 'Layerset löschen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
         add_instance:
           title: 'Datenquelle auswählen'
-          btn:
-            cancel: Abbrechen
         delete_instance:
           title: 'Instanz löschen'
-          btn:
-            ok: Löschen
-            cancel: Abbrechen
-        element_acl:
-          btn:
-            cancel: Abbrechen
-            ok: Aktualisieren
-            add: Hinzufügen
-            back: Zurück
-            remove: Entfernen
     template:
       region:
         tabs:

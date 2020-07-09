@@ -204,8 +204,7 @@ $(function() {
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_element.title',
             confirm: "mb.actions.delete",
-            cancel: "mb.actions.cancel",
-            subTitle: 'mb.manager.components.popup.delete_element.subtitle'
+            cancel: "mb.actions.cancel"
         });
         return false;
     });
