@@ -85,10 +85,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function() {
-                            this.close();
-                        }
+                        cssClass: 'button buttonCancel critical popupClose'
                     }
                 ])
             });
@@ -119,10 +116,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function() {
-                            this.close();
-                        }
+                        cssClass: 'button buttonCancel critical popupClose'
                     }
                 ]
             });
@@ -222,10 +216,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function() {
-                            this.close();
-                        }
+                        cssClass: 'button buttonCancel critical popupClose'
                     }
                 ]
             });
@@ -262,15 +253,12 @@ $(function() {
             content: [
                 $.ajax({url: self.attr("href")})
             ],
-            buttons: {
-                'cancel': {
+            buttons: [
+                {
                     label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical',
-                    callback: function() {
-                        this.close();
-                    }
+                    cssClass: 'button buttonCancel critical popupClose'
                 }
-            }
+            ]
         });
         return false;
     });
