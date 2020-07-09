@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\SQLSearchEngine;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -59,9 +58,6 @@ class SearchRouter extends Element
             "asDialog"      => false,
         );
     }
-
-    /** @var Form[] Element search forms */
-    protected $forms;
 
     /**
      * @return array
@@ -188,7 +184,6 @@ class SearchRouter extends Element
         }
 
         if ('search' === $action) {
-            $this->getForms();
             $data = json_decode($request->getContent(), true);
             $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
@@ -240,23 +235,6 @@ class SearchRouter extends Element
     }
 
     /**
-     * Get all forms.
-     *
-     * @return Form[] Search forms
-     */
-    public function getForms()
-    {
-        $forms = array();
-        $configuration = $this->getConfiguration();
-        foreach ($configuration['routes'] as $name => $conf) {
-            $forms[$name] = $this->getForm($conf, $name);
-        }
-        // Legacy / inheritance compatibility HACK: store forms in instance attribute
-        $this->forms = $forms;
-        return $forms;
-    }
-
-    /**
      * Get form views
      *
      * @return FormView[]
@@ -289,20 +267,6 @@ class SearchRouter extends Element
             }
         }
         return $configuration;
-    }
-
-    /**
-     * GeoJSON FeatureCollection
-     *
-     * @param array $features
-     * @return array
-     */
-    protected function getFeatureCollection(&$features)
-    {
-        return array(
-            'type'     => 'FeatureCollection',
-            'features' => $features
-        );
     }
 
     /**
