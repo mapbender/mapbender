@@ -128,13 +128,10 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
                 $templateClasses = array_merge($templateClasses, array_values($bundle->getTemplates()));
             }
         }
-        /** @var ElementFactory $factory  */
-        $factory = $this->getContainer()->get('mapbender.element_factory.service');
-        $dummyApplication = $factory->appComponentFromEntity(new Application());
         $templateInstances = array();
         foreach ($templateClasses as $className) {
             /** @var Template|string $className */
-            $templateInstances[] = new $className($this->getContainer(), $dummyApplication);
+            $templateInstances[] = new $className();
         }
         return $this->extractTemplateTranslationDependencies($templateInstances);
     }
