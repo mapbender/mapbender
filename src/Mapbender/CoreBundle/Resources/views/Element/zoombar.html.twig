@@ -40,7 +40,7 @@
         {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
         <ul class="zoomSliderLevels">
             {%- for _level, _scale in zoom_levels -%}
-            <li class="iconZoomLevel" title="1:{{ _scale }}" data-zoom="{{ _level }}"></li>
+            <li class="iconZoomLevel hover-highlight-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"></li>
             {%- endfor -%}
         </ul>
         {% endif %}
