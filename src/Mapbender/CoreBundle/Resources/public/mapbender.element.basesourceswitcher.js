@@ -20,7 +20,9 @@
             for (var i = 0; i < menuItems.length; ++i) {
                 var menuItem = menuItems[i];
                 var $menuItem = $(menuItem);
-                var sourceIds = $menuItem.attr('data-sourceset').split(',');
+                var sourceIds = $menuItem.attr('data-sourceset').split(',').filter(function(x) {
+                    return !!x;
+                });
                 var sources = [];
                 for (var j = 0; j < sourceIds.length; ++j) {
                     var source = this.mbMap.model.getSourceById(sourceIds[j]);
@@ -33,11 +35,11 @@
                         console.warn("No source with id " + sourceIds[j]);
                     }
                 }
-                if (sources.length) {
-                    $menuItem.data('sources', sources);
-                } else {
-                    console.warn("Removing menu item with no associated sources", menuItem);
+                if (sourceIds.length && !sources.length) {
+                    console.warn("Removing menu item with entirely invalid source associations", menuItem);
                     $menuItem.remove();
+                } else {
+                    $menuItem.data('sources', sources);
                 }
             }
             $('.basesourcesetswitch', this.element).on('click', $.proxy(this._toggleMapset, this));
