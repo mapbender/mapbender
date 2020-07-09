@@ -134,24 +134,9 @@ mb:
         scale: Maßstab
         rotation: Drehung
         legend: 'Legende drucken'
-      popup:
-        btn:
-          ok: Drucken
-          cancel: Abbrechen
-      info:
-        noactivelayer: 'Keine aktive Ebene!'
-      form:
-        required: 'Bitte füllen Sie dieses Feld aus'
       class:
         title: Druck
         description: 'Druck Dialog'
-      tag:
-        print: Druck
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Druckrahmen deaktivieren'
         activate: 'Druckrahmen aktivieren'

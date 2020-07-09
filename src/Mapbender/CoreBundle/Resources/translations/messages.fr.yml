@@ -127,24 +127,9 @@ mb:
         scale: Échelle
         rotation: Rotation
         legend: 'Imprimer la légende'
-      popup:
-        btn:
-          ok: Imprimer
-          cancel: Annuler
-      info:
-        noactivelayer: 'Aucune couche n''est activée!'
-      form:
-        required: 'Ce champ est obligatoire'
       class:
         title: 'Client d''impression'
         description: 'Affiche une fenêtre d''impression. Permet d''exporter en format PDF'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Désactiver le cadre de l''impression'
         activate: 'Activer le cadre de l''impression'

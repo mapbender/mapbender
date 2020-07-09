@@ -126,24 +126,9 @@ mb:
         scale: Schaal
         rotation: Roteren
         legend: Legenda
-      popup:
-        btn:
-          ok: Print
-          cancel: Annuleren
-      info:
-        noactivelayer: 'Geen actieve laag!'
-      form:
-        required: 'Verplicht invoerveld'
       class:
         title: 'Printen'
         description: 'Toont Print dialoog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Deactiveer Print Venster'
         activate: 'Activeer Print Venster'

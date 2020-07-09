@@ -126,24 +126,9 @@ mb:
         scale: 'Ölçek'
         rotation: 'Dönüklük'
         legend: 'Lejant yazdır'
-      popup:
-        btn:
-          ok: 'Yazdır'
-          cancel: 'Vazgeç'
-      info:
-        noactivelayer: 'Etkin katman yok!'
-      form:
-        required: 'Lütfen bu alanı doldurun'
       class:
         title: 'Yazıcı istemcisi'
         description: 'Yazdır penceresi gösterir'
-      tag:
-        print: 'Yazdır'
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Yazdırılan Alan Çerçevesini Devre Dışı Bırak'
         activate: 'Yazdırılan Alan Çerçevesini Etkinleştir'

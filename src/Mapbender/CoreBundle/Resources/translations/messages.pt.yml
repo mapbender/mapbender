@@ -127,24 +127,9 @@ mb:
         scale: Escala
         rotation: Rotação
         legend: 'Imprimir legenda'
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'Nenhuma camada ativa'
-      form:
-        required: 'Por favor, preencha este campo.'
       class:
         title: Impressão
         description: 'Diálogo de Impressão'
-      tag:
-        print: Impressão
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~

@@ -127,24 +127,9 @@ mb:
         scale: Масштаб
         rotation: Вращение
         legend: 'Легенда'
-      popup:
-        btn:
-          ok: Печать
-          cancel: Отмена
-      info:
-        noactivelayer: 'Нет активного слоя!'
-      form:
-        required: 'Пожалуйста, заполните это поле'
       class:
         title: Печать
         description: 'Отображает диалоговое окно печати'
-      tag:
-        print: печать
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~

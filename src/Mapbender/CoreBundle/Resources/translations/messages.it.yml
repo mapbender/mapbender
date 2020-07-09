@@ -127,24 +127,9 @@ mb:
         scale: Scala
         rotation: Rotazione
         legend: 'Stampa la legenda'
-      popup:
-        btn:
-          ok: Stampa
-          cancel: Cancella
-      info:
-        noactivelayer: 'Nessun layer attivo!'
-      form:
-        required: 'Per favore compila il campo'
       class:
         title: 'Stampa'
         description: 'Mostra la finestra di stampa'
-      tag:
-        print: Stampa
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Disattiva il frame per la stampa'
         activate: 'Attiva il frame della stampa'

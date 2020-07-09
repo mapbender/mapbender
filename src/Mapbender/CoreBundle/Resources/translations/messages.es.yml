@@ -127,24 +127,9 @@ mb:
         scale: Escala
         rotation: Rotación
         legend: ~
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'No hay capa activa!'
-      form:
-        required: 'Por favor rellene este campo'
       class:
         title: 'Cliente de Impresión'
         description: 'Renders un diálogo de Impresión'
-      tag:
-        print: imprimir
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~

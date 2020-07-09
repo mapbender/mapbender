@@ -57,7 +57,8 @@ class PrintClient extends Element
                 '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
             ),
             'trans' => array(
-                'MapbenderPrintBundle:Element:printclient.json.twig',
+                'mb.core.printclient.btn.*',
+                'mb.print.printclient.joblist.*',
                 'mb.print.imageexport.info.*',
             ),
         );
