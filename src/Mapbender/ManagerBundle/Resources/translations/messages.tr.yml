@@ -145,9 +145,6 @@ mb:
       acl_element: 'Acl element'
       import_application: 'İçe aktarım (Import)'
       export_application: 'Dışa aktarım (Export)'
-    element:
-      yaml:
-        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
     be:
       element:
         delete: 'Öğe sil %element_title%'

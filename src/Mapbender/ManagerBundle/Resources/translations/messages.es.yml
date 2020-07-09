@@ -151,9 +151,6 @@ mb:
       acl_element: 'Elemento Acl'
       import_application: Importar
       export_application: Exportar
-    element:
-      yaml:
-        message: ~
     be:
       element:
         delete: 'Borrar elemento ''%element_title%'''

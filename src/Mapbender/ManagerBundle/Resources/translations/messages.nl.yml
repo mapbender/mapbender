@@ -151,9 +151,6 @@ mb:
       acl_element: 'Toegangs-restrictie (ACL) element'
       import_application: 'Importeer'
       export_application: 'Exporteer'
-    element:
-      yaml:
-        message: 'Gebruik <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
     be:
       element:
         delete: 'Verwijder element ''%element_title%'''

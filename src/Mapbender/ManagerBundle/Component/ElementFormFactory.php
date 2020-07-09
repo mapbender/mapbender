@@ -64,14 +64,8 @@ class ElementFormFactory extends BaseElementFactory
 
         $options = array('application' => $element->getApplication());
 
-        if ($configurationType === null) {
-            $configurationType = $this->getFallbackConfigurationFormType($element);
-            unset($options['application']);
-            $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-        } else {
-            $componentClassName = $this->getComponentClass($element);
-            $twigTemplate = $componentClassName::getFormTemplate();
-        }
+        $componentClassName = $this->getComponentClass($element);
+        $twigTemplate = $componentClassName::getFormTemplate();
 
         $formType->add('configuration', $configurationType, $options);
 
@@ -121,11 +115,6 @@ class ElementFormFactory extends BaseElementFactory
             return \get_class($type);
         }
         return null;
-    }
-
-    public function getFallbackConfigurationFormType(Element $element)
-    {
-        return 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType';
     }
 
     /**

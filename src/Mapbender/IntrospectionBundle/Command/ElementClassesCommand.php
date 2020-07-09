@@ -177,8 +177,8 @@ class ElementClassesCommand extends ContainerAwareCommand
         }
 
         $adminType = $formFactory->getConfigurationFormType($element->getEntity());
-        if ($adminType === null) {
-            return '<error>' . $formFactory->getFallbackConfigurationFormType($element->getEntity()) . '</error>';
+        if (!$adminType) {
+            return '<comment>none</comment>';
         }
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
