@@ -78,6 +78,26 @@ class ZoomBar extends Element
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $target = $this->entity->getTargetElement('target');
+        $scales = array();
+        if ($target) {
+            $mapConfig = $target->getConfiguration();
+            if (!empty($mapConfig['scales'])) {
+                $scales = $mapConfig['scales'];
+                asort($scales, SORT_NUMERIC | SORT_REGULAR);
+            }
+        }
+        $withDefaults = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
+        return array(
+            'zoom_levels' => $scales,
+            'configuration' => array_replace($withDefaults, array(
+                'components' => $this->filterComponentList($this->entity, $withDefaults['components']),
+            )),
+        );
+    }
+
     /**
      * @param Entity\Element $entity
      * @param string[] $componentList
@@ -106,26 +126,6 @@ class ZoomBar extends Element
             }
         }
         return $blackList;
-    }
-
-    public function getConfiguration()
-    {
-        $config = $this->entity->getConfiguration();
-        $config['components'] = static::filterComponentList($this->entity, $config['components']);
-        return $config;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $configuration = $this->getConfiguration();
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(),  array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $configuration,
-        ));
     }
 
     /**

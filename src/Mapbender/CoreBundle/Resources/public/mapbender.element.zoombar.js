@@ -44,24 +44,9 @@ $.widget("mapbender.mbZoomBar", {
         this.mbMap.zoomToFullExtent();
     },
     _setupSlider: function() {
-        this.zoomslider = this.element.find('.zoomSlider .zoomSliderLevels')
-            .hide()
-            .empty();
-
-        var zoomLevels = this.mbMap.getModel().getZoomLevels();
-        for (var i = zoomLevels.length - 1; i >= 0; --i) {
-            var $zoomLi = $('<li>')
-                .addClass('iconZoomLevel')
-                .attr('title', '1:' + zoomLevels[i].scale)
-                .attr('data-zoom', zoomLevels[i].level)
-            ;
-            this.zoomslider.append($zoomLi);
-        }
-
-        this.zoomslider.show();
-
         var self = this;
-        this.zoomslider.find('li').click(function() {
+        this.zoomslider = $('.zoomSliderLevels', this.element);
+        this.zoomslider.on('click', '[data-zoom]', function() {
             var zoomLevel = parseInt($(this).attr('data-zoom'));
             self.mbMap.getModel().setZoomLevel(zoomLevel, true);
         });
