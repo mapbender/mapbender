@@ -81,6 +81,9 @@
   label {
     margin-bottom: 0;
   }
+  a.mb-button:hover {
+    text-decoration: none;
+  }
 }
 
 
@@ -199,12 +202,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     max-height: 600px;
     overflow: auto;
     word-wrap: break-word;
-}
-
-.templateWrapper {
-  .toolBar a.mb-button {
-    color: inherit;
-  }
 }
 
 .mapbender-popup, .fom-popup {
