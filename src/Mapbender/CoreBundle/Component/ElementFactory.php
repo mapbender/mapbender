@@ -24,8 +24,6 @@ class ElementFactory extends BaseElementFactory
     protected $translator;
     /** @var Component\Element[] */
     protected $components = array();
-    /** @var Component\Application[] */
-    protected $appComponents = array();
 
     /**
      * @param ElementInventoryService $inventoryService
@@ -138,20 +136,5 @@ class ElementFactory extends BaseElementFactory
         }
         // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
         return $instance;
-    }
-
-    /**
-     * @param Entity\Application $appEntity
-     * @param bool $reuse
-     * @return Component\Application
-     */
-    public function appComponentFromEntity(Entity\Application $appEntity, $reuse=true)
-    {
-        $entityObjectId = spl_object_hash($appEntity);
-        if (!$reuse || !array_key_exists($entityObjectId, $this->appComponents)) {
-            $instance = new Component\Application($this->container, $appEntity);
-            $this->appComponents[$entityObjectId] = $instance;
-        }
-        return $this->appComponents[$entityObjectId];
     }
 }
