@@ -108,7 +108,6 @@ abstract class Element extends MinimalBound
     {
         $defaultTemplateVars = array(
             'id'            => $this->getId(),
-            'entity'        => $this->entity,
             'title'         => $this->getTitle(),
         );
         $templateVars = array_replace($defaultTemplateVars, $this->getFrontendTemplateVars());

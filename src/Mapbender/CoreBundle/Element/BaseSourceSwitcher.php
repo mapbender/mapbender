@@ -89,7 +89,7 @@ class BaseSourceSwitcher extends Element
         $rawConf = $element->getConfiguration();
         $itemsOut = array();
         if (empty($rawConf['instancesets']) || !is_array($rawConf['instancesets'])) {
-            // @todo: throw config error if wrong type, complain about empty array
+            // @todo: throw config error if wrong type
             $itemConfigs = array();
         } else {
             $itemConfigs = $rawConf['instancesets'];
