@@ -257,10 +257,7 @@ fieldset{
 .splashScreenWrapper {
   background-color: rgba($ciColor4, .7);
   z-index: 12;
-  display: none;
   @include absolute(0 0 0 0);
-
-  &[data-state="active"]{display: block;}
 }
 .splashScreen{
   margin:0 auto;
