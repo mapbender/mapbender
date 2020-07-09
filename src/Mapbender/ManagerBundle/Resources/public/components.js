@@ -201,7 +201,7 @@ $(function() {
                 url: url
             }).then(function(response) {
                 var popup = new Mapbender.Popup({
-                    title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
+                    title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
                     content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
@@ -231,7 +231,7 @@ $(function() {
         var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
         var content = [
             '<div>',
-            Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}),
+            Mapbender.trans('mb.manager.components.popup.delete_user_group.content',{'userGroup': userGroup}),
             '</div>'
             ].join('');
         var labels = {
@@ -348,7 +348,7 @@ $(function() {
         $permissionsTable.on("click", 'tbody .iconRemove', function() {
             var $row = $(this).closest('tr');
             var userGroup =($row.find(".iconUser").length ? "user " : "group ") + $row.find(".labelInput").text();
-            popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
+            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {'userGroup': userGroup}));
             $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
             $('.buttonRemove', popup.$element).data('target-row', $row);
             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');

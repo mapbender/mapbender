@@ -175,6 +175,9 @@ mb:
           title: 'Seleziona fonte'
         delete_instance:
           title: 'Conferma eliminazione'
+        delete_user_group:
+          title: 'Conferma cancellazione'
+          content: 'Cancellare davvero %userGroup%?'
     template:
       region:
         tabs:

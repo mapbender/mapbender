@@ -177,6 +177,11 @@ mb:
           title: 'Datenquelle auswählen'
         delete_instance:
           title: 'Instanz löschen'
+        add_user_group:
+          title: 'Benutzer/Gruppe hinzufügen.'
+        delete_user_group:
+          title: 'Entfernen bestätigen'
+          content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
     template:
       region:
         tabs:

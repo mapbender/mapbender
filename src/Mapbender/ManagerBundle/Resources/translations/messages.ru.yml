@@ -175,6 +175,9 @@ mb:
           title: 'Выбрать источник'
         delete_instance:
           title: 'Подтвердить удаления'
+        delete_user_group:
+          title: 'Подтвердите удаление'
+          content: 'Действительно удалить%userGroup%?'
     template:
       region:
         tabs:

@@ -175,6 +175,9 @@ mb:
           title: 'Escolher origem de dados'
         delete_instance:
           title: 'Remover instância'
+        delete_user_group:
+          title: 'Confirme apagar'
+          content: 'Realmente eliminar %userGroup%?'
     template:
       region:
         tabs:

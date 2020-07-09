@@ -28,10 +28,8 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
             case 'trans':
                 return array(
                     'mb.actions.*',
-                    'fom.core.components.popup.add_user_group.title',
-                    'fom.core.components.popup.delete_user_group.title',
-                    'fom.core.components.popup.delete_user_group.content',
                     'mb.manager.components.popup.*',
+                    'mb.manager.managerbundle.add_user_group',
                     'mb.manager.upload.label_delete',
                     'mb.manager.admin.application.upload.label',
                     'mb.core.entity.app.screenshotfile.*',

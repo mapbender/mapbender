@@ -175,6 +175,9 @@ mb:
           title: 'Kies bron'
         delete_instance:
           title: 'Bevestig verwijderen'
+        delete_user_group:
+          title: 'Bevestig verwijderen'
+          content: '%userGroup% echt verwijderen?'
     template:
       region:
         tabs:

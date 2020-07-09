@@ -175,6 +175,9 @@ mb:
           title: 'Seleccionar fuente'
         delete_instance:
           title: 'Confirmar borrar'
+        delete_user_group:
+          title: 'Confirmar eliminar'
+          content: 'Realmente eliminar %userGroup%?'
     template:
       region:
         tabs:

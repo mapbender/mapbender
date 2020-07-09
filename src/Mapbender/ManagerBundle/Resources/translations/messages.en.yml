@@ -177,6 +177,9 @@ mb:
           title: 'Select source'
         delete_instance:
           title: 'Confirm delete'
+        delete_user_group:
+          title: 'Confirm delete'
+          content: 'Really delete %userGroup%?'
     template:
       region:
         tabs:
