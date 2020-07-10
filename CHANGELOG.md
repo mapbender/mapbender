@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 298ce1676
+## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
