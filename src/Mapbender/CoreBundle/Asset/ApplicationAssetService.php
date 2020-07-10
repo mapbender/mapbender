@@ -278,12 +278,7 @@ class ApplicationAssetService
     public function getTemplateBaseAssetReferences(Entity\Application $application, $type)
     {
         $templateComponent = $this->getDummyTemplateComponent($application);
-        if ($type === 'css') {
-            $refs = $templateComponent->getVariablesAssets();
-            $refs = array_merge($refs, $templateComponent->getAssets($type));
-        } else {
-            $refs = $templateComponent->getAssets($type);
-        }
+        $refs = $templateComponent->getAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
     }
 

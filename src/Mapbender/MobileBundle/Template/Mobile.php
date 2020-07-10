@@ -53,13 +53,6 @@ class Mobile extends Template
         }
     }
 
-    public function getVariablesAssets()
-    {
-        return array_merge(parent::getVariablesAssets(), array(
-            '@MapbenderMobileBundle/Resources/public/sass/theme/variables.scss',
-        ));
-    }
-
     public function getTwigTemplate()
     {
         return 'MapbenderMobileBundle:Template:mobile.html.twig';
