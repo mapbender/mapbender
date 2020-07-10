@@ -2,7 +2,7 @@
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
-- Fix bad ordering of Wms instance "allow toggle" checkboxes if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
+- Fix bad ordering of Wms instance layers in form if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
 - Fix random WMS source layer reordering on reload
 - Fix random WMS instance layer reordering on source reload
 - Fix new WMS group layers only appearing after reloading the source twice
