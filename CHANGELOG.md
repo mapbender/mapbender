@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 0a1c46d0a
+## dev-release/3.0.7 @ 298ce1676
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
@@ -19,6 +19,9 @@
 - [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
 - [PrintClient]: Replace manual `type` configuration with auto-detection
 - [PrintClient]: remove comment fields from default configuration (not printable with shipping default templates)
+- [Backend] Fix form change discard confirmation when going "back" to Element type list from a modified Element form
+- [Backend] Fix double-display of collection adding icon when editing empty Element permissions set
+- [Backend] Add translation for form change discard confirmation when leaving a modified Element form
 - [Backend] Avoid form resubmit confirmation when refreshing source instance form after saving
 - Update "map-click" demo element
 - Misc fixes to jQueryUI standard / theme css compatibility
