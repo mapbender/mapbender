@@ -279,14 +279,6 @@ fieldset{
     line-height:$fontSize*2;
     text-align:center;
   }
-  // @todo: remove, not in template. Looks ~like a close button positioning attempt, but a little off.
-  // Custom templates that add splash screen content should also add all required css rules themselves
-  i{
-    color: $ciColor3;
-    font-size: 2em;
-    font-style: normal;
-    @include absolute((-$space/2) (-$space/2) '' '');
-  }
 }
 
 
