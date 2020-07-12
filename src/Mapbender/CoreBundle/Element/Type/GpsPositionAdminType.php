@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
 
 class GpsPositionAdminType extends AbstractType
 {
@@ -47,18 +46,6 @@ class GpsPositionAdminType extends AbstractType
             ))
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
-            ))
-            ->add('refreshinterval', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
-                'required' => false,
-                'constraints' => array(
-                    new Range(array(
-                        'min' => 0,
-                    )),
-                ),
-                'attr' => array(
-                    'min' => 0,
-                    'step' => 200,
-                ),
             ))
             ->add('follow', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

@@ -66,7 +66,6 @@ class GpsPosition extends Element implements ConfigMigrationInterface
             'autoStart'             => false,
             'target'                => null,
             'icon'                  => null,
-            'refreshinterval'       => '5000',
             'average'               => 1,
             'follow'                => false,
             'centerOnFirstPosition' => true,
