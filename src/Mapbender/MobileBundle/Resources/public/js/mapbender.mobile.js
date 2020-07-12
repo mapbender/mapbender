@@ -11,7 +11,8 @@ $(function(){
     });
 
     $('#footer').on('click', '.mb-button', function(e) {
-        var button = $(e.currentTarget).data('mapbenderMbButton');
+        var $button = $(this);
+        var button = $button.data('mapbenderMbButton');
         var buttonOptions = button.options;
         var target = $('#' + buttonOptions.target);
         var pane = target.closest('.mobilePane');
@@ -27,8 +28,11 @@ $(function(){
             $(item).addClass('hidden');
         });
         target.removeClass('hidden');
-
-        paneTitle.text(target.attr('title') || target.data('title') || 'undefined');
+        var headerText = target.attr('title') || target.data('title');
+        if (!headerText || /^\w+(\.\w+)+$/.test(headerText)) {
+            headerText = $button.attr('title') || headerText || 'undefined';
+        }
+        paneTitle.text(headerText);
         pane.attr('data-state', 'opened');
 
         return false;
