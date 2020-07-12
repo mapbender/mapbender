@@ -16,9 +16,12 @@
 - Fix conflicts of legacy custom dropdown widget with Bootstrap JavaScript
 - Fix login issues when embedding Mapbender in a frame
 - Fix toolbar button centering when showing only icon but no label
+- Fix untranslated popup headings in Mobile template
 - [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
 - [PrintClient]: Replace manual `type` configuration with auto-detection
 - [PrintClient]: remove comment fields from default configuration (not printable with shipping default templates)
+- [GpsPosition]: Fix defaults for tooltip and icon options
+- [GpsPosition]: remove "refreshinterval" option (unused since v3.0.5.3)
 - [Backend] Fix form change discard confirmation when going "back" to Element type list from a modified Element form
 - [Backend] Fix double-display of collection adding icon when editing empty Element permissions set
 - [Backend] Add translation for form change discard confirmation when leaving a modified Element form
