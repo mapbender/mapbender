@@ -16,7 +16,8 @@
     }
     float:left;
     padding:3px 10px 3px 10px;
-    @include relative('' '' '-$tabPopHeight*2' '');
+    position:relative;
+    bottom:-$tabPopHeight*2;
     @extend .smallText;
     @include noUserSelect();
 

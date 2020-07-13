@@ -78,26 +78,7 @@ fieldset{
 }
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer{
-  $tabPopHeight:3px;
-  $tabHeight:34px;
-
   .tab{
-    margin-right:3px;
-    color:$middleFontColor;
-    background-color:$contentColor;
-    cursor:pointer;
-    position:relative;
-    bottom:-$tabPopHeight*2;
-    height:$tabHeight;
-    z-index:10;
-    border:{
-      left:solid 1px $thirdColor;
-      top:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-    }
-    float:left;
-    padding:3px 10px 3px 10px;
-    @extend .smallText;
     @include box-shadow(1px 0px 2px rgba(0, 0, 0, 0.1),
                         inset 1px 0px 2px #fff);
     @include transition(all 0.2s ease-in-out);
@@ -107,61 +88,25 @@ fieldset{
 
     &:hover{
       background-color:#fff;
-      bottom:-$tabPopHeight;
     }
 
     &.active{
-      cursor:default;
-      color:$darkFontColor;
-      bottom:-$tabPopHeight;
-      height:$tabHeight;
-      z-index: 30;
-      background-color:$contentColor;
       @include box-shadow(1px 0px 1px rgba(0, 0, 0, 0.1));
     }
   }
   .container{
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-    background-color:$contentColor;
-    border:{
-      top:solid 3px $firstColor;
-      left:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-      bottom:solid 1px $thirdColor;
-    }
     @include border-bottom-radius($radius);
     @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
 
-    &.active{display:block;}
   }
 }
 .tabContainerAlt{
   .tab{
-    display: inline-block;
-    @extend .button;
-
     &.active{
-      cursor:default;
       background-color:darken(#6fb536, 10%);
-      color:$lightFontColor;
       @include box-shadow(0 0 6px rgba(0,0,0,0.1),
                         inset 0 -10px 10px darken(#5fa229, 8%));
     }
-  }
-  .container{
-    border-top:dashed 1px $thirdColor;
-    margin-top:$space;
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-
-    &.active{display:block;}
   }
 }
 
