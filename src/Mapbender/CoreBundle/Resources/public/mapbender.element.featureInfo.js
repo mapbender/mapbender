@@ -17,7 +17,6 @@
         model: null,
         popup: null,
         context: null,
-        queries: {},
         state: null,
         contentManager: null,
         mobilePane: null,
@@ -45,9 +44,7 @@
             widget._trigger('ready');
         },
         _contentElementId: function(source) {
-            // @todo: stop using mapqueryish stuff
-            var id0 = source.mqlid;
-            var id = this._getContentManager().contentId(id0);
+            var id = this._getContentManager().contentId(source.id);
             // verify element is in DOM
             if ($('#' + id, this._getContext()).length) {
                 return id;
@@ -65,12 +62,6 @@
             this.isActive = true;
         },
         deactivate: function() {
-            this._trigger('featureinfo', null, {
-                action: "deactivate",
-                title: this.element.attr('title'),
-                id: this.element.attr('id')
-            });
-
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
 
@@ -94,21 +85,12 @@
             if (!this.isActive) {
                 return;
             }
-            this._trigger('featureinfo', null, {
-                action: "clicked",
-                title: this.element.attr('title'),
-                id: this.element.attr('id')
-            });
             var self = this;
             var model = this.target.getModel();
-            this.queries = {};
             $.each(model.getSources(), function(idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
-                    self.queries[src.mqlid] = url;
                     self._setInfo(src, url);
-                } else {
-                    self._removeContent(src.mqlid);
                 }
             });
         },
@@ -148,7 +130,7 @@
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     // @todo: stop using mapquery-specific stuff
-                    self._removeContent(source.mqlid);
+                    self._removeContent(source);
                 } else if (self.options.showOriginal) {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
@@ -157,7 +139,7 @@
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                this._removeContent(source.mqlid);
+                this._removeContent(source);
             });
         },
         _isDataValid: function(data, mimetype) {
@@ -171,6 +153,8 @@
             }
         },
         _triggerHaveResult: function(source) {
+            // only used for mobile hacks
+            // @todo: add mobile hacks here, remove event
             var eventData = {
                 action: "haveresult",
                 title: this.element.attr('title'),
@@ -178,25 +162,17 @@
                 source: source,
                 id: this.element.attr('id')
             };
-            Object.defineProperty(eventData, 'mqlid', {
-                enumerable: true,
-                get: function() {
-                    console.warn("You are accessing the legacy .mqlid property on feature info event data. Please access the also provided source object instead")
-                    return this.source.mqlid;
-                }
-            });
             this._trigger('featureinfo', null, eventData);
         },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
-            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     this._open();
                     var iframe = $(this._getIframeDeclaration(null, null));
-                    self._addContent(layerId, layerTitle, iframe);
+                    self._addContent(source, layerTitle, iframe);
                     var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
                         if (Mapbender.Util.addDispatcher) {
@@ -211,16 +187,14 @@
                     break;
                 case 'text/plain':
                 default:
-                    this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
+                    this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
                     this._triggerHaveResult(source);
                     this._open();
                     break;
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
-            // @todo: stop using mapquery-specific stuff
-            var layerId = source.mqlid;
-            this._addContent(layerId, layerTitle, data);
+            this._addContent(source.id, layerTitle, data);
             this._triggerHaveResult(source);
             this._open();
         },
@@ -327,22 +301,17 @@
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-        _removeContent: function(layerId) {
+        _removeContent: function(source) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            $(this._selectorSelfAndSub(manager.headerId(layerId), manager.headerContentSel), $context).remove();
-            $(this._selectorSelfAndSub(manager.contentId(layerId), manager.contentContentSel), $context).remove();
-            delete(this.queries[layerId]);
-            if (!Object.keys(this.queries).length) {
-                $(manager.headerSel, this.element).remove();
-                $(manager.contentSel, this.element).remove();
-            }
+            $(this._selectorSelfAndSub(manager.headerId(source.id), manager.headerContentSel), $context).remove();
+            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), $context).remove();
          },
-        _addContent: function(layerId, layerTitle, content) {
+        _addContent: function(source, layerTitle, content) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            var headerId = manager.headerId(layerId);
-            var contentId = manager.contentId(layerId);
+            var headerId = manager.headerId(source.id);
+            var contentId = manager.contentId(source.id);
             var $header = $('#' + headerId, $context);
             if ($header.length === 0) {
                 $header = manager.$header.clone();
@@ -368,10 +337,10 @@
             var $context = this._getContext();
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var el = $('.js-content-content.active,.active .js-content-content', $context);
-            var printContent = "";
-            if ($('> iframe', el).length === 1) {
-                var a = document.getElementById($('iframe', el).attr('id'));
-                printContent = a.contentWindow.document.documentElement.innerHTML;
+            var printContent;
+            var iframe = $('iframe', el).get(0);
+            if (iframe) {
+                printContent = iframe.contentWindow.document.documentElement.innerHTML;
             } else {
                 printContent = el.html();
             }

@@ -188,7 +188,7 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
      * Returns list of assets of given type required for source instances to work on the client.
      *
      * @param Application $application
-     * @param string $type must be 'js' or 'trans'
+     * @param string $type must be 'js'
      * @return string[]
      */
     public function getAssets(Application $application, $type)

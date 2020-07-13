@@ -57,7 +57,8 @@ class PrintClient extends Element
                 '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
             ),
             'trans' => array(
-                'MapbenderPrintBundle:Element:printclient.json.twig',
+                'mb.core.printclient.btn.*',
+                'mb.print.printclient.joblist.*',
                 'mb.print.imageexport.info.*',
             ),
         );
@@ -106,8 +107,7 @@ class PrintClient extends Element
             "legend_default_behaviour" => true,
             "optional_fields" => array(
                 "title" => array("label" => 'Title', "options" => array("required" => false)),
-                "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
-                "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))),
+            ),
             'required_fields_first' => false,
             "replace_pattern" => null,
             "file_prefix" => 'mapbender',
@@ -119,7 +119,7 @@ class PrintClient extends Element
      */
     public static function getType()
     {
-        return 'mapbender.form_type.element.printclient';
+        return 'Mapbender\PrintBundle\Element\Type\PrintClientAdminType';
     }
 
     /**

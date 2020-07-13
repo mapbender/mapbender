@@ -309,8 +309,8 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'js':
-            case 'trans':
                 return $this->sourceTypeDirectory->getAssets($application, $type);
+            case 'trans':
             case 'css':
                 return array();
             default:
@@ -337,9 +337,8 @@ class ApplicationAssetService
     protected function getDummyTemplateComponent(Entity\Application $application)
     {
         $templateClassName = $application->getTemplate();
-        $appComp = $this->elementFactory->appComponentFromEntity($application);
         /** @var Template $instance */
-        $instance = new $templateClassName($this->dummyContainer, $appComp);
+        $instance = new $templateClassName();
         return $instance;
     }
 

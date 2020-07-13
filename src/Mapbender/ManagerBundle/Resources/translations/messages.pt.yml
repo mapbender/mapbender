@@ -161,48 +161,22 @@ mb:
       popup:
         add_element:
           title: 'Adicionar elemento'
-          btn:
-            ok: Adicionar
-            cancel: Cancelar
-            back: Voltar
         edit_element:
           title: 'Editar elemento'
-          btn:
-            ok: Atualizar
-            cancel: Cancelar
         delete_element:
-          subtitle: Elemento
           title: 'Confirmar eliminação'
-          btn:
-            ok: Remove
-            cancel: Cancelar
         add_edit_layerset:
           title_edit: 'Editar conjunto de camadas'
           title_add: 'Adicionar conjunto de camadas'
-          btn:
-            ok: Ok
-            cancel: Cancelar
         delete_layerset:
           title: 'Remover conjunto de camadas'
-          btn:
-            ok: Remover
-            cancel: Cancelar
         add_instance:
           title: 'Escolher origem de dados'
-          btn:
-            cancel: Cancelar
         delete_instance:
           title: 'Remover instância'
-          btn:
-            ok: Remover
-            cancel: Cancelar
-        element_acl:
-          btn:
-            cancel: Cancelar
-            ok: Atualizar
-            add: Adicionar
-            back: Voltar
-            remove: Remover
+        delete_user_group:
+          title: 'Confirme apagar'
+          content: 'Realmente eliminar %userGroup%?'
     template:
       region:
         tabs:

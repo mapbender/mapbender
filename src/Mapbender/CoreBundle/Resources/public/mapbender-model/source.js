@@ -7,24 +7,82 @@
  */
 
 window.Mapbender = Mapbender || {};
+
+window.Mapbender.LayerGroup = (function() {
+    function LayerGroup(title, parent) {
+        this.title_ = title;
+        this.parent = parent || null;
+        this.children = [];
+        this.siblings = [this];
+    }
+    Object.assign(LayerGroup.prototype, {
+        getTitle: function() {
+            return this.title_;
+        },
+        getActive: function() {
+            var active = this.getSelected();
+            var parent = this.parent;
+            while (parent && active) {
+                active = active && parent.getSelected();
+                parent = parent.parent;
+            }
+            return active;
+        },
+        /**
+         * @return Boolean
+         * @abstract
+         */
+        getSelected: function() {
+            throw new Error("Invoked abstract LayerGroup.getSelected");
+        },
+        removeChild: function(child) {
+            [this.children, this.siblings].forEach(function(list) {
+                var index = list.indexOf(child);
+                if (-1 !== index) {
+                    list.splice(index, 1);
+                }
+            });
+        }
+    });
+    return LayerGroup;
+})();
+
+window.Mapbender.Layerset = (function() {
+    function Layerset(title, id) {
+        Mapbender.LayerGroup.call(this, title, null);
+        this.id = id;
+        // layersets always start out enabled
+        this.selected = true;
+    }
+    Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(Layerset.prototype, {
+        constructor: Layerset,
+        getSelected: function() {
+            return this.selected;
+        }
+    });
+    return Layerset;
+})();
+
 window.Mapbender.Source = (function() {
     function Source(definition) {
+        Mapbender.LayerGroup.call(this, definition.title, null);
         if (definition.id || definition.id === 0) {
             this.id = '' + definition.id;
         }
-        if (definition.origId || definition.origId === 0) {
-            this.origId = '' + definition.origId;
-        }
-        this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
-        this.wmsloader = definition.wmsloader;
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
+        this.children = this.configuration.children;
     }
     Source.typeMap = {};
+    /**
+     * @param {*} definition
+     * @returns {Mapbender.Source}
+     */
     Source.factory = function(definition) {
         var typeClass = Source.typeMap[definition.type];
         if (!typeClass) {
@@ -32,7 +90,8 @@ window.Mapbender.Source = (function() {
         }
         return new typeClass(definition);
     };
-    Source.prototype = {
+    Source.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(Source.prototype, {
         constructor: Source,
         createNativeLayers: function(srsName) {
             console.error("Layer creation not implemented", this);
@@ -42,22 +101,18 @@ window.Mapbender.Source = (function() {
             this.nativeLayers = this.createNativeLayers(srsName);
             return this.nativeLayers;
         },
+        getActive: function() {
+            var upstream = Mapbender.LayerGroup.prototype.getActive.call(this);
+            // NOTE: (only) WmsLoader sources don't have a layerset
+            return upstream && (!this.layerset || this.layerset.getSelected());
+        },
         id: null,
-        origId: null,
-        mqlid: null,
         title: null,
         type: null,
         configuration: {},
         nativeLayers: [],
         recreateOnSrsSwitch: false,
         wmsloader: false,
-        rewriteLayerIds: function() {
-            if (!this.id) {
-                throw new Error("Can't rewrite layer ids with empty source id");
-            }
-            var rootLayer = this.configuration.children[0];
-            rootLayer.rewriteChildIds(this.id);
-        },
         destroyLayers: function() {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
@@ -98,9 +153,6 @@ window.Mapbender.Source = (function() {
         getRootLayer: function() {
             return this.configuration.children[0];
         },
-        supportsMetadata: function() {
-            return !(this.wmsloader || isNaN(parseInt(this.origId)));
-        },
         _reduceBboxMap: function(bboxMap, projCode) {
             if (bboxMap && Object.keys(bboxMap).length) {
                 if (projCode) {
@@ -114,30 +166,6 @@ window.Mapbender.Source = (function() {
                 return bboxMap;
             }
             return null;
-        },
-        /**
-         * @param {string} layerId
-         * @param {boolean} [inheritFromParent] from parent layers; default true
-         * @param {boolean} [inheritFromSource] from source; default true
-         * @returns {null|Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair; null if completely unrestricted
-         */
-        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
-            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
-            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
-            var sourceLayer = this.getLayerById(layerId);
-            var boundsMap = null;
-            while (sourceLayer && !boundsMap) {
-                boundsMap = this._reduceBboxMap(sourceLayer.options.bbox);
-                if (inheritParent_) {
-                    sourceLayer = sourceLayer.parent
-                } else {
-                    break;
-                }
-            }
-            if (!boundsMap && inheritSource_) {
-                boundsMap = this._reduceBboxMap(this.configuration.options.bbox);
-            }
-            return boundsMap;
         },
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layer;
@@ -162,24 +190,23 @@ window.Mapbender.Source = (function() {
         _bboxArrayToBounds: function(bboxArray, projCode) {
             return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
+        _getPrintBaseOptions: function() {
+            return {
+                type: this.configuration.type,
+                sourceId: this.id,
+                // @todo: use live native layer opacity?
+                opacity: this.configuration.options.opacity
+            };
+        },
         // Custom toJSON for mbMap.getMapState()
-        // Drops runtime-specific ollid and mqlid
         // Drops nativeLayers to avoid circular references
         toJSON: function() {
             return {
                 id: this.id,
-                origId: this.origId,
                 title: this.title,
                 type: this.type,
                 configuration: this.configuration
             };
-        }
-    };
-    Object.defineProperty(Source.prototype, 'ollid', {
-        enumerable: true,
-        get: function() {
-            console.warn("Calling shimmed .ollid property accessor on source object", this);
-            return (this.nativeLayers[0] || {}).id || null;
         }
     });
     return Source;
@@ -187,29 +214,22 @@ window.Mapbender.Source = (function() {
 
 window.Mapbender.SourceLayer = (function() {
     function SourceLayer(definition, source, parent) {
+        Mapbender.LayerGroup.call(this, ((definition || {}).options || {}).title || '', parent)
         this.options = definition.options || {};
         this.state = definition.state || {};
-        this.parent = parent;
         this.source = source;
-        if (!this.options.origId && this.options.id) {
-            this.options.origId = this.options.id;
-        }
-        if (definition.children && definition.children.length) {
-            var self = this, i;
-            this.children = definition.children.map(function(childDef) {
-                return SourceLayer.factory(childDef, source, self);
-            });
-            for (i = 0; i < this.children.length; ++i) {
-                this.children[i].siblings = this.children;
-            }
-        } else {
-            // Weird hack because not all places that check for child layers do so
-            // by checking children && children.length, but only do a truthiness test
-            this.children = null;
+        var childDefs = definition.children || [];
+        var i, child, childDef;
+        for (i = 0; i < childDefs.length; ++i) {
+            childDef = childDefs[i];
+            child = SourceLayer.factory(childDef, source, this);
+            child.siblings = this.children;
+            this.children.push(child);
         }
         this.siblings = [this];
     }
-    SourceLayer.prototype = {
+    SourceLayer.prototype = Object.create(Mapbender.LayerGroup.prototype);
+    Object.assign(SourceLayer.prototype, {
         constructor: SourceLayer,
         // need custom toJSON for getMapState call
         toJSON: function() {
@@ -225,19 +245,6 @@ window.Mapbender.SourceLayer = (function() {
         },
         getParent: function() {
             return this.parent;
-        },
-        rewriteChildIds: function(parentId) {
-            if (!this.options.origId) {
-                this.options.origId = this.options.id;
-            }
-            this.options.id = [parentId, '_', this.siblings.indexOf(this)].join('');
-            var nChildren = this.children && this.children.length || 0;
-            for (var chIx = 0; chIx < nChildren; ++chIx) {
-                this.children[chIx].rewriteChildIds(this.options.id);
-            }
-            if (!this.options.origId) {
-                this.options.origId = this.options.id;
-            }
         },
         remove: function() {
             var index = this.siblings.indexOf(this);
@@ -268,8 +275,18 @@ window.Mapbender.SourceLayer = (function() {
                 return this.parent.getBounds(projCode, true);
             }
             return null;
+        },
+        hasBounds: function() {
+            var layer = this;
+            do {
+                if (Object.keys(layer.options.bbox).length) {
+                    return true;
+                }
+                layer = layer.parent;
+            } while (layer);
+            return false;
         }
-    };
+    });
     SourceLayer.typeMap = {};
     SourceLayer.factory = function(definition, source, parent) {
         var typeClass = SourceLayer.typeMap[source.type];

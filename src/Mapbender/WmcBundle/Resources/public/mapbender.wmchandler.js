@@ -37,15 +37,12 @@ Mapbender.WmcHandler = function(mapWidget, options){
         var model = this.mapWidget.getModel();
         var mapProj = model.map.olMap.getProjectionObject();
         if (this.options.keepSources !== 'allsources') {
-            var toKeepSources = {};
-            if (this.options.keepSources === 'basesources') {
-                for(var i = 0; i < model.sourceTree.length; i++){
-                    var source = model.sourceTree[i];
-                    if(source.configuration.isBaseSource)
-                        toKeepSources[source.id] = {sourceId: source.id};
+            for (var i = 0; i < model.sourceTree.length; i++) {
+                var source = model.sourceTree[i];
+                if (!source.configuration.isBaseSource || this.options.keepSources !== 'basesources') {
+                    model.removeSource(source);
                 }
             }
-            this.mapWidget.removeSources(toKeepSources);
         }
         if (state.extent.srs !== mapProj.projCode) {
             try {
@@ -64,20 +61,12 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     
     this._addWmcToMap = function(sources){
-        this.mapWidget.fireModelEvent({
-            name: 'contextaddstart',
-            value: null
-        });
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
-                source.configuration.status = source.configuration.status ? source.configuration.status : 'ok';
-                this.mapWidget.addSource(source, true);
+                source.id = ['wmc', parseInt('' + Math.random() * 10000)].join('-');
+                this.mapWidget.getModel().addSourceFromConfig(source);
             }
         }
-        this.mapWidget.fireModelEvent({
-            name: 'contextaddend',
-            value: null
-        });
     };
 };

@@ -30,18 +30,8 @@
             }else{
                 Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
             }
-            if(this.options.wms_url && this.options.wms_url !== ''){
-                var urlObj = new Mapbender.Util.Url(this.options.wms_url);
-                var options = {
-                    'gcurl': urlObj,
-                    'type': 'url',
-                    'layers': {},
-                    'global': {
-                        'mergeSource': false,
-                        'options': {'treeOptions': {'selected': true}}
-                    }
-                };
-                this.loadWms(options);
+            if (this.options.wms_url) {
+                this.loadWms(this.options.wms_url);
             }
 
             if (this.options.wms_id && this.options.wms_id !== '') {
@@ -88,16 +78,7 @@
                                 var urlObj = new Mapbender.Util.Url(url);
                                 urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
                                 urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
-                                var options = {
-                                    'gcurl': urlObj,
-                                    'type': 'url',
-                                    'layers': {},
-                                    'global': {
-                                        'mergeSource': false,
-                                        'options': {'treeOptions': {'selected': true}}
-                                    }
-                                };
-                                self.loadWms(options);
+                                self.loadWms(urlObj.asString());
                                 self.element.hide().appendTo($('body'));
                                 self.close();
                             }
@@ -122,7 +103,7 @@
             }
         },
         loadDeclarativeWms: function(elm){
-            var layerNamesToActivate = typeof(elm.attr('mb-wms-layers')) !== 'undefined' && elm.attr('mb-wms-layers').split(',');
+            var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
             var sourceUrl = elm.attr('mb-url') || elm.attr('href');
 
@@ -132,18 +113,11 @@
             }
             // No merge allowed or merge allowed but no merge candidate found.
             // => load as an entirely new source
-            var options = {
-                gcurl: new Mapbender.Util.Url(sourceUrl),
-                type: 'declarative',
-                // assigned values are irrelevant, we only need an object with the layer names as keys
-                layers: _.invert(layerNamesToActivate || []),
-                global: {
-                    mergeSource: false,
-                    // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
-                    options: this._layerOptionsOff.options
-                }
-            };
-            this.loadWms(options);
+            this.loadWms(sourceUrl, {
+                layers: layerNamesToActivate,
+                // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
+                keepOtherLayerStates: false
+            });
             return false;
         },
         /**
@@ -156,28 +130,32 @@
             // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
             //       was 'mb-layer-merge'. Just support both equivalently.
             var mergeLayersAttribValue = $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
-            var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
+            var keepCurrentActive = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
             var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
             if (mergeCandidate) {
-                if (layerNamesToActivate !== false) {
-                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers);
-                }
+                this.activateLayersByName(mergeCandidate, layerNamesToActivate, keepCurrentActive);
                 // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
                 //       attributes and config params matter. We leave the source alone completely.
                 return true;    // indicate merge target found, merging performed
             }
             return false;       // indicate no merge target, no merging performed
         },
-        loadWms: function (sourceOpts) {
+        /**
+         * @param {String} url
+         * @param {Object} [options]
+         * @property {Array<String>} [options.layers]
+         * @property {boolean} [options.keepOtherLayerStates]
+         */
+        loadWms: function (url, options) {
             var self = this;
             $.ajax({
                 url: self.elementUrl + 'loadWms',
                 data: {
-                    url: sourceOpts.gcurl.asString()
+                    url: url
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){
-                    self._addSources(data, sourceOpts);
+                    self._addSources(data, options || {});
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
@@ -195,8 +173,8 @@
                 dataType: 'json',
                 success: function(response) {
                     (response.success || []).map(function(sourceDef) {
-                        if (!self.mbMap.model.getSource({id: sourceDef.id})) {
-                            self.mbMap.addSource(sourceDef, false);
+                        if (!self.mbMap.model.getSourceById(sourceDef.id)) {
+                            self.mbMap.model.addSourceFromConfig(sourceDef);
                         }
                     });
                 },
@@ -205,28 +183,25 @@
                 }
             });
         },
-        _addSources: function(sourceDefs, sourceOpts) {
+        /**
+         * @param {Array<Object>} sourceDefs
+         * @param {Object} options
+         * @property {Array<String>} [options.layers]
+         * @property {boolean} [options.keepOtherLayerStates]
+         */
+        _addSources: function(sourceDefs, options) {
+            var keepStates = options.keepOtherLayerStates || (typeof (options.keepOtherLayerStates) === 'undefined');
             var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
-            var self = this;
-            $.each(sourceDefs, function(idx, sourceDef) {
-                var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
+            for (var i = 0; i < sourceDefs.length; ++i) {
+                var sourceDef = sourceDefs[i];
+                var sourceId = srcIdPrefix + '-' + (this.loadedSourcesCount++);
                 sourceDef.id = sourceId;
-                sourceDef.origId = sourceId;
-                // Need to pre-generate layer ids now because layer activation only works if layers
-                // already have ids
+                // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
-                sourceDef.wmsloader = true;
-                var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);
-                var updateTarget = mergeCandidate || sourceDef;
-                var defaultLayerActive = sourceOpts.global.options.treeOptions.selected;
-                self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive);
+                this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
-                if (!mergeCandidate) {
-                    self.mbMap.addSource(sourceDef, false);
-                } else {
-                    self.mbMap.model.updateSource(mergeCandidate);
-                }
-            });
+                this.mbMap.model.addSourceFromConfig(sourceDef);
+            }
         },
         /**
          * Locates an already loaded source with an equivalent base url, returns that source object or null

@@ -20,17 +20,25 @@ abstract class RefreshableSourceLoader extends SourceLoader
      */
     public function refresh(Source $target, HttpOriginInterface $origin)
     {
-        $reloadedSource = $this->evaluateServer($origin, false)->getSource();
-        if ($target->getType() !== $reloadedSource->getType()) {
-            $message = "Source type mismatch: {$target->getType()} (old) vs {$reloadedSource->getType()} (reloaded)";
-            throw new RefreshTypeMismatchException($message);
-        }
+        $reloadedSource = $this->evaluateServer($origin);
         $this->updateSource($target, $reloadedSource);
         $this->updateOrigin($target, $origin);
-        $target->setValid(true);
     }
 
-    abstract protected function updateSource(Source $target, Source $reloaded);
+    /**
+     * @param Source $target
+     * @param Source $reloaded
+     * @throws RefreshTypeMismatchException
+     */
+    protected function beforeSourceUpdate(Source $target, Source $reloaded)
+    {
+        if ($target->getType() !== $reloaded->getType()) {
+            $message = "Source type mismatch: {$target->getType()} (old) vs {$reloaded->getType()} (reloaded)";
+            throw new RefreshTypeMismatchException($message);
+        }
+    }
+
+    abstract public function updateSource(Source $target, Source $reloaded);
 
     /**
      * @param Source $target

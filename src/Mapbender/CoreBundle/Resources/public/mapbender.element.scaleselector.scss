@@ -1,5 +1,9 @@
 .mb-element-scaleselector {
-  &.dropdown {
-    width: 100px;
+  .dropdown {
+    min-width: 100px;
+  }
+  span + .dropdown {
+    // keep label and dropdown on one line
+    float: right;
   }
 }

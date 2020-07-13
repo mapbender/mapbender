@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\SQLSearchEngine;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -59,9 +58,6 @@ class SearchRouter extends Element
             "asDialog"      => false,
         );
     }
-
-    /** @var Form[] Element search forms */
-    protected $forms;
 
     /**
      * @return array
@@ -123,6 +119,14 @@ class SearchRouter extends Element
         return 'MapbenderCoreBundle:Element:search_router.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        return array(
+            'route_select_form' => $this->getRouteSelectForm()->createView(),
+            'search_forms' => $this->getFormViews(),
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -180,7 +184,6 @@ class SearchRouter extends Element
         }
 
         if ('search' === $action) {
-            $this->getForms();
             $data = json_decode($request->getContent(), true);
             $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
@@ -201,7 +204,7 @@ class SearchRouter extends Element
     /**
      * Create form for selecting search route (= search form) to display.
      *
-     * @return FormView Search route select form
+     * @return FormInterface Search route select form
      */
     public function getRouteSelectForm()
     {
@@ -214,7 +217,7 @@ class SearchRouter extends Element
             null,
             array('routes' => $configuration['routes'])
         );
-        return $form->createView();
+        return $form->get('route');
     }
 
     /**
@@ -229,23 +232,6 @@ class SearchRouter extends Element
         return $factory->createNamed($categoryId, 'Mapbender\CoreBundle\Element\Type\SearchRouterFormType', null, array(
             'fields' => $categoryConfig,
         ));
-    }
-
-    /**
-     * Get all forms.
-     *
-     * @return Form[] Search forms
-     */
-    public function getForms()
-    {
-        $forms = array();
-        $configuration = $this->getConfiguration();
-        foreach ($configuration['routes'] as $name => $conf) {
-            $forms[$name] = $this->getForm($conf, $name);
-        }
-        // Legacy / inheritance compatibility HACK: store forms in instance attribute
-        $this->forms = $forms;
-        return $forms;
     }
 
     /**
@@ -281,20 +267,6 @@ class SearchRouter extends Element
             }
         }
         return $configuration;
-    }
-
-    /**
-     * GeoJSON FeatureCollection
-     *
-     * @param array $features
-     * @return array
-     */
-    protected function getFeatureCollection(&$features)
-    {
-        return array(
-            'type'     => 'FeatureCollection',
-            'features' => $features
-        );
     }
 
     /**

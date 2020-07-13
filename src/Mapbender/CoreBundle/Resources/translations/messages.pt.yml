@@ -127,24 +127,9 @@ mb:
         scale: Escala
         rotation: Rotação
         legend: 'Imprimir legenda'
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'Nenhuma camada ativa'
-      form:
-        required: 'Por favor, preencha este campo.'
       class:
         title: Impressão
         description: 'Diálogo de Impressão'
-      tag:
-        print: Impressão
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -174,8 +159,6 @@ mb:
         position: Posição
         button: Button
     layertree:
-      confirm:
-        allremove: 'Limpar todos os serviços?'
       popup:
         btn:
           ok: Fechar
@@ -194,14 +177,11 @@ mb:
         opacity: Dimensão
         zoomtolayer: 'Ampliar em cima de camada'
         metadata: Metadados
-        sources: Origem
-        deleteallsources: 'Tirar todos os serviços'
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'Dimensão ligada/desligada'
         dimension: Dimensão
         sourcevisibility_onoff: 'Visibilidade ligada/desligada'
-        allvisibility_on: 'Mostrar todas as camadas'
       class:
         title: 'Árvore de camadas'
         description: 'Árvore de camadas de mapa'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Mostrar BaseSources'
           autoopen: 'Abrir automaticamente'
-          showheader: 'Mostrar header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Mostrar o tema'
           themes: Temas
@@ -324,8 +303,6 @@ mb:
             opened: 'Tema aberto/fechado'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Camada temática'
-            sourceVisibility: 'Tema: Visibilidade de serviços'
-            allSelected: 'Tema: Visibilidade de camadas'
             label: 'Nome do tema'
           hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
           hideselect: 'Ocultar visibilidade de arquivos'
@@ -360,8 +337,3 @@ mb:
       class:
         title: Redlining
         description: 'Ferramenta: Redlining'
-  geosource:
-    image_error:
-      datails: 'Não pode mostra o mapa.'
-      exception: 'Exceção: %exception%'
-      statuscode: 'Código de status HTTP'

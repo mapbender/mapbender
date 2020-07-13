@@ -134,24 +134,9 @@ mb:
         scale: Maßstab
         rotation: Drehung
         legend: 'Legende drucken'
-      popup:
-        btn:
-          ok: Drucken
-          cancel: Abbrechen
-      info:
-        noactivelayer: 'Keine aktive Ebene!'
-      form:
-        required: 'Bitte füllen Sie dieses Feld aus'
       class:
         title: Druck
         description: 'Druck Dialog'
-      tag:
-        print: Druck
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Druckrahmen deaktivieren'
         activate: 'Druckrahmen aktivieren'
@@ -181,8 +166,6 @@ mb:
         position: Position
         button: Button
     layertree:
-      confirm:
-        allremove: 'Sollen wirklich alle Dienste gelöscht werden?'
       popup:
         btn:
           ok: Schließen
@@ -201,15 +184,12 @@ mb:
         opacity: Deckkraft
         zoomtolayer: 'Zoom auf Ebene'
         metadata: Metadaten
-        sources: Quellen
-        deleteallsources: 'Alle Dienste entfernen'
         legend: Legende
         kmlexport: 'KML Export'
         dimensions: Dimensions
         dimension_onoff: 'An/Aus Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
-        allvisibility_on: 'Alle Layer anzeigen'
       class:
         title: Ebenenbaum
         description: 'Baum der Karten-Ebenen'
@@ -325,7 +305,6 @@ mb:
         label:
           showbasesources: 'BaseSources anzeigen'
           autoopen: 'Automatisches Öffnen'
-          showheader: 'Header anzeigen'
           showlayerremove: '"Layer entfernen" anzeigen'
           usetheme: 'Thematischer Layer'
           themes: Themen
@@ -333,8 +312,6 @@ mb:
             opened: 'Thema geöffnet/geschlossen'
             activate: 'Aktivieren von Layers hinzufügen/entfernen'
             useTheme: 'Thema anzeigen'
-            sourceVisibility: 'Thema: Dienste-Sichtbarkeit'
-            allSelected: 'Thema: Layer-Sichtbarkeit'
             label: Themenname
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
@@ -372,11 +349,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining Werkzeug'
-  geosource:
-    image_error:
-      datails: 'Die Karte kann nicht angezeigt werden.'
-      exception: 'Ausnahmefehler: %exception%'
-      statuscode: 'HTTP Statuscode'
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

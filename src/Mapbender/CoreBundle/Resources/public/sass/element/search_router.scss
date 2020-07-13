@@ -38,12 +38,7 @@ $searchRouterInputWidth: 100%;
     }
   }
   .search-action-buttons {
-    a.button {
-      text-decoration: none;
-      &:hover, &:active, &:focus {
-        color: #fff;
-      }
-    }
+    text-align: right;
   }
   th {
     @extend .subTitle;

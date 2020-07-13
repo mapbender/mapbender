@@ -35,37 +35,6 @@
             return this.model.getMapState();
         },
         /**
-         *
-         */
-        addSource: function(sourceDef, mangleIds) {
-            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
-            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
-        },
-        /**
-         *
-         */
-        removeSources: function(keepSources){
-            this.model.removeSources(keepSources);
-        },
-        /**
-         * Triggers an event from the model.
-         * options.name - name of the event,
-         * options.value - parameter in the form of:
-         * options.value.mapquerylayer - for a MapQuery.Layer,
-         * options.value.source - for a source from the model.sourceTree,
-         * options.value.tochange - for a "tochange" object
-         * options.value.changed -  for a "changed" object
-         */
-        fireModelEvent: function(options) {
-            this._trigger(options.name, null, options.value);
-        },
-        /**
-         * Returns a sourceTree from model.
-         **/
-        getSourceTree: function(){
-            return this.model.sourceTree;
-        },
-        /**
          * Returns all defined srs
          */
         getAllSrs: function(){
@@ -144,33 +113,6 @@
          */
         scales: function(){
             return this.options.scales;
-        },
-        /**
-         * Sets opacity to source
-         * @param {spource} source
-         * @param {float} opacity
-         */
-        setOpacity: function(source, opacity){
-            this.model.setOpacity(source, opacity);
-        },
-        /**
-         * Zooms to layer
-         * @param {object} options of form { sourceId: XXX, layerId: XXX }
-         */
-        zoomToLayer: function(options){
-            this.model.zoomToLayer(options);
-        },
-        /**
-         * Turns on the highlight layer at map
-         */
-        highlightOn: function(features, options){
-            this.model.highlightOn(features, options);
-        },
-        /**
-         * Turns off the highlight layer at map
-         */
-        highlightOff: function(features){
-            this.model.highlightOff(features);
         }
     });
 

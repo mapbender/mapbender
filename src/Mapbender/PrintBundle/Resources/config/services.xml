@@ -57,7 +57,6 @@
              see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes
              NOTE: this will never REDUCE memory limit vs a system configuration (php.ini etc), it only works upwards -->
         <parameter key="mapbender.print.queue.memory_limit">1G</parameter>
-        <parameter key="mapbender.form_type.element.printclient.class">Mapbender\PrintBundle\Element\Type\PrintClientAdminType</parameter>
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
@@ -132,7 +131,7 @@
             <argument>%mapbender.print.queue.storage_dir%</argument>
             <argument>%mapbender.print.queue.load_path%</argument>
         </service>
-        <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
+        <service id="mapbender.form_type.element.printclient" class="Mapbender\PrintBundle\Element\Type\PrintClientAdminType">
             <argument>%mapbender.print.queueable%</argument>
             <tag name="form.type" />
         </service>

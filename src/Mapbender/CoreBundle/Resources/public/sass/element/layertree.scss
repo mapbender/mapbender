@@ -3,6 +3,8 @@
   .leave {
     // for absolute menu positioning
     position: relative;
+  }
+  .leave .leave, .themeContainer .leave {
     margin-left: calc(1em + 5px)
   }
 
@@ -18,10 +20,6 @@
   .checkWrapper + .featureInfoWrapper {
     margin-left: 5px;
   }
-  .checkWrapper.sourceVisibilityWrapper {
-    margin-left: 2px;
-  }
-
   .iconFolder{
     display:none;
   }
@@ -79,17 +77,6 @@
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
 
-    .leave{
-      &:before{
-        content:'';
-        display: block;
-        height:5px;
-        width:5px;
-      }
-    }
-    .leave.groupContainer:before {
-      left: -13px;    // ~= font size
-    }
     .leaveContainer{
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
@@ -101,14 +88,6 @@
         }
       }
     }
-  }
-  .checkWrapper.sourceVisibilityWrapper:before{
-    content: "\f10c";
-    font-family: 'FontAwesome';
-  }
-  .checkWrapper.sourceVisibilityWrapper.iconCheckboxActive:before{
-    content: "\f05d" !important;
-    font-family: 'FontAwesome';
   }
   [data-state="loading"]{
     @include opacity(.7);

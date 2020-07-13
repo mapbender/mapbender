@@ -127,24 +127,9 @@ mb:
         scale: Scala
         rotation: Rotazione
         legend: 'Stampa la legenda'
-      popup:
-        btn:
-          ok: Stampa
-          cancel: Cancella
-      info:
-        noactivelayer: 'Nessun layer attivo!'
-      form:
-        required: 'Per favore compila il campo'
       class:
         title: 'Stampa'
         description: 'Mostra la finestra di stampa'
-      tag:
-        print: Stampa
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Disattiva il frame per la stampa'
         activate: 'Attiva il frame della stampa'
@@ -174,8 +159,6 @@ mb:
         position: Posizione
         button: Pulsante
     layertree:
-      confirm:
-        allremove: 'Vuoi veramente cancellare tutte le risorse?'
       popup:
         btn:
           ok: Chiudi
@@ -194,14 +177,11 @@ mb:
         opacity: Opacità
         zoomtolayer: 'Fai zoom sul layer'
         metadata: Metadata
-        sources: Risorse
-        deleteallsources: 'Rimuovere tutti le risorse'
         legend: Legenda
         kmlexport: 'esporta KML'
         dimension_onoff: 'On/Off Dimensione'
         dimension: Dimensione
         sourcevisibility_onoff: 'Mostra risorsa'
-        allvisibility_on: 'Mostra tutti i layers'
       class:
         title: 'Layer tree'
         description: 'Tree dei layers della mappa'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Mostra la risorsa di base'
           autoopen: 'Apertura automatica'
-          showheader: 'Mostra header'
           showlayerremove: 'Mostra i layer rimossi'
           usetheme: 'Layer tematico'
           themes: Temi
@@ -324,8 +303,6 @@ mb:
             opened: aperto
             activate: 'Abilita Aggiunta/Rimozione Layer'
             useTheme: 'Mostra tema'
-            sourceVisibility: 'Tema: visibilità della risorsa'
-            allSelected: 'Tema: visibilità del layer'
             label: 'nome del tema'
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideselect: 'Nascondi la visibilità per le cartelle'
@@ -360,11 +337,6 @@ mb:
       class:
         title: Redlining
         description: 'Strumento di Redlining'
-  geosource:
-    image_error:
-      datails: 'La mappa non può essere mostrata.'
-      exception: 'Eccezione: %exception%'
-      statuscode: 'HTTP status code'
 
 # Login exceptions
 "Bad credentials.": Credentiali errate.

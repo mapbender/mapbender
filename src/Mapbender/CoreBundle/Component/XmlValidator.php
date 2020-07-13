@@ -1,30 +1,29 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Buzz\Message\Response;
+use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * XmlValidator class to validate xml documents.
  *
  * @author Paul Schmidt
+ *
+ * Legacy mix of service and transient runtime data. Do not instantiate directly.
+ * Use XmlValidatorService as a frontend.
+ * @internal
  */
 class XmlValidator
 {
-    /**
-     *
-     * @var ContainerInterface container
-     */
-    protected $container;
+    /** @var LoggerInterface */
+    protected $logger;
+    /** @var HttpTransportInterface */
+    protected $httpTransport;
 
     /**
-     * @var string path to built-in schemas shipping with mapbender. This is an optimization, avoiding ad-hoc
+     * @var string|false path to built-in schemas used for the validation session. This is an optimization, avoiding ad-hoc
      *   downloads of commonly used schemas
-     * @todo: these are currently in web, in mapbender-starter; they should be part of a Resources package
      */
     protected $shippingSchemaDir = null;
 
@@ -40,16 +39,22 @@ class XmlValidator
     protected $filesToDelete;
 
     /**
-     * XmlValidator constructor.
-     *
-     * @param  ContainerInterface $container
+     * @param HttpTransportInterface $httpTransport
+     * @param LoggerInterface $logger
+     * @param string $tempDir
+     * @param string|null|false $staticSchemaPath
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(HttpTransportInterface $httpTransport, LoggerInterface $logger,
+                                $tempDir, $staticSchemaPath = null)
     {
-        $this->container     = $container;
-        $shippingRoot = $this->container->get('kernel')->getRootDir() . '/../web/xmlschemas';
-        $this->shippingSchemaDir = $this->ensureDirectory($this->normalizePath($shippingRoot));
-        $this->schemaDownloadDir = $this->ensureDirectory(sys_get_temp_dir() . '/mapbender/xmlvalidator');
+        $this->logger = $logger;
+        $this->httpTransport = $httpTransport;
+        $this->schemaDownloadDir = $this->ensureDirectory($tempDir);
+        if ($staticSchemaPath) {
+            $this->shippingSchemaDir = $this->normalizePath($staticSchemaPath);
+        } else {
+            $this->shippingSchemaDir = false;
+        }
         $this->filesToDelete = array();
     }
 
@@ -57,7 +62,6 @@ class XmlValidator
      * Validates a xml document
      *
      * @param \DOMDocument $doc a xml dicument
-     * @return \DOMDocument the validated xml document
      * @throws \Exception
      * @throws XmlParseException
      */
@@ -75,11 +79,6 @@ class XmlValidator
             throw $e;
         }
         $this->removeFiles();
-        /**
-         * @todo: return value is === passed argument and not used at any calling site in mapbender itself. Evaluate
-         * if it's safe to remove return
-         */
-        return $doc;
     }
 
 
@@ -133,7 +132,7 @@ EOF
             foreach ($errors as $error) {
                 $message .= "\n" . $error->message;
             }
-            $this->getLogger()->error($message);
+            $this->logger->error($message);
             libxml_clear_errors();
             throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
         }
@@ -340,7 +339,7 @@ EOF
         }
         $wrongType = (is_file($path) ? "file" : (is_link($path) ? "symlink" : ""));
         if ($wrongType) {
-            $this->getLogger()->warning("Need directory at " . var_export($path, true) . ", found $wrongType => deleting");
+            $this->logger->warning("Need directory at " . var_export($path, true) . ", found $wrongType => deleting");
             unlink($path);
         }
         if (!is_dir($path)) {
@@ -378,22 +377,7 @@ EOF
      */
     protected function download($url)
     {
-        $proxy_query = ProxyQuery::createFromUrl($url);
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy = new CommonProxy($proxy_config, $proxy_query);
-        /** @var Response $response */
-        $response = $proxy->handle();
-        return $response->getContent();
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get("logger");
-        return $logger;
+        return $this->httpTransport->getUrl($url)->getContent();
     }
 
     /**

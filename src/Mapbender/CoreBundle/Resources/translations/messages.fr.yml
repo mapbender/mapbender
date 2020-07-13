@@ -127,24 +127,9 @@ mb:
         scale: Échelle
         rotation: Rotation
         legend: 'Imprimer la légende'
-      popup:
-        btn:
-          ok: Imprimer
-          cancel: Annuler
-      info:
-        noactivelayer: 'Aucune couche n''est activée!'
-      form:
-        required: 'Ce champ est obligatoire'
       class:
         title: 'Client d''impression'
         description: 'Affiche une fenêtre d''impression. Permet d''exporter en format PDF'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Désactiver le cadre de l''impression'
         activate: 'Activer le cadre de l''impression'
@@ -174,8 +159,6 @@ mb:
         position: position
         button: button
     layertree:
-      confirm:
-        allremove: 'Voulez-vous vraiment supprimer toutes les sources?'
       popup:
         btn:
           ok: Fermer
@@ -194,14 +177,11 @@ mb:
         opacity: Opacité
         zoomtolayer: ~
         metadata: Metadonnées
-        sources: Sources
-        deleteallsources: 'Supprimer toutes les sources'
         legend: Légende
         kmlexport: 'Exporter en KML'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Afficher les sources'
-        allvisibility_on: 'Afficher toutes les couches'
       class:
         title: 'Arborescence des couches'
         description: 'Arborescence des couches de la carte'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Afficher les fonds de carte'
           autoopen: Autoopen
-          showheader: 'Afficher l''entête'
           showlayerremove: 'Afficher l''option de supression de couche'
           usetheme: 'Couche thématique'
           themes: Themes
@@ -324,8 +303,6 @@ mb:
             opened: ouvert
             activate: 'Permettre la suppression/l''ajout de couches'
             useTheme: 'Afficher le thème'
-            sourceVisibility: 'Thème: visibilité de la source'
-            allSelected: 'Thème: visibilité de la source'
             label: 'nom du thème'
           hidenottoggleable: 'Ne pas afficher les couches non-basculables'
           hideselect: 'Ne pas afficher la visiblité pour les dossiers'
@@ -358,11 +335,6 @@ mb:
       class:
         title: Annotation
         description: 'Outil d''annotation'
-  geosource:
-    image_error:
-      datails: 'La carte ne peut pas être affichée.'
-      exception: 'Exception: %exception%'
-      statuscode: 'Code de statut HTTP'
 
 # Login exceptions
 "Bad credentials.": 'Le mot de passe ou le nom d''utilisateur est invalide'

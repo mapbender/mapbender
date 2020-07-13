@@ -19,8 +19,6 @@ class LayerThemeType extends AbstractType
             'title' => '',
             'useTheme' => true,
             'opened' => true,
-            'sourceVisibility' => false,
-            'allSelected' => false,
         ));
     }
 
@@ -36,12 +34,6 @@ class LayerThemeType extends AbstractType
                 'required' => false,
             ))
             ->add('opened', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-            ))
-            ->add('sourceVisibility', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-            ))
-            ->add('allSelected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
         ;

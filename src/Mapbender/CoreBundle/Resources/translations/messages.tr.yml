@@ -126,24 +126,9 @@ mb:
         scale: 'Ölçek'
         rotation: 'Dönüklük'
         legend: 'Lejant yazdır'
-      popup:
-        btn:
-          ok: 'Yazdır'
-          cancel: 'Vazgeç'
-      info:
-        noactivelayer: 'Etkin katman yok!'
-      form:
-        required: 'Lütfen bu alanı doldurun'
       class:
         title: 'Yazıcı istemcisi'
         description: 'Yazdır penceresi gösterir'
-      tag:
-        print: 'Yazdır'
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Yazdırılan Alan Çerçevesini Devre Dışı Bırak'
         activate: 'Yazdırılan Alan Çerçevesini Etkinleştir'
@@ -173,8 +158,6 @@ mb:
         position: 'Konum'
         button: 'Buton'
     layertree:
-      confirm:
-        allremove: 'Bütün kaynaklar silinsin mi?'
       popup:
         btn:
           ok: 'Kapat'
@@ -193,14 +176,11 @@ mb:
         opacity: 'Opaklık'
         zoomtolayer: 'Katmana yakınlaştır'
         metadata: ' Üstveri (Metadata)'
-        sources: 'Kaynaklar'
-        deleteallsources: 'Tüm kaynakları kaldır'
         legend: 'Lejant'
         kmlexport: 'KML formatında dışa aktar (Export)'
         dimension_onoff: 'Boyutlar Açık/Kapalı'
         dimension: 'Boyut'
         sourcevisibility_onoff: 'Kaynaklari göster'
-        allvisibility_on: 'Bütün Katmanlari göster'
       class:
         title: 'Katman ağacı'
         description: 'Haritanın katman ağacı'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Altlık kaynaklarını göster'
           autoopen: 'Otomatik aç'
-          showheader: 'Başlığı göster'
           showlayerremove: 'Katman kaldır aracını göster'
           usetheme: 'Tematik katman'
           themes: 'Temalar'
@@ -324,8 +303,6 @@ mb:
             opened: 'Açıldı'
             activate: 'Katman ekle/kaldır aracını ekler'
             useTheme: 'Temaları göster'
-            sourceVisibility: 'Kaynak görünürlüğü'
-            allSelected: 'Katman görünürlüğü'
             label: 'Tema isimleri'
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'
@@ -358,9 +335,4 @@ mb:
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
-  geosource:
-    image_error:
-      datails: 'Harita Görüntülenemiyor.'
-      exception: 'Kural-dışı: %exception%'
-      statuscode: 'HTTP durum kodu'
 

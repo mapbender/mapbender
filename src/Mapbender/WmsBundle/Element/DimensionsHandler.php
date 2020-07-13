@@ -134,16 +134,15 @@ class DimensionsHandler extends Element implements BoundConfigMutator
             return $appConfig;
         }
 
-        foreach ($appConfig['layersets'] as &$layerList) {
-            foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (empty($instances[$layerId]) || empty($layerDef['configuration']['options']['dimensions'])) {
-                        // layer is not controllable through DimHandler, leave its config alone
-                        continue;
-                    }
-                    $dimConfig = $instances[$layerId]->getConfiguration();
-                    $this->updateDimensionConfig($layerDef['configuration']['options']['dimensions'], $dimConfig);
+        foreach ($appConfig['layersets'] as &$layersetConfig) {
+            foreach ($layersetConfig['instances'] as &$layerDef) {
+                $layerId = $layerDef['id'];
+                if (empty($instances[$layerId]) || empty($layerDef['configuration']['options']['dimensions'])) {
+                    // layer is not controllable through DimHandler, leave its config alone
+                    continue;
                 }
+                $dimConfig = $instances[$layerId]->getConfiguration();
+                $this->updateDimensionConfig($layerDef['configuration']['options']['dimensions'], $dimConfig);
             }
         }
         return $appConfig;

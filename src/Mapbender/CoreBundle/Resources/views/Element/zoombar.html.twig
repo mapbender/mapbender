@@ -37,8 +37,12 @@
         {% if 'zoom_in_out' in configuration.components %}
         <div class="iconZoomIn iconBig" title="{{ "mb.core.zoombar.zoomin" | trans }}"></div>
         {% endif %}
-        {% if 'zoom_slider' in configuration.components %}
-        <ul class="zoomSliderLevels"></ul>
+        {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
+        <ul class="zoomSliderLevels">
+            {%- for _level, _scale in zoom_levels -%}
+            <li class="iconZoomLevel" title="1:{{ _scale }}" data-zoom="{{ _level }}"></li>
+            {%- endfor -%}
+        </ul>
         {% endif %}
         {% if 'zoom_in_out' in configuration.components %}
         <div class="iconZoomOut iconBig" title="{{ "mb.core.zoombar.zoomout" | trans }}"></div>

@@ -26,8 +26,15 @@ mb:
       create:
         success: A new instance has been created. Please edit it.
   manager:
+    confirm_form_discard: Discard changes?
     sourceinstance:
-      embedded_in_applications: '{0} This instance is not attached to any application|{1} This source is assigned to one application|]1,Inf[ This instance is attached to %count% applications'
+      embedded_in_applications: '{0} This instance is not used in any application|{1} This instance is used in one application|]1,Inf[ This instance is used in %count% applications'
+      convert_to_reusable: Convert to shared instance
+      convert_to_bound: Convert to bound instance
+      converted_to_bound: A bound copy of the shared instance has been added to the application
+      reusable_added_to_application: The shared instance has been added to the application
+      create_reusable: Create shared instance
+      created_reusable: A new shared instance has been created
     admin:
       sources: Sources
       source:
@@ -157,9 +164,6 @@ mb:
       acl_element: 'Acl element'
       import_application: Import
       export_application: Export
-    element:
-      yaml:
-        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     be:
       element:
         delete: 'Delete element ''%element_title%'''
@@ -167,48 +171,22 @@ mb:
       popup:
         add_element:
           title: 'Add element'
-          btn:
-            ok: Ok
-            cancel: Cancel
-            back: Back
         edit_element:
           title: 'Edit element'
-          btn:
-            ok: Update
-            cancel: Cancel
         delete_element:
-          subtitle: element
           title: 'Confirm delete'
-          btn:
-            ok: Delete
-            cancel: Cancel
         add_edit_layerset:
           title_edit: 'Edit layerset'
           title_add: 'Add layerset'
-          btn:
-            ok: Ok
-            cancel: Cancel
         delete_layerset:
           title: 'Delete layerset'
-          btn:
-            ok: Delete
-            cancel: Cancel
         add_instance:
           title: 'Select source'
-          btn:
-            cancel: Cancel
         delete_instance:
           title: 'Confirm delete'
-          btn:
-            ok: Delete
-            cancel: Cancel
-        element_acl:
-          btn:
-            cancel: Cancel
-            ok: Update
-            add: Add
-            back: Back
-            remove: Remove
+        delete_user_group:
+          title: 'Confirm delete'
+          content: 'Really delete %userGroup%?'
     template:
       region:
         tabs:

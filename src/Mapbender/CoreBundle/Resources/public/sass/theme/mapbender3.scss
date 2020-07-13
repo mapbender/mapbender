@@ -35,8 +35,8 @@
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
     [class^="icon"], [class*=" icon"] {
-      &:before {
-        margin-right: 0.4rem;
+      & +* {
+        margin-left: 0.4em;
       }
     }
   }

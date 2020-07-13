@@ -16,7 +16,7 @@
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
             <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.xmlvalidator.service" />
         </service>
         <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
             <argument type="service" id="mapbender.source.url_processor.service" />
@@ -31,6 +31,10 @@
         <service id="mapbender.sourceinstance.wms.form" class="Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType">
             <argument>%mapbender.preview.layer_order.wms%</argument>
             <tag name="form.type" />
+        </service>
+        <service id="mapbender.init_db_handler.prune_invalid_wms_sources" class="Mapbender\WmsBundle\EventHandler\InitDb\PruneInvalidWmsSourcesHandler">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="kernel.event_subscriber" />
         </service>
     </services>
 </container>

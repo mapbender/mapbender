@@ -468,7 +468,7 @@
         _collectLegends: function() {
             var legends = [];
             var scale = this._getPrintScale();
-            var sources = this._getRasterSourceDefs();
+            var sources = this._getRasterSources();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
                 var rootLayer = source.configuration.children[0];

@@ -3,12 +3,23 @@
  * See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/public/js/widgets
  */
 $(function () {
+    function isMbDropdown(element) {
+        var $element = $(element);
+        if ($element.is('select')) {
+            return $element.is('.hiddenDropdown') && $element.parent('.dropdown').length;
+        } else {
+            return $element.is('.dropdown') && $('> select.hiddenDropdown', $element).length;
+        }
+    }
     function fixOptions(scope) {
+        var $selects = $('select', scope).filter(function() {
+            return isMbDropdown(this);
+        });
         // Update (potentially runtime generated) dropdown markup,
         // replace correlating opt-... and item-... classes with
         // a 'data-value' attribute and a 'choice' class on the display item
         // matching requires an implicit hyphen, see https://api.jquery.com/attribute-contains-prefix-selector/
-        $('select option[class|="opt"]', scope).each(function() {
+        $('option[class|="opt"]', $selects).each(function() {
             var $opt = $(this);
             var optClass = ($opt.attr('class').match(/opt-\d+/) || [])[0];
 
@@ -41,6 +52,11 @@ $(function () {
     }
 
     function initDropdown() {
+        if (!isMbDropdown(this)) {
+            console.warn("Ignoring not-mapbender-dropdown", this);
+            return;
+        }
+
         fixOptions(this);
         var $select = $('select', this);
         var $form = $select.closest('form');

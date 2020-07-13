@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<WMS_Capabilities xmlns="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd">
+    <Service>
+        <Name>WMS</Name>
+        <Title>WMS layer reload test data - base state</Title>
+        <OnlineResource/>
+    </Service>
+    <Capability>
+        <Request>
+            <GetMap>
+                <Format>image/png</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource/>
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetMap>
+        </Request>
+        <Layer>
+            <Title>Root layer</Title>
+            <Layer>
+                <Title>First root child (leaf)</Title>
+                <Name>A</Name>
+            </Layer>
+            <Layer>
+                <Title>Second root child (unnamed group)</Title>
+                <Layer>
+                    <Title>First child of first group</Title>
+                    <Name>B1</Name>
+                </Layer>
+                <Layer>
+                    <Title>Second child of first group</Title>
+                    <Name>B2</Name>
+                </Layer>
+            </Layer>
+            <Layer>
+                <Title>Third root child (leaf)</Title>
+                <Name>C</Name>
+            </Layer>
+        </Layer>
+    </Capability>
+</WMS_Capabilities>

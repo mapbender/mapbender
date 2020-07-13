@@ -1,15 +1,13 @@
-.mb-element-basesourceswitcher{
-  li{
-    padding:0px 5px 0px 5px;
+.mb-element-basesourceswitcher {
+  display: table-row;
+  li {
+    padding: 0 5px;
     background-color: #b5b5b5;
-    display:inline-block;
-    margin-right:-4px;
-    color:$lightFontColor;
+    display: inline-block;
     cursor:pointer;
     @include transition(all .2s ease-in-out);
-    position: relative;
-    border:solid 1px $thirdColor;
-    border-right-width: 0px;
+    border: solid 1px $thirdColor;
+    border-right-width: 0;
     &:first-child{@include border-left-radius($radius);}
     &:last-child{
       @include border-right-radius($radius);
@@ -20,26 +18,33 @@
       background-color: $contentColor;
     }
   }
-  li ul{
-    position: absolute;
-    text-align: right;
-    right: 3px;
-    z-index: 1;
-  }
-  li ul li{
-    /*width: 100%;*/
-    display: list-item;
-    border:solid 1px $thirdColor;
-    border-bottom-width: 0px;
-    white-space: nowrap;
-    &:first-child{
-      @include border-left-radius(0);
-      @include border-top-radius($radius);
+  .basesourcegroup {
+    position: relative;
+    ul {
+      display: none;
+      position: absolute;
+      text-align: right;
+      margin-top: $lineHeight;
+      right: 0;
+      z-index: 1;
     }
-    &:last-child{
-      border-bottom-width: 1px;
-      @include border-right-radius(0);
-      @include border-bottom-radius($radius);
+    &:hover ul {
+      display: initial;
+    }
+    ul li {
+      display: list-item;
+      border:solid 1px $thirdColor;
+      border-bottom-width: 0px;
+      white-space: nowrap;
+      &:first-child{
+        @include border-left-radius(0);
+        @include border-top-radius($radius);
+      }
+      &:last-child{
+        border-bottom-width: 1px;
+        @include border-right-radius(0);
+        @include border-bottom-radius($radius);
+      }
     }
   }
 }

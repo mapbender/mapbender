@@ -405,21 +405,12 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId, $application);
-            $action = $this->generateUrl('mapbender_manager_application_editlayerset', array(
-                'slug' => $slug,
-                'layersetId' => $layerset->getId(),
-            ));
         } else {
             $layerset = new Layerset();
             $layerset->setApplication($application);
-            $action = $this->generateUrl('mapbender_manager_application_newlayerset', array(
-                'slug' => $slug,
-            ));
         }
 
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset, array(
-            'action' => $action,
-        ));
+        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
@@ -435,6 +426,7 @@ class ApplicationController extends WelcomeController
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
+                '_fragment' => 'tabLayerset',
             ));
         }
 
@@ -571,7 +563,8 @@ class ApplicationController extends WelcomeController
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
         $em->flush();
-        $this->addFlash('success', 'Eine nun wieder private Kopie der geteilten Instanz wurde der Applikation hinzugefügt');
+        $msg = $this->translate('mb.manager.sourceinstance.converted_to_bound');
+        $this->addFlash('success', $msg);
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
@@ -658,8 +651,8 @@ class ApplicationController extends WelcomeController
         // sanity
         $instance->setLayerset(null);
         $em->flush();
-        // @todo: translate flash message
-        $this->addFlash('success', 'Die freie Instanz wurde der Applikation zugewiesen');
+        $msg = $this->translate('mb.manager.sourceinstance.reusable_assigned_to_application');
+        $this->addFlash('success', $msg);
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
             "instanceId" => $instance->getId(),

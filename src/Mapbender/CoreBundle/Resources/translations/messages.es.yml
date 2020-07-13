@@ -127,24 +127,9 @@ mb:
         scale: Escala
         rotation: Rotación
         legend: ~
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'No hay capa activa!'
-      form:
-        required: 'Por favor rellene este campo'
       class:
         title: 'Cliente de Impresión'
         description: 'Renders un diálogo de Impresión'
-      tag:
-        print: imprimir
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -174,8 +159,6 @@ mb:
         position: posición
         button: botón
     layertree:
-      confirm:
-        allremove: '¿Realmente borrar todas las fuentes?'
       popup:
         btn:
           ok: Cerrar
@@ -194,14 +177,11 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Aumento a la capa'
         metadata: Metadata
-        sources: Fuentes
-        deleteallsources: 'Quitar todas las fuentes'
         legend: Leyenda
         kmlexport: 'Exportar Kml'
         dimension_onoff: ~
         dimension: ~
         sourcevisibility_onoff: ~
-        allvisibility_on: ~
       class:
         title: 'Árbol de capa'
         description: 'Árbol de las capas del mapa'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Mostar fuentes bases'
           autoopen: Autoabrir
-          showheader: 'Mostrar encabezado'
           showlayerremove: 'Mostrar quitar capa'
           usetheme: ~
           themes: ~
@@ -324,8 +303,6 @@ mb:
             opened: opened
             activate: ~
             useTheme: ~
-            sourceVisibility: ~
-            allSelected: ~
             label: ~
           hidenottoggleable: ~
           hideselect: ~
@@ -360,8 +337,3 @@ mb:
       class:
         title: ~
         description: ~
-  geosource:
-    image_error:
-      datails: 'El mapa no puede ser presentado.'
-      exception: 'Excepción: %exception%'
-      statuscode: 'HTTP código de estado'

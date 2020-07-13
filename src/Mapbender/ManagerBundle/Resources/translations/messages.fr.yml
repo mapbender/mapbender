@@ -152,9 +152,6 @@ mb:
       acl_element: 'Élément ACL'
       import_application: Importer
       export_application: Exporter
-    element:
-      yaml:
-        message: 'Utilisez le format <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> afin de décrire la configuration de l''élément.'
     be:
       element:
         delete: 'Supprimer l''élément ''%element_title%'''
@@ -162,48 +159,22 @@ mb:
       popup:
         add_element:
           title: 'Ajouter un élément'
-          btn:
-            ok: Ok
-            cancel: Annuler
-            back: Retour
         edit_element:
           title: 'Modifier l''élément'
-          btn:
-            ok: Mettre à jour
-            cancel: Annuler
         delete_element:
-          subtitle: element
           title: 'Confirmez la suppression'
-          btn:
-            ok: Supprimer
-            cancel: Annuler
         add_edit_layerset:
           title_edit: 'Modifier un ensemble de couches'
           title_add: 'Ajouter un ensemble de couches'
-          btn:
-            ok: Ok
-            cancel: Annuler
         delete_layerset:
           title: 'Supprimer un ensemble de couches'
-          btn:
-            ok: Supprimer
-            cancel: Annuler
         add_instance:
           title: 'Choisissez une source'
-          btn:
-            cancel: Annuler
         delete_instance:
           title: 'Confirmez la suppression'
-          btn:
-            ok: Supprimer
-            cancel: Annuler
-        element_acl:
-          btn:
-            cancel: Annuler
-            ok: Mettre à jour
-            add: Ajouter
-            back: Retour
-            remove: Supprimer
+        delete_user_group:
+          title: 'Confirmez la suppression'
+          content: 'Voulez-vous vraiment supprimer %userGroup%?'
     template:
       region:
         tabs:

@@ -78,6 +78,12 @@
     // FOM popup does this with a margin relative to its (draggable!) invisible container...
     left: 80px;
     top: 100px;
+    position: absolute;
+    .popupContainer.modal & {
+      position: relative;
+      top: 0;
+      left: 0;
+    }
   }
   z-index:9999;
   background-color:#f4f4f4;
@@ -125,7 +131,7 @@
     width:100%;
     padding: $space*2.5;
     display: block;
-    .popup{
+    .popup {
       // undo relative top / left used to set draggable non-modal initial position
       top: 0;
       left: 0;

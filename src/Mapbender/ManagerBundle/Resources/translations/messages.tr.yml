@@ -145,9 +145,6 @@ mb:
       acl_element: 'Acl element'
       import_application: 'İçe aktarım (Import)'
       export_application: 'Dışa aktarım (Export)'
-    element:
-      yaml:
-        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
     be:
       element:
         delete: 'Öğe sil %element_title%'
@@ -155,48 +152,19 @@ mb:
       popup:
         add_element:
           title: 'Öğe ekle'
-          btn:
-            ok: 'Ekle'
-            cancel: 'Vazgeç'
-            back: 'Geri git'
         edit_element:
           title: 'Öğeyi düzenle'
-          btn:
-            ok: 'Güncelle'
-            cancel: 'Vazgeç'
         delete_element:
-          subtitle: 'Öğe'
           title: 'Silme işlemini onayla'
-          btn:
-            ok: 'Sil'
-            cancel: 'Vazgeç'
         add_edit_layerset:
           title_edit: 'Katman düzenle'
           title_add: 'Katman ekle'
-          btn:
-            ok: 'Ekle'
-            cancel: 'Vazgeç'
         delete_layerset:
           title: 'Katmanı sil'
-          btn:
-            ok: 'Sil'
-            cancel: 'Vazgeç'
         add_instance:
           title: 'Kaynak seç'
-          btn:
-            cancel: 'Vazgeç'
         delete_instance:
           title: 'Silme işlemini onayla'
-          btn:
-            ok: 'Sil'
-            cancel: 'Vazgeç'
-        element_acl:
-          btn:
-            cancel: 'Vazgeç'
-            ok: 'Güncelle'
-            add: 'Ekle'
-            back: 'Geri git'
-            remove: 'Kaldır'
     template:
       region:
         tabs:

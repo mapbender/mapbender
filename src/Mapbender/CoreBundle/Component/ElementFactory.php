@@ -18,16 +18,12 @@ class ElementFactory extends BaseElementFactory
 {
     /** @var Element[] */
     protected $componentDummies = array();
-    /** @var Application */
-    protected $applicationComponentDummy;
     /** @var ContainerInterface */
     protected $container;
     /** @var TranslatorInterface */
     protected $translator;
     /** @var Component\Element[] */
     protected $components = array();
-    /** @var Component\Application[] */
-    protected $appComponents = array();
 
     /**
      * @param ElementInventoryService $inventoryService
@@ -41,7 +37,6 @@ class ElementFactory extends BaseElementFactory
         parent::__construct($inventoryService);
         $this->translator = $translator;
         $this->container = $container;
-        $this->applicationComponentDummy = $this->appComponentFromEntity(new Entity\Application());
     }
 
     /**
@@ -54,12 +49,7 @@ class ElementFactory extends BaseElementFactory
     {
         $entityObjectId = spl_object_hash($entity);
         if (!$reuse || !array_key_exists($entityObjectId, $this->components)) {
-            if ($entity->getApplication()) {
-                $appComponent = $this->appComponentFromEntity($entity->getApplication(), $reuse);
-            } else {
-                $appComponent = $this->applicationComponentDummy;
-            }
-            $instance = $this->instantiateComponent($entity, $appComponent);
+            $instance = $this->instantiateComponent($entity);
             $this->components[$entityObjectId] = $instance;
         }
         return $this->components[$entityObjectId];
@@ -125,7 +115,7 @@ class ElementFactory extends BaseElementFactory
         if (!array_key_exists($className, $this->componentDummies)) {
             $element = new Entity\Element();
             $element->setClass($className);
-            $dummy = $this->instantiateComponent($element, $this->applicationComponentDummy);
+            $dummy = $this->instantiateComponent($element);
             $this->componentDummies[$className] = $dummy;
         }
         return $this->componentDummies[$className];
@@ -133,34 +123,18 @@ class ElementFactory extends BaseElementFactory
 
     /**
      * @param Entity\Element $entity
-     * @param Application $appComponent
      * @return Element
      * @throws Component\Exception\ElementErrorException
      */
-    protected function instantiateComponent(Entity\Element $entity, Application $appComponent)
+    protected function instantiateComponent(Entity\Element $entity)
     {
         $this->migrateElementConfiguration($entity);
         $componentClassName = $entity->getClass();
-        $instance = new $componentClassName($appComponent, $this->container, $entity);
+        $instance = new $componentClassName($this->container, $entity);
         if (!$instance instanceof Component\Element) {
             throw new InvalidElementClassException($componentClassName);
         }
         // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
         return $instance;
-    }
-
-    /**
-     * @param Entity\Application $appEntity
-     * @param bool $reuse
-     * @return Component\Application
-     */
-    public function appComponentFromEntity(Entity\Application $appEntity, $reuse=true)
-    {
-        $entityObjectId = spl_object_hash($appEntity);
-        if (!$reuse || !array_key_exists($entityObjectId, $this->appComponents)) {
-            $instance = new Component\Application($this->container, $appEntity);
-            $this->appComponents[$entityObjectId] = $instance;
-        }
-        return $this->appComponents[$entityObjectId];
     }
 }

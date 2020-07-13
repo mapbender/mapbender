@@ -134,24 +134,9 @@ mb:
         scale: Scale
         rotation: Rotation
         legend: 'Print legend'
-      popup:
-        btn:
-          ok: Print
-          cancel: Cancel
-      info:
-        noactivelayer: 'No active layer!'
-      form:
-        required: 'Please fill out this field'
       class:
         title: 'Print client'
         description: 'Renders a Print dialog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Deactivate Print Frame'
         activate: 'Activate Print Frame'
@@ -181,8 +166,6 @@ mb:
         position: position
         button: button
     layertree:
-      confirm:
-        allremove: 'Really all sources delete?'
       popup:
         btn:
           ok: Close
@@ -201,14 +184,11 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
         metadata: Metadata
-        sources: Sources
-        deleteallsources: 'Remove all sources'
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
       class:
         title: 'Layer tree'
         description: 'Tree of map''s layers'
@@ -324,7 +304,6 @@ mb:
         label:
           showbasesources: 'Show base sources'
           autoopen: Autoopen
-          showheader: 'Show header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
@@ -332,8 +311,6 @@ mb:
             opened: opened
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
             label: 'theme name'
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'
@@ -371,8 +348,3 @@ mb:
       class:
         title: Redlining
         description: 'Redlining tool'
-  geosource:
-    image_error:
-      datails: 'The map cannot be displayed.'
-      exception: 'Exception: %exception%'
-      statuscode: 'HTTP status code'

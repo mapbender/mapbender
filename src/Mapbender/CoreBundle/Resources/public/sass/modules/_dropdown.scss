@@ -1,28 +1,25 @@
 .dropdown{
-  $lineHeight: $lineHeight + 8;
-
   cursor:pointer;
-  display:inline-block;
   position: relative;
   color: $inputForegroundColor;
-  border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
-  height:$inputHeight;
+  border: solid 1px lighten($thirdColor, 15%);
   .toolBar & {
     text-align: left;
   }
   padding-right: $space + $space/2;
   background-color: $inputBackgroundColor;
 
-  .dropdownValue{
+  .dropdownValue, .dropdownList {
+    user-select: none;
+    line-height: $inputHeight;
+  }
+  .dropdownValue {
     padding-left: 5px;
-    border:none;
-    line-height:$lineHeight;
-    cursor: pointer;
     &.iconDown:before{@include absolute(0 5px '' '');}
   }
-  .dropdownList{
+  .dropdownList {
     background-color: inherit;
+    margin-left: 0 !important;  // defeat icon follower margin inside .toolBar
     position: absolute;
     z-index: 10;
     display:none;
@@ -38,7 +35,6 @@
     }
 
     li {
-      line-height: $lineHeight;
       &.choice {
         padding-left: 5px;
         &:hover{
@@ -56,5 +52,4 @@
   }
 
   @extend .smallText;
-  @include noUserSelect;
 }

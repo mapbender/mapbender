@@ -1,19 +1,16 @@
-<div class="mb-element mb-element-searchrouter" id="{{ element.id }}" title="{{ element.title | trans }}">
-    {{ form_widget(element.getRouteSelectForm.route) }}
+<div class="mb-element mb-element-searchrouter" id="{{ id }}" title="{{ title | trans }}">
+    {{ form_widget(route_select_form) }}
 
     <div class="search-forms">
-        {% for form in element.formViews %}
+        {% for form in search_forms %}
             <form name="{{ form.vars.name }}" autocomplete="off">
                 {{ form_widget(form) }}
             </form>
         {% endfor %}
     </div>
-    {%- if not element.configuration.asDialog %}
-    <div class="search-action-buttons">
-        <a href="#{{ element.id }}/button/reset" class="button right">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</a>
-        <a href="#{{ element.id }}/button/ok" class="button right">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</a>
+    <div class="search-action-buttons hidden">
+        <span data-action="reset" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</span>
+        <span data-action="search" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</span>
     </div>
-    {% endif -%}    
-    <div class="clear"></div>
     <div class="search-results"></div>
 </div>

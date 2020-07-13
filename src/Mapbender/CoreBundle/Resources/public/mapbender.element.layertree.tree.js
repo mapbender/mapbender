@@ -59,8 +59,19 @@
             var sources = this.model.getSources();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
-                    var li_s = this._createSourceTree(sources[i]);
-                    this._addNode(li_s, sources[i]);
+                    var source = sources[i];
+                    var $sourceNode = this._createSourceTree(sources[i]);
+                    var themeOptions = this.options.useTheme && this._getThemeOptions(source.layerset);
+                    if (themeOptions) {
+                        var $themeNode = this._findThemeNode(source.layerset);
+                        if (!$themeNode.length) {
+                            $themeNode = this._createThemeNode(source.layerset, themeOptions);
+                            $('ul.layers:first', this.element).append($themeNode);
+                        }
+                        $('ul.layers:first', $themeNode).append($sourceNode);
+                    } else {
+                        $("ul.layers:first", this.element).append($sourceNode);
+                    }
                     this._resetSourceAtTree(sources[i]);
                 }
             }
@@ -68,36 +79,11 @@
             this._reset();
             this.created = true;
         },
-        _addNode: function($toAdd, source) {
-            var $targetList = $("ul.layers:first", this.element);
-            if (this.options.useTheme) {
-                // Collect layerset <=> theme relations
-                // @todo: knowing the layerset should not need "finding", we should iterate through displayable layersets,
-                //        then through source instances in the layerset, so the layerset is already known
-                // @todo 3.1.0: this should happen server-side
-                var layerset = this._findLayersetWithSource(source);
-                var theme = {};
-                $.each(this.options.themes, function(idx, item) {
-                    if (item.id === layerset.id)
-                        theme = item;
-                });
-                if (theme.useTheme) {
-                    var $themeNode = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
-                    if (!$themeNode.length) {
-                        $themeNode = this._createThemeNode(layerset, theme);
-                        $themeNode.attr('data-layersetid', layerset.id);
-                    }
-                    $targetList = $("ul.layers:first", $themeNode);
-                }
-            }
-            $targetList.append($toAdd);
-        },
         _reset: function() {
             if (this.options.allowReorder) {
                 this._createSortable();
             }
             $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
-            this._setSourcesCount();
         },
         _createEvents: function() {
             var self = this;
@@ -105,11 +91,17 @@
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-            this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
+            });
+            this.element.on('click', '.layer-remove-btn', function() {
+                var $node = $(this).closest('li.leave');
+                var layer = $node.data('layer');
+                self.model.removeLayer(layer);
+            });
+            this.element.on('click', '.layer-metadata', function(evt) {
+                self._showMetadata(evt);
             });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
@@ -186,33 +178,27 @@
                 });
             });
         },
-        _isThemeVisible: function(layerset) {
-            for (var i = 0; i < layerset.content.length; i++) {
-                for (id in layerset.content[i]) {
-                    if (layerset.content[i][id].configuration.children[0].options.treeOptions.selected) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        },
-        _createThemeNode: function(layerset, theme) {
+        _createThemeNode: function(layerset, options) {
             var $li = this.themeTemplate.clone();
-            $('ul.layers:first', this.element).append($li);
-            $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
-            $li.toggleClass('showLeaves', theme.opened);
-            $('.iconFolder', $li).toggleClass('iconFolderActive', theme.opened);
-            $('span.layer-title:first', $li).text(layerset.title);
-            if (!theme.allSelected) {
-                $('div.selectAll', $li).remove();
-            }
-            if (!theme.sourceVisibility) {
-                $('div.sourceVisibilityWrapper', $li).remove();
-            } else {
-                $('div.sourceVisibilityWrapper input[name="sourceVisibility"]', $li).prop('checked',
-                    this._isThemeVisible(layerset));
-            }
+            $li.attr('data-type', this.consts.theme);
+            $li.attr('data-layersetid', layerset.id);
+            $li.toggleClass('showLeaves', options.opened);
+            $('.iconFolder', $li).toggleClass('iconFolderActive', options.opened);
+            $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             return $li;
+        },
+        _getThemeOptions: function(layerset) {
+            var matches =  (this.options.themes || []).filter(function(item) {
+                 return item.id === layerset.id;
+            });
+            if (!matches.length || !matches[0].useTheme) {
+                return null;
+            } else {
+                return matches[0];
+            }
+        },
+        _findThemeNode: function(layerset) {
+            return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
         },
         _createLayerNode: function(layer) {
             var $li = this.template.clone();
@@ -221,12 +207,11 @@
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
             var nodeType;
-            $li.attr('data-title', layer.options.title);
             var $childList = $('ul.layers', $li);
-            if (this.options.hideInfo || layer.children) {
+            if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
             }
-            if (layer.children) {
+            if (layer.children && layer.children.length) {
                 var treeOptions = layer.options.treeOptions;
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
@@ -263,20 +248,14 @@
         },
         _createSourceTree: function(source) {
             var li = this._createLayerNode(source.configuration.children[0]);
-            if (source.configuration.status !== 'ok') {
-                li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                    source.configuration.status);
-            }
             return li;
         },
-        _onSourceAdded: function(event, options) {
-            if (!this.created || !options.added)
-                return;
-            var added = options.added;
-            if (added.source.configuration.baseSource && !this.options.showBaseSource) {
+        _onSourceAdded: function(event, data) {
+            var source = data.source;
+            if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            var li_s = this._createSourceTree(added.source);
+            var li_s = this._createSourceTree(source);
             var first_li = $(this.element).find('ul.layers:first li:first');
             if (first_li && first_li.length !== 0) {
                 first_li.before(li_s);
@@ -289,8 +268,9 @@
             this._resetSourceAtTree(data.source);
         },
         _onSourceLayerRemoved: function(event, data) {
-            var layerId = data.layerId;
-            var sourceId = data.source.id;
+            var layer = data.layer;
+            var layerId = layer.options.id;
+            var sourceId = layer.source.id;
             var $node = $('[data-sourceid="' + sourceId + '"][data-id="' + layerId + '"]', this.element);
             $node.remove();
         },
@@ -360,7 +340,6 @@
                 if ($theme.length && $theme.find('.serviceContainer').length === 0){
                     $theme.remove();
                 }
-                this._setSourcesCount();
             }
         },
         _getSourceNode: function(sourceId) {
@@ -404,35 +383,16 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-            var self = this;
             var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
-                var $item = $(item);
-                var $chkSource = $('input[name="selected"]:first', $item);
-                var active = $chkSource.prop('checked') && $sourceVsbl.prop('checked');
-                self.model.setSourceVisibility($item.attr('data-sourceid'), active);
-            });
+            var $themeNode = $sourceVsbl.closest('.themeContainer');
+            var themeId = $themeNode.attr('data-layersetid');
+            var theme = Mapbender.layersets.filter(function(x) {
+                return x.id === themeId;
+            })[0];
+            this.model.controlTheme(theme, $sourceVsbl.prop('checked'));
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
             }
-            return false;
-        },
-        _selectAll: function(e) {
-            var self = this;
-            var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
-                var $srcLi = $(srcLi);
-                var sourceId = $srcLi.attr('data-sourceid');
-                var source = sourceId && self.model.getSourceById(sourceId);
-                if (source) {
-                    Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
-                        layer.options.treeOptions.selected = layer.options.treeOptions.allow.selected;
-                    });
-                    self.model.updateSource(source);
-                }
-            });
             return false;
         },
         _toggleSelected: function(e) {
@@ -458,17 +418,11 @@
         _initMenu: function($layerNode) {
             var layer = $layerNode.data('layer');
             var source = layer.source;
-            var atLeastOne;
             var menu = $(this.menuTemplate.clone());
             if (layer.getParent()) {
                 $('.layer-control-root-only', menu).remove();
             }
-            var removeButton = menu.find('.layer-remove-btn');
-            menu.on('mousedown mousemove', function(e) {
-                e.stopPropagation();
-            });
-            atLeastOne = removeButton.length > 0;
-            removeButton.on('click', $.proxy(this._removeSource, this));
+            var atLeastOne = !!$('.layer-remove-btn', menu).length;
 
             // element must be added to dom and sized before Dragdealer init...
             $('.leaveContainer:first', $layerNode).after(menu);
@@ -476,7 +430,6 @@
             var $opacityControl = $('.layer-control-opacity', menu);
             if ($opacityControl.length) {
                 atLeastOne = true;
-                var self = this;
                 var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
                 new Dragdealer($('.layer-opacity-bar', $opacityControl).get(0), {
@@ -487,26 +440,26 @@
                     steps: 100,
                     handleClass: "layer-opacity-handle",
                     animationCallback: function(x, y) {
-                        var percentage = Math.round(x * 100);
+                        var opacity = Math.max(0.0, Math.min(1.0, x));
+                        var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
-                        self._setOpacity(source, percentage / 100.0);
+                        source.setOpacity(opacity);
                     }
                 });
             }
             var $zoomControl = $('.layer-zoom', menu);
-            if ($zoomControl.length && this.model.getLayerExtents({sourceId: source.id, layerId: layer.options.id})) {
+            if ($zoomControl.length && layer.hasBounds()) {
                 atLeastOne = true;
                 $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
             } else {
                 $zoomControl.remove();
             }
-            var $metadataControl = $('.layer-metadata', menu);
-            if ($metadataControl.length && source.supportsMetadata()) {
+            if (layer.options.metadataUrl && $('.layer-metadata', menu).length) {
                 atLeastOne = true;
-                $metadataControl.on('click', $.proxy(this._showMetadata, this));
             } else {
-                $metadataControl.remove();
+                $('.layer-metadata', menu).remove();
             }
+
             var dims = source.configuration.options.dimensions || [];
             var $dimensionsControl = $('.layer-control-dimensions', menu);
             if (dims.length && $dimensionsControl.length) {
@@ -608,18 +561,6 @@
             }
             return true;
         },
-        _setOpacity: function(source, opacity) {
-            this.model.setOpacity(source, opacity);
-        },
-        _removeSource: function(e) {
-            var $node = $(e.currentTarget).closest('li.leave');
-            var layerId = $node.attr('data-id');
-            var sourceId = $node.attr('data-sourceid');
-            if (layerId && sourceId) {
-                this.model.removeLayer(sourceId, layerId);
-                this._setSourcesCount();
-            }
-        },
         _zoomToLayer: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var options = {
@@ -630,28 +571,34 @@
         },
         _showMetadata: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
-            Mapbender.Metadata.call(null, null, layer);
-        },
-        _getUniqueSourceIds: function() {
-            var sourceIds = [];
-            $('.serviceContainer[data-sourceid]', this.element).each(function() {
-                sourceIds.push($(this).attr('data-sourceid'));
-            });
-            return _.uniq(sourceIds);
-        },
-        _setSourcesCount: function() {
-            var num = this._getUniqueSourceIds().length;
-            $(this.element).find('#counter').text(num);
-        },
-        _removeAllSources: function(e) {
-            var sourceIds, i, n;
-            if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
-                sourceIds = this._getUniqueSourceIds();
-                for (i = 0, n = sourceIds.length; i < n; ++i) {
-                    this.model.removeSourceById(sourceIds[i]);
-                }
-            }
-            this._setSourcesCount();
+            var url = layer.options.metadataUrl;
+            $.ajax(url)
+                .then(function(response) {
+                    var metadataPopup = new Mapbender.Popup2({
+                        title: Mapbender.trans("mb.core.metadata.popup.title"),
+                        cssClass: 'metadataDialog',
+                        modal: false,
+                        resizable: true,
+                        draggable: true,
+                        content: $(response),
+                        destroyOnClose: true,
+                        width: 850,
+                        height: 600,
+                        buttons: [{
+                            label: Mapbender.trans('mb.core.metadata.popup.btn.ok'),
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function() {
+                                this.close();
+                            }
+                        }]
+                    });
+                    if (initTabContainer) {
+                        initTabContainer(metadataPopup.$element);
+                    }
+                }, function(jqXHR, textStatus, errorThrown) {
+                    Mapbender.error(errorThrown);
+                })
+            ;
         },
         /**
          * Default action for mapbender element
@@ -716,27 +663,6 @@
                 (this.callback)();
                 this.callback = null;
             }
-        },
-        _findLayersetWithSource: function(source) {
-            var layerset = null;
-            Mapbender.Util.SourceTree.iterateLayersets(function(layersetDef, layersetId) {
-                for (var i = 0; i < layersetDef.length; i++) {
-                    var entries = Object.entries(layersetDef[i]);
-                    for (var j = 0; j < entries.length; ++j) {
-                        var entry = entries[j][1];
-                        if (entry.origId.toString() === source.origId.toString()) {
-                            layerset = {
-                                id: layersetId,
-                                title: Mapbender.configuration.layersetmap[layersetId],
-                                content: layersetDef
-                            };
-                            // stop iteration
-                            return false;
-                        }
-                    }
-                }
-            });
-            return layerset;
         },
         _destroy: $.noop
     });

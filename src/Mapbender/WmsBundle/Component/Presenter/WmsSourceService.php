@@ -165,7 +165,6 @@ class WmsSourceService extends SourceService
         $sourceItem = $instanceLayer->getSourceItem();
         $configuration = array(
             "id" => strval($instanceLayer->getId()),
-            "origId" => strval($instanceLayer->getId()),
             "priority" => $instanceLayer->getPriority(),
             "name" => strval($sourceItem->getName()),
             "title" => $instanceLayer->getTitle() ?: $sourceItem->getTitle(),
@@ -175,11 +174,33 @@ class WmsSourceService extends SourceService
             "maxScale" => $instanceLayer->getMaxScale(true),
             "bbox" => $this->getLayerBboxConfiguration($sourceItem),
             "treeOptions" => $this->getTreeOptionsLayerConfig($instanceLayer),
+            'metadataUrl' => $this->getMetadataUrl($instanceLayer),
         );
         $configuration += array_filter(array(
             'legend' => $this->getLegendConfig($instanceLayer),
         ));
         return $configuration;
+    }
+
+    /**
+     * @param WmsInstanceLayer $instanceLayer
+     * @return string|null
+     */
+    protected function getMetadataUrl(WmsInstanceLayer $instanceLayer)
+    {
+        // no metadata for unpersisted instances (WmsLoader)
+        if (!$instanceLayer->getId()) {
+            return null;
+        }
+        $layerset = $instanceLayer->getSourceInstance()->getLayerset();
+        if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
+            return null;
+        }
+        $router = $this->urlProcessor->getRouter();
+        return $router->generate('mapbender_core_application_metadata', array(
+            'instance' => $instanceLayer->getSourceInstance(),
+            'layerId' => $instanceLayer->getId(),
+        ));
     }
 
     /**
@@ -391,10 +412,6 @@ class WmsSourceService extends SourceService
                 return array(
                     '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
                     '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
-                );
-            case 'trans':
-                return array(
-                    'MapbenderCoreBundle::geosource.json.twig',
                 );
             default:
                 throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));

@@ -126,24 +126,9 @@ mb:
         scale: Schaal
         rotation: Roteren
         legend: Legenda
-      popup:
-        btn:
-          ok: Print
-          cancel: Annuleren
-      info:
-        noactivelayer: 'Geen actieve laag!'
-      form:
-        required: 'Verplicht invoerveld'
       class:
         title: 'Printen'
         description: 'Toont Print dialoog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Deactiveer Print Venster'
         activate: 'Activeer Print Venster'
@@ -173,8 +158,6 @@ mb:
         position: positie
         button: knop
     layertree:
-      confirm:
-        allremove: 'Wilt u werkelijk alle bronnen verwijderen?'
       popup:
         btn:
           ok: Sluit
@@ -193,14 +176,11 @@ mb:
         opacity: Doorzichtigheid
         zoomtolayer: 'Zoom naar laag'
         metadata: Metadata
-        sources: Bronnen
-        deleteallsources: 'Verwijder alle bronnen'
         legend: Legenda
         kmlexport: 'Kml export'
         dimension_onoff: 'Dimensie Aan/Uit'
         dimension: Dimensie
         sourcevisibility_onoff: 'Toon Bronnen'
-        allvisibility_on: 'Toon alle Lagen'
       class:
         title: 'Lagenboom'
         description: 'Mappen-structuur (LayerTree) van kaartlagen'
@@ -315,7 +295,6 @@ mb:
         label:
           showbasesources: 'Toon basis-bronnen'
           autoopen: 'Automatisch openen'
-          showheader: 'Toon koptekst'
           showlayerremove: 'Toon verwijder-laag knop'
           usetheme: 'Gebruik thema'
           themes: Themas
@@ -323,8 +302,6 @@ mb:
             opened: geopend
             activate: 'Voeg activatie-knop toe'
             useTheme: 'Gebruik thema'
-            sourceVisibility: 'Thema: bron-zichtbaarheid'
-            allSelected: 'Thema: alles geselecteerd'
             label: 'thema naam'
           hidenottoggleable: 'Verberg niet-schakelbaar'
           hideselect: 'Verberg kiesbaar'
@@ -357,11 +334,6 @@ mb:
       class:
         title: Tekenen
         description: 'Tekentool (Redlining)'
-  geosource:
-    image_error:
-      datails: 'De kaart kan niet getoond worden.'
-      exception: 'Foutmelding: %exception%'
-      statuscode: 'HTTP status code'
 
 # Login exceptions
 "Bad credentials.": Ongeldige inloggegevens.

@@ -25,18 +25,31 @@
  *   - opened  - after the dialog has fully openend
  *   - focus   - after the dialog becomes an focus
  *   - close   - before closing the dialog
- *   - closed  - after the dialog has been fully closed
- *   - destroy - just before the popup is destroyed. Last dance, anyone?
  *
- * @TODOs:
- *   - CSS for following classes:
- *     - noTitle
- *     - noSubTitle
  */
 (function($) {
     var counter = 0;
     var currentZindex = 10000;
     var currentModal_ = null;
+    var container_ = null;
+
+    function initContainer_() {
+        if (!container_) {
+            container_ = document.body;
+            var positionRule = $(container_).css('position');
+            if (!positionRule || positionRule === 'static') {
+                $(container_).css('position', 'relative');
+            }
+        }
+        return container_;
+    }
+
+    $(document).on('click', '.popupContainer.modal .overlay', function(e) {
+        if (currentModal_ && currentModal_.options.closeOnOutsideClick) {
+            currentModal_.close();
+        }
+    });
+
     /**
      * Popup constructor.
      *
@@ -132,14 +145,8 @@
     };
 
     Popup.prototype = {
-        kartoffel: function() {
-            return currentModal_;
-        },
         // Reference to the created popup
         $element: null,
-
-        // Containing element
-        $container: $('body'),
 
         /**
          * Default options
@@ -223,12 +230,13 @@
                 currentModal_ = this;
             }
 
+            var container = initContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
                     this.$modalWrap.prepend(this.$element);
-                    this.$modalWrap.appendTo(this.$container);
+                    this.$modalWrap.appendTo(container);
                 } else {
-                    this.$element.appendTo(this.$container);
+                    this.$element.appendTo(container);
                 }
             }
             if (this.options.draggable) {
@@ -280,9 +288,6 @@
             if (this.options.modal && this === currentModal_) {
                 currentModal_ = null;
             }
-            if (!this.options.destroyOnClose && this.$element) {
-                this.$element.trigger('closed'); // why?
-            }
         },
 
         /**
@@ -290,7 +295,6 @@
          */
         destroy: function() {
             if(this.$element){
-                this.$element.trigger('destroy'); // why?
                 this.$element.remove();
                 this.$element = null;
             }
@@ -301,9 +305,9 @@
                 buttonset = $('.popupButtons', this.$element);
 
             $.each(buttons, function(key, conf) {
-                var button = $('<a/>', {
-                    href: '#' + self.$element.attr('id') + '/button/' + key,
-                    html: conf.label
+                var button = $('<button/>', {
+                    type: 'button',
+                    text: conf.label
                 });
 
                 if(conf.cssClass) {
@@ -312,8 +316,6 @@
 
                 if(conf.callback) {
                     button.on('click', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
                         conf.callback.call(self, event);
                         return false;
                     });

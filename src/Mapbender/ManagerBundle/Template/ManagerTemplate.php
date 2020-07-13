@@ -28,7 +28,13 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
             case 'trans':
                 return array(
                     'mb.actions.*',
-                    '@MapbenderManagerBundle/Resources/views/translations.json.twig',
+                    'mb.manager.components.popup.*',
+                    'mb.manager.managerbundle.add_user_group',
+                    'mb.manager.upload.label_delete',
+                    'mb.manager.admin.application.upload.label',
+                    'mb.core.entity.app.screenshotfile.*',
+                    'mb.application.save.failure.general',
+                    'mb.manager.confirm_form_discard',
                 );
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));

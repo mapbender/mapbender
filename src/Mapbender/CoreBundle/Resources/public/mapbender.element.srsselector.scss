@@ -1,8 +1,7 @@
 .mb-element-srsselector {
-  width: 230px;
-  select {
-    width: auto;
-    border: 1px solid #cccccc;
-    color: #3f3f3f;
+  min-width: 230px;
+  .dropdown {
+    // @todo: this should be the default globally
+    width: 100%;
   }
 }

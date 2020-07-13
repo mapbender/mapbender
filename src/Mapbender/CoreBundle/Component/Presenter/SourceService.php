@@ -55,7 +55,6 @@ abstract class SourceService implements SourceInstanceInformationInterface
             'title'         => $sourceInstance->getTitle(),
             'configuration' => $innerConfig,
             'id'            => strval($sourceInstance->getId()),
-            'origId'        => strval($sourceInstance->getId()),
         );
         return $wrappedConfig;
     }
@@ -129,7 +128,6 @@ abstract class SourceService implements SourceInstanceInformationInterface
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
-        $configuration['status'] = 'ok';    // for initial layertree visual; 'error' can only be produced client-side
         return $configuration;
     }
 
@@ -163,7 +161,7 @@ abstract class SourceService implements SourceInstanceInformationInterface
      * @see TypeDirectoryService::getAssets()
      *
      * @param Application $application
-     * @param string $type must be 'js' or 'trans'
+     * @param string $type must be 'js'
      * @return string[]
      */
     abstract public function getAssets(Application $application, $type);

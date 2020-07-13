@@ -25,14 +25,14 @@
 {% block heading %}
     <div class="contentTitle">
         <h1><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ _h1_text | default(title) }}<div class="clear"></div></h1>
-        <p class="clear">{% if _is_reusable_instance %}<span class="badge badge-info badge pull-right">Geteilte Dienstinstanz</span>{% endif %}{{ _h1_subtext }}<span class="clear"></span></p>
+        <p class="clear">{% if _is_reusable_instance %}<span class="badge badge-info badge pull-right">{{ 'mb.terms.sourceinstance.reusable.singular' | trans }}</span>{% endif %}{{ _h1_subtext }}<span class="clear"></span></p>
         <div class="clear">
             <div class="pull-right">
                 {%- if _is_reusable_instance and layerset is defined and layerset -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;In private Instanz in dieser Anwendung umwandeln</a>
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_bound' | trans }}</a>
                 {%- endif -%}
                 {%- if not _is_reusable_instance -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;In freie Instanz umwandeln</a>
+                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_reusable' | trans }}</a>
                 {%- endif -%}
             </div>
             <div class="clearContainer"></div>

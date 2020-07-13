@@ -53,7 +53,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         });
     }
     WmtsTmsBaseSource.prototype = Object.create(Mapbender.Source.prototype);
-    $.extend(WmtsTmsBaseSource.prototype, {
+    Object.assign(WmtsTmsBaseSource.prototype, {
         constructor: WmtsTmsBaseSource,
         currentActiveLayer: null,
         autoDisabled: null,
@@ -64,6 +64,10 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
+        },
+        getSelected: function() {
+            var fakeRootLayer = this.configuration.children[0];
+            return fakeRootLayer.options.treeOptions.selected;
         },
         createNativeLayers: function(srsName) {
             var compatibleLayer = this._selectCompatibleLayer(srsName);
@@ -99,7 +103,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var fakeRootLayer = this.configuration.children[0];
             var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
             var engine = Mapbender.mapEngine;
-            var targetVisibility = !!layerIdent && fakeRootLayer.state.visibility;
+            var rootVisibility = fakeRootLayer.state.visibility;
+            var targetVisibility = !!layerIdent && rootVisibility && this.getActive();
             var olLayer = this.getNativeLayer(0);
             if (!olLayer) {
                 return;
@@ -163,19 +168,26 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
             return [];
         },
-        getMultiLayerPrintConfig: function(bounds, scale, srsName) {
+        /**
+         * @param {*} bounds
+         * @param {Number} scale
+         * @param {String} srsName
+         * @return {Array<Object>}
+         */
+        getPrintConfigs: function(bounds, scale, srsName) {
             var layerDef = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!fakeRootLayer.state.visibility || !layerDef) {
                 return [];
             }
             var matrix = this._getMatrix(layerDef, scale, srsName);
+            var commonOptions = this._getPrintBaseOptions();
             return [
-                {
+                Object.assign({}, commonOptions, {
                     url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
-                    matrix: $.extend({}, matrix),
+                    matrix: Object.assign({}, matrix),
                     resolution: this._getMatrixResolution(matrix, srsName)
-                }
+                })
             ];
         },
         getLayerById: function(id) {
@@ -190,32 +202,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 }
             }
             return foundLayer;
-        },
-        supportsMetadata: function() {
-            return false;
-        },
-        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
-            var bboxMap;
-            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
-            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
-            if (this.currentActiveLayer && (inheritParent_ || inheritSource_)) {
-                bboxMap = this._reduceBboxMap(this.currentActiveLayer.options.bbox);
-                if (bboxMap) {
-                    return bboxMap;
-                }
-            }
-            var fakeRootLayerId = this.configuration.children[0].options.id;
-            if ((!layerId || layerId === fakeRootLayerId) && (inheritParent_ || inheritSource_)) {
-                // root layer doesn't have bbox config
-                // just find something..
-                for (var i = 0; i < this.configuration.layers.length; ++i) {
-                    bboxMap = this._reduceBboxMap(this.configuration.layers[i].options.bbox);
-                    if (bboxMap) {
-                        return bboxMap;
-                    }
-                }
-            }
-            return Mapbender.Source.prototype.getLayerExtentConfigMap.apply(this, arguments);
         },
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layerId_;
@@ -265,10 +251,18 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         Mapbender.SourceLayer.apply(this, arguments);
     }
     WmtsTmsBaseSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
-    $.extend(WmtsTmsBaseSourceLayer.prototype, {
+    Object.assign(WmtsTmsBaseSourceLayer.prototype, {
         constructor: WmtsTmsBaseSourceLayer,
         getMatrixSet: function() {
             return this.source.getMatrixSetByIdent(this.options.tilematrixset);
+        },
+        getSelected: function() {
+            var rootLayer = this.source.getRootLayer();
+            return rootLayer.options.treeOptions.selected;
+        },
+        hasBounds: function() {
+            var currentActive = this.source.currentActiveLayer;
+            return !!currentActive && Mapbender.SourceLayer.prototype.hasBounds.call(currentActive);
         }
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;

@@ -8,6 +8,8 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -60,10 +62,12 @@ class ElementClassesCommand extends ContainerAwareCommand
         $rows = array();
         /** @var ElementFactory $factory */
         $factory = $this->getContainer()->get('mapbender.element_factory.service');
+        $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
                 $entity = new \Mapbender\CoreBundle\Entity\Element();
                 $entity->setClass($elementName);
+                $entity->setApplication($application);
                 $instance = $factory->componentFromEntity($entity);
                 $rows[$elementName] = $this->formatElementInfo($instance);
             } catch (\Exception $e) {
@@ -163,8 +167,11 @@ class ElementClassesCommand extends ContainerAwareCommand
      * @param Element $element
      * @return string
      */
-    protected static function formatAdminType($element)
+    protected function formatAdminType($element)
     {
+        /** @var ElementFormFactory $formFactory */
+        $formFactory = $this->getContainer()->get('mapbender.manager.element_form_factory.service');
+
         try {
             $rc = new \ReflectionClass($element);
             $rm = $rc->getMethod('getType');
@@ -172,7 +179,10 @@ class ElementClassesCommand extends ContainerAwareCommand
             return "<error>No reflection</error>";
         }
 
-        $adminType = $element->getType();
+        $adminType = $formFactory->getConfigurationFormType($element->getEntity());
+        if (!$adminType) {
+            return '<comment>none</comment>';
+        }
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
@@ -192,7 +202,7 @@ class ElementClassesCommand extends ContainerAwareCommand
             }
         }
         if ($adminTypeBNS && $adminTypeBNS != $elementBNS) {
-            $formatted = str_replace($formatted, "<comment>{$adminTypeBNS}</comment>", $adminType);
+            $formatted = str_replace($adminTypeBNS, "<comment>{$adminTypeBNS}</comment>", $formatted);
         }
         if ($rm->class != $rc->getName()) {
             $formatted .= "\n<comment>(inherited from</comment>\n";
@@ -279,8 +289,14 @@ class ElementClassesCommand extends ContainerAwareCommand
             $th->setRows($rows);
             $th->render($output);
         } else {
-            $symfonyVersion = Kernel::VERSION;
-            throw new \RuntimeException("Table rendering support gone in Symfony $symfonyVersion");
+            foreach ($rows as $row) {
+                foreach ($headers as $cellIndex => $header) {
+                    if (array_key_exists($cellIndex, $row)) {
+                        $reflowed = preg_replace('#\n+#', '; ', $row[$cellIndex]);
+                        $output->writeln("  {$header}: {$reflowed}");
+                    }
+                }
+            }
         }
     }
 

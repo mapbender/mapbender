@@ -3,7 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -11,7 +11,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends Element implements BoundConfigMutator
+class BaseSourceSwitcher extends Element
 {
 
     /**
@@ -38,7 +38,7 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
         return array(
             'tooltip' => "BaseSourceSwitcher",
             'target' => null,
-            'instancesets' => array()
+            'instancesets' => array(),
         );
     }
 
@@ -83,48 +83,46 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
             ),
         );
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
+
+    protected function mergeGroups(Entity\Element $element)
     {
-        $configuration = $confHelp = parent::getConfiguration();
-        if (isset($configuration['instancesets'])) {
-            unset($configuration['instancesets']);
+        $rawConf = $element->getConfiguration();
+        $itemsOut = array();
+        if (empty($rawConf['instancesets']) || !is_array($rawConf['instancesets'])) {
+            // @todo: throw config error if wrong type
+            $itemConfigs = array();
+        } else {
+            $itemConfigs = $rawConf['instancesets'];
         }
-        $configuration['groups'] = array();
-        if (!isset($confHelp['instancesets']) || !is_array($confHelp['instancesets'])) {
-            $confHelp['instancesets'] = array();
-        }
-        foreach ($confHelp['instancesets'] as $instanceset) {
-            if (isset($instanceset['group']) && $instanceset['group'] !== '') {
-                if (!isset($configuration['groups'][$instanceset['group']])) {
-                    $configuration['groups'][$instanceset['group']] = array(
-                        'type'  => 'group',
+        foreach ($itemConfigs as $itemIn) {
+            $itemOut = array(
+                'type'    => 'item',
+                'title'   => $itemIn['title'],
+                'sources' => $itemIn['instances']
+            );
+            $isGroup = !empty($itemIn['group']);
+            if ($isGroup) {
+                $groupName = $itemIn['group'];
+                if (empty($itemsOut[$groupName])) {
+                    $itemsOut[$groupName] = array(
+                        'type' => 'group',
+                        'title' => $groupName,
                         'items' => array(),
                     );
                 }
-                $configuration['groups'][$instanceset['group']]['items'][] = array(
-                    'title'   => $instanceset['title'],
-                    'sources' => $instanceset['instances']
-                );
+                $itemsOut[$groupName]['items'][] = $itemOut;
             } else {
-                $configuration['groups'][$instanceset['title']] = array(
-                    'type'    => 'item',
-                    'title'   => $instanceset['title'],
-                    'sources' => $instanceset['instances']
-                );
+                $itemsOut[$itemIn['title']] = $itemOut;
             }
         }
-        foreach ($configuration['groups'] as &$firstGroup) {
+        foreach ($itemsOut as &$firstGroup) {
             $firstGroup['active'] = true;
             if ($firstGroup['type'] == 'group' && $firstGroup['items']) {
                 $firstGroup['items'][0]['active'] = true;
             }
             break;
         }
-        return $configuration;
+        return $itemsOut;
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
@@ -132,16 +130,26 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
         return 'MapbenderCoreBundle:Element:basesourceswitcher.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $rawConf = $this->entity->getConfiguration();
+        return array(
+            'id' => $this->entity->getId(),
+            'title' => $this->entity->getTitle(),
+            'configuration' => $rawConf + array(
+                'groups' => $this->mergeGroups($this->entity),
+            ),
+        );
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $this->getConfiguration()
-        ));
+        $template = $this->getFrontendTemplatePath();
+        $vars = $this->getFrontendTemplateVars();
+        return $this->container->get('templating')->render($template, $vars);
     }
 
     /**
@@ -158,72 +166,5 @@ class BaseSourceSwitcher extends Element implements BoundConfigMutator
             }
         }
         return $configuration;
-    }
-
-    /**
-     * Returns an array with 'active' and 'inactive' lists of source ids, in the initial state after loading.
-     *
-     * return int[][]
-     */
-    public function getDefaultSourceVisibility()
-    {
-        $rv = array(
-            'active' => array(),
-            'inactive' => array(),
-        );
-        $config = $this->getConfiguration();
-
-        foreach ($config['groups'] as $menuEntry) {
-            switch ($menuEntry['type']) {
-                case 'item':
-                    // wrap single item as array
-                    $menuItems = array($menuEntry);
-                    break;
-                case 'group':
-                    // process submenu items
-                    $menuItems = $menuEntry['items'];
-                    break;
-                default:
-                    throw new \RuntimeException("Unexpected menu item type " . var_export($menuEntry['type'], true));
-            }
-            foreach ($menuItems as $menuItem) {
-                $destKey = (!empty($menuItem['active'])) ? 'active' : 'inactive';
-                $rv[$destKey] = array_merge($rv[$destKey], $menuItem['sources']);
-            }
-        }
-        return $rv;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function updateAppConfig($config)
-    {
-        $controlledSourceIds = $this->getDefaultSourceVisibility();
-
-        /**
-         * @todo: evaluate "target" (e.g. main map vs overview map) and only process
-         *        layers bound to that target
-         */
-        foreach ($config['layersets'] as &$layerList) {
-            foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (in_array($layerId, $controlledSourceIds['active'])) {
-                        $setActive = true;
-                    } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
-                        $setActive = false;
-                    } else {
-                        // layer is not controllable through BSS, leave its config alone
-                        continue;
-                    }
-                    if (!empty($layerDef['configuration']['children'])) {
-                        foreach ($layerDef['configuration']['children'] as &$chDef) {
-                            $chDef['options']['treeOptions']['selected'] = $setActive;
-                        }
-                    }
-                }
-            }
-        }
-        return $config;
     }
 }

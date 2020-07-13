@@ -27,7 +27,6 @@ window.Mapbender.MapModelBase = (function() {
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
         this.mbMap = mbMap;
         var mapOptions = mbMap.options;
-        this.sourceBaseId_ = 0;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
         var startProj = this._startProj = mapOptions.targetsrs || mapOptions.srs;
@@ -50,7 +49,6 @@ window.Mapbender.MapModelBase = (function() {
     MapModelBase.prototype = {
         constructor: MapModelBase,
         mbMap: null,
-        sourceBaseId_: null,
         sourceTree: [],
         mapStartExtent: null,
         mapMaxExtent: null,
@@ -123,25 +121,6 @@ window.Mapbender.MapModelBase = (function() {
             });
         },
         /**
-         * @param {Source} source
-         * @param {number} opacity float in [0;1]
-         * engine-agnostic
-         */
-        setOpacity: function(source, opacity) {
-            // unchecked findSource in layertree may pass undefined for source
-            if (source) {
-                var opacity_ = parseFloat(opacity);
-                if (isNaN(opacity_)) {
-                    opacity_ = 1.0;
-                }
-                opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
-                if (opacity_ !== opacity) {
-                    console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
-                }
-                source.setOpacity(opacity_);
-            }
-        },
-        /**
          * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
          *
          * @param {Mapbender.SourceLayer} layer
@@ -200,23 +179,6 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
-         * Gets a mapping of all defined extents for a layer, keyed on SRS
-         * @param {Object} options
-         * @property {String} options.sourceId
-         * @property {String} options.layerId
-         * @return {Object<String, Array<Number>>}
-         * engine-agnostic
-         */
-        getLayerExtents: function(options) {
-            var source = this.getSourceById(options.sourceId);
-            if (source) {
-                return source.getLayerExtentConfigMap(options.layerId, true, true);
-            } else {
-                console.warn("Source not found", options);
-                return null;
-            }
-        },
-        /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
          * engine-agnostic
@@ -224,35 +186,25 @@ window.Mapbender.MapModelBase = (function() {
         getSourceById: function(id) {
             return _.findWhere(this.sourceTree, {id: '' + id}) || null;
         },
-        generateSourceId: function() {
-            var id = 'auto-src-' + (this.sourceBaseId_ + 1);
-            ++this.sourceBaseId_;
-            return id;
+        /**
+         * @param {Mapbender.Layerset} theme
+         * @param {Boolean} state
+         */
+        controlTheme: function(theme, state) {
+            theme.selected = state;
+            var instances = theme.children;
+            for (var i = 0; i < instances.length; ++i) {
+                var instance = instances[i];
+                this.updateSource(instance);
+            }
         },
         /**
-         * @param {string|Object} sourceOrId
-         * @property {string} sourceOrId.id
-         * @param state
+         * @param {Mapbender.Source} source
+         * @param {boolean} state
          * engine-agnostic
          */
-        setSourceVisibility: function(sourceOrId, state) {
-            var source;
-            if (typeof sourceOrId === 'object') {
-                if (sourceOrId instanceof Mapbender.Source) {
-                    source = sourceOrId;
-                } else {
-                    source = this.getSourceById(sourceOrId.id);
-                }
-            } else {
-                source = this.getSourceById(sourceOrId);
-            }
-            var rootLayer = source.configuration.children[0];
-            var selected0 = rootLayer.options.treeOptions.selected;
-            var selected = state && rootLayer.options.treeOptions.allow.selected && !source.autoDisabled;
-            rootLayer.options.treeOptions.selected = selected;
-            if (selected0 !== selected) {
-                this.updateSource(source);
-            }
+        setSourceVisibility: function(source, state) {
+            this.controlLayer(source.getRootLayer(), state);
         },
         /**
          * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
@@ -268,25 +220,11 @@ window.Mapbender.MapModelBase = (function() {
             });
         },
         /**
-         * @return {Array<Source>}
+         * @return {Array<Mapbender.Source>}
          * engine-agnostic
          */
         getSources: function() {
             return this.sourceTree;
-        },
-        /**
-         * Returns the source's position
-         * engine-agnostic
-         */
-        getSourcePos: function(source) {
-            if (source) {
-                for (var i = 0; i < this.sourceTree.length; i++) {
-                    if (this.sourceTree[i].id.toString() === source.id.toString()) {
-                        return i;
-                    }
-                }
-            } else
-                return null;
         },
         /**
          * @param {string} [srsName] default: current
@@ -433,63 +371,36 @@ window.Mapbender.MapModelBase = (function() {
 
     // Deprecated old-style APIs
     Object.assign(MapModelBase.prototype, {
-        /**
-         * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
-         *  {add: {sourceDef: <x>}}
-         *
-         * @param {object} addOptions
-         * @returns {object} source defnition (unraveled but same ref)
-         * @deprecated, call addSourceFromConfig directly
-         * engine-agnostic
-         */
-        addSource: function(addOptions) {
-            if (addOptions.add && addOptions.add.sourceDef) {
-                // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
-                return this.addSourceFromConfig(addOptions.add.sourceDef, true);
+        removeLayer: function(layer) {
+            if (!layer.parent) {
+                this.removeSource(layer.source);
             } else {
-                console.error("Unuspported options, ignoring", addOptions);
+                var topMostRemovedLayerId = layer.remove();
+                var rootLayerId = layer.source.getRootLayer().options.id;
+                if (topMostRemovedLayerId === rootLayerId) {
+                    this.removeSource(layer.source);
+                } else {
+                    this._checkSource(layer.source, false);
+                    this.mbMap.element.trigger('mbmapsourcelayerremoved', {
+                        layer: layer,
+                        source: layer.source,
+                        mbMap: this.mbMap
+                    });
+                }
             }
         },
-        removeLayer: function(sourceId, layerId) {
-            var source = this.getSourceById(sourceId);
-            var layer = source && source.getLayerById(layerId);
-            var removedLayerId = null;
-            if (layer) {
-                if (!layer.parent) {
-                    this.removeSourceById(sourceId);
-                    return;
-                }
-                var rootLayerId = '' + source.getRootLayer().options.id;
-                removedLayerId = layer.remove();
-                var wasRootLayer = removedLayerId && (('' + removedLayerId) === rootLayerId);
-                if (wasRootLayer) {
-                    this.removeSourceById(sourceId);
-                    return;
-                }
+        removeSource: function(source) {
+            var stIndex = this.sourceTree.indexOf(source);
+            Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
+            if (stIndex !== -1) {
+                this.sourceTree.splice(stIndex, 1);
             }
-            if (removedLayerId) {
-                this._checkSource(source, false);
-                $(this.mbMap.element).trigger('mbmapsourcelayerremoved', {
-                    layerId: removedLayerId,
-                    source: source,
-                    mbMap: this.mbMap
-                });
+            if (source.layerset) {
+                source.layerset.removeChild(source);
             }
-        },
-        removeSourceById: function(sourceId) {
-            var source = this.getSourceById(sourceId);
-            if (source) {
-                var stIndex = this.sourceTree.indexOf(source);
-                Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
-                if (stIndex) {
-                    this.sourceTree.splice(stIndex, 1);
-                }
-                var fakeMqId = source.mqlid;
-                delete(this.map.layersList[fakeMqId]);
-                $(this.mbMap.element).trigger('mbmapsourceremoved', {
-                    source: source
-                });
-            }
+            $(this.mbMap.element).trigger('mbmapsourceremoved', {
+                source: source
+            });
         },
         /**
          * @param {OpenLayers.Layer.HTTPRequest|Object} source
@@ -533,75 +444,49 @@ window.Mapbender.MapModelBase = (function() {
             // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
             // Do not use .reverse on centrally shared values without making your own copy
             $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-                if(!Mapbender.configuration.layersets[layersetId]) {
-                    return;
+                var theme = Mapbender.layersets.filter(function(x) {
+                    return x.id === layersetId || ('' + x.id === '' + layersetId);
+                })[0];
+                if (!theme) {
+                    throw new Error("No layerset with id " + layersetId);
                 }
-                $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
-                    $.each(defArr, function(idx, sourceDef) {
-                        self.addSourceFromConfig(sourceDef, false);
-                    });
+                theme.children.slice().reverse().map(function(instance) {
+                    self.addSource(instance);
                 });
             });
         },
         /**
-         * @param {Mapbender.Source|Object} sourceOrSourceDef
-         * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
-         * @returns {object} sourceDef same ref, potentially modified
+         * @param {Mapbender.Source} source
          */
-        addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
-            var sourceDef, i, isNew = true;
-            if (sourceOrSourceDef instanceof Mapbender.Source) {
-                sourceDef = sourceOrSourceDef;
-            } else {
-                sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
-            }
-            if (mangleIds) {
-                sourceDef.id = this.generateSourceId();
-                if (typeof sourceDef.origId === 'undefined' || sourceDef.origId === null) {
-                    sourceDef.origId = sourceDef.id;
-                }
-                sourceDef.rewriteLayerIds();
-            }
-
-            // Note: do not bother with getSourcePos, checking for undefined vs null vs 0 return value
-            //       is not worth the trouble
-            // @todo: Layersets should be objects with a .containsSource method
-            for (i = 0; i < this.sourceTree.length; ++i) {
-                if (this.sourceTree[i].id.toString() === sourceDef.id.toString()) {
-                    isNew = false;
-                    break;
-                }
-            }
-            if (isNew) {
-                this.sourceTree.push(sourceDef);
-            }
+        addSource: function(source) {
+            this.sourceTree.push(source);
             var projCode = this.getCurrentProjectionCode();
 
-            sourceDef.mqlid = this.map.trackSource(sourceDef).id;
-            var olLayers = sourceDef.initializeLayers(projCode);
-            for (i = 0; i < olLayers.length; ++i) {
+            var olLayers = source.initializeLayers(projCode);
+            for (var i = 0; i < olLayers.length; ++i) {
                 var olLayer = olLayers[i];
                 Mapbender.mapEngine.setLayerVisibility(olLayer, false);
             }
 
-            this._spliceLayers(sourceDef, olLayers);
+            this._spliceLayers(source, olLayers);
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,
-                source: sourceDef,
-                // legacy event data; @todo: remove
-                added: {
-                    source: sourceDef,
-                    // legacy: no known consumer evaluates these props,
-                    // but even if, they've historically been wrong anyway
-                    // was: "before": always last source previously in list, even though
-                    // the new source was actually added *after* that
-                    before: null,
-                    after: null
-                }
+                source: source
             });
-            this._checkSource(sourceDef, false);
-            return sourceDef;
+            this._checkSource(source, false);
+        },
+        /**
+         * Creates a Mapbender.Source instance from given configuration, adds it,
+         * and returns it.
+         *
+         * @param {Object} sourceDef
+         * @returns {Mapbender.Source}
+         */
+        addSourceFromConfig: function(sourceDef) {
+            var source = Mapbender.Source.factory(sourceDef);
+            this.addSource(source);
+            return source;
         },
         /**
          * Bring the sources identified by the given ids into the given order.
@@ -731,41 +616,6 @@ window.Mapbender.MapModelBase = (function() {
          */
         getCurrentViewportSize: function() {
             return Mapbender.mapEngine.getCurrentViewportSize(this.olMap);
-        },
-        /**
-         * Returns individual print / export instructions for each active layer in the source individually.
-         * This allows image export / print to respect min / max scale hints on a per-layer basis and print
-         * layers at varying resolutions.
-         * The multitude of layers will be squashed on the PHP side while considering the actual print
-         * resolution (which is not known here), to minimize the total amount of requests.
-         *
-         * @param sourceOrLayer
-         * @param {Number} scale
-         * @param {Object} extent
-         * @property {Number} extent.left
-         * @property {Number} extent.right
-         * @property {Number} extent.top
-         * @property {Number} extent.bottom
-         * @return {Array<Model~SingleLayerPrintConfig>}
-         */
-        getPrintConfigEx: function(sourceOrLayer, scale, extent) {
-            var source = this.getMbConfig(sourceOrLayer, true, true);
-            var dataOut = [];
-            var commonLayerData = {
-                type: source.configuration.type,
-                sourceId: source.id,
-                opacity: source.configuration.options.opacity
-            };
-            if (typeof source.getMultiLayerPrintConfig === 'function') {
-                var srsName = this.getCurrentProjectionCode();
-                var mlPrintConfigs = source.getMultiLayerPrintConfig(extent, scale, srsName);
-                mlPrintConfigs.map(function(pc) {
-                    dataOut.push($.extend({}, commonLayerData, pc));
-                });
-            } else {
-                console.warn("Unprintable source", sourceOrLayer);
-            }
-            return dataOut;
         },
         displayPois: function(poiOptions) {
             if (!poiOptions.length) {

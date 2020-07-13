@@ -54,7 +54,6 @@ class Layertree extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.layertree.tree.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.metadata.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss',
@@ -87,7 +86,6 @@ class Layertree extends Element
             "type" => null,
             "autoOpen" => false,
             "showBaseSource" => true,
-            "showHeader" => false,
             "hideNotToggleable" => false,
             "hideSelect" => false,
             "hideInfo" => false,

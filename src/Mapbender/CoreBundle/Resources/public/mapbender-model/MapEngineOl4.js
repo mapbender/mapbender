@@ -175,7 +175,7 @@ window.Mapbender.MapEngineOl4 = (function() {
          * @param {String} srsName
          * @return {String}
          */
-        getWmsBaseUrl: function(olLayer, srsName) {
+        getWmsBaseUrlInternal_: function(olLayer, srsName) {
             var source = olLayer.getSource();
             if (typeof source.tileUrlFunction === 'function') {
                 /** @var {ol.source.TileWMS} source */

@@ -131,23 +131,15 @@
             }
             return new OpenLayers.Control.OverviewMap(options);
         },
-        _getSourceInstanceDefinitions: function() {
-            var instanceDefs = [];
-            var layerSet = (Mapbender.configuration.layersets[this.options.layerset] || []).slice().reverse();
-            for (var lsix = 0; lsix < layerSet.length; ++lsix) {
-                var instanceMap = layerSet[lsix];
-                var instanceIds = Object.keys(instanceMap);
-                for (var idIndex = 0; idIndex < instanceIds.length; ++ idIndex) {
-                    var instanceId = instanceIds[idIndex];
-                    instanceDefs.push(instanceMap[instanceId]);
-                }
-            }
-            return instanceDefs;
-        },
         _createLayers: function() {
             var layers = [];
             var srsName = this.mbMap.getModel().getCurrentProjectionCode();
-            var instanceDefs = this._getSourceInstanceDefinitions();
+            var lsId = this.options.layerset;
+            var layerset = Mapbender.layersets.filter(function(x) {
+                return ('' + lsId) === ('' + x.id);
+            })[0];
+            var instanceDefs = layerset && layerset.children.slice().reverse() || [];
+
             for (var i = 0; i < instanceDefs.length; ++i) {
                 var source = instanceDefs[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children

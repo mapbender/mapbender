@@ -240,32 +240,15 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Metadata action.
      *
-     * @Route("/application/{slug}/metadata")
-     * @param Request $request
-     * @param string $slug
+     * @Route("/application/metadata/{instance}/{layerId}")
+     * @param SourceInstance $instance
+     * @param string $layerId
      * @return Response
-     * @todo: param sourceId is required => it should be part of the route
-     * @todo: param layerName is required => it should be part of the route
      */
-    public function metadataAction(Request $request, $slug)
+    public function metadataAction(SourceInstance $instance, $layerId)
     {
-        $sourceId = $request->get("sourceId", null);
-        if (!strlen($sourceId)) {
-            throw new BadRequestHttpException();
-        }
         // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
         // @todo: give Yaml applications a proper object repository and make this work
-        $application = $this->requireApplication($slug);
-        $instance = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        if (!$instance || !$application) {
-            throw new NotFoundHttpException();
-        }
-        /** @var SourceInstance $instance */
-        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $application);
-        }
-
-        $layerId = $request->query->get('layerId', null);
         $metadata  = $instance->getMetadata();
         if (!$metadata) {
             throw new NotFoundHttpException();

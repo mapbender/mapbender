@@ -127,24 +127,9 @@ mb:
         scale: Масштаб
         rotation: Вращение
         legend: 'Легенда'
-      popup:
-        btn:
-          ok: Печать
-          cancel: Отмена
-      info:
-        noactivelayer: 'Нет активного слоя!'
-      form:
-        required: 'Пожалуйста, заполните это поле'
       class:
         title: Печать
         description: 'Отображает диалоговое окно печати'
-      tag:
-        print: печать
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -174,8 +159,6 @@ mb:
         position: положение
         button: кнопка
     layertree:
-      confirm:
-        allremove: 'Действительно удалить все источники?'
       popup:
         btn:
           ok: Закрыть
@@ -194,14 +177,11 @@ mb:
         opacity: Прозрачность
         zoomtolayer: 'Масштаб по слоюr'
         metadata: Метаданные
-        sources: Источники
-        deleteallsources: 'Удалить все источники'
         legend: Легенда
         kmlexport: 'Kml экспорт'
         dimension_onoff: 'Вкл/Выкл Измерение'
         dimension: Измерение
         sourcevisibility_onoff: 'Вкл/Выкл Сервисы'
-        allvisibility_on: 'Показать все слой'
       class:
         title: 'Дерево слоев'
         description: 'Дерево слоев карты'
@@ -316,7 +296,6 @@ mb:
         label:
           showbasesources: 'Показать базу источника'
           autoopen: Авто-открытие
-          showheader: 'Показать заголовок'
           showlayerremove: 'Показать удаление слоя'
           usetheme: 'Тематический слой'
           themes: Темы
@@ -324,8 +303,6 @@ mb:
             opened: 'Вкл/Выкл Рубрику'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Показать рубрики'
-            sourceVisibility: 'Рубрика: Сервисы'
-            allSelected: 'Рубрика:  Слой'
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'
@@ -360,11 +337,6 @@ mb:
       class:
         title: Redlining
         description: 'Redlining инструмент'
-  geosource:
-    image_error:
-      datails: 'Карта не отображается'
-      exception: 'Ошибка: %exception%'
-      statuscode: HTTP-Код
 
 # Login exceptions
 "Bad credentials.": 'Ошибка аутентификации'

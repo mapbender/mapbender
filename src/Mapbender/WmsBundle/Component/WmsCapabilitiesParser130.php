@@ -53,7 +53,6 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
                 $this->parseCapabilityException($wms, $capabilityEl);
             } elseif ($capabilityEl->localName === "Layer") {
                 $rootlayer = new WmsLayerSource();
-                $rootlayer->setPriority(0);
                 $wms->addLayer($rootlayer);
                 $this->parseLayer($wms, $rootlayer, $capabilityEl);
                 /* parse wms:_ExtendedOperation  */
@@ -419,9 +418,7 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         if ($tempList !== null) {
             foreach ($tempList as $item) {
                 $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(), $item);
-                $subwmslayer->setParent($wmslayer);
                 $subwmslayer->setSource($wms);
-                $subwmslayer->setPriority($wms->getLayers()->count());
                 $wmslayer->addSublayer($subwmslayer);
                 $wms->addLayer($subwmslayer);
             }
