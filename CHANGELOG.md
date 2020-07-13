@@ -1,8 +1,8 @@
-## dev-release/3.0.7 @ 0a1c46d0a
+## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
 - Fix Wms source reload errors when the Wms added a new group layer ([#1234](https://github.com/mapbender/mapbender/issues/1234), [PR#1238](https://github.com/mapbender/mapbender/pull/1238))
-- Fix bad ordering of Wms instance "allow toggle" checkboxes if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
+- Fix bad ordering of Wms instance layers in form if layer ordering priority is not fully initialized ([#1236](https://github.com/mapbender/mapbender/issues/1236), [PR#1239](https://github.com/mapbender/mapbender/pull/1239))
 - Fix random WMS source layer reordering on reload
 - Fix random WMS instance layer reordering on source reload
 - Fix new WMS group layers only appearing after reloading the source twice
@@ -16,9 +16,15 @@
 - Fix conflicts of legacy custom dropdown widget with Bootstrap JavaScript
 - Fix login issues when embedding Mapbender in a frame
 - Fix toolbar button centering when showing only icon but no label
+- Fix untranslated popup headings in Mobile template
 - [PrintClient]: Fully reinitialize selection rectangle scale and center on each activation
 - [PrintClient]: Replace manual `type` configuration with auto-detection
 - [PrintClient]: remove comment fields from default configuration (not printable with shipping default templates)
+- [GpsPosition]: Fix defaults for tooltip and icon options
+- [GpsPosition]: remove "refreshinterval" option (unused since v3.0.5.3)
+- [Backend] Fix form change discard confirmation when going "back" to Element type list from a modified Element form
+- [Backend] Fix double-display of collection adding icon when editing empty Element permissions set
+- [Backend] Add translation for form change discard confirmation when leaving a modified Element form
 - [Backend] Avoid form resubmit confirmation when refreshing source instance form after saving
 - Update "map-click" demo element
 - Misc fixes to jQueryUI standard / theme css compatibility
