@@ -220,24 +220,31 @@
             var previous = this.feature;
             var model = this.map.getModel();
             var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
-            this.feature = this._createFeature(this._getPrintScale(), center);
+            this.feature = this._createFeature(this._getPrintScale(), center, this.inputRotation_);
             this._clearFeature(previous);
             this._updateGeometry();
         },
         _updateGeometry: function() {
+            var center;
             if (!this.feature) {
-                this.feature = this._createFeature(this._getPrintScale(), this.map.getModel().getCurrentMapCenter());
+                center = this.map.getModel().getCurrentMapCenter();
+            } else {
+                this._endDrag();
+                center = this.map.getModel().getFeatureCenter(this.feature);
+                this._clearFeature(this.feature);
             }
-            this._applyRotation(this.feature, this.inputRotation_);
+            this.feature = this._createFeature(this._getPrintScale(), center, this.inputRotation_);
+            this._redrawSelectionFeatures();
             this._startDrag(this.feature, this.inputRotation_);
         },
         /**
          * @param {Number} scale
          * @param {Array<Number>} center
+         * @param {Number} [rotation]
          * @return {ol.Feature|OpenLayers.Feature.Vector}
          * @private
          */
-        _createFeature: function(scale, center) {
+        _createFeature: function(scale, center, rotation) {
             var bounds = this._getPrintBounds(center[0], center[1], scale);
             var feature;
             if (Mapbender.mapEngine.code === 'ol2') {
@@ -247,9 +254,10 @@
                 var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
                 feature = new ol.Feature(geom);
             }
+            this.map.getModel().rotateFeature(feature, -rotation || 0);
             this.selectionFeatures_.push({
                 feature: feature,
-                appliedRotation: 0
+                appliedRotation: rotation || 0
             });
             return feature;
         },
@@ -257,15 +265,10 @@
             var entry = this._getFeatureEntry(feature);
             var appliedRotation = entry && entry.appliedRotation || 0;
             var delta = degrees - appliedRotation;
-            var fixDragOl2 = Mapbender.mapEngine.code === 'ol2' && this.control && this.control.feature === feature;
-            if (fixDragOl2) {
-                this._endDrag();
-            }
+            this._endDrag();
             this.map.getModel().rotateFeature(feature, -delta);
             this._redrawSelectionFeatures();
-            if (fixDragOl2) {
-                this._startDrag(feature, degrees);
-            }
+            this._startDrag(feature, degrees);
             if (entry) {
                 entry.appliedRotation = degrees;
             }
@@ -339,18 +342,16 @@
          * @private
          */
         _handleControlRotation: function(degrees) {
-            $('input[name="rotation"]', this.$form).val(degrees);
-            this.inputRotation_ = degrees;
             var entry = this._getFeatureEntry(this.feature);
-            if (entry) {
-                entry.appliedRotation = degrees;
-            }
+            var total = ((entry || {}).appliedRotation || 0) + degrees;
+            $('input[name="rotation"]', this.$form).val(total);
+            this.inputRotation_ = total;
         },
         /**
          * Gets the drag control used to rotate and
          * move the selection feature around over the map.
          */
-        _startDrag: function(feature, degrees) {
+        _startDrag: function(feature) {
             // Neither ol2 nor ol4 controls do not properly support outside feature updates.
             // They have APIs for this, but they are buggy in different ways
             // => for both engines, always dispose and recreate
@@ -363,7 +364,7 @@
                 // create and activate
                 this.control = this._createDragRotateControlOl2();
                 this.map.map.olMap.addControl(this.control);
-                this.control.setFeature(feature, {rotation: -degrees});
+                this.control.setFeature(feature);
                 this.control.activate();
             } else {
                 if (this.control) {
