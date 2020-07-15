@@ -619,15 +619,6 @@
             }
             return jobData;
         },
-        /**
-         * @private
-         * @deprecated extend _collectJobData if you need more stuff sent to the server
-         * @deprecated extend _onSubmit if you need to check further preconditions before
-         *     form is sent
-         */
-        _print: function() {
-            this.$form.submit();
-        },
         _onSubmit: function(evt) {
             if (!this.selectionActive) {
                 // prevent submit without selection (sidepane mode has separate button to start selecting)
