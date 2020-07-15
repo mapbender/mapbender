@@ -45,8 +45,6 @@
             }
 
             this.$select.change($.proxy(this._zoomToScale, this));
-            this.$select.val(model.getCurrentScale());
-
             initDropdown.call(this.$select.parent());
 
             this._updateScale();
@@ -76,8 +74,13 @@
          * @private
          */
         _updateScale: function() {
-            var scale = this.mbMap.getModel().getCurrentScale();
+            var scale = this.mbMap.getModel().getCurrentScale(false);
             this.$select.val(scale).trigger('dropdown.changevisual');
+            if (!this.$select.val()) {
+                // unconfigured fractional scale
+                var $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
+                $displayArea.text(Math.round(scale));
+            }
         },
 
         _destroy: $.noop
