@@ -3,7 +3,11 @@
   <span class="labelInput">{{ title|trans }}</span>
 {% endif %}
   <div class="dropdown">
-    <select class="hiddenDropdown"></select>
+    <select class="hiddenDropdown">
+      {%- for scale in scales -%}
+        <option value="{{ scale }}">{{ scale }}</option>
+      {%- endfor -%}
+    </select>
     <div class="dropdownValue iconDown"></div>
     <ul class="dropdownList"></ul>
   </div>

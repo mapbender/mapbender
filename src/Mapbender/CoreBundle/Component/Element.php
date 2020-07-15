@@ -343,4 +343,26 @@ abstract class Element extends MinimalBound
     {
         return $this->entity->getApplication()->getMapEngineCode();
     }
+
+    /**
+     * Returns configured map scales, sorted ascending
+     *
+     * @param Entity|null $element
+     * @return int[]
+     */
+    protected function getMapScales(Entity $element = null)
+    {
+        $element = $element ?: $this->entity;
+        // @todo: map is central to application, should be accessible more directly (must enforce exactly 1 map per application first)
+        $target = $element->getTargetElement('target');
+        $scales = array();
+        if ($target) {
+            $mapConfig = $target->getConfiguration();
+            if (!empty($mapConfig['scales'])) {
+                $scales = array_map('intval', $mapConfig['scales']);
+                asort($scales, SORT_NUMERIC | SORT_REGULAR);
+            }
+        }
+        return $scales;
+    }
 }
