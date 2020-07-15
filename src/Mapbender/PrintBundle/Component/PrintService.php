@@ -143,6 +143,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return new Box(0, $targetHeight, $targetWidth, 0);
     }
 
+    protected function getJobExtent($jobData)
+    {
+        $box = parent::getJobExtent($jobData);
+        // Print only: extend on rotation
+        if (isset($jobData['rotation']) && intval($jobData['rotation'])) {
+            $box = $box->getExpandedForRotation(floatval($jobData['rotation']));
+        }
+        return $box;
+    }
+
     /**
      * @param array $templateData
      * @param array $jobData
