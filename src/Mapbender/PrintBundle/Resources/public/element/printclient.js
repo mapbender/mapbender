@@ -353,6 +353,14 @@
             var entry = this._getFeatureEntry(this.feature);
             entry.tempRotation = degrees;
             var total = ((entry || {}).rotationBias || 0) + degrees;
+            // limit to +-180
+            while (total > 180) {
+                total -= 360;
+            }
+            while (total <= -180) {
+                total += 360;
+            }
+            total = Math.round(total);
             $('input[name="rotation"]', this.$form).val(total);
             this.inputRotation_ = total;
         },
@@ -411,11 +419,7 @@
             control.events.on({
                 'transformcomplete': function() {
                     /** @this {OpenLayers.Control.TransformFeature} */
-                    var userRotation = 360 - this.rotation;
-                    if (userRotation > 180) {
-                        userRotation -= 360;
-                    }
-                    self._handleControlRotation(userRotation);
+                    self._handleControlRotation(-this.rotation);
                 }
             });
             return control;
