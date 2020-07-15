@@ -57,11 +57,29 @@ window.Mapbender.MapModelBase = (function() {
         /** Actual initial projection, determined by a combination of several URL parameters */
         _startProj: null,
         /**
+         * @param {boolean} [closest] round to nearest configured map scale (default true if omitted)
          * @return {number}
          * engine-agnostic
          */
-        getCurrentScale: function() {
-            return (this._getScales())[this.getCurrentZoomLevel()];
+        getCurrentScale: function(closest) {
+            if (closest || (typeof closest === 'undefined')) {
+                var zoom = this.getCurrentZoomLevel(true);
+                var scales = this._getScales();
+                return scales[zoom];
+            } else {
+                return this._getFractionalScale();
+            }
+        },
+        /**
+         * @param {boolean} [closest] round to nearest configured map scale (default true if omitted)
+         * @returns {number}
+         */
+        getCurrentZoomLevel: function(closest) {
+            var zoom = this._getFractionalZoomLevel();
+            if (closest || (typeof closest === 'undefined')) {
+                zoom = Math.max(0, Math.min(this._countScales() - 1, Math.round(zoom)));
+            }
+            return zoom;
         },
         /**
          * engine-agnostic

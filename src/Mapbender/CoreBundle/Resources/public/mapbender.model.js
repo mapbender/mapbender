@@ -351,8 +351,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         $(this.mbMap.element).trigger('mbmapzoomchanged', {
             mbMap: this.mbMap,
             zoom: zoom,
-            // scale: this.getCurrentScale()
-            scale: scales[zoom]
+            scale: scales[zoom],
+            scaleExact: scales[zoom]
         });
     },
     /**
@@ -453,11 +453,15 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             }
         }
     },
-    getCurrentZoomLevel: function() {
+    _getFractionalZoomLevel: function() {
         return this.map.olMap.getZoom();
     },
     getViewPort: function() {
         return this.map.olMap.viewPortDiv;
+    },
+    _getFractionalScale: function() {
+        // no fractional zoom levels allowed in Openlayers 2
+        return this.getCurrentScale(true);
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
@@ -470,7 +474,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             return parseInt('' + Math.round(s));
         });
     },
-
+    _countScales: function() {
+        return this._getScales().length;
+    },
     /**
      * @param {OpenLayers.Layer} olLayer
      * @param {OpenLayers.Projection} newProj

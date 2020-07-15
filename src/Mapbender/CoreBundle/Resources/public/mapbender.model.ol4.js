@@ -86,7 +86,8 @@ window.Mapbender.MapModelOl4 = (function() {
             mbMap.element.trigger('mbmapzoomchanged', {
                 mbMap: mbMap,
                 zoom: zoom,
-                scale: scales[zoom]
+                scale: scales[zoom],
+                scaleExact: self._getFractionalScale()
             });
         });
         olMap.on("singleclick", function(data) {
@@ -260,8 +261,12 @@ window.Mapbender.MapModelOl4 = (function() {
             }
         }
     },
-    getCurrentZoomLevel: function() {
+    _getFractionalZoomLevel: function() {
         return this.olMap.getView().getZoom();
+    },
+    _getFractionalScale: function() {
+        var resolution = this.olMap.getView().getResolution();
+        return this.resolutionToScale(resolution);
     },
     zoomIn: function() {
         this.setZoomLevel(this.getCurrentZoomLevel() + 1, true);
@@ -355,6 +360,10 @@ window.Mapbender.MapModelOl4 = (function() {
             return parseInt('' + Math.round(scale0));
         });
     },
+    _countScales: function() {
+        return this.olMap.getView().getResolutions().length;
+    },
+
     DRAWTYPES: ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'],
 
     /**
