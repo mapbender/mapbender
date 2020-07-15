@@ -3,6 +3,7 @@
      * @typedef {Object} mbPrintClientSelectionEntry
      * @property {Object} feature
      * @property {Number} appliedRotation
+     * @property {Number} tempRotation
      */
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
@@ -271,6 +272,7 @@
             this._startDrag(feature, degrees);
             if (entry) {
                 entry.appliedRotation = degrees;
+                entry.tempRotation = 0;
             }
         },
         _redrawSelectionFeatures: function() {
@@ -343,6 +345,7 @@
          */
         _handleControlRotation: function(degrees) {
             var entry = this._getFeatureEntry(this.feature);
+            entry.tempRotation = degrees;
             var total = ((entry || {}).appliedRotation || 0) + degrees;
             $('input[name="rotation"]', this.$form).val(total);
             this.inputRotation_ = total;
@@ -423,6 +426,13 @@
             interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
                 var rad2deg = 360. / (2 * Math.PI);
                 self._handleControlRotation(-Math.round(rad2deg * data.angle));
+            });
+            interaction.on('rotateend', /** @this {ol.interaction.Transform} */ function(data) {
+                // All 'rotating' event angles are incremental from the start of the rotation interaction
+                // When the rotation ends, bake the final value into the inherent rotation bias of the feature
+                var entry = self._getFeatureEntry(data.feature);
+                entry.appliedRotation += entry.tempRotation;
+                entry.tempRotation = 0;
             });
             // Adjust styling
             // Interaction can repeatedly call setDefaultStyle, patching once is not enough
