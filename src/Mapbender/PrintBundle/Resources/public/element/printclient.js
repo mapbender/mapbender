@@ -54,7 +54,7 @@
                 /** @this {HTMLInputElement} */
                 self.inputRotation_ = parseInt($(this).val()) || 0;
                 if (self.selectionActive && self.feature) {
-                    self._applyRotation(self.feature, self.inputRotation_);
+                    self._resetSelectionFeature();
                 }
             });
             $('select[name="template"]', this.$form)
@@ -250,25 +250,6 @@
                 tempRotation: 0
             });
             return feature;
-        },
-        /**
-         * Called to re-rotate the selection feature on rotation input field change
-         * @param feature
-         * @param degrees
-         * @private
-         */
-        _applyRotation: function(feature, degrees) {
-            var entry = this._getFeatureEntry(feature);
-            var rotationBias = entry && entry.rotationBias || 0;
-            var delta = degrees - rotationBias;
-            this._endDrag();
-            this.map.getModel().rotateFeature(feature, -delta);
-            if (entry) {
-                entry.rotationBias = degrees;
-                entry.tempRotation = 0;
-            }
-            this._redrawSelectionFeatures();
-            this._startDrag(feature);
         },
         _redrawSelectionFeatures: function() {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
