@@ -116,7 +116,7 @@
             this._getTemplateSize().then(function() {
                 self.selectionActive = true;
                 self._setScale();
-                self._updateGeometry();
+                self._resetSelectionFeature();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
@@ -223,20 +223,8 @@
             var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
             this.feature = this._createFeature(this._getPrintScale(), center, this.inputRotation_);
             this._clearFeature(previous);
-            this._updateGeometry();
-        },
-        _updateGeometry: function() {
-            var center;
-            if (!this.feature) {
-                center = this.map.getModel().getCurrentMapCenter();
-            } else {
-                this._endDrag();
-                center = this.map.getModel().getFeatureCenter(this.feature);
-                this._clearFeature(this.feature);
-            }
-            this.feature = this._createFeature(this._getPrintScale(), center, this.inputRotation_);
             this._redrawSelectionFeatures();
-            this._startDrag(this.feature, this.inputRotation_);
+            this._startDrag(this.feature);
         },
         /**
          * @param {Number} scale
@@ -353,7 +341,7 @@
         _handleControlRotation: function(degrees) {
             var entry = this._getFeatureEntry(this.feature);
             entry.tempRotation = degrees;
-            var total = ((entry || {}).rotationBias || 0) + degrees;
+            var total = entry.rotationBias + degrees;
             // limit to +-180
             while (total > 180) {
                 total -= 360;
