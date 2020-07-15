@@ -2,8 +2,8 @@
     /**
      * @typedef {Object} mbPrintClientSelectionEntry
      * @property {Object} feature
-     * @property {Number} appliedRotation
-     * @property {Number} tempRotation
+     * @property {Number} rotationBias inherent feature geometry rotation, before handing it to rotate interaction
+     * @property {Number} tempRotation in-progress feature rotation added by rotate interaction
      */
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
@@ -258,20 +258,26 @@
             this.map.getModel().rotateFeature(feature, -rotation || 0);
             this.selectionFeatures_.push({
                 feature: feature,
-                appliedRotation: rotation || 0
+                rotationBias: rotation || 0
             });
             return feature;
         },
+        /**
+         * Called to re-rotate the selection feature on rotation input field change
+         * @param feature
+         * @param degrees
+         * @private
+         */
         _applyRotation: function(feature, degrees) {
             var entry = this._getFeatureEntry(feature);
-            var appliedRotation = entry && entry.appliedRotation || 0;
-            var delta = degrees - appliedRotation;
+            var rotationBias = entry && entry.rotationBias || 0;
+            var delta = degrees - rotationBias;
             this._endDrag();
             this.map.getModel().rotateFeature(feature, -delta);
             this._redrawSelectionFeatures();
             this._startDrag(feature, degrees);
             if (entry) {
-                entry.appliedRotation = degrees;
+                entry.rotationBias = degrees;
                 entry.tempRotation = 0;
             }
         },
@@ -346,7 +352,7 @@
         _handleControlRotation: function(degrees) {
             var entry = this._getFeatureEntry(this.feature);
             entry.tempRotation = degrees;
-            var total = ((entry || {}).appliedRotation || 0) + degrees;
+            var total = ((entry || {}).rotationBias || 0) + degrees;
             $('input[name="rotation"]', this.$form).val(total);
             this.inputRotation_ = total;
         },
@@ -431,7 +437,7 @@
                 // All 'rotating' event angles are incremental from the start of the rotation interaction
                 // When the rotation ends, bake the final value into the inherent rotation bias of the feature
                 var entry = self._getFeatureEntry(data.feature);
-                entry.appliedRotation += entry.tempRotation;
+                entry.rotationBias += entry.tempRotation;
                 entry.tempRotation = 0;
             });
             // Adjust styling
