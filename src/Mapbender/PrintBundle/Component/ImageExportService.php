@@ -80,17 +80,16 @@ class ImageExportService
         $targetBox = new Box(0, $jobData['height'], $jobData['width'], 0);
         $extentBox = $this->getJobExtent($jobData);
         if (isset($jobData['rotation']) && intval($jobData['rotation'])) {
-            $rotation = intval($jobData['rotation']);
+            $rotation = floatval($jobData['rotation']);
             $expandedCanvas = $targetBox->getExpandedForRotation($rotation);
             $expandedCanvas->roundToIntegerBoundaries();
-            $expandedExtent = $extentBox->getExpandedForRotation($rotation);
 
             $rotatedJob = array_replace($jobData, array(
                 'rotation' => 0,
                 'width' => abs($expandedCanvas->getWidth()),
                 'height' => abs($expandedCanvas->getHeight()),
-                'extent' => $expandedExtent->getAbsWidthAndHeight(),
-                'center' => $expandedExtent->getCenterXy(),
+                'extent' => $extentBox->getAbsWidthAndHeight(),
+                'center' => $extentBox->getCenterXy(),
             ));
             // self-delegate
             $rotatedImage = $this->buildExportImage($rotatedJob);

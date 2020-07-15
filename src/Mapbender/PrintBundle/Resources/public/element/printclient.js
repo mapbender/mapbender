@@ -2,7 +2,8 @@
     /**
      * @typedef {Object} mbPrintClientSelectionEntry
      * @property {Object} feature
-     * @property {Number} appliedRotation
+     * @property {Number} rotationBias inherent feature geometry rotation, before handing it to rotate interaction
+     * @property {Number} tempRotation in-progress feature rotation added by rotate interaction
      */
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
@@ -53,7 +54,7 @@
                 /** @this {HTMLInputElement} */
                 self.inputRotation_ = parseInt($(this).val()) || 0;
                 if (self.selectionActive && self.feature) {
-                    self._applyRotation(self.feature, self.inputRotation_);
+                    self._resetSelectionFeature();
                 }
             });
             $('select[name="template"]', this.$form)
@@ -115,7 +116,7 @@
             this._getTemplateSize().then(function() {
                 self.selectionActive = true;
                 self._setScale();
-                self._updateGeometry();
+                self._resetSelectionFeature();
                 $('input[type="submit"]', self.$form).removeClass('hidden');
             });
         },
@@ -220,24 +221,19 @@
             var previous = this.feature;
             var model = this.map.getModel();
             var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
-            this.feature = this._createFeature(this._getPrintScale(), center);
+            this.feature = this._createFeature(this._getPrintScale(), center, this.inputRotation_);
             this._clearFeature(previous);
-            this._updateGeometry();
-        },
-        _updateGeometry: function() {
-            if (!this.feature) {
-                this.feature = this._createFeature(this._getPrintScale(), this.map.getModel().getCurrentMapCenter());
-            }
-            this._applyRotation(this.feature, this.inputRotation_);
-            this._startDrag(this.feature, this.inputRotation_);
+            this._redrawSelectionFeatures();
+            this._startDrag(this.feature);
         },
         /**
          * @param {Number} scale
          * @param {Array<Number>} center
+         * @param {Number} [rotation]
          * @return {ol.Feature|OpenLayers.Feature.Vector}
          * @private
          */
-        _createFeature: function(scale, center) {
+        _createFeature: function(scale, center, rotation) {
             var bounds = this._getPrintBounds(center[0], center[1], scale);
             var feature;
             if (Mapbender.mapEngine.code === 'ol2') {
@@ -247,28 +243,13 @@
                 var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
                 feature = new ol.Feature(geom);
             }
+            this.map.getModel().rotateFeature(feature, -rotation || 0);
             this.selectionFeatures_.push({
                 feature: feature,
-                appliedRotation: 0
+                rotationBias: rotation || 0,
+                tempRotation: 0
             });
             return feature;
-        },
-        _applyRotation: function(feature, degrees) {
-            var entry = this._getFeatureEntry(feature);
-            var appliedRotation = entry && entry.appliedRotation || 0;
-            var delta = degrees - appliedRotation;
-            var fixDragOl2 = Mapbender.mapEngine.code === 'ol2' && this.control && this.control.feature === feature;
-            if (fixDragOl2) {
-                this._endDrag();
-            }
-            this.map.getModel().rotateFeature(feature, -delta);
-            this._redrawSelectionFeatures();
-            if (fixDragOl2) {
-                this._startDrag(feature, degrees);
-            }
-            if (entry) {
-                entry.appliedRotation = degrees;
-            }
         },
         _redrawSelectionFeatures: function() {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
@@ -339,18 +320,25 @@
          * @private
          */
         _handleControlRotation: function(degrees) {
-            $('input[name="rotation"]', this.$form).val(degrees);
-            this.inputRotation_ = degrees;
             var entry = this._getFeatureEntry(this.feature);
-            if (entry) {
-                entry.appliedRotation = degrees;
+            entry.tempRotation = degrees;
+            var total = entry.rotationBias + degrees;
+            // limit to +-180
+            while (total > 180) {
+                total -= 360;
             }
+            while (total <= -180) {
+                total += 360;
+            }
+            total = Math.round(total);
+            $('input[name="rotation"]', this.$form).val(total);
+            this.inputRotation_ = total;
         },
         /**
-         * Gets the drag control used to rotate and
-         * move the selection feature around over the map.
+         * Start drag + rotate interaction on the selection feature
+         * @param {(OpenLayers.Feature.Vector|ol.Feature)} feature
          */
-        _startDrag: function(feature, degrees) {
+        _startDrag: function(feature) {
             // Neither ol2 nor ol4 controls do not properly support outside feature updates.
             // They have APIs for this, but they are buggy in different ways
             // => for both engines, always dispose and recreate
@@ -362,8 +350,9 @@
                 }
                 // create and activate
                 this.control = this._createDragRotateControlOl2();
+                var entry = this._getFeatureEntry(feature);
                 this.map.map.olMap.addControl(this.control);
-                this.control.setFeature(feature, {rotation: -degrees});
+                this.control.setFeature(feature, {rotation: -entry.rotationBias});
                 this.control.activate();
             } else {
                 if (this.control) {
@@ -399,13 +388,19 @@
                 layer: this.layer
             });
             control.events.on({
+                'transform': function(data) {
+                    /** @this {OpenLayers.Control.TransformFeature} */
+                    var entry = self._getFeatureEntry(this.feature);
+                    if (data.rotation) {
+                        // per-event rotation is INCREMENTAL (delta on top of previous event)
+                        self._handleControlRotation(entry.tempRotation - data.rotation);
+                    }
+                },
                 'transformcomplete': function() {
                     /** @this {OpenLayers.Control.TransformFeature} */
-                    var userRotation = 360 - this.rotation;
-                    if (userRotation > 180) {
-                        userRotation -= 360;
-                    }
-                    self._handleControlRotation(userRotation);
+                    var entry = self._getFeatureEntry(this.feature);
+                    entry.rotationBias += entry.tempRotation;
+                    entry.tempRotation = 0;
                 }
             });
             return control;
@@ -422,6 +417,13 @@
             interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
                 var rad2deg = 360. / (2 * Math.PI);
                 self._handleControlRotation(-Math.round(rad2deg * data.angle));
+            });
+            interaction.on('rotateend', /** @this {ol.interaction.Transform} */ function(data) {
+                // All 'rotating' event angles are incremental from the start of the rotation interaction
+                // When the rotation ends, bake the final value into the inherent rotation bias of the feature
+                var entry = self._getFeatureEntry(data.feature);
+                entry.rotationBias += entry.tempRotation;
+                entry.tempRotation = 0;
             });
             // Adjust styling
             // Interaction can repeatedly call setDefaultStyle, patching once is not enough
@@ -616,15 +618,6 @@
                 _.assign(jobData, this.digitizerData);
             }
             return jobData;
-        },
-        /**
-         * @private
-         * @deprecated extend _collectJobData if you need more stuff sent to the server
-         * @deprecated extend _onSubmit if you need to check further preconditions before
-         *     form is sent
-         */
-        _print: function() {
-            this.$form.submit();
         },
         _onSubmit: function(evt) {
             if (!this.selectionActive) {
