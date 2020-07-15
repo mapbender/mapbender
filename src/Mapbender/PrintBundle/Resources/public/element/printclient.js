@@ -258,7 +258,8 @@
             this.map.getModel().rotateFeature(feature, -rotation || 0);
             this.selectionFeatures_.push({
                 feature: feature,
-                rotationBias: rotation || 0
+                rotationBias: rotation || 0,
+                tempRotation: 0
             });
             return feature;
         },
@@ -274,12 +275,12 @@
             var delta = degrees - rotationBias;
             this._endDrag();
             this.map.getModel().rotateFeature(feature, -delta);
-            this._redrawSelectionFeatures();
-            this._startDrag(feature, degrees);
             if (entry) {
                 entry.rotationBias = degrees;
                 entry.tempRotation = 0;
             }
+            this._redrawSelectionFeatures();
+            this._startDrag(feature);
         },
         _redrawSelectionFeatures: function() {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 0);
@@ -365,8 +366,8 @@
             this.inputRotation_ = total;
         },
         /**
-         * Gets the drag control used to rotate and
-         * move the selection feature around over the map.
+         * Start drag + rotate interaction on the selection feature
+         * @param {(OpenLayers.Feature.Vector|ol.Feature)} feature
          */
         _startDrag: function(feature) {
             // Neither ol2 nor ol4 controls do not properly support outside feature updates.
@@ -380,8 +381,9 @@
                 }
                 // create and activate
                 this.control = this._createDragRotateControlOl2();
+                var entry = this._getFeatureEntry(feature);
                 this.map.map.olMap.addControl(this.control);
-                this.control.setFeature(feature);
+                this.control.setFeature(feature, {rotation: -entry.rotationBias});
                 this.control.activate();
             } else {
                 if (this.control) {
@@ -417,9 +419,19 @@
                 layer: this.layer
             });
             control.events.on({
+                'transform': function(data) {
+                    /** @this {OpenLayers.Control.TransformFeature} */
+                    var entry = self._getFeatureEntry(this.feature);
+                    if (data.rotation) {
+                        // per-event rotation is INCREMENTAL (delta on top of previous event)
+                        self._handleControlRotation(entry.tempRotation - data.rotation);
+                    }
+                },
                 'transformcomplete': function() {
                     /** @this {OpenLayers.Control.TransformFeature} */
-                    self._handleControlRotation(-this.rotation);
+                    var entry = self._getFeatureEntry(this.feature);
+                    entry.rotationBias += entry.tempRotation;
+                    entry.tempRotation = 0;
                 }
             });
             return control;
