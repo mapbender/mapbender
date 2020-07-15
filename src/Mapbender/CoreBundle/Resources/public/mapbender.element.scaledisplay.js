@@ -30,17 +30,9 @@
          */
         _setup: function() {
             var self = this;
-            switch (Mapbender.mapEngine.code) {
-                case 'ol2':
-                    // fall through
-                case 'ol4':
-                    $(this.mbMap.element).on('mbmapzoomchanged', function(e, data) {
-                        self._updateDisplay(data.scale);
-                    });
-                    break;
-                default:
-                    throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
-            }
+            $(this.mbMap.element).on('mbmapzoomchanged', function(e, data) {
+                self._updateDisplay(data.scaleExact);
+            });
 
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             this._trigger('ready');
@@ -69,7 +61,7 @@
             $(this.element).text(parts.join(''));
         },
         _changeSrs: function(event, srs){
-            this._updateDisplay(this.mbMap.getModel().getCurrentScale());
+            this._updateDisplay(this.mbMap.getModel().getCurrentScale(false));
         }
     });
 
