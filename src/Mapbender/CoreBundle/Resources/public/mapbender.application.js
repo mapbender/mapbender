@@ -661,7 +661,7 @@ Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
 };
 
 Mapbender.Util.addProxy = function(url) {
-    return OpenLayers.ProxyHost + encodeURIComponent(url);
+    return Mapbender.configuration.application.urls.proxy + '?url=' + encodeURIComponent(url);
 };
 
 Mapbender.Util.removeProxy = function(url) {
