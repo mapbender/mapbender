@@ -325,13 +325,14 @@
          */
         _extendStyles: function(styles, feature) {
             var label = feature.get('area') || '';
-            styles.forEach(function(style) {
+            return styles.map(function(original) {
+                var style = original.clone();
                 if (!style.getText()) {
                     style.setText(new ol.style.Text());
                 }
                 style.getText().setText(label);
+                return style;
             });
-            return styles;
         },
         _formatMeasure: function(value) {
             var scale = 1;
