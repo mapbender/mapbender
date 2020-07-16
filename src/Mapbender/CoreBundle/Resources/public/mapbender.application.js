@@ -660,10 +660,6 @@ Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
     return a.host === b.host && a.protocol && b.protocol;
 };
 
-Mapbender.Util.addProxy = function(url) {
-    return Mapbender.configuration.application.urls.proxy + '?url=' + encodeURIComponent(url);
-};
-
 Mapbender.Util.removeProxy = function(url) {
     var proxyBase = Mapbender.configuration.application.urls.proxy + '?url=';
     if (url.indexOf(proxyBase) === 0) {
