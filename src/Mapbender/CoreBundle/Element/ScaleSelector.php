@@ -77,17 +77,12 @@ class ScaleSelector extends Element
         return 'MapbenderCoreBundle:Element:scaleselector.html.twig';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplateVars()
     {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration(),
-        ));
+        return array(
+            'configuration' => $this->entity->getConfiguration(),
+            'scales' => $this->getMapScales($this->entity),
+        );
     }
 
     /**

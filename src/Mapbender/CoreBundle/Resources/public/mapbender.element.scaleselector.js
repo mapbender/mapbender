@@ -32,22 +32,12 @@
         },
 
         _setup: function() {
-            var model = this.mbMap.getModel();
-            var zoomLevels = model.getZoomLevels();
             var self = this;
-            for (var i = 0; i < zoomLevels.length; ++i) {
-                var $option = $("<option/>");
-                $option
-                    .attr('value', zoomLevels[i].scale)
-                    .html(zoomLevels[i].scale)
-                ;
-                this.$select.append($option);
-            }
-
             this.$select.change($.proxy(this._zoomToScale, this));
-            initDropdown.call(this.$select.parent());
 
             this._updateScale();
+            initDropdown.call(this.$select.parent());
+
             $(document).on('mbmapzoomchanged', function(e, data) {
                 if (data.mbMap === self.mbMap) {
                     self._updateScale();
