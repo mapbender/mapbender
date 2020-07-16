@@ -33,7 +33,6 @@ window.Mapbender.MapModelOl4 = (function() {
             tileSize: this.mbMap.options.tileSize
         };
 
-        this.vectorLayer = {};
         if (!options || !options.srs || !options.maxExtent) {
             console.error("Options srs and maxExtent required");
             throw new Error("Can't initialize model");
