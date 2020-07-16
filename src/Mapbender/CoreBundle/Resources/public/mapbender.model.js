@@ -71,8 +71,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
 
     map: null,
-    _geoJsonReader: null,
-    _wktReader: null,
     _initMap: function _initMap() {
         // dpi only used for scale to resolution / resolution to scale calculations
         this.options = {

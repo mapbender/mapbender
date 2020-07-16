@@ -204,17 +204,16 @@
             var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
             var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
             var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
-            var x0 = llBottomLeft.lon, x1 = llTopRight.lon, y0 = llBottomLeft.lat, y1 = llTopRight.lat;
-            return new OpenLayers.Bounds.fromArray([x0, y0, x1, y1]);
+            return {
+                left: llBottomLeft.lon,
+                right: llTopRight.lon,
+                bottom: llBottomLeft.lat,
+                top: llTopRight.lat
+            };
         },
         _printBoundsFromFeature: function(feature, scale) {
-            if (Mapbender.mapEngine.code === 'ol2') {
-                var featureCenter = feature.geometry.getBounds().getCenterLonLat();
-                return this._getPrintBounds(featureCenter.lon, featureCenter.lat, scale);
-            } else {
-                var featureCenterCoords = ol.extent.getCenter(feature.getGeometry().getExtent());
-                return this._getPrintBounds(featureCenterCoords[0], featureCenterCoords[1], scale);
-            }
+            var center = this.map.getModel().getFeatureCenter(feature);
+            return this._getPrintBounds(center[0], center[1], scale);
         },
         _resetSelectionFeature: function() {
             this._endDrag();
@@ -237,7 +236,7 @@
             var bounds = this._getPrintBounds(center[0], center[1], scale);
             var feature;
             if (Mapbender.mapEngine.code === 'ol2') {
-                var geometry = bounds.toGeometry();
+                var geometry = OpenLayers.Bounds.prototype.toGeometry.call(bounds);
                 feature = new OpenLayers.Feature.Vector(geometry);
             } else {
                 var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);

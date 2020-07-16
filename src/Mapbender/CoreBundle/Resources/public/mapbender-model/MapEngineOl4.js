@@ -15,11 +15,6 @@ window.Mapbender.MapEngineOl4 = (function() {
             if (_dpi) {
                 // todo: apply dpi globally?
             }
-            // todo: image path?
-             // something something Mapbender.configuration.application.urls.asset
-            // todo: proxy host?
-              // something something Mapbender.configuration.application.urls.proxy + '?url=';
-            // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
             // todo: fix drag pan
             // OpenLayers.Control.Navigation.prototype.documentDrag = true;
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);

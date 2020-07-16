@@ -79,40 +79,6 @@
          */
         zoomToFullExtent: function() {
             this.model.zoomToFullExtent();
-        },
-        /**
-         * Zooms the map to scale
-         * @deprecated
-         */
-        zoomToScale: function(scale, closest) {
-            console.warn("Deprecated zoomToScale call, use engine-independent Model.pickZoomForScale + Model.setZoomLevel");
-            this.map.olMap.zoomToScale.apply(this.map.olMap, arguments);
-        },
-        /**
-         * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model
-         * @deprecated
-         */
-        setExtent: function() {
-            console.error("mbMap.setExtent called, doesn't do anything, you probably want to call zoomToExtent instead", arguments);
-        },
-        /**
-         * Adds the popup
-         */
-        addPopup: function(popup){
-            this.map.olMap.addPopup(popup);
-        },
-        /**
-         * Removes the popup
-         */
-        removePopup: function(popup){
-            this.map.olMap.removePopup(popup);
-        },
-        /**
-         * Returns the scale list
-         * @deprecated, just get options.scales yourself
-         */
-        scales: function(){
-            return this.options.scales;
         }
     });
 
