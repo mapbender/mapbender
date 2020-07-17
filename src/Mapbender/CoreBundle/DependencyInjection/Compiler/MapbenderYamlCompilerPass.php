@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
-use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
@@ -80,10 +80,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
                     $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
                     $applications[$slug]['__filename__'] = $file->getRealPath();
                 }
-                // Add a file resource to auto-invalidate the container build when the input file changes
-                $container->addResource(new FileResource($file->getRealPath()));
             }
         }
+        $container->addResource(new DirectoryResource($path));
         $this->addApplications($container, $applications);
     }
 
