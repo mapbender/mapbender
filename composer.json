@@ -33,6 +33,7 @@
         "mapbender/fom": "~3.1.2 || ^3.2.1",
         "mapbender/owsproxy": "^3.0.6.2",
 
+        "mapbender/openlayers6-es5": "0.x || ^1",
         "mapbender/mapquery": "1.x"
     },
     "autoload": {

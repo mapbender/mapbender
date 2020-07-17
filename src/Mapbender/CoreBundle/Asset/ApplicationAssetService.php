@@ -204,8 +204,7 @@ class ApplicationAssetService
 
                 $modelJsBase = "@MapbenderCoreBundle/Resources/public/mapbender-model";
                 $commonAssets = array(
-                    // HACK: use Openlayers 6 single-file build (not yet public)
-                    '/components/ol6/ol-debug.js',
+                    '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js',
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
