@@ -65,7 +65,6 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
             }
         },
         customizeStyle: function(styles) {
-            var stylesPerIntent = {};
             var valueCallbacks = {};
             var globalLiterals = {};
             var defaultLiterals = {};
@@ -82,15 +81,14 @@ window.Mapbender.VectorLayerBridgeOl2 = (function() {
                     defaultLiterals[key] = value;
                 }
             }
-            ['default', 'select', 'temporary'].forEach(function(intent) {
-                var styleOptions = Object.assign({}, OpenLayers.Feature.Vector.style[intent], globalLiterals);
-                if (intent === 'default') {
-                    Object.assign(styleOptions, defaultLiterals);
-                }
-                stylesPerIntent[intent] = new OpenLayers.Style(styleOptions, {
+            var styleOptionsPerIntent = {
+                default: Object.assign({}, OpenLayers.Feature.Vector.style['default'], globalLiterals, defaultLiterals)
+            };
+            var stylesPerIntent = {
+                default: new OpenLayers.Style(styleOptionsPerIntent['default'], {
                     context: valueCallbacks
-                });
-            });
+                })
+            };
             var styleMap = new OpenLayers.StyleMap(stylesPerIntent, {extendDefault: true});
             this.wrappedLayer_.styleMap = styleMap;
         },
