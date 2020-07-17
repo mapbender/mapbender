@@ -41,6 +41,9 @@
         <parameter key="mapbender.asset_compiler.translations.class">Mapbender\CoreBundle\Asset\TranslationCompiler</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
+        <parameter key="mapbender.yaml_application_dirs" type="collection">
+            <parameter>%kernel.root_dir%/config/applications</parameter>
+        </parameter>
         <parameter key="mapbender.uploads_dir">uploads</parameter>
         <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
              try setting /usr/bin/sassc -->

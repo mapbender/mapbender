@@ -28,11 +28,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     protected $strictElementConfigs = false;
 
     /**
-     * MapbenderYamlCompilerPass constructor.
-     *
-     * @param string             $applicationDir       Applications directory path
+     * @param string|null $applicationDir Optional: explicit path to scan; default directories are configured
      */
-    public function __construct($applicationDir)
+    public function __construct($applicationDir = null)
     {
         $this->applicationDir = $applicationDir;
     }
@@ -42,19 +40,17 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->strictElementConfigs = $this->resolveParameterReference($container, 'mapbender.strict.static_app.element_configuration');
+        $sourcePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
         if ($this->applicationDir) {
-            $this->loadYamlApplications($container, $this->applicationDir);
+            @trigger_error("DEPRECATED: explicit path passed to MapbenderYamlCompilerPass constructor. Use mapbender.yaml_application_dirs parameter collection to customize Yaml application load paths", E_USER_DEPRECATED);
+            $sourcePaths = array($this->applicationDir);
         }
-    }
-
-    protected function resolveParameterReference(ContainerBuilder $container, $name)
-    {
-        $value = $container->getParameter($name);
-        while (preg_match('/^[%].*?[%]$/', $value)) {
-            $value = $container->getParameter(substr($value, 1, -1));
+        $this->strictElementConfigs = $container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%');
+        foreach ($sourcePaths as $path) {
+            if (\is_dir($path)) {
+                $this->loadYamlApplications($container, $path);
+            }
         }
-        return $value;
     }
 
     /**
