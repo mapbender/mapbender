@@ -81,7 +81,7 @@ class ApplicationController extends ApplicationControllerBase
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
             $response = new BinaryFileResponse($cacheFile, 200, $headers);
             // allow file timestamp to be read again correctly for 'Last-Modified' header
-            clearstatcache();
+            clearstatcache($cacheFile, true);
             $response->isNotModified($request);
             return $response;
         }
@@ -151,7 +151,7 @@ class ApplicationController extends ApplicationControllerBase
                 $content = $appComponent->getTemplate()->render();
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
-                clearstatcache();
+                clearstatcache($cacheFile, true);
             }
             $response = new BinaryFileResponse($cacheFile, 200, $headers);
             $response->isNotModified($request);
