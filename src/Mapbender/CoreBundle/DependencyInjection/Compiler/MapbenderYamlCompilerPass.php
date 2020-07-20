@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
-use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
@@ -28,11 +28,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     protected $strictElementConfigs = false;
 
     /**
-     * MapbenderYamlCompilerPass constructor.
-     *
-     * @param string             $applicationDir       Applications directory path
+     * @param string|null $applicationDir Optional: explicit path to scan; default directories are configured
      */
-    public function __construct($applicationDir)
+    public function __construct($applicationDir = null)
     {
         $this->applicationDir = $applicationDir;
     }
@@ -42,19 +40,17 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->strictElementConfigs = $this->resolveParameterReference($container, 'mapbender.strict.static_app.element_configuration');
+        $sourcePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
         if ($this->applicationDir) {
-            $this->loadYamlApplications($container, $this->applicationDir);
+            @trigger_error("DEPRECATED: explicit path passed to MapbenderYamlCompilerPass constructor. Use mapbender.yaml_application_dirs parameter collection to customize Yaml application load paths", E_USER_DEPRECATED);
+            $sourcePaths = array($this->applicationDir);
         }
-    }
-
-    protected function resolveParameterReference(ContainerBuilder $container, $name)
-    {
-        $value = $container->getParameter($name);
-        while (preg_match('/^[%].*?[%]$/', $value)) {
-            $value = $container->getParameter(substr($value, 1, -1));
+        $this->strictElementConfigs = $container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%');
+        foreach ($sourcePaths as $path) {
+            if (\is_dir($path)) {
+                $this->loadYamlApplications($container, $path);
+            }
         }
-        return $value;
     }
 
     /**
@@ -80,10 +76,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
                     $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
                     $applications[$slug]['__filename__'] = $file->getRealPath();
                 }
-                // Add a file resource to auto-invalidate the container build when the input file changes
-                $container->addResource(new FileResource($file->getRealPath()));
             }
         }
+        $container->addResource(new DirectoryResource($path));
         $this->addApplications($container, $applications);
     }
 

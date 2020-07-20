@@ -21,7 +21,6 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
 
     /**
      * Execute command
-     * @Todo Add logic to execute different action depended on the used MB3 Version
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return int|null|void
@@ -43,11 +42,15 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
     }
 
     /**
-     * Change imagesPath configuration value from all MB3 map elements in the database
-     * from  "bundles/mapbendercore/mapquery/lib/openlayers/img"
-     * to "components/mapquery/lib/openlayers/img"
+     * Prunes obsolete configuration options from map elements
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    protected function updateMapElementConfigs(InputInterface $input, OutputInterface $output){
+    protected function updateMapElementConfigs(InputInterface $input, OutputInterface $output)
+    {
 
         /**
          * @var EntityManager $em
