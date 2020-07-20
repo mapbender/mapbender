@@ -8,9 +8,14 @@ window.Mapbender.WmtsSource = (function() {
     Object.assign(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
-            if (Mapbender.mapEngine.code === 'ol4') {
-                return this._ol4LayerFactory(compatibleLayer, srsName);
+            switch (Mapbender.mapEngine.code) {
+                default:
+                    return this._layerFactory(compatibleLayer, srsName);
+                case 'ol2':
+                    return this._layerFactoryOl2(compatibleLayer, srsName);
             }
+        },
+        _layerFactoryOl2: function(compatibleLayer, srsName) {
             var matrixSet = compatibleLayer.getMatrixSet();
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
@@ -30,7 +35,7 @@ window.Mapbender.WmtsSource = (function() {
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
         },
-        _ol4LayerFactory: function(layer, srsName) {
+        _layerFactory: function(layer, srsName) {
             var matrixSet = layer.getMatrixSet();
             var self = this;
             var gridOpts = {

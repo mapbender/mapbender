@@ -47,14 +47,12 @@
             }
 
             switch (Mapbender.mapEngine.code) {
-                case 'ol4':
+                default:
                     this._initAsOl4Control(layers);
                     break;
                 case 'ol2':
                     this._initAsOl2Control(layers);
                     break;
-                default:
-                    throw new Error("Unhandled engine code " + Mapbender.mapEngine.code);
             }
             $(this.mbMap.element).bind('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
         },
@@ -171,14 +169,12 @@
         _onMbMapSrsChanged: function(event, data) {
             try {
                 switch (Mapbender.mapEngine.code) {
+                    default:
+                        this._changeSrs4(event, data);
+                        break;
                     case 'ol2':
                         this._changeSrs2(event, data);
                         break;
-                    case 'ol4':
-                        this._changeSrs4(event, data);
-                        break;
-                    default:
-                        throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
                 }
             } catch (e) {
                 console.error("Overview srs change failed", e);

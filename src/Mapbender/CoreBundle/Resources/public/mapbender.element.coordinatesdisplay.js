@@ -42,14 +42,12 @@
                 numDigits += 5;
             }
             switch (Mapbender.mapEngine.code) {
+                default:
+                    this._resetOl4(numDigits);
+                    break;
                 case 'ol2':
                     this._resetOl2(numDigits);
                     break;
-                case 'ol4':
-                    this._resetOl4(numDigits);
-                    break;
-                default:
-                    throw new Error("Unuspported map engine code " + Mapbender.mapEngine.code);
             }
         },
         _resetOl2: function(numDigits) {

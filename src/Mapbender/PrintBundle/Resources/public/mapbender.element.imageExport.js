@@ -97,14 +97,12 @@
             var rasterLayers = this._collectRasterLayerData();
             var geometryLayers;
             switch (Mapbender.mapEngine.code) {
+                default:
+                    geometryLayers = this._collectGeometryLayers4();
+                    break;
                 case 'ol2':
                     geometryLayers = this._collectGeometryAndMarkerLayers();
                     break;
-                case 'ol4':
-                    geometryLayers = this._collectGeometryLayers4();
-                    break;
-                default:
-                    throw new Error("Unsupported map engine " + Mapbender.mapEngine.code);
             }
             return {
                 layers: rasterLayers.concat(geometryLayers),
