@@ -1,15 +1,9 @@
 .mb-element-printclient {
-  $labelHeight: 23px;
-
-  display: none;
   overflow: visible;
 
   label.labelInput {
-    width: auto;
-    font-weight: inherit;
-    margin-bottom: inherit;
-    line-height: $labelHeight;
-    height: $labelHeight;
+    display: block;
+    line-height: 1.5;
   }
   .input, .dropdown {
     min-width: 190px;
