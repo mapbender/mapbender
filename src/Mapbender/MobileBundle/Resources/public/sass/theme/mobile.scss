@@ -320,9 +320,9 @@ fieldset{
     }
   }
   .leaveContainer {
+    font-size: 2rem;
     height: auto;
     line-height: normal;
-    flex-direction: row-reverse;
     padding: $space/2;
   }
   .checkWrapper {
@@ -331,11 +331,9 @@ fieldset{
   }
   .iconCheckbox, .iconCheckboxActive {
     @extend .iconOk;
-    font-size: 20px;
     color:lighten($ciColor3, 60%);
   }
   .layer-title{
-    font-size: 14px;
     color: $middleFontColor !important;
   }
   .iconCheckboxActive{color:lighten($ciColor3, 5%);}
