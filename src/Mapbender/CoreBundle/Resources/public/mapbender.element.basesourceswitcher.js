@@ -94,6 +94,7 @@
             for (i = 0; i < sourcesOff.length; ++i) {
                 this.mbMap.model.setSourceVisibility(sourcesOff[i], false);
             }
+            this._hideMobile();
         },
 
         _hideMobile: function() {
