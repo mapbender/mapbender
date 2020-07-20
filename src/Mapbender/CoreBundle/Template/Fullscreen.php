@@ -81,8 +81,6 @@ class Fullscreen extends Template
                     '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                     '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
-                    '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-                    '/components/vis-ui.js/vis-ui.js-built.js',
                 );
             case 'trans':
             default:
