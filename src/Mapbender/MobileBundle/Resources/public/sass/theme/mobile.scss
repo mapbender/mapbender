@@ -244,26 +244,19 @@ fieldset{
 }
 /* ------------------------------------------------------ BASESOURCE SWITCHER */
 .mb-element-basesourceswitcher{
+  font-size: 2rem;
+  line-height: 1.5;
   li {
-    text-align: left;
     padding:$space/2;
     display:block;
-    font-size: 14px;
     border: none;
-    border-radius: 0px;
 
-    @extend .iconOk;
-    @extend .labelCheck;
-    &:before{
-      font-size: 20px;
-      color:lighten($ciColor3, 60%);;
-      @include absolute('' $space/2 '' '');
+    .state-check {
+      color:lighten($ciColor3, 60%);
     }
 
-    &[data-state="active"]{
-      &:before{
-        color:lighten($ciColor3, 5%);
-      }
+    &[data-state="active"] .state-check {
+      color:lighten($ciColor3, 5%);
     }
   }
 }

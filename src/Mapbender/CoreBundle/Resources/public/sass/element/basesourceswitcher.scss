@@ -1,4 +1,8 @@
 .mb-element-basesourceswitcher {
+  body.desktop-template & .mobile-only {
+    display: none;
+  }
+
   .toolBarItem & {
     display: table-row;
   }
@@ -18,6 +22,9 @@
     &:hover, &[data-state="active"]{
       color:$firstColor;
       background-color: $contentColor;
+    }
+    .state-check {
+      margin-right: 0.5em;
     }
   }
   .basesourcegroup {
