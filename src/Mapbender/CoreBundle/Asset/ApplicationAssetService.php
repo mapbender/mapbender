@@ -189,7 +189,8 @@ class ApplicationAssetService
             default:
                 $commonAssets = array();
                 break;
-            case 'ol4-js':
+            case 'ol4-js':  // legacy identifier
+            case Entity\Application::MAP_ENGINE_CURRENT . '-js':
                 // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
                 // Currently known missing:
                 // * ol.proj.getTransformFromProjections
@@ -226,6 +227,7 @@ class ApplicationAssetService
                 );
                 break;
             case 'ol4-css':
+            case Entity\Application::MAP_ENGINE_CURRENT . '-css':
                 return array(
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
                 );
