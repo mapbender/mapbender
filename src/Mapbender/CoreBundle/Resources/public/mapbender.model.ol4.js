@@ -252,7 +252,7 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
-        if (_level !== this.getCurrentZoomLevel()) {
+        if (_level !== this.getCurrentZoomLevel(false)) {
             if (allowTransitionEffect) {
                 this.olMap.getView().animate({zoom: _level, duration: 300});
             } else {
