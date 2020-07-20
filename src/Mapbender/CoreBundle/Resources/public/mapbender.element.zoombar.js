@@ -61,7 +61,6 @@ $.widget("mapbender.mbZoomBar", {
             throw new Error("Rotation not supported on current engine " + engine.code);
         }
         var model = this.mbMap.getModel();
-        var olMap = model.olMap;
         $('[data-degrees]', $rotationElement).on('click', function() {
             var increment = parseInt($(this).attr('data-degrees'));
             var degrees = increment + model.getViewRotation();
@@ -73,17 +72,11 @@ $.widget("mapbender.mbZoomBar", {
         $('.reset-rotation', $rotationElement).on('click', function() {
             model.setViewRotation(0, true);
         });
-        var displayRotation = function() {
+        this.mbMap.element.on('mbmaprotationchanged', function() {
             var degrees = model.getViewRotation() + rotationBias;
             $('i',$resetElement).css({
                 transform: 'rotate(' + degrees + 'deg)'
             });
-        };
-
-        olMap.getView().on('change:rotation', displayRotation);
-        olMap.on('change:view', function(e) {
-            displayRotation();
-            e.target.getView().on('change:rotation', displayRotation);
         });
     },
     _setupZoomButtons: function() {

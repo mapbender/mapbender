@@ -93,11 +93,24 @@ window.Mapbender.MapModelOl4 = (function() {
             });
         });
         olMap.on("singleclick", function(data) {
-            $(self.mbMap.element).trigger('mbmapclick', {
-                mbMap: self.mbMap,
+            $(mbMap.element).trigger('mbmapclick', {
+                mbMap: mbMap,
                 pixel: data.pixel.slice(),
                 coordinate: data.coordinate.slice()
             });
+        });
+        var initRotation = function(view) {
+            view.on('change:rotation', function() {
+                $(mbMap.element).trigger('mbmaprotationchanged', {
+                    mbMap: mbMap,
+                    degrees: self.getViewRotation()
+                });
+            });
+        };
+        initRotation(olMap.getView());
+        // Rebind view events on replacement of view object (happens on SRS switch)
+        olMap.on('change:view', function(e) {
+            initRotation(e.target.getView());
         });
     },
     /**
