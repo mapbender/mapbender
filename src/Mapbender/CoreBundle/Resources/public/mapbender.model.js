@@ -697,6 +697,10 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     getCurrentExtentArray: function() {
         return this.olMap.getExtent().toArray();
     },
+    getViewRotation: function() {
+        // no rotation support => always 0
+        return 0;
+    },
     /**
      * @param {OpenLayers.Bounds} extent
      * @param {string|OpenLayers.Projection} fromProj

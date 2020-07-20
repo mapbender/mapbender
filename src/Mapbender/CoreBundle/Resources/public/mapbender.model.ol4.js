@@ -2,6 +2,9 @@ window.Mapbender = Mapbender || {};
 window.Mapbender.MapModelOl4 = (function() {
     'use strict';
 
+    var rad2deg = 360. / (2 * Math.PI);
+    var deg2rad = 2 * Math.PI / 360;
+
     /**
      * @param {Object} mbMap
      * @constructor
@@ -447,6 +450,12 @@ window.Mapbender.MapModelOl4 = (function() {
          */
         getCurrentExtentArray: function() {
             return this.olMap.getView().calculateExtent();
+        },
+        /**
+         * @returns {number} in degrees
+         */
+        getViewRotation: function() {
+            return rad2deg * this.olMap.getView().getRotation();
         },
         /**
          * @param {ol.layer.Vector} olLayer
