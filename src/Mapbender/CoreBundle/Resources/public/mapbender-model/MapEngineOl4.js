@@ -157,13 +157,13 @@ window.Mapbender.MapEngineOl4 = (function() {
             var firstOlLayer = source.getNativeLayer(0);
             /** @var {ol.source.ImageWMS|ol.source.TileWMS} nativeSource */
             var nativeSource = firstOlLayer.getSource();
-            if (!nativeSource.getGetFeatureInfoUrl) {
+            if (!nativeSource.getFeatureInfoUrl) {
                 return null;
             }
             var res = olMap.getView().getResolution();
             var proj = olMap.getView().getProjection().getCode();
             var coord = olMap.getCoordinateFromPixel([x, y]);
-            return nativeSource.getGetFeatureInfoUrl(coord, res, proj, params);
+            return nativeSource.getFeatureInfoUrl(coord, res, proj, params);
         },
         /**
          * @param {(ol.layer.Tile|ol.layer.Image)} olLayer
