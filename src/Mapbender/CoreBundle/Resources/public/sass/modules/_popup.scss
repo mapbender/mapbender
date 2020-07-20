@@ -39,11 +39,11 @@
     padding: 0 $space;  // pad left and right, equal to footer lr padding / header lr margin
     &.popupScroll {
         // min-height: 200px;  // avoid squishing scrollable content too far vertically
-      .popupContent, .popupSubContent {
+      .popupContent {
         max-width: calc(100% - 20px);
       }
     }
-    .popupContent, .popupSubContent {
+    .popupContent {
       padding: 0;   // we already have our padding on the wrapping .popup-body
       margin-bottom: $space;
     }
@@ -58,7 +58,7 @@
   @extend .smallText;
 }
 .fom-popup {
-  .popupContent, .popupSubContent{
+  .popupContent {
     padding:0 20px;
   }
 }
@@ -92,11 +92,6 @@
       left: solid 1px $thirdColor;
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
-  }
-  //@include transition(margin 0.4s ease-in-out);
-
-  &.popupOverflow{
-    .popupContent, .popupSubContent{overflow:visible;}
   }
 }
 .popupContainer.ui-draggable, .popup.ui-draggable {
