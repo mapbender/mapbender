@@ -164,7 +164,14 @@ fieldset.box {
     float: none;
   }
 
-  .checkboxColumn{text-align:center;}
+  .checkboxColumn{
+    text-align:center;
+    .checkWrapper {
+      display: inline-block;
+      float: none;
+      width: 1em;
+    }
+  }
   .odd{background-color:darken($contentColor, 6%);}
 
   &.table {
@@ -195,10 +202,7 @@ fieldset.box {
     .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn {
       .checkWrapper {
-        display: inline-block;
         line-height: $inputHeight;
-        float: none;
-        width: 1em;
       }
     }
   }
