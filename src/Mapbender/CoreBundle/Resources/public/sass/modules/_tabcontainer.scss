@@ -78,13 +78,14 @@
 }
 
 .accordionContainer {
-  display: table;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
     
   .accordion{
     user-select: none;
-    display: table-row;
+    flex: 0 0 auto; // fixed size
     cursor: pointer;
     @extend .buttonColors;
     /* background-color: $buttonFirstColor; */
@@ -99,28 +100,30 @@
     }
   }
   .container-accordion{
+    flex: 1 1 auto; // grow and shrink
     display: none;
-    &.active{
-      display: table-row;
+    &.active {
+      display: initial;
+      position: relative;
       .accordion-cell {
-        display: table-cell;
-        height: 100%;
         .accordion-wrapper{
-          height: 100%;
-          display:block; 
-          position: relative;
+          // position: relative;
           >.mb-element,>div{
             display:block;
-            position: absolute;
-            bottom:0;
-            top:0;
-            overflow-y: auto;
             overflow-x: hidden;
+            overflow-y: auto;
             width:100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
           }
           >.mb-element{padding-top:$space/2}
         }
       }
     }
+  }
+  // spacing between consecutive content blocks
+  .container-accordion + .accordion {
+    margin-top: 0.25em;
   }
 }
