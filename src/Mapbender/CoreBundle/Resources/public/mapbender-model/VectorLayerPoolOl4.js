@@ -6,7 +6,11 @@ window.Mapbender.VectorLayerPoolOl4 = (function() {
         this.nativeElementLayerGroup_ = new ol.layer.Group();
         olMap.getLayers().push(this.nativeElementLayerGroup_);
     }
-    window.Mapbender.VectorLayerPool.typeMap['ol4'] = VectorLayerPoolOl4;
+    Object.assign(window.Mapbender.VectorLayerPool.typeMap, {
+        'default': VectorLayerPoolOl4,
+        'ol4': VectorLayerPoolOl4,
+        'ol6': VectorLayerPoolOl4
+    });
     VectorLayerPoolOl4.prototype = Object.create(Mapbender.VectorLayerPool.prototype);
     Object.assign(VectorLayerPoolOl4.prototype, {
         constructor: VectorLayerPoolOl4,

@@ -11,10 +11,8 @@ window.Mapbender.VectorLayerPool = (function() {
      * @return {(VectorLayerPoolOl2|VectorLayerPoolOl4)}
      */
     VectorLayerPool.factory = function(engine, nativeMap) {
-        var constructor = VectorLayerPool.typeMap[engine.code];
-        if (!constructor) {
-            throw new Error("Unsupported MapEngine code " + engine.code.toString());
-        }
+        var typeMap = VectorLayerPool.typeMap;
+        var constructor = typeMap[engine.code] || typeMap['default'];
         return new (constructor)(nativeMap);
     };
     Object.assign(VectorLayerPool.prototype, {

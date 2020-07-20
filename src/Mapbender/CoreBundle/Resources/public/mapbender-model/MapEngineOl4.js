@@ -6,6 +6,9 @@ window.Mapbender.MapEngineOl4 = (function() {
     MapEngineOl4.prototype = Object.create(Mapbender.MapEngine.prototype);
     Object.assign(MapEngineOl4.prototype, {
         constructor: MapEngineOl4,
+        mapModelFactory: function(mbMap) {
+            return new Mapbender.MapModelOl4(mbMap);
+        },
         patchGlobals: function(mapOptions) {
             var _tileSize = mapOptions && mapOptions.tileSize && parseInt(mapOptions.tileSize);
             var _dpi = mapOptions && mapOptions.dpi && parseInt(mapOptions.dpi);
@@ -222,6 +225,10 @@ window.Mapbender.MapEngineOl4 = (function() {
             return proj || null;
         }
     });
-    window.Mapbender.MapEngine.typeMap['ol4'] = MapEngineOl4;
+    Object.assign(window.Mapbender.MapEngine.typeMap, {
+        'default': MapEngineOl4,
+        'ol6': MapEngineOl4,
+        'ol4': MapEngineOl4
+    });
     return MapEngineOl4;
 }());

@@ -6,6 +6,9 @@ window.Mapbender.MapEngineOl2 = (function() {
     MapEngineOl2.prototype = Object.create(Mapbender.MapEngine.prototype);
     Object.assign(MapEngineOl2.prototype, {
         constructor: MapEngineOl2,
+        mapModelFactory: function(mbMap) {
+            return new Mapbender.MapModelOl2(mbMap);
+        },
         patchGlobals: function(mapOptions) {
             var _tileSize = mapOptions && mapOptions.tileSize && parseInt(mapOptions.tileSize);
             var _dpi = mapOptions && mapOptions.dpi && parseInt(mapOptions.dpi);
