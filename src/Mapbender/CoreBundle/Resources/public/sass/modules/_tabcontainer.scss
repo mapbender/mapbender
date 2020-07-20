@@ -88,16 +88,10 @@
     cursor: pointer;
     @extend .buttonColors;
     /* background-color: $buttonFirstColor; */
-    border-radius: $radius;
-    border-width: 3px;
-    border-style: solid;
     >div{
       background-color: inherit;
       padding-left: 0.5em;
       display: table-cell;
-      border-style: solid;
-      border-color: inherit;
-      border-width: 1px;
     }
     &.active{
       background-color:darken($buttonFirstColor, 10%);
