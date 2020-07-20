@@ -33,11 +33,7 @@ class MapbenderCoreBundle extends MapbenderBundle
     {
         parent::build($container);
 
-        $kernelPath = $container->getParameter('kernel.root_dir');
-        $yamlAppDir = $kernelPath . "/config/applications";
-        if (is_dir($yamlAppDir)) {
-            $container->addCompilerPass(new MapbenderYamlCompilerPass($yamlAppDir));
-        }
+        $container->addCompilerPass(new MapbenderYamlCompilerPass());
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
         $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
