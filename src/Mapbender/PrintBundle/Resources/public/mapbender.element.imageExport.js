@@ -11,15 +11,17 @@
         $form: null,
 
         _create: function(){
-            if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
-                return;
-            }
             this.$form = $('form', this.element);
-            $(this.element).show();
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.onElementReady(this.options.target, function(mbMap) {
+                self.mbMap = mbMap;
+                self.map = mbMap;   // legacy
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget(self.widgetName, self.options.target);
+            });
         },
         _setup: function() {
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.$form.on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
         },
