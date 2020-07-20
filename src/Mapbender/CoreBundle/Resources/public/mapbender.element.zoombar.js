@@ -56,8 +56,10 @@ $.widget("mapbender.mbZoomBar", {
         if (!$rotationElement.length) {
             return;
         }
-        var engineCode = Mapbender.mapEngine.code;
-        var engineSupportsRotation = engineCode === 'ol4';
+        var engine = Mapbender.mapEngine;
+        if (!engine.supportsRotation()) {
+            throw new Error("Rotation not supported on current engine " + engine.code);
+        }
         var deg2rad = function(x) {
             return x * Math.PI / 180;
         };

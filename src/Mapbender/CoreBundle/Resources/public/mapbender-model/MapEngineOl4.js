@@ -207,6 +207,9 @@ window.Mapbender.MapEngineOl4 = (function() {
                 height: s[1]
             };
         },
+        supportsRotation: function() {
+            return true;
+        },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);

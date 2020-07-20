@@ -222,6 +222,9 @@ window.Mapbender.MapEngineOl2 = (function() {
                 height: s.h
             };
         },
+        supportsRotation: function() {
+            return false;
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {
