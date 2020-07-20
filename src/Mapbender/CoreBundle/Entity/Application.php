@@ -652,6 +652,10 @@ class Application
      */
     public function setMapEngineCode($mapEngineCode)
     {
+        if ($mapEngineCode === 'ol4') {
+            $mapEngineCode = Application::MAP_ENGINE_CURRENT;
+            @trigger_error("Engine code 'ol4' is deprecated, use {$mapEngineCode} instead", E_USER_DEPRECATED);
+        }
         $this->map_engine_code = $mapEngineCode;
         return $this;
     }
