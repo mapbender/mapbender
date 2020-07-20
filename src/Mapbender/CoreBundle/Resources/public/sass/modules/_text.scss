@@ -33,7 +33,6 @@ h4, .h4, .bigText {
   font-size: 1rem;
 }
 .labelInput, .labelText, .labelCheck{
-  @extend .smallText;
   @include noUserSelect;
 }
 .labelInput{
