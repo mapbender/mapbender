@@ -60,32 +60,21 @@ $.widget("mapbender.mbZoomBar", {
         if (!engine.supportsRotation()) {
             throw new Error("Rotation not supported on current engine " + engine.code);
         }
-        var deg2rad = function(x) {
-            return x * Math.PI / 180;
-        };
-        var rad2deg = function(x) {
-            return x * 180 / Math.PI;
-        };
-        if (!engineSupportsRotation) {
-            throw new Error("Rotation is only supported on ol4 engine, not on current engine " + engineCode);
-        }
-        var olMap = this.mbMap.getModel().olMap;
+        var model = this.mbMap.getModel();
+        var olMap = model.olMap;
         $('[data-degrees]', $rotationElement).on('click', function() {
             var increment = parseInt($(this).attr('data-degrees'));
-            var view = olMap.getView();
-            var rotationCurrentRadians = view.getRotation();
-            var rotationNewRadians = rotationCurrentRadians + deg2rad(increment);
-            view.animate({rotation: rotationNewRadians, duration: 400});
+            var degrees = increment + model.getViewRotation();
+            model.setViewRotation(degrees, true);
         });
         var $resetElement = $('.reset-rotation', $rotationElement);
         var rotationBias = parseInt($resetElement.attr('data-rotation-bias') || '0');
 
         $('.reset-rotation', $rotationElement).on('click', function() {
-            var view = olMap.getView();
-            view.animate({rotation: 0, duration: 400});
+            model.setViewRotation(0, true);
         });
-        var displayRotation = function(e) {
-            var degrees = rad2deg(e.target.getRotation()) + rotationBias;
+        var displayRotation = function() {
+            var degrees = model.getViewRotation() + rotationBias;
             $('i',$resetElement).css({
                 transform: 'rotate(' + degrees + 'deg)'
             });
@@ -93,7 +82,7 @@ $.widget("mapbender.mbZoomBar", {
 
         olMap.getView().on('change:rotation', displayRotation);
         olMap.on('change:view', function(e) {
-            displayRotation({target: olMap.getView()});
+            displayRotation();
             e.target.getView().on('change:rotation', displayRotation);
         });
     },

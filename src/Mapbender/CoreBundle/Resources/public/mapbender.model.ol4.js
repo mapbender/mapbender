@@ -458,6 +458,19 @@ window.Mapbender.MapModelOl4 = (function() {
             return rad2deg * this.olMap.getView().getRotation();
         },
         /**
+         * @param {Number} degrees
+         * @param {boolean} animate
+         */
+        setViewRotation: function(degrees, animate) {
+            var radians = deg2rad * degrees;
+            var view = this.olMap.getView();
+            if (animate) {
+                view.animate({rotation: radians, duration: 400});
+            } else {
+                view.setRotation(radians);
+            }
+        },
+        /**
          * @param {ol.layer.Vector} olLayer
          * @param {ol.Feature} feature
          * @param {Number} resolution

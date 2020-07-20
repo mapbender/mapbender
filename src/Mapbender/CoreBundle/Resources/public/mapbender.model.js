@@ -701,6 +701,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         // no rotation support => always 0
         return 0;
     },
+    setViewRotation: function(degrees, animate) {
+        throw new Error("Rotation not supported on current engine " + Mapbender.mapEngine.code);
+    },
     /**
      * @param {OpenLayers.Bounds} extent
      * @param {string|OpenLayers.Projection} fromProj
