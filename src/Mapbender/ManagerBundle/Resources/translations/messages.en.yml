@@ -147,8 +147,8 @@ mb:
         description: Description
         template: Template
         map_engine_code: Map engine
-        map_engine_code.ol2: OpenLayers 2
-        map_engine_code.current: OpenLayers 4
+        map_engine_code.ol2: OpenLayers 2 (legacy)
+        map_engine_code.current: OpenLayers 6
       applications: Applications
     source:
       serviceurl: 'Service URL'
