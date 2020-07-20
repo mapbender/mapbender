@@ -416,6 +416,7 @@ window.Mapbender.MapModelOl4 = (function() {
         var newViewOptions = Object.assign({}, this.viewOptions_, resolutionOptions, {
             projection: srsNameTo,
             center: newCenter,
+            rotation: currentView.getRotation(),
             zoom: zoomLevel
         });
 
