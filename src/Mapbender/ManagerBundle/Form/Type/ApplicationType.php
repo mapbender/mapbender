@@ -89,8 +89,8 @@ class ApplicationType extends AbstractType
             ))
             ->add('map_engine_code', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => array(
+                    'mb.manager.admin.application.map_engine_code.current' => Application::MAP_ENGINE_OL4,
                     'mb.manager.admin.application.map_engine_code.ol2' => Application::MAP_ENGINE_OL2,
-                    'mb.manager.admin.application.map_engine_code.ol4' => Application::MAP_ENGINE_OL4,
                 ),
                 'choices_as_values' => true,
                 'label' => 'mb.manager.admin.application.map_engine_code',
