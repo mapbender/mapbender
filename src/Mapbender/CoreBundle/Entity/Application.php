@@ -80,7 +80,7 @@ class Application
      * @ORM\Column(type="string", length=15, nullable=false, options={"default": "ol2"})
      * @var string|null
      */
-    protected $map_engine_code = self::MAP_ENGINE_OL2;
+    protected $map_engine_code = self::MAP_ENGINE_CURRENT;
 
     /**
      * @var RegionProperties[]|ArrayCollection
@@ -138,7 +138,7 @@ class Application
         $this->elements         = new ArrayCollection();
         $this->layersets        = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
-        $this->map_engine_code = self::MAP_ENGINE_OL2;
+        $this->map_engine_code = self::MAP_ENGINE_CURRENT;
     }
 
     /**
