@@ -12,7 +12,7 @@ window.Mapbender.VectorLayerPool = (function() {
      */
     VectorLayerPool.factory = function(engine, nativeMap) {
         var typeMap = VectorLayerPool.typeMap;
-        var constructor = typeMap[engine.code] || typeMap['default'];
+        var constructor = typeMap[engine.code] || typeMap['current'];
         return new (constructor)(nativeMap);
     };
     Object.assign(VectorLayerPool.prototype, {

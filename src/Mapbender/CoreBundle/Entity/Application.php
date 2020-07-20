@@ -33,7 +33,9 @@ class Application
     const SOURCE_DB = 2;
 
     const MAP_ENGINE_OL2 = 'ol2';
+    /** @deprecated; use MAP_ENGINE_CURRENT */
     const MAP_ENGINE_OL4 = 'ol4';
+    const MAP_ENGINE_CURRENT = 'current';
 
     /** @var array YAML roles */
     protected $yamlRoles;
@@ -662,5 +664,26 @@ class Application
     public function bumpUpdate(LifecycleEventArgs $args)
     {
         $this->setUpdated(new \DateTime('now'));
+    }
+
+    /**
+     * Static amenity method for Yaml applications which cannot execute ORM PostLoad handlers
+     *
+     * @param Application $application
+     */
+    public static function postLoadStatic(Application $application)
+    {
+        // Rewrite legacy explicit 'ol4' identifier to 'current'
+        if ('ol4' === $application->getMapEngineCode()) {
+            $application->setMapEngineCode(Application::MAP_ENGINE_CURRENT);
+        }
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        $this->postLoadStatic($this);
     }
 }

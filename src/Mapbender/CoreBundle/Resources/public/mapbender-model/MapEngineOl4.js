@@ -226,9 +226,8 @@ window.Mapbender.MapEngineOl4 = (function() {
         }
     });
     Object.assign(window.Mapbender.MapEngine.typeMap, {
-        'default': MapEngineOl4,
-        'ol6': MapEngineOl4,
-        'ol4': MapEngineOl4
+        'current': MapEngineOl4,
+        'ol4': MapEngineOl4     // legacy
     });
     return MapEngineOl4;
 }());

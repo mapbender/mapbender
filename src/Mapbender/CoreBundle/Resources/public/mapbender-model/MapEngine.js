@@ -34,7 +34,7 @@ window.Mapbender.MapEngine = (function() {
     MapEngine.typeMap = {};
     MapEngine.factory = function(engineCode) {
         var typeMap = MapEngine.typeMap;
-        var constructor = typeMap[engineCode] || typeMap['default'];
+        var constructor = typeMap[engineCode] || typeMap['current'];
         return new (constructor)(engineCode);
     };
 

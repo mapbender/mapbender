@@ -7,9 +7,8 @@ window.Mapbender.VectorLayerPoolOl4 = (function() {
         olMap.getLayers().push(this.nativeElementLayerGroup_);
     }
     Object.assign(window.Mapbender.VectorLayerPool.typeMap, {
-        'default': VectorLayerPoolOl4,
-        'ol4': VectorLayerPoolOl4,
-        'ol6': VectorLayerPoolOl4
+        'current': VectorLayerPoolOl4,
+        'ol4': VectorLayerPoolOl4   // legacy
     });
     VectorLayerPoolOl4.prototype = Object.create(Mapbender.VectorLayerPool.prototype);
     Object.assign(VectorLayerPoolOl4.prototype, {

@@ -148,6 +148,7 @@ class ApplicationYAMLMapper
             $application->addLayerset($layerset);
         }
         $application->setSource(Application::SOURCE_YAML);
+        Application::postLoadStatic($application);
         return $application;
     }
 
