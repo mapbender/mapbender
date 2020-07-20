@@ -17,7 +17,7 @@
             {% for section in metadata.sections %}
                 {% set vt=prefix~section.title~ "._title" %}
                 <div id="accordion{{ loop.index }}" class="accordion{% if loop.first %} active{% endif %}">
-                    <div class="tablecell">{{ vt | trans }}</div>
+                    <div>{{ vt | trans }}</div>
                 </div>
                 <div id="container{{ loop.index }}" class="container-accordion{% if loop.first %} active{% endif %}">
                     <div class="accordion-cell">

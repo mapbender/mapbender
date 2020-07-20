@@ -16,7 +16,7 @@
     {% elseif region_props.name == 'accordion' %}
       <div class="accordionContainer">
         {%  for element in elements %}
-          <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}"><div class="tablecell">{{ element.title | trans }}</div></div>
+          <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}"><div>{{ element.title | trans }}</div></div>
           <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
               <div class="accordion-cell">
                   <div class="accordion-wrapper">
