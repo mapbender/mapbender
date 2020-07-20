@@ -23,14 +23,6 @@
   .iconFolder{
     display:none;
   }
-  .placeholder{
-    display:block;
-    &:before{
-      content: "\f096";
-      font-family: 'FontAwesome';
-      visibility: hidden;
-    }
-  }
   .leaveContainer {
     display: flex;
     line-height: 1.5;

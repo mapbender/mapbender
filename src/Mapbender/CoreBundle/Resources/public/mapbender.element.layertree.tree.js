@@ -7,7 +7,6 @@
             target: null,
             showBaseSource: true,
             allowReorder: true,
-            hideNotToggleable: false,
             hideSelect: false,
             hideInfo: false,
             themes: null,
@@ -225,10 +224,6 @@
                 $folder.toggleClass('iconFolderActive', treeOptions.toggle);
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('input[name="selected"]', $li).closest('.checkWrapper').remove();
-                    if (!treeOptions.allow.toggle && this.options.hideNotToggleable && this.options.hideInfo) {
-                        $folder.addClass('placeholder');
-                        $folder.removeClass('iconFolder');
-                    }
                 }
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
