@@ -3,7 +3,6 @@
     $.widget("mapbender.mbScalebar", {
         options: {
         },
-        scalebar: null,
         mbMap: null,
 
         /**
@@ -23,32 +22,24 @@
          * Initializes the scale bar
          */
         _setup: function() {
-            $(this.element).addClass(this.options.anchor);
             switch (Mapbender.mapEngine.code) {
+                default:
+                    this._setupOl4();
+                    break;
                 case 'ol2':
                     this._setupOl2();
                     break;
-                case 'ol4':
-                    this._setupOl4();
-                    break;
-                default:
-                    throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
             }
             this._trigger('ready');
         },
         _setupOl4: function() {
-            var controlOptions = {
+            var control = new ol.control.ScaleLine({
                 target: this.element.attr('id'),
                 'minWidth': '64',
                 geodesic: true,
                 units: this.options.units === 'ml' ? 'imperial' : 'metric'
-            };
-            this.scalebar = new ol.control.ScaleLine(controlOptions);
-            // Todo: work around upstream bug in display calculations on non-metric SRS
-            // This bug has been fixed only after v4 maintenance stopped
-            // See https://github.com/openlayers/openlayers/pull/7700
-            // See https://github.com/openlayers/openlayers/pull/7908
-            this.mbMap.getModel().olMap.addControl(this.scalebar);
+            });
+            this.mbMap.getModel().olMap.addControl(control);
         },
         _setupOl2: function() {
             var controlOptions = {
@@ -71,9 +62,8 @@
                     break;
             }
 
-
-            this.scalebar = new OpenLayers.Control.ScaleLine(controlOptions);
-            this.mbMap.getModel().map.olMap.addControl(this.scalebar);
+            var control = new OpenLayers.Control.ScaleLine(controlOptions);
+            this.mbMap.getModel().map.olMap.addControl(control);
         }
     });
 
