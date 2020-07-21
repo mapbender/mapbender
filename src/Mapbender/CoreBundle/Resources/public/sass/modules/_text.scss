@@ -35,13 +35,15 @@ h4, .h4, .bigText {
   font-size:$fontSize;
   color:$ciColor;
 }
-.labelInput, .labelText, .labelCheck{
+.labelInput, .labelText, .labelCheck {
   @extend .smallText;
-  @include noUserSelect;
+  user-select: none;
+}
+.labelInput, .labelCheck {
+  color:$middleFontColor;
 }
 .labelInput{
   display: inline-block;
-  color:$middleFontColor;
   margin-right:$space/2;
   line-height:$lineHeight + 8;
 
