@@ -247,11 +247,6 @@ fieldset{
   font-size: 2rem;
   line-height: 1.5;
   li {
-    padding:$space/2;
-    display:block;
-    border: none;
-    background: transparent;
-
     .state-check {
       color:lighten($ciColor3, 25);
     }

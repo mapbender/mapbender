@@ -26,6 +26,12 @@
     .state-check {
       margin-right: 0.5em;
     }
+    .mobilePane & {
+      padding: $space/2;
+      display: block;
+      border: none;
+      background: transparent;
+    }
   }
   .basesourcegroup {
     position: relative;
