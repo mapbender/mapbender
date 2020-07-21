@@ -1,33 +1,42 @@
+.mb-element-simplesearch {
+  .autocompleteWrapper {
+    position: relative;
+    .autocompleteList {
+      display: none;  // suppress border; will be shown via script when populated
+      z-index: 20000;
+      background-color: #FFF;
+      color: #858585;
+      cursor: pointer;
+      width: 100%;
+      overflow: auto;
+      overflow-x: hidden;
+      border: solid 1px #c8c8c8;
+      border-top: none;
+      li {
+        padding-left: 5px;
+        width: 100%;
+        text-align: left;
+      }
+    }
+  }
+}
+
 .sidePane {
   .mb-element-simplesearch {
     .autocompleteWrapper {
       width: 100%;
-      position: relative;
       input.searchterm {
         width: 100%;
       }
       .autocompleteList {
-        display: block !important;
-        width: 100%;
         position: relative;
-        z-index: 20000;
-        background-color: #FFF;
-        color: #858585;
-        cursor: pointer;
         max-width: 100%;
         li {
-          padding-left: 5px;
-          width: 100%;
-          text-align: left;
-          display: list-item;
           font-size: 11px;
 
           &:hover {
             color: #5b932a;
             background-color: #f9f9f9;
-          }
-          &:last-child {
-            clear: both;
           }
         }
       }
@@ -38,32 +47,15 @@
 .toolBar {
   .mb-element-simplesearch {
     .autocompleteWrapper {
-      position: relative;
       .autocompleteList {
         position: absolute;
-        display: none;
-        z-index: 20000;
-        background-color: #FFF;
-        color: #858585;
-        cursor: pointer;
         line-height: 29px;
-        width: 100%;
         max-height: 250px;
-        overflow: auto;
-        border: solid 1px #c8c8c8;
-        border-top: none;
         font-size: 11px;
-        overflow-x: hidden;
         li {
           display: block;
-          padding-left: 5px;
-          width: 100%;
-          text-align: left;
           &:hover {
             background-color: darken(#FFF, 10%);
-          }
-          &:last-child {
-            clear: both;
           }
         }
       }
@@ -71,8 +63,16 @@
   }
 }
 
-.mobilePane {
-
+.mobilePane .mb-element-simplesearch {
+  .autocompleteWrapper {
+    width:100%;
+  }
+  .autocompleteList li {
+    padding:$space/2;
+    display:block;
+    line-height: 2.5;
+    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
+  }
 }
 
 

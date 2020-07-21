@@ -350,11 +350,9 @@ fieldset{
   }
 }
 /* ------------------------------------------------------------ SIMPLE SEARCH */
-.autocompleteWrapper{width:100%;}
-.autocompleteList li {
-  padding:$space/2;
-  display:block;
-  font-size: 14px;
-  &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
+.mb-element-simplesearch {
+  .autocompleteList li {
+    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
+  }
 }
 
