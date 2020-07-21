@@ -32,12 +32,14 @@ h4, .h4, .bigText {
 .subTitle{
   font-size: 1rem;
 }
-.labelInput, .labelText, .labelCheck{
-  @include noUserSelect;
+.labelInput, .labelText, .labelCheck {
+  user-select: none;
+}
+.labelInput, .labelCheck {
+  color:$middleFontColor;
 }
 .labelInput{
   display: inline-block;
-  color:$middleFontColor;
   margin-right:$space/2;
   line-height:$lineHeight + 8;
 
