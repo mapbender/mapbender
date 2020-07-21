@@ -272,34 +272,29 @@ fieldset{
 
 /* ---------------------------------------------------------------- LAYERTREE */
 .mb-element-layertree{
+  font-size: 2rem;
+  color: $middleFontColor;
   .layers{
-    padding-left: 0px;
+    padding-left: 0;
     .serviceContainer {
-      color: $darkFontColor;
-      border: none !important;
-
       &:nth-child(2n) {
         background-color: lighten($ciColor2, 15%);
       }
     }
   }
+
   .leaveContainer {
-    font-size: 2rem;
-    line-height: normal;
     padding: $space/2;
-  }
-  .checkWrapper {
-    height: initial;
-    width: auto;
   }
   .iconCheckbox, .iconCheckboxActive {
     @extend .iconOk;
-    color:lighten($ciColor3, 60%);
   }
-  .layer-title{
-    color: $middleFontColor !important;
+  .selectedWrapper {
+    color: lighten($ciColor3, 60%);
   }
-  .iconCheckboxActive{color:lighten($ciColor3, 5%);}
+  .iconCheckboxActive{
+    color:lighten($ciColor3, 5%);
+  }
   .checkboxDisabled:before{display:none;}
   .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
   .serviceContainer, .groupContainer{
