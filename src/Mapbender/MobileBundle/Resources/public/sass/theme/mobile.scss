@@ -245,14 +245,11 @@ fieldset{
   }
 }
 /* -------------------------------------------------------------- FEATUREINFO */
-.mb-element-featureinfo{
-  .tabs{display:none;}
-  .container{
-    display:block;
+.mb-element-featureinfo {
+  .tabContainer .container {
     padding:0;
     border:none;
   }
-  td{padding-right: $space;}
 }
 /* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-zoombar{
