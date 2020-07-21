@@ -19,9 +19,10 @@
 
 .toolBar{
   .mb-element-scaleline{
-    position: relative;
     bottom:5px;
     padding-bottom:5px;
-    .scaleBorder{border-color:$lightFontColor}
+    .scaleBorder {
+      border-color: $toolBarFontColor;
+    }
   }
 }
