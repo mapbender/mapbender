@@ -62,10 +62,6 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
             ))
-            ->add('hideNotToggleable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.layertree.label.hidenottoggleable',
-            ))
             ->add('hideSelect', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideselect',

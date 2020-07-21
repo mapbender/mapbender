@@ -23,18 +23,10 @@
   .iconFolder{
     display:none;
   }
-  .placeholder{
-    display:block;
-    &:before{
-      content: "\f096";
-      font-family: 'FontAwesome';
-      visibility: hidden;
-    }
-  }
   .leaveContainer {
     display: flex;
-    height: 21px;       // must set height explicitly for IE11
-    line-height: 21px;  // line-height should equal height (note: dashed line trickery depends on this value)
+    line-height: 1.5;
+    height: 1.5em;       // must set height explicitly for IE11
   }
   .layer-title {
     flex: 1 1 auto;
@@ -45,8 +37,6 @@
   .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
   .leave.invisible {visibility: visible;}
   .themeContainer{
-    // border-left:dotted 1px black;
-    margin-bottom:1px; // Fix for Firefox
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
@@ -56,15 +46,11 @@
     }
     .leaveContainer{
       margin-left:-6px;
-      margin-top:1px; // Fix for Firefox
     }
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
   }
   .serviceContainer, .groupContainer{
-    // border-left:dotted 1px black;
-    margin-bottom:1px; // Fix for Firefox
-
     // elements with childrens
     & > .leaveContainer{
       .iconFolder{display:block;}
@@ -79,7 +65,6 @@
 
     .leaveContainer{
       margin-left:-6px;
-      margin-top:1px; // Fix for Firefox
       .layer-menu-btn{
         margin-left: 4px;
         &:before{
@@ -168,7 +153,7 @@ $layer-slider-bar-height: 5px;
       width: 30px;
       height: 16px;
       line-height: 16px;
-      background-color: $ciColor;
+      background-color: $sliderHandleBackgroundColor;
       font-size: 12px;
       text-align: center;
       @include border-radius(4px);

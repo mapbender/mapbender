@@ -2,6 +2,7 @@
 @import url("components/bootstrap/css/bootstrap.min.css");
 
 @import "libs/variables";
+@import "bundles/mapbendercore/sass/template/fullscreen_variables.scss";
 @import "libs/mixins";
 @import "libs/icons";
 @import "theme/mapbender3";
@@ -273,17 +274,6 @@ form {
   float: left;
 }
 
-/* --------------------------------------------------------- TOOLBARS */
-.toolBar {
-  z-index: 4;
-  label, span {
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */
-  }
-}
-
 /* --------------------------------------------------------- SIDEPANE */
 $tabSize: 32px;
 .sidePaneTabs {
@@ -314,32 +304,32 @@ $tabSize: 32px;
 }
 
 .toolBar {
-  color: #222;
+  .mb-button, .mb-aboutButton, .mb-gpsButton {
+    opacity: .8;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  .toolBarItemActive {
+    .mb-button, .mb-aboutButton, .mb-gpsButton {
+      opacity: 1;
+    }
+  }
+  opacity: 1; // avoid applying opacity twice (gradient + $toolBarOpacity)
   &.top {
-    background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.9), rgba($toolBarBackgroundColor, 0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    // scale button icons and text all to the same size, undoing .iconBig
     font-size: 1.6rem;
-    line-height: 1;
     .toolBarItem {
-      line-height: inherit;
-      span {
-        line-height: 1;
-      }
-      [class^="icon"], [class*=" icon"] {
-        vertical-align: initial;
-      }
       .iconBig {
         font-size: inherit;
-        &:before {
-          font-size: inherit
-        }
       }
     }
   }
   &.bottom {
-    background: linear-gradient(0deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.7), rgba($toolBarBackgroundColor, 0.9));
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
-    font-size: 1.2rem;
   }
 }
 .toolBar.top {
@@ -410,9 +400,6 @@ $tabSize: 32px;
   }
 }
 
-html .layer-menu .layer-slider-bar .layer-slider-handle {
-  background: #777;
-}
 html .accordionContainer .accordion {
   background-color: #777;
   color: #ddd;

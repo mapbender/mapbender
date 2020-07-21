@@ -1,4 +1,6 @@
 $(function(){
+    var $mobilePane = $('#mobilePane');
+    $('.mb-element', $mobilePane).addClass('hidden');
     $(document).on('mbfeatureinfofeatureinfo', function(e, options){
         if(options.action === 'haveresult') {
             $.each($('#mobilePane .mobileContent').children(), function(idx, item){
@@ -19,14 +21,15 @@ $(function(){
         if (!(target && target.length && pane && pane.length)) {
             return;
         }
+        // HACK: prevent button from ever gaining a visual highlight
+        $button.parent('.toolBarItem').removeClass('toolBarItemActive');
+
         var paneContent = $('.mobileContent', pane);
         var paneTitle = $('.contentTitle', pane);
         e.stopImmediatePropagation();
 
         // hide frames
-        $.each(paneContent.children().not(target), function(idx, item) {
-            $(item).addClass('hidden');
-        });
+        paneContent.children().not(target).addClass('hidden');
         target.removeClass('hidden');
         var headerText = target.attr('title') || target.data('title');
         if (!headerText || /^\w+(\.\w+)+$/.test(headerText)) {

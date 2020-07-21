@@ -20,18 +20,26 @@
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
+.toolBarColors, .toolBar {
+  background-color: $toolBarBackgroundColor;
+  color: $toolBarFontColor;
+}
+
 .toolBar {
-  @include frontendContainerStyle();
+  opacity: $toolBarOpacity;
+  z-index: 4;
+  user-select: none;
   .toolBarItem {
     padding:5px;
     display: inline-block;
+    > span {
+      // amenity for buttons with ".iconBig" icons + labels
+      // inline does not get enough height to wrap contents vertically, inline-block does
+      display: inline-block;
+    }
     text-wrap: avoid;
     white-space: nowrap;
-    color: fade-out($toolBarFontColor, .3);
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-    &:hover {
-      color: inherit;
-    }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
     [class^="icon"], [class*=" icon"] {
@@ -40,32 +48,19 @@
       }
     }
   }
-  .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: fade-out($toolBarFontColor, .3);
-    color: #eee;
+  .toolBarItemActive {
+    // Invert background and foreground
+    background-color: $toolBarFontColor;
+    color: $toolBarBackgroundColor;
   }
-  margin: 0;
   padding:$space/4 $space/2 $space/4 $space/2;
   border-color: darken($contentColor, 20%);
 
   &.top {
-    .toolBarItem {
-      > label, > span, > a span {
-        margin-bottom: 0;
-      }
-    }
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
-    .toolBarItem{
-      font-size:80%;
-
-      > label{
-        margin-bottom: 0;
-      }
-    }
-
     .dropdownList{
       bottom:0;   // to "drop up"
       margin-bottom: $inputHeight;
@@ -80,9 +75,16 @@
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
+  // Undo fixed-pixel line height on body
+  line-height: 1;
+  // Undo Bootstrap global label margin
+  label {
+    margin-bottom: 0;
+  }
+  a.mb-button:hover {
+    text-decoration: none;
+  }
 }
-
-
 
 
 
@@ -200,12 +202,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     max-height: 600px;
     overflow: auto;
     word-wrap: break-word;
-}
-
-.templateWrapper {
-  .toolBar a.mb-button {
-    color: inherit;
-  }
 }
 
 .mapbender-popup, .fom-popup {

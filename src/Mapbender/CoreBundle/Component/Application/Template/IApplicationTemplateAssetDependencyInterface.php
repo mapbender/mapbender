@@ -28,7 +28,6 @@ interface IApplicationTemplateAssetDependencyInterface
      */
     public function getAssets($type);
 
-
     /**
      * Should return 'late' assets, to be loaded at the very end, particularly after all Element assets.
      * Semantics are the same as for @see getAssets

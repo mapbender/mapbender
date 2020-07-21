@@ -38,6 +38,10 @@ class Mobile extends Template
     public function getAssets($type)
     {
         switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile_skeleton.scss',
+                );
             case 'js':
                 return array(
                     '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
