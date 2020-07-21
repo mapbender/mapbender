@@ -161,6 +161,9 @@ fieldset{
     color: $ciColor3;
     border-bottom: solid 5px $ciColor;
   }
+  .contentTitle, .mobileClose {
+    font-size: 2rem;
+  }
   // @todo: it's called .active
   &[data-state="opened"]{
     opacity: 1;
@@ -175,11 +178,7 @@ fieldset{
   overflow-y: scroll;
 }
 .mobileClose{
-  font-style: normal;
-  font-size: 28px;
   color: darken($ciColor2, 20%);
-  // @todo: DO NOT extend from icon classes. Put icons into the markup.
-  @extend .iconCancel;
   float: right;
 }
 /* ------------------------------------------------------------------ CONTENT */
