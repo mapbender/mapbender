@@ -294,7 +294,7 @@
         },
         _removeContent: function(source) {
             var manager = this._getContentManager();
-            $(this._selectorSelfAndSub(manager.headerId(source.id), manager.headerContentSel), this.element).remove();
+            $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
          },
         _addContent: function(source, layerTitle, content) {
