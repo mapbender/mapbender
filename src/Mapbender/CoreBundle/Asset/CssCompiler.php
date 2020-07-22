@@ -50,13 +50,6 @@ class CssCompiler extends AssetFactoryBase
     public function compile($inputs, $debug=false)
     {
         $content = $this->concatenateContents($inputs, $debug);
-        // Quite damaging hack for special snowflake mobile template
-        // Pulls imports in front of everything else, including variable (re)definitions
-        // This makes it impossible to @import modules accessing variable definitions after
-        // redefining those variables.
-        // @todo: make mobile template scss work with and without squashing, then disable squashing
-        //        alternatively nuke mobile template completely (Mapbender 3.1?)
-        $content = $this->deduplicateImports($content);
 
         $sass = clone $this->sassFilter;
         $sass->setStyle($debug ? 'nested' : 'compressed');
@@ -68,27 +61,6 @@ class CssCompiler extends AssetFactoryBase
         $assets = new StringAsset($content, $filters, '/', $this->getSourcePath());
         $assets->setTargetPath($this->getTargetPath());
         return $assets->dump();
-    }
-
-    /**
-     * @param $content
-     * @return string
-     */
-    protected function deduplicateImports($content)
-    {
-        $encounteredImports = array();
-        $matches = array();
-        preg_match_all('#\@import\s*[\'"]([^\'"]+)[\'"]\s*;#', $content, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            $reference = $match[1][0];
-            if (!empty($encounteredImports[$reference])) {
-                $statementPosition = $match[0][1];
-                // shred the import statement into a comment while maintaining total length (and thus further offsets)
-                $content = substr_replace($content, '// ', $statementPosition, 3);
-            }
-            $encounteredImports[$reference] = true;
-        }
-        return $content;
     }
 
     /**
