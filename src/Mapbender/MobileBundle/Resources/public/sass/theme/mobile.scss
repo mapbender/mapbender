@@ -290,15 +290,6 @@ fieldset{
     .layers{display:none;}
   }
 }
-/* ---------------------------------------------------------------------- MAP */
-.contentPane{
-  .mb-element-map{
-    width:100%;
-    height:100%;
-    z-index: 1;
-    @include absolute(0 0 0 0);
-  }
-}
 /* ------------------------------------------------------------ SIMPLE SEARCH */
 .mb-element-simplesearch {
   .autocompleteList li {
