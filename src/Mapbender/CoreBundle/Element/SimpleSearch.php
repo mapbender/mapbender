@@ -72,7 +72,7 @@ class SimpleSearch extends Element
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
             ),
             'css'   => array(
-                "@MapbenderManagerBundle/Resources/public/sass/element/simple_search.scss"
+                "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
             ),
             'trans' => array(
                 'mb.core.simplesearch.error.*',
