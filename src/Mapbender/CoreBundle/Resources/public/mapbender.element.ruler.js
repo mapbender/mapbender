@@ -206,7 +206,7 @@
                     height: 300,
                     buttons: {
                         'ok': {
-                            label: Mapbender.trans("mb.core.ruler.popup.btn.ok"),
+                            label: Mapbender.trans("mb.actions.close"),
                             cssClass: 'button right',
                             callback: function(){
                                 self.deactivate();

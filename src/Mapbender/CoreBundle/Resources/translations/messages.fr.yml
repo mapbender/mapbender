@@ -109,9 +109,6 @@ mb:
         title: Légende
         description: 'Affiche la légende de la carte'
     ruler:
-      popup:
-        btn:
-          ok: Fermer
       create_error: 'Mesurer: Le type doit être une ligne ou un polygone.'
       class:
         title: 'Mesure linéaire ou surfacique'

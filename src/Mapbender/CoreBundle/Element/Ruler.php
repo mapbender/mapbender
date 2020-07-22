@@ -34,7 +34,6 @@ class Ruler extends Element
             'css' => array(),
             'trans' => array(
                 'mb.core.ruler.create_error',
-                'mb.core.ruler.popup.*',    // @todo: use standard close action label for popup
             ),
         );
     }

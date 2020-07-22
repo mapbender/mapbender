@@ -109,9 +109,6 @@ mb:
         title: Legenda
         description: 'Mostra a leganda sobre os temas ativos. '
     ruler:
-      popup:
-        btn:
-          ok: Fechar
       create_error: 'Medição: O tipo de geometria tem que ser linha ou área.'
       class:
         title: 'Medição de linha/área'

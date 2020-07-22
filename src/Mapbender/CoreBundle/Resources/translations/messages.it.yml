@@ -109,9 +109,6 @@ mb:
         title: Legenda
         description: 'Mostra la legenda dei layers della mappa'
     ruler:
-      popup:
-        btn:
-          ok: Chiudi
       create_error: 'Righello: la tipologia deve essere linea o area.'
       class:
         title: 'Righello per linea/area'

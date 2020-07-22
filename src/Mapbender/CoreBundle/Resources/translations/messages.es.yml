@@ -109,9 +109,6 @@ mb:
         title: Leyenda
         description: 'La leyenda muestra la leyenda de las capas del mapa'
     ruler:
-      popup:
-        btn:
-          ok: Cerrar
       create_error: 'Regla: Tipo debe ser línea o área.'
       class:
         title: 'Regla Línear/Área'

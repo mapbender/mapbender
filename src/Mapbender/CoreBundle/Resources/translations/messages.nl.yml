@@ -108,9 +108,6 @@ mb:
         title: Legenda
         description: 'Toon de legenda van de kaartlagen'
     ruler:
-      popup:
-        btn:
-          ok: Sluit
       create_error: 'Liniaal: Type moet lijn of vlak zijn.'
       class:
         title: 'Lijn/Vlak lineaal'

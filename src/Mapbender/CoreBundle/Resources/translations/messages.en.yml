@@ -116,9 +116,6 @@ mb:
         title: Legend
         description: 'The legend shows the legend of the map''s layers'
     ruler:
-      popup:
-        btn:
-          ok: Close
       create_error: 'Ruler: Type must be line or area.'
       class:
         title: 'Line/Area Ruler'

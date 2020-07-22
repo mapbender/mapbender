@@ -116,9 +116,6 @@ mb:
         title: Legende
         description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
     ruler:
-      popup:
-        btn:
-          ok: Schließen
       create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
       class:
         title: Linien-/Flächenmessung

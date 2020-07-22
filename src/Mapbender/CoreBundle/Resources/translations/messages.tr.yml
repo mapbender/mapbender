@@ -108,9 +108,6 @@ mb:
         title: 'Lejant'
         description: 'Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir'
     ruler:
-      popup:
-        btn:
-          ok: 'Kapat'
       create_error: 'İpucu: Tip hat veya bölge olmalıdır.'
       class:
         title: 'Hat/KapalıAlan Ölçümü'
