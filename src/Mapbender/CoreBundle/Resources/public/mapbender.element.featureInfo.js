@@ -229,6 +229,9 @@
             return this.contentManager;
         },
         _open: function() {
+            $(document).trigger('mobilepane.switch-to-element', {
+                element: this.element
+            });
             var widget = this;
             var options = widget.options;
             if (!this.mobilePane.length) {
