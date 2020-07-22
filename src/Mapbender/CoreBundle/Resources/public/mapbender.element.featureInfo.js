@@ -46,7 +46,7 @@
         _contentElementId: function(source) {
             var id = this._getContentManager().contentId(source.id);
             // verify element is in DOM
-            if ($('#' + id, this._getContext()).length) {
+            if ($('#' + id, this.element).length) {
                 return id;
             }
         },
@@ -194,7 +194,7 @@
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
-            this._addContent(source.id, layerTitle, data);
+            this._addContent(source, layerTitle, data);
             this._triggerHaveResult(source);
             this._open();
         },
@@ -295,24 +295,19 @@
                 }
             }
         },
-        _getContext: function() {
-            return this.element;
-        },
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
         _removeContent: function(source) {
-            var $context = this._getContext();
             var manager = this._getContentManager();
-            $(this._selectorSelfAndSub(manager.headerId(source.id), manager.headerContentSel), $context).remove();
-            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), $context).remove();
+            $(this._selectorSelfAndSub(manager.headerId(source.id), manager.headerContentSel), this.element).remove();
+            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
          },
         _addContent: function(source, layerTitle, content) {
-            var $context = this._getContext();
             var manager = this._getContentManager();
             var headerId = manager.headerId(source.id);
             var contentId = manager.contentId(source.id);
-            var $header = $('#' + headerId, $context);
+            var $header = $('#' + headerId, this.element);
             if ($header.length === 0) {
                 $header = manager.$header.clone();
                 $header.attr('id', headerId);
@@ -321,22 +316,21 @@
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
                 $header.addClass('active');
             }
-            $(this._selectorSelfAndSub(headerId, manager.headerContentSel), $context).text(layerTitle);
-            var $content = $('#' + contentId, $context);
+            $(this._selectorSelfAndSub(headerId, manager.headerContentSel), this.element).text(layerTitle);
+            var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
                 $content = manager.$content.clone();
                 $content.attr('id', contentId);
                 manager.$contentParent.append($content);
             }
             $content.toggleClass('active', $header.hasClass('active'));
-            $(this._selectorSelfAndSub(contentId, manager.contentContentSel), $context)
+            $(this._selectorSelfAndSub(contentId, manager.contentContentSel), this.element)
                 .empty().append(content);
-            initTabContainer($context);
+            initTabContainer(this.element);
         },
         _printContent: function() {
-            var $context = this._getContext();
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
-            var el = $('.js-content-content.active,.active .js-content-content', $context);
+            var el = $('.js-content-content.active,.active .js-content-content', this.element);
             var printContent;
             var iframe = $('iframe', el).get(0);
             if (iframe) {
