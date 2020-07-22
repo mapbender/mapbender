@@ -255,17 +255,6 @@ fieldset{
   &.left-bottom{@include absolute('' '' $space*4 $space/2);}
   &.right-bottom{@include absolute('' $space/2 $space*4 '');}
 }
-.contentPane{
-    > .mb-element.mb-element-zoombar{
-        > ul.toolPane{
-          border: 2px solid $ciColor2;
-          padding:$space/2;
-          color:$ciColor3;
-          background-color: $ciColor4;
-        }
-    }
-}
-
 /* ---------------------------------------------------------------- LAYERTREE */
 .mb-element-layertree{
   font-size: 2rem;
