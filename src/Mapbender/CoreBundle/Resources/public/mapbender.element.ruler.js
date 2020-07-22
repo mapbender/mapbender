@@ -141,8 +141,10 @@
                 this.control = this._createControl4();
             }
             this.container = $('<div/>');
-            this.total = $('<div/>').appendTo(this.container);
-            this.segments = $('<ul/>').appendTo(this.container);
+            this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
+            this.segments = $('<ul/>');
+            this.container.append(this.total);
+            this.container.append(this.segments);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
             
@@ -236,12 +238,17 @@
             }
         },
         _reset: function() {
-            this.segments.empty();
-            this.total.empty();
-            this.segments.append('<li/>');
+            $('>li', this.segments).remove();
+            this.total.text('');
         },
         _handleModify: function(event){
-            this._handleFinal(event);
+            var measure = this._getMeasureFromEvent(event);
+            this._updateTotal(measure, event);
+            // Reveal the previously hidden segment measure if it's now different from total
+            var $previous = $('>li', this.segments).first();
+            if ($previous.text() !== measure) {
+                $previous.show();
+            }
         },
         _handlePartial: function(event) {
             if (this.options.type === 'area') {
@@ -252,39 +259,23 @@
             if (!measure) {
                 return;
             }
-            var recentSegments = this.segments.children('li');
-            this.total.empty().append($('<b>').text(measure));
-            for (var i = 0; i < recentSegments.length; ++i) {
-                var recentSegment = recentSegments.eq(i);
-                var segmentText = recentSegment.text();
-                if (segmentText === measure) {
-                    recentSegment.hide();
-                } else {
-                    recentSegment.show();
-                    break;
-                }
-            }
+            this._updateTotal(measure, event);
             var measureElement = $('<li/>');
             measureElement.text(measure);
+            // initially hide segment entry identical to current total
             measureElement.hide();
             this.segments.prepend(measureElement);
         },
         _handleFinal: function(event){
             var measure = this._getMeasureFromEvent(event);
-            if (!measure) {
-                return;
-            }
-            if (this.options.type === 'area') {
+            this._updateTotal(measure, event);
+        },
+        _updateTotal: function(measure, event) {
+            this.total.text(measure || '');
+            if (measure && this.options.type === 'area') {
                 var feature = event.feature || event.object.handler.polygon;
-                this._updateAreaLabel(feature, measure);
-                this.segments.empty();
+                this._updateAreaLabel(feature, measure || '');
             }
-            var mostRecent = this.segments.children('li').first();
-            if (mostRecent.length && measure === mostRecent.text()) {
-                // remove first text entry node, with identical text to final measure
-                mostRecent.remove();
-            }
-            this.total.empty().append($('<b>').text(measure));
         },
         _getMeasureFromEvent: function(event) {
             var measure;
