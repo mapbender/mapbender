@@ -202,11 +202,15 @@ fieldset{
     height: auto;
     width: auto\9; /* ie8 */
   }
-  // @todo: [template BC break] the application title is an h1, not a paragraph
-  p.app-title {
-    font-size:$fontSize*2;
-    line-height:$fontSize*2;
-    text-align:center;
+  .app-title {
+    text-align: center;
+    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
+  }
+  .app-title:last-child {
+    margin-bottom: 0;
+  }
+  .app-title:first-child {
+    margin-top: 0;
   }
 }
 
