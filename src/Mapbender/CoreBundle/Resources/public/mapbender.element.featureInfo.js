@@ -158,7 +158,6 @@
             // @todo: add mobile hacks here, remove event
             var eventData = {
                 action: "haveresult",
-                title: this.element.attr('title'),
                 content: this._contentElementId(source),
                 source: source,
                 id: this.element.attr('id')
