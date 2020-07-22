@@ -6,7 +6,6 @@
 @import "modules/popup";
 @import "modules/input";
 @import "modules/button";
-@import "modules/seperator";
 @import "modules/container";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
@@ -124,11 +123,19 @@ div.contentTitle {
   // remove broken head background when the page is smaller than defined width
   min-width:$pageWidth;
   border-top:solid 5px darken($firstColor, 10%);
-  background-image:url($headPatternUrl);
   @include background(linear-gradient(rgba(255,255,255,.1),
                                       rgba(255,255,255,0)),
                       url($headPatternUrl));
-  hr{@include absolute('' 0 0 0);}
+  .dekoSeperator {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 6px;
+    border:none;
+    outline:none;
+    border-bottom:solid 1px $firstColor;
+    background:url($imageBasePath + "/line.png");
+  }
 }
 
 .account-bar-wrap {

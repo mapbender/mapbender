@@ -5,21 +5,10 @@
 
 .authWrapper {
   margin-top: 15vh;
-
-  > .head {
+  .head {
     position: absolute;
     width: 100%;
-    border-top: solid 5px darken($firstColor, 10%);
-    background-image: url($headPatternUrl);
     height: 300px;
-    min-width: auto;
-
-    @include background(
-        linear-gradient(rgba(255, 255, 255, .1), rgba(255, 255, 255, 0)), url($headPatternUrl));
-
-    > .dekoSeperator {
-      @include absolute('' 0 0 0);
-    }
   }
   /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
   .login-wrapper, .logoContainer {
