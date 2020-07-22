@@ -3,7 +3,7 @@
   .description{
     text-align: right;
   }
-  .checkWrapper{
+  .checkWrapper {
     // HACK: markup puts label first, checkbox second (same cell). We want the checkbox left of the label...
     position: absolute;
     left: 0;
