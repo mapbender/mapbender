@@ -228,12 +228,8 @@ class LayerRendererWms extends LayerRenderer
         $maxRes = ArrayUtil::getDefault($layerDef, 'maxResolution', null);
         $targetResH = $this->clipResolutionComponent($resolution->getHorizontal(), $minRes, $maxRes);
         $targetResV = $this->clipResolutionComponent($resolution->getVertical(), $minRes, $maxRes);
-        if ($targetResH != $resolution->getHorizontal()) {
-            $params['WIDTH'] = intval(max(16, abs($extent->getWidth()) / $targetResH));
-        }
-        if ($targetResV != $resolution->getVertical()) {
-            $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
-        }
+        $params['WIDTH'] = intval(max(16, abs($extent->getWidth()) / $targetResH));
+        $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
         return $params;
     }
 
