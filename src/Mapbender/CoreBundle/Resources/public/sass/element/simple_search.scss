@@ -12,10 +12,17 @@
       overflow-x: hidden;
       border: solid 1px #c8c8c8;
       border-top: none;
+      // Make it look like a .dropdown without really being a dropdown
+      line-height: $inputHeight;
+      @extend .smallText;
       li {
+        display: block;
         padding-left: 5px;
         width: 100%;
         text-align: left;
+        &:hover {
+          background-color: darken(#FFF, 10%);
+        }
       }
     }
   }
@@ -25,18 +32,11 @@
   .mb-element-simplesearch {
     .autocompleteWrapper {
       width: 100%;
-      input.searchterm {
-        width: 100%;
-      }
       .autocompleteList {
-        position: relative;
         max-width: 100%;
         li {
-          font-size: 11px;
-
           &:hover {
             color: #5b932a;
-            background-color: #f9f9f9;
           }
         }
       }
@@ -50,15 +50,6 @@
       .autocompleteList {
         position: absolute;
         max-height: 250px;
-        // Make it look like a .dropdown without really being a dropdown
-        line-height: $inputHeight;
-        @extend .smallText;
-        li {
-          display: block;
-          &:hover {
-            background-color: darken(#FFF, 10%);
-          }
-        }
       }
     }
   }
