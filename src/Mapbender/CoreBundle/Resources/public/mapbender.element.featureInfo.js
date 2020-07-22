@@ -94,10 +94,8 @@
                 }
             });
         },
-        _getIframeDeclaration: function(uuid, url) {
-            var id = uuid ? (' id="' + uuid + '"') : '';
-            var src = url ? (' src="' + url + '"') : '';
-            return '<iframe class="featureInfoFrame"' + id + src + '></iframe>'
+        _getIframeDeclaration: function() {
+            return '<iframe class="featureInfoFrame"></iframe>';
         },
         _getTabTitle: function(source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
@@ -129,12 +127,15 @@
                 data_ = $.trim(data_);
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    // @todo: stop using mapquery-specific stuff
                     self._removeContent(source);
-                } else if (self.options.showOriginal) {
-                    self._showOriginal(source, layerTitle, data_, mimetype);
                 } else {
-                    self._showEmbedded(source, layerTitle, data_, mimetype);
+                    if (self.options.showOriginal) {
+                        self._showOriginal(source, layerTitle, data_, mimetype);
+                    } else {
+                        self._showEmbedded(source, layerTitle, data_, mimetype);
+                    }
+                    self._triggerHaveResult(source);
+                    self._open();
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -148,7 +149,7 @@
                     return !!("" + data).match(/<[/][a-z]+>/gi);
                 case 'text/plain':
                     return !!("" + data).match(/[^\s]/g);
-                default: // TODO other mimetypes ?
+                default:
                     return true;
             }
         },
@@ -166,12 +167,10 @@
         },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
-            /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                    this._open();
-                    var iframe = $(this._getIframeDeclaration(null, null));
+                    var iframe = $(this._getIframeDeclaration());
                     self._addContent(source, layerTitle, iframe);
                     var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
@@ -179,7 +178,6 @@
                            Mapbender.Util.addDispatcher(doc);
                         }
                         $('body', doc).css("background", "transparent");
-                        self._triggerHaveResult(source);
                     });
                     doc.open();
                     doc.write(data);
@@ -188,15 +186,11 @@
                 case 'text/plain':
                 default:
                     this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
-                    this._triggerHaveResult(source);
-                    this._open();
                     break;
             }
         },
         _showEmbedded: function(source, layerTitle, data, mimetype) {
             this._addContent(source, layerTitle, data);
-            this._triggerHaveResult(source);
-            this._open();
         },
         _cleanHtml: function(data) {
             try {
