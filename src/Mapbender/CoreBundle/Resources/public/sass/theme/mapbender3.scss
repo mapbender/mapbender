@@ -25,6 +25,13 @@
   color: $toolBarFontColor;
 }
 
+.toolbar-button-hover-effect {
+  opacity: $toolBarButtonDefaultOpacity;
+  &:hover {
+    opacity: $toolBarButtonHoverOpacity;
+  }
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;
