@@ -1,3 +1,11 @@
+@import "libs/variables";
+// extend / replace some variables with mobile-specific values
+@import "bundles/mapbendermobile/sass/theme/variables.scss";
+@import "libs/mixins";
+@import "libs/normalize";
+@import "libs/icons";
+@import "theme/mapbender3";
+
 // Purpose unknown. Special snowflake hack for Digitizer / vis-ui...?
 fieldset{
   padding:$space;

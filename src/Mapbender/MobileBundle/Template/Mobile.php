@@ -23,24 +23,12 @@ class Mobile extends Template
         );
     }
 
-    public function getLateAssets($type)
-    {
-        switch ($type) {
-            case 'css':
-                return array(
-                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
-                );
-            default:
-                return parent::getLateAssets($type);
-        }
-    }
-
     public function getAssets($type)
     {
         switch ($type) {
             case 'css':
                 return array(
-                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile_skeleton.scss',
+                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
                 );
             case 'js':
                 return array(
