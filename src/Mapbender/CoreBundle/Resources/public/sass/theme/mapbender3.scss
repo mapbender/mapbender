@@ -48,10 +48,19 @@
       }
     }
   }
+  .mb-button, .mb-aboutButton, .mb-gpsButton {
+    opacity: $toolBarButtonDefaultOpacity;
+    &:hover {
+      opacity: $toolBarButtonHoverOpacity;
+    }
+  }
   .toolBarItemActive {
     // Invert background and foreground
     background-color: $toolBarFontColor;
     color: $toolBarBackgroundColor;
+    .mb-button, .mb-aboutButton, .mb-gpsButton {
+      opacity: $toolBarButtonActiveOpacity;
+    }
   }
   padding:$space/4 $space/2 $space/4 $space/2;
   border-color: darken($contentColor, 20%);

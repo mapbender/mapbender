@@ -6,3 +6,8 @@ $ciColor4:#fff ; // white
 $toolBarFontColor: #0066BA;
 $toolBarBackgroundColor: #fff;
 $toolBarOpacity: 1.0;
+
+// Invert button hover opacity behavior (opaque when NOT hovered, lighter when hovered)
+$toolBarButtonDefaultOpacity: 1.0;
+$toolBarButtonHoverOpacity: 0.8;
+$toolBarButtonActiveOpacity: 1.0;

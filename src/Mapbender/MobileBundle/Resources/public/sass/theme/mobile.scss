@@ -133,17 +133,6 @@ fieldset{
     bottom: 0;
     width: 100%;
   }
-  .mb-button, .mb-aboutButton, .mb-gpsButton {
-    opacity: 1;
-    &:hover {
-      opacity: .8;
-    }
-  }
-  .toolBarItemActive {
-    .mb-button, .mb-aboutButton, .mb-gpsButton {
-      opacity: .8;
-    }
-  }
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane{

@@ -304,17 +304,6 @@ $tabSize: 32px;
 }
 
 .toolBar {
-  .mb-button, .mb-aboutButton, .mb-gpsButton {
-    opacity: .8;
-    &:hover {
-      opacity: 1;
-    }
-  }
-  .toolBarItemActive {
-    .mb-button, .mb-aboutButton, .mb-gpsButton {
-      opacity: 1;
-    }
-  }
   opacity: 1; // avoid applying opacity twice (gradient + $toolBarOpacity)
   &.top {
     background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.9), rgba($toolBarBackgroundColor, 0.7));
