@@ -49,9 +49,10 @@
     .autocompleteWrapper {
       .autocompleteList {
         position: absolute;
-        line-height: 29px;
         max-height: 250px;
-        font-size: 11px;
+        // Make it look like a .dropdown without really being a dropdown
+        line-height: $inputHeight;
+        @extend .smallText;
         li {
           display: block;
           &:hover {
@@ -60,6 +61,11 @@
         }
       }
     }
+  }
+  &.bottom .autocompleteList {
+    // "drop up"
+    bottom: 0;
+    margin-bottom: $inputHeight;
   }
 }
 
