@@ -222,7 +222,6 @@
         deactivate: function(){
             this.container.detach();
             this._toggleControl(false);
-            $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
             if(this.popup && this.popup.$element){
                 this.popup.destroy();
             }
