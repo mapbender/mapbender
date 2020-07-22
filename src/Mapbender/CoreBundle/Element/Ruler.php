@@ -76,7 +76,7 @@ class Ruler extends Element
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return 'MapbenderCoreBundle:Element:measure_dialog.html.twig';
+        return 'MapbenderCoreBundle:Element:ruler.html.twig';
     }
 
     /**
