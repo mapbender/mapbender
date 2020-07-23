@@ -1,3 +1,42 @@
+## 3.2.0-RC2
+* Fix Ruler displaying too few intermediate line segment measures
+* Fix FeatureInfo only displaying single service response with `showOriginal`=false
+* Fix Layertree layer title coloring regression
+* Fix ScaleBar coloring in toolbar
+* Fix inconsistency of toolbar button colors and hover effects vs ZoomBar in mobile template
+* Fix vertically misaligned checkmarks in user / group selection list when assigning access privileges
+* Fix ImageExport + Print edge-case error (viewport / min/max scale dependent) calculating label resolution params
+* Fix SimpleSearch layout when used in toolbar
+
+## 3.2.0-RC1 (Changelog WIP)
+* Add configurable per-Application engine code (OpenLayers 2 or OpenLayers 6)
+* Added reusable source instances; configure once, share between many applications
+* Ruler: display polygon area in-place as a polygon label
+* SimpleSearch: remove requirement on (current) map CRS being equal to server data CRS
+* ZoomBar: add step-wise rotation and north arrow
+* Redlining: add circle drawing tool
+* Redlining: support labels on every type of feature
+* Print: fix incompatibilities with PHP 7.4
+* Wmts: fix configuration generation error on PHP 7.4
+
+### Layouting changes
+* Properly flow multiple map overlaying Elements in the same corner ("Anchor")
+
+### Removed functionality
+* ZoomBar: legacy incremental panning arrows
+* ZoomBar: legacy "zoom_box" navigation workflow
+* Ruler: "immediate" option (now always behaves as if immediate is on)
+* ScaleBar: simultaneous dual-unit display
+* Layertree "hidenottoggleable" option; superseded by instance layer settings
+* "Classic" template
+* Legacy (buggy) "Responsive" template
+* SuggestMap element, WmcLoader / WmcList / WmcEditor elements
+#### Technical removals
+* Layer attribute emulation for legacy `mqlid` and `ollid` properties
+* Client-side Source property `origId`
+
+
+
 ## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
