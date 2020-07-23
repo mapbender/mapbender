@@ -124,6 +124,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 zoomToOriginal.apply(this, arguments);
             };
         })(this.olMap);
+        this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
         this.setView(true);
         this.processUrlParams();
