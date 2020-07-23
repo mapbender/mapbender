@@ -37,10 +37,6 @@ mb:
         nolayer: 'Camada de informação não existe.'
         unknownoption: 'Opção desconhecida'
         noresult: 'A visão geral não contem camadas.'
-      popup:
-        btn:
-          ok: Fechar
-          print: Imprimir
       class:
         title: Informação
         description: Informação

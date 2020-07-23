@@ -37,9 +37,6 @@ mb:
         nolayer: 'Detay bilgisi katmanı bulunamadı.'
         unknownoption: '% Namespace%.% Widgetname% için bilinmeyen veya işlenmemiş seçenek %key%.'
         noresult: 'Sonuç bulunamadı'
-      popup:
-        btn:
-          ok: 'Kapat'
       class:
         title: 'Detay bilgisi'
         description: 'Detay bilgisi'

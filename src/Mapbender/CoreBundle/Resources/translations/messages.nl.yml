@@ -37,9 +37,6 @@ mb:
         nolayer: 'Object-informatie laag bestaat niet.'
         unknownoption: 'Onbekende of onverwerkbare optie %key% voor %namespace%.%widgetname%.'
         noresult: 'geen resultaat'
-      popup:
-        btn:
-          ok: Sluit
       class:
         title: 'Object informatie'
         description: 'Object informatie'

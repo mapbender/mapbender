@@ -247,16 +247,7 @@
                         cssClass: 'featureinfoDialog',
                         width: options.width,
                         height: options.height,
-
-                        buttons: {
-                            'ok': {
-                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
-                                cssClass: 'button buttonCancel critical right',
-                                callback: function() {
-                                    this.close();
-                                }
-                            }
-                        }
+                        buttons: this._getPopupButtonOptions()
                     });
                     widget.popup.$element.on('close', function() {
                         if (widget.options.deactivateOnClose) {
@@ -270,17 +261,6 @@
                     widget.popup.$element.on('open', function() {
                         widget.state = 'opened';
                     });
-                    if (options.printResult === true) {
-                        widget.popup.addButtons({
-                            'print': {
-                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.print'),
-                                cssClass: 'button right',
-                                callback: function() {
-                                    widget._printContent();
-                                }
-                            }
-                        });
-                    }
                 }
                 if(widget.state !== 'opened') {
                     widget.popup.open();
@@ -290,6 +270,31 @@
                     widget.popup.$element.show();
                 }
             }
+        },
+        /**
+         * @returns {Array<Object>}
+         */
+        _getPopupButtonOptions: function() {
+            var buttons = [{
+                label: Mapbender.trans('mb.actions.close'),
+                cssClass: 'button buttonCancel critical right',
+                callback: function() {
+                    /** @this Mapbender.Popup2 */
+                    this.close();
+                }
+            }];
+            if (this.options.printResult) {
+                var self = this;
+                buttons.push({
+                    label: Mapbender.trans('mb.actions.print'),
+                    // both buttons float right => will visually appear in reverse dom order, Print first
+                    cssClass: 'button right',
+                    callback: function() {
+                        self._printContent();
+                    }
+                });
+            }
+            return buttons;
         },
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;

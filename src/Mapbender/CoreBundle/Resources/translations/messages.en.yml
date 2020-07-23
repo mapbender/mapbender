@@ -43,10 +43,6 @@ mb:
         nolayer: 'No feature info layer exists.'
         unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
         noresult: 'no result'
-      popup:
-        btn:
-          ok: Close
-          print: Print
       class:
         title: FeatureInfo
         description: FeatureInfo

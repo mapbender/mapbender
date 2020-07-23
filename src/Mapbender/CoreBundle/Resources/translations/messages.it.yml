@@ -37,10 +37,6 @@ mb:
         nolayer: 'Nessuna informazione per le feature nel layer'
         unknownoption: 'Option sconosciuta %key% per %namespace%.%widgetname%.'
         noresult: 'nessun risultato'
-      popup:
-        btn:
-          ok: Chiudi
-          print: Stampa
       class:
         title: Informazioni
         description: Informazioni

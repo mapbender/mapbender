@@ -37,10 +37,6 @@ mb:
         nolayer: 'Impossible d''identifier l''objet.'
         unknownoption: 'Option %key% inconnue ou non prise en charge pour %namespace%.%widgetname%.'
         noresult: 'aucun résultat'
-      popup:
-        btn:
-          ok: Fermer
-          print: Imprimer
       class:
         title: Identifier
         description: Identifier l'objet cliqué sur la carte

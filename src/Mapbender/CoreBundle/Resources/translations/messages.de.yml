@@ -43,10 +43,6 @@ mb:
         nolayer: 'Informationsebene existiert nicht.'
         unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
         noresult: 'kein Ergebnis'
-      popup:
-        btn:
-          ok: Schließen
-          print: Drucken
       class:
         title: Information
         description: Information

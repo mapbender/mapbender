@@ -287,9 +287,10 @@
             this.options.buttons = buttons;
         },
 
-        addButtons: function(buttons, offset) {
+        addButtons: function(buttons) {
             var self = this,
-                buttonset = $('');
+                buttonset = []
+            ;
 
             $.each(buttons, function(key, conf) {
                 var button = $('<a/>', {
@@ -307,11 +308,9 @@
                         conf.callback.call(self, event);
                     });
                 }
-
-                buttonset = buttonset.add(button);
+                buttonset.push(button);
             });
 
-            // @todo use offset if given
             $('.popupButtons', this.$element.get(0)).append(buttonset);
         },
 

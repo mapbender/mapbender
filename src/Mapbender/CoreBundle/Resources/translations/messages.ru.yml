@@ -37,10 +37,6 @@ mb:
         nolayer: 'Не существует функция инфо-слой.'
         unknownoption: 'Неизвестный или необрабатываемый параметр %key% для %namespace%.%widgetname%.'
         noresult: 'Ничего не найдено'
-      popup:
-        btn:
-          ok: Закрыть
-          print: Печать
       class:
         title: Инфосвойства
         description: Инфосвойства

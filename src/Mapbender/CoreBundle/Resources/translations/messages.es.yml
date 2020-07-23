@@ -37,10 +37,6 @@ mb:
         nolayer: 'No existe feature info de la capa.'
         unknownoption: 'Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.'
         noresult: 'no result'
-      popup:
-        btn:
-          ok: Cerrar
-          print: Imprimir
       class:
         title: FeatureInfo
         description: FeatureInfo
