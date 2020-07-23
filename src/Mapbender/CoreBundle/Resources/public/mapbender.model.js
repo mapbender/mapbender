@@ -152,6 +152,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 zoomToOriginal.apply(this, arguments);
             };
         })(this.olMap);
+        this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
         this.setView(true);
         this.parseURL();
