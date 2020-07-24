@@ -81,13 +81,13 @@ $.widget("mapbender.mbZoomBar", {
     },
     _setupZoomButtons: function() {
         var self = this;
-        this.element.find('.zoomSlider .iconZoomIn').bind('click', function() {
+        this.element.on('click', '.zoom-in', function() {
             self.mbMap.getModel().zoomIn();
         });
-        this.element.find('.zoomSlider .iconZoomOut').bind('click', function() {
+        this.element.on('click', '.zoom-out', function() {
             self.mbMap.getModel().zoomOut();
         });
-        this.element.find('.iconZoomMin').bind('click', function() {
+        this.element.on('click', '.zoom-world', function() {
             self._worldZoom();
         });
     },

@@ -28,24 +28,27 @@
     <div class="component">
   <ul class="toolPane toolBarColors">
     {% if 'zoom_max' in configuration.components %}
-      <li class="zoomWorld toolbar-button-hover-effect">
-        <span class="iconZoomMin iconBig" title="{{ "mb.core.zoombar.zoombyworld" | trans }}"></span>
+      <li class="zoom-world toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoombyworld" | trans }}">
+        <i class="fa fa-globe fas fa-globe-americas"></i>
       </li>
     {% endif %}
     {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="iconZoomIn iconBig toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"></div>
+        <div class="toolbar-button-hover-effect zoom-in" title="{{ "mb.core.zoombar.zoomin" | trans }}"><i class="fa far fa-plus-square fa-plus-square-o"></i></div>
         {% endif %}
         {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
-        <ul class="zoomSliderLevels">
+        <ul class="zoomSliderLevels list-unstyled">
             {%- for _level, _scale in zoom_levels -%}
+            {%- if not loop.first -%}
+            <li class="zoom-level-gap"><i class="fa fas fa-ellipsis-v"></i></li>
+            {%- endif -%}
             <li class="iconZoomLevel toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"></li>
             {%- endfor -%}
         </ul>
         {% endif %}
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="iconZoomOut iconBig toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"></div>
+        <div class="toolbar-button-hover-effect zoom-out" title="{{ "mb.core.zoombar.zoomout" | trans }}"><i class="fa far fa-minus-square fa-minus-square-o"></i></div>
         {% endif %}
       </li>
     {% endif %}
