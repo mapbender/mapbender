@@ -1,3 +1,8 @@
+## dev-release/3.0.7 @ 417c59f2a
+- Fix mbmapclick event data on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
+- Restore keyboard arrow keys map panning
+- Fix compiler discovery of newly added Yaml applications
+
 ## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option
 - [Regression] Fix missing ScaleSelector visual update when zooming map by non-ScaleSelector methods
