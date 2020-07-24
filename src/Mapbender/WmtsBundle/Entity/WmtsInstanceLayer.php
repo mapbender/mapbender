@@ -19,13 +19,13 @@ class WmtsInstanceLayer extends SourceInstanceItem
 {
     /**
      * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"persist", "refresh"})
-     * @ORM\JoinColumn(name="wmtsinstance", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmtsinstance", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceInstance;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"persist", "refresh"})
-     * @ORM\JoinColumn(name="wmtslayersource", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmtslayersource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceItem;
 
