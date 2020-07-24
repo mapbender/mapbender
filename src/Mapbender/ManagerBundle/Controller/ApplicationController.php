@@ -605,15 +605,15 @@ class ApplicationController extends WelcomeController
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $newInstance = $directory->createInstance($source);
-        $otherInstances = $layerset->getInstances()->getValues();
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
+            /** @var SourceInstanceAssignment $otherAssignment */
+            $otherAssignment->setWeight($index + 1);
+            $entityManager->persist($otherAssignment);
+        }
+
         $newInstance->setWeight(0);
         $newInstance->setLayerset($layerset);
         $layerset->getInstances()->add($newInstance);
-
-        foreach ($otherInstances as $index => $lsInstance) {
-            /** @var SourceInstance $lsInstance */
-            $lsInstance->setWeight($index + 1);
-        }
 
         $entityManager->persist($application);
         $application->setUpdated(new \DateTime('now'));
@@ -648,6 +648,7 @@ class ApplicationController extends WelcomeController
         foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
             /** @var SourceInstanceAssignment $otherAssignment */
             $otherAssignment->setWeight($index + 1);
+            $em->persist($otherAssignment);
         }
 
         $layerset->getReusableInstanceAssignments()->add($assignment);
