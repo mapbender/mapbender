@@ -6,16 +6,6 @@
 @import "libs/icons";
 @import "theme/mapbender3";
 
-// Purpose unknown. Special snowflake hack for Digitizer / vis-ui...?
-fieldset{
-  padding:$space;
-
-  legend{
-    @extend .subTitle;
-    margin:0 !important;
-    padding:0 5px 0 5px;
-  }
-}
 /* ------------------------------------------------------------------- BUTTON */
 .button{
   @include box-shadow(0 0 6px rgba(0,0,0,0.1),
