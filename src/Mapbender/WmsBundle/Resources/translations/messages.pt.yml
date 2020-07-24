@@ -7,9 +7,6 @@ mb:
           wmsurl: URL
           wmsuser: Usuário
           wmspass: Senha
-        btn:
-          cancel: Cancelar
-          load: Carregar
       error:
         load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
       repo:

@@ -7,9 +7,6 @@ mb:
           wmsurl: 'Сервис URL'
           wmsuser: Пользователь
           wmspass: Пароль
-        btn:
-          cancel: Отменить
-          load: Загрузить
       error:
         load: 'WMSLoader: WMS Capabilities не загружен!'
       repo:

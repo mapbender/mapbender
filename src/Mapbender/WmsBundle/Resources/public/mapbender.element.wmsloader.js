@@ -60,14 +60,14 @@
                     height: 325,
                     buttons: {
                         'cancel': {
-                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
+                            label: Mapbender.trans('mb.actions.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.load'),
+                            label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'button right',
                             callback: function(){
                                 var url = $('input[name="loadWmsUrl"]', self.element).val();

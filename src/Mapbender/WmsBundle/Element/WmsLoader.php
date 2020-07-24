@@ -108,7 +108,6 @@ class WmsLoader extends Element
             ),
             'trans' => array(
                 'mb.wms.wmsloader.error.*',
-                'mb.wms.wmsloader.dialog.*',    // @todo: use standard add / cancel action labels for popup buttons
             ),
         );
         $config = $this->entity->getConfiguration();

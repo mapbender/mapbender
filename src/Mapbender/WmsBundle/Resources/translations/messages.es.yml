@@ -7,9 +7,6 @@ mb:
           wmsurl: 'Servicio URL'
           wmsuser: User
           wmspass: Password
-        btn:
-          cancel: Cancelar
-          load: Cargar
       error:
         load: 'WMSLoader: las características del wms no pueden ser cargadas!'
       repo:

@@ -7,9 +7,6 @@ mb:
           wmsurl: 'Service URL'
           wmsuser: User
           wmspass: Password
-        btn:
-          cancel: Cancel
-          load: Load
       error:
         load: "WMSLoader: wms capabilities can't be loaded!"
       repo:
