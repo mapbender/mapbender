@@ -36,10 +36,12 @@
 * Client-side Source property `origId`
 
 
-## dev-release/3.0.7 @ 417c59f2a
-- Fix mbmapclick event data on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
+## dev-release/3.0.7 @ a050b64d8
+- Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
 - Restore keyboard arrow keys map panning
 - Fix compiler discovery of newly added Yaml applications
+- Fix error when deleting Wmts source with instances
+- Fix error when using a new Wmts instance without explicitly saving its instance form first
 
 ## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option

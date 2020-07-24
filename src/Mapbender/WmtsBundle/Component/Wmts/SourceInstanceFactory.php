@@ -6,6 +6,7 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
@@ -44,6 +45,12 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         $styles = $sourceLayer->getStyles();
         if ($styles && count($styles)) {
             $instanceLayer->setStyle($styles[0]->identifier);
+        }
+        $matrixLinks = array_values($sourceLayer->getTilematrixSetlinks() ?: array());
+        if ($matrixLinks) {
+            /** @var TileMatrixSetLink $defaultLink */
+            $defaultLink = $matrixLinks[0];
+            $instanceLayer->setTileMatrixSet($defaultLink->getTileMatrixSet());
         }
         return $instanceLayer;
     }
