@@ -138,7 +138,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.olMap.setCenter(this.olMap.getCenter(), this.olMap.getZoom(), false, true);
 
         this._setupHistoryControl();
-        this._setupNavigationControl();
         this._initEvents(this.olMap, this.mbMap);
     },
     _initEvents: function(olMap, mbMap) {
@@ -171,11 +170,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
         this.olMap.addControl(this.historyControl);
-    },
-    _setupNavigationControl: function() {
-        this._navigationControl = this.map.olMap.getControlsByClass('OpenLayers.Control.Navigation')[0];
-        this._navigationDragHandler = this._navigationControl.zoomBox.handler.dragHandler;
-        this._initialDragHandlerKeyMask = this._navigationDragHandler.keyMask;
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
