@@ -3,11 +3,11 @@
   position: relative;
   color: $inputForegroundColor;
   border: solid 1px lighten($thirdColor, 15%);
-  .toolBar & {
-    text-align: left;
-  }
   padding-right: $space + $space/2;
   background-color: $inputBackgroundColor;
+  &.numeric {
+    text-align: right;
+  }
 
   .dropdownValue, .dropdownList {
     user-select: none;
@@ -30,6 +30,7 @@
     .group-label {
       display: block;
       padding-left: 5px;
+      padding-right: 5px;
       color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
       background-color: $inputForegroundColor;
     }
@@ -37,6 +38,7 @@
     li {
       &.choice {
         padding-left: 5px;
+        padding-right: 5px;
         &:hover{
           color:$ciColor;
           background-color:$contentColor;

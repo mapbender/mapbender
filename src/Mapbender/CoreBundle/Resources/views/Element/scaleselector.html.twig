@@ -2,7 +2,7 @@
 {% if configuration.label %}
   <span class="labelInput">{{ title|trans }}</span>
 {% endif %}
-  <div class="dropdown">
+  <div class="dropdown numeric">
     <select class="hiddenDropdown">
       {%- for scale in scales -%}
         <option value="{{ scale }}">{{ scale }}</option>
