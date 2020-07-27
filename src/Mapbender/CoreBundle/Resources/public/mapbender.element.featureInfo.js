@@ -94,9 +94,6 @@
                 }
             });
         },
-        _getIframeDeclaration: function() {
-            return '<iframe class="featureInfoFrame"></iframe>';
-        },
         _getTabTitle: function(source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
             //  title of the root layer. This should be made consistent one way or the other.
@@ -169,18 +166,18 @@
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                    var iframe = $(this._getIframeDeclaration());
+                    var iframe = $('<iframe>');
                     self._addContent(source, layerTitle, iframe);
-                    var doc = iframe.get(0).contentWindow.document;
                     iframe.on('load', function() {
+                        var doc = iframe.get(0).contentWindow.document;
+                        doc.open();
+                        doc.write(data);
+                        doc.close();
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
                         $('body', doc).css("background", "transparent");
                     });
-                    doc.open();
-                    doc.write(data);
-                    doc.close();
                     break;
                 case 'text/plain':
                 default:
