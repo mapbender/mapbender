@@ -1,4 +1,5 @@
 ## 3.2.0-RC3
+* Fix FeatureInfo errors with `showOriginal` option
 * Fix FeatureInfo breaking WmsLoader popup translations
 * Fix broken instance ordering after adding a mix of shared and bound instances to the same layerset
 * Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
