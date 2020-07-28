@@ -17,7 +17,6 @@
         menuTemplate: null,
         popup: null,
         created: false,
-        loadStarted: {},
         consts: {
             source: "source",
             theme: "theme",
@@ -27,7 +26,6 @@
         },
         _mobilePane: null,
         _create: function() {
-            this.loadStarted = {};
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
@@ -343,27 +341,21 @@
         _onSourceLoadStart: function(event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
-            if ($sourceEl && $sourceEl.length) {
-                this.loadStarted[sourceId] = true;
-                $sourceEl.attr('data-state', 'loading');
-            }
+            $sourceEl.addClass('state-loading');
         },
         _onSourceLoadEnd: function(event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
-            if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
-                this.loadStarted[sourceId] = false;
-                $sourceEl.attr('data-state', '');
+            $sourceEl.removeClass('state-loading state-error');
+
+            if ($sourceEl && $sourceEl.length) {
                 this._resetSourceAtTree(options.source);
             }
         },
         _onSourceLoadError: function(event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
-            if ($sourceEl && $sourceEl.length && this.loadStarted[sourceId]) {
-                this.loadStarted[sourceId] = false;
-                $sourceEl.attr('data-state', 'error');
-            }
+            $sourceEl.removeClass('state-loading').addClass('state-error');
         },
         _toggleFolder: function(e) {
             var $me = $(e.target);

@@ -72,7 +72,6 @@
     .leaveContainer{
       margin-left:-6px;
       .layer-menu-btn{
-        margin-left: 4px;
         &:before{
           content: '\f0c9';
           font-family: 'FontAwesome';
@@ -80,25 +79,18 @@
       }
     }
   }
-  [data-state="loading"]{
-    @include opacity(.7);
-    @extend .iconActivity;
-    &:before{
-      font-family: 'FontAwesome';
-      -webkit-animation:spin 1s linear infinite;
-      -moz-animation:spin 1s linear infinite;
-      animation:spin 1s linear infinite;
-      @include absolute('' $space '' '');
-    }
+  .leave:not(.state-error) .error-icon-wrapper,
+  .leave:not(.state-loading) .loading-icon-wrapper {
+    display: none;
   }
-  [data-state="error"]{
-    @extend .iconWarning;
-    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
-    &:before{
-      font-family: 'FontAwesome';
-      color:$errorColor;
-      @include absolute('' $space '' '');
-    }
+  .error-icon-wrapper, .leave.state-error .layer-title {
+    color: $errorColor;
+  }
+  .leave.state-loading {
+    opacity: 0.75;
+  }
+  .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
+    margin-left: 4px;
   }
   >ul{padding-left: 6px;}
 }
@@ -163,21 +155,6 @@ $layer-slider-bar-height: 5px;
       font-size: 12px;
       text-align: center;
       @include border-radius(4px);
-    }
-  }
-}
-
-/*
-* Only if layer tree is integrated in side pane content (not as tab or accordion)
-*/
-.sideContent {
-  > .mb-element-layertree {
-    .leave {
-      &[data-state="loading"], &[data-state="error"] {
-        &:before {
-          @include absolute('' $space+16px '' '');
-        }
-      }
     }
   }
 }

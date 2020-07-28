@@ -10,9 +10,8 @@
         </div>
         <ul class="layers"></ul>
       </li>
-      <li class="-fn-template hidden leave showLeaves" data-state="" data-title="">
+      <li class="-fn-template hidden leave showLeaves">
         <div class="leaveContainer">
-          <span class="layer-spinner"></span>
           <span class="layer-state"></span>
           <span class="iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
           <div class="checkWrapper iconCheckbox selectedWrapper" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans  }}">
@@ -22,6 +21,8 @@
             <input class="layer-info checkbox" type="checkbox" name="info"/>
           </div>
           <span class="layer-title"></span>
+          <span class="error-icon-wrapper"><i class="fa fas fa-exclamation-triangle"></i></span>
+          <span class="loading-icon-wrapper"><i class="fa fas fa-spinner fa-spin"></i></span>
           {% if configuration.menu is defined and configuration.menu %}
           <span class="iconMenu layer-menu-btn"></span>
             <div class="layer-menu hidden">
