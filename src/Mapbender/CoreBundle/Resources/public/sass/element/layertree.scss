@@ -71,12 +71,6 @@
 
     .leaveContainer{
       margin-left:-6px;
-      .layer-menu-btn{
-        &:before{
-          content: '\f0c9';
-          font-family: 'FontAwesome';
-        }
-      }
     }
   }
   .leave:not(.state-error) .error-icon-wrapper,
