@@ -1,4 +1,5 @@
-## dev-release/3.0.7 @ a050b64d8
+## dev-release/3.0.7 @ f79dc2d6d
+- [Regression] Fix missing legends for WmsLoader instances
 - Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
 - Restore keyboard arrow keys map panning
 - Fix compiler discovery of newly added Yaml applications
