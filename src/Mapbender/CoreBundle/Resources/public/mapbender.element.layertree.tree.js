@@ -275,14 +275,19 @@
             var $sourceVisCheckbox = $('>.leaveContainer input[name="sourceVisibility"]', $themeNode);
             return $sourceVisCheckbox.prop('checked');
         },
-        _redisplayLayerState: function($li, state) {
-            if (state.outOfScale) {
-                $li.addClass("invisible").find('span.layer-state').attr("title", Mapbender.trans("mb.core.layertree.const.outofscale"));
-            } else if (state.visibility) {
-                $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
+        _redisplayLayerState: function($li, layer) {
+            var $title = $('>.leaveContainer .layer-title', $li);
+            if (layer.state.visibility) {
+                $li.removeClass('invisible');
+                $title.attr('title', layer.options.title);
             } else {
-                // @todo (TBD): is this really a separate state, or is visibility always := !outOfScale?
-                $li.addClass("invisible").find('span.layer-state').attr("title", "");
+                // @todo: implement proper out-of-bounds detection
+                $li.addClass("invisible");
+                var tooltipParts = [
+                    layer.options.title,
+                    Mapbender.trans("mb.core.layertree.const.outofscale")
+                ];
+                $title.attr('title', tooltipParts.join("\n"));
             }
         },
         _resetSourceAtTree: function(source) {
@@ -300,7 +305,7 @@
         },
         _updateLayerDisplay: function($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
-                this._redisplayLayerState($li, layer.state);
+                this._redisplayLayerState($li, layer);
             }
             if (layer && Object.keys((layer.options || {}).treeOptions).length) {
                 var $checkboxScope = $('>.leaveContainer', $li);
