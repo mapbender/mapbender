@@ -4,7 +4,6 @@
         options: {
             autoOpen:                 true,
             target:                   null,
-            elementType:              "dialog",
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedLayerTitle: true
@@ -19,6 +18,7 @@
          * @private
          */
         _create: function() {
+            this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             this.htmlContainer = $('> .legends', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
@@ -46,11 +46,8 @@
          */
         onMapLoaded: function(e) {
             this.onMapLayerChanges();
-
-            if (this.options.elementType === 'dialog') {
-                if (this.options.autoOpen) {
-                    this.open();
-                }
+            if (this.useDialog_ && this.options.autoOpen) {
+                this.open();
             }
 
             $(document)
@@ -250,7 +247,7 @@
         open: function(callback) {
             this.callback = callback;
 
-            if (this.options.elementType === 'dialog') {
+            if (this.useDialog_) {
                 if (!this.popupWindow) {
                     this.popupWindow = new Mapbender.Popup2(this.getPopupOptions());
                     this.popupWindow.$element.on('close', $.proxy(this.close, this));
