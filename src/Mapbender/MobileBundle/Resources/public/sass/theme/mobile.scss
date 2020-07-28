@@ -261,17 +261,14 @@
   .leaveContainer {
     padding: $space/2;
   }
-  .iconCheckbox, .iconCheckboxActive {
-    @extend .iconOk;
-  }
   .selectedWrapper {
-    color: lighten($ciColor3, 60%);
-  }
-  .iconCheckboxActive{
-    color:lighten($ciColor3, 5%);
+    color: lighten($ciColor3, 5%);
   }
   .checkboxDisabled:before{display:none;}
   .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
+  .iconFolder + .checkWrapper {
+    margin-left: 0 !important;
+  }
   .serviceContainer, .groupContainer{
     .layers{display:none;}
   }

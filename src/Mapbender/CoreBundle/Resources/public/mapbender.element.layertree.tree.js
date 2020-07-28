@@ -87,7 +87,7 @@
             this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.iconFolder', $.proxy(this._toggleFolder, this));
+            this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
@@ -180,7 +180,7 @@
             $li.attr('data-type', this.consts.theme);
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('.iconFolder', $li).toggleClass('iconFolderActive', options.opened);
+            $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             return $li;
         },
@@ -218,7 +218,7 @@
                     nodeType = this.consts.root;
                 }
                 $li.toggleClass('showLeaves', treeOptions.toggle);
-                var $folder = $('.iconFolder', $li);
+                var $folder = $('.-fn-toggle-children', $li);
                 $folder.toggleClass('iconFolderActive', treeOptions.toggle);
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('input[name="selected"]', $li).closest('.checkWrapper').remove();
@@ -227,6 +227,7 @@
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }
             } else {
+                $('.-fn-toggle-children', $li).remove();
                 nodeType = this.consts.simple;
                 $childList.remove();
             }

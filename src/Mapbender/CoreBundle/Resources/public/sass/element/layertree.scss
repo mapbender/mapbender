@@ -17,14 +17,11 @@
     // pre-flex
     width: 1em;
   }
-  .checkWrapper + .featureInfoWrapper {
+  .iconFolder + .checkWrapper, .checkWrapper + .featureInfoWrapper {
     margin-left: 5px;
   }
   .checkWrapper + .layer-title {
     margin-left: 0.25em;
-  }
-  .iconFolder{
-    display:none;
   }
   .leaveContainer {
     display: flex;
@@ -43,25 +40,10 @@
   .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
   .leave.invisible {visibility: visible;}
   .themeContainer{
-    // elements with childrens
-    & > .leaveContainer{
-      .iconFolder{display:block;}
-      .iconFolder + .checkWrapper {
-        margin-left: 5px;
-      }
-    }
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
   }
   .serviceContainer, .groupContainer{
-    // elements with childrens
-    & > .leaveContainer{
-      .iconFolder{display:block;}
-      .iconFolder + .checkWrapper {
-        margin-left: 5px;
-      }
-    }
-
     // show only layers which are toggled
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
