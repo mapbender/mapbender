@@ -24,15 +24,6 @@ class LegendAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('elementType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
-                array(
-                'required' => true,
-                'choices' => array(
-                    "dialog" => "dialog",
-                    "blockelement" => "blockelement",
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
