@@ -37,14 +37,6 @@ class LegendAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
             ))
-            ->add('displayType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
-                array(
-                'required' => true,
-                'choices' => array(
-                    "list" => "list",
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],

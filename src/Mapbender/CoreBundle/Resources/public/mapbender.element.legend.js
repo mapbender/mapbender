@@ -5,7 +5,6 @@
             autoOpen:                 true,
             target:                   null,
             elementType:              "dialog",
-            displayType:              "list",
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedLayerTitle: true
