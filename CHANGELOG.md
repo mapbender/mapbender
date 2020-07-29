@@ -1,3 +1,13 @@
+## a348a5078
+* Implement missing initial map center override with "center" url param or pois
+* Fix broken Layerset tab activation after creating new layerset
+* Fix missing legends for WmsLoader instances
+* Fix schema validation error on reusable source instance entity relations
+* Fix Layertree margins with mixed layer / "theme" nestings
+* Fix visual collapse of custom dropdown widget with empty display value
+* Fix misalignment in user privileges matrix display
+* Update default logo (frontend + backend)
+
 ## 3.2.0-RC3
 * Fix FeatureInfo errors with `showOriginal` option
 * Fix FeatureInfo breaking WmsLoader popup translations
