@@ -1,4 +1,6 @@
-## dev-master @ 05bf2d2da
+## 3.2.0
+* Fix ScaleBar minWidth option on Openlayers 6
+* Fix feautreinfo repeated queries with open dialog and "showOriginal" option
 * Implement missing initial map center override with "center" url param or pois
 * Fix broken Layerset tab activation after creating new layerset
 * Fix missing legends for WmsLoader instances
