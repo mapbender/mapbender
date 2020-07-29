@@ -379,18 +379,27 @@ label[for^="inputFilter"] {
 }
 
 .permissionsTable{
-  tr{
+  tr {
     border-bottom: solid 1px darken($contentColor, 10%);
     &.new{
-      .labelInput, .iconGroup, .iconUser{color:green;}
+      td:first-child {
+        color: green;
+      }
       background-color: #f0ffed;
     }
+
   }
+  tbody .labelInput {
+    // Undo .labelInput completely; @todo: fix FOM markup to not use labelInput
+    margin: 0;
+    display: initial;
+    color: inherit;
+  }
+
   th, td {
     padding:5px 0;
   }
   td{
-    .labelInput{width:150px;}
     .input{display:none;}
     .iconGroup:before, .iconUser:before{
       display: inline-block;
