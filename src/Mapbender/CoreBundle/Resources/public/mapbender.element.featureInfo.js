@@ -167,7 +167,6 @@
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     var iframe = $('<iframe>');
-                    self._addContent(source, layerTitle, iframe);
                     iframe.on('load', function() {
                         var doc = iframe.get(0).contentWindow.document;
                         doc.open();
@@ -178,6 +177,7 @@
                         }
                         $('body', doc).css("background", "transparent");
                     });
+                    self._addContent(source, layerTitle, iframe);
                     break;
                 case 'text/plain':
                 default:
