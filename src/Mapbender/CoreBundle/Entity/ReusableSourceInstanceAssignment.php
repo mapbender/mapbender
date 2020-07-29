@@ -28,7 +28,7 @@ class ReusableSourceInstanceAssignment extends SourceInstanceAssignment
 
     /**
      * @var Layerset
-     * @ORM\ManyToOne(targetEntity="Layerset")
+     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="reusableInstanceAssignments", cascade={"refresh"}))
      * @ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $layerset;
