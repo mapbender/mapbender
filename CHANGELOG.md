@@ -1,4 +1,4 @@
-## a348a5078
+## dev-master @ 05bf2d2da
 * Implement missing initial map center override with "center" url param or pois
 * Fix broken Layerset tab activation after creating new layerset
 * Fix missing legends for WmsLoader instances
@@ -6,6 +6,7 @@
 * Fix Layertree margins with mixed layer / "theme" nestings
 * Fix visual collapse of custom dropdown widget with empty display value
 * Fix misalignment in user privileges matrix display
+* Fix layout errors in Element security with empty assigned user / group list
 * Update default logo (frontend + backend)
 
 ## 3.2.0-RC3
