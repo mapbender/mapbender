@@ -373,8 +373,10 @@ label[for^="inputFilter"] {
   top: 30px;
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
-  & + form .collectionAdd {
-    display: none;
+  & + form {
+    .collectionAdd, .labelInput.required {
+      display: none;
+    }
   }
 }
 
@@ -438,6 +440,18 @@ label[for^="inputFilter"] {
     }
     input {
       display: none;
+    }
+  }
+}
+#elementSecurity {
+  // Prevent sizeless collection add icon from overflowing the sized content
+  // @todo: fix icon integration in FOM
+  min-height: 150px;
+  .permissionsTable {
+    thead th:last-child {
+      // Expand cell to contain the sizeless collection add icon
+      // @todo: fix icon integration in FOM
+      min-width: 32px;
     }
   }
 }

@@ -246,7 +246,7 @@ $(function() {
     function initElementSecurity(response, url) {
         var $content = $(response);
         // submit back to same url (would be automatic outside of popup scope)
-        $content.filter('form#elementSecurity').attr('action', url);
+        $content.filter('form').attr('action', url);
 
         var popup;
         var $initialView, $permissionsTable;
@@ -309,7 +309,7 @@ $(function() {
                     label: Mapbender.trans('mb.actions.save'),
                     cssClass: 'button buttonOk',
                     callback: function() {
-                        $("#elementSecurity", popup.$element).submit();
+                        $("form", popup.$element).submit();
                     }
                 },
                 {
