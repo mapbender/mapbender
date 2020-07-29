@@ -417,6 +417,7 @@ label[for^="inputFilter"] {
     text-align: center;
     padding: 3px .5em;
     margin: 0 .25em;
+    display: inline-block;  // match .checkWrapper in body; @todo: fix markup in FOM
     @include noUserSelect;
     @include border-radius($radius);
     &.multi {
