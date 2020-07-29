@@ -9,41 +9,15 @@
     left: 0;
     width: 100%;    // size up to catch clicks on entire cell
     height: 100%;
+    font-size: 153%;
   }
-  .iconCheckboxActive, .iconCheckbox {
-    // HACK: rewire BOTH active and inactive icons to iconOk glyph
-    //       (markup in FOM)
-    @extend .iconOk;
-    &:before{
-      display:inline-block;
-      font-size: 153%;
-      margin-top: 4px;
+  .tdContentWrapper {
+    position:relative;  // for absolute checkWrapper repositioning
+    padding-left: 1.75em; // for absolute checkWrapper repositioning
+    line-height: $inputHeight + 5px;
+    .labelInput {
+      margin: 0;    // @todo: remove global .labelInput margins (margin belongs on form group)
     }
-  }
-  .iconCheckbox {
-    &:before {
-      opacity: 0.4;
-    }
-    &:hover:before {
-      opacity: 0.6;
-    }
-  }
-  .iconCheckboxActive {
-    &:before {
-      opacity: 0.8;
-    }
-    &:hover:before {
-      opacity: 1.0;
-    }
-  }
-
-  .tdContentWrapper{
-    position:relative;
-    // padding:0px;
-    padding-left: 25px;
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-    display:block;
   }
 }
 .userGroupTabContainer{
