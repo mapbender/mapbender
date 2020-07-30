@@ -176,6 +176,7 @@ window.Mapbender.WmsSource = (function() {
         getPrintConfigs: function(bounds, scale, srsName) {
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName, true);
             var extraParams = {
+                REQUEST: 'GetMap',          // required for tunnel resolution
                 VERSION: this.configuration.options.version,
                 FORMAT: this.configuration.options.format || 'image/png'
             };
