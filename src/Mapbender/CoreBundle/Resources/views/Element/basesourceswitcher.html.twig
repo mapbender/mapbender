@@ -1,13 +1,13 @@
 <div id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
   {%- for name, opts in configuration.groups -%}
     {%- if opts.type == 'item' -%}
-    <div class="basesourcesetswitch" data-sourceset="{{ opts.sources | join(',') }}" ><i class="state-check fa fas fa-check"></i>{{ opts.title | trans }}</div>
+    <div class="basesourcesetswitch" data-sourceset="{{ opts.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opts.title | trans }}</div>
     {%- else -%}
     <div class="basesourcegroup">
       <div class="desktop-only group-title">{{ name | trans }}</div>
       <div class="basesourcesubswitcher">
       {%- for opt in opts.items -%}
-          <div class="basesourcesetswitch" data-sourceset="{{ opt.sources | join(',') }}" ><i class="state-check fa fas fa-check"></i>{{ opt.title | trans }}</div>
+          <div class="basesourcesetswitch" data-sourceset="{{ opt.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opt.title | trans }}</div>
       {%- endfor -%}
       </div>
     </div>
