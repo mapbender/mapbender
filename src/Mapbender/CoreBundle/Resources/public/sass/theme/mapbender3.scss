@@ -43,7 +43,6 @@
       // inline does not get enough height to wrap contents vertically, inline-block does
       display: inline-block;
     }
-    text-wrap: avoid;
     white-space: nowrap;
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     @include border-radius($radius);
