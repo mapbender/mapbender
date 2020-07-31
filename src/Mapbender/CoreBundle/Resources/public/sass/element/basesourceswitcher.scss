@@ -1,8 +1,4 @@
 .mb-element-basesourceswitcher {
-  body.desktop-template & .mobile-only {
-    display: none;
-  }
-
   .toolBarItem & {
     display: table-row;
   }

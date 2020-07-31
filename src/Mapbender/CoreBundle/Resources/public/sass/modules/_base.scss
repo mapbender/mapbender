@@ -72,6 +72,13 @@ p{margin:0;}
   flex-direction: column;
 }
 
+body.desktop-template .mobile-only {
+  display: none;
+}
+body.mobile-template .desktop-only {
+  display: none;
+}
+
 .anchored-element-wrap {
   position: absolute;
   .element-wrapper {
