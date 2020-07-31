@@ -1,61 +1,65 @@
 .mb-element-basesourceswitcher {
+  .basesourcegroup, .basesourcesetswitch {
+    cursor: pointer;
+  }
+  line-height: 1.615;   // @todo: fix global line-height to respect font size
   .toolBarItem & {
-    display: table-row;
+    // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
+    text-align: left;
+    .state-check {
+      display: none;
+    }
+    .basesourcegroup, .basesourcesetswitch {
+      padding: 0 5px;
+      background-color: #b5b5b5;
+      &:hover, &[data-state="active"]{
+        color:$firstColor;
+        background-color: $contentColor;
+      }
+      @include transition(all .2s ease-in-out);
+    }
+    .basesourcegroup, > .basesourcesetswitch {
+      display: inline-block;
+      border: solid 1px $thirdColor;
+      border-right-width: 0;
+      &:first-child {
+        border-top-left-radius: $radius;
+      }
+      &:last-child{
+        border-top-right-radius: $radius;
+        border-right-width: 1px;
+      }
+    }
+    .basesourcegroup {
+      position: relative;
+    }
+    .basesourcesubswitcher {
+      display: none;
+      position: absolute;
+      right: 0;
+    }
+    .basesourcegroup:hover .basesourcesubswitcher {
+      display: initial;
+    }
+    .basesourcegroup .basesourcesetswitch {
+      border:solid 1px $thirdColor;
+      border-bottom-width: 0;
+      &:last-child {
+        border-bottom-width: 1px;
+        border-bottom-left-radius: $radius;
+        border-bottom-right-radius: $radius;
+      }
+    }
+  }
+  .state-check {
+    margin-right: 0.5em;
   }
   li {
-    padding: 0 5px;
-    background-color: #b5b5b5;
-    display: inline-block;
-    cursor:pointer;
-    @include transition(all .2s ease-in-out);
-    border: solid 1px $thirdColor;
-    border-right-width: 0;
-    &:first-child{@include border-left-radius($radius);}
-    &:last-child{
-      @include border-right-radius($radius);
-      border-right-width: 1px;
-    }
-    &:hover, &[data-state="active"]{
-      color:$firstColor;
-      background-color: $contentColor;
-    }
-    .state-check {
-      margin-right: 0.5em;
-    }
     .mobilePane & {
       padding: $space/2;
       display: block;
       border: none;
       background: transparent;
-    }
-  }
-  .basesourcegroup {
-    position: relative;
-    ul {
-      display: none;
-      position: absolute;
-      text-align: right;
-      margin-top: $lineHeight;
-      right: 0;
-      z-index: 1;
-    }
-    &:hover ul {
-      display: initial;
-    }
-    ul li {
-      display: list-item;
-      border:solid 1px $thirdColor;
-      border-bottom-width: 0px;
-      white-space: nowrap;
-      &:first-child{
-        @include border-left-radius(0);
-        @include border-top-radius($radius);
-      }
-      &:last-child{
-        border-bottom-width: 1px;
-        @include border-right-radius(0);
-        @include border-bottom-radius($radius);
-      }
     }
   }
 }

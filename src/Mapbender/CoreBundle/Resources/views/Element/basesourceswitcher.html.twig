@@ -1,16 +1,16 @@
-<ul id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
+<div id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
   {%- for name, opts in configuration.groups -%}
     {%- if opts.type == 'item' -%}
-    <li class="basesourcesetswitch notgroup" data-sourceset="{{ opts.sources | join(',') }}" ><i class="mobile-only state-check fa fas fa-check"></i>{{ opts.title | trans }}</li>
+    <div class="basesourcesetswitch" data-sourceset="{{ opts.sources | join(',') }}" ><i class="state-check fa fas fa-check"></i>{{ opts.title | trans }}</div>
     {%- else -%}
-    <li class="basesourcegroup">
-      {{ name | trans }}
-      <ul class="basesourcesubswitcher">
+    <div class="basesourcegroup">
+      <div class="desktop-only group-title">{{ name | trans }}</div>
+      <div class="basesourcesubswitcher">
       {%- for opt in opts.items -%}
-          <li class="basesourcesetswitch" data-sourceset="{{ opt.sources | join(',') }}" ><i class="mobile-only state-check fa fas fa-check"></i>{{ opt.title | trans }}</li>
+          <div class="basesourcesetswitch" data-sourceset="{{ opt.sources | join(',') }}" ><i class="state-check fa fas fa-check"></i>{{ opt.title | trans }}</div>
       {%- endfor -%}
-      </ul>
-    </li>
+      </div>
+    </div>
     {%- endif -%}
   {%- endfor -%}
-</ul>
+</div>
