@@ -1,5 +1,6 @@
 .mb-element-layertree{
   user-select: none;
+  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   .leave {
     // for absolute menu positioning
     position: relative;
@@ -25,11 +26,6 @@
   }
   .leaveContainer {
     display: flex;
-    line-height: 1.5;
-    height: 1.5em;       // must set height explicitly for IE11
-    .mobilePane & {
-      height: auto;
-    }
   }
   .layer-title {
     flex: 1 1 auto;

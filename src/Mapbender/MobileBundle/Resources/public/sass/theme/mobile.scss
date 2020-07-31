@@ -32,19 +32,7 @@
   }
   @include border-radius($radius);
 }
-/* -------------------------------------------------------------------- INPUT */
-.input{
-  color:$secondColor;
-  border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
-  height:$inputHeight;
-  padding-left: 5px;
-  padding-right: 5px;
-  background-color: $contentColor;
-  width:100%;
-  @extend .bigText;
-  &:focus{outline:none;}
-}
+
 /* -------------------------------------------------------------------- POPUP */
 .overlay{
   @include noUserSelect();
@@ -130,6 +118,7 @@
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane{
   background-color: $ciColor4;
+  color: $darkFontColor;
   z-index:10;
   height: 100%;
   min-height: 100%;
@@ -160,7 +149,6 @@
   overflow-y: scroll;
 }
 .mobileClose{
-  color: darken($ciColor2, 20%);
   float: right;
 }
 /* ------------------------------------------------------------------ CONTENT */
@@ -208,26 +196,14 @@
 }
 
 
+// Misc element checkbox coloring
+.mb-element-layertree .selectedWrapper, .mb-element-basesourceswitcher .state-check {
+  color: lighten($ciColor3, 5%);
+}
 
-
-
-
-
-
-
-
-/* ------------------------------------------------------ BASESOURCE SWITCHER */
-.mb-element-basesourceswitcher{
+// Nice big fonts in layer selection
+.mb-element-layertree, .mb-element-basesourceswitcher {
   font-size: 2rem;
-  li {
-    .state-check {
-      color:lighten($ciColor3, 25);
-    }
-
-    &[data-state="active"] .state-check {
-      color:lighten($ciColor3, 5%);
-    }
-  }
 }
 /* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-featureinfo {
@@ -246,8 +222,6 @@
 }
 /* ---------------------------------------------------------------- LAYERTREE */
 .mb-element-layertree{
-  font-size: 2rem;
-  color: $middleFontColor;
   .layers{
     padding-left: 0;
     .serviceContainer {
@@ -260,10 +234,6 @@
   .leaveContainer {
     padding: $space/2;
   }
-  .selectedWrapper {
-    color: lighten($ciColor3, 5%);
-  }
-  .checkboxDisabled:before{display:none;}
   .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
   .iconFolder + .checkWrapper {
     margin-left: 0 !important;

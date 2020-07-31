@@ -2,7 +2,7 @@
   .basesourcegroup, .basesourcesetswitch {
     cursor: pointer;
   }
-  line-height: 1.615;   // @todo: fix global line-height to respect font size
+  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   .toolBarItem & {
     // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
     text-align: left;

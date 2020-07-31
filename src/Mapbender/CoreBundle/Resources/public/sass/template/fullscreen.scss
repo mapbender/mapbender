@@ -393,7 +393,7 @@ html .accordionContainer .accordion {
   background-color: #777;
   color: #ddd;
   font-size: 1.6rem;
-  line-height: 1.5;
+  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   &.active {
     color: #fff;
     &:hover {
