@@ -1,15 +1,11 @@
 .mb-element-overview {
-  -webkit-user-select: none; /* Chrome all / Safari all */
-  -moz-user-select: none; /* Firefox all */
-  -ms-user-select: none; /* IE 10+ */
-  user-select: none; /* Likely future */
+  user-select: none;
 
   .toggleOverview {
     padding: 0 6px;
-
-    @extend .iconClose;
-    @extend .buttonCore;
-    @include border-radius($radius);
+    cursor: pointer;
+    border-radius: $radius;
+    font-size: 0.85rem;
   }
 
   .olMap, .ol-overviewmap-map {
@@ -39,10 +35,6 @@
       height: 0;
       opacity: 0;
       border: 0;
-    }
-
-    .toggleOverview {
-      @extend .iconOpen;
     }
   }
 

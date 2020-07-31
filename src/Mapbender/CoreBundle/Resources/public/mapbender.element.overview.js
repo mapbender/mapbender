@@ -17,6 +17,7 @@
          * Creates the overview
          */
         _create: function(){
+            this._updateToggleIcon(this.options.maximized);
             if(!Mapbender.checkTarget("mbOverview", this.options.target)){
                 return;
             }
@@ -153,9 +154,11 @@
          */
         _openClose: function(event){
             var self = this;
-            $(this.element).toggleClass('closed');
-            window.setTimeout(function(){
-                if (!$(self.element).hasClass('closed')) {
+            this.element.toggleClass('closed')
+            var newState = !this.element.hasClass('closed');
+            this._updateToggleIcon(newState);
+            if (newState) {
+                window.setTimeout(function() {
                     if (!self.overview) {
                         self._initOverview();
                     } else {
@@ -163,8 +166,13 @@
                             self.overview.ovmap.updateSize();
                         }
                     }
-                }
-            }, 300);
+                }, 300);
+            }
+        },
+        _updateToggleIcon: function(newState) {
+            var $icon = $('.toggleOverview i.fa', this.element);
+            $icon.toggleClass('fa-plus', !newState);
+            $icon.toggleClass('fa-minus', newState);
         },
         _onMbMapSrsChanged: function(event, data) {
             try {
