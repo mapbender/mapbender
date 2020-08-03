@@ -10,10 +10,12 @@
   height: auto;
 }
 
-a[class^="icon"], a[class*=" icon"] {
+a.iconLinkButton {
   &:before {
     margin-right: 0.4rem;
   }
+}
+a[class^="icon"], a[class*=" icon"] {
   text-decoration: none;
 }
 

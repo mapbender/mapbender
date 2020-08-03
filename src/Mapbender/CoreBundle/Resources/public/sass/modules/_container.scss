@@ -18,14 +18,10 @@
     padding:$space/2;
     flex: 1 1 auto;  // fit available space
   }
-  .buttonGroup{
+  .buttonGroup {
     float: right;
     font-size: 20px;
     line-height: 1;
-    // undo built-in margin on a.icon...:before
-    a:before {
-      margin: 0;
-    }
     white-space: nowrap;
     > * + * {
       margin-left: .2em;

@@ -39,7 +39,9 @@ body {
       display: block;
       @include transition(color 0.3s linear);
       // separate text from built-in icon
-      &:before{margin-right:5px;}
+      &.iconLinkButton:before {
+        margin-right:5px;
+      }
     }
     &:hover, &:focus {
       color: darken($middleFontColor, 12%);
@@ -78,11 +80,6 @@ div.contentTitle {
 .popupContainer,
 .page{
   position:relative;
-  a {
-    &:hover{
-      color: $darkFontColor;
-    }
-  }
   @media (min-width: 992px){
     .container {
       width: auto;
