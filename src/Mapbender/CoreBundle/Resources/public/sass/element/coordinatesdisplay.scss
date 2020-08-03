@@ -1,7 +1,4 @@
 .mb-element-coordsdisplay {
-  .iconCoordinates {
-    cursor:default;
-  }
   // Openlayers 4 mouse position control creates a div as the display area. This is hardcoded and cannot be prevented.
   // see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/mouseposition.js#L30
   // We want to display inline though.
