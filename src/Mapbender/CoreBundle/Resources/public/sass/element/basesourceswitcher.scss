@@ -3,6 +3,10 @@
     cursor: pointer;
   }
   line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
+  .state-check {
+    margin-right: 0.5em;
+  }
+
   .toolBarItem & {
     // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
     text-align: left;
@@ -22,11 +26,7 @@
       display: inline-block;
       border: solid 1px $thirdColor;
       border-right-width: 0;
-      &:first-child {
-        border-top-left-radius: $radius;
-      }
-      &:last-child{
-        border-top-right-radius: $radius;
+      &:last-child {
         border-right-width: 1px;
       }
     }
@@ -45,7 +45,22 @@
       border:solid 1px $thirdColor;
     }
   }
-  .state-check {
-    margin-right: 0.5em;
+  .toolBar.top & {
+    .basesourcegroup .basesourcesetswitch {
+      border-bottom-width: 0;
+      &:last-child {
+        border-bottom-width: 1px;
+        border-bottom-left-radius: $radius;
+        border-bottom-right-radius: $radius;
+      }
+    }
+    .basesourcegroup, > .basesourcesetswitch {
+      &:first-child {
+        border-top-left-radius: $radius;
+      }
+      &:last-child{
+        border-top-right-radius: $radius;
+      }
+    }
   }
 }
