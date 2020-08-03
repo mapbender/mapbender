@@ -274,32 +274,6 @@ form {
   float: left;
 }
 
-/* --------------------------------------------------------- SIDEPANE */
-$tabSize: 32px;
-.sidePaneTabs {
-  width: $tabSize;
-  height: $tabSize;
-  @include absolute(40% '' '' '');
-}
-
-.sidePane {
-  &.notCollapsable {
-    .sidePaneTabs {
-      display: none;
-    }
-  }
-
-  &.left {
-    .sidePaneTabs {
-      right: -$tabSize;
-    }
-  }
-  &.right {
-    .sidePaneTabs {
-      left: -$tabSize;
-    }
-  }
-}
 
 .toolBar {
   opacity: 1; // avoid applying opacity twice (gradient + $toolBarOpacity)
