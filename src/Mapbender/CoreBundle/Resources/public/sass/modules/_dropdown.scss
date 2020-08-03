@@ -16,7 +16,11 @@
   .dropdownValue {
     min-height: $inputHeight;   // =line-height; fixes visual collapse with empty initial value
     padding-left: 5px;
-    &.iconDown:before{@include absolute(0 5px '' '');}
+    &.iconDown:before{
+      position: absolute;
+      right: 0;
+      margin-right: .5em;
+    }
   }
   .dropdownList {
     background-color: inherit;
