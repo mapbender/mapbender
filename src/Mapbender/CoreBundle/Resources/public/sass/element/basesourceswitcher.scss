@@ -43,23 +43,9 @@
     }
     .basesourcegroup .basesourcesetswitch {
       border:solid 1px $thirdColor;
-      border-bottom-width: 0;
-      &:last-child {
-        border-bottom-width: 1px;
-        border-bottom-left-radius: $radius;
-        border-bottom-right-radius: $radius;
-      }
     }
   }
   .state-check {
     margin-right: 0.5em;
-  }
-  li {
-    .mobilePane & {
-      padding: $space/2;
-      display: block;
-      border: none;
-      background: transparent;
-    }
   }
 }
