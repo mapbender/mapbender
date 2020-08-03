@@ -202,8 +202,11 @@
 }
 
 // Nice big fonts in layer selection
-.mb-element-layertree, .mb-element-basesourceswitcher {
-  font-size: 2rem;
+body.mobile-template {
+  .mb-element-layertree, .mb-element-basesourceswitcher {
+    font-size: 2rem;
+    line-height: 2.2;
+  }
 }
 /* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-featureinfo {
@@ -232,7 +235,7 @@
   }
 
   .leaveContainer {
-    padding: $space/2;
+    padding-left: $space/2;
   }
   .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
   .iconFolder + .checkWrapper {
