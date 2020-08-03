@@ -37,18 +37,24 @@
       border: 0;
     }
   }
-
+  .toggleOverview {
+    position: absolute;
+  }
   &.right-top .toggleOverview {
-    @include absolute(0 '' '' -25px);
+    top: 0;
+    left: -25px;
   }
   &.left-top .toggleOverview {
-    @include absolute(0 -25px '' '');
+    top: 0;
+    right: -25px;
   }
   &.right-bottom .toggleOverview {
-    @include absolute('' '' 0 -25px);
+    bottom: 0;
+    left: -25px;
   }
   &.left-bottom .toggleOverview {
-    @include absolute('' -25px 0 '');
+    bottom: 0;
+    right: -25px;
   }
   .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
     vertical-align: bottom;

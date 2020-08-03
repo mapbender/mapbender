@@ -1,7 +1,6 @@
 .overlay{
   background:url($imageBasePath + '/overlay.png');
-  @include opacity(0);
-  //@include transition(opacity 0.4s ease-in-out);
+  opacity: 0;
 }
 
 .popupHead {
@@ -99,7 +98,7 @@
     cursor:move;
   }
   &.ui-draggable-dragging {
-    @include opacity(0.6);
+    opacity: 0.6;
   }
 }
 
@@ -139,8 +138,12 @@
       }
     }
     .overlay{
-      @include opacity(0.9);
-      @include fixed(0 0 0 0);
+      opacity: 0.9;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
   }
 }

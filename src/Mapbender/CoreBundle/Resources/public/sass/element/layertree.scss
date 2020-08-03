@@ -27,8 +27,12 @@
     white-space: nowrap;
     overflow-x: hidden;
   }
-  .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
-  .leave.invisible {visibility: visible;}
+  .leave.invisible {
+    visibility: visible;
+    .layer-title {
+        opacity: 0.7;
+    }
+  }
   .themeContainer{
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}

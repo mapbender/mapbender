@@ -64,7 +64,7 @@
   margin-left:-$width/2;
   @include absolute(0 '' '' 50%);
   @include transition(all 1s ease-in-out);
-  @include opacity(1);
+  opacity: 1;
 
   &.success{
     @extend .iconThumbsUp;
@@ -83,7 +83,7 @@
   }
   &.kill{
     top:-100px;
-    @include opacity(0);
+    opacity: 0;
   }
 }
 fieldset{

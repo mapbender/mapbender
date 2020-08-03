@@ -13,7 +13,11 @@
       -ms-user-select: none;      /* IE 10+ */
       user-select: none;          /* Likely future */
     }
-    @include absolute(0 0 0 0);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 }
 
@@ -21,7 +25,7 @@
   .olHandlerBoxZoomBox, .ol-box {
     border: 2px solid $firstColor;
     background-color: white;
-    @include opacity(.6);
+    opacity: .6;
   }
 
   // Minimal selection / event rules from original Openlayers 6 css to allow

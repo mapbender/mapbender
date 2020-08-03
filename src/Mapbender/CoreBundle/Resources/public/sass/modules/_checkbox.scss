@@ -1,7 +1,9 @@
 .checkWrapper {
   cursor:pointer;
   display: inline-block;
-  &.checkboxDisabled{@include opacity(0.4);}
+  &.checkboxDisabled {
+    opacity: .4;
+  }
   input[type="checkbox"] {
     display: none;
   }
