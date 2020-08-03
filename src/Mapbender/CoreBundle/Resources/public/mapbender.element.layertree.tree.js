@@ -198,6 +198,11 @@
             return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
         },
         _createLayerNode: function(layer) {
+            var treeOptions = layer.options.treeOptions;
+            if (!treeOptions.selected && !treeOptions.allow.selected) {
+                return null;
+            }
+
             var $li = this.template.clone();
             $li.data('layer', layer);
 
@@ -209,7 +214,6 @@
                 $('input[name="info"]', $li).closest('.checkWrapper').remove();
             }
             if (layer.children && layer.children.length) {
-                var treeOptions = layer.options.treeOptions;
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
                     nodeType = this.consts.group;
@@ -250,12 +254,8 @@
                 return;
             }
             var li_s = this._createSourceTree(source);
-            var first_li = $(this.element).find('ul.layers:first li:first');
-            if (first_li && first_li.length !== 0) {
-                first_li.before(li_s);
-            } else {
-                $(this.element).find('ul.layers:first').append($(li_s));
-            }
+            // Insert on top
+            $('ul.layers:first', this.element).prepend(li_s);
             this._reset();
         },
         _onSourceChanged: function(event, data) {
