@@ -6,23 +6,17 @@
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: calc(1em + 5px)
+    margin-left: 1.28em;
   }
 
-  .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper, .checkWrapper.selectedWrapper {
+  .selectedWrapper, .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
     // keep constant size to prevent visual "jump" on icon glyph change and neatly
     // align icons across rows
     text-align:center;
     flex: 0 0 1em;
     -ms-flex: 0 0 1em;
-    // pre-flex
-    width: 1em;
-  }
-  .iconFolder + .checkWrapper, .checkWrapper + .featureInfoWrapper {
-    margin-left: 5px;
-  }
-  .checkWrapper + .layer-title {
-    margin-left: 0.25em;
+    width: 1em; // pre-flex
+    margin-right: 0.28em;
   }
   .leaveContainer {
     display: flex;
