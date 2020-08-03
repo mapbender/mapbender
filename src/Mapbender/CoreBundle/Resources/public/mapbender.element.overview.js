@@ -115,6 +115,9 @@
                 layers: layers,
                 div: $('.overviewContainer', this.element).get(0),
                 size: new OpenLayers.Size(this.options.width, this.options.height),
+                // OL2 concatenates the given class with prefix "olControlOverviewMap"
+                // When using icon class alone, must lead with a space
+                minRectDisplayClass: 'RectReplacement fa fas fa-crosshairs',
                 mapOptions: {
                     maxExtent: (maxExtent && maxExtent.clone()) || null,
                     projection: projection,
