@@ -65,4 +65,11 @@
       }
     }
   }
+  .toolBar.bottom & {
+    .basesourcesubswitcher {
+      // Make the child list "drop up"
+      bottom: 0;
+      margin-bottom: calc(1.5em - 1px);   // =line height + one border
+    }
+  }
 }
