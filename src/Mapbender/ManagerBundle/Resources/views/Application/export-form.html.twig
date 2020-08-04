@@ -1,6 +1,6 @@
 {{ form_start(form, {"attr": {"novalidate": "novalidate", "target": "_blank"}}) }}
   {{ form_row(form.format) }}
-  {{ form_row(form.application, {'attr': {'size': 10}}) }}
+  {{ form_row(form.application) }}
   <div class="button-group">
     <input type="submit" value="{{ 'mb.manager.admin.application.export.btn.export' | trans }}" class="button"/>
     <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.export.btn.cancel' | trans}}</a>
