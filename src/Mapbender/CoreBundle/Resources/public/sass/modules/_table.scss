@@ -2,13 +2,11 @@
   width: 100%;
   background-color:$contentColor;
 
-  td{
-    padding: 0px $space/2;
+  td, th {
+    padding: $space/4 8px;    // NOTE: 8px (all directions) is Bootstrap default on .table
   }
   thead{border-bottom: solid 5px darken($contentColor, 15%);}
-  th{
-    padding:$space/4;
-    padding-left:$space/2;
+  th {
     font-weight:normal;
     text-align: left;
   }
