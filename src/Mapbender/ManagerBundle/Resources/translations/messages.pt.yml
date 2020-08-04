@@ -151,9 +151,6 @@ mb:
       acl_element: Acl
       import_application: Importar
       export_application: Exportar
-    element:
-      yaml:
-        message: 'Utilize o formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> para descrever a configuração do elemento.'
     be:
       element:
         delete: 'Remover elemento ''%element_title%'' '

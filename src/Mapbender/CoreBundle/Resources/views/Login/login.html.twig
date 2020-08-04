@@ -9,10 +9,10 @@
       {{ form_widget(form) }}
 
       {% if selfregister == true %}
-      <a class="linkButton iconLinkButton left" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
+      <a class="linkButton iconLinkButton" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
       {% endif %}
       {% if reset_password == true %}
-      <a class="linkButton iconLinkButton left" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
+      <a class="linkButton iconLinkButton" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
       {% endif %}
 
       <input type="submit" class="right button" value="{{ 'fom.user.login.login.login' | trans}}" />
