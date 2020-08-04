@@ -91,13 +91,12 @@ div.contentTitle {
     }
   }
 
+  // Overrule Bootstrap (very specific selectors) on padding top / bottom
+  // Keep left / right padding (8px from Bootstrap .table rules)
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
-
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-top: $space/4;
+    padding-bottom: $space/4;
   }
 
 }
