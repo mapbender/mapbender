@@ -9,7 +9,8 @@
 {% for form_layer in form_layers %}
     {% if form_layer.vars.value.id == layer.id %}
         <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}">
-            <td class="level{{ level }} itemType"><span class="itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></span></td>
+            {% set _icon = (layer.sublayer | length) ? 'fa fas fa-folder-open' : 'fa fas fa-caret-right' %}
+            <td class="level{{ level }} itemType"><span class="itemType {{ _icon }}"></span></td>
             <td class="titleColumn" title="{{ form_layer.title.vars.label | trans }}">{{ form_widget(form_layer.title) }}</td>
 
             <td class="minScaleColumn" title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
