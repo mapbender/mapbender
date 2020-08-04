@@ -58,6 +58,8 @@ a {
     color:inherit;
   }
 }
+// @todo: p is for typography and should always have margins. If no margins are desired,
+//        div is the right tag to use
 p{margin:0;}
 
 .clickable {
