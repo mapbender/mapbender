@@ -98,9 +98,9 @@ div.contentTitle {
     padding-top: $space/4;
     padding-bottom: $space/4;
   }
-
 }
-.iconBig, .iconSmall{
+.iconBig, .iconSmall {
+  // Add highlights for legacy markup (.iconSmall = no other rules, FOM only)
   &:before {
     @extend .hover-highlight-effect;
   }
