@@ -20,10 +20,7 @@
  *   - Ajax promise
  *   - A array of all the above
  *
- * Events available on the element which you can get with .getElement:
- *   - open    - before opening the dialog
- *   - opened  - after the dialog has fully openend
- *   - focus   - after the dialog becomes an focus
+ * Event available on the element which you can get with .$element
  *   - close   - before closing the dialog
  *
  */
