@@ -1,8 +1,12 @@
 .elementForm {
-  $labelWidth: 70px;
+  .labelInput, .labelCheck, .checkWrapper {
+    font-size: 11px;
+  }
   .labelInput {
-    width: $labelWidth;
+    width: 70px;
     margin-bottom: $space/2;
+    line-height: $inputHeight;
+    vertical-align: top;
   }
   textarea {
     height: 150px;
