@@ -1,3 +1,19 @@
+## dev-master @ b45756c7d
+* [Regression] Fix print of tunneled WMS
+* [Regression] Fix missing scale-limited WMS layers in ImageExport
+* Fix design inconsistencies LayerTree vs BaseSourceSwitcher in mobile
+* Fix design inconsistencies LayerTree vs BaseSourceSwitcher in desktop sidepane
+* Fix inaccessible BaseSourceSwitcher groups in bottom toolbar
+* Fix BaseSourceSwitcher / SrsSelector / ScaleSelector dropouts from toolbar getting covered by sidepane
+* Fix vertical misalignment of toolbar button labels
+* Fix interaction icon layout in user list
+* Fix Element form label sizing and alignment
+* Fix console errors trying to focus popup on close
+* Fix missing clickable mouse cursor indications on parts of the ZoomBar
+* Fix invalid empty initial value of required Application selection in export
+* Fix support for very low ScaleBar minWidth option values on Openlayers 6
+* Layertree: do not display layers that are deselected and cannot be selected
+
 ## 3.2.0
 * Fix ScaleBar minWidth option on Openlayers 6
 * Fix feautreinfo repeated queries with open dialog and "showOriginal" option
