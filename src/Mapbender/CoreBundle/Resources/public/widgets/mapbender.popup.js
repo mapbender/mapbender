@@ -85,7 +85,10 @@
             }
             this.$element.resizable(resizableOptions);
         }
-        this.$element.on('click', '.popupClose', $.proxy(this.close, this));
+        this.$element.on('click', '.popupClose', function(evt) {
+            evt.stopPropagation();
+            self.close();
+        });
         if (!this.options.closeButton) {
             $('.popupHead .popupClose', this.$element).remove();
         }
@@ -136,7 +139,13 @@
         }
 
         // focused on popup click
-        this.$element.on("click", $.proxy(this.focus, this));
+        this.$element.on('click', function() {
+            // avoid focusing after dom destruction
+            if ((self.$element || []).length) {
+                self.focus();
+            }
+        });
+
         $(document).on('keyup', this.handleKeyUp.bind(this));
         this.open();
     };
