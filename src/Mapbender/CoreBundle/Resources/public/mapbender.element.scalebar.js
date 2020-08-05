@@ -35,7 +35,7 @@
         _setupOl4: function() {
             var control = new ol.control.ScaleLine({
                 target: this.element.attr('id'),
-                minWidth: '' + Math.max(64, parseInt(this.options.maxWidth) / 3),
+                minWidth: '' + Math.max(1, parseInt(this.options.maxWidth) / 3),
                 geodesic: true,
                 units: this.options.units === 'ml' ? 'imperial' : 'metric'
             });
