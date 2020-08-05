@@ -65,7 +65,7 @@
             });
         },
         _getExportScale: function() {
-            return null;
+            return this.mbMap.getModel().getCurrentScale(false);
         },
         _getExportExtent: function() {
             var lbrt = this.map.model.getCurrentExtentArray();
