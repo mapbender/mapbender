@@ -85,12 +85,7 @@
             }
             this.$element.resizable(resizableOptions);
         }
-        this.$element.on('click', '.popupClose', function() {
-            // avoid focusing after dom destruction
-            if ((self.$element || []).length) {
-                self.focus();
-            }
-        });
+        this.$element.on('click', '.popupClose', $.proxy(this.close, this));
         if (!this.options.closeButton) {
             $('.popupHead .popupClose', this.$element).remove();
         }
