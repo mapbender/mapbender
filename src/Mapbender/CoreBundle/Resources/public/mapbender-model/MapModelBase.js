@@ -649,6 +649,87 @@ window.Mapbender.MapModelBase = (function() {
             layer.addMarker(poi.x, poi.y);
         },
         /**
+         * @return {{srsName: String, center: Array<Number>, scale: number}}
+         * @todo: add typedef (same as decodeViewParams)
+         */
+        getCurrentViewParams: function() {
+            return {
+                scale: this.getCurrentScale(false),
+                center: this.getCurrentMapCenter(),
+                srsName: this.getCurrentProjectionCode()
+            };
+        },
+        /**
+         * @param {Object} options
+         * @param {number} [options.scale]
+         * @param {Array<number>} [options.center]
+         * @param {String} [options.srsName]
+         */
+        applyViewParams: function(options) {
+            if (options.srsName) {
+                this.changeProjection(options.srsName);
+            }
+            var centerOptions = {};
+            var center = options.center;
+            if (options.scale) {
+                centerOptions.minScale = options.scale;
+                centerOptions.maxScale = options.scale;
+                center = options.center|| this.getCurrentMapCenter();
+            }
+            if (center) {
+                // @todo: fix restore of fractional scale (currently snaps to a configured zoom level)
+                this.centerXy(center[0], center[1], centerOptions);
+            }
+        },
+        /**
+         * @param {Object} params
+         * @param {number} params.scale
+         * @param {Array<number>} params.center
+         * @param {String} params.srsName
+         * @return {String}
+         */
+        encodeViewParams: function(params) {
+            // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
+            var center0 = {
+                x: params.center[0],
+                y: params.center[1]
+            };
+            var centerXy = Mapbender.mapEngine.transformCoordinate(center0, params.srsName, 'WGS84');
+            var center = [centerXy.x, centerXy.y];
+
+            // normalize center: keep positive, round to five digits (~meter resolution)
+            for (var ci = 0; ci < 2; ++ci) {
+                while (center[ci] < 0) center[ci] += 360;
+                center[ci] = center[ci].toFixed(5);
+            }
+            // round scale to integer and stringify
+            var scale = params.scale.toFixed(0);
+            var parts = [
+                scale,
+                '@',
+                center[0],
+                '/',
+                center[1],
+                '@',
+                params.srsName
+            ];
+            return parts.join('');
+        },
+        /**
+         * @param {String} value
+         * @return {{srsName: String, center: Array<Number>, scale: number}}
+         * @todo: add typedef (same as getViewParams)
+         */
+        decodeViewParams: function(value) {
+            var parts = /^(\d+)@([\d.]+)\/([\d.]+)@(\w+:\d+)$/.exec(value). slice(1);
+            var params = {
+                scale: parseInt(parts[0]),
+                center: [parseFloat(parts[1]), parseFloat(parts[2])],
+                srsName: parts[3]
+            };
+            return params;
+        },
+        /**
          * @param feature
          * @param {number} [bufferAbs] in meters
          * @param {number} [bufferFactor] extra scale factor; applied after bufferAbs
