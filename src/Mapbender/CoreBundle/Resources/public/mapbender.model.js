@@ -209,6 +209,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             ));
         }
     },
+    /**
+     * @return {String}
+     */
     getCurrentProjectionCode: function() {
         if (this.olMap) {
             return this.olMap.getProjection();

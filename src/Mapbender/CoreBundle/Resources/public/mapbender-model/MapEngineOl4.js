@@ -105,6 +105,10 @@ window.Mapbender.MapEngineOl4 = (function() {
             var proj = ol.proj.get(srsName);
             return 1.0 / proj.getMetersPerUnit();
         },
+        /**
+         * @param {Array<number>} values
+         * @return {Array<Number> | {left: number, bottom: number, right: number, top: number}}
+         */
         boundsFromArray: function(values) {
             var bounds = values.slice();
             Object.defineProperty(bounds, 'left', {
@@ -192,6 +196,10 @@ window.Mapbender.MapEngineOl4 = (function() {
         replaceLayers: function(olMap, nativeLayerArray) {
             olMap.getLayerGroup().setLayers(new ol.Collection(nativeLayerArray, {unique: true}));
         },
+        /**
+         * @param {ol.Feature} olFeature
+         * @return {{left: number, bottom: number, right: number, top: number}}
+         */
         getFeatureBounds: function(olFeature) {
             var geometry = olFeature && olFeature.getGeometry();
             if (!geometry) {

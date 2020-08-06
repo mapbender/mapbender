@@ -208,6 +208,10 @@ window.Mapbender.MapEngineOl2 = (function() {
             olMap.layers = nativeLayerArray;
             olMap.resetLayersZIndex();
         },
+        /**
+         * @param {OpenLayers.Feature} olFeature
+         * @return {{left: number, bottom: number, right: number, top: number}}
+         */
         getFeatureBounds: function(olFeature) {
             if (!olFeature || !olFeature.geometry) {
                 console.error("Empty feature or empty feature geometry", olFeature);

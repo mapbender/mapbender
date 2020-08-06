@@ -307,6 +307,9 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         return proj.getUnits() || 'degrees';
     },
+    /**
+     * @return {String}
+     */
     getCurrentProjectionCode: function() {
         if (this.olMap) {
             return this.olMap.getView().getProjection().getCode();
