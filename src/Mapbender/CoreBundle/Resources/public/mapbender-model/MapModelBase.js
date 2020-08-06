@@ -694,8 +694,8 @@ window.Mapbender.MapModelBase = (function() {
                 x: params.center[0],
                 y: params.center[1]
             };
-            var centerXy = Mapbender.mapEngine.transformCoordinate(center0, params.srsName, 'WGS84');
-            var center = [centerXy.x, centerXy.y];
+            var center84 = Mapbender.mapEngine.transformCoordinate(center0, params.srsName, 'WGS84');
+            var center = [center84.x, center84.y];
 
             // normalize center: keep positive, round to five digits (~meter resolution)
             for (var ci = 0; ci < 2; ++ci) {
@@ -722,10 +722,17 @@ window.Mapbender.MapModelBase = (function() {
          */
         decodeViewParams: function(value) {
             var parts = /^(\d+)@([\d.]+)\/([\d.]+)@(\w+:\d+)$/.exec(value). slice(1);
+            // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
+            var center84 = {
+                x: parseFloat(parts[1]),
+                y: parseFloat(parts[2])
+            };
+            var targetSrsName = parts[3];
+            var centerTargetSrs = Mapbender.mapEngine.transformCoordinate(center84, 'WGS84', targetSrsName);
             var params = {
                 scale: parseInt(parts[0]),
-                center: [parseFloat(parts[1]), parseFloat(parts[2])],
-                srsName: parts[3]
+                center: [centerTargetSrs.x, centerTargetSrs.y],
+                srsName: targetSrsName
             };
             return params;
         },
