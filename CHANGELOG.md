@@ -1,4 +1,4 @@
-## dev-master @ b45756c7d
+## 3.2.1
 * [Regression] Fix print of tunneled WMS
 * [Regression] Fix missing scale-limited WMS layers in ImageExport
 * Fix design inconsistencies LayerTree vs BaseSourceSwitcher in mobile
@@ -10,6 +10,7 @@
 * Fix Element form label sizing and alignment
 * Fix console errors trying to focus popup on close
 * Fix missing clickable mouse cursor indications on parts of the ZoomBar
+* Fix missing clickable mouse cursor indications on Redlining feature interactions
 * Fix invalid empty initial value of required Application selection in export
 * Fix support for very low ScaleBar minWidth option values on Openlayers 6
 * Layertree: do not display layers that are deselected and cannot be selected
