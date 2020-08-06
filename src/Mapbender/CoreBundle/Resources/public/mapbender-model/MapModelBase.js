@@ -648,16 +648,31 @@ window.Mapbender.MapModelBase = (function() {
         displayPoi: function(layer, poi) {
             layer.addMarker(poi.x, poi.y);
         },
-        _getBufferedFeatureBounds: function(feature, buffer) {
+        /**
+         * @param feature
+         * @param {number} [bufferAbs] in meters
+         * @param {number} [bufferFactor] extra scale factor; applied after bufferAbs
+         * @return {*}
+         * @private
+         */
+        _getBufferedFeatureBounds: function(feature, bufferAbs, bufferFactor) {
             var engine = Mapbender.mapEngine;
             var bounds = engine.getFeatureBounds(feature);
-            if (buffer) {
+            if (bufferAbs) {
                 var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
-                var bufferNative = buffer * unitsPerMeter;
+                var bufferNative = bufferAbs * unitsPerMeter;
                 bounds.left -= bufferNative;
                 bounds.right += bufferNative;
                 bounds.top += bufferNative;
                 bounds.bottom -= bufferNative;
+            }
+            if (bufferFactor) {
+                var centerX = 0.5 * (bounds.left + bounds.right);
+                var centerY = 0.5 * (bounds.top + bounds.bottom);
+                bounds.left = centerX + bufferFactor * (bounds.left - centerX);
+                bounds.right = centerX + bufferFactor * (bounds.right - centerX);
+                bounds.top = centerY + bufferFactor * (bounds.top - centerY);
+                bounds.bottom = centerY + bufferFactor * (bounds.bottom - centerY);
             }
             return bounds;
         },
