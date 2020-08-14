@@ -528,6 +528,7 @@ window.Mapbender.MapModelOl4 = (function() {
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
             var image = olStyle.getImage();
+            let scale =  image.getScale() || 1;
             if (fill) {
                 Object.assign(style, Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'))
             }
@@ -549,8 +550,8 @@ window.Mapbender.MapModelOl4 = (function() {
                         externalGraphic: iconUrl,
                         graphicXOffset: -anchor[0],
                         graphicYOffset: -anchor[1],
-                        graphicWidth: size[0],
-                        graphicHeight: size[1]
+                        graphicWidth: size[0] * scale,
+                        graphicHeight: size[1]* scale
                     });
                 }
             }
