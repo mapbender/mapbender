@@ -44,8 +44,16 @@
     white-space: nowrap;
     overflow-x: hidden;
   }
-  .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
-  .leave.invisible {visibility: visible;}
+  .leave.state-deselected {
+    .layer-title {
+      opacity: 0.7;
+    }
+  }
+  .leave.state-outofscale {
+    .layer-title {
+      opacity: 0.5;
+    }
+  }
   .themeContainer{
     border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox

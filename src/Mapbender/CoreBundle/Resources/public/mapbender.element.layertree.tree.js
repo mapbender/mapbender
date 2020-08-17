@@ -381,13 +381,14 @@
             return false;
         },
         _redisplayLayerState: function($li, state) {
+            // NOTE: outOfScale is only calculated for leaves. May be null
+            //       for intermediate nodes.
+            $li.toggleClass('state-outofscale', !!state.outOfScale);
+            $li.toggleClass('state-deselected', !state.visibility && !state.outOfScale);
             if (state.outOfScale) {
-                $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
+                $li.find('span.layer-state').attr("title", "out of scale");
             } else if (state.visibility) {
-                $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
-            } else {
-                // @todo (TBD): is this really a separate state, or is visibility always := !outOfScale?
-                $li.addClass("invisible").find('span.layer-state').attr("title", "");
+                $li.find('span.layer-state:first').attr("title", "");
             }
         },
         _resetSourceAtTree: function(source) {
