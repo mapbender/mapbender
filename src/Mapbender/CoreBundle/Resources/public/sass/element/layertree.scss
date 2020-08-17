@@ -27,10 +27,14 @@
     white-space: nowrap;
     overflow-x: hidden;
   }
-  .leave.invisible {
-    visibility: visible;
+  .leave.state-deselected {
     .layer-title {
-        opacity: 0.7;
+      opacity: 0.7;
+    }
+  }
+  .leave.state-outofscale {
+    .layer-title {
+      opacity: 0.5;
     }
   }
   .themeContainer{

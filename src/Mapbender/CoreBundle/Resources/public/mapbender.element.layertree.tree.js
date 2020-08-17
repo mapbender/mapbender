@@ -278,18 +278,15 @@
         },
         _redisplayLayerState: function($li, layer) {
             var $title = $('>.leaveContainer .layer-title', $li);
-            if (layer.state.visibility) {
-                $li.removeClass('invisible');
-                $title.attr('title', layer.options.title);
-            } else {
-                // @todo: implement proper out-of-bounds detection
-                $li.addClass("invisible");
-                var tooltipParts = [
-                    layer.options.title,
-                    Mapbender.trans("mb.core.layertree.const.outofscale")
-                ];
-                $title.attr('title', tooltipParts.join("\n"));
+            // NOTE: outOfScale is only calculated for leaves. May be null
+            //       for intermediate nodes.
+            $li.toggleClass('state-outofscale', !!layer.state.outOfScale);
+            $li.toggleClass('state-deselected', !layer.getSelected());
+            var tooltipParts = [layer.options.title];
+            if (layer.state.outOfScale) {
+                tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofscale"));
             }
+            $title.attr('title', tooltipParts.join("\n"));
         },
         _resetSourceAtTree: function(source) {
             var self = this;
