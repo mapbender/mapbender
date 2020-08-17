@@ -511,7 +511,7 @@ class WmsInstance extends SourceInstance
         }
         foreach ($formats as $format) {
             // NOTE: also matches png8, png24, png32
-            if (false && preg_match('#^image/png#', $format)) {
+            if (preg_match('#^image/png#', $format)) {
                 return $format;
             }
         }
