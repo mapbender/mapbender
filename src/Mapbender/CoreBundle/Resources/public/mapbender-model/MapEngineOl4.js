@@ -32,21 +32,8 @@ window.Mapbender.MapEngineOl4 = (function() {
             var sourceOpts = {
                 url: source.configuration.options.url,
                 transition: 0,
-                params: {}
+                params: source.getGetMapRequestBaseParams()
             };
-
-            var activatedLeaves = source.getActivatedLeaves();
-            var nonEmptyLayerNames = activatedLeaves.map(function(sourceLayer) {
-                return sourceLayer.options.name;
-            }).filter(function(layerName) {
-                return !!layerName;
-            });
-            sourceOpts.params.LAYERS = nonEmptyLayerNames;
-            // @todo: use configured styles
-            var styles = nonEmptyLayerNames.map(function() {
-                return '';
-            });
-            sourceOpts.params.STYLES = styles;
 
             var olSourceClass;
             var olLayerClass;
@@ -63,8 +50,6 @@ window.Mapbender.MapEngineOl4 = (function() {
                 source: new (olSourceClass)(sourceOpts)
             };
             // todo: transparent
-            // todo: version
-            // todo: format
             // todo: exception format
             return new (olLayerClass)(layerOptions);
         },

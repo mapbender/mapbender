@@ -149,6 +149,31 @@ window.Mapbender.WmsSource = (function() {
             });
             return !!nonEmptyLayerNames.length;
         },
+        /**
+         * Build base params (no SRS / CRS / BBOX considerations) for GetMap
+         * request.
+         *
+         * @return Object<String, (String | (Array<String>))
+         */
+        getGetMapRequestBaseParams: function() {
+            var params = {
+                LAYERS: [],
+                STYLES: [],
+                VERSION: this.configuration.options.version,
+                FORMAT: this.configuration.options.format || null
+            };
+            var activatedLeaves = this.getActivatedLeaves();
+            for (var i = 0; i < activatedLeaves.length; ++i) {
+                var sourceLayer = activatedLeaves[i];
+                // skip layers with empty name (valid for group container layers that cannot be requested directly)
+                if (!!sourceLayer.options.name) {
+                    params.LAYERS.push(sourceLayer.options.name);
+                    // @todo: use configured style
+                    params.STYLES.push('');
+                }
+            }
+            return params;
+        },
         _isBboxFlipped: function(srsName) {
             if (this.configuration.options.version === '1.3.0') {
                 return Mapbender.mapEngine.isProjectionAxisFlipped(srsName);

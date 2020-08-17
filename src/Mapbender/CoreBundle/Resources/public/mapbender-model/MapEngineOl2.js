@@ -64,27 +64,13 @@ window.Mapbender.MapEngineOl2 = (function() {
                 return opts;
             }
             function getNativeLayerParams(source) {
-                var params = $.extend({}, source.customParams, {
-                    transparent: source.configuration.options.transparent,
-                    format: source.configuration.options.format,
-                    version: source.configuration.options.version
+                var params = Object.assign({}, source.getGetMapRequestBaseParams(), source.customParams, {
+                    transparent: source.configuration.options.transparent
                 });
                 var exceptionFormatConfig = source.configuration.options.exception_format;
                 if (exceptionFormatConfig) {
                     params.exceptions = exceptionFormatConfig;
                 }
-                var activatedLeaves = source.getActivatedLeaves();
-                var nonEmptyLayerNames = activatedLeaves.map(function(sourceLayer) {
-                    return sourceLayer.options.name;
-                }).filter(function(layerName) {
-                    return !!layerName;
-                });
-                params.LAYERS = nonEmptyLayerNames;
-                // @todo: use configured styles
-                var styles = nonEmptyLayerNames.map(function() {
-                    return '';
-                });
-                params.STYLES = styles;
                 return params;
             }
         },
