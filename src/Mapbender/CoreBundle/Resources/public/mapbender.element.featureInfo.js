@@ -137,7 +137,7 @@
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                this._removeContent(source);
+                self._removeContent(source);
             });
         },
         _isDataValid: function(data, mimetype) {

@@ -413,7 +413,7 @@ class RepositoryController extends ApplicationControllerBase
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
      * @param Request $request
      * @param string $slug
-     * @param string $layersetId
+     * @param string $layersetId (unused, legacy)
      * @param string $instanceId
      * @return Response
      */
@@ -426,7 +426,7 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
 
-        $layerset = $this->requireLayerset($layersetId);
+        $layerset = $instance->getLayerset();
         return $this->instanceWeightCommon($request, $layerset, $instance);
 
     }
@@ -464,15 +464,17 @@ class RepositoryController extends ApplicationControllerBase
         $em = $this->getEntityManager();
         $newWeight = $request->get("number");
         $targetLayersetId = $request->get("new_layersetId");
-        if (intval($newWeight) === $assignment->getWeight() && $layerset->getId() == $targetLayersetId) {
-            return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-        }
 
         $assignments = $layerset->getCombinedInstanceAssignments();
-        if ($layerset->getId() == $targetLayersetId) {
+        $targetLayerset = $this->requireLayerset($targetLayersetId);
+
+        if ($layerset === $targetLayerset) {
+            if (intval($newWeight) === $assignment->getWeight()) {
+                return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+            }
+
             WeightSortedCollectionUtil::updateSingleWeight($assignments, $assignment, $newWeight);
         } else {
-            $targetLayerset = $this->requireLayerset($targetLayersetId);
             $targetAssignments = $targetLayerset->getCombinedInstanceAssignments();
             WeightSortedCollectionUtil::moveBetweenCollections($targetAssignments, $assignments, $assignment, $newWeight);
             $assignment->setLayerset($targetLayerset);

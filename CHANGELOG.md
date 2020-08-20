@@ -75,8 +75,9 @@
 * Client-side Source property `origId`
 
 
-## dev-release/3.0.7 @ f79dc2d6d
+## dev-release/3.0.7 @ bb6f0ba96
 - [Regression] Fix missing legends for WmsLoader instances
+- [Regression] Fix error when handling FeatureInfo server response error
 - Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
 - Restore keyboard arrow keys map panning
 - Fix compiler discovery of newly added Yaml applications
