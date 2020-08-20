@@ -357,7 +357,7 @@ class RepositoryController extends ApplicationControllerBase
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
      * @param Request $request
      * @param string $slug
-     * @param string $layersetId
+     * @param string $layersetId (unused, legacy)
      * @param string $instanceId
      * @return Response
      */
@@ -376,15 +376,16 @@ class RepositoryController extends ApplicationControllerBase
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
-        if (intval($newWeight) === $instance->getWeight() && $layersetId === $targetLayersetId) {
-            return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-        }
+        $layerset = $instance->getLayerset();
+        $targetLayerset = $this->requireLayerset($targetLayersetId);
 
-        $layerset = $this->requireLayerset($layersetId);
-        if ($layersetId === $targetLayersetId) {
+        if ($layerset === $targetLayerset) {
+            if (intval($newWeight) === $instance->getWeight()) {
+                return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+            }
+
             WeightSortedCollectionUtil::updateSingleWeight($layerset->getInstances(), $instance, $newWeight);
         } else {
-            $targetLayerset = $this->requireLayerset($targetLayersetId);
             $targetCollection = $targetLayerset->getInstances();
             WeightSortedCollectionUtil::moveBetweenCollections($targetCollection, $layerset->getInstances(), $instance, $newWeight);
             $instance->setLayerset($targetLayerset);

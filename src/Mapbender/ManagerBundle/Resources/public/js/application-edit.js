@@ -64,16 +64,15 @@ $(function() {
         items: "tr:not(.header)",
         distance: 20,
         stop: function(event, ui) {
-            $(ui.item).parent().find("tr").each(function(idx, elm) {
-                if ($(elm).attr("data-id") === $(ui.item).attr("data-id")) {
-                    $.ajax({
-                        url: $(ui.item).attr("data-href"),
-                        type: "POST",
-                        data: {
-                            number: idx,
-                            new_layersetId: $(elm).closest('table').attr("data-id")
-                        }
-                    });
+            var $item = $(ui.item);
+            var $siblings = $('tr:not(.dummy)', $item.parent());
+            console.log("New siblings?", $siblings.get(), ui);
+            $.ajax({
+                url: $item.attr("data-href"),
+                type: "POST",
+                data: {
+                    number: $siblings.index($item),
+                    new_layersetId: $item.closest('table').attr("data-id")
                 }
             });
         }
