@@ -30,7 +30,7 @@
                 <td class="titleColumn description">{{ instance.title }} ({{ instance.source.title }})</td>
                 <td class="typeColumn description">{{ instance.source.type }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }}"
+                  <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
                     <input data-url="{{ path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %}>

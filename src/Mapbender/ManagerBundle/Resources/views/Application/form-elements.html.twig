@@ -33,7 +33,7 @@
                 <td class="titleColumn description">{{ element.title | trans }}</td>
                 <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }}"
+                  <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{"mb.manager.admin.element.show_hide"|trans}} {{element.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
                     <input
