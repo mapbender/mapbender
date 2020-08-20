@@ -56,7 +56,7 @@
                   {%- endif -%}
                   &nbsp;{{ instance.source.type }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }}"
+                  <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
                     <input data-url="{{ _toggle_url }}" type="checkbox" {% if assignment.enabled %} checked="checked" {% endif %}>

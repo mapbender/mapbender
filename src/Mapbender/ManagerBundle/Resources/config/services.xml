@@ -20,6 +20,9 @@
             <argument type="service" id="service_container" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
+        <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
+            <tag name="twig.extension"/>
+        </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
             <argument>%mapbender.manager.menu.items%</argument>
