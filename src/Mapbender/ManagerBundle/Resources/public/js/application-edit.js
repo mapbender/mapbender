@@ -66,7 +66,6 @@ $(function() {
         stop: function(event, ui) {
             var $item = $(ui.item);
             var $siblings = $('tr:not(.dummy)', $item.parent());
-            console.log("New siblings?", $siblings.get(), ui);
             $.ajax({
                 url: $item.attr("data-href"),
                 type: "POST",
