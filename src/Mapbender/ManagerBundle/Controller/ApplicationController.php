@@ -687,11 +687,13 @@ class ApplicationController extends WelcomeController
         }
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
-        // renumber weights and persist other instances in the same layerset
-        WeightSortedCollectionUtil::removeOne($layerset->getInstances(), $instance);
-        foreach ($layerset->getInstances() as $remainingInstance) {
-            $em->persist($remainingInstance);
+        $layerset->getInstances()->removeElement($instance);
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $remainingAssignment) {
+            /** @var SourceInstanceAssignment $remainingAssignment */
+            $remainingAssignment->setWeight($index);
+            $em->persist($remainingAssignment);
         }
+
         $em->remove($instance);
         $em->flush();
         $this->addFlash('success', 'Your source instance has been deleted');
