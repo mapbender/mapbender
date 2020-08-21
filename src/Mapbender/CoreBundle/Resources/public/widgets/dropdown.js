@@ -40,7 +40,7 @@ $(function () {
         $valueDisplay.text($option.text());
     }
     function installFormEvents(form) {
-        form.addEventListener('reset', function() {
+        var handler = function() {
             $('.dropdown > .dropdownValue', form).each(function() {
                 var $wrapper = $(this).parent('.dropdown');
                 if ($('select', $wrapper).length) {
@@ -48,6 +48,11 @@ $(function () {
                     updateValueDisplay($wrapper);
                 }
             });
+        };
+        form.addEventListener('reset', function() {
+            // defer execution until after reset event has executed and values are restored
+            // (select values are still pre-reset when event is first received)
+            window.setTimeout(handler, 0);
         });
     }
 
