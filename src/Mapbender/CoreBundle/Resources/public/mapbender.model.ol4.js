@@ -220,17 +220,30 @@ window.Mapbender.MapModelOl4 = (function() {
      * @param {Number|String} [options.zoom]
      */
     centerXy: function(x, y, options) {
-        var geom = new ol.geom.Point([x, y]);
-        var zoom = null;
-        var ztfOptions = options && Object.assign({}, options) || undefined;
-        if (options && (options.zoom || parseInt(options.zoom) === 0)) {
-            zoom = this._clampZoomLevel(parseInt(options.zoom));
-            delete ztfOptions['zoom'];
-            var scales = this._getScales();
-            ztfOptions.minScale = scales[zoom];
-            ztfOptions.maxScale = scales[zoom];
+        var resolution = null;
+        var zoomOption = (options || {}).zoom;
+        if (typeof zoomOption === 'number') {
+            resolution = this.olMap.getView().getResolutionForZoom(zoomOption);
+        } else {
+            var resNow = this.olMap.getView().getResolution();
+            if (typeof ((options || {}).minScale) === 'number') {
+                var minRes = this.scaleToResolution(options.minScale);
+                if (resNow < minRes) {
+                    resolution = minRes;
+                }
+            }
+            if (typeof ((options || {}).maxScale) === 'number') {
+                var maxRes = this.scaleToResolution(options.maxScale);
+                if (resNow > maxRes) {
+                    resolution = maxRes;
+                }
+            }
         }
-        this.zoomToFeature(new ol.Feature(geom), ztfOptions);
+        var view = this.olMap.getView();
+        view.setCenter([x, y]);
+        if (resolution !== null) {
+            view.setResolution(resolution);
+        }
     },
     /**
      * @param {ol.Feature} feature
