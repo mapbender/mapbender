@@ -177,17 +177,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
     setView: function(addLayers) {
         var mapOptions = this.mbMap.options;
-        var lonlat;
-
-        if (mapOptions.center) {
-            lonlat = new OpenLayers.LonLat(mapOptions.center);
-            this.map.olMap.setCenter(lonlat);
-        } else if (this._poiOptions && this._poiOptions.length === 1) {
-            var singlePoi = this._poiOptions[0];
-            this.centerXy(singlePoi.x, singlePoi.y);
-        } else {
-            this.setExtent(this.mapStartExtent);
-        }
+        var resolution = this._getInitialResolution(this.olMap, this.mapStartExtent, this.mbMap.options, this._startProj);
+        var center = this._getInitialCenter(this.mbMap.options, this.mapStartExtent);
+        var scale = this.resolutionToScale(resolution, mapOptions.dpi, this._startProj);
+        var zoom = this.pickZoomForScale(scale, true);
+        this.olMap.setCenter(center, zoom);
         if (addLayers) {
             this.initializeSourceLayers();
         }
