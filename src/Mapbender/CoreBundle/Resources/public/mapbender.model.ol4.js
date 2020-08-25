@@ -27,22 +27,10 @@ window.Mapbender.MapModelOl4 = (function() {
 
 
     _initMap: function() {
-        var options = {
-            srs: this._startProj,
-            maxExtent: Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj),
-            startExtent: Mapbender.mapEngine.transformBounds(this.mapStartExtent, this._configProj, this._startProj),
-            scales : this.mbMap.options.scales,
-            dpi: this.mbMap.options.dpi,
-            tileSize: this.mbMap.options.tileSize
-        };
+        var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj);
+        var startExtent = Mapbender.mapEngine.transformBounds(this.mapStartExtent, this._configProj, this._startProj);
 
-        if (!options || !options.srs || !options.maxExtent) {
-            console.error("Options srs and maxExtent required");
-            throw new Error("Can't initialize model");
-        }
-        this.options = options;
-
-        this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, options.maxExtent, options.dpi);
+        this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
@@ -55,7 +43,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this._setInitialView(this.olMap, options.startExtent, this.mbMap.options, this._startProj);
+        this._setInitialView(this.olMap, startExtent, this.mbMap.options, this._startProj);
 
         this.initializeSourceLayers();
         this.processUrlParams();

@@ -44,6 +44,12 @@ window.Mapbender.MapModelBase = (function() {
             });
         });
         this.mapStartExtent = Mapbender.mapEngine.boundsFromArray(startExtentArray);
+        if (!this._startProj) {
+            throw new Error("Can't initialize map without srs option");
+        }
+        if (!startExtentArray) {
+            throw new Error("Can't initialize map without a start extent");
+        }
     }
 
     MapModelBase.prototype = {
@@ -111,7 +117,7 @@ window.Mapbender.MapModelBase = (function() {
         scaleToResolution: function (scale, dpi, srsName) {
             var upm = this.getProjectionUnitsPerMeter(srsName);
             var inchesPerMetre = 39.37;
-            return (scale * upm) / (inchesPerMetre * (dpi || this.options.dpi || 72));
+            return (scale * upm) / (inchesPerMetre * (dpi || this.mbMap.options.dpi || 72));
         },
 
         /**
@@ -124,7 +130,7 @@ window.Mapbender.MapModelBase = (function() {
         resolutionToScale: function(resolution, dpi, srsName) {
             var upm = this.getProjectionUnitsPerMeter(srsName);
             var inchesPerMetre = 39.37;
-            return resolution * inchesPerMetre * (dpi || this.options.dpi || 72) / upm;
+            return resolution * inchesPerMetre * (dpi || this.mbMap.options.dpi || 72) / upm;
         },
         /**
          * @return {Array<Object>}
