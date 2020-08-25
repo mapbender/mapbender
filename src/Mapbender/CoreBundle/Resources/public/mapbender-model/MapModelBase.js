@@ -764,6 +764,47 @@ window.Mapbender.MapModelBase = (function() {
             }
             return bounds;
         },
+        /**
+         * @param {OpenLayers.Map|ol.PluggableMap} olMap
+         * @param {Object} startExtent
+         * @param {Object} mapOptions
+         * @param {Number} mapOptions.dpi
+         * @param {Number} [mapOptions.targetscale]
+         * @param {String} srsName
+         * @return {number}
+         * @private
+         */
+        _getInitialResolution: function(olMap, startExtent, mapOptions, srsName) {
+            if (mapOptions.targetscale) {
+                return this.scaleToResolution(mapOptions.targetscale, mapOptions.dpi, srsName);
+            } else {
+                var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
+                return Math.max(
+                    Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
+                    Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
+                );
+            }
+        },
+        /**
+         * @param {Object} mapOptions
+         * @param {Array<Number>} [mapOptions.center]
+         * @param {Object} startExtent
+         * @return {Array<Number>}
+         * @private
+         */
+        _getInitialCenter: function(mapOptions, startExtent) {
+            if (mapOptions.center) {
+                return mapOptions.center;
+            } else if (this._poiOptions && this._poiOptions.length === 1) {
+                var singlePoi = this._poiOptions[0];
+                return [singlePoi.x, singlePoi.y];
+            } else {
+                return [
+                    0.5 * (startExtent.left + startExtent.right),
+                    0.5 * (startExtent.bottom + startExtent.top)
+                ];
+            }
+        },
         _comma_dangle_dummy: null
     });
 

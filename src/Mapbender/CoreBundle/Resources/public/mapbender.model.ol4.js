@@ -55,18 +55,17 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        // initial view
-        var mapOptions = this.mbMap.options;
-        this.setExtent(options.startExtent || options.maxExtent);
-        if (mapOptions.center) {
-            this.olMap.getView().setCenter([mapOptions.center[0], mapOptions.center[1]]);
-        } else if (this._poiOptions && this._poiOptions.length === 1) {
-            var singlePoi = this._poiOptions[0];
-            this.olMap.getView().setCenter([singlePoi.x, singlePoi.y]);
-        }
+        this._setInitialView(this.olMap, options.startExtent, this.mbMap.options, this._startProj);
 
         this.initializeSourceLayers();
         this.processUrlParams();
+    },
+    _setInitialView: function(olMap, startExtent, mapOptions, srsName) {
+        var resolution = this._getInitialResolution(olMap, startExtent, mapOptions, srsName);
+        var center = this._getInitialCenter(mapOptions, startExtent);
+        var view = olMap.getView();
+        view.setCenter(center);
+        view.setResolution(resolution);
     },
     /**
      * @param {ol.Map} olMap
