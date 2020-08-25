@@ -126,7 +126,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
-        this._setInitialView(this.olMap, this.mapStartExtent, this.mbMap.options, this._startProj);
+        var startExtent = Mapbender.mapEngine.transformBounds(this.mapStartExtent, this._configProj, this._startProj);
+        this._setInitialView(this.olMap, startExtent, this.mbMap.options, this._startProj);
         this.initializeSourceLayers();
         this.processUrlParams();
         this._setupHistoryControl();
