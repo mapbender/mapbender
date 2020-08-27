@@ -75,14 +75,17 @@
 * Client-side Source property `origId`
 
 
-## dev-release/3.0.7 @ bb6f0ba96
+## dev-release/3.0.7 @ 741fde8ad
 - [Regression] Fix missing legends for WmsLoader instances
 - [Regression] Fix error when handling FeatureInfo server response error
 - Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
+- Fix select value (visually) restoring only on second form reset (e.g. SearchRouter [#1214](https://github.com/mapbender/mapbender/issues/1214))
+- Fix error when moving instance between layersets multiple times before reloading page
 - Restore keyboard arrow keys map panning
 - Fix compiler discovery of newly added Yaml applications
 - Fix error when deleting Wmts source with instances
 - Fix error when using a new Wmts instance without explicitly saving its instance form first
+- Add misc helper selectors for functional testing support
 
 ## v3.0.8.6-RC1
 - [Regression] Fix FeatureInfo print with "showOriginal" option
