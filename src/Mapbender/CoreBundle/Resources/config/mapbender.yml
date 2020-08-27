@@ -2,7 +2,7 @@ parameters:
     applications: {}
 
     mapbender.branding.name: Mapbender
-    mapbender.version: 3.0.8.6-RC1
+    mapbender.version: 3.0.8.6-RC2
     mapbender.branding.logo: bundles/mapbendercore/image/logo_mb.png
     # These should all remain empty here, they are just for IDE search results.
     # Customize these in your parameters.yml.
