@@ -156,8 +156,64 @@
             }
             this._super();
         },
-        _pickScale: function() {
-            var scales = this.options.scales;
+        /**
+         * @param {boolean} [closestToMapScale]
+         * @return {Number}
+         * @private
+         */
+        _pickScale: function(closestToMapScale) {
+            if (closestToMapScale || (typeof closestToMapScale === 'undefined')) {
+                return this._pickClosestMapScale();
+            } else {
+                return this._pickFittingMapScale();
+            }
+        },
+        /**
+         * Picks a print scale where the currently selected print template will fit into
+         * the currently visible map viewport.
+         *
+         * @return {Number}
+         * @private
+         */
+        _pickFittingMapScale: function() {
+            // @todo: scales should already be sorted; either server side or in constructor
+            var scalesReverse = this.options.scales.slice().sort(function(a, b) {
+                // basic numeric sort (default JS sort is lexical)
+                return (a === b) ? 0 : (a > b) * 2 - 1;
+            }).reverse();
+            // @todo: extract copy & paste with _getSelectionFeature (next 3 lines) into method
+            var previous = this.feature;
+            var model = this.map.getModel();
+            var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
+            var extent = this.mbMap.getModel().getCurrentExtent();
+            // "Ten percent should be good enough for anyone"...
+            // Keep selection inside visible map, even with map extending under top+bottom toolbars
+            var bufferRatio = 1.1;
+            var projectedTemplateExtent = this._getPrintBounds(center[0], center[1], 1);
+            var maxSize = {
+                h: Math.abs(extent.right - extent.left) / bufferRatio,
+                v: Math.abs(extent.top - extent.bottom) / bufferRatio
+            };
+            var baseSize = {
+                h: Math.abs(projectedTemplateExtent.right - projectedTemplateExtent.left),
+                v: Math.abs(projectedTemplateExtent.top - projectedTemplateExtent.bottom)
+            };
+            for (var i = 0; i < scalesReverse.length; ++i) {
+                var scale = scalesReverse[i];
+                if (maxSize.h >= baseSize.h * scale && maxSize.v >= baseSize.v * scale) {
+                    return scale;
+                }
+            }
+            return scalesReverse[scalesReverse.length - 1];
+        },
+        /**
+         * Picks the print scale closest to the current map scale.
+         *
+         * @return {Number}
+         * @private
+         */
+        _pickClosestMapScale: function() {
+            var scales = this.options.scales.slice();
             var currentScale = Math.round(this.map.getModel().getCurrentScale());
             // sort by absolute difference to current scale
             var sorted = scales.sort(function(a, b) {
@@ -173,7 +229,7 @@
         },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
-            var scale = this._pickScale();
+            var scale = this._pickScale(false);
             select.val(scale).trigger('dropdown.changevisual');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
