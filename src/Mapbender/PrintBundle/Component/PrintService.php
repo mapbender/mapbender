@@ -468,7 +468,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         if ($rotation != 0) {
             $image = imagecreatefrompng($northarrow);
-            $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
+            $transColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
             $srcSize = array(imagesx($image), imagesy($image));
 
