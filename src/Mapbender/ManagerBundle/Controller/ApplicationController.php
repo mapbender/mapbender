@@ -424,10 +424,11 @@ class ApplicationController extends WelcomeController
                 // @todo: use form error translations directly; also support message for empty title
                 $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
             }
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            // NOTE: Symfony 2.8 router does not support "_fragment" magic parameter
+            $redirectUrl = $this->generateUrl('mapbender_manager_application_edit', array(
                 'slug' => $slug,
-                '_fragment' => 'tabLayers',
             ));
+            return $this->redirect($redirectUrl . '#tabLayers');
         }
 
         return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
