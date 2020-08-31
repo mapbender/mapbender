@@ -493,12 +493,12 @@ window.Mapbender.MapModelBase = (function() {
             }
 
             this._spliceLayers(source, olLayers);
+            this._checkSource(source, false);
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,
                 source: source
             });
-            this._checkSource(source, false);
         },
         /**
          * Creates a Mapbender.Source instance from given configuration, adds it,
