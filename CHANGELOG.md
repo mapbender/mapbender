@@ -1,4 +1,4 @@
-## dev-master @ 2dd749c54
+## dev-master @ 9163429d0
 * Fix map ignoring configured Wms image format on Openlayers 6
 * Fix Layertree visualization of Wms "out of scale" layer state for deselected layers
 * Fix initial Legend on sources added by WmsLoader
@@ -6,8 +6,10 @@
 * Fix OL6 map ignoring URL parameter `scale` and scale from POI
 * Fix OL2 initial map scale when passing url parameter `srs`
 * Fix SearchRouter form initialization on empty configuration
+* Fix empty "themes" configuration on Layertree after import / duplication
 * Fix broken instance ordering after deleting a bound instance from a layerset with mixed bound / reusable instances
 * Fix error when moving instance between layersets multiple times before reloading page
+* Add missing shared instances support in BaseSourceSwitcher
 * [Framework] fix OL6 `centerXy` implementation changing zoom when called without any zoom / scale related options
 * Prefer initial image formats with transparency support when creating new Wms instance
 * Add misc helper selectors for functional testing support
