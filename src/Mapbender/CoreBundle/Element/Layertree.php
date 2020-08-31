@@ -126,11 +126,13 @@ class Layertree extends Element
      */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        if (isset($configuration['themes'])) {
-            for ($i = 0; $i < count($configuration['themes']); $i++) {
-                $helpId = intval($configuration['themes'][$i]['id']);
-                $id = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $helpId, true);
-                $configuration['themes'][$i]['id'] = strval($id);
+        if (!empty($configuration['themes'])) {
+            foreach ($configuration['themes'] as $k => $themeConfig) {
+                $oldLsId = $themeConfig['id'];
+                $newLsId = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $oldLsId, true);
+                // Must cast to string; entities may return numeric ids during duplication,
+                // but all ids loaded by doctrine will be strings.
+                $configuration['themes'][$k]['id'] = strval($newLsId);
             }
         }
         return $configuration;
