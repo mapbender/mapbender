@@ -396,24 +396,19 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * Get inherited effective min scale for layer instance
-     * 1) if admin replaced min scale for THE parent layer instance, use that value.
-     * 2) if THE parent instance has no admin-set value, use value from source layer
-     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * 1) if source layer has a non-null value, use that
+     * 2) if admin replaced min scale for the parent layer instance, use that value.
+     * 3) if neither is set, recurse up, maintaining preference source layer first, then parent instance layer
      * @return float|null
      */
     public function getInheritedMinScale()
     {
-        $parent = $this->getParent();
-        $parentValue = $parent ? $parent->getMinScale(false) : null;
-        if ($parentValue !== null) {
-            $value = $parentValue;
-        } else {
-            $value = $this->getSourceItem()->getMinScale(false);
-            if ($value === null && $parent) {
-                $value = $parent->getInheritedMinScale();
-            }
+        $sourceItemScale = $this->getSourceItem()->getMinScale(false);
+        if ($sourceItemScale !== null) {
+            return $sourceItemScale;
         }
-        return $value;
+        $parent = $this->getParent();
+        return $parent ? $parent->getMinScale(true) : null;
     }
 
     /**
@@ -449,24 +444,19 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * Get inherited effective max scale for layer instance
-     * 1) if admin replaced max scale for THE parent layer instance, use that value.
-     * 2) if THE parent instance has no admin-set value, use value from source layer
-     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * 1) if source layer has a non-null value, use that
+     * 2) if admin replaced min scale for the parent layer instance, use that value.
+     * 3) if neither is set, recurse up, maintaining preference source layer first, then parent instance layer
      * @return float|null
      */
     public function getInheritedMaxScale()
     {
-        $parent = $this->getParent();
-        $parentValue = $parent ? $parent->getMaxScale(false) : null;
-        if ($parentValue !== null) {
-            $value = $parentValue;
-        } else {
-            $value = $this->getSourceItem()->getMaxScale(false);
-            if ($value === null && $parent) {
-                $value = $parent->getInheritedMaxScale();
-            }
+        $sourceItemScale = $this->getSourceItem()->getMaxScale(false);
+        if ($sourceItemScale !== null) {
+            return $sourceItemScale;
         }
-        return $value;
+        $parent = $this->getParent();
+        return $parent ? $parent->getMaxScale(true) : null;
     }
 
     /**
