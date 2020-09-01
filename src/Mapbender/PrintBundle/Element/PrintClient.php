@@ -4,7 +4,9 @@ namespace Mapbender\PrintBundle\Element;
 
 use Doctrine\Common\Collections\Collection;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
@@ -21,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  *
  */
-class PrintClient extends Element
+class PrintClient extends Element implements ConfigMigrationInterface
 {
 
     /**
@@ -566,6 +568,18 @@ class PrintClient extends Element
         // ignore null values as documented
         if ($parameter) {
             MemoryUtil::increaseMemoryLimit($parameter);
+        }
+    }
+
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $values = $entity->getConfiguration();
+        if ($values && !empty($values['scales'])) {
+            // Force all 'scales' values to integer
+            $values['scales'] = array_map('intval', $values['scales']);
+            // Remove (invalid) 0 / null / empty 'scales' values
+            $values['scales'] = array_filter($values['scales']);
+            $entity->setConfiguration($values);
         }
     }
 }
