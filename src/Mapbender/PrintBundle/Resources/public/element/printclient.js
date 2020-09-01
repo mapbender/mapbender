@@ -186,9 +186,9 @@
             var model = this.map.getModel();
             var center = previous && model.getFeatureCenter(previous) || model.getCurrentMapCenter();
             var extent = this.mbMap.getModel().getCurrentExtent();
-            // "Ten percent should be good enough for anyone"...
+            // "Fifteen percent should be good enough for anyone"...
             // Keep selection inside visible map, even with map extending under top+bottom toolbars
-            var bufferRatio = 1.1;
+            var bufferRatio = 1.15;
             var projectedTemplateExtent = this._getPrintBounds(center[0], center[1], 1);
             var maxSize = {
                 h: Math.abs(extent.right - extent.left) / bufferRatio,
