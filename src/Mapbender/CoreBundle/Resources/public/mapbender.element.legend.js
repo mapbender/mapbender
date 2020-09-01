@@ -69,10 +69,6 @@
             var html = this.render();
 
             this.htmlContainer.html(html);
-
-            if (this.popupWindow) {
-                this.popupWindow.open(this.element);
-            }
         },
 
         /**
