@@ -10,8 +10,9 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 /**
  * Transforms array model data into a single comma-separated string, for form views using a single text field
  * for an editable list of values.
+ * Operates on strings. For a version fit for integer numbers
+ * @see IntArrayToCsvScalarTransformer
  *
- * @todo: discern / validate numbers and strings
  * @todo: optional empty value filtering
  */
 class ArrayToCsvScalarTransformer implements DataTransformerInterface
