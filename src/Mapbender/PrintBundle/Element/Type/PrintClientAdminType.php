@@ -2,6 +2,7 @@
 namespace Mapbender\PrintBundle\Element\Type;
 
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
+use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -47,7 +48,7 @@ class PrintClientAdminType extends AbstractType
                 'required' => false,
             ))
         ;
-        $builder->get('scales')->addViewTransformer(new ArrayToCsvScalarTransformer());
+        $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
         if ($this->queueable) {
             $builder->add('renderMode', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => false,            // FOM form theme fails to translate preselected label with required = true
