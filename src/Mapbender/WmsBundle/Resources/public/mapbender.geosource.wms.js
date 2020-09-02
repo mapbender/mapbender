@@ -3,9 +3,41 @@ window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
         Mapbender.SourceLayer.apply(this, arguments);
     }
+    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
     WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
     WmsSourceLayer.prototype.constructor = WmsSourceLayer;
-    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
+    Object.assign(WmsSourceLayer.prototype, {
+        constructor: WmsSourceLayer,
+        isInScale: function(scale) {
+            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
+            //       equivalently
+            var min = this.options.minScale;
+            var max = this.options.maxScale;
+            if (min && min > scale) {
+                return false;
+            } else {
+                return !(max && max < scale);
+            }
+        },
+        intersectsExtent: function(extent, srsName) {
+            // HACK: logic disabled, always return true
+            // WHen switching SRS this gets called multiple times, sometimes with an extent in the old SRS,
+            // which effectively disables perfectly viable layers.
+            return true;
+            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            if (!bounds) {
+                if (bounds === null) {
+                    // layer is world wide
+                    return true;
+                } else {
+                    // layer is kaputt
+                    return false;
+                }
+            }
+            var extent_ = extent || Mapbender.Model.getCurrentExtent();
+            return extent_.intersectsBounds(bounds);
+        }
+    });
     return WmsSourceLayer;
 }());
 window.Mapbender.WmsSource = (function() {

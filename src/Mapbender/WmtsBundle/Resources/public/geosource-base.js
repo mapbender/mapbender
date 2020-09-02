@@ -278,6 +278,16 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         constructor: WmtsTmsBaseSourceLayer,
         getMatrixSet: function() {
             return this.source.getMatrixSetByIdent(this.options.tilematrixset);
+        },
+        isInScale: function(scale) {
+            // HACK: always return true
+            // @todo: implement properly
+            return true;
+        },
+        intersectsExtent: function(extent, srsName) {
+            // HACK: always return true
+            // @todo: implement properly
+            return true;
         }
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
