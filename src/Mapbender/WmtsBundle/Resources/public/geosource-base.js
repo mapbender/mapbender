@@ -285,7 +285,12 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
             return true;
         },
         intersectsExtent: function(extent, srsName) {
-            // HACK: always return true
+            // Let the source substitute fake root layer for the right one
+            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            if (!bounds) {
+                // unlimited extent
+                return true;
+            }
             // @todo: implement properly
             return true;
         }

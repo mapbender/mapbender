@@ -275,12 +275,14 @@ Mapbender.Geo.SourceHandler = {
         var infoMap = {};
         // @todo: srsName should be a method argument to make extent well defined
         var srsName = Mapbender.Model.getCurrentProjectionCode();
+        // @todo: callers should pass extent; this is required for working out-of-bounds checks
+        var extent_ = extent || Mapbender.Model.getCurrentExtent();
 
         var order = 0;
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
             var outOfScale = !layer.isInScale(scale);
-            var outOfBounds = !layer.intersectsExtent(extent, srsName);
+            var outOfBounds = !layer.intersectsExtent(extent_, srsName);
             var enabled = !!layer.options.treeOptions.selected;
             var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
             parents.map(function(p) {

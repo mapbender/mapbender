@@ -20,11 +20,7 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
         },
         intersectsExtent: function(extent, srsName) {
-            // HACK: logic disabled, always return true
-            // WHen switching SRS this gets called multiple times, sometimes with an extent in the old SRS,
-            // which effectively disables perfectly viable layers.
-            return true;
-            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            var bounds = this.getBounds(srsName, false);
             if (!bounds) {
                 if (bounds === null) {
                     // layer is world wide
