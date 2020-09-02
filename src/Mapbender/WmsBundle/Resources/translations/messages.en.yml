@@ -198,6 +198,7 @@ mb:
           _title: Layer
           title: Title
           name: Name
+          abstract: Abstract
           srs: SRS
           bbox: BoundingBox
     repo:
