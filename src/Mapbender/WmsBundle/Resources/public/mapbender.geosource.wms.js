@@ -20,18 +20,12 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
         },
         intersectsExtent: function(extent, srsName) {
-            var bounds = this.getBounds(srsName, false);
-            if (!bounds) {
-                if (bounds === null) {
-                    // layer is world wide
-                    return true;
-                } else {
-                    // layer is kaputt
-                    return false;
-                }
+            var layerExtent = this.getBounds(srsName, false);
+            if (layerExtent === null) {
+                // unlimited layer extent
+                return true;
             }
-            var extent_ = extent || Mapbender.Model.getCurrentExtent();
-            return extent_.intersectsBounds(bounds);
+            return Mapbender.Util.extentsIntersect(extent, layerExtent);
         }
     });
     return WmsSourceLayer;
