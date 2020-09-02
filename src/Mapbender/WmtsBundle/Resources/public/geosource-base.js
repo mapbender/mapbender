@@ -291,8 +291,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
                 // unlimited extent
                 return true;
             }
-            // @todo: implement properly
-            return true;
+            return Mapbender.Util.extentsIntersect(bounds, extent);
         }
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
