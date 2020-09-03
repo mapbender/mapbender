@@ -76,15 +76,17 @@ Mapbender.Geo.SourceHandler = {
                 // start with false (recursion order is root first)
                 layer.state.visibility = false;
             }
-            var entry = stateMap[layer.options.id];
-            if (entry) {
-                for (var sni = 0; sni < stateNames.length; ++ sni) {
-                    var stateName = stateNames[sni];
-                    if (layer.state[stateName] !== entry[stateName]) {
-                        layer.state = $.extend(layer.state || {}, entry);
-                        stateChanged = true;
-                        break;
-                    }
+            var entry = stateMap[layer.options.id] || Object.assign({}, layer.state, {
+                outOfScale: !layer.isInScale(scale),
+                outOfBounds: !layer.intersectsExtent(extent, srsName)
+            });
+
+            for (var sni = 0; sni < stateNames.length; ++ sni) {
+                var stateName = stateNames[sni];
+                if (layer.state[stateName] !== entry[stateName]) {
+                    layer.state = $.extend(layer.state || {}, entry);
+                    stateChanged = true;
+                    break;
                 }
             }
             for (var p = 0; p < parents.length; ++p) {
