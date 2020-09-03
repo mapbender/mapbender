@@ -1,8 +1,11 @@
-## dev-master @ b3905ba33
+## dev-master @ a4aaadd84
 * Fix map ignoring configured Wms image format on Openlayers 6
-* Fix Layertree visualization of Wms "out of scale" layer state for deselected layers
+* Fix missing POI label popup on Openlayers 6
+* Fix Layertree visualization of Wms "out of scale" / "out of bounds" layer state for deselected layers
+* Fix Layertree visualization of Wms "out of scale" / "out of bounds" layer state for root / group layers
 * Fix Wms layer minScale / maxScale inheritance
 * Fix initial Legend on sources added by WmsLoader
+* Fix Legend dialog changing z index on Layertree interactions
 * Fix print / export ignoring icon scale in Openlayers 6 styles ([PR#1252](https://github.com/mapbender/mapbender/pull/1252))
 * Fix OL6 map ignoring URL parameter `scale` and scale from POI
 * Fix OL2 initial map scale when passing url parameter `srs`
@@ -11,6 +14,8 @@
 * Fix broken instance ordering after deleting a bound instance from a layerset with mixed bound / reusable instances
 * Fix error when moving instance between layersets multiple times before reloading page
 * Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
+* Fix Map form showing selected layersets not in currently configured order
+* Limit initial print scale to keep selection rectangle inside visible map viewport
 * Add missing shared instances support in BaseSourceSwitcher
 * [Framework] fix OL6 `centerXy` implementation changing zoom when called without any zoom / scale related options
 * Prefer initial image formats with transparency support when creating new Wms instance
