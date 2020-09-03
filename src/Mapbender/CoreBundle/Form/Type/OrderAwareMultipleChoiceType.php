@@ -48,6 +48,7 @@ class OrderAwareMultipleChoiceType extends ChoiceType
                     break;
                 }
             }
+            $eventDispatcher->addListener(FormEvents::PRE_SET_DATA, array($this, 'preSetData'));
         }
     }
 
@@ -113,5 +114,26 @@ class OrderAwareMultipleChoiceType extends ChoiceType
             $form->add($checkbox);
         }
         $event->setData($reconstructedData);
+    }
+
+    public function preSetData(FormEvent $event)
+    {
+        // Rebuild child checkbox list in order of current data
+        $form = $event->getForm();
+        $formChildMap = array();
+        foreach ($form->all() as $child) {
+            $formValue = $child->getConfig()->getOption('value');
+            $formChildMap[$formValue] = $child;
+            $form->remove($child->getName());
+        }
+        foreach ($event->getData() as $selectedValue) {
+            $selectedChoice = $formChildMap[$selectedValue];
+            $form->add($selectedChoice);
+            unset($formChildMap[$selectedValue]);
+        }
+        // also re-add remaining (not currently selected) choices
+        foreach ($formChildMap as $ch) {
+            $form->add($ch);
+        }
     }
 }
