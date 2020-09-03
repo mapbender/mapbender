@@ -648,6 +648,36 @@ Mapbender.Util.replaceUrlParams = function(url, params, caseSensitive) {
     return Mapbender.Util.addUrlParams(stripped, filteredParams);
 };
 
+/**
+ * @param {Object} a
+ * @param {Object} b
+ * @return {boolean}
+ */
+Mapbender.Util.extentsIntersect = function(a, b) {
+    /**
+     * Rectangle intersection logic lifted from OpenLayers 2
+     * minus all its behavioural tweak options we do not need.
+     * @see OpenLayers.Bounds.prototype.intersectsBounds
+     */
+    var inBottom = (
+        ((a.bottom >= b.bottom) && (a.bottom <= b.top)) ||
+        ((b.bottom >= a.bottom) && (b.bottom <= a.top))
+    );
+    var inTop = (
+        ((a.top >= b.bottom) && (a.top <= b.top)) ||
+        ((b.top > a.bottom) && (b.top < a.top))
+    );
+    var inLeft = (
+        ((a.left >= b.left) && (a.left <= b.right)) ||
+        ((b.left >= a.left) && (b.left <= a.right))
+    );
+    var inRight = (
+        ((a.right >= b.left) && (a.right <= b.right)) ||
+        ((b.right >= a.left) && (b.right <= a.right))
+    );
+    return ((inBottom || inTop) && (inLeft || inRight));
+};
+
 Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
 };

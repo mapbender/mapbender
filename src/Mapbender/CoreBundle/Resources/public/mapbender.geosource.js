@@ -23,14 +23,16 @@ Mapbender.Geo.SourceHandler = {
      */
     getExtendedLeafInfo: function(source, scale, extent) {
         var infoMap = {};
-        var self = this;
+        // @todo: srsName should be a method argument to make extent well defined
+        var srsName = Mapbender.Model.getCurrentProjectionCode();
+        // @todo: callers should pass extent; this is required for working out-of-bounds checks
+        var extent_ = extent || Mapbender.Model.getCurrentExtent();
 
         var order = 0;
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
-            var outOfScale = !self.isLayerInScale(layer, scale);
-            var outOfBounds = !self.isLayerWithinBounds(layer, extent);
-            // @todo: integrate OOS / OOB checks directly
+            var outOfScale = !layer.isInScale(scale);
+            var outOfBounds = !layer.intersectsExtent(extent_, srsName);
             var enabled = layer.getActive();
             var visibility = enabled && !(outOfScale || outOfBounds);
             // no feature info if layer turned off or out of scale
@@ -94,37 +96,20 @@ Mapbender.Geo.SourceHandler = {
      * @param {Object} layer
      * @param {number} scale current value fetched from Mapbender.Model if omitted
      * @return {boolean}
+     * @deprecated call layer.isInScale
      */
     isLayerInScale: function(layer, scale) {
-        return Mapbender.Util.isInScale(scale, layer.options.minScale, layer.options.maxScale);
+        return layer.isInScale(scale);
     },
     /**
      * @param {Object} layer
      * @param {*} extent
      * @return {boolean}
+     * @deprecated call layer.intersectsExtent
      */
     isLayerWithinBounds: function(layer, extent) {
-        // HACK: disabled for now
-        // WHen switching SRS this gets called multiple times, sometimes with an extent in the old SRS,
-        // which effectively disables perfectly viable layers.
-        return true;
-        var projectionCode = Mapbender.Model.getCurrentProjectionCode();
-        // let the source substitute the layer (c.f. WMTS fake root layer for layertree)
-        var bounds = layer.source && layer.source.getLayerBounds(layer.options.id, projectionCode, true);
-        if (layer.source && layer === layer.source.configuration.children[0]) {
-            console.warn("Checking root layer in bounds", extent_, projectionCode);
-        }
-        if (!bounds) {
-            if (bounds === null) {
-                // layer is world wide
-                return true;
-            } else {
-                // layer is kaputt
-                return false;
-            }
-        }
-        var extent_ = extent || Mapbender.Model.getCurrentExtent();
-        return extent_.intersectsBounds(bounds);
+        var srsName = Mapbender.Model.getCurrentProjectionCode();
+        return layer.intersectsExtent(extent, srsName);
     },
     setLayerOrder: function setLayerOrder(source, layerIdOrder) {
         var listsSorted = [];

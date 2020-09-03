@@ -9,6 +9,25 @@ window.Mapbender.WmsSourceLayer = (function() {
         constructor: WmsSourceLayer,
         getSelected: function() {
             return this.options.treeOptions.selected;
+        },
+        isInScale: function(scale) {
+            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
+            //       equivalently
+            var min = this.options.minScale;
+            var max = this.options.maxScale;
+            if (min && min > scale) {
+                return false;
+            } else {
+                return !(max && max < scale);
+            }
+        },
+        intersectsExtent: function(extent, srsName) {
+            var layerExtent = this.getBounds(srsName, false);
+            if (layerExtent === null) {
+                // unlimited layer extent
+                return true;
+            }
+            return Mapbender.Util.extentsIntersect(extent, layerExtent);
         }
     });
     return WmsSourceLayer;

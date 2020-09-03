@@ -263,6 +263,20 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         hasBounds: function() {
             var currentActive = this.source.currentActiveLayer;
             return !!currentActive && Mapbender.SourceLayer.prototype.hasBounds.call(currentActive);
+        },
+        isInScale: function(scale) {
+            // HACK: always return true
+            // @todo: implement properly
+            return true;
+        },
+        intersectsExtent: function(extent, srsName) {
+            // Let the source substitute fake root layer for the right one
+            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            if (!bounds) {
+                // unlimited extent
+                return true;
+            }
+            return Mapbender.Util.extentsIntersect(bounds, extent);
         }
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
