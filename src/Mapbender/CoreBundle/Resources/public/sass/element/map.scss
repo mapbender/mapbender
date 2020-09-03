@@ -48,7 +48,7 @@
     background: #fff;
     font-size: 1rem;
     padding: 0.5em;
-    border: 1px solid #444;
+    border: 1px solid #aaa;
     border-radius: 0.5em;
 
     .close-btn {
@@ -57,5 +57,36 @@
       padding-left: 0.5em;
       padding-bottom: 0.5em;
     }
+    // Offset and anchor the whole popup, add an "arrow" with the usual border hacks
+    position: absolute;
+    min-width: 15vw;
+    left: -50px;
+    top: 12px;  // space used by "arrow" borders
+
+
+    &:after, &:before {
+      bottom: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    // "outer" arrow (grey, match popup border color)
+    &:before {
+      border-bottom-color: #aaa; // =popup border
+      border-width: 11px;
+      left: 50px;   // inverse of mbmappopup's left
+      margin-left: -11px;
+    }
+    // "inner" arrow (white)
+    &:after {
+      border-bottom-color: #fff; // =popup background
+      border-width: 10px;
+      left: 50px;   // inverse of mbmappopup's left
+      margin-left: -10px;
+    }
   }
+
 }
