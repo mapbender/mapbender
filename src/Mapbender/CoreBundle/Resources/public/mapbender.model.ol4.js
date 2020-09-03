@@ -584,6 +584,31 @@ window.Mapbender.MapModelOl4 = (function() {
             return style;
         },
         /**
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Element} content
+         * @private
+         * @return {Promise}
+         */
+        openPopupInternal_: function(x, y, content) {
+            var olMap = this.olMap;
+            // @todo: use native Promise (needs polyfill)
+            var def = $.Deferred();
+            // Always make a new clone of the template
+            var $popup = $(
+                '<div class="mbmappopup"><span class="close-btn -fn-close"><i class="fa fas fa-times"></i></span></div>'
+            );
+            $popup.append(content);
+            var overlay = new ol.Overlay({element: $popup.get(0)});
+            olMap.addOverlay(overlay);
+            overlay.setPosition([x, y]);
+            $popup.one('click', '-fn-close', function() {
+                olMap.removeOverlay(overlay);
+                def.resolve();
+            });
+            return def.promise();
+        },
+        /**
          * @param {String} srsName
          * @param {Array<Number>}scales
          * @param {Array<Number>=} [maxExtent]

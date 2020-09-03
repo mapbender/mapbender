@@ -167,23 +167,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var zoom = this.pickZoomForScale(scale, true);
         olMap.setCenter(center, zoom);
     },
-    displayPoi: function(layer, poi) {
-        var olMap = this.olMap;
-        Mapbender.MapModelBase.prototype.displayPoi.call(this, layer, poi);
-        if (poi.label) {
-            olMap.addPopup(new OpenLayers.Popup.FramedCloud(null,
-                new OpenLayers.LonLat(poi.x, poi.y),
-                null,
-                poi.label,
-                null,
-                true,
-                function() {
-                    olMap.removePopup(this);
-                    this.destroy();
-                }
-            ));
-        }
-    },
     /**
      * @return {String}
      */
@@ -678,6 +661,46 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     setViewRotation: function(degrees, animate) {
         throw new Error("Rotation not supported on current engine " + Mapbender.mapEngine.code);
+    },
+    /**
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Element} content
+     * @private
+     * @return {Promise}
+     */
+    openPopupInternal_: function(x, y, content) {
+        var olMap = this.olMap;
+        // @todo: use native Promise (needs polyfill)
+        var def = $.Deferred();
+        var popup = new OpenLayers.Popup.FramedCloud(null,
+            new OpenLayers.LonLat(x, y),
+            null,
+            content.innerHTML,
+            null,
+            true,
+            function() {
+                olMap.removePopup(this);
+                this.destroy();
+                def.resolve();
+            }
+        );
+        // Fix close icon (with or without Openlayers 2 css)
+        popup.closeDiv.className = '';
+        $(popup.closeDiv)
+            .css({
+                width: '25px',
+                height: 'auto',
+                // right: '0',
+                // top: '0',
+                'padding-left': '8px',
+                'font-size': '17px'
+            })
+            .attr('title', Mapbender.trans('mb.actions.close'))
+            .append('<i class="fa fas fa-times"></i>')
+        ;
+        olMap.addPopup(popup);
+        return def.promise();
     },
     /**
      * @param {OpenLayers.Bounds} extent

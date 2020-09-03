@@ -655,6 +655,26 @@ window.Mapbender.MapModelBase = (function() {
         },
         displayPoi: function(layer, poi) {
             layer.addMarker(poi.x, poi.y);
+            if (poi.label) {
+                this.openPopup(poi.x, poi.y, poi.label);
+            }
+        },
+        /**
+         * @param {Number} x projected
+         * @param {Number} y projected
+         * @param {String|Element|jQuery} [content]
+         * @return {Promise}
+         */
+        openPopup: function(x, y, content) {
+            var contentNode = document.createElement('div');
+            if (content) {
+                if (typeof content === 'string') {
+                    contentNode.innerText = content;
+                } else {
+                    $(content).appendTo(contentNode);
+                }
+            }
+            return this.openPopupInternal_(x, y, contentNode);
         },
         /**
          * @return {{srsName: String, center: Array<Number>, scale: number}}
