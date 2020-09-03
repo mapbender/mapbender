@@ -281,10 +281,14 @@
             // NOTE: outOfScale is only calculated for leaves. May be null
             //       for intermediate nodes.
             $li.toggleClass('state-outofscale', !!layer.state.outOfScale);
+            $li.toggleClass('state-outofbounds', !!layer.state.outOfBounds);
             $li.toggleClass('state-deselected', !layer.getSelected());
             var tooltipParts = [layer.options.title];
             if (layer.state.outOfScale) {
                 tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofscale"));
+            }
+            if (layer.state.outOfBounds) {
+                tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofbounds"));
             }
             $title.attr('title', tooltipParts.join("\n"));
         },

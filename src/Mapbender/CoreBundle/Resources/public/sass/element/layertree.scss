@@ -32,7 +32,7 @@
       opacity: 0.7;
     }
   }
-  .leave.state-outofscale {
+  .leave.state-outofscale, .leave.state-outofbounds {
     .layer-title {
       opacity: 0.5;
     }
