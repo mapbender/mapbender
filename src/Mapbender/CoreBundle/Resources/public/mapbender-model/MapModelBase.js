@@ -344,7 +344,9 @@ window.Mapbender.MapModelBase = (function() {
          */
         _checkSource: function(source, fireSourceChangedEvent) {
             var scale = this.getCurrentScale();
-            var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale);
+            var extent = this.getCurrentExtent();
+            var srsName = this.getCurrentProjectionCode();
+            var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale, extent, srsName);
             source.updateEngine();
             if (fireSourceChangedEvent && changedStates) {
                 $(this.mbMap.element).trigger('mbmapsourcechanged', {

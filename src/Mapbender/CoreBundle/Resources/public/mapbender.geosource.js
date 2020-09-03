@@ -19,12 +19,13 @@ Mapbender.Geo.SourceHandler = {
      * @param {Object} source
      * @param {number} [scale] current value fetched from Mapbender.Model if omitted
      * @param {*} [extent]
+     * @param {String} [srsName]
      * @return {Object<string, Model~ExtendedLayerInfo>}
      */
-    getExtendedLeafInfo: function(source, scale, extent) {
+    getExtendedLeafInfo: function(source, scale, extent, srsName) {
         var infoMap = {};
         // @todo: srsName should be a method argument to make extent well defined
-        var srsName = Mapbender.Model.getCurrentProjectionCode();
+        var srsName_ = srsName || Mapbender.Model.getCurrentProjectionCode();
         // @todo: callers should pass extent; this is required for working out-of-bounds checks
         var extent_ = extent || Mapbender.Model.getCurrentExtent();
 
@@ -32,7 +33,7 @@ Mapbender.Geo.SourceHandler = {
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
             var outOfScale = !layer.isInScale(scale);
-            var outOfBounds = !layer.intersectsExtent(extent_, srsName);
+            var outOfBounds = !layer.intersectsExtent(extent_, srsName_);
             var enabled = layer.getActive();
             var visibility = enabled && !(outOfScale || outOfBounds);
             // no feature info if layer turned off or out of scale
@@ -57,11 +58,12 @@ Mapbender.Geo.SourceHandler = {
      *
      * @param {*} source
      * @param {number} [scale] uses current map scale if not passed in
-     * @param [extent] currently not used; @todo: implement outOfBounds checking
+     * @param {Object} [extent]
+     * @param {String} [srsName]
      * @return {boolean}
      */
-    updateLayerStates: function(source, scale, extent) {
-        var stateMap = _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
+    updateLayerStates: function(source, scale, extent, srsName) {
+        var stateMap = _.mapObject(this.getExtendedLeafInfo(source, scale, extent, srsName), function(item) {
             return item.state;
         });
 
