@@ -42,4 +42,20 @@
   .ol-selectable {
     user-select: text;
   }
+
+  // Popup styling (Openlayers >= 4 only)
+  .mbmappopup {
+    background: #fff;
+    font-size: 1rem;
+    padding: 0.5em;
+    border: 1px solid #444;
+    border-radius: 0.5em;
+
+    .close-btn {
+      font-size: 153%;
+      float: right;
+      padding-left: 0.5em;
+      padding-bottom: 0.5em;
+    }
+  }
 }

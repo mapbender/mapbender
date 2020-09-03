@@ -599,6 +599,7 @@ window.Mapbender.MapModelOl4 = (function() {
                 '<div class="mbmappopup"><span class="close-btn -fn-close"><i class="fa fas fa-times"></i></span></div>'
             );
             $popup.append(content);
+            $popup.append('<div class="clear"></div>');
             var overlay = new ol.Overlay({element: $popup.get(0)});
             olMap.addOverlay(overlay);
             overlay.setPosition([x, y]);
