@@ -33,6 +33,8 @@ $(document).on('click', '.collectionAdd', function(event) {
 
     // Now let's enter that item...
     collection.append(item);
+    item[0].scrollIntoView();
+
 });
 
 $(document).on('click', '.collectionRemove', function(event) {
