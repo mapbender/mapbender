@@ -176,7 +176,7 @@ class Map extends Element implements ConfigMigrationInterface
                 $poiConfig  = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
-                    'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
+                    'label' => isset($poi['label']) ? $poi['label'] : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
                 if (!empty($poi['srs'])) {
