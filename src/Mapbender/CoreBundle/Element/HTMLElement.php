@@ -62,6 +62,7 @@ class HTMLElement extends Element
         return array(
             'configuration' => $config,
             'tagName' => $tagName,
+            'application' => $this->entity->getApplication(),
         );
     }
 
