@@ -60,23 +60,13 @@
             padding: 0;
             > div.button-navigation {
               display: inline-block;
-              > button {
-                font-size: 0; // for vis-ui <=0.1.79 generating unwanted visible button labels
-                &:before {
-                  display: inline-block;
-                  font-size: $uiFontSize;
-                  padding: 3px 3px 2px 4px;
-                }
-                &.button {
-                  padding: 0;   // undo global .button padding
-                }
-              }
-              .button {
-                border-right-width: 0;
-              }
-              .button:last-child {
-                border-right-width: 1px;
-              }
+            }
+            .button {
+              padding: 3px 3px 2px 4px;
+              border-right-width: 0;
+            }
+            .button:last-child {
+              border-right-width: 1px;
             }
           }
 
