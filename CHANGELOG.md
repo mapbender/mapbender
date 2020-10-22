@@ -97,6 +97,11 @@
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
+## v3.0.8.6
+- Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
+- Fix empty "themes" configuration on Layertree after import / duplication
+- Fix broken Layerset tab activation after creating new layerset
+- Fix Map form showing selected layersets not in currently configured order
 
 ## v3.0.8.6-RC2
 - [Regression] Fix missing legends for WmsLoader instances

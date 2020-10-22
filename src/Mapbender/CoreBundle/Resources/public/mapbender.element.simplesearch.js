@@ -43,14 +43,21 @@ $.widget('mapbender.mbSimpleSearch', {
             this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result.icon_url, offset[0], offset[1]);
         }
 
-        // Set up autocomplete
-        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
-            url: url,
-            delay: this.options.delay,
-            dataTitle: this.options.label_attribute,
-            dataIdx: null,
-            preProcessor: $.proxy(this._tokenize, this)
+        // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
+        // same options object
+        // @todo: drop the FOM Autocomplete widget usage entirely (SimpleSearch is the only user)
+        var acOptions = Object.assign({}, Mapbender.Autocomplete.prototype.options, {
+                url: url,
+                delay: this.options.delay,
+                dataTitle: this.options.label_attribute,
+                dataIdx: null,
+                preProcessor: $.proxy(this._tokenize, this)
         });
+        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
+            url: acOptions.url,
+            delay: acOptions.delay
+        });
+        this.autocomplete.options = acOptions;
 
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
