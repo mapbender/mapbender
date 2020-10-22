@@ -39,11 +39,12 @@
     }
     a.ui-button {
       // jquerydialogextendjs uses anchors instead of buttons
-      width: auto;            // size to contained glyph
-      display: inline-block;  // allow top / bottom margins to match <button> used for close
       text-decoration: none;
     }
     .ui-button {
+      margin: 0;
+      line-height: 1;
+      vertical-align: initial;
       font-weight: bold;
       opacity: .2;
       &:hover, &:focus {
@@ -64,6 +65,13 @@
       .ui-icon.ui-icon-newwin:before{
         font-family: FontAwesome;
         content: "\f063";
+      }
+    }
+    .ui-button-icon-only {
+      width: 1em;
+      height: 16px;  // not in base theme, must set a height; natural height will be 0 pixels
+      .ui-icon {
+        text-indent: 0;	// not in base theme (base theme uses sprites instead of glyph-based icons)
       }
     }
   }
