@@ -235,17 +235,13 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     /**
      * @param {ol.Feature} feature
-     * @param {Object} [options]
-     * @param {number=} options.buffer in meters
-     * @param {number=} options.minScale
-     * @param {number=} options.maxScale
+     * @param {Model~BufferOptions} [options]
      * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
      *      just keeps feature in view
      */
     zoomToFeature: function(feature, options) {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
-        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
-
+        var bounds = this._getBufferedFeatureBounds(feature, options);
         var view = this.olMap.getView();
         var zoom0 = Math.floor(view.getZoomForResolution(view.getResolutionForExtent(bounds)));
         var zoom = this._adjustZoom(zoom0, options);
@@ -266,7 +262,9 @@ window.Mapbender.MapModelOl4 = (function() {
      */
     panToFeature: function(feature, options) {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
-        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+        // default to zero buffering
+        var bufferOptions = Object.assign({buffer: 0}, options);
+        var bounds = this._getBufferedFeatureBounds(feature, bufferOptions);
 
         var view = this.olMap.getView();
         var viewExtent = view.calculateExtent();

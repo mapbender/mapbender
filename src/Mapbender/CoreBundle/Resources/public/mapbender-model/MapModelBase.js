@@ -766,14 +766,26 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param feature
-         * @param {number} [bufferAbs] in meters
-         * @param {number} [bufferFactor] extra scale factor; applied after bufferAbs
+         * @param {Model~BufferOptions} [options]
          * @return {*}
          * @private
          */
-        _getBufferedFeatureBounds: function(feature, bufferAbs, bufferFactor) {
+        _getBufferedFeatureBounds: function(feature, options) {
             var engine = Mapbender.mapEngine;
             var bounds = engine.getFeatureBounds(feature);
+            var bufferAbs = (options || {}).buffer;
+            var bufferFactor = (options || {}).ratio;
+            if (typeof bufferAbs === 'undefined'){
+                bufferAbs = 100;
+            }
+            if (typeof bufferFactor === 'undefined') {
+                if (bufferAbs !== 0) {
+                    bufferFactor = 1.5;
+                } else {
+                    bufferFactor = 1.0;
+                }
+            }
+
             if (bufferAbs) {
                 var unitsPerMeter = engine.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
                 var bufferNative = bufferAbs * unitsPerMeter;

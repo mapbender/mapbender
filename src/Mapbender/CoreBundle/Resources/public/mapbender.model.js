@@ -69,6 +69,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {Array<Number>} [center] same as position! .position takes precedence if both are set
      * @property {Number} [zoom]
      */
+    /**
+     * @typedef {Object} Model~BufferOptions
+     * @property {Number} [buffer] in meters
+     * @property {Number} [ratio] extension factor applied AFTER absolute buffer
+     * @property {Number} [minScale]
+     * @property {Number} [maxScale]
+     */
 
     map: null,
     _initMap: function _initMap() {
@@ -360,16 +367,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     /**
      * @param {OpenLayers.Feature.Vector} feature
-     * @param {Object} [options]
-     * @param {number=} options.buffer in meters
-     * @param {number=} options.minScale
-     * @param {number=} options.maxScale
+     * @param {Model~BufferOptions} [options]
      * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
      *      just keeps feature in view
      */
     zoomToFeature: function(feature, options) {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
-        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+        var bounds = this._getBufferedFeatureBounds(feature, options);
 
         var zoom0 = this.map.olMap.getZoomForExtent(bounds, false);
         var zoom = this._adjustZoom(zoom0, options);
@@ -389,7 +393,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
     panToFeature: function(feature, options) {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
-        var bounds = this._getBufferedFeatureBounds(feature, (options && options.buffer) || 0);
+        // default to zero buffering
+        var bufferOptions = Object.assign({buffer: 0}, options);
+        var bounds = this._getBufferedFeatureBounds(feature, bufferOptions);
 
         var featureInView = this.olMap.getExtent().containsBounds(bounds);
         if (center_ || !featureInView) {
