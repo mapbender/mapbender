@@ -24,10 +24,19 @@ body {
   overflow: hidden;
 }
 
+.contentPane {
+  // prevent invisible contained elements from gaining size; a sized contentPane breaks popup
+  // positioning on drag / resize
+  height: 0;
+  overflow-y: hidden;
+}
+
 /*
   Override bootstrap standard declaration
 */
 .modal-body {
+  // @todo: doesn't belong in template css
+  // @todo: support hack only for tabbed vis-ui popups; target tab containers in vis-ui dialogs specifically
   padding: 0px;
 
   &.confirm-dialog{
