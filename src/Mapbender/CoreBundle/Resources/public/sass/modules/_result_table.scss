@@ -7,13 +7,14 @@
 .mapbender-element-result-table {
 
   > .dataTables_wrapper {
-    position: relative;
 
     > table[role="grid"] {
+      td, th {
+        padding: 4px;
+      }
       font-size: $uiFontSize;
       > thead > tr > th {
         background-color: $buttonFirstColor;
-        cursor: pointer;
         user-select: none;
         border: 1px solid $buttonSecondColor;
         &:last-child {
@@ -22,19 +23,18 @@
         }
         color: #ffffff;
         font-weight: normal;
-        padding: 3px 6px;
 
-        &:hover{
-          background-color: $buttonSecondColor;
+        &.sorting, &.sorting_asc, &.sorting_desc {
+          cursor: pointer;
+          text-align: right;
+          &:hover {
+            background-color: $buttonSecondColor;
+          }
         }
 
         &.sorting_asc, &.sorting_desc {
           background-color: $buttonFirstActiveColor;
         }
-        &.buttons.sorting_disabled {
-          cursor: default;
-        }
-        text-align: right;
         &.sorting:after {
           display: inline-block;
           content: "\f0dc";
@@ -68,8 +68,6 @@
           background-color: $selectColor;
         }
         > td {
-          padding: 4px;
-
           &.buttons {
             text-align: right;
             white-space: nowrap;
@@ -111,7 +109,6 @@
     }
 
     > .dataTables_info {
-      font-size: $uiFontSize;
       margin-top: 8px;
       text-align: center;
       border-radius: 7px;
