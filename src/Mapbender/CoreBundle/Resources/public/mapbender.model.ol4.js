@@ -522,6 +522,25 @@ window.Mapbender.MapModelOl4 = (function() {
             return styleOptions;
         },
         /**
+         * @param {String|Array<Number>} olColor
+         * @param {String} colorProp
+         * @param {String} opacityProp
+         * @return {Object}
+         */
+        _extractColor: function(olColor, colorProp, opacityProp) {
+            var rule;
+            if (typeof olColor === 'string') {
+                rule = olColor;
+            } else {
+                if (olColor.length === 4) {
+                    rule = ['rgba(', olColor.join(', '), ')'].join('');
+                } else {
+                    rule = ['rgb(', olColor.join(', '), ')'].join('');
+                }
+            }
+            return Mapbender.StyleUtil.cssColorToSvgRules(rule, colorProp, opacityProp);
+        },
+        /**
          * @param {ol.style.Style} olStyle
          * @return {Object}
          * @private
@@ -537,10 +556,10 @@ window.Mapbender.MapModelOl4 = (function() {
 
             var scale =  image.getScale() || 1;
             if (fill) {
-                Object.assign(style, Mapbender.StyleUtil.cssColorToSvgRules(fill.getColor(), 'fillColor', 'fillOpacity'))
+                Object.assign(style, this._extractColor(fill.getColor(), 'fillColor', 'fillOpacity'));
             }
             if (stroke) {
-                Object.assign(style, Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'strokeColor', 'strokeOpacity'));
+                Object.assign(style, this._extractColor(stroke.getColor(), 'strokeColor', 'strokeOpacity'));
                 style['strokeWidth'] = stroke.getWidth();
                 style['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
             }
@@ -573,8 +592,8 @@ window.Mapbender.MapModelOl4 = (function() {
             var style = {};
             var stroke = olTextStyle.getStroke();
             Object.assign(style,
-                Mapbender.StyleUtil.cssColorToSvgRules(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity'),
-                Mapbender.StyleUtil.cssColorToSvgRules(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity'),
+                this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
             );
             style['labelOutlineWidth'] = stroke.getWidth();
 
