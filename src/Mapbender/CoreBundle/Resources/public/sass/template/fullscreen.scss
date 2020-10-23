@@ -43,20 +43,6 @@ body {
     position: relative;
   }
 
-  div.radio,
-  div.checkbox {
-    > label {
-      padding-right: 4px;
-    }
-    &.has-warning > label {
-      color: $warnFontColor;
-    }
-    &.has-error > label {
-      color: $errorFontColor;
-    }
-  }
-
-
   label {
     margin-bottom: 0px;
     font-size: 11px;
