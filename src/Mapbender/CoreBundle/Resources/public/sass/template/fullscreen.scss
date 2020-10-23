@@ -35,10 +35,6 @@ body {
   Override bootstrap standard declaration
 */
 .modal-body {
-  // @todo: doesn't belong in template css
-  // @todo: support hack only for tabbed vis-ui popups; target tab containers in vis-ui dialogs specifically
-  padding: 0px;
-
   &.confirm-dialog{
     padding: 5px;
     text-shadow: 0px 1px 0px #fff;
