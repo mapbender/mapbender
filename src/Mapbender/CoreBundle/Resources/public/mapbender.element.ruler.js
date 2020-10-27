@@ -52,7 +52,6 @@
                 fillColor: this.options.fillColor || '#ee9900'
             };
 
-            console.log(scheme,this.options,sketchSymbolizer[scheme]);
             var style = new OpenLayers.Style();
             style.addRules([
                 new OpenLayers.Rule({symbolizer: sketchSymbolizer})
