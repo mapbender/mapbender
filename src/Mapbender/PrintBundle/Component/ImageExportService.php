@@ -323,9 +323,10 @@ class ImageExportService
      * @param int $y0 source offset
      * @param int $width target witdth
      * @param int $height target height
+     * @param bool $destructive set to true to discard original image resource (saves memory)
      * @return bool|resource a NEW image resource
      */
-    protected function cropImage($image, $x0, $y0, $width, $height)
+    protected function cropImage($image, $x0, $y0, $width, $height, $destructive = false)
     {
         // NOTE GD deficiency: imagecrop cannot be used because it COPIES onto a new black image and cannot disable blending
         // This effectively converts transparent pixels to black.
@@ -333,6 +334,9 @@ class ImageExportService
         imagesavealpha($newImage, true);
         imagealphablending($newImage, false);
         imagecopy($newImage, $image, 0, 0, $x0, $y0, $width, $height);
+        if ($destructive) {
+            imagedestroy($image);
+        }
         return $newImage;
     }
 
@@ -359,8 +363,6 @@ class ImageExportService
         $offsetX = (imagesx($rotatedImage) - $targetBox->getWidth()) * 0.5;
         $offsetY = (imagesy($rotatedImage) - abs($targetBox->getHeight())) * 0.5;
 
-        $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
-        imagedestroy($rotatedImage);
-        return $cropped;
+        return $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight, true);
     }
 }

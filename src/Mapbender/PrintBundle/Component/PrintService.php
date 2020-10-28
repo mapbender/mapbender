@@ -480,7 +480,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             // in either dimension
             $cropWidth = min($srcSize[0], $destSize[0] - $x);
             $cropHeight = min($srcSize[1], $destSize[1] - $y);
-            $northarrow = $this->cropImage($rotatedImage, $x, $y, $cropWidth, $cropHeight);
+            $northarrow = $this->cropImage($rotatedImage, $x, $y, $cropWidth, $cropHeight, true);
         }
         $this->addImageToPdfRegion($pdf, $northarrow, $region);
         return true;
