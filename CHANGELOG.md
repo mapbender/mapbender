@@ -1,4 +1,4 @@
-## dev-master @ a4aaadd84
+## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
 * Fix missing POI label popup on Openlayers 6
 * Fix Layertree visualization of Wms "out of scale" / "out of bounds" layer state for deselected layers
@@ -15,9 +15,14 @@
 * Fix error when moving instance between layersets multiple times before reloading page
 * Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
 * Fix Map form showing selected layersets not in currently configured order
+* Fix positioning errors on jquery ui dialog resize in Fullscreen template
+* Fix application entity not available in HTMLElement twig, breaking documentation example usage
+* Fix multiple multiple SimpleSearch elements all sharing one randomly chosen server request url ([#1240](https://github.com/mapbender/mapbender/issues/1240))
 * Limit initial print scale to keep selection rectangle inside visible map viewport
+* Layertree: Remove confusing extra visualization for manually deselected layer; layer titles will only be lightened if layer is out of scale / out of bounds, or currently loading
 * Add missing shared instances support in BaseSourceSwitcher
 * [Framework] fix OL6 `centerXy` implementation changing zoom when called without any zoom / scale related options
+* [Framework] Fix print with Openlayers 6 feature styles containing array-type colors
 * Prefer initial image formats with transparency support when creating new Wms instance
 * Add misc helper selectors for functional testing support
 
