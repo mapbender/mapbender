@@ -130,7 +130,7 @@ class ElementMarkupExtension extends AbstractExtension
         if ($regionName === 'content') {
             return $this->unanchored_content_elements($application);
         } elseif (!empty($this->nonContentRegionMap[$regionName])) {
-            $glue = $this->getGlueTag($regionName);
+            $glue = $this->getRegionGlue($regionName);
             return $this->renderComponents($this->nonContentRegionMap[$regionName], $glue);
         } else {
             return '';
@@ -164,8 +164,10 @@ class ElementMarkupExtension extends AbstractExtension
             return implode('', $parts);
         }
         if (!empty($this->anchoredContentElements[$anchorValue])) {
-            $glue = '<div class="element-wrapper">';
-            return $this->renderComponents($this->anchoredContentElements[$anchorValue], $glue);
+            return $this->renderComponents($this->anchoredContentElements[$anchorValue], array(
+                'tagName' => 'div',
+                'class' => 'element-wrapper'
+            ));
         } else {
             return '';
         }
@@ -173,20 +175,18 @@ class ElementMarkupExtension extends AbstractExtension
 
     /**
      * @param Component\Element[] $components
-     * @param string|null $glue HTML opening tag
+     * @param string[]|null $wrapper if not empty, must have entries "tagName" (string), "class" (string)
      * @return string
      */
-    protected function renderComponents($components, $glue = null)
+    protected function renderComponents($components, $wrapper = null)
     {
-        $glueParts = array('', '');
-        if ($glue) {
-            $pattern = '#^<(\w+)[^/>]*>$#i';
-            $matches = array();
-            preg_match($pattern, $glue, $matches);
-            if (!$matches) {
-                throw new \RuntimeException("Invalid glue " . print_r($glue, true));
-            }
-            $glueParts = array($glue, "</{$matches[1]}>");
+        if ($wrapper) {
+            $glueParts = array(
+                '<' . $wrapper['tagName'] . ' class="' . $wrapper['class'] . '">',
+                "</{$wrapper['tagName']}>",
+            );
+        } else {
+            $glueParts = array('', '');
         }
 
         $markupFragments = array();
@@ -276,14 +276,17 @@ class ElementMarkupExtension extends AbstractExtension
      * Detect appropriate Element markup wrapping tag for a named region.
      *
      * @param string $regionName
-     * @return string|null
+     * @return string[]|null
      */
-    protected static function getGlueTag($regionName)
+    protected static function getRegionGlue($regionName)
     {
         switch (static::normalizeRegionName($regionName)) {
             case 'footer':
             case 'toolbar':
-                return '<li class="toolBarItem">';
+                return array(
+                    'tagName' => 'li',
+                    'class' => 'toolBarItem',
+                );
             case 'sidepane':
                 // @todo: unify this
                 return null;
