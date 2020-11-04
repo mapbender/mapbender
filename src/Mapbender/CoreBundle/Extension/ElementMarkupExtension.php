@@ -180,22 +180,44 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function renderComponents($components, $wrapper = null)
     {
-        if ($wrapper) {
-            $glueParts = array(
-                '<' . $wrapper['tagName'] . ' class="' . $wrapper['class'] . '">',
-                "</{$wrapper['tagName']}>",
-            );
-        } else {
-            $glueParts = array('', '');
-        }
+        $wrapperMarkup = $this->renderWrappers(array_filter(array($wrapper)));
 
         $markupFragments = array();
         foreach ($components as $component) {
-            $markupFragments[] = $glueParts[0];
+            $markupFragments[] = $wrapperMarkup['open'];
             $markupFragments[] = $component->render();
-            $markupFragments[] = $glueParts[1];
+            $markupFragments[] = $wrapperMarkup['close'];
         }
         return implode('', $markupFragments);
+    }
+
+    /**
+     * @param (string[]|null)[] $wrappers
+     * @return string[] with entries 'open', 'close'
+     */
+    protected function renderWrappers($wrappers)
+    {
+        $tagName = null;
+        $classes = array();
+        foreach ($wrappers ?: array() as $wrapper) {
+            // use tag name from first wrapper entry
+            if ($tagName === null) {
+                $tagName = $wrapper['tagName'];
+            }
+            // concatenate all classes
+            $classes[] = $wrapper['class'];
+        }
+        if (!$tagName) {
+            return array(
+                'open' => '',
+                'close' => '',
+            );
+        } else {
+            return array(
+                'open' => '<' . $tagName . ' class="' . implode(' ', $classes) . '">',
+                'close' => "</{$tagName}>",
+            );
+        }
     }
 
     /**
