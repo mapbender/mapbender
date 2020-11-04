@@ -68,6 +68,7 @@ class ElementMarkupExtension extends AbstractExtension
             'anchored_content_elements' => new TwigFunction('anchored_content_elements', array($this, 'anchored_content_elements')),
             'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', array($this, 'unanchored_content_elements')),
             'map_markup' => new TwigFunction('map_markup', array($this, 'map_markup')),
+            'element_visibility_class' => new TwigFunction('element_visibility_class', array($this, 'element_visibility_class')),
         );
     }
 
@@ -175,6 +176,15 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
+     * @param Entity\Element|Component\Element $element
+     * @return string|null
+     */
+    public function element_visibility_class($element)
+    {
+        return $this->getElementVisibilityClass($this->normalizeElementEntityArgument($element));
+    }
+
+    /**
      * @param Component\Element[] $components
      * @param string[]|null $wrapper if not empty, must have entries "tagName" (string), "class" (string)
      * @return string
@@ -205,11 +215,25 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function getElementWrapper(Entity\Element $element)
     {
+        $visibilityClass = $this->getElementVisibilityClass($element);
+        if ($visibilityClass) {
+            return array(
+                'tagName' => 'div',
+                'class' => $visibilityClass,
+            );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param Entity\Element $element
+     * @return string|null
+     */
+    protected function getElementVisibilityClass(Entity\Element $element)
+    {
         // @todo screen-type visibility filter
-        // if ($element->getScrrenTypes !== 'both') return array(
-        //    'tagName' => 'div'
-        //    'class' => ...
-        //    );
+        // if ($element->getScrrenTypes !== 'both') return '...';
         return null;
     }
 
@@ -353,5 +377,22 @@ class ElementMarkupExtension extends AbstractExtension
             throw new \LogicException("Invalid template class " . get_class($templateObj));
         }
         return $templateObj;
+    }
+
+    /**
+     * @param Entity\Element|Component\Element $element
+     * @return Entity\Element
+     * @throws \InvalidArgumentException
+     */
+    protected function normalizeElementEntityArgument($element)
+    {
+        // normalize to entity
+        if ($element instanceof Component\Element) {
+            $element = $element->getEntity();
+        }
+        if (!$element instanceof Entity\Element) {
+            throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
+        }
+        return $element;
     }
 }
