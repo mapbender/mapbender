@@ -97,13 +97,13 @@ class ConfigCheckCommand extends ContainerAwareCommand
         $output->title("Check PHP Version");
         $headers = ['Your Version','Required Version','Message'];
         $rows=[];
-        //check PHP-Version >= 5.5.4
+        //check PHP-Version >=7.1.0
         $success = true;
-        if (version_compare(phpversion(), '5.5.4', '<')) {
+        if (version_compare(phpversion(), '7.1.0', '<')) {
             $success = false;
-            $rows[]=[phpversion(),'5.5.4','<fg=red>Too low</>'];
+            $rows[]=[phpversion(),'7.1.0','<fg=red>Too low</>'];
         } else {
-            $rows[]=[phpversion(),'5.5.4','<fg=green>ok</>'];
+            $rows[]=[phpversion(),'7.1.0','<fg=green>ok</>'];
         }
         $output->table($headers,$rows);
         return $success;
