@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Extension;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Element\Map;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\Exception\Application\MissingMapElementException;
 use Mapbender\Exception\Application\MultipleMapElementsException;
@@ -180,15 +181,36 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function renderComponents($components, $wrapper = null)
     {
-        $wrapperMarkup = $this->renderWrappers(array_filter(array($wrapper)));
+        $wrappers = array_filter(array($wrapper));
+        $defaultWrapperMarkup = $this->renderWrappers($wrappers);
 
         $markupFragments = array();
         foreach ($components as $component) {
-            $markupFragments[] = $wrapperMarkup['open'];
+            $elementWrapper = $this->getElementWrapper($component->getEntity());
+            if ($elementWrapper) {
+                $elementWrapMarkup = $this->renderWrappers(array_merge($wrappers, array($elementWrapper)));
+            } else {
+                $elementWrapMarkup = $defaultWrapperMarkup;
+            }
+            $markupFragments[] = $elementWrapMarkup['open'];
             $markupFragments[] = $component->render();
-            $markupFragments[] = $wrapperMarkup['close'];
+            $markupFragments[] = $elementWrapMarkup['close'];
         }
         return implode('', $markupFragments);
+    }
+
+    /**
+     * @param Entity\Element $element
+     * @return string[]|null
+     */
+    protected function getElementWrapper(Entity\Element $element)
+    {
+        // @todo screen-type visibility filter
+        // if ($element->getScrrenTypes !== 'both') return array(
+        //    'tagName' => 'div'
+        //    'class' => ...
+        //    );
+        return null;
     }
 
     /**
