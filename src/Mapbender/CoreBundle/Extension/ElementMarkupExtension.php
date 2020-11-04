@@ -69,6 +69,7 @@ class ElementMarkupExtension extends AbstractExtension
             'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', array($this, 'unanchored_content_elements')),
             'map_markup' => new TwigFunction('map_markup', array($this, 'map_markup')),
             'element_visibility_class' => new TwigFunction('element_visibility_class', array($this, 'element_visibility_class')),
+            'element_markup' => new TwigFunction('element_markup', array($this, 'element_markup')),
         );
     }
 
@@ -88,6 +89,15 @@ class ElementMarkupExtension extends AbstractExtension
         }
 
         return $this->renderComponents(array($this->mapElement));
+    }
+
+    /**
+     * @param Entity\Element|Component\Element $element
+     * @return string
+     */
+    public function element_markup($element)
+    {
+        return $this->renderComponents(array($this->normalizeElementComponentArgument($element)));
     }
 
     /**
@@ -391,6 +401,23 @@ class ElementMarkupExtension extends AbstractExtension
             $element = $element->getEntity();
         }
         if (!$element instanceof Entity\Element) {
+            throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
+        }
+        return $element;
+    }
+
+    /**
+     * @param Entity\Element|Component\Element $element
+     * @return Component\Element
+     * @throws \InvalidArgumentException
+     */
+    protected function normalizeElementComponentArgument($element)
+    {
+        if ($element instanceof Entity\Element) {
+            // @todo: replace with something more efficient
+            return $this->appService->getSingleElementComponent($element->getApplication(), $element->getId());
+        }
+        if (!$element instanceof Component\Element) {
             throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
         }
         return $element;

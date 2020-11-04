@@ -9,7 +9,7 @@
         </ul>
           {% for element in elements %}
             <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
-              {{ element.render() | raw }}
+                {{ element_markup(element) | raw }}
             </div>
           {% endfor %}
       </div>
@@ -20,7 +20,7 @@
           <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
               <div class="accordion-cell">
                   <div class="accordion-wrapper">
-                  {{ element.render() | raw }}
+                      {{ element_markup(element) | raw }}
                   </div>
               </div>
           </div>
