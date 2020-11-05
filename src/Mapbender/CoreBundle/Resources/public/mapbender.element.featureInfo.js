@@ -22,6 +22,8 @@
         mobilePane: null,
         isActive: false,
 
+
+
         _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
             var self = this;
@@ -30,7 +32,9 @@
             }, function() {
                 Mapbender.checkTarget("mbFeatureInfo", self.options.target);
             });
+
         },
+
 
         _setup: function(mbMap) {
             var widget = this;
@@ -40,6 +44,19 @@
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
             }
+            this._createLayerStyle();
+
+            this.featureInfoLayer = new ol.layer.Vector({
+                source: new ol.source.Vector({}),
+                name: 'featureInfo',
+                style:  widget.featureInfoStyle,
+                visible: true,
+                minResolution: Mapbender.Model.scaleToResolution( 0),
+                maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+            });
+
+            this.target.map.olMap.addLayer(this.featureInfoLayer);
+            this._createHighlightControl();
 
             widget._trigger('ready');
         },
@@ -167,11 +184,39 @@
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     var iframe = $('<iframe>');
-                    iframe.on('load', function() {
+                    // use 'one' to prevent capturing load event on deactivating featureinfo
+                    iframe.one('load', function() {
                         var doc = iframe.get(0).contentWindow.document;
                         doc.open();
                         doc.write(data);
                         doc.close();
+
+                        doc.addEventListener('readystatechange', function(event) {
+                            if (document.readyState === "complete") {
+                               var nodes = doc.querySelectorAll("div.geometryElement");
+                               var ewkts =  Array.from(nodes).map(function(node) {
+                                   return {
+                                       srid : node.getAttribute("data-srid"),
+                                       wkt : node.getAttribute("data-geometry"),
+                                       id: node.getAttribute('id'),
+                                   };
+                                });
+
+                               self._populateFeatureInfoLayer(source,ewkts);
+
+                               Array.from(nodes).forEach(function(node) {
+                                   node.addEventListener("mouseover", function(event) {
+                                       var id = node.getAttribute("id");
+                                       self._highlightFeature(self._getFeatureById(id));
+                                   });
+                                   node.addEventListener("mouseout", function(event) {
+                                       var id = node.getAttribute("id");
+                                       self._getFeatureById(id).setStyle(undefined);
+                                   });
+                               });
+                            }
+                        }, { once: true });
+
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
@@ -254,6 +299,7 @@
                             widget.popup.$element.hide();
                         }
                         widget.state = 'closed';
+                        widget.featureInfoLayer.getSource().clear();
                     });
                     widget.popup.$element.on('open', function() {
                         widget.state = 'opened';
@@ -344,6 +390,82 @@
             self.target.element.on('mbmapclick', function(event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
+        },
+
+        _createLayerStyle: function() {
+            this.featureInfoStyle = new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255, 255, 255, 1)',
+                    lineCap: 'round',
+                    width: 1,
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 165, 0, 0.4)'
+                })
+            });
+
+            this.featureInfoStyle_hover = new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255, 255, 255, 1)',
+                    lineCap: 'round',
+                    width: 1,
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 0, 0, 1)'
+                }),
+                zIndex: 1000
+            });
+
+        },
+
+        _populateFeatureInfoLayer: function(source,ewkts) {
+          var features = ewkts.map(function(ewkt) {
+              var feature = Mapbender.Model.parseWktFeature(ewkt.wkt,ewkt.srid);
+              feature.set("id",ewkt.id);
+              return feature;
+          });
+
+          this.featureInfoLayer.getSource().clear();
+          this.featureInfoLayer.getSource().addFeatures(features);
+
+        },
+
+        _createHighlightControl: function() {
+
+            var widget = this;
+            var map = this.target.map.olMap;
+            widget.highlightedFeatures = [];
+
+            map.on('pointermove', function (e) {
+
+                if( widget.highlightedFeatures.length > 0) {
+                    widget.highlightedFeatures.forEach(function(feature) {
+                        feature.setStyle(undefined);
+                    });
+                }
+
+                map.forEachFeatureAtPixel(e.pixel, function (f) {
+                    widget._highlightFeature(f);
+                });
+
+
+            });
+        },
+
+
+        _highlightFeature: function(feature) {
+            var widget = this;
+            if (widget.featureInfoLayer.getSource().getFeatures().includes(feature)) {
+                widget.highlightedFeatures.push(feature);
+                feature.setStyle(widget.featureInfoStyle_hover);
+            }
+        },
+
+        _getFeatureById: function(id) {
+            return this.featureInfoLayer.getSource().getFeatures().find(function(feature) {
+               return feature.get("id") == id;
+            });
         }
+
     });
 })(jQuery);
