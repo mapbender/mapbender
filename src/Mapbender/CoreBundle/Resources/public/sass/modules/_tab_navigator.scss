@@ -16,10 +16,22 @@
         z-index: 1;
         position: relative;
       }
+      @extend .buttonCore;
       > a {
+        @extend .buttonColors;
+        padding: ($space/4) ($space/2);
+        // undo Bootstrap .nav-tabs>li>a border rules
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        border: none;
         border-radius: 0;
-        @extend .button;
-        float: left;
+        // undo Bootstrap .nav-tabs>li>a margin-right rule
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        margin-right: 0;
+        // undo Bootstrap focus outline rule
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        &:focus {
+          outline: none;
+        }
       }
     }
   }

@@ -85,11 +85,6 @@
     > .mapbender-element-tab-navigator {
       > .ui-tabs-nav {
         background-color: #B6D39E;
-        &.nav-tabs > li > a {
-          // undo Bootstrap .nav-tabs>li>a border rule
-          // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
-          border: none;
-        }
       }
       > .tab-content {
         padding: 0;
