@@ -93,34 +93,29 @@
     >div{
       background-color: inherit;
       padding-left: 0.5em;
-      display: table-cell;
     }
     &.active{
       background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
     }
   }
-  .container-accordion{
+  .container-accordion {
     flex: 1 1 auto; // grow and shrink
-    display: none;
-    &.active {
-      display: initial;
-      position: relative;
-      .accordion-cell {
-        .accordion-wrapper{
-          // position: relative;
-          >.mb-element,>div{
-            display:block;
-            overflow-x: hidden;
-            overflow-y: auto;
-            width:100%;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-          }
-          >.mb-element{padding-top:$space/2}
-        }
-      }
+    &:not(.active) {
+      display: none;
+    }
+    width:100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    .accordion-cell {
+      // Extend content to fill entire accordion cell; this is a Hack helping nested absolte-positioned
+      // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
+      width: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      padding-top: $space / 2;
     }
   }
   // spacing between consecutive content blocks
