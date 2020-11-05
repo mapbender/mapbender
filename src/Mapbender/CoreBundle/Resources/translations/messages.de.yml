@@ -284,6 +284,7 @@ mb:
           autoopen: 'Automatisches Öffnen'
           showoriginal: 'Original Zeigen'
           onlyvalid: 'Nur valide zeigen'
+          highlightlayer: 'Highlighting'
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'

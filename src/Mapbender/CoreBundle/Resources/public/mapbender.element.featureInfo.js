@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
 
     $.widget("mapbender.mbFeatureInfo", {
         options: {
@@ -23,44 +23,47 @@
         isActive: false,
 
 
-
-        _create: function() {
+        _create: function () {
             this.mobilePane = this.element.closest('.mobilePane');
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function (mbMap) {
                 self._setup(mbMap);
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget("mbFeatureInfo", self.options.target);
             });
 
         },
 
 
-        _setup: function(mbMap) {
+        _setup: function (mbMap) {
             var widget = this;
             var options = widget.options;
             this.target = mbMap;
             this._setupMapClickHandler();
-            if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
+            if (options.autoActivate || options.autoOpen) { // autoOpen old configuration
                 widget.activate();
             }
-            this._createLayerStyle();
 
-            this.featureInfoLayer = new ol.layer.Vector({
-                source: new ol.source.Vector({}),
-                name: 'featureInfo',
-                style:  widget.featureInfoStyle,
-                visible: true,
-                minResolution: Mapbender.Model.scaleToResolution( 0),
-                maxResolution: Mapbender.Model.scaleToResolution(Infinity)
-            });
+            if (options.highlightLayer) {
 
-            this.target.map.olMap.addLayer(this.featureInfoLayer);
-            this._createHighlightControl();
+                this._createLayerStyle();
+
+                this.featureInfoLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector({}),
+                    name: 'featureInfo',
+                    style: widget.featureInfoStyle,
+                    visible: true,
+                    minResolution: Mapbender.Model.scaleToResolution(0),
+                    maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+                });
+
+                this.target.map.olMap.addLayer(this.featureInfoLayer);
+                this._createHighlightControl();
+            }
 
             widget._trigger('ready');
         },
-        _contentElementId: function(source) {
+        _contentElementId: function (source) {
             var id = this._getContentManager().contentId(source.id);
             // verify element is in DOM
             if ($('#' + id, this.element).length) {
@@ -70,15 +73,15 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback) {
+        defaultAction: function (callback) {
             this.activate(callback);
         },
-        activate: function(callback) {
+        activate: function (callback) {
             this.callback = callback;
             this.target.element.addClass('mb-feature-info-active');
             this.isActive = true;
         },
-        deactivate: function() {
+        deactivate: function () {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
 
@@ -98,25 +101,25 @@
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
-        _triggerFeatureInfo: function(x, y) {
+        _triggerFeatureInfo: function (x, y) {
             if (!this.isActive) {
                 return;
             }
             var self = this;
             var model = this.target.getModel();
-            $.each(model.getSources(), function(idx, src) {
+            $.each(model.getSources(), function (idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
                     self._setInfo(src, url);
                 }
             });
         },
-        _getTabTitle: function(source) {
+        _getTabTitle: function (source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
             //  title of the root layer. This should be made consistent one way or the other.
             return source.configuration.title;
         },
-        _setInfo: function(source, url) {
+        _setInfo: function (source, url) {
             var self = this;
             var layerTitle = this._getTabTitle(source);
             var ajaxOptions = {
@@ -132,7 +135,7 @@
                 ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
             var request = $.ajax(ajaxOptions);
-            request.done(function(data, textStatus, jqXHR) {
+            request.done(function (data, textStatus, jqXHR) {
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (!self.options.showOriginal && mimetype.search(/text[/]html/i) === 0) {
@@ -152,12 +155,12 @@
                     self._open();
                 }
             });
-            request.fail(function(jqXHR, textStatus, errorThrown) {
+            request.fail(function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
                 self._removeContent(source);
             });
         },
-        _isDataValid: function(data, mimetype) {
+        _isDataValid: function (data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     return !!("" + data).match(/<[/][a-z]+>/gi);
@@ -167,7 +170,7 @@
                     return true;
             }
         },
-        _triggerHaveResult: function(source) {
+        _triggerHaveResult: function (source) {
             // only used for mobile hacks
             // @todo: add mobile hacks here, remove event
             var eventData = {
@@ -178,28 +181,29 @@
             };
             this._trigger('featureinfo', null, eventData);
         },
-        _showOriginal: function(source, layerTitle, data, mimetype) {
+        _showOriginal: function (source, layerTitle, data, mimetype) {
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                     var iframe = $('<iframe>');
                     // use 'one' to prevent capturing load event on deactivating featureinfo
-                    iframe.one('load', function() {
+                    iframe.one('load', function () {
                         var doc = iframe.get(0).contentWindow.document;
                         doc.open();
                         doc.write(data);
                         doc.close();
 
-                        doc.addEventListener('readystatechange', function(event) {
+                        doc.addEventListener('readystatechange', function (event) {
                             if (doc.readyState === "complete") {
-                                self._initializeFeatureInfoLayer(doc);
+                                if (self.options.highlightLayer) {
+                                    self._initializeFeatureInfoLayer(doc);
+                                }
+                                if (Mapbender.Util.addDispatcher) {
+                                    Mapbender.Util.addDispatcher(doc);
+                                }
                             }
                         });
-
-                        if (Mapbender.Util.addDispatcher) {
-                           Mapbender.Util.addDispatcher(doc);
-                        }
                         $('body', doc).css("background", "transparent");
                     });
                     self._addContent(source, layerTitle, iframe);
@@ -210,10 +214,10 @@
                     break;
             }
         },
-        _showEmbedded: function(source, layerTitle, data, mimetype) {
+        _showEmbedded: function (source, layerTitle, data, mimetype) {
             this._addContent(source, layerTitle, data);
         },
-        _cleanHtml: function(data) {
+        _cleanHtml: function (data) {
             try {
                 if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
                     return data.replace(/document.writeln[^;]*;/g, '')
@@ -229,28 +233,28 @@
             }
             return data;
         },
-        _getContentManager: function() {
+        _getContentManager: function () {
             if (!this.contentManager) {
                 this.contentManager = {
                     headerSel: '.js-header',
                     $headerParent: $('.js-header', this.element).parent(),
                     $header: $('.js-header', this.element).remove(),
                     headerContentSel: '.js-header-content',
-                    headerId: function(id) {
+                    headerId: function (id) {
                         return this.$header.attr('data-idname') + id
                     },
                     contentSel: '.js-content',
                     $contentParent: $('.js-content', this.element).parent(),
                     $content: $('.js-content', this.element).remove(),
                     contentContentSel: '.js-content-content',
-                    contentId: function(id) {
+                    contentId: function (id) {
                         return this.$content.attr('data-idname') + id
                     }
                 };
             }
             return this.contentManager;
         },
-        _open: function() {
+        _open: function () {
             $(document).trigger('mobilepane.switch-to-element', {
                 element: this.element
             });
@@ -271,7 +275,7 @@
                         height: options.height,
                         buttons: this._getPopupButtonOptions()
                     });
-                    widget.popup.$element.on('close', function() {
+                    widget.popup.$element.on('close', function () {
                         if (widget.options.deactivateOnClose) {
                             widget.deactivate();
                         }
@@ -281,15 +285,15 @@
                         widget.state = 'closed';
                         widget.featureInfoLayer.getSource().clear();
                     });
-                    widget.popup.$element.on('open', function() {
+                    widget.popup.$element.on('open', function () {
                         widget.state = 'opened';
                     });
                 }
-                if(widget.state !== 'opened') {
+                if (widget.state !== 'opened') {
                     widget.popup.open();
                 }
 
-                if(widget.popup && widget.popup.$element){
+                if (widget.popup && widget.popup.$element) {
                     widget.popup.$element.show();
                 }
             }
@@ -297,11 +301,11 @@
         /**
          * @returns {Array<Object>}
          */
-        _getPopupButtonOptions: function() {
+        _getPopupButtonOptions: function () {
             var buttons = [{
                 label: Mapbender.trans('mb.actions.close'),
                 cssClass: 'button buttonCancel critical right',
-                callback: function() {
+                callback: function () {
                     /** @this Mapbender.Popup2 */
                     this.close();
                 }
@@ -312,22 +316,22 @@
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
                     cssClass: 'button right',
-                    callback: function() {
+                    callback: function () {
                         self._printContent();
                     }
                 });
             }
             return buttons;
         },
-        _selectorSelfAndSub: function(idStr, classSel) {
+        _selectorSelfAndSub: function (idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-        _removeContent: function(source) {
+        _removeContent: function (source) {
             var manager = this._getContentManager();
             $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
-         },
-        _addContent: function(source, layerTitle, content) {
+        },
+        _addContent: function (source, layerTitle, content) {
             var manager = this._getContentManager();
             var headerId = manager.headerId(source.id);
             var contentId = manager.contentId(source.id);
@@ -352,7 +356,7 @@
                 .empty().append(content);
             initTabContainer(this.element);
         },
-        _printContent: function() {
+        _printContent: function () {
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var el = $('.js-content-content.active,.active .js-content-content', this.element);
             var printContent;
@@ -367,97 +371,102 @@
         },
         _setupMapClickHandler: function () {
             var self = this;
-            self.target.element.on('mbmapclick', function(event, data) {
+            self.target.element.on('mbmapclick', function (event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
         },
 
-        _createLayerStyle: function() {
-            this.featureInfoStyle = new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(255, 255, 255, 1)',
-                    lineCap: 'round',
-                    width: 1,
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 165, 0, 0.4)'
-                })
-            });
+        _createLayerStyle: function () {
+            this.featureInfoStyle = function (feature) {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 255, 255, 1)',
+                        lineCap: 'round',
+                        width: 1,
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 165, 0, 0.4)'
+                    })
+                });
+            };
 
-            this.featureInfoStyle_hover = new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(255, 255, 255, 1)',
-                    lineCap: 'round',
-                    width: 1,
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 0, 0, 0.7)'
-                }),
-                zIndex: 1000
-            });
+
+            this.featureInfoStyle_hover = function (feature) {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 255, 255, 1)',
+                        lineCap: 'round',
+                        width: 1,
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 0, 0, 0.7)'
+                    }),
+                    zIndex: 1000
+                });
+            }
 
         },
 
 
-        _initializeFeatureInfoLayer: function(doc) {
+        _initializeFeatureInfoLayer: function (doc) {
             var widget = this;
 
             var nodes = doc.querySelectorAll("div.geometryElement");
-            var ewkts =  Array.from(nodes).map(function(node) {
+            var ewkts = Array.from(nodes).map(function (node) {
                 return {
-                    srid : node.getAttribute("data-srid"),
-                    wkt : node.getAttribute("data-geometry"),
+                    srid: node.getAttribute("data-srid"),
+                    wkt: node.getAttribute("data-geometry"),
                     id: node.getAttribute('id'),
                 };
             });
 
             widget._populateFeatureInfoLayer(ewkts);
 
-            Array.from(nodes).forEach(function(node) {
-                node.addEventListener("mouseover", function(event) {
+            Array.from(nodes).forEach(function (node) {
+                node.addEventListener("mouseover", function (event) {
                     var id = node.getAttribute("id");
                     widget._getFeatureById(id).setStyle(widget.featureInfoStyle_hover);
                 });
-                node.addEventListener("mouseout", function(event) {
+                node.addEventListener("mouseout", function (event) {
                     var id = node.getAttribute("id");
                     widget._getFeatureById(id).setStyle(undefined);
                 });
             });
         },
 
-        _populateFeatureInfoLayer: function(ewkts) {
-          var features = ewkts.map(function(ewkt) {
-              var feature = Mapbender.Model.parseWktFeature(ewkt.wkt,ewkt.srid);
-              feature.set("id",ewkt.id);
-              return feature;
-          });
+        _populateFeatureInfoLayer: function (ewkts) {
+            var features = ewkts.map(function (ewkt) {
+                var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
+                feature.set("id", ewkt.id);
+                return feature;
+            });
 
-          this.featureInfoLayer.getSource().clear();
-          this.featureInfoLayer.getSource().addFeatures(features);
+            this.featureInfoLayer.getSource().clear();
+            this.featureInfoLayer.getSource().addFeatures(features);
 
         },
 
-        _createHighlightControl: function() {
+        _createHighlightControl: function () {
 
             var widget = this;
             var map = this.target.map.olMap;
 
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
-                layers: function() {
+                layers: function () {
                     return widget.featureInfoLayer
                 },
-                filter: function(feature) {
+                filter: function (feature) {
                     return true;
                 },
                 multi: true
             });
 
             highlightControl.on('select', function (e) {
-                e.deselected.forEach(function(feature) {
+                e.deselected.forEach(function (feature) {
                     feature.setStyle(undefined);
                 });
-                e.selected.forEach(function(feature) {
+                e.selected.forEach(function (feature) {
                     feature.setStyle(widget.featureInfoStyle_hover);
                 });
             });
@@ -467,9 +476,9 @@
 
         },
 
-        _getFeatureById: function(id) {
-            return this.featureInfoLayer.getSource().getFeatures().find(function(feature) {
-               return feature.get("id") == id;
+        _getFeatureById: function (id) {
+            return this.featureInfoLayer.getSource().getFeatures().find(function (feature) {
+                return feature.get("id") == id;
             });
         },
 

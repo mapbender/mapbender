@@ -276,6 +276,7 @@ mb:
           deactivateonclose: ~
           showoriginal: ~
           onlyvalid: ~
+          highlightlayer: 'Highlighting'
       printclient:
         label:
           autoopen: ~

@@ -276,6 +276,8 @@ mb:
           deactivateonclose: 'Disattiva in chiusura'
           showoriginal: 'Mostra originale'
           onlyvalid: 'Solo per le feature valide'
+          highlightlayer: 'Highlighting'
+
       printclient:
         label:
           autoopen: 'Apertura automatica'
