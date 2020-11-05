@@ -16,24 +16,10 @@
         z-index: 1;
         position: relative;
       }
-      &.current > a{
-        background-color:  #47791f;
-      }
       > a {
-        border-radius: 0px;
+        border-radius: 0;
         @extend .button;
         float: left;
-        > span.close {
-          font-size: 0;
-          display: inline-block;
-          margin-left: 6px;
-          margin-right: -4px;
-          &:after {
-            font-family: FontAwesome;
-            font-size: 13px;
-            content: "\f00d";
-          }
-        }
       }
     }
   }
