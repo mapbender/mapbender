@@ -15,23 +15,6 @@
     outline: none;
   }
 }
-.buttonColors {
-  color:$lightFontColor;
-  background-color:$buttonFirstColor;
-  border-color: darken($buttonSecondColor, 5%);
-  &:hover{
-    background-color:darken($buttonFirstColor, 5%);
-  }
-}
-.buttonColorsCritical {
-  color:$lightFontColor;
-  background-color:$buttonCriticalFirstColor;
-  border-color: darken($buttonCriticalSecondColor, 5%);
-  &:hover{
-    background-color:darken($buttonCriticalFirstColor, 5%);
-  }
-}
-
 .button{
   padding:($space/4) ($space/2);
   height: 24px;
@@ -40,24 +23,33 @@
   margin:0;
   text-decoration: none;
 
-  border:1px solid darken($buttonSecondColor, 5%);
-  color:$lightFontColor;
-  background-color:$buttonFirstColor;
+  border-width: 1px;
+  border-style: solid;
   @extend .buttonCore;
   @include transition(all, 0.3s, ease-in-out);
 
-  &:hover{background-color:darken($buttonFirstColor, 5%);}
   &:focus {
     box-shadow: 0 0 5px $buttonFirstActiveColor;
   }
-
-  &.critical{
-    border:1px solid darken($buttonCriticalSecondColor, 5%);
-    color:$lightFontColor;
-    background-color:$buttonCriticalFirstColor;
-    &:hover{background-color:darken($buttonCriticalFirstColor, 5%);}
+}
+.button, .buttonColors {
+  color:$lightFontColor;
+  background-color:$buttonFirstColor;
+  border-color: darken($buttonSecondColor, 5%);
+  &:hover{
+    background-color:darken($buttonFirstColor, 5%);
   }
 }
+
+.button.critical, .buttonColorsCritical {
+  color:$lightFontColor;
+  background-color:$buttonCriticalFirstColor;
+  border-color: darken($buttonCriticalSecondColor, 5%);
+  &:hover{
+    background-color:darken($buttonCriticalFirstColor, 5%);
+  }
+}
+
 .linkButton {
   @extend .smallText;
   user-select: none;
