@@ -19,7 +19,7 @@
     position:relative;
     bottom:-$tabPopHeight*2;
     @extend .smallText;
-    @include noUserSelect();
+    user-select: none;
 
     &:hover{bottom:-$tabPopHeight;}
 
@@ -27,9 +27,7 @@
       cursor:default;
       color:$darkFontColor;
       bottom:-$tabPopHeight;
-      height:$tabHeight;
       z-index: 30;
-      background-color:$contentColor;
     }
   }
   .container{
