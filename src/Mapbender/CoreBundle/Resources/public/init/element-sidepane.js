@@ -28,7 +28,8 @@
         });
     }
     function addTabContainerElementEvents() {
-        var $panels = $('>.container[id]', this);
+        var $panels = $('>.container[id]', this)
+        var $buttons = $('>.tabs >.tab', this);
         var currentPanel = null;
         function setCurrentTab() {
             var panelId = this.id.replace('tab', 'container');
@@ -45,9 +46,27 @@
         $('>.tabs >.tab.active:first', this).each(setCurrentTab);
         // follow further click events
         $('>.tabs', this).on('click', '>.tab[id]', setCurrentTab);
+        var updateResponsive = function() {
+            var $activeButton = $buttons.filter('.active').first();
+            if ($activeButton.length && !$($activeButton).is(':visible')) {
+                var $firstVisibleButton = $buttons.filter(':visible').first();
+                if ($firstVisibleButton.length) {
+                    // NOTE: toggles active classes and implicitly ends up calling notifyElements
+                    // @see initTabContainer
+                    $firstVisibleButton.click();
+                }
+            }
+        };
+        window.addEventListener('resize', function() {
+            // Switch active "tab" if screen size change caused current active "tab" to visually disappear
+            updateResponsive();
+        });
+        // Also select a different active "tab" if default active "tab" is already invisible on initialization
+        updateResponsive();
     }
 
     function addAccordionElementEvents() {
+        var $headers = $('>.accordion', this);
         var $panels = $('>.container-accordion', this);
         function panelFromHeader($panels, header) {
             var panelId = header && header.id
@@ -56,14 +75,14 @@
         }
 
         // set initial active panel from .active class
-        var initialHeader = $('>.accordion.active:first', this).get(0);
+        var initialHeader = $('>.accordion.active', this).get(0);
         if (initialHeader) {
             var initialPanel = panelFromHeader($panels, initialHeader);
             if (initialPanel) {
                 notifyElements(initialPanel, true);
             }
         }
-        $('>.accordion', this).on('selected', function(e, tabData) {
+        $headers.on('selected', function(e, tabData) {
             var activatedHeader = tabData.current && tabData.current.get(0);
             var deactivatedHeader = tabData.previous && tabData.previous.get(0);
             var activatedPanel = panelFromHeader($panels, activatedHeader);
@@ -75,6 +94,23 @@
                 notifyElements(activatedPanel, true);
             }
         });
+        var updateResponsive = function() {
+            var $activeHeader = $headers.filter('.active').first();
+            if (!$activeHeader.length || !$activeHeader.is(':visible')) {
+                var $firstVisibleHeader = $headers.filter(':visible').first();
+                if ($firstVisibleHeader.length) {
+                    // NOTE: toggles active classes and implicitly ends up calling notifyElements
+                    // @see initTabContainer
+                    $firstVisibleHeader.click();
+                }
+            }
+        };
+        window.addEventListener('resize', function() {
+            // Switch active panel if screen size change caused current active panel to visually disappear
+            updateResponsive();
+        });
+        // Also select a different active panel if default active panel is already invisible on initialization
+        updateResponsive();
     }
 
     function processSidePane(node) {
