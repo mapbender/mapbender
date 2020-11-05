@@ -391,62 +391,13 @@
                     width: 1,
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(255, 0, 0, 1)'
+                    color: 'rgba(255, 0, 0, 0.7)'
                 }),
                 zIndex: 1000
             });
 
         },
 
-        _populateFeatureInfoLayer: function(ewkts) {
-          var features = ewkts.map(function(ewkt) {
-              var feature = Mapbender.Model.parseWktFeature(ewkt.wkt,ewkt.srid);
-              feature.set("id",ewkt.id);
-              return feature;
-          });
-
-          this.featureInfoLayer.getSource().clear();
-          this.featureInfoLayer.getSource().addFeatures(features);
-
-        },
-
-        _createHighlightControl: function() {
-
-            var widget = this;
-            var map = this.target.map.olMap;
-            widget.highlightedFeatures = [];
-
-            map.on('pointermove', function (e) {
-
-                if( widget.highlightedFeatures.length > 0) {
-                    widget.highlightedFeatures.forEach(function(feature) {
-                        feature.setStyle(undefined);
-                    });
-                }
-
-                map.forEachFeatureAtPixel(e.pixel, function (f) {
-                    widget._highlightFeature(f);
-                });
-
-
-            });
-        },
-
-
-        _highlightFeature: function(feature) {
-            var widget = this;
-            if (widget.featureInfoLayer.getSource().getFeatures().includes(feature)) {
-                widget.highlightedFeatures.push(feature);
-                feature.setStyle(widget.featureInfoStyle_hover);
-
-            }
-        },
-
-        _getFeatureById: function(id) {
-            return this.featureInfoLayer.getSource().getFeatures().find(function(feature) {
-               return feature.get("id") == id;
-            });
-        },
 
         _initializeFeatureInfoLayer: function(doc) {
             var widget = this;
@@ -465,14 +416,64 @@
             Array.from(nodes).forEach(function(node) {
                 node.addEventListener("mouseover", function(event) {
                     var id = node.getAttribute("id");
-                    widget._highlightFeature(widget._getFeatureById(id));
+                    widget._getFeatureById(id).setStyle(widget.featureInfoStyle_hover);
                 });
                 node.addEventListener("mouseout", function(event) {
                     var id = node.getAttribute("id");
                     widget._getFeatureById(id).setStyle(undefined);
                 });
             });
-        }
+        },
+
+        _populateFeatureInfoLayer: function(ewkts) {
+          var features = ewkts.map(function(ewkt) {
+              var feature = Mapbender.Model.parseWktFeature(ewkt.wkt,ewkt.srid);
+              feature.set("id",ewkt.id);
+              return feature;
+          });
+
+          this.featureInfoLayer.getSource().clear();
+          this.featureInfoLayer.getSource().addFeatures(features);
+
+        },
+
+        _createHighlightControl: function() {
+
+            var widget = this;
+            var map = this.target.map.olMap;
+
+            var highlightControl = new ol.interaction.Select({
+                condition: ol.events.condition.pointerMove,
+                layers: function() {
+                    return widget.featureInfoLayer
+                },
+                filter: function(feature) {
+                    return true;
+                },
+                multi: true
+            });
+
+            highlightControl.on('select', function (e) {
+                e.deselected.forEach(function(feature) {
+                    feature.setStyle(undefined);
+                });
+                e.selected.forEach(function(feature) {
+                    feature.setStyle(widget.featureInfoStyle_hover);
+                });
+            });
+
+            map.addInteraction(highlightControl);
+            highlightControl.setActive(true);
+
+        },
+
+        _getFeatureById: function(id) {
+            return this.featureInfoLayer.getSource().getFeatures().find(function(feature) {
+               return feature.get("id") == id;
+            });
+        },
+
 
     });
+
 })(jQuery);
