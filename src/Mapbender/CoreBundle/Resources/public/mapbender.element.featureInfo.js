@@ -192,30 +192,10 @@
                         doc.close();
 
                         doc.addEventListener('readystatechange', function(event) {
-                            if (document.readyState === "complete") {
-                               var nodes = doc.querySelectorAll("div.geometryElement");
-                               var ewkts =  Array.from(nodes).map(function(node) {
-                                   return {
-                                       srid : node.getAttribute("data-srid"),
-                                       wkt : node.getAttribute("data-geometry"),
-                                       id: node.getAttribute('id'),
-                                   };
-                                });
-
-                               self._populateFeatureInfoLayer(source,ewkts);
-
-                               Array.from(nodes).forEach(function(node) {
-                                   node.addEventListener("mouseover", function(event) {
-                                       var id = node.getAttribute("id");
-                                       self._highlightFeature(self._getFeatureById(id));
-                                   });
-                                   node.addEventListener("mouseout", function(event) {
-                                       var id = node.getAttribute("id");
-                                       self._getFeatureById(id).setStyle(undefined);
-                                   });
-                               });
+                            if (doc.readyState === "complete") {
+                                self._initializeFeatureInfoLayer(doc);
                             }
-                        }, { once: true });
+                        });
 
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
@@ -418,7 +398,7 @@
 
         },
 
-        _populateFeatureInfoLayer: function(source,ewkts) {
+        _populateFeatureInfoLayer: function(ewkts) {
           var features = ewkts.map(function(ewkt) {
               var feature = Mapbender.Model.parseWktFeature(ewkt.wkt,ewkt.srid);
               feature.set("id",ewkt.id);
@@ -458,12 +438,39 @@
             if (widget.featureInfoLayer.getSource().getFeatures().includes(feature)) {
                 widget.highlightedFeatures.push(feature);
                 feature.setStyle(widget.featureInfoStyle_hover);
+
             }
         },
 
         _getFeatureById: function(id) {
             return this.featureInfoLayer.getSource().getFeatures().find(function(feature) {
                return feature.get("id") == id;
+            });
+        },
+
+        _initializeFeatureInfoLayer: function(doc) {
+            var widget = this;
+
+            var nodes = doc.querySelectorAll("div.geometryElement");
+            var ewkts =  Array.from(nodes).map(function(node) {
+                return {
+                    srid : node.getAttribute("data-srid"),
+                    wkt : node.getAttribute("data-geometry"),
+                    id: node.getAttribute('id'),
+                };
+            });
+
+            widget._populateFeatureInfoLayer(ewkts);
+
+            Array.from(nodes).forEach(function(node) {
+                node.addEventListener("mouseover", function(event) {
+                    var id = node.getAttribute("id");
+                    widget._highlightFeature(widget._getFeatureById(id));
+                });
+                node.addEventListener("mouseout", function(event) {
+                    var id = node.getAttribute("id");
+                    widget._getFeatureById(id).setStyle(undefined);
+                });
             });
         }
 
