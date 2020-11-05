@@ -38,11 +38,6 @@
         }
         .accordion-cell {
           padding-top: 0;
-          iframe {
-            // Prevent doubled scrollbars Popup + iframe
-            height: 98%;
-            width: 98%;
-          }
         }
         .container-accordion.active {
           // avoid cutting off / producing vertical scroll from not using all space in the cell
