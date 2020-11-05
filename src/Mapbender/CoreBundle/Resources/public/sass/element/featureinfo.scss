@@ -60,28 +60,12 @@
   .mb-element-featureinfo {
     height: 90%;
     > .tabContainer {
-      height: 100%;
-      position: relative;
       > .tabs {
-        display: block;
         > li.tab {
-          margin-right: -1px;
           font-size: 13px;
-          color: #707070;
-          background-color: #fff;
-          &.active{
-            bottom: -1px;
-          }
         }
         &:after {
           clear: both;
-        }
-      }
-
-      // container js-content js-content-content active
-      > .container {
-        > &.active {
-          bottom: -1px;
         }
       }
     }

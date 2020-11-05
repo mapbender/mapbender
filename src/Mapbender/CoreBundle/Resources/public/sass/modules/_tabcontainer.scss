@@ -1,13 +1,15 @@
 .tabContainer{
-  $tabPopHeight:3px;
-  $tabHeight:34px;
-
+  .tabs {
+    // Guarantee enough space so our tab.active can move up without clipping
+    padding-top: 1px;
+  }
   .tab{
-    margin-right:3px;
-    color:$middleFontColor;
+    margin-right: -1px;
+    color: $darkFontColor;
     background-color:$contentColor;
     cursor:pointer;
-    height:$tabHeight;
+    line-height: 3;
+    position: relative; // for z-index
     z-index:10;
     border:{
       left:solid 1px $thirdColor;
@@ -15,27 +17,29 @@
       right:solid 1px $thirdColor;
     }
     float:left;
-    padding:3px 10px 3px 10px;
-    position:relative;
-    bottom:-$tabPopHeight*2;
+    padding: 0 0.75em;;
     @extend .smallText;
     user-select: none;
 
-    &:hover{bottom:-$tabPopHeight;}
-
-    &.active{
-      cursor:default;
-      color:$darkFontColor;
-      bottom:-$tabPopHeight;
+    &.active {
+      // Stretch up
+      padding-top: 1px;
+      margin-top: -1px;
+      // Stretch down to cover container border
+      padding-bottom: 3px;
+      margin-bottom: -3px;
       z-index: 30;
+    }
+    &:hover, &:focus {
+      outline: none;
     }
   }
   .container{
     clear:left;
     display:none;
     padding:$space;
-    z-index:20;
     position:relative;
+    z-index:20;
     background-color:$contentColor;
     border:{
       top:solid 3px $thirdColor;
@@ -62,17 +66,18 @@
     }
   }
   .container{
+    &:not(.active) {
+      display: none;
+    }
     border-top:dashed 1px $thirdColor;
     margin-top:$space;
     clear:left;
-    display:none;
     padding: 0px;
     padding-top:$space;
     padding-bottom:$space;
     z-index:20;
     position:relative;
     width: 100%;
-    &.active{display:block;}
   }
 }
 

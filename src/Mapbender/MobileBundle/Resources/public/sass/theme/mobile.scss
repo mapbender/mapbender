@@ -69,9 +69,14 @@
 
     &.active{
       @include box-shadow(1px 0px 1px rgba(0, 0, 0, 0.1));
+      // Undo container border overlapping hack on active tab (our container has no border)
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
   }
-  .container{
+  .container {
+    padding:0;
+    border:none;
     @include border-bottom-radius($radius);
     @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
 
@@ -207,14 +212,6 @@ body.mobile-template {
     line-height: 2.2;
   }
 }
-/* -------------------------------------------------------------- FEATUREINFO */
-.mb-element-featureinfo {
-  .tabContainer .container {
-    padding:0;
-    border:none;
-  }
-}
-/* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-zoombar{
   z-index: 4;
   &.right-top{@include absolute($space $space '' '');}
