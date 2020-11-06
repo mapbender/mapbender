@@ -358,6 +358,24 @@ $(function() {
         });
         return false;
     });
-
-
+    $('.elementsTable').on('click', '.screentype-icon[data-screentype]', function() {
+        var $target = $(this);
+        var $group = $target.closest('.screentypes');
+        var $other = $('.screentype-icon[data-screentype]', $group).not($target);
+        var newScreenType;
+        if (!$target.hasClass('disabled')) {
+            newScreenType = $other.attr('data-screentype');
+        } else {
+            newScreenType = 'all';
+        }
+        $.ajax($group.attr('data-url'), {
+            method: 'POST',
+            data: {
+                screenType: newScreenType
+            }
+        }).then(function() {
+            $other.removeClass('disabled');
+            $target.toggleClass('disabled');
+        });
+    });
 });

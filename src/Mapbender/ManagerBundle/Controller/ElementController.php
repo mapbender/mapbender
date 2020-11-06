@@ -353,6 +353,26 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
+     * @ManagerRoute("/element/{element}/screentype", methods={"POST"})
+     * @param Request $request
+     * @param Element $element
+     * @return Response
+     */
+    public function screentypeAction(Request $request, Element $element)
+    {
+        // @todo: grants check on application
+        $application = $element->getApplication();
+        $newValue = $request->request->get('screenType');
+        $em = $this->getEntityManager();
+        $em->persist($element);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime());
+        $element->setScreenType($newValue);
+        $em->flush();
+        return new Response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
      * @return ElementFactory
      */
     protected function getFactory()

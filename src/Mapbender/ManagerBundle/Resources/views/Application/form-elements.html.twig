@@ -40,7 +40,7 @@
                            data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
                            data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
                   </div>
-                  <span class="screentypes">
+                  <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
                     {%- set _element_screentype = element.getScreenType() -%}
                     <input type="hidden" value="{{ _element_screentype }}">
                     {# @todo: tooltips at least English + German #}
