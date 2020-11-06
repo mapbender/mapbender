@@ -360,8 +360,8 @@ class ElementController extends ApplicationControllerBase
      */
     public function screentypeAction(Request $request, Element $element)
     {
-        // @todo: grants check on application
         $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
         $newValue = $request->request->get('screenType');
         $em = $this->getEntityManager();
         $em->persist($element);
