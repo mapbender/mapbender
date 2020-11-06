@@ -242,9 +242,15 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function getElementVisibilityClass(Entity\Element $element)
     {
-        // @todo screen-type visibility filter
-        // if ($element->getScrrenTypes !== 'both') return '...';
-        return null;
+        switch ($element->getScreenType()) {
+            case Entity\Element::SCREENTYPE_ALL:
+            default:
+                return null;
+            case Entity\Element::SCREENTYPE_MOBILE_ONLY:
+                return 'hide-screentype-desktop';
+            case Entity\Element::SCREENTYPE_DESKTOP_ONLY:
+                return 'hide-screentype-mobile';
+        }
     }
 
     /**
