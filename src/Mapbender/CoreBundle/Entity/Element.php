@@ -76,8 +76,11 @@ class Element
     /** @var string[]|null */
     protected $yamlRoles;
 
-    /** @todo: declare database column */
-    /** @var string */
+    /**
+     * Allowable screen type
+     * @var string
+     * @ORM\Column(type="string", length=7, options={"default": "all"})
+     */
     protected $screenType = 'all';  // = self::SCREENTYPE_ALL
 
     /**
