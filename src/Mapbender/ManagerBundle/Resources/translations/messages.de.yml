@@ -27,6 +27,10 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     confirm_form_discard: Änderungen verwerfen?
+    element:
+      screentype:
+        mobile: Auf Mobilgeräten anzeigen
+        desktop: Auf großen Bildschirmen anzeigen
     sourceinstance:
       embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
       convert_to_reusable: In freie Instanz umwandeln
