@@ -142,15 +142,17 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     protected function processElementDefinition($definition)
     {
+        $nonConfigKeys = array(
+            'class',
+            'title',
+            'screenType',
+        );
         // @todo: look up and adjust migrated class names as well
         if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
             $className = $definition['class'];
             $dummyEntity = new Element();
-            $nonConfigs = array_intersect_key($definition, array(
-                'class' => true,
-                'title' => true,
-            ));
+            $nonConfigs = array_intersect_key($definition, array_flip($nonConfigKeys));
             $configBefore = array_diff_key($definition, $nonConfigs);
             $dummyEntity->setConfiguration($configBefore);
             $className::updateEntityConfig($dummyEntity);
@@ -158,10 +160,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             $this->onElementConfigChange($nonConfigs['class'], $configBefore, $configAfter);
             $definition = array_replace($configAfter, $nonConfigs);
         }
-        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip(array(
-            'class',
-            'title',
-        ))));
+        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip($nonConfigKeys)));
         return $definition;
     }
 
