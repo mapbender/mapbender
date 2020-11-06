@@ -69,14 +69,19 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
     {
         $title = ArrayUtil::getDefault($configuration, 'title', false);
         $className = $configuration['class'];
+        $screenType = ArrayUtil::getDefault($configuration, 'screenType', false);
         unset($configuration['class']);
         unset($configuration['title']);
+        unset($configuration['screenType']);
         try {
             $element = $this->factory->newEntity($className, $region);
             $element->setId($id);
             $this->factory->configureElement($element, $configuration);
             if ($title) {
                 $element->setTitle($title);
+            }
+            if ($screenType) {
+                $element->setScreenType($screenType);
             }
             return $element;
         } catch (ElementErrorException $e) {

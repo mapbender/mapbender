@@ -16,6 +16,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Element
 {
+    const SCREENTYPE_ALL = 'all';
+    const SCREENTYPE_MOBILE_ONLY = 'mobile';
+    const SCREENTYPE_DESKTOP_ONLY = 'desktop';
 
     /**
      * @var integer
@@ -72,6 +75,10 @@ class Element
 
     /** @var string[]|null */
     protected $yamlRoles;
+
+    /** @todo: declare database column */
+    /** @var string */
+    protected $screenType = 'all';  // = self::SCREENTYPE_ALL
 
     /**
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
@@ -233,6 +240,31 @@ class Element
     public function setYamlRoles($yamlRoles)
     {
         $this->yamlRoles = $yamlRoles;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScreenType()
+    {
+        return $this->screenType;
+    }
+
+    /**
+     * @param string $screenType
+     * @throws \InvalidArgumentException
+     */
+    public function setScreenType($screenType)
+    {
+        switch ($screenType) {
+            default:
+                throw new \InvalidArgumentException("Unsupported screen type value " . print_r($screenType, true));
+            case self::SCREENTYPE_ALL:
+            case self::SCREENTYPE_DESKTOP_ONLY:
+            case self::SCREENTYPE_MOBILE_ONLY:
+                $this->screenType = $screenType;
+                break;
+        }
     }
 
     /**
