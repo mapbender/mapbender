@@ -288,6 +288,9 @@
   .typeColumn, .titleColumn {width: 49%;}
 
   .placeholderRow{height:$space;}
+  .screentype-icon.disabled {
+    opacity: 0.3;
+  }
 }
 
 .layersetTable{
