@@ -186,7 +186,8 @@
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                    var iframe = $('<iframe>');
+                    data = "<script type='text/javascript'> window.parent = null; window.top = null; </script>"+data;
+                    var iframe = $('<iframe sandbox="allow-same-origin allow-scripts">');
                     // use 'one' to prevent capturing load event on deactivating featureinfo
                     iframe.one('load', function () {
                         var doc = iframe.get(0).contentWindow.document;
