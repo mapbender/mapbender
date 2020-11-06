@@ -242,6 +242,10 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function getElementVisibilityClass(Entity\Element $element)
     {
+        // Allow screenType filtering only on current map engine
+        if ($element->getApplication()->getMapEngineCode() === Application::MAP_ENGINE_OL2) {
+            return null;
+        }
         switch ($element->getScreenType()) {
             case Entity\Element::SCREENTYPE_ALL:
             default:

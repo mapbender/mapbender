@@ -322,6 +322,8 @@ class ApplicationController extends WelcomeController
             'template_name'       => $templateClass::getTitle(),
             'screenshot'          => $screenShotUrl,
             'screenshot_filename' => $screenShot,
+            // Allow screenType filtering only on current map engine
+            'allow_screentypes' => $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
         ));
     }
 
