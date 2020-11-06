@@ -44,9 +44,9 @@
                     {%- set _element_screentype = element.getScreenType() -%}
                     <input type="hidden" value="{{ _element_screentype }}">
                     {# @todo: tooltips at least English + German #}
-                    {# NOTE: .fa-mobile-phone is FontAwesome 4 only; .fa-mobile-alt is FontAwesome 5 only #}
-                    <i data-screentype="mobile" class="screentype-icon fa fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}"></i>
-                    <i data-screentype="desktop" class="screentype-icon fa fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}"></i>
+
+                    <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-fw fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}"></i>
+                    <i data-screentype="desktop" class="screentype-icon fa fa-fw fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}"></i>
                   </span>
                   <span class="iconEdit editElement hover-highlight-effect"
                         title="{{"mb.manager.admin.element.edit"|trans}}  {{element.title}}"
