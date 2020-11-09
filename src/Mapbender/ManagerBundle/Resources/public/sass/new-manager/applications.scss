@@ -1,0 +1,218 @@
+@import url("components/open-sans/open-sans.css");
+@import url("components/bootstrap/css/bootstrap.min.css");
+@import "libs/icons";
+
+
+// @import "bundles/mapbendermanager/sass/element/form.scss";
+
+@import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
+
+/* Old class deleted: 
+
+.leftPane
+.navItem
+.navItemLevel2
+.navLevel1
+
+
+*/
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Ubuntu";
+}
+
+
+.navigation-bar {
+    border-bottom: 1px solid #ebebeb;
+    display: flex;
+    flex-direction: row;
+    padding-top: 3px;
+    // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+
+
+
+    .logo-container {
+        // border: 1px solid red;
+       
+        padding: 5px;
+
+        .logo {
+            width: 100px;
+        }
+
+    }
+}
+
+.navigation-list-container {
+    // border: 1px solid black;
+    width: 60%;
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    left: 10%;
+    
+    .nav-main-items {
+        color: #222222;
+        font-size: 20px;
+        margin: 1% 2%;
+        list-style-type: none;
+
+        
+    }
+}
+
+.sub-nav-item {
+    // border: 1px solid black;
+    display: none;
+}
+
+.nav-main-items:hover .sub-nav-item{
+    display: block;
+    position: absolute;
+    z-index: 5;
+}
+
+
+// .navigation-list ul:nth-child(2){
+//     border: 1px solid red;
+//     position: absolute;
+//     top: 100%;
+//     right: 0;
+//     width: 100%;
+//     // display: flex;
+//     display: none;
+//     flex-direction: row;
+//     justify-content: center;
+
+// }
+
+
+
+
+.account-bar-container {
+    // border: 2px solid blue;
+    width: 10%;
+    position: absolute;
+    right: 8%;
+    top: 1%;
+}
+
+.account-menu li{
+    list-style-type: none;
+}
+
+.sub-acc-nav {
+    display: none;
+}
+
+.account-open:hover .sub-acc-nav {
+    display: block;
+}
+
+
+.content{
+    // border: 2px solid green;
+    margin-top: 2%;
+}
+
+.filter-input-container {
+    // border: 2px solid #222222;
+    position: relative;
+    left: 60%;
+    box-sizing: border-box;
+    width: 14%;
+    padding: 1%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+}
+
+.listFilterInput {
+    border: none;
+    border-bottom: 1px solid black;
+    opacity: 0.4;
+}
+
+.listFilterContainer{
+    // border: 2px solid blue;
+    width: 50%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    left: 25%;
+    margin-top: 8%;
+}
+.filterItem{
+    // border: 2px solid green;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 1%;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+}
+
+.list-content-container {
+    // border: 2px solid cyan;
+    width: 85%;
+    display: flex;
+    // flex-direction: row;
+    
+}
+
+.text-content {
+    // border: 2px solid red;
+    margin: 0 1%;
+    flex-grow: 3;
+}
+
+.button-group{
+    // border: 2px solid green;    
+    display: flex;
+    flex-grow: 2;
+    justify-content: flex-end;
+}
+
+.button-group a {
+    margin: 0 6px;
+    font-size: 20px;
+    color: #222222;
+}
+.button-group span {
+    margin: 0 6px;
+    font-size: 20px
+}
+
+.title {
+    font-size: 2em;
+    color: #222222;
+    font-weight: 500;
+}
+
+
+.content-title {
+    // border: 2px solid palevioletred;
+    width: 20%;
+    position: relative;
+    left: 25%;
+}
+
+.underline-title {
+    width: 130px;
+    height: 5px;
+    background-color: #079ee0;
+    position: relative;
+    left: 25%;
+    border-radius: 30px;
+}
+
+
+// new application
+
+.dropdownValue, .dropdownList {
+    display: none;
+}

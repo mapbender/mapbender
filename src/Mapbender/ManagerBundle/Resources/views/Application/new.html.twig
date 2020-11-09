@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block manager_content %}
+  <div class="container">
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
@@ -41,4 +42,5 @@
 
     {{ form_row(form._token) }}
     {{ form_end(form, {"render_rest": false}) }}
+  </div>
 {% endblock %}
