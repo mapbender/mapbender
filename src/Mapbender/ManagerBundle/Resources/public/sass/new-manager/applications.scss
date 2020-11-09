@@ -216,3 +216,39 @@
 .dropdownValue, .dropdownList {
     display: none;
 }
+
+.containerSecurity {
+    display: none;
+}
+
+.container {
+    width: 70%;
+}
+
+.containerMainContent {
+    margin-top: 5%;
+}
+
+.newAppTabs {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    left: 13%;
+
+    li {
+        list-style: none;
+        margin-right: 5%;
+        font-size: 20px;
+    }
+}
+
+.applicationTabContainer {
+    // border: 1px solid green;
+}
+
+.containerBaseData {
+    // border: 2px solid red;
+    position: relative;
+    left: 13%;
+    margin-top: 7%;
+}
