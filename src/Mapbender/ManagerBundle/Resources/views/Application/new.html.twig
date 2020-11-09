@@ -9,23 +9,23 @@
 {% endblock %}
 
 {% block manager_content %}
-  <div class="container">
+  <div class="container containerMainContent">
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
-      <ul class="tabs">
+      <ul class="newAppTabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
           {% if form.acl is defined %}
             <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
           {% endif %}
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-          <div class="col-xs-8">
+          <div >
             {{ form_row(form.template) }}
             {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
-           <div class="col-xs-4">
+           {# <div class="col-xs-4">
                <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-           </div>
+           </div> #}
       </div>
 
       <div id="containerSecurity" class="container containerSecurity">
