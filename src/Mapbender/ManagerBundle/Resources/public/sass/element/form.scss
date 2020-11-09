@@ -27,7 +27,8 @@
   }
   .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
     width: 70%;
-    color: $secondColor;
+    // color: $secondColor;
+    border: 3px solid red;
 
     .validationMsgBox{
       min-width: 28%;

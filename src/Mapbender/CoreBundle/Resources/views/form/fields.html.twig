@@ -36,7 +36,7 @@
     {% if type != 'hidden'%}
       <div class="inputWrapper {{ block('widget_attribute_class') }}">
         {% spaceless %}
-          <input class="input {% if type != 'file' %}validationInput{% endif %}" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+          <input class="input {% if type != 'file' %}validationInput{% endif %} form-control" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
 
           {% if errors|length > 0 %}
             <span class="validationMsgBox smallText">
@@ -54,6 +54,7 @@
 
     {% else %}
       <input class="hidden" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+      
     {% endif %}
   {% endspaceless %}
 {% endblock form_widget_simple %}
@@ -446,7 +447,9 @@
         <tr class="doNotFilter">
           <th>
             <label for="inputFilterPermission" class="labelInput left">{{"fom.core.fields.filter"|trans}}</label>
+            
             <input id="inputFilterPermission" type="text" class="input left listFilterInput"/>
+            
           </th>
           {% for child in form.ace.vars.prototype %}
             {% if child.vars.attr.class is defined %}
