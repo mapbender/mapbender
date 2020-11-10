@@ -84,26 +84,26 @@ $(function () {
     }
     // init dropdown list --------------------------------------------------------------------
 
-    // function toggleList() {
-    //     fixOptions(this);
-    //     var me = $(this);
-    //     var list = $('.dropdownList', this);
-    //     var opts = $('.hiddenDropdown', this);
-    //     if (list.css("display") === "block") {
-    //         list.hide();
-    //     } else {
-    //         list.one('click', 'li.choice', function (event) {
-    //             var $target = $(this);
-    //             var val = $target.attr('data-value');
-    //             event.stopPropagation();
-    //             var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', opts);
-    //             me.find(".dropdownValue").text(opt.text());
-    //             opts.val(opt.val());
-    //             opts.trigger('change');
-    //             list.hide();
-    //         });
-    //         list.show();
-    //     }
+    function toggleList() {
+        fixOptions(this);
+        var me = $(this);
+        var list = $('.dropdownList', this);
+        var opts = $('.hiddenDropdown', this);
+        if (list.css("display") === "block") {
+            list.hide();
+        } else {
+            list.one('click', 'li.choice', function (event) {
+                var $target = $(this);
+                var val = $target.attr('data-value');
+                event.stopPropagation();
+                var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', opts);
+                me.find(".dropdownValue").text(opt.text());
+                opts.val(opt.val());
+                opts.trigger('change');
+                list.hide();
+            });
+            list.show();
+        }
 
         $(document).one("click", function () {
             list.hide().find("li").off("click", 'li.choice');

@@ -1,10 +1,10 @@
 {% for item in items %}
-<li class="nav-main-items{% if item.active %} activeItem{% endif %}">
+<li class="navMainItems{% if item.active %} activeItem{% endif %}">
   <a class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
 
       {%- set items = item.subroutes  -%}
       {%- if items|length -%}
-      <ul class=" sub-nav-item">
+      <ul class=" subNavItem">
         {{ include('MapbenderManagerBundle:Index:menu-items.html.twig') }}
       </ul>
       {%- endif -%}

@@ -18,7 +18,7 @@
       <span class="iconSearch"></span>
   </div>
 
-    <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
+    <ul id="listFilterApplications" class="container listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
       {% for application in applications %}
         <li class="filterItem">
           <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
@@ -33,9 +33,9 @@
             </div>
           </a>
 
-          <div class="list-content-container">
+          <div class="listContentContainer">
 
-              <div class="text-content">
+              <div class="textContent">
                 <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" 
                   class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}"
                   >
@@ -45,7 +45,7 @@
                 <p class="description"><b> Descriptions:</b> {{ application.description }}</p>
                 </div>
 
-                      <div class="button-group">
+                      <div class="buttonGroup">
                         <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
 
                         {% if is_granted('EDIT', application) %}

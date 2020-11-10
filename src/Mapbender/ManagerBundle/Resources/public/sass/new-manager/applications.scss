@@ -25,7 +25,7 @@
 }
 
 
-.navigation-bar {
+.navigationBar {
     border-bottom: 1px solid #ebebeb;
     display: flex;
     flex-direction: row;
@@ -34,7 +34,7 @@
 
 
 
-    .logo-container {
+    .logoContainer {
         // border: 1px solid red;
        
         padding: 5px;
@@ -46,7 +46,7 @@
     }
 }
 
-.navigation-list-container {
+.navigationListContainer{
     // border: 1px solid black;
     width: 60%;
     display: flex;
@@ -54,7 +54,7 @@
     position: relative;
     left: 10%;
     
-    .nav-main-items {
+    .navMainItems {
         color: #222222;
         font-size: 20px;
         margin: 1% 2%;
@@ -64,12 +64,12 @@
     }
 }
 
-.sub-nav-item {
+.subNavItem {
     // border: 1px solid black;
     display: none;
 }
 
-.nav-main-items:hover .sub-nav-item{
+.navMainItems:hover .subNavItem{
     display: block;
     position: absolute;
     z-index: 5;
@@ -92,7 +92,7 @@
 
 
 
-.account-bar-container {
+.accountBarContainer {
     // border: 2px solid blue;
     width: 10%;
     position: absolute;
@@ -100,15 +100,15 @@
     top: 1%;
 }
 
-.account-menu li{
+.accountMenu li{
     list-style-type: none;
 }
 
-.sub-acc-nav {
+.subAccNav {
     display: none;
 }
 
-.account-open:hover .sub-acc-nav {
+.accountOpen:hover .subAccNav {
     display: block;
 }
 
@@ -116,6 +116,29 @@
 .content{
     // border: 2px solid green;
     margin-top: 2%;
+
+    .title {
+        font-size: 2em;
+        color: #222222;
+        font-weight: 500;
+    }
+    
+    
+    .contentTitle {
+        // border: 2px solid palevioletred;
+        width: 20%;
+        position: relative;
+        left: 25%;
+    }
+    
+    .underlineTitle {
+        width: 130px;
+        height: 5px;
+        background-color: #079ee0;
+        position: relative;
+        left: 25%;
+        border-radius: 30px;
+    }
 }
 
 .filter-input-container {
@@ -136,27 +159,54 @@
     opacity: 0.4;
 }
 
+
 .listFilterContainer{
     // border: 2px solid blue;
-    width: 50%;
     position: relative;
     display: flex;
     flex-direction: column;
-    left: 25%;
+    // left: 25%;
     margin-top: 8%;
 }
+
+#listFilterApplications {
+    width: 50%;
+}
+
 .filterItem{
     // border: 2px solid green;
     width: 100%;
     display: flex;
     flex-direction: row;
     margin: 1%;
-    border-radius: 30px;
-    overflow: hidden;
+    padding: 1%;
+    border-radius: 15px;
+    // overflow: hidden;
     box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+
+    .col1 {
+        // border: 2px solid red;
+        position: relative;
+        left: 7%;
+        // border-radius: 15px;
+        
+
+        .cell {            
+            // border: 2px solid red;
+            position: relative;
+            // margin: 10% 15%;
+
+            img {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 15px;
+                  
+            }
+        }
+    }
 }
 
-.list-content-container {
+.listContentContainer {
     // border: 2px solid cyan;
     width: 85%;
     display: flex;
@@ -164,51 +214,30 @@
     
 }
 
-.text-content {
+.textContent {
     // border: 2px solid red;
-    margin: 0 1%;
+    margin: 0 4%;
     flex-grow: 3;
 }
 
-.button-group{
+.buttonGroup{
     // border: 2px solid green;    
     display: flex;
     flex-grow: 2;
     justify-content: flex-end;
 }
 
-.button-group a {
+.buttonGroup a {
     margin: 0 6px;
     font-size: 20px;
     color: #222222;
 }
-.button-group span {
+.buttonGroup span {
     margin: 0 6px;
     font-size: 20px
 }
 
-.title {
-    font-size: 2em;
-    color: #222222;
-    font-weight: 500;
-}
 
-
-.content-title {
-    // border: 2px solid palevioletred;
-    width: 20%;
-    position: relative;
-    left: 25%;
-}
-
-.underline-title {
-    width: 130px;
-    height: 5px;
-    background-color: #079ee0;
-    position: relative;
-    left: 25%;
-    border-radius: 30px;
-}
 
 
 // new application
@@ -218,15 +247,17 @@
 }
 
 .containerSecurity {
-    display: none;
+    display: block;
 }
 
 .container {
     width: 70%;
 }
 
-.containerMainContent {
+#containerMainContent {
+    // border: 2px solid crimson;
     margin-top: 5%;
+    
 }
 
 .newAppTabs {
@@ -248,7 +279,36 @@
 
 .containerBaseData {
     // border: 2px solid red;
+    display: none;
     position: relative;
     left: 13%;
     margin-top: 7%;
+}
+
+.buttonContainerNewApp {
+    // border: 2px solid crimson;
+    width: 50%;
+    position: relative;
+    left: 30%;
+    margin: 15% 0;
+    display: flex;
+    justify-content: flex-end;
+
+
+
+    #buttonCreate {
+        width: 15%;
+        margin: 0 5%;
+    }
+
+    #buttonCancel {
+       width: 15%;
+       
+       a {
+        color: #ffffff;
+        text-decoration: none;
+       }
+    }
+
+
 }
