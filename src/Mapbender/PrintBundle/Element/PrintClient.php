@@ -74,35 +74,56 @@ class PrintClient extends Element implements ConfigMigrationInterface
             "templates" => array(
                 array(
                     'template' => "a4portrait",
-                    "label" => "A4 Portrait")
-                ,
+                    "label" => "A4 Portrait",
+                ),
                 array(
                     'template' => "a4landscape",
-                    "label" => "A4 Landscape")
-                ,
+                    "label" => "A4 Landscape",
+                ),
                 array(
                     'template' => "a3portrait",
-                    "label" => "A3 Portrait")
-                ,
+                    "label" => "A3 Portrait",
+                ),
                 array(
                     'template' => "a3landscape",
-                    "label" => "A3 Landscape")
-                ,
+                    "label" => "A3 Landscape",
+                ),
                 array(
                     'template' => "a4_landscape_offical",
-                    "label" => "A4 Landscape offical"),
+                    "label" => "A4 Landscape offical",
+                ),
                 array(
                     'template' => "a2_landscape_offical",
-                    "label" => "A2 Landscape offical")
+                    "label" => "A2 Landscape offical",
+                ),
             ),
-            "scales" => array(500, 1000, 5000, 10000, 25000),
-            "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
-                array('dpi' => "288", 'label' => "Document (288dpi)")),
+            "scales" => array(
+                500,
+                1000,
+                5000,
+                10000,
+                25000,
+            ),
+            "quality_levels" => array(
+                array(
+                    'dpi' => "72",
+                    'label' => "Draft (72dpi)",
+                ),
+                array(
+                    'dpi' => "288",
+                    'label' => "Document (288dpi)",
+                ),
+            ),
             "rotatable" => true,
             "legend" => true,
             "legend_default_behaviour" => true,
             "optional_fields" => array(
-                "title" => array("label" => 'Title', "options" => array("required" => false)),
+                "title" => array(
+                    "label" => 'Title',
+                    "options" => array(
+                        "required" => false,
+                    ),
+                ),
             ),
             'required_fields_first' => false,
             "replace_pattern" => null,
