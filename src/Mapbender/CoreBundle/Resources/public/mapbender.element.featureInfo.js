@@ -460,7 +460,8 @@
         _getInjectionScript: function() {
             return `<script>
                             // Hack to prevent DOMException when loading jquery
-                            window.history.replaceState = function(){};
+                            var replaceState = window.history.replaceState;
+                            window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };
                             document.addEventListener('DOMContentLoaded', function() {
                                 if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
 
