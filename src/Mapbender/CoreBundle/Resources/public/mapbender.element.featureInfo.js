@@ -187,8 +187,7 @@
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var script = self._getInjectionScript();
-
+                    var script = self.options.highlightLayer ? self._getInjectionScript() : '';
                     var iframe = $('<iframe sandbox="allow-scripts">');
                     iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
