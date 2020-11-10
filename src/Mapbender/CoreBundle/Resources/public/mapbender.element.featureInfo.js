@@ -46,6 +46,8 @@
 
             if (options.highlightLayer) {
 
+                window.addEventListener("message", widget._postMessage.bind(widget));
+
                 this._createLayerStyle();
 
                 this.featureInfoLayer = new ol.layer.Vector({
@@ -185,28 +187,10 @@
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                    data = "<script type='text/javascript'> window.parent = null; window.top = null; </script>"+data;
-                    var iframe = $('<iframe sandbox="allow-same-origin allow-scripts">');
-                    // use 'one' to prevent capturing load event on deactivating featureinfo
-                    iframe.one('load', function () {
-                        var doc = iframe.get(0).contentWindow.document;
-                        doc.open();
-                        doc.write(data);
-                        doc.close();
+                    var script = self._getInjectionScript();
 
-                        doc.addEventListener('readystatechange', function (event) {
-                            if (doc.readyState === "complete") {
-                                if (self.options.highlightLayer) {
-                                    self._initializeFeatureInfoLayer(doc);
-                                }
-                                if (Mapbender.Util.addDispatcher) {
-                                    Mapbender.Util.addDispatcher(doc);
-                                }
-                            }
-                        });
-                        $('body', doc).css("background", "transparent");
-                    });
+                    var iframe = $('<iframe sandbox="allow-scripts">');
+                    iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
                     break;
                 case 'text/plain':
@@ -408,32 +392,22 @@
 
         },
 
-
-        _initializeFeatureInfoLayer: function (doc) {
+        _postMessage: function(message) {
             var widget = this;
+            var data = message.data;
+            if (data.ewkts) {
+                widget._populateFeatureInfoLayer(data.ewkts);
+            } else
+            if (data.hover) {
+                widget._getFeatureById(data.hover).setStyle(widget.featureInfoStyle_hover);
+            } else
+            if (data.unhover) {
+                widget._getFeatureById(data.unhover).setStyle(undefined);
+            }
 
-            var nodes = doc.querySelectorAll("div.geometryElement");
-            var ewkts = Array.from(nodes).map(function (node) {
-                return {
-                    srid: node.getAttribute("data-srid"),
-                    wkt: node.getAttribute("data-geometry"),
-                    id: node.getAttribute('id'),
-                };
-            });
-
-            widget._populateFeatureInfoLayer(ewkts);
-
-            Array.from(nodes).forEach(function (node) {
-                node.addEventListener("mouseover", function (event) {
-                    var id = node.getAttribute("id");
-                    widget._getFeatureById(id).setStyle(widget.featureInfoStyle_hover);
-                });
-                node.addEventListener("mouseout", function (event) {
-                    var id = node.getAttribute("id");
-                    widget._getFeatureById(id).setStyle(undefined);
-                });
-            });
         },
+
+
 
         _populateFeatureInfoLayer: function (ewkts) {
             var features = ewkts.map(function (ewkt) {
@@ -482,6 +456,38 @@
                 return feature.get("id") == id;
             });
         },
+
+        _getInjectionScript: function() {
+            return `<script>
+                            // Hack to prevent DOMException when loading jquery
+                            window.history.replaceState = function(){};
+                            document.addEventListener('DOMContentLoaded', function() {
+                                if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
+
+                                    var origin = '*';
+                                    var nodes = document.querySelectorAll('div.geometryElement');
+                                    var ewkts = Array.from(nodes).map(function (node) {
+                                        return {
+                                            srid: node.getAttribute('data-srid'),
+                                            wkt: node.getAttribute('data-geometry'),
+                                            id: node.getAttribute('id'),
+                                        };
+                                    });
+                                    Array.from(nodes).forEach(function (node) {
+                                        node.addEventListener('mouseover', function (event) {
+                                            var id = node.getAttribute('id');
+                                            window.parent.postMessage({ hover : id },origin);
+                                        });
+                                        node.addEventListener('mouseout', function (event) {
+                                            var id = node.getAttribute('id');
+                                            window.parent.postMessage({ unhover : id },origin);
+                                        });
+                                    });
+                                    window.parent.postMessage({ ewkts :  ewkts }, origin);
+                                }
+                            });
+                            </script>`;
+        }
 
 
     });
