@@ -107,6 +107,8 @@ class PrintClient extends Element implements ConfigMigrationInterface
             'required_fields_first' => false,
             "replace_pattern" => null,
             "file_prefix" => 'mapbender',
+            'renderMode' => 'direct',
+            'queueAccess' => 'global',
         );
     }
 
