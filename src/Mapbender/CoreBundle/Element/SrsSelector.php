@@ -60,9 +60,10 @@ class SrsSelector extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            "tooltip" => "SRS Selector",
+            'tooltip' => static::getClassTitle(),
             'label' => false,
-            "target" => null);
+            "target" => null,
+        );
     }
 
     /**

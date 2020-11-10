@@ -61,7 +61,7 @@ class GpsPosition extends Element implements ConfigMigrationInterface
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'mb.core.gpsposition.class.title',
+            'tooltip' => static::getClassTitle(),
             'label'                 => true,
             'autoStart'             => false,
             'target'                => null,
