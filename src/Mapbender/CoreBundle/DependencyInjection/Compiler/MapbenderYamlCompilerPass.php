@@ -187,7 +187,8 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         if ($removedKeys) {
             $messageParts[] = 'removed ' . implode(', ', $removedKeys);
         }
-        if ($addedKeys) {
+        // Do not warn for added defaults
+        if ($addedKeys && $removedKeys) {
             $messageParts[] = 'added ' . implode(', ', $addedKeys);
         }
         foreach ($changedValueKeys as $k) {
