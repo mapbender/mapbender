@@ -50,6 +50,10 @@ class SimpleSearch extends Element
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
+            'query_ws_replace' => null,
+            'result' => array(
+                'buffer' => 300,
+            )
         );
     }
 
