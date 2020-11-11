@@ -187,7 +187,7 @@
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var script = self.options.highlightLayer ? self._getInjectionScript(source.id) : '';
+                    var script = self._getInjectionScript(source.id);
                     var iframe = $('<iframe sandbox="allow-scripts">');
                     iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
@@ -399,7 +399,7 @@
         _postMessage: function(message) {
             var widget = this;
             var data = message.data;
-            if (data.ewkts) {
+            if (data.ewkts && data.ewkts.length) {
                 widget._populateFeatureInfoLayer(data.ewkts);
             } else
             if (data.hover) {
@@ -479,7 +479,7 @@
                                 if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
 
                                     var origin = '*';
-                                    var nodes = document.querySelectorAll('div.geometryElement');
+                                    var nodes = document.querySelectorAll('div.geometryElement') || [];
                                     var ewkts = Array.from(nodes).map(function (node) {
                                         return {
                                             srid: node.getAttribute('data-srid'),
