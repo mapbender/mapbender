@@ -1,4 +1,16 @@
 ((function($) {
+    function updateResponsive($buttons) {
+        var $activeButton = $buttons.filter('.active').first();
+        if ($activeButton.length && !$($activeButton).is(':visible')) {
+            var $firstVisibleButton = $buttons.filter(':visible').first();
+            if ($firstVisibleButton.length) {
+                // NOTE: toggles active classes and implicitly ends up calling notifyElements
+                // @see initTabContainer
+                $firstVisibleButton.click();
+            }
+        }
+    }
+
     function notifyElements(scope, state) {
         $('.mb-element[id]', scope).each(function() {
             var promise;
@@ -46,23 +58,12 @@
         $('>.tabs >.tab.active:first', this).each(setCurrentTab);
         // follow further click events
         $('>.tabs', this).on('click', '>.tab[id]', setCurrentTab);
-        var updateResponsive = function() {
-            var $activeButton = $buttons.filter('.active').first();
-            if ($activeButton.length && !$($activeButton).is(':visible')) {
-                var $firstVisibleButton = $buttons.filter(':visible').first();
-                if ($firstVisibleButton.length) {
-                    // NOTE: toggles active classes and implicitly ends up calling notifyElements
-                    // @see initTabContainer
-                    $firstVisibleButton.click();
-                }
-            }
-        };
         window.addEventListener('resize', function() {
             // Switch active "tab" if screen size change caused current active "tab" to visually disappear
-            updateResponsive();
+            updateResponsive($buttons);
         });
         // Also select a different active "tab" if default active "tab" is already invisible on initialization
-        updateResponsive();
+        updateResponsive($buttons);
     }
 
     function addAccordionElementEvents() {
@@ -94,23 +95,12 @@
                 notifyElements(activatedPanel, true);
             }
         });
-        var updateResponsive = function() {
-            var $activeHeader = $headers.filter('.active').first();
-            if (!$activeHeader.length || !$activeHeader.is(':visible')) {
-                var $firstVisibleHeader = $headers.filter(':visible').first();
-                if ($firstVisibleHeader.length) {
-                    // NOTE: toggles active classes and implicitly ends up calling notifyElements
-                    // @see initTabContainer
-                    $firstVisibleHeader.click();
-                }
-            }
-        };
         window.addEventListener('resize', function() {
             // Switch active panel if screen size change caused current active panel to visually disappear
-            updateResponsive();
+            updateResponsive($headers);
         });
         // Also select a different active panel if default active panel is already invisible on initialization
-        updateResponsive();
+        updateResponsive($headers);
     }
 
     function processSidePane(node) {
