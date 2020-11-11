@@ -187,7 +187,7 @@
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var script = self.options.highlightLayer ? self._getInjectionScript() : '';
+                    var script = self.options.highlightLayer ? self._getInjectionScript(source.id) : '';
                     var iframe = $('<iframe sandbox="allow-scripts">');
                     iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
@@ -468,7 +468,7 @@
             });
         },
 
-        _getInjectionScript: function() {
+        _getInjectionScript: function(source_id) {
             var script = `<script>
                             // Hack to prevent DOMException when loading jquery
                             var replaceState = window.history.replaceState;
@@ -482,16 +482,16 @@
                                         return {
                                             srid: node.getAttribute('data-srid'),
                                             wkt: node.getAttribute('data-geometry'),
-                                            id: node.getAttribute('id'),
+                                            id: ${source_id}+'-'+node.getAttribute('id'),
                                         };
                                     });
                                     Array.from(nodes).forEach(function (node) {
                                         node.addEventListener('mouseover', function (event) {
-                                            var id = node.getAttribute('id');
+                                            var id = ${source_id}+'-'+node.getAttribute('id');
                                             window.parent.postMessage({ hover : id },origin);
                                         });
                                         node.addEventListener('mouseout', function (event) {
-                                            var id = node.getAttribute('id');
+                                            var id = ${source_id}+'-'+node.getAttribute('id');
                                             window.parent.postMessage({ unhover : id },origin);
                                         });
                                     });
