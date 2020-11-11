@@ -98,6 +98,7 @@ class ApplicationType extends AbstractType
         ;
         /** @var Application $application */
         $application = $options['data'];
+        /** @var Template|string $templateClassName */
         $templateClassName = $application->getTemplate();
         if ($templateClassName) {
             /** @var Template::class $templateClassName */

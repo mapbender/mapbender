@@ -637,6 +637,7 @@ class ApplicationController extends WelcomeController
      */
     private function setRegionProperties(Application $application, Form $form)
     {
+        /** @var Template|string $templateClass */
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
         $applicationRegionProperties = $application->getRegionProperties();

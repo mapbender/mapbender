@@ -52,7 +52,7 @@ class RegionPropertiesType extends AbstractType
         /** @var Application $application */
         $application = $options['application'];
         $templateClassName = $application->getTemplate();
-        /** @var Template::class $templateClassName */
+        /** @var Template|string $templateClassName */
         $templateRegionProps = $templateClassName::getRegionsProperties();
         $choices = array();
         if (Kernel::MAJOR_VERSION >= 3 || $options['choices_as_values']) {
