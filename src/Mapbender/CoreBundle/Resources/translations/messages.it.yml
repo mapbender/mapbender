@@ -276,7 +276,7 @@ mb:
           deactivateonclose: 'Disattiva in chiusura'
           showoriginal: 'Mostra originale'
           onlyvalid: 'Solo per le feature valide'
-          highlightlayer: 'Highlighting'
+          highlightlayer: ~
 
       printclient:
         label:

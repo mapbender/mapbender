@@ -277,7 +277,7 @@ mb:
           deactivateonclose: 'Kapandığında devre dışı bırak'
           showoriginal: 'Orjinali göster'
           onlyvalid: 'Sadece geçerli olan'
-          highlightlayer: 'Highlighting'
+          highlightlayer: ~
       printclient:
         label:
           autoopen: 'Otomatik aç'

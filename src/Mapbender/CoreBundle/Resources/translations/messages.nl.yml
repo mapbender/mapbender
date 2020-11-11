@@ -276,7 +276,7 @@ mb:
           deactivateonclose: 'Deactiveer bij sluiten'
           showoriginal: 'Laat origineel zien'
           onlyvalid: 'Alleen geldig'
-          highlightlayer: 'Highlighting'
+          highlightlayer: ~
 
       printclient:
         label:
