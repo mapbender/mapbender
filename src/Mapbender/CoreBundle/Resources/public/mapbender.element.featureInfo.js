@@ -280,6 +280,9 @@
                 }
 
                 if (widget.popup && widget.popup.$element) {
+                    if (widget.options.highlightLayer) {
+                        widget.featureInfoLayer.getSource().clear();
+                    }
                     widget.popup.$element.show();
                 }
             }
@@ -427,7 +430,6 @@
                 return feature;
             });
 
-            this.featureInfoLayer.getSource().clear();
             this.featureInfoLayer.getSource().addFeatures(features);
 
         },
