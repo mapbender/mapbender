@@ -131,7 +131,6 @@ mb:
         label:
           autoopen: 'Автоматический открыт'
           splitlayers: 'Разделение слои'
-          declarative: 'Используйте декларативный'
       class:
         title: 'WMS loader'
         description: 'Загружает WMS через GetCapabilities-Request'

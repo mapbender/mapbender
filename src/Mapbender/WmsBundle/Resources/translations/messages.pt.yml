@@ -133,7 +133,6 @@ mb:
         label:
           autoopen: 'Abrir automaticamente'
           splitlayers: 'Dividir camadas'
-          declarative: 'Usar declarativo'
     repository:
       parser:
         couldnotparse: 'Não pode "parse" o documento XML.'

@@ -136,7 +136,6 @@ mb:
         label:
           autoopen: 'Auto open'
           splitlayers: 'Split layers'
-          declarative: 'Use declarative'
     repository:
       parser:
         couldnotparse: 'Could not parse CapabilitiesDocument'
