@@ -9,6 +9,14 @@
                 $firstVisibleButton.click();
             }
         }
+        var wholeSidePaneVisible = false;
+        for (var i = 0; i < $buttons.length; ++i) {
+            if ($($buttons[i]).css('display') !== 'none') {
+                wholeSidePaneVisible = true;
+                break;
+            }
+        }
+        $buttons.first().closest('.sidePane').toggleClass('hidden', !wholeSidePaneVisible);
     }
 
     function notifyElements(scope, state) {
