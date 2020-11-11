@@ -110,10 +110,6 @@ class WmsLoader extends Element
                 'mb.wms.wmsloader.error.*',
             ),
         );
-        $config = $this->entity->getConfiguration();
-        if (!empty($config['useDeclarative'])) {
-            $assetRefs['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js';
-        }
         return $assetRefs;
     }
 

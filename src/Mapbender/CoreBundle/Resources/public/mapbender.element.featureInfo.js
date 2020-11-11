@@ -402,7 +402,17 @@
             } else
             if (data.unhover) {
                 widget._getFeatureById(data.unhover).setStyle(undefined);
+            } else
+            if (data.actionValue && data.element) {
+                if(Mapbender.declarative && Mapbender.declarative[data.actionValue] && typeof Mapbender.declarative[data.actionValue] === 'function') {
+                    // Method to simulate attribute access has to be inserted within Mapbender's frame to prevent clone errors on postMessage
+                    data.element.attr = function(val) {
+                        return this.attributes[val];
+                    };
+                    Mapbender.declarative[data.actionValue](data.element);
+                }
             }
+
 
         },
 
@@ -457,7 +467,7 @@
         },
 
         _getInjectionScript: function() {
-            return `<script>
+            var script = `<script>
                             // Hack to prevent DOMException when loading jquery
                             var replaceState = window.history.replaceState;
                             window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };
@@ -484,9 +494,29 @@
                                         });
                                     });
                                     window.parent.postMessage({ ewkts :  ewkts }, origin);
+
+                                    $(document).on('click', '[mb-action]', function(e) {
+                                        var element= e.target;
+                                        var actionValue = element.getAttribute('mb-action');
+                                        var attributesMap = new Object();
+                                        for (var i = 0; i < element.attributes.length; i++) {
+                                            var attrib = element.attributes[i];
+                                            attributesMap[attrib.name] = attrib.value;
+                                         }
+                                        e.preventDefault();
+                                        window.parent.postMessage({
+                                            actionValue: actionValue,
+                                            element: {
+                                                attributes: attributesMap
+                                            }
+                                        },origin);
+                                        return false;
+                                    });
+
                                 }
                             });
                             </script>`;
+            return script;
         }
 
 

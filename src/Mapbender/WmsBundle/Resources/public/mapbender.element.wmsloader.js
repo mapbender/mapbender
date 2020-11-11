@@ -25,10 +25,9 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.element.hide();
-            if(Mapbender.declarative){
+            if (this.options.useDeclarative) {
+                Mapbender.declarative = Mapbender.declarative || {};
                 Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
-            }else{
-                Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
             }
             if (this.options.wms_url) {
                 this.loadWms(this.options.wms_url);
