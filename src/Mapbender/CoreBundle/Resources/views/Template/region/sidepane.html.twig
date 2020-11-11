@@ -1,4 +1,8 @@
-<div class="{{ ('sidePane flex-fill ' ~ (alignment_class | default('left'))) | trim }}">
+<div class="{{ ('sidePane flex-fill ' ~ (alignment_class | default('left'))) | trim }}"
+     {%- if region_props.width | default('') -%}
+        {{ ' ' }}style="width: {{ region_props.width }};"
+     {%- endif -%}
+>
   <div class="sideContent">
     {% if region_props.name == 'tabs' %}
       <div class="tabContainerAlt">
