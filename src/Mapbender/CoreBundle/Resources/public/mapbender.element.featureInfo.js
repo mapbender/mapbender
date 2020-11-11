@@ -267,7 +267,9 @@
                             widget.popup.$element.hide();
                         }
                         widget.state = 'closed';
-                        widget.featureInfoLayer.getSource().clear();
+                        if (widget.options.highlightLayer) {
+                            widget.featureInfoLayer.getSource().clear();
+                        }
                     });
                     widget.popup.$element.on('open', function () {
                         widget.state = 'opened';
