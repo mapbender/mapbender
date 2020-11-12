@@ -22,6 +22,5 @@ class ToolbarSettingsType extends AbstractType
         $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(
             'label' => 'mb.manager.screentype.label',
         ));
-        $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType');
     }
 }
