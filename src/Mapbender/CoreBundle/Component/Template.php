@@ -53,15 +53,28 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
 
     public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
     {
-        $allRegionProps = $application->getNamedRegionProperties();
-        if (!empty($allRegionProps[$regionName])) {
-            $regionProps = $allRegionProps[$regionName]->getProperties() ?: array();
-        } else {
-            $regionProps = array();
-        }
         return array(
-            'region_props' => $regionProps,
+            'region_props' => $this->extractRegionProperties($application, $regionName),
+            'region_class' => implode(' ', $this->getRegionClasses($application, $regionName)),
         );
+    }
+
+    /**
+     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param string $regionName
+     * @return string[]
+     */
+    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    {
+        $classes = array();
+        switch ($regionName) {
+            case 'toolbar':
+                $classes[] = 'top';
+                break;
+            case 'footer':
+                $classes[] = 'bottom';
+        }
+        return $classes;
     }
 
     /**

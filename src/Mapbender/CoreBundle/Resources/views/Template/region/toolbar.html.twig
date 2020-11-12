@@ -1,5 +1,5 @@
 {% block region_wrapper %}
-<div class="{{ ('toolBar ' ~ (position_class | default('top'))) | trim }}">
+<div class="{{ ('toolBar ' ~ region_class) | trim }}">
     {% block item_list %}
     <ul class="{{ alignment_class | default('itemsRight') }}">
         {% block item_list_body %}
