@@ -48,22 +48,21 @@ class Fullscreen extends Template
         }
     }
 
-    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
     {
-        $upstream = parent::getRegionTemplateVars($application, $regionName);
+        $classes = parent::getRegionClasses($application, $regionName);
         switch ($regionName) {
             default:
-                return $upstream;
+                break;
             case 'sidepane':
-                $alignment = 'left';
+                $classes[] = 'left';
                 $props = $this->extractRegionProperties($application, $regionName);
                 if (!empty($props['closed'])) {
-                    $alignment .= ' closed';
+                    $classes[] = 'closed';
                 }
-                return array_replace($upstream, array(
-                    'alignment_class' => $alignment,
-                ));
+                break;
         }
+        return $classes;
     }
 
     /**
