@@ -27,6 +27,12 @@ mb:
         success: A new instance has been created. Please edit it.
   manager:
     confirm_form_discard: Discard changes?
+    screentype:
+      label: Screen type
+      choice:
+        all: Any
+        mobile: Mobile
+        desktop: Desktop
     element:
       screentype:
         mobile: Show on mobile screens

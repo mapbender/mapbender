@@ -27,6 +27,12 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     confirm_form_discard: Änderungen verwerfen?
+    screentype:
+      label: Bildschirmtyp
+      choice:
+        all: Alle
+        mobile: Mobil
+        desktop: Desktop
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen
