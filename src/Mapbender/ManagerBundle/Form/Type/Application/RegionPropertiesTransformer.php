@@ -39,6 +39,7 @@ class RegionPropertiesTransformer implements DataTransformerInterface
             return $collection;
         }
 
+        $missing = array_flip(array_keys($value));
         foreach ($collection as $rprop) {
             $regionName = $rprop->getName();
             if (array_key_exists($regionName, $value)) {
@@ -47,7 +48,18 @@ class RegionPropertiesTransformer implements DataTransformerInterface
                 // Legacy quirk: label for sidepane types used to be copied into db but is redundant.
                 unset($mergedProps['label']);
                 $rprop->setProperties($mergedProps);
+                unset($missing[$regionName]);
             }
+        }
+        foreach (array_keys($missing) as $regionName) {
+            $rprop = new RegionProperties();
+            $rprop->setName($regionName);
+            $rprop->setApplication($this->application);
+            $formProps = $value[$regionName];
+            // Legacy quirk: label for sidepane types used to be copied into db but is redundant.
+            unset($formProps['label']);
+            $rprop->setProperties($formProps);
+            $this->application->addRegionProperties($rprop);
         }
         return $collection;
     }
