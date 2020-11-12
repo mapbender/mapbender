@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Template Fullscreen
@@ -51,12 +53,25 @@ class Fullscreen extends Template
     public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
     {
         $classes = parent::getRegionClasses($application, $regionName);
+        $props = $this->extractRegionProperties($application, $regionName);
+        switch (ArrayUtil::getDefault($props, 'screenType')) {
+            // @todo: if we're using them globally, move screentype constants out of element entity
+            default:
+            case Element::SCREENTYPE_ALL:
+                // nothing;
+                break;
+            case Element::SCREENTYPE_DESKTOP_ONLY:
+                $classes[] = 'hide-screentype-mobile';
+                break;
+            case Element::SCREENTYPE_MOBILE_ONLY:
+                $classes[] = 'hide-screentype-desktop';
+                break;
+        }
         switch ($regionName) {
             default:
                 break;
             case 'sidepane':
                 $classes[] = 'left';
-                $props = $this->extractRegionProperties($application, $regionName);
                 if (!empty($props['closed'])) {
                     $classes[] = 'closed';
                 }
