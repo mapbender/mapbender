@@ -6,6 +6,7 @@
 
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with radio_widget as div_radio_widget %}
+{% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {% block form_widget %}
   {% spaceless %}
@@ -220,27 +221,18 @@
   {% endspaceless %}
 {% endblock checkbox_widget %}
 
+
 {% block radio_widget %}
-  {%- if 'application_region_properties' in form.parent.vars['block_prefixes'] -%}
+  {%- if 'sidepane_type' in form.parent.vars['block_prefixes'] -%}
     {%- set _iconClass = form.parent.vars.iconMap[value] -%}
-    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ form.vars.label | trans }}">
+    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ attr.title | trans }}">
       <i class="{{ _iconClass }}"></i>
-      {%- set attr = attr | merge({'class' : attr.class | default('') ~  ' hidden' | trim }) -%}
       {{ block('div_radio_widget') }}
     </span>
   {%- else -%}
     {{ block('div_radio_widget') }}
   {%- endif -%}
 {% endblock radio_widget %}
-
-{% block application_region_properties_widget %}
-  <div {{ block('widget_container_attributes') }}>
-    {%- for choice in form -%}
-      {# do not invoke form_label, label is placed into a title attribute tooltip #}
-      {{- form_widget(choice, {'block_name': 'region_properties_choice_value'}) -}}
-    {%- endfor -%}
-  </div>
-{% endblock application_region_properties_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}
@@ -352,39 +344,14 @@
 
 
 
-{# Labels #}
-
 {% block form_label %}
-  {% spaceless %}
-    {% if not compound %}
-      {% set label_attr = label_attr|merge({'for': id}) %}
-    {% endif %}
-    {% if required %}
-      {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-    {% endif %}
-    {% if label is empty %}
-      {% set label = name|humanize %}
-    {% endif %}
-    {% if 'checkbox' in form.vars.block_prefixes %}
-      {% set _labelClass = 'labelCheck' %}
-    {% else %}
-      {% set _labelClass = 'labelInput' %}
-    {% endif %}
-    {% if label_attr.class is not defined or not (' labelCheck ' in (' '~label_attr.class~' ') or ' labelInput ' in (' '~label_attr.class~' ')) %}
-      {% set label_attr = label_attr|merge({'class': ((label_attr.class | default('')) ~ ' ' ~_labelClass)|trim}) %}
-    {% endif %}
-    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-    {%- with { '_labeltext': label|trans({}, translation_domain)} -%}
-    {%- with { '_labeltextucfirst':  (_labeltext | slice(0, 1) | capitalize) ~ (_labeltext | slice(1) )} -%}
-    {{ _labeltextucfirst }}
-    {%- endwith -%}
-    {%- endwith -%}
-    {%- if required -%}<span class="required">*</span>{%- endif -%}</label>
-  {% endspaceless %}
+  {%- if 'checkbox' in form.vars.block_prefixes -%}
+    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelCheck' | trim}) -%}
+  {%- else -%}
+    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelInput' | trim}) -%}
+  {%- endif -%}
+  {{ block('div_form_label') }}
 {% endblock form_label %}
-
-
-
 
 {# Rows #}
 

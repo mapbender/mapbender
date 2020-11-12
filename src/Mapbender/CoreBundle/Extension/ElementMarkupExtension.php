@@ -406,7 +406,6 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function normalizeElementEntityArgument($element)
     {
-        // normalize to entity
         if ($element instanceof Component\Element) {
             $element = $element->getEntity();
         }

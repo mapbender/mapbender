@@ -98,6 +98,16 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
 
     /**
      * @return string TWIG template path
+     * @param string $regionName
+     * @return string|null
+     */
+    public static function getRegionSettingsFormType($regionName)
+    {
+        return null;
+    }
+
+    /**
+     * @return string TWIG template path
      */
     abstract public function getTwigTemplate();
 

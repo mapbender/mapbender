@@ -53,6 +53,10 @@ class SimpleSearch extends Element
             'delay'           => 300,
             // @todo: add form field
             'sourceSrs' => 'EPSG:4326',
+            'query_ws_replace' => null,
+            'result' => array(
+                'buffer' => 300,
+            )
         );
     }
 

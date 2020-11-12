@@ -263,7 +263,6 @@ class ApplicationController extends WelcomeController
             $em = $this->getEntityManager();
             $em->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
-            $this->setRegionProperties($application, $form);
             if ($form->get('removeScreenShot')->getData() == '1') {
                 $application->setScreenshot(null);
             }
@@ -751,35 +750,6 @@ class ApplicationController extends WelcomeController
             'screenshotHeight'     => 200,
             'include_acl' => $this->allowAclEditing($application),
         ));
-    }
-
-    /**
-     * Merge application, form and template default properties
-     *
-     * @param Application $application
-     * @param Form        $form
-     */
-    private function setRegionProperties(Application $application, Form $form)
-    {
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-        $applicationRegionProperties = $application->getRegionProperties();
-        foreach ($templateProps as $regionName => $regionProperties) {
-            foreach ($applicationRegionProperties as $regionProperty) {
-                if ($regionProperty->getName() === $regionName) {
-                    $propValues = $regionProperty->getProperties();
-                    $formValue = $form->get($regionName)->getData();
-                    $propValues = array_replace($propValues, array(
-                        'name' => $formValue ?: '',
-                    ));
-                    // Legacy quirk: label used to be copied into db but is redundant. Only used in form, where
-                    // it is taken from the Template, not from the entity.
-                    unset($propValues['label']);
-                    $regionProperty->setProperties($propValues);
-
-                }
-            }
-        }
     }
 
     /**

@@ -51,8 +51,46 @@
   }
 }
 
+.tabContainerAlt, .accordionContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.tabContainerAlt > .tabs, .accordionContainer > .accordion {
+  flex: 0 0 auto; // fixed size
+}
+
+.tabContainerAlt >.container,
+.accordionContainer > .container-accordion {
+  &:not(.active) {
+    display: none;
+  }
+  flex: 1 1 auto; // grow and shrink
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+.tabContainerAlt >.container > *,
+.accordionContainer > .container-accordion > .accordion-cell {
+  // Extend content to fill entire accordion cell; this is a Hack helping nested absolte-positioned
+  // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
 .tabContainerAlt{
-  .tab{
+  position: relative;
+  .tabs {
+    border-bottom: dashed 1px $thirdColor;
+    padding-bottom: $space;
+    margin-bottom: $space;
+  }
+  .tab {
     display: inline-block;
     @extend .button;
 
@@ -61,63 +99,28 @@
       background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
     }
-    a {
-      color:inherit;
-    }
   }
-  .container{
-    &:not(.active) {
-      display: none;
-    }
-    border-top:dashed 1px $thirdColor;
-    margin-top:$space;
-    clear:left;
-    padding: 0px;
-    padding-top:$space;
-    padding-bottom:$space;
-    z-index:20;
-    position:relative;
-    width: 100%;
+  .container {
+    // Undo Bootstrap margin + padding
+    // @ŧodo: if we want nothing from Bootstrap .container, we should not add Bootstrap .container
+    margin: 0;
+    padding: 0;
   }
 }
 
 .accordionContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-    
   .accordion{
     user-select: none;
-    flex: 0 0 auto; // fixed size
     cursor: pointer;
     @extend .buttonColors;
-    /* background-color: $buttonFirstColor; */
-    >div{
-      background-color: inherit;
-      padding-left: 0.5em;
-    }
+    padding-left: 0.5em;
     &.active{
       background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
     }
   }
   .container-accordion {
-    flex: 1 1 auto; // grow and shrink
-    &:not(.active) {
-      display: none;
-    }
-    width:100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: relative;
     .accordion-cell {
-      // Extend content to fill entire accordion cell; this is a Hack helping nested absolte-positioned
-      // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
-      width: 100%;
-      position: absolute;
-      top: 0;
-      bottom: 0;
       padding-top: $space / 2;
     }
   }

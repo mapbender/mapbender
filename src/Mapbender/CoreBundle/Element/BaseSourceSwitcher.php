@@ -36,7 +36,7 @@ class BaseSourceSwitcher extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => "BaseSourceSwitcher",
+            'tooltip' => static::getClassTitle(),
             'target' => null,
             'instancesets' => array(),
         );

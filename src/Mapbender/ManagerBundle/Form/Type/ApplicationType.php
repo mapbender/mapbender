@@ -108,17 +108,9 @@ class ApplicationType extends AbstractType
         ;
         /** @var Application $application */
         $application = $options['data'];
-        $templateClassName = $application->getTemplate();
-        if ($templateClassName) {
-            /** @var Template::class $templateClassName */
-            foreach (array_keys($templateClassName::getRegionsProperties()) as $regionName) {
-                $builder->add($regionName, 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
-                    'property_path' => '[' . $regionName . ']',
-                    'application' => $options['data'],
-                    'region' => $regionName,
-                ));
-            }
-        }
+        $builder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
+            'application' => $application,
+        ));
 
         if ($options['include_acl']) {
             $builder

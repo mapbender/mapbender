@@ -46,14 +46,10 @@
    */
   .ui-tabs {
     @extend .tabContainerAlt;
-    position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-  }
-  .ui-tabs-panel {
-    margin-top: $space / 2;
   }
   .ui-tabs .ui-tabs-nav {
-    margin: 0;
-    padding: .2em .2em 0;
+    margin-bottom: $space / 2;
+    padding-bottom: $space / 2;
   }
   .ui-tabs .ui-tabs-nav li {
     list-style: none;

@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Extension;
 
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\Debug\Exception\ContextErrorException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

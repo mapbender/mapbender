@@ -142,11 +142,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     protected function processElementDefinition($definition)
     {
-        $nonConfigKeys = array(
-            'class',
-            'title',
-            'screenType',
-        );
+        $nonConfigKeys = $this->getTopLevelElementKeys();
         // @todo: look up and adjust migrated class names as well
         if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
@@ -186,7 +182,8 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         if ($removedKeys) {
             $messageParts[] = 'removed ' . implode(', ', $removedKeys);
         }
-        if ($addedKeys) {
+        // Do not warn for added defaults
+        if ($addedKeys && $removedKeys) {
             $messageParts[] = 'added ' . implode(', ', $addedKeys);
         }
         foreach ($changedValueKeys as $k) {
@@ -252,5 +249,17 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         }
         unset($definition['class']);
         return $definition;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getTopLevelElementKeys()
+    {
+        return array(
+            'title',
+            'roles',
+            'class',
+        );
     }
 }

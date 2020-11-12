@@ -33,10 +33,11 @@ class ActivityIndicator extends Element
     static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'background activity',
+            'tooltip' => static::getClassTitle(),
             'activityClass' => 'mb-activity',
             'ajaxActivityClass' => 'mb-activity-ajax',
-            'tileActivityClass' => 'mb-activity-tile');
+            'tileActivityClass' => 'mb-activity-tile',
+        );
     }
 
     /**
