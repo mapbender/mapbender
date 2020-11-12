@@ -115,6 +115,9 @@ class Fullscreen extends Template
         switch ($regionName) {
             case 'sidepane':
                 return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
+            case 'toolbar':
+            case 'footer':
+            return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
             default:
                 return null;
         }
