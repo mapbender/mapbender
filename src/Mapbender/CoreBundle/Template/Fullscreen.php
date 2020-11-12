@@ -105,4 +105,18 @@ class Fullscreen extends Template
     {
         return 'desktop-template';
     }
+
+    /**
+     * @param string $regionName
+     * @return string|null
+     */
+    public static function getRegionSettingsFormType($regionName)
+    {
+        switch ($regionName) {
+            case 'sidepane':
+                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
+            default:
+                return null;
+        }
+    }
 }

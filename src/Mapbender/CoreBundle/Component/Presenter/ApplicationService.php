@@ -119,29 +119,32 @@ class ApplicationService
      * @param Entity\Element $element
      * @param string $permission
      * @return bool
+     * @todo: this needs to be a voter
      */
     protected function isElementGranted(Entity\Element $element, $permission = 'VIEW')
     {
+        if ($element->getApplication()->isYamlBased()) {
+            $roles = $element->getYamlRoles();
+            if (!$roles) {
+                // Empty list of roles => allow all
+                return true;
+            }
+            foreach ($roles as $role) {
+                if ($this->authorizationChecker->isGranted($role)) {
+                    return true;
+                }
+            }
+        }
         $oid = ObjectIdentity::fromDomainObject($element);
         try {
             $acl = $this->aclProvider->findAcl($oid);
             if ($acl->getObjectAces()) {
-                $isGranted = $this->authorizationChecker->isGranted($permission, $element);
+                return $this->authorizationChecker->isGranted($permission, $element);
             } else {
-                $isGranted = true;
+                return true;
             }
         } catch (AclNotFoundException $e) {
-            $isGranted = true;
+            return true;
         }
-
-        if (!$isGranted && $element->getApplication()->isYamlBased()) {
-            foreach ($element->getYamlRoles() ?: array() as $role) {
-                if ($this->authorizationChecker->isGranted($role)) {
-                    $isGranted = true;
-                    break;
-                }
-            }
-        }
-        return $isGranted;
     }
 }

@@ -61,7 +61,8 @@ class ScaleSelector extends Element
         return array(
             "target" => null,
             'label' => false,
-            "tooltip" => "Scale");
+            "tooltip" => static::getClassTitle(),
+        );
     }
 
     /**

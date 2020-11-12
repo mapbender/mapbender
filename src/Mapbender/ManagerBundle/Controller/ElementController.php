@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
@@ -54,6 +55,7 @@ class ElementController extends ApplicationControllerBase
         $trans      = $this->container->get('translator');
         $elements   = array();
 
+        /** @var MinimalInterface|string $elementClassName */
         foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
             $elements[$title] = array(

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Component;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -107,6 +108,7 @@ class TargetElementType extends AbstractType
         } else {
             $elementIds = array();
             foreach ($application->getElements() as $elementEntity) {
+                /** @var Component\Element|string $elementComponentClass */
                 $elementComponentClass = $elementEntity->getClass();
                 if (class_exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
