@@ -22,13 +22,11 @@
 {% block form_widget_simple %}
   {% spaceless %}
     {% set type = type|default('text') %}
-
-    {% if type != 'hidden'%}
-      <div class="inputWrapper {{ block('widget_attribute_class') }}">
-        {% spaceless %}
-          <input class="input" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
-
-          {% if errors|length > 0 %}
+    {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
+    {% if type != 'hidden' %}
+      <div class="inputWrapper">
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+          {% if errors|length %}
             <span class="validationMsgBox smallText">
               {% for error in errors %}
                 {{
@@ -39,11 +37,10 @@
               {% endfor %}
             </span>
           {% endif %}
-        {% endspaceless %}
       </div>
-
     {% else %}
-      <input class="hidden" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+      {%- set attr = attr|merge({'class': ('hidden ' ~ (attr.class | default(''))) | trim}) -%}
+      <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     {% endif %}
   {% endspaceless %}
 {% endblock form_widget_simple %}
@@ -452,19 +449,3 @@
     {% endfor %}
   {% endspaceless %}
 {% endblock form_rows %}
-
-{% block widget_attributes %}
-  {% spaceless %}
-    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}
-    {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
-  {% endspaceless %}
-{% endblock widget_attributes %}
-
-{% block widget_attribute_class %}
-  {% set cssClass = block('widget_attributes')|split('class') %}
-
-  {# Get the class attribute from widget_attributes #}
-  {% if cssClass[1] is defined%}
-    {{ cssClass[1]|replace({'"': '', '=':''}) }}
-  {% endif %}
-{% endblock widget_attribute_class %}
