@@ -398,18 +398,3 @@
     </tr>
   {% endspaceless %}
 {% endblock %}
-
-
-
-
-
-{# Support #}
-
-{% block form_rows %}
-  {% spaceless %}
-    {% for child in form %}
-      {{ form_row(child) }}
-     <div class="clearContainer"></div>
-    {% endfor %}
-  {% endspaceless %}
-{% endblock form_rows %}
