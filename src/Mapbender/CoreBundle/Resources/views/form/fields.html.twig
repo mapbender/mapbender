@@ -146,7 +146,7 @@
   {%- if multiple -%}
     {{- block('symfony_choice_widget_collapsed') -}}
   {%- else -%}
-    <div class="dropdown {{ block('widget_attribute_class') }}" >
+    <div class="dropdown">
     {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
     {{- block('symfony_choice_widget_collapsed') -}}
     <div class="dropdownValue iconDown">
