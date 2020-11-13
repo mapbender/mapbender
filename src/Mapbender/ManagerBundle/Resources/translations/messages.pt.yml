@@ -46,20 +46,10 @@ mb:
         max_extent: 'Extensão maxima'
         start_extent: 'Extensão do princípio'
       element:
-        delete:
-          title: 'Remover elemento'
-          confirm: 'Realmente remover elemento?'
-        btn:
-          delete: Remover
-          cancel: Cancelar
-        requirements: 'Campos requeridos têm letra escura. Campos opcionais têm letra clara.'
-        base_data: 'Dados de segundo plano'
-        configuration: 'Configuração do elemento'
         title: Título
         type: Tipo
         add: 'Adicionar elemento'
         show_hide: Ativo/Inativo
-        edit: Editar
         no_element_added:
           '': 'Nenhum elemento existe'
       zoombar:
@@ -155,9 +145,6 @@ mb:
     element:
       yaml:
         message: 'Utilize o formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> para descrever a configuração do elemento.'
-    be:
-      element:
-        delete: 'Remover elemento ''%element_title%'' '
     components:
       popup:
         add_element:

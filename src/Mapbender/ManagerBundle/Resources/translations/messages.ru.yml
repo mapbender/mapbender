@@ -46,20 +46,10 @@ mb:
         max_extent: 'Макс. область'
         start_extent: 'Начало области'
       element:
-        delete:
-          title: 'Удалить элемент'
-          confirm: 'Вы действительно хотите удалить элемент?'
-        btn:
-          delete: Удалить
-          cancel: Отменить
-        requirements: 'Обязательные поля помечены темными метками, а необязательные - светлые.'
-        base_data: 'Базовые данные'
-        configuration: Конфигурация
         title: Название
         type: Тип
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
-        edit: 'Редактировать элемент'
         no_element_added:
           '': 'Элемент не добавлен'
       zoombar:
@@ -155,9 +145,6 @@ mb:
     element:
       yaml:
         message: 'Используйте <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Формат для описания конфигурации элемента..'
-    be:
-      element:
-        delete: 'Удалить элемент ''%element_title%'''
     components:
       popup:
         add_element:

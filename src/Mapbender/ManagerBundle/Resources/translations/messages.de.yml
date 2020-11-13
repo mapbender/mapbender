@@ -48,20 +48,10 @@ mb:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
       element:
-        delete:
-          title: 'Element entfernen'
-          confirm: 'Wollen Sie das Element wirklich löschen?'
-        btn:
-          delete: Löschen
-          cancel: Abbrechen
-        requirements: 'Pflichtfelder verfügen über dunkle Beschriftungen, optionale Felder über hellere Beschriftungen.'
-        base_data: Hintergrunddaten
-        configuration: 'Konfiguration des Elements'
         title: Titel
         type: Typ
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
-        edit: bearbeiten
         no_element_added:
           '': 'Kein Element vorhanden'
       zoombar:
@@ -157,9 +147,6 @@ mb:
     element:
       yaml:
         message: 'Benutzen Sie das <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Format, um die Elementkonfiguration zu beschreiben.'
-    be:
-      element:
-        delete: 'Element ''%element_title%'' löschen'
     components:
       popup:
         add_element:

@@ -46,20 +46,10 @@ mb:
         max_extent: 'Maks. kapsam'
         start_extent: 'Baslangıç kapsamı'
       element:
-        delete:
-          title: 'Öğe sil'
-          confirm: 'Öğe silinsin mi?'
-        btn:
-          delete: 'Sil'
-          cancel: 'Vazgeç'
-        requirements: 'Zorunlu alanlar koyu renkli etiketlerle, isteğe bağlı alanlar ise daha açık renkli etiketlerle işaretlenir.'
-        base_data: 'Temel veriler'
-        configuration: 'Yapılandırma'
         title: 'Başlık'
         type: 'Öğe tipi'
         add: 'Yeni bir öğe oluştur'
         show_hide: 'Geçiş gösterme/gizleme öğesi'
-        edit: 'Öğe düzenle'
         no_element_added:
           '': 'Öğe eklenmedi'
       zoombar:
@@ -149,9 +139,6 @@ mb:
     element:
       yaml:
         message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
-    be:
-      element:
-        delete: 'Öğe sil %element_title%'
     components:
       popup:
         add_element:

@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. omvang (extent)'
         start_extent: 'Start omvang (extent)'
       element:
-        delete:
-          title: 'Verwijder element'
-          confirm: 'Wilt u werkelijk dit element verwijderen?'
-        btn:
-          delete: Verwijder
-          cancel: Cancel
-        requirements: 'Verplichte velden zijn donker gekleurd en optionele velden zijn lichter gekleurd.'
-        base_data: 'Basis data'
-        configuration: Configuratie
         title: Titel
         type: Type
         add: 'Voeg een nieuw element toe'
         show_hide: 'Wissel toon/verberg element'
-        edit: 'Wijzig element'
         no_element_added:
           '': 'Geen element toegevoegd'
       zoombar:
@@ -155,9 +145,6 @@ mb:
     element:
       yaml:
         message: 'Gebruik <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
-    be:
-      element:
-        delete: 'Verwijder element ''%element_title%'''
     components:
       popup:
         add_element:
