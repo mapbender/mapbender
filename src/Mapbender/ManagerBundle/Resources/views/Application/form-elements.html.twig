@@ -3,6 +3,22 @@
   <div class="clear"></div>
 </div>
 
+{% form_theme form _self %}
+{# Define block without immediate output #}
+{%- if false -%}
+{% block sidepane_type_widget %}
+  <div {{ block('widget_container_attributes') }}>
+    {%- set _iconMap = form.vars.iconMap -%}
+    {%- for child in form -%}
+      <span class="radioWrapper {% if child.vars.checked %} checked{% endif %}{% if child.vars.disabled %} disabled{% endif %}" title="{{ child.vars.attr.title | trans }}">
+        <i class="{{ _iconMap[child.vars.value] }}"></i>
+        {{ form_widget(child) }}
+      </span>
+    {%- endfor -%}
+  </div>
+{% endblock sidepane_type_widget %}
+{%- endif -%}
+
 {% for region in regions %}
   <div class="{{region}} region">
       <table class="application-component-table elementsTable" data-region="{{ region }}">

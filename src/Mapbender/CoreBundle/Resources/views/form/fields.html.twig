@@ -5,7 +5,6 @@
 #}
 
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
-{% use "form_div_layout.html.twig" with radio_widget as div_radio_widget %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {% block form_widget %}
@@ -221,18 +220,6 @@
   {% endspaceless %}
 {% endblock checkbox_widget %}
 
-
-{% block radio_widget %}
-  {%- if 'sidepane_type' in form.parent.vars['block_prefixes'] -%}
-    {%- set _iconClass = form.parent.vars.iconMap[value] -%}
-    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ attr.title | trans }}">
-      <i class="{{ _iconClass }}"></i>
-      {{ block('div_radio_widget') }}
-    </span>
-  {%- else -%}
-    {{ block('div_radio_widget') }}
-  {%- endif -%}
-{% endblock radio_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}
