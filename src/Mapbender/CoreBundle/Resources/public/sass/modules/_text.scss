@@ -45,7 +45,9 @@ h4, .h4, .bigText {
   margin-right:$space/2;
   line-height:$lineHeight + 8;
 
-  .required{
+  &.required:after {
+    margin-left: 0.25em;
+    content: '*';
     color:$errorColor;
   }
 }
