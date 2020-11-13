@@ -39,36 +39,23 @@
   {% endspaceless %}
 {% endblock form_widget_simple %}
 
-{% block form_widget_compound %}
-  {% spaceless %}
-    <div {{ block('widget_container_attributes') }}>
-      {% if form.vars.prototype is defined  and form.vars.allow_add is defined %}
-      <a href="#add" class="collectionAdd iconAdd hover-highlight-effect"></a>
-      {% endif %}
-      {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
-        <a href="#delete" class="collectionRemove iconRemove hover-highlight-effect"></a>
-      {% endif %}
-
-      {% if form.parent is empty %}
-      {{ form_errors(form) }}
-      {% endif %}
-      {{ block('form_rows') }}
-      {{ form_rest(form) }}
-    </div>
-
-  {% endspaceless %}
-{% endblock form_widget_compound %}
-
 {% block collection_widget %}
   {% spaceless %}
     {% if prototype is defined %}
       {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
-      {% endif %}
-      {% if allow_delete %}
+    {% endif %}
+    {% if allow_delete %}
       {% set attr = attr|merge({'data-allow-delete': 1 }) %}
+    {% endif %}
+    <div {{ block('widget_container_attributes') }}>
+      {% if prototype is defined and form.vars.allow_add is not empty %}
+        <a href="#add" class="collectionAdd iconAdd hover-highlight-effect"></a>
       {% endif %}
-      {{ block('form_widget') }}
-    {% endspaceless %}
+      {%- for child in form -%}
+        {{- form_row(child) -}}
+      {%- endfor -%}
+    </div>
+  {% endspaceless %}
 {% endblock collection_widget %}
 
 {% block textarea_widget %}
@@ -306,22 +293,29 @@
   {{ block('div_form_label') }}
 {% endblock form_label %}
 
+{% block checkbox_row %}
+<div>
+  {{- form_widget(form) -}}
+  {{- form_label(form) -}}
+</div>
+{% endblock checkbox_row %}
+
 {% block form_row %}
-  {% spaceless %}
-    {% set _isCollectionItem = 'collection' in form.parent.vars['block_prefixes'] %}
-    <div{{ _isCollectionItem ? ' class="collectionItem"' : '' }}>
-      {% if 'checkbox' in form.vars.block_prefixes %}
-        {{ form_widget(form) }}
-        {{ form_label(form) }}
-      {% else %}
-        {% if not _isCollectionItem %}
-          {{ form_label(form) }}
-        {% endif %}
-        {{ form_widget(form) }}
-        {{ block('form_errors_inline') }}
-      {% endif %}
+  {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
+    <div class="collectionItem">
+      {%- if form.parent.vars.allow_delete -%}
+        <a href="#delete" class="collectionRemove iconRemove hover-highlight-effect"></a>
+      {%- endif -%}
+      {# No label for collection item #}
+      {{ form_widget(form) }}
     </div>
-  {% endspaceless %}
+  {%- else -%}
+    <div>
+      {{- form_label(form) -}}
+      {{- form_widget(form) -}}
+      {{- block('form_errors_inline') -}}
+    </div>
+  {%- endif -%}
 {% endblock form_row %}
 
 {# Misc #}
