@@ -27,8 +27,8 @@
   .input {
       width: 100%;
   }
-
-  .validationMsgBox{
+}
+  .validationMsgBox {
     position: absolute;
     z-index: 9999;
     min-width: 260px;
@@ -60,4 +60,3 @@
       margin-top: -5px;
     }
   }
-}
