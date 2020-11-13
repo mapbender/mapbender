@@ -336,17 +336,7 @@
   {% endspaceless %}
 {% endblock form_row %}
 
-{% block hidden_row %}
-  {{ form_widget(form) }}
-{% endblock hidden_row %}
-
 {# Misc #}
-
-{% block form_enctype %}
-  {% spaceless %}
-    {% if multipart %}enctype="multipart/form-data"{% endif %}
-  {% endspaceless %}
-{% endblock form_enctype %}
 
 {% block form_rest %}
   {% spaceless %}
