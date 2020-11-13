@@ -72,21 +72,9 @@
 {% endblock collection_widget %}
 
 {% block textarea_widget %}
-  <div class="inputWrapper {{ block('widget_attribute_class') }}">
-    {% spaceless %}
-      <textarea class="input" {{ block('widget_attributes') }}>{{ value }}</textarea>
-      {% if errors|length > 0 %}
-        <span class="validationMsgBox smallText">
-          {% for error in errors %}
-            {{
-              error.messagePluralization is null
-              ? error.messageTemplate|trans(error.messageParameters, 'validators')
-              : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
-            }}
-          {% endfor %}
-        </span>
-      {% endif %}
-    {% endspaceless %}
+  <div class="inputWrapper">
+    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' input') | trim}) -%}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
   </div>
 {% endblock textarea_widget %}
 
