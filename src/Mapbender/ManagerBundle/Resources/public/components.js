@@ -67,11 +67,6 @@ $(function() {
         }
     });
 
-    // init validation feedback --------------------------------------------------------------
-    $(document).on("keypress", ".validationInput", function(){
-      $(this).siblings(".validationMsgBox").hide();
-    });
-
     var flashboxes = $(".flashBox").addClass("kill");
     // kill all flashes ---------------------------------------------------------------------
     flashboxes.each(function(idx, item){
