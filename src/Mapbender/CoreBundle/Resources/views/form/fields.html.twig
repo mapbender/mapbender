@@ -299,9 +299,9 @@
 
 {% block form_label %}
   {%- if 'checkbox' in form.vars.block_prefixes -%}
-    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelCheck' | trim}) -%}
+    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelCheck') | trim}) -%}
   {%- else -%}
-    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelInput' | trim}) -%}
+    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
   {%- endif -%}
   {{ block('div_form_label') }}
 {% endblock form_label %}
