@@ -7,16 +7,6 @@
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
-{% block form_widget %}
-  {% spaceless %}
-    {% if compound %}
-      {{ block('form_widget_compound') }}
-    {% else %}
-      {{ block('form_widget_simple') }}
-    {% endif %}
-  {% endspaceless %}
-{% endblock form_widget %}
-
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
         <div class="alert alert-danger">
@@ -340,18 +330,6 @@
   {{ block('div_form_label') }}
 {% endblock form_label %}
 
-{# Rows #}
-
-{% block repeated_row %}
-  {% spaceless %}
-  {#
-  No need to render the errors here, as all errors are mapped
-  to the first child (see RepeatedTypeValidatorExtension).
-  #}
-  {{ block('form_rows') }}
-  {% endspaceless %}
-{% endblock repeated_row %}
-
 {% block form_row %}
   {% spaceless %}
     {% set _isCollectionItem = 'collection' in form.parent.vars['block_prefixes'] %}
@@ -481,13 +459,6 @@
     {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
   {% endspaceless %}
 {% endblock widget_attributes %}
-
-{% block widget_container_attributes %}
-  {% spaceless %}
-    {% if id is not empty %}id="{{ id }}" {% endif %}
-    {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
-  {% endspaceless %}
-{% endblock widget_container_attributes %}
 
 {% block widget_attribute_class %}
   {% set cssClass = block('widget_attributes')|split('class') %}
