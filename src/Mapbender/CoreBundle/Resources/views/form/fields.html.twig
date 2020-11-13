@@ -36,7 +36,7 @@
     {% if type != 'hidden'%}
       <div class="inputWrapper {{ block('widget_attribute_class') }}">
         {% spaceless %}
-          <input class="input {% if type != 'file' %}validationInput{% endif %}" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+          <input class="input" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
 
           {% if errors|length > 0 %}
             <span class="validationMsgBox smallText">
@@ -93,7 +93,7 @@
 {% block textarea_widget %}
   <div class="inputWrapper {{ block('widget_attribute_class') }}">
     {% spaceless %}
-      <textarea class="input validationInput" {{ block('widget_attributes') }}>{{ value }}</textarea>
+      <textarea class="input" {{ block('widget_attributes') }}>{{ value }}</textarea>
       {% if errors|length > 0 %}
         <span class="validationMsgBox smallText">
           {% for error in errors %}

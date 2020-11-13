@@ -11,7 +11,7 @@
                 <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
                     <span class="required">*</span>
                 </label>
-                <input type="text" class="input validationInput" name="extra[{{ key }}]" required="required">
+                <input type="text" class="input" name="extra[{{ key }}]" required="required">
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -64,10 +64,10 @@
                 <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
                 {% if field.options.required %}
                     <span class="required">*</span></label>
-                    <input type="text" class="input validationInput" name="extra[{{ key }}]" required="required">
+                    <input type="text" class="input" name="extra[{{ key }}]" required="required">
                 {% else %}
                     </label>
-                    <input type="text" class="input validationInput" name="extra[{{ key }}]">
+                    <input type="text" class="input" name="extra[{{ key }}]">
                 {% endif %}
             {% endif %}
         {% endfor %}
