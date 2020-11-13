@@ -23,7 +23,6 @@
   {% spaceless %}
     {% set type = type|default('text') %}
     {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
-    {% if type != 'hidden' %}
       <div class="inputWrapper">
         <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
           {% if errors|length %}
@@ -38,10 +37,6 @@
             </span>
           {% endif %}
       </div>
-    {% else %}
-      {%- set attr = attr|merge({'class': ('hidden ' ~ (attr.class | default(''))) | trim}) -%}
-      <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    {% endif %}
   {% endspaceless %}
 {% endblock form_widget_simple %}
 
@@ -301,12 +296,9 @@
   {% endspaceless %}
 {% endblock password_widget %}
 
-{% block hidden_widget %}
-  {% spaceless %}
-    {% set type = type|default('hidden') %}
-    {{ block('form_widget_simple') }}
-  {% endspaceless %}
-{% endblock hidden_widget %}
+{%- block hidden_widget -%}
+  <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock hidden_widget -%}
 
 {% block email_widget %}
   {% spaceless %}
