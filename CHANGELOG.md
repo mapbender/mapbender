@@ -1,8 +1,11 @@
-## dev-master @ 636ec7a88
+## dev-master @ 0cb2db34d
 * Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 * Fix missing handling of configurable sidepane width
 * Fix visible content overflow / no scrolling in "tabs"-Type sidepane ([#1269](https://github.com/mapbender/mapbender/issues/1269))
-* [Framework] fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
+* Fix backend element list interaction tooltips on Yaml applications copied into db
+* [Framework] Fix broken form theme visualization of "disabled" input state
+* [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
+* [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
