@@ -55,17 +55,19 @@ class Fullscreen extends Template
     {
         $classes = parent::getRegionClasses($application, $regionName);
         $props = $this->extractRegionProperties($application, $regionName);
-        switch (ArrayUtil::getDefault($props, 'screenType')) {
-            default:
-            case ScreenTypes::ALL;
-                // nothing;
-                break;
-            case ScreenTypes::DESKTOP_ONLY:
-                $classes[] = 'hide-screentype-mobile';
-                break;
-            case ScreenTypes::MOBILE_ONLY:
-                $classes[] = 'hide-screentype-desktop';
-                break;
+        if ($application->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
+            switch (ArrayUtil::getDefault($props, 'screenType')) {
+                default:
+                case ScreenTypes::ALL;
+                    // nothing;
+                    break;
+                case ScreenTypes::DESKTOP_ONLY:
+                    $classes[] = 'hide-screentype-mobile';
+                    break;
+                case ScreenTypes::MOBILE_ONLY:
+                    $classes[] = 'hide-screentype-desktop';
+                    break;
+            }
         }
         switch ($regionName) {
             default:
