@@ -1,14 +1,15 @@
 .elementFormMap {
-  $label: 100px;
   .labelInput {
-    width: $label;
+    vertical-align: top;
+    margin: 0;
+  }
+  > div:not(.form-group) {
+    margin-bottom: 1em;
   }
   .singleRow {
-    float: right;
-    width: calc(100% - #{$label + 1.25 * $space});
+    margin-bottom: 0.5em;
     .labelInput {
-      width: 40px;
-      margin-right: 5px;
+      width: 5em;
     }
     .inputWrapper {
       min-width: 0;

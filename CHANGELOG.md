@@ -108,6 +108,13 @@
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
+## dev-release/3.0.7 @ 11e7ed6af
+- Fix backend element list interaction tooltips on Yaml applications copied into db
+- Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
+- [Framework] Fix broken form theme visualization of "disabled" input state
+- [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
+- [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+
 ## v3.0.8.6
 - Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
 - Fix empty "themes" configuration on Layertree after import / duplication

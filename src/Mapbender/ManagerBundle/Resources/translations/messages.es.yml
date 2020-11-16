@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
       element:
-        delete:
-          title: 'Borrar Elemento'
-          confirm: '¿Realmente quieres borrar el elemento?'
-        btn:
-          delete: Borrar
-          cancel: Cancelar
-        requirements: 'Campos requeridos están marcados con etiquetas oscuras, mientras que los campos opcionales tienen etiquetas claras.'
-        base_data: 'Dato base'
-        configuration: Configuración
         title: Título
         type: Tipo
         add: 'Añadir un nuevo elemento a'
         show_hide: 'Cambiar mostrar/ocultar el elemento'
-        edit: 'Editar elemento'
         no_element_added:
           '': 'No añadido elemento'
       zoombar:
@@ -151,9 +141,6 @@ mb:
       acl_element: 'Elemento Acl'
       import_application: Importar
       export_application: Exportar
-    be:
-      element:
-        delete: 'Borrar elemento ''%element_title%'''
     components:
       popup:
         add_element:

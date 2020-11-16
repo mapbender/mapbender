@@ -56,20 +56,10 @@ mb:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
       element:
-        delete:
-          title: 'Delete Element'
-          confirm: 'Do you really want to delete the element?'
-        btn:
-          delete: Delete
-          cancel: Cancel
-        requirements: 'Required fields are marked with dark labels, while optional fields have lighter labels.'
-        base_data: 'Base data'
-        configuration: Configuration
         title: Title
         type: Type
         add: 'Add a new element to'
         show_hide: 'Toggle show/hide element'
-        edit: 'Edit element'
         no_element_added:
           '': 'No element added'
       zoombar:
@@ -164,9 +154,6 @@ mb:
       acl_element: 'Acl element'
       import_application: Import
       export_application: Export
-    be:
-      element:
-        delete: 'Delete element ''%element_title%'''
     components:
       popup:
         add_element:

@@ -5,18 +5,7 @@
 #}
 
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
-{% use "form_div_layout.html.twig" with radio_widget as div_radio_widget %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
-
-{% block form_widget %}
-  {% spaceless %}
-    {% if compound %}
-      {{ block('form_widget_compound') }}
-    {% else %}
-      {{ block('form_widget_simple') }}
-    {% endif %}
-  {% endspaceless %}
-{% endblock form_widget %}
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
@@ -30,83 +19,49 @@
     {%- endif -%}
 {%- endblock -%}
 
+{%- block form_errors_inline -%}
+{%- if errors|length > 0 -%}
+  <span class="validationMsgBox smallText">
+    {%- for error in errors -%}
+      {{ error.message }}
+    {%- endfor -%}
+  </span>
+{%- endif -%}
+{%- endblock form_errors_inline %}
+
 {% block form_widget_simple %}
   {% spaceless %}
     {% set type = type|default('text') %}
-
-    {% if type != 'hidden'%}
-      <div class="inputWrapper {{ block('widget_attribute_class') }}">
-        {% spaceless %}
-          <input class="input {% if type != 'file' %}validationInput{% endif %}" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
-
-          {% if errors|length > 0 %}
-            <span class="validationMsgBox smallText">
-              {% for error in errors %}
-                {{
-                  error.messagePluralization is null
-                  ? error.messageTemplate|trans(error.messageParameters, 'validators')
-                  : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
-                }}
-              {% endfor %}
-            </span>
-          {% endif %}
-        {% endspaceless %}
+    {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
+      <div class="inputWrapper">
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
       </div>
-
-    {% else %}
-      <input class="hidden" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    {% endif %}
   {% endspaceless %}
 {% endblock form_widget_simple %}
-
-{% block form_widget_compound %}
-  {% spaceless %}
-    <div {{ block('widget_container_attributes') }}>
-      {% if form.vars.prototype is defined  and form.vars.allow_add is defined %}
-      <a href="#add" class="collectionAdd iconAdd hover-highlight-effect"></a>
-      {% endif %}
-      {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
-        <a href="#delete" class="collectionRemove iconRemove hover-highlight-effect"></a>
-      {% endif %}
-
-      {% if form.parent is empty %}
-      {{ form_errors(form) }}
-      {% endif %}
-      {{ block('form_rows') }}
-      {{ form_rest(form) }}
-    </div>
-
-  {% endspaceless %}
-{% endblock form_widget_compound %}
 
 {% block collection_widget %}
   {% spaceless %}
     {% if prototype is defined %}
       {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
-      {% endif %}
-      {% if allow_delete %}
+    {% endif %}
+    {% if allow_delete %}
       {% set attr = attr|merge({'data-allow-delete': 1 }) %}
+    {% endif %}
+    <div {{ block('widget_container_attributes') }}>
+      {% if prototype is defined and form.vars.allow_add is not empty %}
+        <a href="#add" class="collectionAdd iconAdd hover-highlight-effect"></a>
       {% endif %}
-      {{ block('form_widget') }}
-    {% endspaceless %}
+      {%- for child in form -%}
+        {{- form_row(child) -}}
+      {%- endfor -%}
+    </div>
+  {% endspaceless %}
 {% endblock collection_widget %}
 
 {% block textarea_widget %}
-  <div class="inputWrapper {{ block('widget_attribute_class') }}">
-    {% spaceless %}
-      <textarea class="input validationInput" {{ block('widget_attributes') }}>{{ value }}</textarea>
-      {% if errors|length > 0 %}
-        <span class="validationMsgBox smallText">
-          {% for error in errors %}
-            {{
-              error.messagePluralization is null
-              ? error.messageTemplate|trans(error.messageParameters, 'validators')
-              : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
-            }}
-          {% endfor %}
-        </span>
-      {% endif %}
-    {% endspaceless %}
+  <div class="inputWrapper">
+    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' input') | trim}) -%}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
   </div>
 {% endblock textarea_widget %}
 
@@ -178,7 +133,7 @@
   {%- if multiple -%}
     {{- block('symfony_choice_widget_collapsed') -}}
   {%- else -%}
-    <div class="dropdown {{ block('widget_attribute_class') }}" >
+    <div class="dropdown">
     {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
     {{- block('symfony_choice_widget_collapsed') -}}
     <div class="dropdownValue iconDown">
@@ -221,18 +176,6 @@
   {% endspaceless %}
 {% endblock checkbox_widget %}
 
-
-{% block radio_widget %}
-  {%- if 'sidepane_type' in form.parent.vars['block_prefixes'] -%}
-    {%- set _iconClass = form.parent.vars.iconMap[value] -%}
-    <span class="radioWrapper {% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}" title="{{ attr.title | trans }}">
-      <i class="{{ _iconClass }}"></i>
-      {{ block('div_radio_widget') }}
-    </span>
-  {%- else -%}
-    {{ block('div_radio_widget') }}
-  {%- endif -%}
-{% endblock radio_widget %}
 
 {% block datetime_widget %}
   {% spaceless %}
@@ -327,12 +270,9 @@
   {% endspaceless %}
 {% endblock password_widget %}
 
-{% block hidden_widget %}
-  {% spaceless %}
-    {% set type = type|default('hidden') %}
-    {{ block('form_widget_simple') }}
-  {% endspaceless %}
-{% endblock hidden_widget %}
+{%- block hidden_widget -%}
+  <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock hidden_widget -%}
 
 {% block email_widget %}
   {% spaceless %}
@@ -346,53 +286,39 @@
 
 {% block form_label %}
   {%- if 'checkbox' in form.vars.block_prefixes -%}
-    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelCheck' | trim}) -%}
+    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelCheck') | trim}) -%}
   {%- else -%}
-    {%- set label_attr = label_attr | merge({'class': label_attr.class | default('') ~ ' labelInput' | trim}) -%}
+    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
   {%- endif -%}
   {{ block('div_form_label') }}
 {% endblock form_label %}
 
-{# Rows #}
-
-{% block repeated_row %}
-  {% spaceless %}
-  {#
-  No need to render the errors here, as all errors are mapped
-  to the first child (see RepeatedTypeValidatorExtension).
-  #}
-  {{ block('form_rows') }}
-  {% endspaceless %}
-{% endblock repeated_row %}
+{% block checkbox_row %}
+<div>
+  {{- form_widget(form) -}}
+  {{- form_label(form) -}}
+</div>
+{% endblock checkbox_row %}
 
 {% block form_row %}
-  {% spaceless %}
-    {% set _isCollectionItem = 'collection' in form.parent.vars['block_prefixes'] %}
-    <div{{ _isCollectionItem ? ' class="collectionItem"' : '' }}>
-      {% if 'checkbox' in form.vars.block_prefixes %}
-        {{ form_widget(form) }}
-        {{ form_label(form) }}
-      {% else %}
-        {% if not _isCollectionItem %}
-          {{ form_label(form) }}
-        {% endif %}
-        {{ form_widget(form) }}
-      {% endif %}
+  {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
+    <div class="collectionItem">
+      {%- if form.parent.vars.allow_delete -%}
+        <a href="#delete" class="collectionRemove iconRemove hover-highlight-effect"></a>
+      {%- endif -%}
+      {# No label for collection item #}
+      {{ form_widget(form) }}
     </div>
-  {% endspaceless %}
+  {%- else -%}
+    <div>
+      {{- form_label(form) -}}
+      {{- form_widget(form) -}}
+      {{- block('form_errors_inline') -}}
+    </div>
+  {%- endif -%}
 {% endblock form_row %}
 
-{% block hidden_row %}
-  {{ form_widget(form) }}
-{% endblock hidden_row %}
-
 {# Misc #}
-
-{% block form_enctype %}
-  {% spaceless %}
-    {% if multipart %}enctype="multipart/form-data"{% endif %}
-  {% endspaceless %}
-{% endblock form_enctype %}
 
 {% block form_rest %}
   {% spaceless %}
@@ -472,41 +398,3 @@
     </tr>
   {% endspaceless %}
 {% endblock %}
-
-
-
-
-
-{# Support #}
-
-{% block form_rows %}
-  {% spaceless %}
-    {% for child in form %}
-      {{ form_row(child) }}
-     <div class="clearContainer"></div>
-    {% endfor %}
-  {% endspaceless %}
-{% endblock form_rows %}
-
-{% block widget_attributes %}
-  {% spaceless %}
-    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}
-    {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
-  {% endspaceless %}
-{% endblock widget_attributes %}
-
-{% block widget_container_attributes %}
-  {% spaceless %}
-    {% if id is not empty %}id="{{ id }}" {% endif %}
-    {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
-  {% endspaceless %}
-{% endblock widget_container_attributes %}
-
-{% block widget_attribute_class %}
-  {% set cssClass = block('widget_attributes')|split('class') %}
-
-  {# Get the class attribute from widget_attributes #}
-  {% if cssClass[1] is defined%}
-    {{ cssClass[1]|replace({'"': '', '=':''}) }}
-  {% endif %}
-{% endblock widget_attribute_class %}
