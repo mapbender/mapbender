@@ -46,20 +46,10 @@ mb:
         max_extent: 'Extensão maxima'
         start_extent: 'Extensão do princípio'
       element:
-        delete:
-          title: 'Remover elemento'
-          confirm: 'Realmente remover elemento?'
-        btn:
-          delete: Remover
-          cancel: Cancelar
-        requirements: 'Campos requeridos têm letra escura. Campos opcionais têm letra clara.'
-        base_data: 'Dados de segundo plano'
-        configuration: 'Configuração do elemento'
         title: Título
         type: Tipo
         add: 'Adicionar elemento'
         show_hide: Ativo/Inativo
-        edit: Editar
         no_element_added:
           '': 'Nenhum elemento existe'
       zoombar:
@@ -151,9 +141,6 @@ mb:
       acl_element: Acl
       import_application: Importar
       export_application: Exportar
-    be:
-      element:
-        delete: 'Remover elemento ''%element_title%'' '
     components:
       popup:
         add_element:

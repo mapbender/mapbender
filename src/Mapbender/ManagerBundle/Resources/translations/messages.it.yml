@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. estensione'
         start_extent: 'Estensione iniziale'
       element:
-        delete:
-          title: 'Elimina Elemento'
-          confirm: 'Sei sicuro di volere eliminare l''elemento?'
-        btn:
-          delete: Elimina
-          cancel: Cancella
-        requirements: 'I campi richiesti sono segnati con labels scure, mentre quelli opzionali hanno labels più chiare.'
-        base_data: 'Dati di base'
-        configuration: Configurazione
         title: Titolo
         type: Tipo
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
-        edit: 'Modifica elemento'
         no_element_added:
           '': 'Nessun elemento aggiunto'
       zoombar:
@@ -151,9 +141,6 @@ mb:
       acl_element: 'Acl elemento'
       import_application: Importazione
       export_application: Esportazione
-    be:
-      element:
-        delete: 'Elimina elemento ''%element_title%'''
     components:
       popup:
         add_element:

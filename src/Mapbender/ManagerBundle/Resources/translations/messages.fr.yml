@@ -46,20 +46,10 @@ mb:
         max_extent: 'Étendue maximum'
         start_extent: 'Étendue de départ'
       element:
-        delete:
-          title: 'Supprimer l''élément'
-          confirm: 'Voulez-vous vraiment supprimer l''élément?'
-        btn:
-          delete: Supprimer
-          cancel: Annuler
-        requirements: 'Les champs requis ont une étiquette foncée alors que les champs optionnels ont une étiquette pâle.'
-        base_data: 'Données de base'
-        configuration: Configuration
         title: Titre
         type: Type
         add: 'Ajouter un nouvel élément à'
         show_hide: 'Afficher/Ne pas afficher l''élément'
-        edit: 'Modifier l''élément'
         no_element_added:
           '': 'Aucun élément ajouté'
       zoombar:
@@ -152,9 +142,6 @@ mb:
       acl_element: 'Élément ACL'
       import_application: Importer
       export_application: Exporter
-    be:
-      element:
-        delete: 'Supprimer l''élément ''%element_title%'''
     components:
       popup:
         add_element:
