@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Template;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\CoreBundle\Entity\Application;
 
 /**
  * Template Fullscreen
@@ -40,7 +41,7 @@ class Fullscreen extends Template
         return 'Fullscreen';
     }
 
-    public function getRegionTemplate(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplate(Application $application, $regionName)
     {
         switch ($regionName) {
             default:
@@ -50,7 +51,7 @@ class Fullscreen extends Template
         }
     }
 
-    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionClasses(Application $application, $regionName)
     {
         $classes = parent::getRegionClasses($application, $regionName);
         $props = $this->extractRegionProperties($application, $regionName);
@@ -114,7 +115,7 @@ class Fullscreen extends Template
         return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
     }
 
-    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getBodyClass(Application $application)
     {
         return 'desktop-template';
     }

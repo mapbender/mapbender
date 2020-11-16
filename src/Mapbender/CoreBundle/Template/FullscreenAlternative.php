@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Template;
 
 
+use Mapbender\CoreBundle\Entity\Application;
+
 /**
  * Template FullscreenAlternative
  *
@@ -18,7 +20,7 @@ class FullscreenAlternative extends Fullscreen
         return 'Fullscreen alternative';
     }
 
-    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplateVars(Application $application, $regionName)
     {
         $vars = parent::getRegionTemplateVars($application, $regionName);
         switch ($regionName) {
@@ -31,7 +33,7 @@ class FullscreenAlternative extends Fullscreen
         }
     }
 
-    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionClasses(Application $application, $regionName)
     {
         $classes = parent::getRegionClasses($application, $regionName);
         if ($regionName === 'sidepane') {
