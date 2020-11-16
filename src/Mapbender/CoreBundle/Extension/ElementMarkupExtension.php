@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Element\Map;
@@ -247,12 +248,12 @@ class ElementMarkupExtension extends AbstractExtension
             return null;
         }
         switch ($element->getScreenType()) {
-            case Entity\Element::SCREENTYPE_ALL:
+            case ScreenTypes::ALL:
             default:
                 return null;
-            case Entity\Element::SCREENTYPE_MOBILE_ONLY:
+            case ScreenTypes::MOBILE_ONLY:
                 return 'hide-screentype-desktop';
-            case Entity\Element::SCREENTYPE_DESKTOP_ONLY:
+            case ScreenTypes::DESKTOP_ONLY:
                 return 'hide-screentype-mobile';
         }
     }

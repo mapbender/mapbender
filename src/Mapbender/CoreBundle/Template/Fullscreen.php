@@ -2,8 +2,8 @@
 
 namespace Mapbender\CoreBundle\Template;
 
+use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
@@ -55,15 +55,14 @@ class Fullscreen extends Template
         $classes = parent::getRegionClasses($application, $regionName);
         $props = $this->extractRegionProperties($application, $regionName);
         switch (ArrayUtil::getDefault($props, 'screenType')) {
-            // @todo: if we're using them globally, move screentype constants out of element entity
             default:
-            case Element::SCREENTYPE_ALL:
+            case ScreenTypes::ALL;
                 // nothing;
                 break;
-            case Element::SCREENTYPE_DESKTOP_ONLY:
+            case ScreenTypes::DESKTOP_ONLY:
                 $classes[] = 'hide-screentype-mobile';
                 break;
-            case Element::SCREENTYPE_MOBILE_ONLY:
+            case ScreenTypes::MOBILE_ONLY:
                 $classes[] = 'hide-screentype-desktop';
                 break;
         }

@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Enumeration\ScreenTypes;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,10 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Element
 {
-    const SCREENTYPE_ALL = 'all';
-    const SCREENTYPE_MOBILE_ONLY = 'mobile';
-    const SCREENTYPE_DESKTOP_ONLY = 'desktop';
-
     /**
      * @var integer
      * @ORM\Id
@@ -81,7 +78,7 @@ class Element
      * @var string
      * @ORM\Column(type="string", length=7, options={"default": "all"})
      */
-    protected $screenType = 'all';  // = self::SCREENTYPE_ALL
+    protected $screenType = 'all';  // = ScreenTypes::ALL
 
     /**
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
@@ -259,15 +256,10 @@ class Element
      */
     public function setScreenType($screenType)
     {
-        switch ($screenType) {
-            default:
-                throw new \InvalidArgumentException("Unsupported screen type value " . print_r($screenType, true));
-            case self::SCREENTYPE_ALL:
-            case self::SCREENTYPE_DESKTOP_ONLY:
-            case self::SCREENTYPE_MOBILE_ONLY:
-                $this->screenType = $screenType;
-                break;
+        if (!in_array($screenType, ScreenTypes::getValidValues(), true)) {
+            throw new \InvalidArgumentException("Unsupported screen type value " . print_r($screenType, true));
         }
+        $this->screenType = $screenType;
     }
 
     /**
