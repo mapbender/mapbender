@@ -2,6 +2,7 @@
 namespace Mapbender\MobileBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Entity\Application;
 
 /**
  * Template Mobile Template
@@ -46,7 +47,7 @@ class Mobile extends Template
         return 'MapbenderMobileBundle:Template:mobile.html.twig';
     }
 
-    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getBodyClass(Application $application)
     {
         return 'mobile-template';
     }
