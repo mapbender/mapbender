@@ -88,6 +88,13 @@ class Redlining extends Element
         return 'MapbenderCoreBundle:ElementAdmin:redlining.html.twig';
     }
 
+    public function getPublicConfiguration()
+    {
+        return array_replace(parent::getPublicConfiguration(), array(
+            'title' => $this->entity->getTitle() ?: $this->getClassTitle(),
+        ));
+    }
+
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
         return 'MapbenderCoreBundle:Element:redlining.html.twig';
