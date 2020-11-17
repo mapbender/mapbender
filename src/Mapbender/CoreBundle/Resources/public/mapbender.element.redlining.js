@@ -113,8 +113,6 @@
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 this._open();
-            } else {
-                this.element.removeClass('hidden');
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
         },
