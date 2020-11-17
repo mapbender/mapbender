@@ -1,0 +1,29 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'fom.user.acl.index.access_control_lists' | trans }}{% endblock %}
+
+{% block manager_content %}
+<table class="table userControlTable">
+  <thead>
+    <tr>
+      <th>{{ "fom.user.acl.index.name" | trans }}</th>
+      <th>{{ "fom.user.acl.index.class" | trans }}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for class, name in classes|sort %}
+      <tr id="app-{{ class|lower }}">
+        <td>
+          <a class="labelText" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name }}</a>
+        </td>
+        <td class="description">{{ class }}</td>
+        <td class="iconColumn">
+          <a class="iconEdit iconSmall" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"></a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+
+{% block title %} {{ 'fom.user.registration.form.title' | trans}} {% endblock %}
+
+{% block box_content %}
+  <div class="loginBox register">
+    <h2 class="contentTitle">{{ 'fom.user.registration.form.caption' | trans}}</h2>
+      {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
+      {{ form_widget(form) }}
+        <button class="right button">{{ 'fom.user.registration.form.register' | trans }}</button>
+        <a class="linkButton iconLinkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.registration.form.back_to_login"|trans}}</a>
+        <div class="clearContainer"></div>
+    {{ form_end(form) }}
+  </div>
+{% endblock %}

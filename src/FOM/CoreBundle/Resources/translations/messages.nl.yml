@@ -1,0 +1,18 @@
+fom:
+  core:
+    components:
+      popup:
+        add_user_group:
+          title: 'Toevoegen gebruikers en groepen'
+          btn:
+            cancel: Cancel
+            add: 'Voeg toe'
+        delete_user_group:
+          title: 'Bevestig verwijderen'
+          content: '%userGroup% echt verwijderen?'
+          btn:
+            cancel: Cancel
+            ok: OK
+    fields:
+      filter: Filter
+      no_user_group_defined: 'Geen gebruiker of groep gedefineerd.'

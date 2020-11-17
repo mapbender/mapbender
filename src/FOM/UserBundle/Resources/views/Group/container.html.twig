@@ -1,0 +1,42 @@
+<div id="userGroupTabContainer" class="tabContainer userGroupTabContainer groupTabContainer">
+  <ul class="tabs">
+    <li id="tabBaseData" class="tab active">{{"fom.user.group.container.base_data" | trans }}</li>
+    <li id="tabUsers" class="tab">{{"fom.user.group.container.users" | trans }}</li>
+  </ul>
+
+  <div id="containerBaseData" class="container active containerBaseData">
+      {{ form_row(form.title) }}
+      {{ form_row(form.description) }}
+  </div>
+  <div id="containerUsers" class="container containerUsers">
+
+    {% if form.users|length > 0 %}
+      <label for="inputFilterUsers" class="labelInput left">{{"fom.user.group.container.filter"|trans}}</label>
+      <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
+
+      <table id="listFilterUsers" class="listFilterContainer tableCore tableUserGroups">
+        <thead>
+          <tr class="doNotFilter">
+            <th>Name</th>
+            <th class="description"><span id="selectedUsersGroups">{{group.users | length}}</span> {{ 'fom.user.group.container.users_of_selected' | trans ({'%users_count%': form.users|length }) }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in form.users %}
+            <tr class="filterItem">
+              <td colspan="2">
+                <div class="tdContentWrapper iconUser">
+                  {{ form_label(user) }}
+                  {{ form_widget(user) }}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {% else %}
+      <p class="description">{{"fom.user.group.container.no_user_exists"|trans}}</p>
+    {% endif %}
+  </div>
+</div>

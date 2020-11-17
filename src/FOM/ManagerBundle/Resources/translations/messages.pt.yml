@@ -1,0 +1,8 @@
+fom:
+  core:
+    manager:
+      logged_as: 'Conectado como'
+      you_account: 'Sua conta'
+      btn:
+        logout: Logout
+        login: Login

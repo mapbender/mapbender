@@ -1,0 +1,8 @@
+fom:
+  core:
+    manager:
+      logged_as: 'Connecté en tant que'
+      you_account: 'Compte'
+      btn:
+        logout: Déconnexion
+        login: Connexion

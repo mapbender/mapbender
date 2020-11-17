@@ -1,0 +1,16 @@
+{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+
+{% block title %} {{ 'fom.user.login.error_tockenexp.title' | trans}} {% endblock %}
+
+{% block box_content %}
+    <div class="loginBox">
+        <h2 class="contentTitle">{{ 'fom.user.login.error_tockenexp.sorry' | trans}}</h2>
+        <p class="description">{{ 'fom.user.login.error_tockenexp.registration_token_expired' | trans}}</p>
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="right button">{{'fom.user.login.error_tockenexp.request_new_token'| trans}}</button>
+            <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.login.error_tockenexp.back_to_login"|trans}}</a>
+            <div class="clearContainer"></div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
