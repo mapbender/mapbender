@@ -25,12 +25,12 @@
 
         _create: function() {
             Object.assign(this.toolLabels, {
-                'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
-                'line': Mapbender.trans('mb.core.redlining.geometrytype.line'),
-                'polygon': Mapbender.trans('mb.core.redlining.geometrytype.polygon'),
-                'rectangle': Mapbender.trans('mb.core.redlining.geometrytype.rectangle'),
-                'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
-                'text': Mapbender.trans('mb.core.redlining.geometrytype.text')
+                'point': Mapbender.trans('mb.core.sketch.geometrytype.point'),
+                'line': Mapbender.trans('mb.core.sketch.geometrytype.line'),
+                'polygon': Mapbender.trans('mb.core.sketch.geometrytype.polygon'),
+                'rectangle': Mapbender.trans('mb.core.sketch.geometrytype.rectangle'),
+                'circle': Mapbender.trans('mb.core.sketch.geometrytype.circle'),
+                'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$labelInput_ = $('input[name="label-text"]', this.element);
@@ -205,7 +205,7 @@
         },
         _validateText: function() {
             if (this.requireText_ && !this.$labelInput_.val().trim()) {
-                Mapbender.info(Mapbender.trans('mb.core.redlining.error.notext'));
+                Mapbender.info(Mapbender.trans('mb.core.sketch.error.notext'));
                 return false;
             } else {
                 return true;

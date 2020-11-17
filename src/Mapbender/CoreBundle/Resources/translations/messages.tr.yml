@@ -301,10 +301,6 @@ mb:
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'
           hideinfo: 'Bilgileri gizle'
-      redlining:
-        label:
-          auto_activate: 'Otomatik etkinleştir'
-          deactivate_on_close: 'Kapandığında devre dışı bırak'
     htmlelement:
       class:
         title: 'HTML'
@@ -313,7 +309,7 @@ mb:
       app:
         screenshotfile:
           error: 'Hata'
-    redlining:
+    sketch:
       geometrytype:
         point: 'Nokta'
         line: 'Hat'
@@ -329,4 +325,10 @@ mb:
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
-
+      admin:
+        auto_activate: Otomatik etkinleştir
+        deactivate_on_close: Kapandığında devre dışı bırak
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: İşaretleme

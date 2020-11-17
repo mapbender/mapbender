@@ -300,10 +300,6 @@ mb:
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'
           hideinfo: 'Скрыть информацию'
-      redlining:
-        label:
-          auto_activate: Автоактивирование
-          deactivate_on_close: 'Деактивировать при закрытии'
     htmlelement:
       class:
         title: HTML
@@ -312,7 +308,7 @@ mb:
       app:
         screenshotfile:
           error: Ошибка
-    redlining:
+    sketch:
       geometrytype:
         point: Точка
         line: Линия
@@ -328,8 +324,11 @@ mb:
           edit: 'Редактировать геометрию'
           zoom: 'Показать геометрию'
       class:
-        title: Redlining
-        description: 'Redlining инструмент'
+        title: ~
+        description: ~
+      admin:
+        auto_activate: Автоактивирование
+        deactivate_on_close: Деактивировать при закрытии
 
 # Login exceptions
 "Bad credentials.": 'Ошибка аутентификации'

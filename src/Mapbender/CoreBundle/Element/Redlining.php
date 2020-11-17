@@ -15,7 +15,7 @@ class Redlining extends Element
      */
     public static function getClassTitle()
     {
-        return "mb.core.redlining.class.title";
+        return "mb.core.sketch.class.title";
     }
 
     /**
@@ -23,7 +23,7 @@ class Redlining extends Element
      */
     public static function getClassDescription()
     {
-        return "mb.core.redlining.class.description";
+        return "mb.core.sketch.class.description";
     }
 
     /**
@@ -48,7 +48,7 @@ class Redlining extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/redlining.scss',
             ),
             'trans' => array(
-                'mb.core.redlining.*',
+                'mb.core.sketch.*',
             ),
         );
     }
