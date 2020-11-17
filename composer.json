@@ -40,6 +40,9 @@
         "mapbender/openlayers6-es5": "^0.3.1 || ^1",
         "mapbender/mapquery": "1.x"
     },
+    "replace": {
+        "mapbender/fom": "3.3"
+    },
     "autoload": {
         "psr-4": {
             "Mapbender\\": "src/Mapbender",
