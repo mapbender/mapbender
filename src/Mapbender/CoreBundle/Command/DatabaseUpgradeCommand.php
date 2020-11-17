@@ -13,7 +13,7 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this
-            ->setHelp('The <info>mapbender:database:upgrade</info> command updates the database to the new schema of mapbender version')
+            ->setHelp('The <info>mapbender:database:upgrade</info> command updates the database to the new schema of your mapbender version')
             ->setName('mapbender:database:upgrade')
             ->setDescription('Updates database schema');
     }
