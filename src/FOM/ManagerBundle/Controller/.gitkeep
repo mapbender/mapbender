@@ -1,0 +1,2 @@
+### Keep this directory around for compatibility with legacy routing configs which include
+### the @FOMManagerBundle/Controller rule. An empty directory works fine.

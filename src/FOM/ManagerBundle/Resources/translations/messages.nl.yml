@@ -1,0 +1,8 @@
+fom:
+  core:
+    manager:
+      logged_as: 'Ingelogd als'
+      you_account: 'Uw gebruikersnaam'
+      btn:
+        logout: 'Log uit'
+        login: 'Log in'

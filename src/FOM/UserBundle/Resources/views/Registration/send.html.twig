@@ -1,0 +1,12 @@
+{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+
+{% block title %} {{ 'fom.user.registration.send.title' | trans}} {% endblock %}
+
+{% block box_content %}
+    <div class="loginBox">
+        <h2 class="contentTitle">{{ 'fom.user.registration.send.caption' | trans}}</h2>
+        <p class="description">{{ 'fom.user.registration.send.account_created' | trans }}</p>
+        <a class="left iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.registration.send.back_to_login"|trans}}</a>
+        <div class="clearContainer"></div>
+    </div>
+{% endblock %}

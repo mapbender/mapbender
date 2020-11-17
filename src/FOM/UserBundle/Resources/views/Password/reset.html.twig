@@ -1,0 +1,27 @@
+{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+
+{% block title %} {{ 'fom.user.password.reset.title' | trans}} {% endblock %}
+
+{% block box_content %}
+    <div class="resetBox loginBox login">
+        <h2 class="contentTitle">{{ 'fom.user.password.reset.caption' | trans }}</h2>
+
+        {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
+            {% if form_errors(form) | length > 0  %}
+                <div class="messageBox error">
+                    {{ error.message | trans }}
+                </div>
+            {% endif %}
+
+            {{ form_row(form._token) }}
+
+            {{ form_row(form.password) }}
+            <input type="submit" class="right button" value="{{ 'fom.user.password.reset.btn' | trans }}" />
+            <div class="clearContainer"></div>
+        {{ form_end(form) }}
+    </div>
+    <script type="text/javascript">
+        var Mapbender = Mapbender || {};
+        Mapbender.configuration = {elements:{}};
+    </script>
+{% endblock %}
