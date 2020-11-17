@@ -41,7 +41,10 @@
         "mapbender/mapquery": "1.x"
     },
     "autoload": {
-        "psr-4": {"Mapbender\\": "src/Mapbender"}
+        "psr-4": {
+            "Mapbender\\": "src/Mapbender",
+            "FOM\\": "src/FOM"
+        }
     },
     "conflict": {
         "mapbender/digitizer": "<1.1.68",
