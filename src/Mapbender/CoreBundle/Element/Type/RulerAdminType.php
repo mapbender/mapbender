@@ -48,29 +48,26 @@ class RulerAdminType extends AbstractType
                     'attr' => array(
                         'min' => 1,
                         'max' => 8
-                    ),
-                    'data' => 1))
+                    )))
             ->add('strokeOpacity', 'Symfony\Component\Form\Extension\Core\Type\RangeType',
                 array('required' => false, 'label' => 'Str. Opacity',
                     'attr' => array(
                         'min' => 0,
                         'max' => 10
-                    ),
-                    'data' => 10))
+                    )))
             ->add('strokeColor', 'Symfony\Component\Form\Extension\Core\Type\TextType',
-                array('required' => false, 'label' => 'Stroke Color', 'data' => '#ee9900'))
+                array('required' => false, 'label' => 'Stroke Color', ))
             ->add('fillOpacity', 'Symfony\Component\Form\Extension\Core\Type\RangeType',
                 array('required' => false, 'label' => 'Fill Opacity',
                     'attr' => array(
                         'min' => 0,
                         'max' => 10
-                    ),
-                    'data' => 4))
+                    )))
             ->add('fillColor', 'Symfony\Component\Form\Extension\Core\Type\TextType',
                 array(
                     'required' => false,
-                    'label' => 'Fill Color',
-                    'data' => '#ee9900'));
+                    'label' => 'Fill Color'
+                    ));
     }
 
 
