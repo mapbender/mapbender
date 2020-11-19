@@ -82,8 +82,6 @@ span.iconBig {
 .iconGpsTarget:before{content:"\f05b"; font-family: FontAwesome;}
 .iconPrev:before{content:"\f0e2"; font-family: FontAwesome;}
 .iconNext:before{content:"\f01e"; font-family: FontAwesome;}
-.iconZoomSelect:before{content:"\f00e"; font-family: FontAwesome;} // unused
-.iconZoomMin:before{content:"\f0ac"; font-family: FontAwesome;}
 .iconZoomLevel:before{content:"\f10c"; font-family: FontAwesome;}
 .iconZoomLevelSelected:before{content:"\f111"; font-family: FontAwesome;}
 .iconAreaRuler:before{content:"\f125"; font-family: FontAwesome;}
@@ -91,16 +89,8 @@ span.iconBig {
 .iconFolderActive:before{content:"\f07c"; font-family: FontAwesome;}
 .iconPoi:before{content:"\f08d"; font-family: FontAwesome;}
 .iconImageExport:before{content:"\f030"; font-family: FontAwesome;}
-.iconWarning:before{content:"\f071"; font-family: FontAwesome;}
-.iconEmail:before {content: "\f0e0"; font-family: FontAwesome;}
-.iconTwitter:before {content: "\f081"; font-family: FontAwesome;}
-.iconFacebook:before {content: "\f082"; font-family: FontAwesome;}
-.iconGooglePlus:before {content: "\f0d4"; font-family: FontAwesome;}
 .iconSketch:before {content: "\f044"; font-family: FontAwesome;}
-.iconClock:before {content: "\f017"; font-family: FontAwesome;}
 .iconFile:before {content: "\f016"; font-family: FontAwesome;}
-.iconBolt:before {content: "\f0e7"; font-family: FontAwesome;}
-.iconStarO:before{content:"\f006"; font-family: FontAwesome;}
 .iconBars:before{content:"\f0c9"; font-family: FontAwesome;}
 .iconFileText:before{content:"\f0f6"; font-family: FontAwesome;}
 .iconCancel:before{ content: "\f05c"; font-family: FontAwesome;}
@@ -119,20 +109,9 @@ span.iconBig {
 .iconThumbsDown:before{content:"\f088"; font-family: FontAwesome;}
 .iconGroup:before{content:"\f0c0"; font-family: FontAwesome;}
 .iconUser:before{content:"\f007"; font-family: FontAwesome;}
-.iconMore:before{content:"\f141"; font-family: FontAwesome;}
 .iconCopy:before{content:"\f0c5"; font-family: FontAwesome;}
 .iconKey:before{content:"\f084"; font-family: FontAwesome;}
 .iconReset:before{content:"\f021"; font-family: FontAwesome;}
-.iconPlay:before{content: "\f04b"; font-family: FontAwesome;}
-.iconStop:before{content: "\f04d"; font-family: FontAwesome;}
-
-/** unused legacy backend stuff */
-/** @todo: remove, mark custom template bc break */
-.iconSettings:before{content:"\f0ad"; font-family: FontAwesome;}
-.iconSignOut:before{content:"\f08b"; font-family: FontAwesome;}
-.iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
-.iconTab:before{content:"\f114"; font-family: FontAwesome;}
-.iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
 
 @import url("components/mapbender-icons/style.css");
 [class^="icon-"]:before, [class*=" icon-"]:before {
