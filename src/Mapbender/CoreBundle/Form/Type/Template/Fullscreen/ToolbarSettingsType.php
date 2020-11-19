@@ -10,6 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ToolbarSettingsType extends AbstractType
 {
+    public function getParent()
+    {
+        return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
