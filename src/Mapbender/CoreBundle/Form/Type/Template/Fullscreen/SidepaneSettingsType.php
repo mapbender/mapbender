@@ -49,5 +49,9 @@ class SidepaneSettingsType extends AbstractType
             ),
             'label' => 'mb.manager.sidepane.width',
         ));
+        $builder->add('closed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            'required' => false,
+            'label' => 'mb.manager.sidepane.closed',
+        ));
     }
 }

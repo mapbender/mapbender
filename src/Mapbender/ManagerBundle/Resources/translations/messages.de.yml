@@ -39,6 +39,7 @@ mb:
         desktop: Auf großen Bildschirmen anzeigen
     sidepane:
       width: Breite
+      closed: Geschlossen starten
     sourceinstance:
       embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
       convert_to_reusable: In freie Instanz umwandeln
