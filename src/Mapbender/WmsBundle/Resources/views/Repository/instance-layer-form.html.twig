@@ -23,13 +23,22 @@
             {{ form_row(form_layer.allowtoggle) }}
             {{ form_row(form_layer.toggle) }}
             <td class="moreColumn">
-              <div class="infoMsgBox hidden">
-                <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
-                <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span><br>
-                <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.sourceItem.name}}</span>
-                {{ form_row(form_layer.style) }}
+            <div class="static-popover-wrap">
+              <div class="infoMsgBox popover left hidden">
+                  <div class="arrow"></div>
+                  <div class="popover-content">
+                    <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
+                    <div>
+                      <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span>
+                    </div>
+                    <div>
+                      <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.sourceItem.name}}</span>
+                    </div>
+                    {{ form_row(form_layer.style) }}
+                  </div>
               </div>
               <span class="-fn-toggle-layer-detail" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
+            </div>
             </td>
 
         </tr>
