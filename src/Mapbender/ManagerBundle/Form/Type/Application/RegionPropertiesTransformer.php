@@ -48,9 +48,10 @@ class RegionPropertiesTransformer implements DataTransformerInterface
                 // Legacy quirk: label for sidepane types used to be copied into db but is redundant.
                 unset($mergedProps['label']);
                 $rprop->setProperties($mergedProps);
-                unset($missing[$regionName]);
             }
+            unset($missing[$regionName]);
         }
+
         foreach (array_keys($missing) as $regionName) {
             $rprop = new RegionProperties();
             $rprop->setName($regionName);
