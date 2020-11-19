@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Template Fullscreen
@@ -57,7 +58,7 @@ class Fullscreen extends Template
                 break;
             case 'sidepane':
                 $props = $this->extractRegionProperties($application, $regionName);
-                $classes[] = 'left';
+                $classes[] = ArrayUtil::getDefault($props, 'align') ?: 'left';
                 if (!empty($props['closed'])) {
                     $classes[] = 'closed';
                 }
