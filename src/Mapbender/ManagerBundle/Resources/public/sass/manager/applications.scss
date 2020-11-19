@@ -336,8 +336,13 @@
     display: initial;
     &.left {
       right: 2em;
-      // center on containing element's height
-      top: calc(-50% - 0.5em);
+    }
+    &.left, &.right {
+      top: -1em;
+      .arrow {
+        top: 1em;
+        margin-top: 0;
+      }
     }
   }
 }
