@@ -113,8 +113,6 @@
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 this._open();
-            } else {
-                this.element.removeClass('hidden');
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
         },
@@ -155,7 +153,7 @@
             var self = this;
             if(!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('data-title'),
+                    title: Mapbender.trans(this.options.title),
                     draggable: true,
                     header: true,
                     modal: false,

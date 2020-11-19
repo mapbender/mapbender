@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="fom_user.security.access.rootaccount.voter.class">FOM\UserBundle\Security\Authorization\Voter\RootAccountVoter</parameter>
+        <parameter key="fom_user.failed_login_listener.class">FOM\UserBundle\EventListener\FailedLoginListener</parameter>
+        <parameter key="fom_user.user_profile_listener.class">FOM\UserBundle\EventListener\UserProfileListener</parameter>
+    </parameters>
+
+    <services>
+        <!-- Root Account Voter: Enabled account with id=1 to do EVERYTHING -->
+        <service id="security.access.rootaccount.voter" class="%fom_user.security.access.rootaccount.voter.class%">
+            <tag name="security.voter" />
+        </service>
+
+        <service id="sspi.security.authentication.listener" class="FOM\UserBundle\Security\Firewall\SspiListener" public="false">
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.authentication.manager" />
+        </service>
+
+        <service id="sspi.security.authentication.provider" class="FOM\UserBundle\Security\Authentication\Provider\SspiAuthenticationProvider" public="false">
+            <argument/>
+            <argument type="service" id="security.user_checker"/>
+        </service>
+
+        <service id="fom.security.failed_login_listener" class="%fom_user.failed_login_listener.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument>%fom_user.login_attempts_before_delay%</argument>
+            <argument>%fom_user.login_delay_after_fail%</argument>
+            <argument>%fom_user.login_check_log_time%</argument>
+            <tag name="kernel.event_listener" event="security.authentication.failure" method="onLoginFailure" />
+            <tag name="kernel.event_listener" event="security.authentication.success" method="onLoginSuccess" />
+        </service>
+
+        <service id="fom.user_profile_listener" class="%fom_user.user_profile_listener.class%">
+            <argument>%fom_user.profile_entity%</argument>
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <!-- @todo v3.3 remove alias, this has nothing to do with security -->
+        <service id="fom.security.user_profile_listener" alias="fom.user_profile_listener" />
+    </services>
+</container>

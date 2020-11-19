@@ -1,0 +1,21 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block js %}
+  {{parent()}}
+  <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+    {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
+
+    {% include 'FOMUserBundle:User:container.html.twig' %}
+
+    {{ form_row(form._token) }}
+
+    <div class="right">
+      <input class="button" type="submit" value="{% if edit %}{{ 'fom.user.user.form.save' | trans }}{% else %}{{ 'fom.user.user.form.create' | trans }}{% endif %}"/>
+      <a class="button critical" href="{{ path('fom_user_user_index') }}">{{ 'fom.user.user.form.cancel' | trans}}</a>
+    </div>
+    {{ form_end(form) }}
+<div class="clearContainer"></div>
+{% endblock %}

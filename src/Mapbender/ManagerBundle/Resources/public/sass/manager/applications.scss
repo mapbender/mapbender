@@ -225,7 +225,7 @@
     }
   }
   // Icon resizing hacks. Icons appear too small on inherited font size :\
-  .iconColumn, thead th.iconColumn, thead td.iconColumn {
+  .iconColumn, thead th.iconColumn, thead th.regionProperties {
     // Keep horizontal alignment of icons thead vs tbody, despite different default font sizes
     font-size: 118%;
   }
@@ -261,20 +261,18 @@
   tr {
     height:30px;
   }
-  .iconColumn {
-    // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
+  td:last-child, th:last-child {
+    // indent inwards even in thead, to line up with tbody > tr > td.iconColumn
     padding-right: $space / 2;
     // neat alignment for "Layouts" table (differing number of icons in cells)
     text-align: right;
+  }
+  .iconColumn {
     // .iconColumn contents mix div / a / span elements, but they should all
     // size and align the same way
     > * {
       display: inline-block;
       min-width: 1.2em;
-    }
-    a:before {
-      // undo built-in margin on a.icon...:before
-      margin: 0;
     }
   }
   .iconColumn, .idColumn {
@@ -327,5 +325,12 @@
     &.checked.disabled {
       opacity: .6;
     }
+  }
+}
+
+.static-popover-wrap {
+  position: relative; // for anchoring of absolute-positioned .popover
+  .popover {
+    display: initial;
   }
 }

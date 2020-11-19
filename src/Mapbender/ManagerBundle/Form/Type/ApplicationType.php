@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

@@ -1,0 +1,2 @@
+{{'fom.user.password.email_body_text' | trans(
+{'%user_username%': user.username,'%url%': url('fom_user_password_reset', { 'token': user.resettoken }) }, "messages")|raw}}

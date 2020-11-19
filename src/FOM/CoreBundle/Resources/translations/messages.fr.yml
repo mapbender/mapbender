@@ -1,0 +1,18 @@
+fom:
+  core:
+    components:
+      popup:
+        add_user_group:
+          title: 'Ajouter des utilisateurs et des groupes'
+          btn:
+            cancel: Annuler
+            add: Ajouter
+        delete_user_group:
+          title: 'Confirmez la suppression'
+          content: 'Voulez-vous vraiment supprimer %userGroup%?'
+          btn:
+            cancel: Annuler
+            ok: OK
+    fields:
+      filter: Filtrer
+      no_user_group_defined: 'Aucun utilisateur ou groupe n''est défini'

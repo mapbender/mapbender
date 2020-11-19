@@ -1,0 +1,4 @@
+fom:
+  user:
+    password:
+      repeat_mismatch: Das Passwort muss identisch wiederholt werden.

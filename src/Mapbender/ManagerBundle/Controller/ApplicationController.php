@@ -23,7 +23,7 @@ use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -740,7 +740,7 @@ class ApplicationController extends WelcomeController
      * Create the application form, set extra options needed
      *
      * @param Application $application
-     * @return Form
+     * @return FormInterface
      */
     private function createApplicationForm(Application $application)
     {

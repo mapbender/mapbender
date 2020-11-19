@@ -1,3 +1,12 @@
+select.numeric {
+  // Right align selects with numeric content
+  // see https://stackoverflow.com/a/43919388
+  text-align-last: right;
+  option {
+    direction: rtl;
+  }
+}
+
 .dropdown{
   cursor:pointer;
   position: relative;
