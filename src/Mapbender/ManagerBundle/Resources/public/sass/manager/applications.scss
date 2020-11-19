@@ -336,7 +336,8 @@
     display: initial;
     &.left {
       right: 2em;
-      top: -150%;
+      // center on containing element's height
+      top: calc(-50% - 0.5em);
     }
   }
 }
