@@ -459,4 +459,11 @@ label[for^="inputFilter"] {
   .inputWrapper, .dropdown {
     width: 45% !important;    // defeat super-sepcific ".contentPane > .content form .inputWrapper" rule
   }
+  .dropdown {
+    display: inline-block;
+  }
+}
+
+.popover {
+  font-size: inherit;
 }
