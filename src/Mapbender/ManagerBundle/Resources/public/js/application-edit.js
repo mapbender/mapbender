@@ -54,6 +54,7 @@ $(function() {
             var $clickedRadio = $('input[type="radio"]', this);
             $clickedRadio.prop('checked', true);
             updateGroupIcons.call($(this).parent());
+            $clickedRadio.trigger('change');
         }
         updateGroupIcons.call(this);
         $(this).on('click', '.radioWrapper', onClick);
