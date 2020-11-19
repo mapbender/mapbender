@@ -42,5 +42,12 @@ class SidepaneSettingsType extends AbstractType
             ));
         }
         $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType');
+        $builder->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '350px',   // HACK: this is implicitly the default (via CSS)
+            ),
+            'label' => 'mb.manager.sidepane.width',
+        ));
     }
 }
