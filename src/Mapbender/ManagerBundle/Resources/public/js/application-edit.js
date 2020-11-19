@@ -444,4 +444,7 @@ $(function() {
             codeMirror.focus();
         });
     })(jQuery);
+    $('.regionProperties [data-toggle-target]').on('click', function() {
+        $($(this).attr('data-toggle-target')).toggleClass('hidden');
+    });
 });

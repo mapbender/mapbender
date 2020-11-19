@@ -17,6 +17,27 @@
     {%- endfor -%}
   </div>
 {% endblock sidepane_type_widget %}
+
+{% block sidepane_settings_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if form.name is defined -%}
+            {{ form_row(form.name) }}
+        {%- endif -%}
+        {%- if not form.rendered -%}
+          {%- set _popover_id = 'popover_' ~ form.vars.id -%}
+          <button type="button" class="btn btn-sm btn-default" data-toggle-target="#{{ _popover_id }}"><i class="fa fa-gear"></i></button>
+          <div class="static-popover-wrap">
+            {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
+            <div class="popover bottom hidden" id="{{ _popover_id }}">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    {{ form_rest(form) }}
+                </div>
+            </div>
+          </div>
+        {%- endif -%}
+    </div>
+{% endblock %}
 {%- endif -%}
 
 {% for region in regions %}
