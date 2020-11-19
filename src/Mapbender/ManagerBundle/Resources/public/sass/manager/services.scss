@@ -203,11 +203,9 @@ fieldset.box {
   .level3 .itemType{margin-left:22px;}
   .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
-  .moreColumn{
+  .moreColumn {
     position: relative;
-    .iconMore{
-      line-height:$inputHeight;
-    }
+    line-height:$inputHeight;
   }
   .input{width:80px;}
   .titleColumn .input{width:200px;}

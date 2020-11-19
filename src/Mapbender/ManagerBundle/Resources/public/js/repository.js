@@ -121,11 +121,8 @@ $(function() {
         });
     });
 
-    $("#instanceTable").on("click", ".iconMore", function(e) {
-        var $target = $(e.target).filter('.iconMore');
-        if (!$target.length) {
-            return;
-        }
+    $("#instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
+        var $target = $(this);
         var $row = $target.closest('tr');
         var $table = $row.closest('table');
         var $targetBox = $('.infoMsgBox', $row);
