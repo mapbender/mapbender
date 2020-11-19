@@ -28,7 +28,7 @@
               <h3 class="subTitle">{{ region | capitalize }}</h3>
             </th>
             <th class="iconColumn regionProperties">
-              {% if true and form.regionProperties[region] is defined %}
+              {% if form.regionProperties[region] is defined %}
                   {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
             </th>
