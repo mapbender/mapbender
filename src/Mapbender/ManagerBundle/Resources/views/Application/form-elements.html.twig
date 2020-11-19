@@ -46,10 +46,10 @@
       <table class="application-component-table smallText elementsTable" data-region="{{ region }}">
         <thead>
           <tr>
-            <th colspan="2">
+            <th colspan="1">
               <h3 class="subTitle">{{ region | capitalize }}</h3>
             </th>
-            <th class="regionProperties">
+            <th colspan="2" class="regionProperties">
               {% if form.regionProperties[region] is defined %}
                   {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
