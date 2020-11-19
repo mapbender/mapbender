@@ -23,7 +23,7 @@
         {%- if 'sidepane_settings' in form.vars.block_prefixes and form.name is defined -%}
             {{ form_widget(form.name) }}
         {%- endif -%}
-        {%- if not form.rendered -%}
+        {%- if not form.rendered and form.children | length -%}
           {%- set _popover_id = 'popover_' ~ form.vars.id -%}
           <div class="static-popover-wrap">
             <span data-toggle-target="#{{ _popover_id }}">
@@ -46,10 +46,10 @@
       <table class="application-component-table smallText elementsTable" data-region="{{ region }}">
         <thead>
           <tr>
-            <th colspan="2">
+            <th colspan="1">
               <h3 class="subTitle">{{ region | capitalize }}</h3>
             </th>
-            <th class="regionProperties">
+            <th colspan="2" class="regionProperties">
               {% if form.regionProperties[region] is defined %}
                   {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
@@ -78,6 +78,13 @@
                            data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
                            data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
                   </div>
+                  {% if allow_screentypes %}
+                  <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
+                    {%- set _element_screentype = element.getScreenType() -%}
+                    <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-fw fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
+                    <i data-screentype="desktop" class="screentype-icon fa fa-fw fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
+                  </span>
+                  {% endif %}
                   <span class="iconEdit editElement hover-highlight-effect"
                         title="{{ 'mb.actions.edit' | trans }}"
                         data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>

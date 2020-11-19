@@ -241,10 +241,12 @@
   thead h3 {
     font-size: 140%;
   }
-  thead .regionProperties > * {
-    // Expand cell content to make space for embedded popover (no initial size)
-    width: 15em;
-    min-width: 15em;
+  thead .regionProperties {
+    .static-popover-wrap {
+      width: 22em;
+      min-width: 22em;
+      margin-left: auto;
+    }
   }
 
   tbody {
@@ -291,6 +293,9 @@
   .typeColumn, .titleColumn {width: 49%;}
 
   .placeholderRow{height:$space;}
+  .screentype-icon.disabled {
+    opacity: 0.3;
+  }
 }
 
 .layersetTable{

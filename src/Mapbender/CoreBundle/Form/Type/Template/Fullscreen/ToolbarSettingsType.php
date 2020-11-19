@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
@@ -7,8 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
-class SidepaneSettingsType extends AbstractType
+class ToolbarSettingsType extends AbstractType
 {
     protected $allowResponsiveContainers;
 
@@ -29,11 +29,6 @@ class SidepaneSettingsType extends AbstractType
         ));
     }
 
-    public function getBlockPrefix()
-    {
-        return 'sidepane_settings';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($this->allowResponsiveContainers) {
@@ -41,6 +36,5 @@ class SidepaneSettingsType extends AbstractType
                 'label' => 'mb.manager.screentype.label',
             ));
         }
-        $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType');
     }
 }

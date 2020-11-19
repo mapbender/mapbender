@@ -3,11 +3,14 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Element\Map;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\Exception\Application\MissingMapElementException;
 use Mapbender\Exception\Application\MultipleMapElementsException;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -34,18 +37,28 @@ class ElementMarkupExtension extends AbstractExtension
     protected $nonContentRegionMap;
     /** @var array */
     protected $regionProperties;
+    /** @var bool */
+    protected $allowResponsiveElements;
+    /** @var bool */
+    protected $allowResponsiveContainers;
 
     /**
      * @param Component\Presenter\ApplicationService $appService
      * @param TwigEngine $templatingEngine
+     * @param bool $allowResponsiveElements
+     * @param bool $allowResponsiveContainers
      * @param bool $debug
      */
     public function __construct(Component\Presenter\ApplicationService $appService,
                                 $templatingEngine,
+                                $allowResponsiveElements,
+                                $allowResponsiveContainers,
                                 $debug)
     {
         $this->appService = $appService;
         $this->templatingEngine = $templatingEngine;
+        $this->allowResponsiveElements = $allowResponsiveElements;
+        $this->allowResponsiveContainers = $allowResponsiveContainers;
         $this->debug = $debug;
     }
 
@@ -120,12 +133,7 @@ class ElementMarkupExtension extends AbstractExtension
         if ($elements || !$suppressEmptyRegion) {
             $template = $this->getTemplateDescriptor($application);
             $skin = $template->getRegionTemplate($application, $regionName);
-            $vars = array_replace($template->getRegionTemplateVars($application, $regionName), array(
-                'elements' => $elements,
-                'region_name' => $regionName,
-                'application' => $application,
-            ));
-            return $this->templatingEngine->render($skin, $vars);
+            return $this->templatingEngine->render($skin, $this->getRegionTemplateVars($application, $regionName, $elements));
         } else {
             return '';
         }
@@ -242,9 +250,19 @@ class ElementMarkupExtension extends AbstractExtension
      */
     protected function getElementVisibilityClass(Entity\Element $element)
     {
-        // @todo screen-type visibility filter
-        // if ($element->getScrrenTypes !== 'both') return '...';
-        return null;
+        // Allow screenType filtering only on current map engine
+        if (!$this->allowResponsiveElements || $element->getApplication()->getMapEngineCode() === Application::MAP_ENGINE_OL2) {
+            return null;
+        }
+        switch ($element->getScreenType()) {
+            case ScreenTypes::ALL:
+            default:
+                return null;
+            case ScreenTypes::MOBILE_ONLY:
+                return 'hide-screentype-desktop';
+            case ScreenTypes::DESKTOP_ONLY:
+                return 'hide-screentype-mobile';
+        }
     }
 
     /**
@@ -375,6 +393,41 @@ class ElementMarkupExtension extends AbstractExtension
 
     /**
      * @param Application $application
+     * @param string $regionName
+     * @param Component\Element[] $elements
+     * @return array
+     */
+    protected function getRegionTemplateVars(Application $application, $regionName, $elements)
+    {
+        $template = $this->getTemplateDescriptor($application);
+        $props = $this->extractRegionProperties($application, $regionName);
+        $classes = $template->getRegionClasses($application, $regionName);
+        if ($this->allowResponsiveContainers && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
+            switch (ArrayUtil::getDefault($props, 'screenType')) {
+                default:
+                case ScreenTypes::ALL;
+                    // nothing;
+                    break;
+                case ScreenTypes::DESKTOP_ONLY:
+                    $classes[] = 'hide-screentype-mobile';
+                    break;
+                case ScreenTypes::MOBILE_ONLY:
+                    $classes[] = 'hide-screentype-desktop';
+                    break;
+            }
+        }
+
+        return array_replace($template->getRegionTemplateVars($application, $regionName), array(
+            'elements' => $elements,
+            'region_name' => $regionName,
+            'application' => $application,
+            'region_class' => implode(' ', $classes),
+            'region_props' => $props,
+        ));
+    }
+
+    /**
+     * @param Application $application
      * @return Template
      */
     protected static function getTemplateDescriptor(Application $application)
@@ -420,5 +473,16 @@ class ElementMarkupExtension extends AbstractExtension
             throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
         }
         return $element;
+    }
+
+    /**
+     * @param Application $application
+     * @param string $regionName
+     * @return array
+     */
+    protected static function extractRegionProperties(Application $application, $regionName)
+    {
+        $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
+        return $propsObject->getProperties() ?: array();
     }
 }

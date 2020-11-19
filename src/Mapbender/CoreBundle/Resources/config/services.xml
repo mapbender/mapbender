@@ -41,6 +41,9 @@
         <parameter key="mapbender.asset_compiler.translations.class">Mapbender\CoreBundle\Asset\TranslationCompiler</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
+        <parameter key="mapbender.responsive">true</parameter>
+        <parameter key="mapbender.responsive.elements">%mapbender.responsive%</parameter>
+        <parameter key="mapbender.responsive.containers">%mapbender.responsive%</parameter>
         <parameter key="mapbender.yaml_application_dirs" type="collection">
             <parameter>%kernel.root_dir%/config/applications</parameter>
         </parameter>
@@ -70,6 +73,8 @@
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="templating" />
+            <argument>%mapbender.responsive.elements%</argument>
+            <argument>%mapbender.responsive.containers%</argument>
             <argument>%kernel.debug%</argument>
         </service>
 
@@ -92,6 +97,14 @@
             <tag name="form.type"/>
             <!-- arguments 1:1 for ChoiceType parent class constructor -->
             <argument type="service" id="form.choice_list_factory"/>
+        </service>
+        <service id="form.type.template.fullscreen.toolbar_settings" class="Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType">
+            <tag name="form.type" />
+            <argument>%mapbender.responsive.containers%</argument>
+        </service>
+        <service id="form.type.template.sidepane_settings" class="Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType">
+            <tag name="form.type" />
+            <argument>%mapbender.responsive.containers%</argument>
         </service>
 
         <service id="signer" class="%signer.class%">

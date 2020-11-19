@@ -260,6 +260,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             'title',
             'roles',
             'class',
+            'screenType',
         );
     }
 }

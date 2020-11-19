@@ -314,6 +314,7 @@ class ApplicationController extends WelcomeController
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
+        $allowScreenTypesGlobal = $this->getParameter('mapbender.responsive.elements');
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'regions'             => $templateClass::getRegions(),
@@ -321,6 +322,8 @@ class ApplicationController extends WelcomeController
             'template_name'       => $templateClass::getTitle(),
             'screenshot'          => $screenShotUrl,
             'screenshot_filename' => $screenShot,
+            // Allow screenType filtering only on current map engine
+            'allow_screentypes' => $allowScreenTypesGlobal && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
         ));
     }
 

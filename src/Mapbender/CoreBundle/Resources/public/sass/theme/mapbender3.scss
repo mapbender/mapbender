@@ -219,3 +219,18 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   background: $buttonFirstColor;
   color: $lightFontColor;
 }
+
+// Filter Element visibility by "screenType"
+// @see Mapbender/CoreBundle/Extension/ElementMarkupExtension.php
+// @todo: eventually we may need to make the breaking pixel width configurable
+@media screen and (max-width: 1119px) {
+  .hide-screentype-mobile {
+    display: none !important; // Overrule misc display: inline-block and such with !important
+  }
+}
+
+@media screen and (min-width: 1120px) {
+  .hide-screentype-desktop {
+    display: none !important; // Overrule misc display: inline-block and such with !important
+  }
+}
