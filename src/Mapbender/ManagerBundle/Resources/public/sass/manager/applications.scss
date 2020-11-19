@@ -274,10 +274,6 @@
       display: inline-block;
       min-width: 1.2em;
     }
-    a:before {
-      // undo built-in margin on a.icon...:before
-      margin: 0;
-    }
   }
   .iconColumn, .idColumn {
     white-space: nowrap;
