@@ -10,6 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ToolbarSettingsType extends AbstractType
 {
+    protected $allowResponsiveContainers;
+
+    public function __construct($allowResponsiveContainers)
+    {
+        $this->allowResponsiveContainers = $allowResponsiveContainers;
+    }
+
     public function getParent()
     {
         return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
@@ -24,8 +31,10 @@ class ToolbarSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(
-            'label' => 'mb.manager.screentype.label',
-        ));
+        if ($this->allowResponsiveContainers) {
+            $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(
+                'label' => 'mb.manager.screentype.label',
+            ));
+        }
     }
 }
