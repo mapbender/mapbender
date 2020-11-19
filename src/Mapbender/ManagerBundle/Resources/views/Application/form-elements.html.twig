@@ -18,9 +18,9 @@
   </div>
 {% endblock sidepane_type_widget %}
 
-{% block sidepane_settings_widget %}
+{% block region_settings_widget %}
     <div {{ block('widget_container_attributes') }}>
-        {%- if form.name is defined -%}
+        {%- if 'sidepane_settings' in form.vars.block_prefixes and form.name is defined -%}
             {{ form_row(form.name) }}
         {%- endif -%}
         {%- if not form.rendered -%}

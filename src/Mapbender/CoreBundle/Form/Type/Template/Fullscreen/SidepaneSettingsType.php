@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -9,6 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SidepaneSettingsType extends AbstractType
 {
+    public function getParent()
+    {
+        return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
