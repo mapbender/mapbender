@@ -40,6 +40,11 @@ mb:
     sidepane:
       width: Width
       closed: Initially closed
+      align:
+        label: Position
+        choice:
+          left: Left
+          right: Right
     sourceinstance:
       embedded_in_applications: '{0} This instance is not used in any application|{1} This instance is used in one application|]1,Inf[ This instance is used in %count% applications'
       convert_to_reusable: Convert to shared instance

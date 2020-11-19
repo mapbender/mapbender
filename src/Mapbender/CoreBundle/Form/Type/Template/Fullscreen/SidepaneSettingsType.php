@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 
@@ -48,6 +49,23 @@ class SidepaneSettingsType extends AbstractType
                 'placeholder' => '350px',   // HACK: this is implicitly the default (via CSS)
             ),
             'label' => 'mb.manager.sidepane.width',
+        ));
+        if (Kernel::MAJOR_VERSION <= 3) {
+            $choiceDefaults = array(
+                'choices_as_values' => true,
+            );
+        } else {
+            $choiceDefaults = array();
+        }
+        $builder->add('align', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceDefaults + array(
+            'required' => false,
+            'choices' => array(
+                'mb.manager.sidepane.align.choice.left' => 'left',
+                'mb.manager.sidepane.align.choice.right' => 'right',
+            ),
+            'label' => 'mb.manager.sidepane.align.label',
+            'placeholder' => false,
+            'empty_data' => 'left',
         ));
         $builder->add('closed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
             'required' => false,
