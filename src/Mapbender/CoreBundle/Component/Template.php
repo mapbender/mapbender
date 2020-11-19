@@ -107,7 +107,6 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     }
 
     /**
-     * @return string TWIG template path
      * @param string $regionName
      * @return string|null
      */
