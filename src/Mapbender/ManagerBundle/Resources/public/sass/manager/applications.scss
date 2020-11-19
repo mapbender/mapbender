@@ -241,6 +241,11 @@
   thead h3 {
     font-size: 140%;
   }
+  thead .regionProperties > * {
+    // Expand cell content to make space for embedded popover (no initial size)
+    width: 15em;
+    min-width: 15em;
+  }
 
   tbody {
     tr {
@@ -332,5 +337,10 @@
   position: relative; // for anchoring of absolute-positioned .popover
   .popover {
     display: initial;
+    &.left {
+      right: 2em;
+      // center on containing element's height
+      top: calc(-50% - 0.5em);
+    }
   }
 }
