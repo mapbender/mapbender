@@ -17,10 +17,7 @@ function guid() {
 
 $(document).on('click', '.collectionAdd', function(event) {
     event.preventDefault();
-
-    // Gather all needed information, like
-    //  collection we're handling right now...
-    var collection = $(event.target).parent(),
+    var collection = $(this).closest('[data-prototype]'),
         count = $('.collectionItem', collection).length,
         // The prototype text for the new item...
         prototype = collection.data('prototype'),
@@ -31,7 +28,6 @@ $(document).on('click', '.collectionAdd', function(event) {
             .replace(/__name__/g, count + '-' + guid()))[0])
             .addClass('collectionItem');
 
-    // Now let's enter that item...
     collection.append(item);
 });
 
