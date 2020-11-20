@@ -260,11 +260,12 @@ class WmsSourceService extends SourceService
      */
     protected function getLayerBboxConfiguration(WmsLayerSource $layer)
     {
-        $boundingBoxMap = array();
-        foreach ($layer->getMergedBoundingBoxes() as $bbox) {
-            $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
+        $configs = array();
+        $bbox = $layer->getLatlonBounds();
+        if ($bbox) {
+            $configs[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
-        return $boundingBoxMap;
+        return $configs;
     }
 
     /**
