@@ -200,17 +200,6 @@ window.Mapbender.WmsSource = (function() {
                 return false;
             }
         },
-        _bboxArrayToBounds: function(bboxArray, projCode) {
-            var bboxArray_;
-            if (this._isBboxFlipped(projCode)) {
-                // Seriously.
-                // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
-                bboxArray_ = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
-            } else {
-                bboxArray_ = bboxArray;
-            }
-            return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
-        },
         /**
          * @param {*} bounds
          * @param {Number} scale

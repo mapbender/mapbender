@@ -151,10 +151,9 @@ class WmtsSourceService extends SourceService
         }
         $configuration['treeOptions'] = $this->getSingleLayerTreeOptionsConfig($instanceLayer);
         $bboxConfigs = array();
-        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
-            foreach ($this->getSrsAliases($bbox->getSrs()) as $bboxSrs) {
-                $bboxConfigs[$bboxSrs] = $bbox->toCoordsArray();
-            }
+        $bbox = $sourceItem->getLatlonBounds();
+        if ($bbox) {
+            $bboxConfigs[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         $configuration['bbox'] = $bboxConfigs;
 
