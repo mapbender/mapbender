@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
@@ -24,6 +25,7 @@ use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -735,6 +737,36 @@ class ApplicationController extends WelcomeController
             'slug' => $application->getSlug(),
         );
         return $this->redirectToRoute('mapbender_manager_application_edit', $params, Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @param Request $request
+     * @param Application $application
+     * @param string $regionName
+     * @ManagerRoute("/{application}/regionproperties/{regionName}", methods={"POST"})
+     */
+    public function updateregionpropertiesAction(Request $request, Application $application, $regionName)
+    {
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        /** @var FormFactoryInterface $factory */
+        $factory = $this->get('form.factory');
+        $formBuilder = $factory->createNamedBuilder('application', 'Symfony\Component\Form\Extension\Core\Type\FormType', $application);
+        $formBuilder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
+            'application' => $application,
+            'region_names' => array($regionName),
+        ));
+        $form = $formBuilder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getEntityManager();
+            $em->persist($application);
+            $application->setUpdated(new \DateTime());
+            $em->flush();
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        } else {
+            return new JsonResponse(\strval($form->getErrors()), Response::HTTP_BAD_REQUEST);
+        }
     }
 
     /**

@@ -78,6 +78,20 @@ $(function() {
         updateGroupIcons.call(this);
         $(this).on('click', '.radioWrapper', onClick);
     });
+    $('.regionProperties[data-url]').on('change', ':input', function() {
+        var $rprop = $(this).closest('.regionProperties');
+        var $inputs = $(':input', $rprop).filter(function() {
+            var $input = $(this);
+            return $input.attr('type') !== 'radio' || $input.is(':checked');
+        });
+        // Include CSRF token, so server can run validation
+        $inputs = $inputs.add($('input[name="application[_token]"]', $rprop.closest('form')));
+        var formData = $inputs.serializeArray();
+        if (true) $.ajax($rprop.attr('data-url'), {
+            method: 'POST',
+            data: formData
+        });
+    });
 
     $("table.layersetTable tbody").sortable({
         connectWith: "table.layersetTable tbody",
