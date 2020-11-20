@@ -29,7 +29,7 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
             var extent_;
             if (srsName !== 'EPSG:4326') {
-                extent_ = Mapbender.Model._transformExtent(extent, srsName, 'EPSG:4326');
+                extent_ = Mapbender.mapEngine.transformBounds(extent, srsName, 'EPSG:4326');
             } else {
                 extent_ = extent;
             }
