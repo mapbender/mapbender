@@ -45,6 +45,9 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
     {
         switch ($type) {
             case 'css':
+                return array(
+                    '/bundles/dbsimmimmo/css/db-manager.scss'
+                );
             case 'js':
             case 'trans':
                 return array();
