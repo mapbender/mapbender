@@ -291,7 +291,13 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
                 // unlimited extent
                 return true;
             }
-            return Mapbender.Util.extentsIntersect(bounds, extent);
+            var extent_;
+            if (srsName !== 'EPSG:4326') {
+                extent_ = Mapbender.Model._transformExtent(extent, srsName, 'EPSG:4326');
+            } else {
+                extent_ = extent;
+            }
+            return Mapbender.Util.extentsIntersect(bounds, extent_);
         }
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
