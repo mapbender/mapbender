@@ -22,12 +22,18 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
         },
         intersectsExtent: function(extent, srsName) {
-            var layerExtent = this.getBounds(srsName, false);
+            var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
                 // unlimited layer extent
                 return true;
             }
-            return Mapbender.Util.extentsIntersect(extent, layerExtent);
+            var extent_;
+            if (srsName !== 'EPSG:4326') {
+                extent_ = Mapbender.Model._transformExtent(extent, srsName, 'EPSG:4326');
+            } else {
+                extent_ = extent;
+            }
+            return Mapbender.Util.extentsIntersect(extent_, layerExtent);
         }
     });
     return WmsSourceLayer;
