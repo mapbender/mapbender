@@ -465,9 +465,13 @@
         },
 
         _getFeatureById: function (id) {
-            return this.featureInfoLayer.getSource().getFeatures().find(function (feature) {
+            var feature = this.featureInfoLayer.getSource().getFeatures().find(function (feature) {
                 return feature.get("id") == id;
             });
+            if (!feature) {
+                console.error("No Feature with id "+id+" found");
+            }
+            return feature;
         },
 
         _getInjectionScript: function(source_id) {
