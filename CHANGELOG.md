@@ -1,12 +1,12 @@
 ## dev-master @ e8e55cf8e
+NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
+
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
 * Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 * Fix missing handling of configurable sidepane width (3.1.0.5 regression)
 * Fix missing handling of configurable sidepane "align" (left or right; 3.1.0.5 regression)
 * Fix visible content overflow / no scrolling in "tabs"-Type sidepane ([#1269](https://github.com/mapbender/mapbender/issues/1269))
 * Fix backend element list interaction tooltips on Yaml applications copied into db
-* Add missing editing capabilites for misc region settings, e.g. sidepane width; previously only possible in Yaml applications
-* Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
@@ -15,6 +15,7 @@
     Value may be one of `all`, `mobile` or `desktop`.
   * NOTE: Responsive filtering is *not* supported when using legacy Openlayers 2 map engine
 * Added missing editing capabilities for sidepane width / position / initial state in database applications (previously only controllable via `regionProperties` in Yaml applications)
+* Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
 * Resolved misc conflicts with Bootstrap script and Bootstrap form theme
 * The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
 
