@@ -37,7 +37,7 @@ class RegionPropertiesType extends AbstractType
                     $builder->add($regionName, $formType);
                 }
             }
-            $builder->addModelTransformer(new RegionPropertiesTransformer($application));
         }
+        $builder->setDataMapper(new RegionPropertiesMapper());
     }
 }
