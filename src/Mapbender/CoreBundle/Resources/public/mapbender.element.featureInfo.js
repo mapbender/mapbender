@@ -466,7 +466,7 @@
                                 if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
 
                                     var origin = '*';
-                                    var nodes = document.querySelectorAll('div.geometryElement') || [];
+                                    var nodes = document.querySelectorAll('[data-geometry]') || [];
                                     var ewkts = Array.from(nodes).map(function (node) {
                                         return {
                                             srid: node.getAttribute('data-srid'),
