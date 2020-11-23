@@ -1,4 +1,4 @@
-## dev-master @ e8e55cf8e
+## dev-master @ b90343dff
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -6,7 +6,10 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix missing handling of configurable sidepane width (3.1.0.5 regression)
 * Fix missing handling of configurable sidepane "align" (left or right; 3.1.0.5 regression)
 * Fix visible content overflow / no scrolling in "tabs"-Type sidepane ([#1269](https://github.com/mapbender/mapbender/issues/1269))
+* Fix initial visible flash of closed sidepane (only works with explicitly configured width)
+* Fix errors on ImageExport / Print with (valid) feature styles missing `image` property
 * Fix backend element list interaction tooltips on Yaml applications copied into db
+* Fix errors editing map element after deleting a previously assigned layerset
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
