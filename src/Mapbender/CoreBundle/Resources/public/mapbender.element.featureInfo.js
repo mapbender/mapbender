@@ -469,7 +469,7 @@
                 return feature.get("id") == id;
             });
             if (!feature) {
-                console.error("No Feature with id "+id+" found");
+                console.error("No Feature with id '"+id+"' found");
             }
             return feature;
         },
@@ -482,22 +482,25 @@
                             document.addEventListener('DOMContentLoaded', function() {
                                 if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
 
+                                    var createId = function(node) {
+                                        return ${source_id}+'-'+node.getAttribute('id').replace(/\s/g,'');
+                                    };
                                     var origin = '*';
                                     var nodes = document.querySelectorAll('div.geometryElement') || [];
                                     var ewkts = Array.from(nodes).map(function (node) {
                                         return {
                                             srid: node.getAttribute('data-srid'),
                                             wkt: node.getAttribute('data-geometry'),
-                                            id: ${source_id}+'-'+node.getAttribute('id'),
+                                            id: createId(node),
                                         };
                                     });
                                     Array.from(nodes).forEach(function (node) {
                                         node.addEventListener('mouseover', function (event) {
-                                            var id = ${source_id}+'-'+node.getAttribute('id');
+                                            var id = createId(node);
                                             window.parent.postMessage({ hover : id },origin);
                                         });
                                         node.addEventListener('mouseout', function (event) {
-                                            var id = ${source_id}+'-'+node.getAttribute('id');
+                                            var id = createId(node);
                                             window.parent.postMessage({ unhover : id },origin);
                                         });
                                     });
