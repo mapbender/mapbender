@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
 
     $.widget("mapbender.mbFeatureInfo", {
         options: {
@@ -23,19 +23,20 @@
         isActive: false,
 
 
-        _create: function () {
+
+        _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function (mbMap) {
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
-            }, function () {
+            }, function() {
                 Mapbender.checkTarget("mbFeatureInfo", self.options.target);
             });
 
         },
 
 
-        _setup: function (mbMap) {
+        _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
             this.target = mbMap;
@@ -65,7 +66,7 @@
 
             widget._trigger('ready');
         },
-        _contentElementId: function (source) {
+        _contentElementId: function(source) {
             var id = this._getContentManager().contentId(source.id);
             // verify element is in DOM
             if ($('#' + id, this.element).length) {
@@ -75,15 +76,15 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function (callback) {
+        defaultAction: function(callback) {
             this.activate(callback);
         },
-        activate: function (callback) {
+        activate: function(callback) {
             this.callback = callback;
             this.target.element.addClass('mb-feature-info-active');
             this.isActive = true;
         },
-        deactivate: function () {
+        deactivate: function() {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
             if (this.featureInfoLayer) {
@@ -106,7 +107,7 @@
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
-        _triggerFeatureInfo: function (x, y) {
+        _triggerFeatureInfo: function(x, y) {
             if (!this.isActive) {
                 return;
             }
@@ -119,12 +120,12 @@
                 }
             });
         },
-        _getTabTitle: function (source) {
+        _getTabTitle: function(source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
             //  title of the root layer. This should be made consistent one way or the other.
             return source.configuration.title;
         },
-        _setInfo: function (source, url) {
+        _setInfo: function(source, url) {
             var self = this;
             var layerTitle = this._getTabTitle(source);
             var ajaxOptions = {
@@ -165,7 +166,7 @@
                 self._removeContent(source);
             });
         },
-        _isDataValid: function (data, mimetype) {
+        _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     return !!("" + data).match(/<[/][a-z]+>/gi);
@@ -175,7 +176,7 @@
                     return true;
             }
         },
-        _triggerHaveResult: function (source) {
+        _triggerHaveResult: function(source) {
             // only used for mobile hacks
             // @todo: add mobile hacks here, remove event
             var eventData = {
@@ -186,7 +187,7 @@
             };
             this._trigger('featureinfo', null, eventData);
         },
-        _showOriginal: function (source, layerTitle, data, mimetype) {
+        _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -201,10 +202,10 @@
                     break;
             }
         },
-        _showEmbedded: function (source, layerTitle, data, mimetype) {
+        _showEmbedded: function(source, layerTitle, data, mimetype) {
             this._addContent(source, layerTitle, data);
         },
-        _cleanHtml: function (data) {
+        _cleanHtml: function(data) {
             try {
                 if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
                     return data.replace(/document.writeln[^;]*;/g, '')
@@ -220,7 +221,7 @@
             }
             return data;
         },
-        _getContentManager: function () {
+        _getContentManager: function() {
             if (!this.contentManager) {
                 this.contentManager = {
                     headerSel: '.js-header',
@@ -241,7 +242,7 @@
             }
             return this.contentManager;
         },
-        _open: function () {
+        _open: function() {
             $(document).trigger('mobilepane.switch-to-element', {
                 element: this.element
             });
@@ -290,7 +291,7 @@
         /**
          * @returns {Array<Object>}
          */
-        _getPopupButtonOptions: function () {
+        _getPopupButtonOptions: function() {
             var buttons = [{
                 label: Mapbender.trans('mb.actions.close'),
                 cssClass: 'button buttonCancel critical right',
@@ -312,15 +313,15 @@
             }
             return buttons;
         },
-        _selectorSelfAndSub: function (idStr, classSel) {
+        _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-        _removeContent: function (source) {
+        _removeContent: function(source) {
             var manager = this._getContentManager();
             $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
-        },
-        _addContent: function (source, layerTitle, content) {
+         },
+        _addContent: function(source, layerTitle, content) {
             var manager = this._getContentManager();
             var headerId = manager.headerId(source.id);
             var contentId = manager.contentId(source.id);
@@ -345,7 +346,7 @@
                 .empty().append(content);
             initTabContainer(this.element);
         },
-        _printContent: function () {
+        _printContent: function() {
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var el = $('.js-content-content.active,.active .js-content-content', this.element);
             var printContent;
@@ -371,7 +372,7 @@
                     stroke: new ol.style.Stroke({
                         color: 'rgba(255, 255, 255, 1)',
                         lineCap: 'round',
-                        width: 1,
+                        width: 1
                     }),
                     fill: new ol.style.Fill({
                         color: 'rgba(255, 165, 0, 0.4)'
@@ -379,13 +380,12 @@
                 });
             };
 
-
             this.featureInfoStyle_hover = function (feature) {
                 return new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: 'rgba(255, 255, 255, 1)',
                         lineCap: 'round',
-                        width: 1,
+                        width: 1
                     }),
                     fill: new ol.style.Fill({
                         color: 'rgba(255, 0, 0, 0.7)'
@@ -393,7 +393,6 @@
                     zIndex: 1000
                 });
             }
-
         },
 
         _postMessage: function(message) {
@@ -422,12 +421,7 @@
                     Mapbender.declarative[data.actionValue](data.element);
                 }
             }
-
-
         },
-
-
-
         _populateFeatureInfoLayer: function (ewkts) {
             var features = ewkts.map(function (ewkt) {
                 var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
@@ -436,10 +430,9 @@
             });
 
             this.featureInfoLayer.getSource().addFeatures(features);
-
         },
 
-        _createHighlightControl: function () {
+        _createHighlightControl: function() {
 
             var widget = this;
             var map = this.target.map.olMap;
@@ -452,7 +445,7 @@
 
             highlightControl.on('select', function (e) {
                 e.deselected.forEach(function (feature) {
-                    feature.setStyle(undefined);
+                    feature.setStyle(null);
                 });
                 e.selected.forEach(function (feature) {
                     feature.setStyle(widget.featureInfoStyle_hover);

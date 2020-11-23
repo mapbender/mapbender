@@ -51,7 +51,7 @@ class WmsLoader extends Element
             "autoOpen" => false,
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
-            "splitLayers" => false
+            "splitLayers" => false,
         );
     }
 
