@@ -399,15 +399,20 @@
         _postMessage: function(message) {
             var widget = this;
             var data = message.data;
+            var feature;
             if (data.ewkts && data.ewkts.length) {
                 widget._populateFeatureInfoLayer(data.ewkts);
-            } else
-            if (data.hover) {
-                widget._getFeatureById(data.hover).setStyle(widget.featureInfoStyle_hover);
-            } else
-            if (data.unhover) {
-                widget._getFeatureById(data.unhover).setStyle(undefined);
-            } else
+            }
+            if (data.command === 'hover') {
+                feature = this.featureInfoLayer.getSource().getFeatureById(data.id);
+                if (feature) {
+                    if (data.state) {
+                        feature.setStyle(this.featureInfoStyle_hover);
+                    } else {
+                        feature.setStyle(null);
+                    }
+                }
+            }
             if (data.actionValue && data.element) {
                 if(Mapbender.declarative && Mapbender.declarative[data.actionValue] && typeof Mapbender.declarative[data.actionValue] === 'function') {
                     // Method to simulate attribute access has to be inserted within Mapbender's frame to prevent clone errors on postMessage
@@ -426,7 +431,7 @@
         _populateFeatureInfoLayer: function (ewkts) {
             var features = ewkts.map(function (ewkt) {
                 var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
-                feature.set("id", ewkt.id);
+                feature.setId(ewkt.id);
                 return feature;
             });
 
@@ -459,16 +464,6 @@
 
         },
 
-        _getFeatureById: function (id) {
-            var feature = this.featureInfoLayer.getSource().getFeatures().find(function (feature) {
-                return feature.get("id") == id;
-            });
-            if (!feature) {
-                console.error("No Feature with id "+id+" found");
-            }
-            return feature;
-        },
-
         _getInjectionScript: function(source_id) {
             var script = `<script>
                             // Hack to prevent DOMException when loading jquery
@@ -489,11 +484,11 @@
                                     Array.from(nodes).forEach(function (node) {
                                         node.addEventListener('mouseover', function (event) {
                                             var id = ${source_id}+'-'+node.getAttribute('id');
-                                            window.parent.postMessage({ hover : id },origin);
+                                            window.parent.postMessage({ command: 'hover', state: true, id: id },origin);
                                         });
                                         node.addEventListener('mouseout', function (event) {
                                             var id = ${source_id}+'-'+node.getAttribute('id');
-                                            window.parent.postMessage({ unhover : id },origin);
+                                            window.parent.postMessage({ command: 'hover', state: false, id: id },origin);
                                         });
                                     });
                                     window.parent.postMessage({ ewkts :  ewkts }, origin);
