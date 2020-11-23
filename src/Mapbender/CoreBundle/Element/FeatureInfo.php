@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Featureinfo element
@@ -46,6 +47,9 @@ class FeatureInfo extends Element
         if (empty($config['maxCount']) || $config['maxCount'] < 0) {
             $config['maxCount'] = $defaults['maxCount'];
         }
+        /** @var EngineInterface $templating */
+        $templating = $this->container->get('templating');
+        $config['iframeInjection'] = $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-iframe-injection.js');
         return $config;
     }
 

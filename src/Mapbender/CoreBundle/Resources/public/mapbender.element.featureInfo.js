@@ -9,6 +9,7 @@
             printResult: false,
             showOriginal: false,
             onlyValid: false,
+            iframeInjection: null,
             maxCount: 100,
             width: 700,
             height: 500
@@ -457,63 +458,15 @@
 
         },
 
-        _getInjectionScript: function(source_id) {
-            var script = `<script>
-                            // Hack to prevent DOMException when loading jquery
-                            var replaceState = window.history.replaceState;
-                            window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };
-                            document.addEventListener('DOMContentLoaded', function() {
-                                if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
-
-                                    var origin = '*';
-                                    var nodes = document.querySelectorAll('[data-geometry]') || [];
-                                    var ewkts = Array.from(nodes).map(function (node) {
-                                        return {
-                                            srid: node.getAttribute('data-srid'),
-                                            wkt: node.getAttribute('data-geometry'),
-                                            id: ${source_id}+'-'+node.getAttribute('id'),
-                                        };
-                                    });
-                                    Array.from(nodes).forEach(function (node) {
-                                        node.addEventListener('mouseover', function (event) {
-                                            var id = ${source_id}+'-'+node.getAttribute('id');
-                                            window.parent.postMessage({ command: 'hover', state: true, id: id },origin);
-                                        });
-                                        node.addEventListener('mouseout', function (event) {
-                                            var id = ${source_id}+'-'+node.getAttribute('id');
-                                            window.parent.postMessage({ command: 'hover', state: false, id: id },origin);
-                                        });
-                                    });
-                                    window.parent.postMessage({ ewkts :  ewkts }, origin);
-
-                                    var mbActionLinks = document.querySelectorAll("[mb-action]");
-                                    mbActionLinks.forEach(function(actionLink) {
-                                        actionLink.addEventListener('click',  function(e) {
-                                            var element= e.target;
-                                            var actionValue = element.getAttribute('mb-action');
-                                            var attributesMap = new Object();
-                                            for (var i = 0; i < element.attributes.length; i++) {
-                                                var attrib = element.attributes[i];
-                                                attributesMap[attrib.name] = attrib.value;
-                                            }
-                                            e.preventDefault();
-                                            window.parent.postMessage({
-                                                actionValue: actionValue,
-                                                element: {
-                                                    attributes: attributesMap
-                                                }
-                                            },origin);
-                                            return false;
-                                        });
-                                    });
-
-                                }
-                            });
-                            </script>`;
-            return script;
+        _getInjectionScript: function(sourceId) {
+            var parts = [
+                '<script>',
+                ['var sourceId = ', sourceId].join(''),
+                this.options.iframeInjection,
+                '</script>'
+            ];
+            return parts.join('');
         }
-
-
     });
 
 })(jQuery);
