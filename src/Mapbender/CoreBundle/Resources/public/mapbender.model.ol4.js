@@ -552,7 +552,7 @@ window.Mapbender.MapModelOl4 = (function() {
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
 
-            var scale =  image.getScale() || 1;
+            var scale = image && image.getScale() || 1;
             if (fill) {
                 Object.assign(style, this._extractColor(fill.getColor(), 'fillColor', 'fillOpacity'));
             }
