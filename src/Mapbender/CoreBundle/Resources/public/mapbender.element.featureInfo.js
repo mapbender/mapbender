@@ -461,7 +461,11 @@
         _getInjectionScript: function(sourceId) {
             var parts = [
                 '<script>',
-                ['var sourceId = ', sourceId].join(''),
+                // Hack to prevent DOMException when loading jquery
+                'var replaceState = window.history.replaceState;',
+                'window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };',
+                // Highlighting support (generate source-scoped feature ids)
+                ['var sourceId = ', sourceId, ';'].join(''),
                 this.options.iframeInjection,
                 '</script>'
             ];
