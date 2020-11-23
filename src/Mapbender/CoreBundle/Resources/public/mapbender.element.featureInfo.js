@@ -441,12 +441,7 @@
 
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
-                layers: function () {
-                    return widget.featureInfoLayer
-                },
-                filter: function (feature) {
-                    return true;
-                },
+                layers: [this.featureInfoLayer],
                 multi: true
             });
 
