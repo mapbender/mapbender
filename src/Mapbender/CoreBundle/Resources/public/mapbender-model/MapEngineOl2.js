@@ -128,7 +128,7 @@ window.Mapbender.MapEngineOl2 = (function() {
             var to = this._getProj(toProj, true);
             var boundsOut = (bounds && bounds.clone()) || null;
             if (!bounds || !boundsOut || !from.projCode || !to.projCode) {
-                console.error("Empty extent or invalid projetcions", bounds, fromProj, toProj);
+                console.error("Empty extent or invalid projections", bounds, fromProj, toProj);
                 throw new Error("Empty extent or invalid projections");
             }
 
