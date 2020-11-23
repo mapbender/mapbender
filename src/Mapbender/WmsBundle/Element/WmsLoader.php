@@ -98,7 +98,7 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $assetRefs = array(
+        return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
             ),
@@ -109,7 +109,6 @@ class WmsLoader extends Element
                 'mb.wms.wmsloader.error.*',
             ),
         );
-        return $assetRefs;
     }
 
     /**
