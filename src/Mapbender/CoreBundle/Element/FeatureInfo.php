@@ -76,6 +76,7 @@ class FeatureInfo extends Element
             "width" => 700,
             "height" => 500,
             "maxCount" => 100,
+            'highlightLayer' => false,
         );
     }
 
