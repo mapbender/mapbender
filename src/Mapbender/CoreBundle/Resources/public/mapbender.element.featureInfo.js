@@ -21,6 +21,7 @@
         contentManager: null,
         mobilePane: null,
         isActive: false,
+        highlightLayer: null,
 
 
 
@@ -50,7 +51,7 @@
 
                 this._createLayerStyle();
 
-                this.featureInfoLayer = new ol.layer.Vector({
+                this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
                     name: 'featureInfo',
                     style: widget.featureInfoStyle,
@@ -59,7 +60,7 @@
                     maxResolution: Mapbender.Model.scaleToResolution(Infinity)
                 });
 
-                this.target.map.olMap.addLayer(this.featureInfoLayer);
+                this.target.map.olMap.addLayer(this.highlightLayer);
                 this._createHighlightControl();
             }
 
@@ -86,8 +87,8 @@
         deactivate: function() {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
-            if (this.featureInfoLayer) {
-                this.featureInfoLayer.getSource().clear();
+            if (this.highlightLayer) {
+                this.highlightLayer.getSource().clear();
             }
 
             if (this.popup) {
@@ -276,8 +277,8 @@
                     });
                 }
                 if (widget.state !== 'opened') {
-                    if (this.featureInfoLayer) {
-                        this.featureInfoLayer.getSource().clear();
+                    if (this.highlightLayer) {
+                        this.highlightLayer.getSource().clear();
                     }
                     widget.popup.open();
                 }
@@ -402,7 +403,7 @@
                 widget._populateFeatureInfoLayer(data.ewkts);
             }
             if (data.command === 'hover') {
-                feature = this.featureInfoLayer.getSource().getFeatureById(data.id);
+                feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
                     if (data.state) {
                         feature.setStyle(this.featureInfoStyle_hover);
@@ -428,7 +429,7 @@
                 return feature;
             });
 
-            this.featureInfoLayer.getSource().addFeatures(features);
+            this.highlightLayer.getSource().addFeatures(features);
         },
 
         _createHighlightControl: function() {
@@ -438,7 +439,7 @@
 
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
-                layers: [this.featureInfoLayer],
+                layers: [this.highlightLayer],
                 multi: true
             });
 
