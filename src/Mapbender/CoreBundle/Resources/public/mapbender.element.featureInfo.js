@@ -86,6 +86,9 @@
         deactivate: function () {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
+            if (this.featureInfoLayer) {
+                this.featureInfoLayer.getSource().clear();
+            }
 
             if (this.popup) {
                 if (this.popup.$element) {
@@ -267,22 +270,19 @@
                             widget.popup.$element.hide();
                         }
                         widget.state = 'closed';
-                        if (widget.options.highlightLayer) {
-                            widget.featureInfoLayer.getSource().clear();
-                        }
                     });
                     widget.popup.$element.on('open', function () {
                         widget.state = 'opened';
                     });
                 }
                 if (widget.state !== 'opened') {
+                    if (this.featureInfoLayer) {
+                        this.featureInfoLayer.getSource().clear();
+                    }
                     widget.popup.open();
                 }
 
                 if (widget.popup && widget.popup.$element) {
-                    if (widget.options.highlightLayer) {
-                        widget.featureInfoLayer.getSource().clear();
-                    }
                     widget.popup.$element.show();
                 }
             }
