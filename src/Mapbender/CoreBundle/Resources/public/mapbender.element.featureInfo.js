@@ -46,8 +46,8 @@
                 widget.activate();
             }
 
+            window.addEventListener("message", widget._postMessage.bind(widget));
             if (Mapbender.mapEngine.code !== 'ol2' && options.highlightLayer) {
-                window.addEventListener("message", widget._postMessage.bind(widget));
 
                 this._createLayerStyle();
 
@@ -399,10 +399,10 @@
             var widget = this;
             var data = message.data;
             var feature;
-            if (data.ewkts && data.ewkts.length) {
+            if (this.highlightLayer && data.ewkts && data.ewkts.length) {
                 widget._populateFeatureInfoLayer(data.ewkts);
             }
-            if (data.command === 'hover') {
+            if (this.highlightLayer && data.command === 'hover') {
                 feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
                     if (data.state) {
