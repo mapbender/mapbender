@@ -45,8 +45,7 @@
                 widget.activate();
             }
 
-            if (options.highlightLayer) {
-
+            if (Mapbender.mapEngine.code !== 'ol2' && options.highlightLayer) {
                 window.addEventListener("message", widget._postMessage.bind(widget));
 
                 this._createLayerStyle();
