@@ -413,15 +413,6 @@
                     }
                 }
             }
-            if (data.actionValue && data.element) {
-                if(Mapbender.declarative && Mapbender.declarative[data.actionValue] && typeof Mapbender.declarative[data.actionValue] === 'function') {
-                    // Method to simulate attribute access has to be inserted within Mapbender's frame to prevent clone errors on postMessage
-                    data.element.attr = function(val) {
-                        return this.attributes[val];
-                    };
-                    Mapbender.declarative[data.actionValue](data.element);
-                }
-            }
         },
         _populateFeatureInfoLayer: function (ewkts) {
             var features = ewkts.map(function (ewkt) {
