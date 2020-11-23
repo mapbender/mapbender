@@ -29,6 +29,20 @@ window.Mapbender.MapEngine = (function() {
                 url = Mapbender.Util.removeProxy(url);
             }
             return Mapbender.Util.removeUrlParams(url, removeParams, false);
+        },
+        /**
+         * @param {Object|Array<Number>} x
+         * @return {OpenLayers.Bounds|(Array<Number> | {left: number, bottom: number, right: number, top: number})}
+         */
+        toExtent: function(x) {
+            if (Array.isArray(x)) {
+                return this.boundsFromArray(x);
+            }
+            if (x && typeof x.left !== 'undefined') {
+                return this.boundsFromArray([x.left, x.bottom, x.right, x.top]);
+            }
+            console.error("Unsupported extent input", x);
+            throw new Error("Unsupported extent input");
         }
     };
     MapEngine.typeMap = {};
