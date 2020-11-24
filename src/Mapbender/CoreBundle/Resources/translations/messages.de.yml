@@ -309,10 +309,6 @@ mb:
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
           hideinfo: 'Info ausblenden'
-      redlining:
-        label:
-          auto_activate: 'Automatisches Aktivieren'
-          deactivate_on_close: 'Beim Schließen deaktivieren'
     htmlelement:
       class:
         title: HTML
@@ -321,7 +317,7 @@ mb:
       app:
         screenshotfile:
           error: 'Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.'
-    redlining:
+    sketch:
       geometrytype:
         point: Punkt
         line: Linie
@@ -340,8 +336,15 @@ mb:
           zoom: 'Zoom auf die Geometrie'
           stop_drawing: Zeichnen beenden
       class:
-        title: Redlining
-        description: 'Redlining Werkzeug'
+        title: Skizzen
+        description: Zeichenwerkzeug
+      admin:
+        auto_activate: 'Automatisches Aktivieren'
+        deactivate_on_close: 'Beim Schließen deaktivieren'
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Skizzen
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

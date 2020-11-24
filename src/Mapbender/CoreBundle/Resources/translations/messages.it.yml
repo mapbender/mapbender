@@ -300,10 +300,6 @@ mb:
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideselect: 'Nascondi la visibilità per le cartelle'
           hideinfo: 'Nascondi info'
-      redlining:
-        label:
-          auto_activate: Auto-attivazione
-          deactivate_on_close: 'Disattiva alla chiusura'
     htmlelement:
       class:
         title: HTML
@@ -312,7 +308,7 @@ mb:
       app:
         screenshotfile:
           error: Errore
-    redlining:
+    sketch:
       geometrytype:
         point: Punto
         line: Linea
@@ -328,8 +324,11 @@ mb:
           edit: 'Modifica la geometria'
           zoom: 'Fai zoom sulla geometria'
       class:
-        title: Redlining
-        description: 'Strumento di Redlining'
+        title: ~
+        description: ~
+      admin:
+        auto_activate: Auto-attivazione
+        deactivate_on_close: Disattiva alla chiusura
 
 # Login exceptions
 "Bad credentials.": Credentiali errate.

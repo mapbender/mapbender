@@ -300,10 +300,6 @@ mb:
           hidenottoggleable: ~
           hideselect: ~
           hideinfo: ~
-      redlining:
-        label:
-          auto_activate: ~
-          deactivate_on_close: ~
     htmlelement:
       class:
         title: ~
@@ -312,7 +308,7 @@ mb:
       app:
         screenshotfile:
           error: ~
-    redlining:
+    sketch:
       geometrytype:
         point: ~
         line: ~

@@ -308,10 +308,6 @@ mb:
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'
           hideinfo: 'Hide info'
-      redlining:
-        label:
-          auto_activate: Auto-activate
-          deactivate_on_close: 'Deactivate on close'
     htmlelement:
       class:
         title: HTML
@@ -320,7 +316,7 @@ mb:
       app:
         screenshotfile:
           error: Error
-    redlining:
+    sketch:
       geometrytype:
         point: Point
         line: Line
@@ -339,5 +335,12 @@ mb:
           zoom: 'Zoom to geometry'
           stop_drawing: Stop drawing
       class:
-        title: Redlining
-        description: 'Redlining tool'
+        title: Sketches
+        description: Drawing tool
+      admin:
+        auto_activate: Auto activate
+        deactivate_on_close: Deactivate on close
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Sketches

@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget("mapbender.mbRedlining", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbSketch", $.mapbender.mbBaseElement, {
         options: {
             target: null,
             auto_activate: false,
@@ -25,12 +25,12 @@
 
         _create: function() {
             Object.assign(this.toolLabels, {
-                'point': Mapbender.trans('mb.core.redlining.geometrytype.point'),
-                'line': Mapbender.trans('mb.core.redlining.geometrytype.line'),
-                'polygon': Mapbender.trans('mb.core.redlining.geometrytype.polygon'),
-                'rectangle': Mapbender.trans('mb.core.redlining.geometrytype.rectangle'),
-                'circle': Mapbender.trans('mb.core.redlining.geometrytype.circle'),
-                'text': Mapbender.trans('mb.core.redlining.geometrytype.text')
+                'point': Mapbender.trans('mb.core.sketch.geometrytype.point'),
+                'line': Mapbender.trans('mb.core.sketch.geometrytype.line'),
+                'polygon': Mapbender.trans('mb.core.sketch.geometrytype.polygon'),
+                'rectangle': Mapbender.trans('mb.core.sketch.geometrytype.rectangle'),
+                'circle': Mapbender.trans('mb.core.sketch.geometrytype.circle'),
+                'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$labelInput_ = $('input[name="label-text"]', this.element);
@@ -39,7 +39,7 @@
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbRedlining", self.options.target);
+                Mapbender.checkTarget("mbSketch", self.options.target);
             });
         },
         _setup: function(){
@@ -51,10 +51,10 @@
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
             var self = this;
-            $('.redlining-tool', this.element).on('click', function() {
+            $('[data-tool-name]', this.element).on('click', function() {
                 return self._onToolButtonClick($(this));
             });
-            $('.redlining-tool-off', this.element).on('click', function() {
+            $('.-fn-tool-off', this.element).on('click', function() {
                 self._deactivateControl();
             });
 
@@ -191,7 +191,7 @@
         },
         _onToolButtonClick: function($button) {
             this._endEdit();
-            $('.redlining-tool', this.element).not($button).removeClass('active');
+            $('[data-tool-name]', this.element).not($button).removeClass('active');
             if ($button.hasClass('active')) {
                 this._deactivateControl();
             } else {
@@ -205,7 +205,7 @@
         },
         _validateText: function() {
             if (this.requireText_ && !this.$labelInput_.val().trim()) {
-                Mapbender.info(Mapbender.trans('mb.core.redlining.error.notext'));
+                Mapbender.info(Mapbender.trans('mb.core.sketch.error.notext'));
                 return false;
             } else {
                 return true;
@@ -220,7 +220,7 @@
         },
         _startDraw: function(toolName) {
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
-            $('.redlining-tool-off', this.element).prop('disabled', false);
+            $('.-fn-tool-off', this.element).prop('disabled', false);
             switch(toolName) {
                 case 'point':
                 case 'line':
@@ -284,8 +284,8 @@
         _deactivateControl: function() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
-            $('.redlining-tool-off', this.element).prop('disabled', true);
-            $('.redlining-tool', this.element).removeClass('active');
+            $('.-fn--tool-off', this.element).prop('disabled', true);
+            $('[data-tool-name]', this.element).removeClass('active');
         },
         _getGeomLabel: function(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
