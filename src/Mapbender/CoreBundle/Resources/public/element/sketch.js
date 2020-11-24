@@ -51,10 +51,10 @@
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
             var self = this;
-            $('.redlining-tool', this.element).on('click', function() {
+            $('[data-tool-name]', this.element).on('click', function() {
                 return self._onToolButtonClick($(this));
             });
-            $('.redlining-tool-off', this.element).on('click', function() {
+            $('.-fn-tool-off', this.element).on('click', function() {
                 self._deactivateControl();
             });
 
@@ -191,7 +191,7 @@
         },
         _onToolButtonClick: function($button) {
             this._endEdit();
-            $('.redlining-tool', this.element).not($button).removeClass('active');
+            $('[data-tool-name]', this.element).not($button).removeClass('active');
             if ($button.hasClass('active')) {
                 this._deactivateControl();
             } else {
@@ -220,7 +220,7 @@
         },
         _startDraw: function(toolName) {
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
-            $('.redlining-tool-off', this.element).prop('disabled', false);
+            $('.-fn-tool-off', this.element).prop('disabled', false);
             switch(toolName) {
                 case 'point':
                 case 'line':
@@ -284,8 +284,8 @@
         _deactivateControl: function() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
-            $('.redlining-tool-off', this.element).prop('disabled', true);
-            $('.redlining-tool', this.element).removeClass('active');
+            $('.-fn--tool-off', this.element).prop('disabled', true);
+            $('[data-tool-name]', this.element).removeClass('active');
         },
         _getGeomLabel: function(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
