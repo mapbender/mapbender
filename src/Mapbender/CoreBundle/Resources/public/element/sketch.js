@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget("mapbender.mbRedlining", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbSketch", $.mapbender.mbBaseElement, {
         options: {
             target: null,
             auto_activate: false,
@@ -39,7 +39,7 @@
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbRedlining", self.options.target);
+                Mapbender.checkTarget("mbSketch", self.options.target);
             });
         },
         _setup: function(){

@@ -31,7 +31,7 @@ class Redlining extends Element
      */
     public function getWidgetName()
     {
-        return 'mapbender.mbRedlining';
+        return 'mapbender.mbSketch';
     }
 
     /**
