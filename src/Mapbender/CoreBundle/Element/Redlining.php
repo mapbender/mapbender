@@ -85,7 +85,7 @@ class Redlining extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:redlining.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
     }
 
     public function getPublicConfiguration()
@@ -97,7 +97,7 @@ class Redlining extends Element
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return 'MapbenderCoreBundle:Element:redlining.html.twig';
+        return 'MapbenderCoreBundle:Element:sketch.html.twig';
     }
 
     /**
