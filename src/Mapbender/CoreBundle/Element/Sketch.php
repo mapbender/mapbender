@@ -4,10 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 
-/**
- *
- */
-class Redlining extends Element
+class Sketch extends Element
 {
 
     /**
