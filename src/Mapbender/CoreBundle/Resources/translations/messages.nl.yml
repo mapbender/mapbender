@@ -276,8 +276,7 @@ mb:
           deactivateonclose: 'Deactiveer bij sluiten'
           showoriginal: 'Laat origineel zien'
           onlyvalid: 'Alleen geldig'
-          highlightlayer: ~
-
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Automatisch openen'

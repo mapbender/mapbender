@@ -10,6 +10,7 @@
             showOriginal: false,
             onlyValid: false,
             iframeInjection: null,
+            highlighting: false,
             maxCount: 100,
             width: 700,
             height: 500
@@ -48,8 +49,7 @@
             }
 
             window.addEventListener("message", widget._postMessage.bind(widget));
-            if (Mapbender.mapEngine.code !== 'ol2' && options.highlightLayer) {
-
+            if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
                 this._createLayerStyle();
 
                 this.highlightLayer = new ol.layer.Vector({

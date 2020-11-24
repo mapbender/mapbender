@@ -66,9 +66,9 @@ class FeatureInfoAdminType extends AbstractType
                     'placeholder' => 100,
                 ),
             ))
-            ->add('highlightLayer', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('highlighting', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.featureinfo.label.highlightlayer',
+                'label' => 'mb.core.admin.featureinfo.label.highlighting',
             ))
         ;
     }

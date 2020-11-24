@@ -52,7 +52,7 @@ class FeatureInfo extends Element
         $iframeScripts = array(
             $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js'),
         );
-        if ($config['highlightLayer']) {
+        if ($config['highlighting']) {
             $iframeScripts[] = $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js');
         }
         $config['iframeInjection'] = implode("\n\n", $iframeScripts);
@@ -76,7 +76,7 @@ class FeatureInfo extends Element
             "width" => 700,
             "height" => 500,
             "maxCount" => 100,
-            'highlightLayer' => false,
+            'highlighting' => false,
         );
     }
 
