@@ -282,7 +282,6 @@ mb:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
           autoopen: 'Automatisches Öffnen'
-          showoriginal: 'Original Zeigen'
           onlyvalid: 'Nur valide zeigen'
           highlighting: 'Highlighting'
       printclient:

@@ -274,7 +274,6 @@ mb:
         label:
           autoopen: 'Abrir automaticamente'
           deactivateonclose: 'Desativar ao fechar'
-          showoriginal: 'Mostrar original'
           onlyvalid: 'Mostrar válido somente'
           highlighting: ~
       printclient:

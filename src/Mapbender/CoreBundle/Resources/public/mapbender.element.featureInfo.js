@@ -7,7 +7,6 @@
             deactivateOnClose: true,
             displayType: 'tabs',
             printResult: false,
-            showOriginal: false,
             onlyValid: false,
             iframeInjection: null,
             highlighting: false,
@@ -145,19 +144,12 @@
             request.done(function (data, textStatus, jqXHR) {
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                if (!self.options.showOriginal && mimetype.search(/text[/]html/i) === 0) {
-                    data_ = self._cleanHtml(data_);
-                }
                 data_ = $.trim(data_);
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     self._removeContent(source);
                 } else {
-                    if (self.options.showOriginal) {
-                        self._showOriginal(source, layerTitle, data_, mimetype);
-                    } else {
-                        self._showEmbedded(source, layerTitle, data_, mimetype);
-                    }
+                    self._showOriginal(source, layerTitle, data_, mimetype);
                     self._triggerHaveResult(source);
                     self._open();
                 }
@@ -202,25 +194,6 @@
                     this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
                     break;
             }
-        },
-        _showEmbedded: function(source, layerTitle, data, mimetype) {
-            this._addContent(source, layerTitle, data);
-        },
-        _cleanHtml: function(data) {
-            try {
-                if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
-                    return data.replace(/document.writeln[^;]*;/g, '')
-                        .replace(/\n|\r/g, '')
-                        .replace(/<!--[^>]*-->/g, '')
-                        .replace(/<link[^>]*>/gi, '')
-                        .replace(/<meta[^>]*>/gi, '')
-                        .replace(/<title>*(?:[^<]*<\/title>)/gi, '')
-                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '')
-                        .replace(/<script[^>]*(?:[^<]*<\/script>|>)/gi, '');
-                }
-            } catch (e) {
-            }
-            return data;
         },
         _getContentManager: function() {
             if (!this.contentManager) {

@@ -69,7 +69,6 @@ class FeatureInfo extends Element
             "autoActivate" => false,
             "deactivateOnClose" => true,
             "printResult" => false,
-            "showOriginal" => false,
             "onlyValid" => false,
             "displayType" => 'tabs',
             "target" => null,
