@@ -77,7 +77,7 @@ class Redlining extends Element
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\RedliningAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\SketchAdminType';
     }
 
     /**
