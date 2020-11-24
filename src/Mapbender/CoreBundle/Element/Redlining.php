@@ -41,11 +41,11 @@ class Redlining extends Element
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.redlining.js',
+                '@MapbenderCoreBundle/Resources/public/element/sketch.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/redlining.scss',
+                '@MapbenderCoreBundle/Resources/public/element/sketch.scss',
             ),
             'trans' => array(
                 'mb.core.sketch.*',
