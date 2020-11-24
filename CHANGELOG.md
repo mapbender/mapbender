@@ -1,4 +1,4 @@
-## dev-master @ b90343dff
+## dev-master @ 591ef7777
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -21,6 +21,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
 * Resolved misc conflicts with Bootstrap script and Bootstrap form theme
 * The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
+* Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
