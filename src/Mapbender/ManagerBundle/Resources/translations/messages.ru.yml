@@ -161,12 +161,6 @@ mb:
         delete_user_group:
           title: 'Подтвердите удаление'
           content: 'Действительно удалить%userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Вкладки
-        accordion:
-          label: Accordion
     upload:
       label_delete: 'Скриншот удален'
     import:

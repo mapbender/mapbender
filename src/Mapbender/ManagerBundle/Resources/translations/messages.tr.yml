@@ -152,12 +152,6 @@ mb:
           title: 'Kaynak seç'
         delete_instance:
           title: 'Silme işlemini onayla'
-    template:
-      region:
-        tabs:
-          label: 'Sekmeler'
-        accordion:
-          label: 'Akordiyon'
     upload:
       label_delete: 'Ekran görüntüsü kaldırıldı (Screenshot).'
     import:

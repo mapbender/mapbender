@@ -194,12 +194,6 @@ mb:
         delete_user_group:
           title: 'Entfernen bestätigen'
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
-    template:
-      region:
-        tabs:
-          label: Buttons
-        accordion:
-          label: Akkordeon
     upload:
       label_delete: 'Bild entfernt.'
     import:

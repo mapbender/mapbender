@@ -161,12 +161,6 @@ mb:
         delete_user_group:
           title: 'Confirme apagar'
           content: 'Realmente eliminar %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Separador
-        accordion:
-          label: Acordeão
     upload:
       label_delete: 'Imagem removida'
     import:

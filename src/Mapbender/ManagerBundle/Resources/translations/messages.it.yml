@@ -161,12 +161,6 @@ mb:
         delete_user_group:
           title: 'Conferma cancellazione'
           content: 'Cancellare davvero %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     upload:
       label_delete: 'Screenshot rimosso'
     import:

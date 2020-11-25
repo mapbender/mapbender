@@ -192,12 +192,6 @@ mb:
         delete_user_group:
           title: 'Confirm delete'
           content: 'Really delete %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     upload:
       label_delete: 'Screenshot removed'
     import:

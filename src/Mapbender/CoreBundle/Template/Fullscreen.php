@@ -22,11 +22,9 @@ class Fullscreen extends Template
             'sidepane' => array(
                 'tabs' => array(
                     'name' => 'tabs',
-                    'label' => 'mb.manager.template.region.tabs.label',
                 ),
                 'accordion' => array(
                     'name' => 'accordion',
-                    'label' => 'mb.manager.template.region.accordion.label',
                 ),
             ),
         );

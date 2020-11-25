@@ -162,12 +162,6 @@ mb:
         delete_user_group:
           title: 'Confirmez la suppression'
           content: 'Voulez-vous vraiment supprimer %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Onglets
-        accordion:
-          label: Accordéon
     upload:
       label_delete: 'Capture d''écran supprimée'
     import:

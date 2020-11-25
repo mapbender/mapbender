@@ -161,12 +161,6 @@ mb:
         delete_user_group:
           title: 'Bevestig verwijderen'
           content: '%userGroup% echt verwijderen?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     upload:
       label_delete: 'Schermafdruk verwijderd'
     import:

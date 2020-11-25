@@ -161,12 +161,6 @@ mb:
         delete_user_group:
           title: 'Confirmar eliminar'
           content: 'Realmente eliminar %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     upload:
       label_delete: 'Captura de Pantalla removida'
     import:
