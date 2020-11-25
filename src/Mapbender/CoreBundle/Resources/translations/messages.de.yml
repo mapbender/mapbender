@@ -311,7 +311,12 @@ mb:
           hideinfo: 'Info ausblenden'
       template:
         sidepane:
-          type: Typ
+          type:
+            label: Typ
+            choice:
+              tabs: Buttons
+              accordion: Akkordeon
+              unstyled: Unformatiert
     htmlelement:
       class:
         title: HTML

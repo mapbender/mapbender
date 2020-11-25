@@ -300,6 +300,13 @@ mb:
           hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
           hideselect: 'Ocultar visibilidade de arquivos'
           hideinfo: 'Ocultar info'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Separador
+              accordion: Acordeão
     htmlelement:
       class:
         title: HTML

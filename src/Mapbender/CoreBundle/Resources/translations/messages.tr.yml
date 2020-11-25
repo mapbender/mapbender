@@ -301,6 +301,13 @@ mb:
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'
           hideinfo: 'Bilgileri gizle'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Sekmeler
+              accordion: Akordiyon
     htmlelement:
       class:
         title: 'HTML'

@@ -300,6 +300,13 @@ mb:
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'
           hideinfo: 'Скрыть информацию'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Вкладки
+              accordion: ~
     htmlelement:
       class:
         title: HTML

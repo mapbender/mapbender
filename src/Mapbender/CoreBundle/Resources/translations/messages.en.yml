@@ -310,7 +310,12 @@ mb:
           hideinfo: 'Hide info'
       template:
         sidepane:
-          type: Type
+          type:
+            label: Type
+            choice:
+              tabs: Buttons
+              accordion: Accordion
+              unstyled: Unstyled
     htmlelement:
       class:
         title: HTML
