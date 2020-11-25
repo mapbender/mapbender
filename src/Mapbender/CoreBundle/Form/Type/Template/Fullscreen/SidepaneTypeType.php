@@ -22,6 +22,8 @@ class SidepaneTypeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
+            'required' => false,
+            'placeholder' => false,
             'choices' => array(
                 'None' => '',
                 'mb.manager.template.region.tabs.label' => 'tabs',
