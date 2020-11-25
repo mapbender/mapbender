@@ -308,6 +308,9 @@ mb:
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'
           hideinfo: 'Hide info'
+      template:
+        sidepane:
+          type: Type
     htmlelement:
       class:
         title: HTML

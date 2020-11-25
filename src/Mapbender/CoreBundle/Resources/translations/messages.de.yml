@@ -309,6 +309,9 @@ mb:
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
           hideinfo: 'Info ausblenden'
+      template:
+        sidepane:
+          type: Typ
     htmlelement:
       class:
         title: HTML

@@ -6,23 +6,9 @@
 {% form_theme form _self %}
 {# Define block without immediate output #}
 {%- if false -%}
-{% block sidepane_type_widget %}
-  <div {{ block('widget_container_attributes') }}>
-    {%- set _iconMap = form.vars.iconMap -%}
-    {%- for child in form -%}
-      <span class="radioWrapper {% if child.vars.checked %} checked{% endif %}{% if child.vars.disabled %} disabled{% endif %}" title="{{ child.vars.attr.title | trans }}">
-        <i class="{{ _iconMap[child.vars.value] }}"></i>
-        {{ form_widget(child) }}
-      </span>
-    {%- endfor -%}
-  </div>
-{% endblock sidepane_type_widget %}
 
 {% block region_settings_widget %}
     <div {{ block('widget_container_attributes') }}>
-        {%- if 'sidepane_settings' in form.vars.block_prefixes and form.name is defined -%}
-            {{ form_widget(form.name) }}
-        {%- endif -%}
         {%- if not form.rendered and form.children | length -%}
           {%- set _popover_id = 'popover_' ~ form.vars.id -%}
           <div class="static-popover-wrap">

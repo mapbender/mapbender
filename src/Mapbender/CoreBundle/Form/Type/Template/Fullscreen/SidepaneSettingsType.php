@@ -37,12 +37,14 @@ class SidepaneSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType', array(
+            'label' => 'mb.core.admin.template.sidepane.type',
+        ));
         if ($this->allowResponsiveContainers) {
             $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(
                 'label' => 'mb.manager.screentype.label',
             ));
         }
-        $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType');
         $builder->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
             'required' => false,
             'attr' => array(
