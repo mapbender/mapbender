@@ -219,6 +219,10 @@
             };
             var normUrl = normalizeUrl(url);
             var matches = this.mbMap.model.getSources().filter(function(source) {
+                if (!source.configuration.options.url) {
+                    // no static url (e.g. WMTS instance) => cannot process further
+                    return false;
+                }
                 var sourceNormUrl = normalizeUrl(source.configuration.options.url);
                 return sourceNormUrl.indexOf(normUrl) === 0 || normUrl.indexOf(sourceNormUrl) === 0;
             });
