@@ -25,9 +25,9 @@ class SidepaneTypeType extends AbstractType
             'required' => false,
             'placeholder' => false,
             'choices' => array(
-                'mb.core.admin.template.sidepane.type.choice.unstyled' => '',
                 'mb.core.admin.template.sidepane.type.choice.tabs' => 'tabs',
                 'mb.core.admin.template.sidepane.type.choice.accordion' => 'accordion',
+                'mb.core.admin.template.sidepane.type.choice.unstyled' => '',
             ),
         ));
         if (Kernel::MAJOR_VERSION < 3) {
