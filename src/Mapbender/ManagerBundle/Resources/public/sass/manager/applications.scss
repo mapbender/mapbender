@@ -319,21 +319,6 @@
     border:solid 1px darken(white, 15%);
   }
 }
-.regionProperties{
-  .radioWrapper {
-    margin-left: $space/2;
-    opacity: .45;
-    &.disabled {
-      opacity: .2;
-    }
-    &.checked {
-      opacity: 1;
-    }
-    &.checked.disabled {
-      opacity: .6;
-    }
-  }
-}
 
 .static-popover-wrap {
   position: relative; // for anchoring of absolute-positioned .popover

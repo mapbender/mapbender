@@ -58,26 +58,6 @@ $(function() {
             });
         }
     });
-    $(".regionProperties").each(function() {
-        function updateGroupIcons() {
-            function updateWrapper() {
-                var $cb = $('input[type="radio"]', this);
-                $(this)
-                    .toggleClass('checked', $cb.prop('checked'))
-                    .toggleClass('disabled', $cb.prop('disabled'))
-                ;
-            }
-            $('.radioWrapper', this).each(updateWrapper);
-        }
-        function onClick() {
-            var $clickedRadio = $('input[type="radio"]', this);
-            $clickedRadio.prop('checked', true);
-            updateGroupIcons.call($(this).parent());
-            $clickedRadio.trigger('change');
-        }
-        updateGroupIcons.call(this);
-        $(this).on('click', '.radioWrapper', onClick);
-    });
     $('.regionProperties[data-url]').on('change', ':input', function() {
         var $rprop = $(this).closest('.regionProperties');
         var $inputs = $(':input', $rprop).filter(function() {
