@@ -15,28 +15,35 @@
 
         <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
 
-          <ul class="newAppTabs">
-              <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
+          <ul class=" nav nav-pills newAppTabs" role="tablist">
+              <li role="presentation" class="tab active" id="tabBaseData"> 
+                <a href="#basedata" aria-controls="basedata" role="tab" data-toggle="tab">
+                  {{"mb.manager.admin.application.new.base_data" | trans }}
+                </a>
+              </li>
               {% if form.acl is defined %}
-              <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
+              <li role="presentation" class="tab" id="tabSecurity"> 
+                <a href="#security" aria-controls="security" role="tab" data-toggle="tab">
+                  {{"mb.manager.admin.application.security.title" | trans }}
+                </a>
+              </li>
               {% endif %}
           </ul>
 
-          <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-              <div >
-              {{ form_row(form.template) }}
-                {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
-              </div>
-              {# <div class="col-xs-4">
-                  <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-              </div> #}
-          </div>
+          <div  class="tab-content">
+                <div id="basedata" role="tabpanel" class="tab-pane active containerBaseData"> {# container  row no-gutters #}
+                {{ form_row(form.template) }}
+                  {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+                </div>
+                {# <div class="col-xs-4">
+                    <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
+                </div> #}
 
-          <div id="containerSecurity" class="container containerSecurity">
-            {% block securityTab %}
-              {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
-            {% endblock %}
-          </div>
+                <div id="security" class="tab-pane containerSecurity" role="tabpanel" > {# container  #}
+                  {% block securityTab %}
+                    {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+                  {% endblock %}
+                </div>
 
         </div>
 

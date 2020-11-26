@@ -20,61 +20,67 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Ubuntu";
+  font-family: "Ubuntu" !important;
 }
 
 .navigationBar {
-  border-bottom: 1px solid #ebebeb;
-  display: flex;
-  flex-direction: row;
+  // border-bottom: 1px solid #ebebeb;
+  // display: flex;
+  // flex-direction: row;
+  background-color: transparent;
   padding-top: 3px;
-  // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+  box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
 
   .logoContainer {
     // border: 1px solid red;
-    position:relative;
-    left: 50px;
-    padding: 5px;
+    // position:relative;
+    // left: 50px;
+    // padding: 5px;
 
     .logo {
-      width: 100px;
-      margin: 10px 0;
+      width: 120px;
+      // margin: 10px 0;
     }
   }
 }
 
-.navigationListContainer {
-  // border: 1px solid black;
-  width: 60%;
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  left: 10%;
+// #navigationListContainer {
+//   // border: 1px solid black;
+//   width: 80%;
+//   display: flex;
+//   justify-content: center;
+// }
 
-  .navMainItems {
-    // border: 1px solid black;
-    color: #222222;
-    font-size: 20px;
-    margin: 1% 2%;
-    list-style-type: none;
-    display: block;
-    height: 100%;
-  }
-}
+// .navMainItems {
+//   width: 10%;
+
+//   .navMainLink {
+//     height: 100%;
+//   }
+// }
+
 
 .subNavItem {
   // border: 1px solid black;
-  // display: block;
-  width: 100%;
+  border-top: 1px solid rgba(8, 8, 8, 0.4);
+  width: 500px !important;
+  height: 50px;
   background-color: #ffffff;
   position: absolute;
   z-index: 5;
   left: 0;
-  top: 120%;
+  top: 100%;
+  position: absolute;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  align-items: center;
   visibility: hidden;
+
+  li {
+    list-style: none;
+    width: 100%;
+  }
 }
 
 .navMainItems:hover  .subNavItem {
@@ -84,24 +90,24 @@
 
 
 .accountBarContainer {
-  // border: 2px solid blue;
-  width: 10%;
-  position: absolute;
-  right: 8%;
-  top: 1%;
+  border: 2px solid blue;
+//   width: 10%;
+//   position: absolute;
+//   right: 8%;
+//   top: 1%;
 }
 
-.accountMenu li {
-  list-style-type: none;
-}
+// .accountMenu li {
+//   list-style-type: none;
+// }
 
-.subAccNav {
-  display: none;
-}
+// .subAccNav {
+//   display: none;
+// }
 
-.accountOpen:hover .subAccNav {
-  display: block;
-}
+// .accountOpen:hover .subAccNav {
+//   display: block;
+// }
 
 .content {
   // border: 2px solid green;
@@ -170,15 +176,11 @@
   margin-top: 8%;
 }
 
-#listFilterApplications {
-  //   width: 50%;
-}
 
 .filterItem {
   // border: 2px solid green;
   width: 100%;
-  display: flex;
-  flex-direction: row;
+  list-style: none;
   margin: 1%;
   padding: 1%;
   border-radius: 15px;
@@ -188,128 +190,167 @@
   .col1 {
     // border: 2px solid red;
     position: relative;
-    left: 7%;
+    // left: 7%;
     // border-radius: 15px;
 
     .cell {
       // border: 2px solid red;
       position: relative;
       // margin: 10% 15%;
+      
 
       img {
         max-width: 100%;
         max-height: 100%;
-        border-radius: 15px;
+        border-radius: 30px !important;
+        
       }
     }
   }
 }
 
-.listContentContainer {
-  // border: 2px solid cyan;
-  width: 85%;
-  display: flex;
-  // flex-direction: row;
+.paddingx-5 {
+  padding: 0 5px; 
 }
 
-.textContent {
-  // border: 2px solid red;
-  margin: 0 4%;
-  flex-grow: 3;
+.marginy-5 {
+  margin: 5px 0;
 }
 
-.buttonGroup {
-  // border: 2px solid green;
-  display: flex;
-  flex-grow: 2;
-  justify-content: flex-end;
+.padding-left-3 {
+  padding-left: 3px;
 }
 
-.buttonGroup a {
-  margin: 0 6px;
-  font-size: 20px;
+.padding-0 {
+  padding: 0 !important;
+}
+
+.app-list-icon {
+  font-size: 15px;
   color: #222222;
 }
-.buttonGroup span {
-  margin: 0 6px;
-  font-size: 20px;
+
+.btn-app-list {
+  border-radius: 10px;
+  margin: 0 5px;
+  padding: 5px 20px;
+  border: none;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+
+  
+  
 }
 
-// new application
+// .iconView, .iconCopy, .iconEdit, .iconRemove {
+//   color: black;
+// }
 
-.dropdownValue,
-.dropdownList {
-  display: none;
-}
 
-.containerSecurity {
-  display: none;
-  //   border: 2px solid black;
-}
+// .listContentContainer {
+//   // border: 2px solid cyan;
+//   width: 85%;
+//   display: flex;
+//   // flex-direction: row;
+// }
 
-.container {
-  width: 70%;
-}
+// .textContent {
+//   // border: 2px solid red;
+//   margin: 0 4%;
+//   flex-grow: 3;
+// }
 
-.containerMainContent {
-  //   border: 2px solid crimson;
-  margin-top: 5%;
-}
+// .buttonGroup {
+//   // border: 2px solid green;
+//   display: flex;
+//   flex-grow: 2;
+//   justify-content: flex-end;
+// }
 
-.newAppTabs {
-  //   border: 2px solid crimson;
-  display: flex;
-  justify-content: flex-start;
-  position: relative;
-  height: 10%;
-  //   left: 13%;
+// .buttonGroup a {
+//   margin: 0 6px;
+//   font-size: 20px;
+//   color: #222222;
+// }
+// .buttonGroup span {
+//   margin: 0 6px;
+//   font-size: 20px;
+// }
 
-  li {
-    list-style: none;
-    margin-right: 5%;
-    font-size: 20px;
-  }
+/* new application */ 
 
-  #tabBaseData {
-    color: #079ee0;
-  }
-}
+// .dropdownValue,
+// .dropdownList {
+//   display: none;
+// }
 
-.applicationTabContainer {
-  // border: 1px solid green;
-}
+// .containerSecurity {
+//   display: none;
+//   //   border: 2px solid black;
+// }
 
-.containerBaseData {
-  // border: 2px solid red;
-  display: none;
-  position: relative;
-  //   left: 13%;
-  margin-top: 7%;
-}
+// .container {
+//   width: 70%;
+// }
 
-.buttonContainerNewApp {
-  // border: 2px solid crimson;
-  width: 50%;
-  position: relative;
-  left: 30%;
-  margin: 15% 0;
-  display: flex;
-  justify-content: flex-end;
+// .containerMainContent {
+//   //   border: 2px solid crimson;
+//   margin-top: 5%;
+// }
 
-  #buttonCreate {
-    width: 15%;
-    margin: 0 5%;
-  }
+// .newAppTabs {
+//   //   border: 2px solid crimson;
+//   display: flex;
+//   justify-content: flex-start;
+//   position: relative;
+//   height: 10%;
+//   //   left: 13%;
 
-  #buttonCancel {
-    width: 15%;
+//   li {
+//     list-style: none;
+//     margin-right: 5%;
+//     font-size: 20px;
+//   }
 
-    a {
-      color: #ffffff;
-      text-decoration: none;
-    }
-  }
-}
+//   #tabBaseData {
+//     color: #079ee0;
+//   }
+// }
+
+// .applicationTabContainer {
+//   // border: 1px solid green;
+// }
+
+// .containerBaseData {
+//   // border: 2px solid red;
+//   display: none;
+//   position: relative;
+//   //   left: 13%;
+//   margin-top: 7%;
+// }
+
+// .buttonContainerNewApp {
+//   // border: 2px solid crimson;
+//   width: 50%;
+//   position: relative;
+//   left: 30%;
+//   margin: 15% 0;
+//   display: flex;
+//   justify-content: flex-end;
+
+//   #buttonCreate {
+//     width: 15%;
+//     margin: 0 5%;
+//   }
+
+//   #buttonCancel {
+//     width: 15%;
+
+//     a {
+//       color: #ffffff;
+//       text-decoration: none;
+//     }
+//   }
+// }
 
 .doActive {
   display: block;
@@ -325,137 +366,137 @@
   bottom: 13px;
 }
 
-@media screen and (max-width: 800px) {
-  .navigationBar {
-    border-bottom: 1px solid #ebebeb;
-    display: flex;
-    flex-direction: column;
-    padding-top: 3px;
-    // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+// @media screen and (max-width: 800px) {
+//   .navigationBar {
+//     border-bottom: 1px solid #ebebeb;
+//     display: flex;
+//     flex-direction: column;
+//     padding-top: 3px;
+//     // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
 
-    .logoContainer {
-      // border: 1px solid red;
-      left: 0;
-      border-bottom: 1px solid #222222;
-      height: 10vh;
+//     .logoContainer {
+//       // border: 1px solid red;
+//       left: 0;
+//       border-bottom: 1px solid #222222;
+//       height: 10vh;
       
 
-      .logo {
-        width: 200px;
-        margin: 2% 0;
-      }
+//       .logo {
+//         width: 200px;
+//         margin: 2% 0;
+//       }
 
-      .hamBtn {
-        // border: 2px solid black;
-        border: none;
-        background-color: transparent;
-        width: 50px;
-        height: 50px;
-        margin: 3% 0;
-        float: right;
+//       .hamBtn {
+//         // border: 2px solid black;
+//         border: none;
+//         background-color: transparent;
+//         width: 50px;
+//         height: 50px;
+//         margin: 3% 0;
+//         float: right;
 
-        .hamMenu {
-          background-color: #222222;
-          margin: 5px 5px;
-          border-radius: 30px;
-          width: 80%;
-          height: 5px;
-        }
-      }
-    }
-  }
+//         .hamMenu {
+//           background-color: #222222;
+//           margin: 5px 5px;
+//           border-radius: 30px;
+//           width: 80%;
+//           height: 5px;
+//         }
+//       }
+//     }
+//   }
 
-  .navigationListContainer {
-    // background-color: red;
-    border-bottom: 1px solid #222222;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    left: 0;
-    display: none;
+//   .navigationListContainer {
+//     // background-color: red;
+//     border-bottom: 1px solid #222222;
+//     width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     position: relative;
+//     left: 0;
+//     display: none;
 
-    .navMainItems {
-      // display: none;
-      font-size: 26px;
-    }
+//     .navMainItems {
+//       // display: none;
+//       font-size: 26px;
+//     }
 
-    .subNavItem {
-      position: relative;
-      // top: 0;
-      display: flex;
-      flex-direction: column;
-      display: none;
-      left: 10px;
-    }
+//     .subNavItem {
+//       position: relative;
+//       // top: 0;
+//       display: flex;
+//       flex-direction: column;
+//       display: none;
+//       left: 10px;
+//     }
 
-    .navMainItems:hover .subNavItem {
-      display: inline-block;
-      position: relative;
-      left: 10px;
-    }
-  }
+//     .navMainItems:hover .subNavItem {
+//       display: inline-block;
+//       position: relative;
+//       left: 10px;
+//     }
+//   }
 
-  .navigationListContainerHam {
-    display: block;
-  }
+//   .navigationListContainerHam {
+//     display: block;
+//   }
 
-  .subAccNav {
-    // display: none;
-  }
-  .accountBarContainer {
-    // border: 2px solid red;
-    width: 100%;
-    left: 0;
-    position: relative;
-    display: none;
-  }
+//   .subAccNav {
+//     // display: none;
+//   }
+//   .accountBarContainer {
+//     // border: 2px solid red;
+//     width: 100%;
+//     left: 0;
+//     position: relative;
+//     display: none;
+//   }
 
-  .container {
-    // border: 1px solid green;
-    width: 100%;
-  }
+//   .container {
+//     // border: 1px solid green;
+//     width: 100%;
+//   }
 
-  .content {
-    .contentTitle {
-      // border: 1px solid black;
-      text-align: center;
-      margin: 5% 0;
-    }
+//   .content {
+//     .contentTitle {
+//       // border: 1px solid black;
+//       text-align: center;
+//       margin: 5% 0;
+//     }
 
-    .underlineTitle {
-      display: none;
-    }
-  }
+//     .underlineTitle {
+//       display: none;
+//     }
+//   }
 
-  .filter-input-container {
-    width: 90%;
-    left: 20%;
-    margin: 3% 0;
-    padding: 5%;
-    box-shadow: none;
-  }
+//   .filter-input-container {
+//     width: 90%;
+//     left: 20%;
+//     margin: 3% 0;
+//     padding: 5%;
+//     box-shadow: none;
+//   }
 
-  .filterItem {
-    width: 100%;
-    margin: 5% 0;
+//   .filterItem {
+//     width: 100%;
+//     margin: 5% 0;
 
-    .col1 {
-      // border: 1px solid red;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      margin: 0 5%;
-    }
-  }
+//     .col1 {
+//       // border: 1px solid red;
+//       height: 100%;
+//       display: flex;
+//       align-items: center;
+//       margin: 0 5%;
+//     }
+//   }
 
-  .listContentContainer {
-    display: flex;
-    flex-direction: column;
-  }
+//   .listContentContainer {
+//     display: flex;
+//     flex-direction: column;
+//   }
 
-  .buttonGroup {
-    justify-content: flex-start;
-    margin-left: 0.5%;
-  }
-}
+//   .buttonGroup {
+//     justify-content: flex-start;
+//     margin-left: 0.5%;
+//   }
+// }
