@@ -136,7 +136,6 @@ mb:
         label:
           autoopen: 'Apertura automatica'
           splitlayers: 'Dividi layers'
-          declarative: 'Uso dichiarativo'
     repository:
       parser:
         couldnotparse: 'Non possibile il parse di CapabilitiesDocument'
@@ -168,7 +167,7 @@ mb:
           facsimileTelephone: Facsimile
           electronicMailAddress: Indirizzo di posta elettronica
           address: Indirizzo
-          addressType: 'Tipo di indirizzo' 
+          addressType: 'Tipo di indirizzo'
           addressCity: Città
           addressStateOrProvince: 'Stato o Provincia'
           addressPostCode: 'Codice postale'

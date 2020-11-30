@@ -274,8 +274,8 @@ mb:
         label:
           autoopen: 'Automatisch openen'
           deactivateonclose: 'Deactiveer bij sluiten'
-          showoriginal: 'Laat origineel zien'
           onlyvalid: 'Alleen geldig'
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Automatisch openen'

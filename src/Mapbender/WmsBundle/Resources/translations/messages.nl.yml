@@ -133,7 +133,6 @@ mb:
         label:
           autoopen: 'Auto open'
           splitlayers: 'Splits lagen'
-          declarative: 'Gebruik declaratief'
     repository:
       parser:
         couldnotparse: 'Kon Capabilities Document niet parsen'

@@ -133,7 +133,6 @@ mb:
         label:
           autoopen: 'Auto abrir'
           splitlayers: 'Partir las capas'
-          declarative: 'Uso declarativo'
     repository:
       parser:
         couldnotparse: 'Could not parse'

@@ -7,8 +7,9 @@
             deactivateOnClose: true,
             displayType: 'tabs',
             printResult: false,
-            showOriginal: false,
             onlyValid: false,
+            iframeInjection: null,
+            highlighting: false,
             maxCount: 100,
             width: 700,
             height: 500
@@ -21,6 +22,9 @@
         contentManager: null,
         mobilePane: null,
         isActive: false,
+        highlightLayer: null,
+
+
 
         _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
@@ -30,15 +34,34 @@
             }, function() {
                 Mapbender.checkTarget("mbFeatureInfo", self.options.target);
             });
+
         },
+
 
         _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
             this.target = mbMap;
             this._setupMapClickHandler();
-            if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
+            if (options.autoActivate || options.autoOpen) { // autoOpen old configuration
                 widget.activate();
+            }
+
+            window.addEventListener("message", widget._postMessage.bind(widget));
+            if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
+                this._createLayerStyle();
+
+                this.highlightLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector({}),
+                    name: 'featureInfo',
+                    style: widget.featureInfoStyle,
+                    visible: true,
+                    minResolution: Mapbender.Model.scaleToResolution(0),
+                    maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+                });
+
+                this.target.map.olMap.addLayer(this.highlightLayer);
+                this._createHighlightControl();
             }
 
             widget._trigger('ready');
@@ -64,6 +87,9 @@
         deactivate: function() {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
+            if (this.highlightLayer) {
+                this.highlightLayer.getSource().clear();
+            }
 
             if (this.popup) {
                 if (this.popup.$element) {
@@ -87,7 +113,7 @@
             }
             var self = this;
             var model = this.target.getModel();
-            $.each(model.getSources(), function(idx, src) {
+            $.each(model.getSources(), function (idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
                     self._setInfo(src, url);
@@ -115,27 +141,23 @@
                 ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
             var request = $.ajax(ajaxOptions);
-            request.done(function(data, textStatus, jqXHR) {
+            request.done(function (data, textStatus, jqXHR) {
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                if (!self.options.showOriginal && mimetype.search(/text[/]html/i) === 0) {
-                    data_ = self._cleanHtml(data_);
-                }
                 data_ = $.trim(data_);
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     self._removeContent(source);
                 } else {
-                    if (self.options.showOriginal) {
-                        self._showOriginal(source, layerTitle, data_, mimetype);
-                    } else {
-                        self._showEmbedded(source, layerTitle, data_, mimetype);
-                    }
+                    self._showOriginal(source, layerTitle, data_, mimetype);
+                    // Bind original url for print interaction
+                    var $documentNode = self._getDocumentNode(source.id);
+                    $documentNode.attr('data-url', url);
                     self._triggerHaveResult(source);
                     self._open();
                 }
             });
-            request.fail(function(jqXHR, textStatus, errorThrown) {
+            request.fail(function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
                 self._removeContent(source);
             });
@@ -165,18 +187,9 @@
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                    var iframe = $('<iframe>');
-                    iframe.on('load', function() {
-                        var doc = iframe.get(0).contentWindow.document;
-                        doc.open();
-                        doc.write(data);
-                        doc.close();
-                        if (Mapbender.Util.addDispatcher) {
-                           Mapbender.Util.addDispatcher(doc);
-                        }
-                        $('body', doc).css("background", "transparent");
-                    });
+                    var script = self._getInjectionScript(source.id);
+                    var iframe = $('<iframe sandbox="allow-scripts">');
+                    iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
                     break;
                 case 'text/plain':
@@ -185,25 +198,6 @@
                     break;
             }
         },
-        _showEmbedded: function(source, layerTitle, data, mimetype) {
-            this._addContent(source, layerTitle, data);
-        },
-        _cleanHtml: function(data) {
-            try {
-                if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
-                    return data.replace(/document.writeln[^;]*;/g, '')
-                        .replace(/\n|\r/g, '')
-                        .replace(/<!--[^>]*-->/g, '')
-                        .replace(/<link[^>]*>/gi, '')
-                        .replace(/<meta[^>]*>/gi, '')
-                        .replace(/<title>*(?:[^<]*<\/title>)/gi, '')
-                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '')
-                        .replace(/<script[^>]*(?:[^<]*<\/script>|>)/gi, '');
-                }
-            } catch (e) {
-            }
-            return data;
-        },
         _getContentManager: function() {
             if (!this.contentManager) {
                 this.contentManager = {
@@ -211,14 +205,14 @@
                     $headerParent: $('.js-header', this.element).parent(),
                     $header: $('.js-header', this.element).remove(),
                     headerContentSel: '.js-header-content',
-                    headerId: function(id) {
+                    headerId: function (id) {
                         return this.$header.attr('data-idname') + id
                     },
                     contentSel: '.js-content',
                     $contentParent: $('.js-content', this.element).parent(),
                     $content: $('.js-content', this.element).remove(),
                     contentContentSel: '.js-content-content',
-                    contentId: function(id) {
+                    contentId: function (id) {
                         return this.$content.attr('data-idname') + id
                     }
                 };
@@ -246,7 +240,7 @@
                         height: options.height,
                         buttons: this._getPopupButtonOptions()
                     });
-                    widget.popup.$element.on('close', function() {
+                    widget.popup.$element.on('close', function () {
                         if (widget.options.deactivateOnClose) {
                             widget.deactivate();
                         }
@@ -255,15 +249,18 @@
                         }
                         widget.state = 'closed';
                     });
-                    widget.popup.$element.on('open', function() {
+                    widget.popup.$element.on('open', function () {
                         widget.state = 'opened';
                     });
                 }
-                if(widget.state !== 'opened') {
+                if (widget.state !== 'opened') {
+                    if (this.highlightLayer) {
+                        this.highlightLayer.getSource().clear();
+                    }
                     widget.popup.open();
                 }
 
-                if(widget.popup && widget.popup.$element){
+                if (widget.popup && widget.popup.$element) {
                     widget.popup.$element.show();
                 }
             }
@@ -275,7 +272,7 @@
             var buttons = [{
                 label: Mapbender.trans('mb.actions.close'),
                 cssClass: 'button buttonCancel critical right',
-                callback: function() {
+                callback: function () {
                     /** @this Mapbender.Popup2 */
                     this.close();
                 }
@@ -286,7 +283,7 @@
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
                     cssClass: 'button right',
-                    callback: function() {
+                    callback: function () {
                         self._printContent();
                     }
                 });
@@ -301,6 +298,10 @@
             $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
          },
+        _getDocumentNode: function(sourceId) {
+            // @todo: get rid of the content manager
+            return $('#' + this._getContentManager().contentId(sourceId), this.element);
+        },
         _addContent: function(source, layerTitle, content) {
             var manager = this._getContentManager();
             var headerId = manager.headerId(source.id);
@@ -327,23 +328,113 @@
             initTabContainer(this.element);
         },
         _printContent: function() {
-            var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
-            var el = $('.js-content-content.active,.active .js-content-content', this.element);
-            var printContent;
-            var iframe = $('iframe', el).get(0);
-            if (iframe) {
-                printContent = iframe.contentWindow.document.documentElement.innerHTML;
-            } else {
-                printContent = el.html();
-            }
-            w.document.write(printContent);
+            var $documentNode = $('.js-content.active', this.element);
+            var url = $documentNode.attr('data-url');
+            // Always use proxy. Calling window.print on a cross-origin window is not allowed.
+            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
+            var w = window.open(proxifiedUrl, 'title', "attributes,scrollbars=yes,menubar=yes");
             w.print();
         },
         _setupMapClickHandler: function () {
             var self = this;
-            self.target.element.on('mbmapclick', function(event, data) {
+            self.target.element.on('mbmapclick', function (event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
+        },
+
+        _createLayerStyle: function () {
+            this.featureInfoStyle = function (feature) {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 255, 255, 1)',
+                        lineCap: 'round',
+                        width: 1
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 165, 0, 0.4)'
+                    })
+                });
+            };
+
+            this.featureInfoStyle_hover = function (feature) {
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 255, 255, 1)',
+                        lineCap: 'round',
+                        width: 1
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 0, 0, 0.7)'
+                    }),
+                    zIndex: 1000
+                });
+            }
+        },
+
+        _postMessage: function(message) {
+            var widget = this;
+            var data = message.data;
+            var feature;
+            if (this.highlightLayer && data.ewkts && data.ewkts.length) {
+                widget._populateFeatureInfoLayer(data.ewkts);
+            }
+            if (this.highlightLayer && data.command === 'hover') {
+                feature = this.highlightLayer.getSource().getFeatureById(data.id);
+                if (feature) {
+                    if (data.state) {
+                        feature.setStyle(this.featureInfoStyle_hover);
+                    } else {
+                        feature.setStyle(null);
+                    }
+                }
+            }
+        },
+        _populateFeatureInfoLayer: function (ewkts) {
+            var features = ewkts.map(function (ewkt) {
+                var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
+                feature.setId(ewkt.id);
+                return feature;
+            });
+
+            this.highlightLayer.getSource().addFeatures(features);
+        },
+
+        _createHighlightControl: function() {
+
+            var widget = this;
+            var map = this.target.map.olMap;
+
+            var highlightControl = new ol.interaction.Select({
+                condition: ol.events.condition.pointerMove,
+                layers: [this.highlightLayer],
+                multi: true
+            });
+
+            highlightControl.on('select', function (e) {
+                e.deselected.forEach(function (feature) {
+                    feature.setStyle(null);
+                });
+                e.selected.forEach(function (feature) {
+                    feature.setStyle(widget.featureInfoStyle_hover);
+                });
+            });
+
+            map.addInteraction(highlightControl);
+            highlightControl.setActive(true);
+        },
+        _getInjectionScript: function(sourceId) {
+            var parts = [
+                '<script>',
+                // Hack to prevent DOMException when loading jquery
+                'var replaceState = window.history.replaceState;',
+                'window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };',
+                // Highlighting support (generate source-scoped feature ids)
+                ['var sourceId = ', sourceId, ';'].join(''),
+                this.options.iframeInjection,
+                '</script>'
+            ];
+            return parts.join('');
         }
     });
+
 })(jQuery);

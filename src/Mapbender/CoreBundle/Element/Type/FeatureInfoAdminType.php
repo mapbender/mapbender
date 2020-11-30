@@ -41,10 +41,6 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.deactivateonclose',
             ))
-            ->add('showOriginal', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.featureinfo.label.showoriginal',
-            ))
             ->add('onlyValid', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
@@ -65,6 +61,10 @@ class FeatureInfoAdminType extends AbstractType
                 'attr' => array(
                     'placeholder' => 100,
                 ),
+            ))
+            ->add('highlighting', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.highlighting',
             ))
         ;
     }

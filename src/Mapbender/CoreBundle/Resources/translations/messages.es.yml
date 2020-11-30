@@ -274,8 +274,8 @@ mb:
         label:
           autoopen: Autoabrir
           deactivateonclose: 'Desactivar al cerrar'
-          showoriginal: ~
           onlyvalid: ~
+          highlighting: ~
       printclient:
         label:
           autoopen: Autoabrir

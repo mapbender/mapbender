@@ -274,8 +274,8 @@ mb:
         label:
           autoopen: Авто-открытие
           deactivateonclose: 'Деактивировать при закрытии'
-          showoriginal: 'Показать оригинал'
           onlyvalid: 'Только действительные'
+          highlighting: ~
       printclient:
         label:
           autoopen: Авто-открытие

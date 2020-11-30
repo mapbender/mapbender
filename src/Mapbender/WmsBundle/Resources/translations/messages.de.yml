@@ -136,7 +136,6 @@ mb:
         label:
           autoopen: 'Automatisch öffnen'
           splitlayers: 'Layer aufteilen'
-          declarative: 'deklarativ verwenden'
     repository:
       parser:
         couldnotparse: 'Das XML Dokument kann  nicht geparst werden.'

@@ -52,7 +52,6 @@ class WmsLoader extends Element
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
             "splitLayers" => false,
-            "useDeclarative" => false
         );
     }
 
@@ -99,7 +98,7 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $assetRefs = array(
+        return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
             ),
@@ -110,11 +109,6 @@ class WmsLoader extends Element
                 'mb.wms.wmsloader.error.*',
             ),
         );
-        $config = $this->entity->getConfiguration();
-        if (!empty($config['useDeclarative'])) {
-            $assetRefs['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js';
-        }
-        return $assetRefs;
     }
 
     /**

@@ -281,8 +281,8 @@ mb:
         label:
           autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
-          showoriginal: 'Show original'
           onlyvalid: 'Only valid'
+          highlighting: 'Highlighting'
       printclient:
         label:
           autoopen: Auto-open

@@ -60,10 +60,6 @@ class WmsLoaderAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.admin.label.splitlayers',
             ))
-            ->add('useDeclarative', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.admin.label.declarative',
-            ))
         ;
     }
 
