@@ -150,6 +150,9 @@
                     self._removeContent(source);
                 } else {
                     self._showOriginal(source, layerTitle, data_, mimetype);
+                    // Bind document for print interaction
+                    var $documentNode = self._getDocumentNode(source.id);
+                    $documentNode.data('document', data_);
                     self._triggerHaveResult(source);
                     self._open();
                 }
@@ -295,6 +298,10 @@
             $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
          },
+        _getDocumentNode: function(sourceId) {
+            // @todo: get rid of the content manager
+            return $('#' + this._getContentManager().contentId(sourceId), this.element);
+        },
         _addContent: function(source, layerTitle, content) {
             var manager = this._getContentManager();
             var headerId = manager.headerId(source.id);
@@ -322,14 +329,8 @@
         },
         _printContent: function() {
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
-            var el = $('.js-content-content.active,.active .js-content-content', this.element);
-            var printContent;
-            var iframe = $('iframe', el).get(0);
-            if (iframe) {
-                printContent = iframe.contentWindow.document.documentElement.innerHTML;
-            } else {
-                printContent = el.html();
-            }
+            var $documentNode = $('.js-content.active', this.element);
+            var printContent = $documentNode.data('document');
             w.document.write(printContent);
             w.print();
         },
@@ -419,9 +420,7 @@
 
             map.addInteraction(highlightControl);
             highlightControl.setActive(true);
-
         },
-
         _getInjectionScript: function(sourceId) {
             var parts = [
                 '<script>',
