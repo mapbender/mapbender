@@ -67,7 +67,7 @@ $(function() {
         // Include CSRF token, so server can run validation
         $inputs = $inputs.add($('input[name="application[_token]"]', $rprop.closest('form')));
         var formData = $inputs.serializeArray();
-        if (true) $.ajax($rprop.attr('data-url'), {
+        $.ajax($rprop.attr('data-url'), {
             method: 'POST',
             data: formData
         });
