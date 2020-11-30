@@ -1,4 +1,4 @@
-## dev-master @ 3e6f6da70
+## dev-master @ 14628f209
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -11,6 +11,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix errors on ImageExport / Print with (valid) feature styles missing `image` property
 * Fix backend element list interaction tooltips on Yaml applications copied into db
 * Fix errors editing map element after deleting a previously assigned layerset
+* Fix error getting FeatureInfo response on current map engine from an instance configured with option `proxy`
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
@@ -18,6 +19,7 @@ NOTE: This version extends the database schema and will require running a `doctr
   * Yaml application definitions may specify a `screenType` in any Element definition, and in the `regionProperties` of the targetted container.  
     Value may be one of `all`, `mobile` or `desktop`.
   * NOTE: Responsive filtering is *not* supported when using legacy Openlayers 2 map engine
+* Added built-in support for displaying and highlighting geometries embedded in FeatureInfo html; see [PR#1270](https://github.com/mapbender/mapbender/pull/1270) for markup requirements
 * Added missing editing capabilities for sidepane width / position / initial state in database applications (previously only controllable via `regionProperties` in Yaml applications)
 * Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
 * Replace custom sidepane formatting type widget with a simple dropdown
