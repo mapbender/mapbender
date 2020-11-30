@@ -1,7 +1,8 @@
-## dev-master @ 591ef7777
+## dev-master @ 3e6f6da70
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
+* Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 * Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 * Fix missing handling of configurable sidepane width (3.1.0.5 regression)
 * Fix missing handling of configurable sidepane "align" (left or right; 3.1.0.5 regression)
@@ -19,6 +20,7 @@ NOTE: This version extends the database schema and will require running a `doctr
   * NOTE: Responsive filtering is *not* supported when using legacy Openlayers 2 map engine
 * Added missing editing capabilities for sidepane width / position / initial state in database applications (previously only controllable via `regionProperties` in Yaml applications)
 * Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
+* Replace custom sidepane formatting type widget with a simple dropdown
 * Resolved misc conflicts with Bootstrap script and Bootstrap form theme
 * The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
 * Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
