@@ -37,7 +37,7 @@ try:
     wd.find_element_by_id("user_password_second").clear()
     wd.find_element_by_id("user_password_second").send_keys("test1234")
     wd.find_element_by_css_selector("input.button").click()
-    wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
+    wd.find_element_by_css_selector("span.iconRemove").click()
     wd.find_element_by_link_text("Delete").click()
     logout(wd)
 except Exception as e:  # Changed ff
