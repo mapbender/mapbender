@@ -153,7 +153,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             var res = olMap.getView().getResolution();
             var proj = olMap.getView().getProjection().getCode();
             var coord = olMap.getCoordinateFromPixel([x, y]);
-            return nativeSource.getFeatureInfoUrl(coord, res, proj, params);
+            return Mapbender.Util.removeProxy(nativeSource.getFeatureInfoUrl(coord, res, proj, params));
         },
         /**
          * @param {(ol.layer.Tile|ol.layer.Image)} olLayer
