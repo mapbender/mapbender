@@ -150,9 +150,9 @@
                     self._removeContent(source);
                 } else {
                     self._showOriginal(source, layerTitle, data_, mimetype);
-                    // Bind document for print interaction
+                    // Bind original url for print interaction
                     var $documentNode = self._getDocumentNode(source.id);
-                    $documentNode.data('document', data_);
+                    $documentNode.attr('data-url', url);
                     self._triggerHaveResult(source);
                     self._open();
                 }
@@ -328,10 +328,11 @@
             initTabContainer(this.element);
         },
         _printContent: function() {
-            var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var $documentNode = $('.js-content.active', this.element);
-            var printContent = $documentNode.data('document');
-            w.document.write(printContent);
+            var url = $documentNode.attr('data-url');
+            // Always use proxy. Calling window.print on a cross-origin window is not allowed.
+            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
+            var w = window.open(proxifiedUrl, 'title', "attributes,scrollbars=yes,menubar=yes");
             w.print();
         },
         _setupMapClickHandler: function () {
