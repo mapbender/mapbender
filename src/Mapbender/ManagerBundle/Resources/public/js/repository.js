@@ -36,19 +36,6 @@ $(function() {
         // change root permission state
         setRootState(groupId);
     }
-    // old template
-    $("#instanceTableCheckHead .iconCheckbox[id]").each(function() {
-        var $this = $(this);
-        var $table = $this.closest('table');
-        var groupId = $this.attr('id');
-        setRootState(groupId);
-        $this.on('click', function() {
-           var newState = !$(this).hasClass("iconCheckboxActive");
-           toggleAllStates(groupId, newState, $table);
-        });
-
-    });
-    // new template
     $("#instanceTableCheckHead .checkboxColumn[data-check-identifier]").each(function() {
         var $this = $(this);
         var $table = $this.closest('table');
