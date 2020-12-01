@@ -1,4 +1,4 @@
-## dev-master @ fca36fae4
+## dev-master @ 3ec20b928
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -28,6 +28,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
 * Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
 * [Backend] changed standard editing icon from pencil to a gear
+* Fix typos and outdated information in `mapbender:database:upgrade` command help ([PR#1265](https://github.com/mapbender/mapbender/pull/1265))
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
