@@ -612,29 +612,33 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
 
         $efData = $jobData['extent_feature'];
+        $minX = min(array_map(function($coordinate){ return $coordinate["x"]; },$efData));
+        $minY = min(array_map(function($coordinate){ return $coordinate["y"]; },$efData));
+        $maxX = max(array_map(function($coordinate){ return $coordinate["x"]; },$efData));
+        $maxY = max(array_map(function($coordinate){ return $coordinate["y"]; },$efData));
         $fieldDataMapping = array(
             // @todo: clean up magic number offsets; these should depend on font
             //        size, text length and direction
             'extent_ll_x' => array(
-                'value' => $efData[0]['x'],
+                'value' => $minX,
                 'offsetX' => 3,
                 'offsetY' => 30,
                 'direction' => 'U',
             ),
             'extent_ll_y' => array(
-                'value' => $efData[0]['y'],
+                'value' => $minY,
                 'offsetX' => 0,
                 'offsetY' => 3,
                 'direction' => 'R',
             ),
             'extent_ur_x' => array(
-                'value' => $efData[2]['x'],
+                'value' => $maxX,
                 'offsetX' => 1,
                 'offsetY' => 0,
                 'direction' => 'D',
             ),
             'extent_ur_y' => array(
-                'value' => $efData[2]['y'],
+                'value' => $maxY,
                 'offsetX' => $offsetXUrY,
                 'offsetY' => 3,
                 'direction' => 'R',
