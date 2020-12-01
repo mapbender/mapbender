@@ -3,13 +3,18 @@
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\RegionProperties;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 
-class SidepaneSettingsType extends AbstractType
+class SidepaneSettingsType extends AbstractType implements EventSubscriberInterface
 {
     protected $allowResponsiveContainers;
 
@@ -73,5 +78,23 @@ class SidepaneSettingsType extends AbstractType
             'required' => false,
             'label' => 'mb.manager.sidepane.closed',
         ));
+
+        $builder->addEventSubscriber($this);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+    }
+
+    public function preSetData(FormEvent $event)
+    {
+        if ($event->getData()) {
+            /** @var RegionProperties $rp */
+            $rp = $event->getData();
+            if ($this->allowResponsiveContainers && $rp->getApplication()->getMapEngineCode() === Application::MAP_ENGINE_OL2) {
+                $event->getForm()->remove('screenType');
+            }
+        }
     }
 }
