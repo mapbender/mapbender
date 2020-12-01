@@ -28,16 +28,19 @@
 					</a>		
 				</div>
 
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
 					{% if app.user != "" %}			
 						{% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}			
 					{% endif %}
+
+					
 					
 
 					{% if app.user != "" %}
-					<div class="vertical-line"></div>
+					
 					{# <div class=" accountBarContainer"> #}
-							<ul id="accountMenu" class="nav navbar-nav navbar-right accountMenu">
+							<ul id="accountMenu" class="nav navbar-nav accountMenu">
+								<div class="vertical-line visible-lg hidden-sm hidden-md"></div>
 								<li class="dropdown accountOpen">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
 									{{ "fom.core.manager.logged_as"|trans}}:
@@ -60,9 +63,11 @@
 								</li>
 							</ul>
 						{% else %}
-							<a href="{{ path('mapbender_core_login_login') }}">
-								<i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}
-							</a>
+						<button class="btn btn-link">							
+							<a class="nav navbar-nav marginy-5" href="{{ path('mapbender_core_login_login') }}">
+									<i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}
+								</a>
+						</button>	
 					{# </div> #}
 					{% endif %}
 					 

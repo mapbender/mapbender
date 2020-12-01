@@ -3,8 +3,9 @@
   see https://github.com/mapbender/fom/blob/v3.0.6.3/src/FOM/ManagerBundle/Resources/views/Manager/menu.html.twig
 #}
 
-  <ul class="nav navbar-nav text-center" id="navigationListContainer">
+  <ul class="nav navbar-nav text-center navbar-container" id="navigationListContainer">
     {%- set items = menu -%}
     {{ include('MapbenderManagerBundle:Index:menu-items.html.twig') }}
+    
   </ul>
    
