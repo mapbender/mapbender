@@ -51,8 +51,8 @@ class ConfigCheckCommand extends ContainerAwareCommand
     {
         $this
             ->setDescription('Check Mapbender requirements')
-            ->setHelp("The <info>mapbender:config:check</info> checks Mapbender requirements")
-            ->setName('mapbender:config:check');
+            ->setName('mapbender:config:check')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
