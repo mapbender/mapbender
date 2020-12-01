@@ -101,7 +101,7 @@ span.iconBig {
 .iconAdd:before{content: "\f067"; font-family: FontAwesome;}
 .iconRemove:before{content:"\f00d"; font-family: FontAwesome;}
 .iconOk:before{content:"\f00c" !important; font-family: FontAwesome;} // ACL user/group selection list hack (markup in FOM)
-.iconEdit:before{content:"\f040"; font-family: FontAwesome;}
+.iconEdit:before{content:"\f013"; font-family: FontAwesome;}  // = .fa-cog
 .iconPublish:before{content:"\f070"; font-family: FontAwesome;}
 .iconPublishActive:before{content:"\f06e"; font-family: FontAwesome;}
 .iconAppDefault:before{content:"\f03e"; font-family: FontAwesome;}

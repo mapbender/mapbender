@@ -21,7 +21,7 @@
           <div class="contentTitle">
             <div class="buttonGroup button-toolbar pull-right">
               <a class="hover-highlight-effect" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
-                ><i class="fa fa-gear"></i></a>
+                ><i class="fa fa-cog"></i></a>
               <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                 ><i class="fa fa-desktop"></i></a>
             {% if is_granted('DELETE', oid) %}
