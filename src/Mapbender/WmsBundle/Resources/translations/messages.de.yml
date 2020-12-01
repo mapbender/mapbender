@@ -194,6 +194,7 @@ mb:
           _title: Ebene
           title: Titel
           name: Name
+          abstract: Beschreibung
           srs: SRS
           bbox: BoundingBox
         useconditions:

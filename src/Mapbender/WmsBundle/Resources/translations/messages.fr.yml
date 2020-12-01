@@ -195,6 +195,7 @@ mb:
           _title: Couche
           title: Titre
           name: Nom
+          abstract: Résumé
           srs: SRS
           bbox: BoundingBox
     repo:

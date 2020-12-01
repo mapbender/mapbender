@@ -97,6 +97,7 @@ class WmsMetadata extends SourceMetadata
         $sourceItem = $layer->getSourceItem();
         $layer_items[] = array("name" => strval($sourceItem->getName()));
         $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
+        $layer_items[] = array("abstract" =>  strval($sourceItem->getAbstract()));
         $bbox = $sourceItem->getLatlonBounds(true);
         if ($bbox) {
             $layer_items[] = array("bbox" => $this->formatBbox($bbox));

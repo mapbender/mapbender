@@ -197,6 +197,7 @@ mb:
           _title: Nível
           title: Título
           name: Nome
+          abstract: Descrição
           srs: SRS
           bbox: BoundingBox
     repo:
