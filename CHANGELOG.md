@@ -1,4 +1,4 @@
-## dev-master @ 14628f209
+## dev-master @ fca36fae4
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -15,6 +15,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+* Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 * Add responsive display filtering for individual Elements and entire Element containers (sidepane / toolbars)
   * Yaml application definitions may specify a `screenType` in any Element definition, and in the `regionProperties` of the targetted container.  
     Value may be one of `all`, `mobile` or `desktop`.
@@ -26,6 +27,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Resolved misc conflicts with Bootstrap script and Bootstrap form theme
 * The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
 * Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
+* [Backend] changed standard editing icon from pencil to a gear
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
