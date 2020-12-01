@@ -180,6 +180,7 @@ mb:
           _title: Слой
           title: название
           name: Имя
+          abstract: Абстрактный
           srs: SRS
           bbox: BoundingBox
     repo:

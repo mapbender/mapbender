@@ -173,6 +173,7 @@ mb:
           _title: Laag
           title: Titel
           name: Naam
+          abstract: Abstract
           srs: Projectie (SRS)
           bbox: Gebied (BoundingBox)
     repo:
