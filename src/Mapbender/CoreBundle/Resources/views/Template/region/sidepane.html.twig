@@ -36,7 +36,9 @@
           {% endfor %}
       </div>
     {% else %}
-        {{ region_content(application, region_name) | raw }}
+        <div class="auto-scroll-v">
+            {{ region_content(application, region_name) | raw }}
+        </div>
     {% endif %}
   </div>
   <span class="toggleSideBar collapse-toggle"><i class="fa fas fa-bars"></i></span>

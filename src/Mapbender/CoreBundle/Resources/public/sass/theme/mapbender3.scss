@@ -234,3 +234,8 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     display: none !important; // Overrule misc display: inline-block and such with !important
   }
 }
+
+.auto-scroll-v {
+  max-height: 100%;
+  overflow-y: auto;
+}
