@@ -91,13 +91,6 @@ body {
     margin-bottom: 10px;
   }
 
-  .form-control {
-    &:focus {
-      border-color: #578e2a;
-      box-shadow: inset 0 1px 1px rgba(87, 142, 42, .075), 0 0 8px rgba(87, 142, 42, .6);
-    }
-  }
-
   .btn {
     $mainColor: #6FB536;
     border-radius: 0;
