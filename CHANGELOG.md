@@ -1,4 +1,4 @@
-## dev-master @ 3ec20b928
+## dev-master @ 0ab578472
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -12,6 +12,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix backend element list interaction tooltips on Yaml applications copied into db
 * Fix errors editing map element after deleting a previously assigned layerset
 * Fix error getting FeatureInfo response on current map engine from an instance configured with option `proxy`
+* Fix missing overview map in print
+* Support automatic scrollbar in unstyled sidepane if content exceeds available height
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
@@ -29,6 +31,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
 * [Backend] changed standard editing icon from pencil to a gear
 * Fix typos and outdated information in `mapbender:database:upgrade` command help ([PR#1265](https://github.com/mapbender/mapbender/pull/1265))
+* Fix focused Bootstrap input highlighting not respecting error state
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
