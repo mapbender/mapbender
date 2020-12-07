@@ -1,10 +1,5 @@
 <div id="{{ id }}" class="mb-element mb-element-featureinfo hidden" data-title="{{ title |trans }}">
-{% if configuration.displayType is not defined or configuration.displayType == '' %}
-    <div class="js-header-parent js-content-parent">
-        <div id="" class="js-header js-header-content" data-idname="common"></div>
-        <div id="" class="js-content js-content-content" data-idname="content"></div>
-    </div>
-{% elseif configuration.displayType == 'tabs' %}
+{% if configuration.displayType | default('tabs') == 'tabs' %}
     <div class="tabContainer js-content-parent">
         <ul class="tabs js-header-parent">
             <li id="" class="tab js-header js-header-content" data-idname="tab"></li>
