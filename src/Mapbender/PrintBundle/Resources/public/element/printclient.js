@@ -37,6 +37,17 @@
         /** @type {Array<mbPrintClientSelectionEntry>} */
         selectionFeatures_: [],
 
+        overviewWidget_: null,
+
+        _create: function() {
+            var self = this;
+            Mapbender.elementRegistry.waitReady('.mb-element-overview').then(function(overviewWidget) {
+                if (!self.overviewWidget_) {
+                    self.overviewWidget_ = overviewWidget;
+                }
+            });
+            this._super();
+        },
         _setup: function(){
             var self = this;
             var $jobList = $('.job-list', this.element);
@@ -607,29 +618,8 @@
             return true;
         },
         _collectOverview: function() {
-            // @todo: collect overview properly, use mbOverview widget, use Source objects
-            return null;
-            // overview map
-            var self = this;
-            var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
-            var changeAxis = false;
-            var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
-                // this is the same for all layers, basically set on first iteration
-                changeAxis = self._changeAxis(layer);
-                // NOTE: bbox / width / height are discarded and replaced by print backend
-                return layer.getURL(ovMap.map.getExtent());
-            });
-            if (overviewLayers.length) {
-                var ovCenter = ovMap.ovmap.getCenter();
-                return {
-                    layers: overviewLayers,
-                    center: {
-                        x: ovCenter.lon,
-                        y: ovCenter.lat
-                    },
-                    height: Math.abs(ovMap.ovmap.getExtent().getHeight()),
-                    changeAxis: changeAxis
-                };
+            if (this.overviewWidget_ && typeof (this.overviewWidget_.getPrintData) === 'function') {
+                return this.overviewWidget_.getPrintData();
             } else {
                 return null;
             }

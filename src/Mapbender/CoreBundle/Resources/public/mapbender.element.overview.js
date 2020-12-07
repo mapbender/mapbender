@@ -194,6 +194,49 @@
                 console.error("Overview srs change failed", e);
             }
         },
+        getPrintData: function() {
+            var printData = {
+                layers: [],
+                changeAxis: false
+            };
+            var center, height;
+            if (Mapbender.mapEngine.code === 'ol2') {
+                var centerLl = this.overview.ovmap.getCenter();
+                printData.center = {x: centerLl.lon, y: centerLl.lat};
+                printData.height = Math.abs(this.overview.ovmap.getExtent().getHeight())
+            } else {
+                var extentArray = this.overview.getOverviewMap().getView().calculateExtent();
+                printData.center = {
+                    x: 0.5 * (extentArray[0] + extentArray[2]),
+                    y: 0.5 * (extentArray[1] + extentArray[3])
+                };
+                printData.height = Math.abs(extentArray[3] - extentArray[1]);
+            }
+            var extent = {
+                bottom: printData.center.y - 0.5 * printData.height,
+                top: printData.center.y + 0.5 * printData.height,
+                // NOTE: extent left / right values don't matter much in print backend, will be adjusted for target region aspect ratio anyway
+                left: printData.center.x - 0.5 * printData.height,
+                right: printData.center.x + 0.5 * printData.height
+            };
+
+            var scale = 10000;      // @todo: extract overview scale properly or disable min / max resolution checks for overview instances
+            var srsName = this.mbMap.getModel().getCurrentProjectionCode();
+            for (var i = 0; i < this.sources_.length; ++i) {
+                // Legacy data format quirk: overview print can ONLY process WMS sources
+                var layerConfigs = this.sources_[i].getPrintConfigs(extent, scale, srsName);
+                for (var j = 0; j < layerConfigs.length; ++j) {
+                    // Legacy data format quirk: overview print expects shared metadata for all layers. Layer itself is only the url.
+                    var layerConfig = layerConfigs[j];
+                    if (!layerConfig.url) {
+                        continue;
+                    }
+                    printData.changeAxis = printData.changeAxis || layerConfig.changeAxis;
+                    printData.layers.push(layerConfig.url);
+                }
+            }
+            return printData.layers.length && printData || null;
+        },
         _changeSrs2: function(event, data) {
             /**
              * @type {null|OpenLayers.Map}
