@@ -12,6 +12,7 @@
         },
         overview: null,
         mbMap: null,
+        sources_: [],
 
         /**
          * Creates the overview
@@ -21,6 +22,12 @@
             if(!Mapbender.checkTarget("mbOverview", this.options.target)){
                 return;
             }
+            var lsId = this.options.layerset;
+            var layerset = Mapbender.layersets.filter(function(x) {
+                return ('' + lsId) === ('' + x.id);
+            })[0];
+            this.sources_ = layerset && layerset.children.slice().reverse() || [];
+
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
 
@@ -136,18 +143,14 @@
         _createLayers: function() {
             var layers = [];
             var srsName = this.mbMap.getModel().getCurrentProjectionCode();
-            var lsId = this.options.layerset;
-            var layerset = Mapbender.layersets.filter(function(x) {
-                return ('' + lsId) === ('' + x.id);
-            })[0];
-            var instanceDefs = layerset && layerset.children.slice().reverse() || [];
 
-            for (var i = 0; i < instanceDefs.length; ++i) {
-                var source = instanceDefs[i];
+            for (var i = 0; i < this.sources_.length; ++i) {
+                var source = this.sources_[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
                 //        of the root layer with non-empty names, ignores every other layer
                 if (source.hasVisibleLayers(srsName)) {
-                    layers = layers.concat(source.createNativeLayers(srsName));
+                    source.initializeLayers(srsName);
+                    layers = layers.concat(source.getNativeLayers());
                 }
             }
             return layers;
