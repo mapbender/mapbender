@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class UserPasswordMixinType extends AbstractType
 {
@@ -44,6 +45,10 @@ class UserPasswordMixinType extends AbstractType
      */
     public function addPasswordField($form, array $options)
     {
+        $constraints = $this->userHelperService->getPasswordConstraints();
+        if ($options['requirePassword']) {
+            $constraints[] = new NotBlank();
+        }
         $form
             ->add('password', 'Symfony\Component\Form\Extension\Core\Type\RepeatedType', array(
                 'type' => 'Symfony\Component\Form\Extension\Core\Type\PasswordType',
@@ -59,7 +64,7 @@ class UserPasswordMixinType extends AbstractType
                 'second_options' => array(
                     'label' => 'fom.user.registration.form.confirm_password',
                 ),
-                'constraints' => $this->userHelperService->getPasswordConstraints(),
+                'constraints' => $constraints,
             ))
         ;
     }
