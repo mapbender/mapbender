@@ -449,6 +449,13 @@
                     y: component.y
                 };
             });
+            // Extracted extent feature is orderer top left => top right => bottom right => bottom left
+            // Adjust to print backend expected order bottom left => top left etc (used for coordinates display in certain templates)
+            // see https://github.com/mapbender/mapbender/issues/1280
+            extentFeature.pop();    // remove duplicated "finishing coordinate"
+            extentFeature.splice(0, 0, extentFeature.pop());    // reorder to start with bottom left
+            extentFeature.push(extentFeature[0]);   // re-add "finishing coordinate" duplicate
+
             var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {
                 overview: overview,
