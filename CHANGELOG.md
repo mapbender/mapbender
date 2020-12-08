@@ -1,7 +1,8 @@
-## dev-master @ b2af52f98
+## dev-master @ 6fe52e85a
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
+* Fix duplicated owner of cloned application
 * Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 * Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 * Fix missing handling of configurable sidepane width (3.1.0.5 regression)
@@ -33,6 +34,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * [Backend] changed standard editing icon from pencil to a gear
 * Fix typos and outdated information in `mapbender:database:upgrade` command help ([PR#1265](https://github.com/mapbender/mapbender/pull/1265))
 * Fix focused Bootstrap input highlighting not respecting error state
+* Fix .mapbender-element-result-table (Digitizer et al) table header text alignment in sortable columns
 
 ## 3.2.2
 * Fix map ignoring configured Wms image format on Openlayers 6
