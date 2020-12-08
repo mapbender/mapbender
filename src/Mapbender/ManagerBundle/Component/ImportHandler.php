@@ -520,7 +520,19 @@ class ImportHandler extends ExchangeHandler
         } catch (AclAlreadyExistsException $e) {
             $acl = $this->aclProvider->findAcl($oid);
         }
-        $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
+        /** @var \Symfony\Component\Security\Acl\Domain\Entry[] $aces */
+        $aces = $acl->getObjectAces();
+        $updatedExistingAce = false;
+        foreach ($aces as $ace) {
+            if ($ace->getSecurityIdentity()->equals($sid)) {
+                $ace->setMask($ace->getMask() | MaskBuilder::MASK_OWNER);
+                $updatedExistingAce = true;
+                break;
+            }
+        }
+        if (!$updatedExistingAce) {
+            $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
+        }
         $this->aclProvider->updateAcl($acl);
     }
 
