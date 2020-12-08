@@ -26,26 +26,28 @@
 
         &.sorting, &.sorting_asc, &.sorting_desc {
           cursor: pointer;
-          text-align: right;
           &:hover {
             background-color: $buttonSecondColor;
+          }
+          &:before {
+            margin-right: 0.5em;
           }
         }
 
         &.sorting_asc, &.sorting_desc {
           background-color: $buttonFirstActiveColor;
         }
-        &.sorting:after {
+        &.sorting:before {
           display: inline-block;
           content: "\f0dc";
           font-family: FontAwesome;
         }
-        &.sorting_asc:after {
+        &.sorting_asc:before {
           display: inline-block;
           content: "\f160";
           font-family: FontAwesome;
         }
-        &.sorting_desc:after {
+        &.sorting_desc:before {
           display: inline-block;
           content: "\f161";
           font-family: FontAwesome;
