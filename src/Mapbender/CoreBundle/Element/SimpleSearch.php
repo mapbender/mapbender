@@ -152,6 +152,16 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             }
         }
         unset($config['result']);
+
+        if (!empty($config['token_regex']) && \is_array($config['token_regex'])) {
+            // Legacy example config quirk: documentation has historically suggested using an
+            // invalid array type for token_regex. This works incidentally because JavaScript
+            // RegExp constructor promotes everything to string.
+            // @see https://docs.mapbender.org/3.0.8/en/functions/search/simplesearch.html#yaml-definition
+            // Array values do however break the backend form, causing exceptions when editing
+            // a Yaml application cloned into the database.
+            $config['token_regex'] = implode(',', $config['token_regex']);
+        }
         $entity->setConfiguration($config);
     }
 
