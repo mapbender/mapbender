@@ -70,19 +70,14 @@ class SimpleSearchAdminType extends AbstractType
                 'required' => true,
             ))
             ->add('result_buffer', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-                'property_path' => '[result][buffer]',
             ))
             ->add('result_minscale', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-                'property_path' => '[result][minscale]',
             ))
             ->add('result_maxscale', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-                'property_path' => '[result][maxscale]',
             ))
             ->add('result_icon_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'property_path' => '[result][icon_url]',
             ))
             ->add('result_icon_offset', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'property_path' => '[result][icon_offset]',
             ))
         ;
     }
