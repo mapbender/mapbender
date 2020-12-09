@@ -546,9 +546,9 @@ class ImportHandler extends ExchangeHandler
         /** @var \Symfony\Component\Security\Acl\Domain\Entry[] $aces */
         $aces = $acl->getObjectAces();
         $updatedExistingAce = false;
-        foreach ($aces as $ace) {
+        foreach ($aces as $index => $ace) {
             if ($ace->getSecurityIdentity()->equals($sid)) {
-                $ace->setMask($ace->getMask() | MaskBuilder::MASK_OWNER);
+                $acl->updateObjectAce($index, $ace->getMask() | MaskBuilder::MASK_OWNER);
                 $updatedExistingAce = true;
                 break;
             }
