@@ -59,7 +59,6 @@ class ConfigCheckCommand extends ContainerAwareCommand
     {
         $io=new SymfonyStyle($input,$output);
         $this->checkDatabaseConnection($io);
-        $this->checkPhpVersion($io);
         $this->checkSystemRequirements($io);
         $this->checkAssets($io);
         $this->checkFastCGI($io);
@@ -87,23 +86,6 @@ class ConfigCheckCommand extends ContainerAwareCommand
                 $success = false;
                 $rows[]=[$connection->getDatabase(),'Error','<fg=red>'.$e->getMessage().'</>'];
             }
-        }
-        $output->table($headers,$rows);
-        return $success;
-    }
-
-    protected function checkPhpVersion(SymfonyStyle $output = null)
-    {
-        $output->title("Check PHP Version");
-        $headers = ['Your Version','Required Version','Message'];
-        $rows=[];
-        //check PHP-Version >= 5.5.4
-        $success = true;
-        if (version_compare(phpversion(), '5.5.4', '<')) {
-            $success = false;
-            $rows[]=[phpversion(),'5.5.4','<fg=red>Too low</>'];
-        } else {
-            $rows[]=[phpversion(),'5.5.4','<fg=green>ok</>'];
         }
         $output->table($headers,$rows);
         return $success;
