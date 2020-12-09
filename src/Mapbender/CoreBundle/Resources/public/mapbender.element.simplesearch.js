@@ -10,13 +10,11 @@ $.widget('mapbender.mbSimpleSearch', {
         label_attribute: null,
         geom_attribute: null,
         geom_format: null,
-        result: {
-            buffer: null,
-            minscale: null,
-            maxscale: null,
-            icon_url: null,
-            icon_offset: null
-        },
+        result_buffer: null,
+        result_minscale: null,
+        result_maxscale: null,
+        result_icon_url: null,
+        result_icon_offset: null,
         delay: 0
     },
 
@@ -70,10 +68,10 @@ $.widget('mapbender.mbSimpleSearch', {
         var feature = format.read(evtData.data[this.options.geom_attribute]);
         var mbMap = this._getMbMap();
 
-        var zoomToFeatureOptions = this.options.result && {
-            maxScale: parseInt(this.options.result.maxscale) || null,
-            minScale: parseInt(this.options.result.minscale) || null,
-            buffer: parseInt(this.options.result.buffer) || null
+        var zoomToFeatureOptions = {
+            maxScale: parseInt(this.options.result_maxscale) || null,
+            minScale: parseInt(this.options.result_minscale) || null,
+            buffer: parseInt(this.options.result_buffer) || null
         };
         mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
@@ -86,10 +84,10 @@ $.widget('mapbender.mbSimpleSearch', {
         var bounds = feature.geometry.getBounds();
 
         // Add marker
-        if(self.options.result.icon_url) {
+        if (self.options.result_icon_url) {
             if(!self.marker) {
                 var addMarker = function() {
-                    var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
+                    var offset = (self.options.result_icon_offset || '').split(new RegExp('[, ;]'));
                     var x = parseInt(offset[0]);
 
                     var size = {
@@ -112,7 +110,7 @@ $.widget('mapbender.mbSimpleSearch', {
                 };
 
                 var image = new Image();
-                image.src = self.options.result.icon_url;
+                image.src = self.options.result_icon_url;
                 image.onload = addMarker;
                 image.onerror = addMarker;
             } else {
