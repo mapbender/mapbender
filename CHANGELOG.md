@@ -140,7 +140,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 8400f8906
+## dev-release/3.0.7 @ 99b8bbdeb
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -148,6 +148,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix backend element list interaction tooltips on Yaml applications copied into db
 - Fix frontend sidepane accordion header text alignment
 - Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))
+- Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+- Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
