@@ -91,10 +91,9 @@
             $others.map(function() {
                 sourcesOff = sourcesOff.concat($(this).data('sources'));
             });
-            // Sanity...
+            // Turn off all other controlled sources except for the ones we want to turn on
             sourcesOff = sourcesOff.filter(function(source, index) {
                 if (-1 !== sourcesOn.indexOf(source)) {
-                    console.warn("Same source is assigned to multiple Base Source Switcher items. Skipping deactivation.", source);
                     return false;
                 }
                 if (-1 !== sourcesOff.slice(0, index).indexOf(source)) {
