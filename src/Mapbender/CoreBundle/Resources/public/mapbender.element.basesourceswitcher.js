@@ -16,10 +16,13 @@
         },
 
         _setup: function () {
+            var allActiveSources = [];
+            var remainingMenuItems = [];
+            var i, menuItem, $menuItem;
             var menuItems = $('.basesourcesetswitch[data-sourceset]', this.element).get();
-            for (var i = 0; i < menuItems.length; ++i) {
-                var menuItem = menuItems[i];
-                var $menuItem = $(menuItem);
+            for (i = 0; i < menuItems.length; ++i) {
+                menuItem = menuItems[i];
+                $menuItem = $(menuItem);
                 var sourceIds = $menuItem.attr('data-sourceset').split(',').filter(function(x) {
                     return !!x;
                 });
@@ -27,8 +30,8 @@
                 for (var j = 0; j < sourceIds.length; ++j) {
                     var source = this.mbMap.model.getSourceById(sourceIds[j]);
                     if (source) {
-                        if (source.getSelected()) {
-                            this._highlight($menuItem, true);
+                        if (source.getSelected() && -1 === allActiveSources.indexOf(source)) {
+                            allActiveSources.push(source);
                         }
                         sources.push(source);
                     } else {
@@ -40,7 +43,20 @@
                     $menuItem.remove();
                 } else {
                     $menuItem.data('sources', sources);
+                    remainingMenuItems.push(menuItem);
                 }
+            }
+            for (i = 0; i < remainingMenuItems.length; ++i) {
+                $menuItem = $(remainingMenuItems[i]);
+                var itemSources = $menuItem.data('sources');
+                var activeSubset = itemSources.filter(function(source) {
+                    return -1 !== allActiveSources.indexOf(source);
+                });
+                // For active highlight all sources associated with the item must be active, and there must NOT be any other
+                // active sources also controlled by this base source switcher
+                var allAssociatedSourcesActive = activeSubset.length === itemSources.length;
+                var noOtherSourcesActive = activeSubset.length === allActiveSources.length;
+                this._highlight($menuItem, allAssociatedSourcesActive && noOtherSourcesActive);
             }
             $('.basesourcesetswitch', this.element).on('click', $.proxy(this._toggleMapset, this));
         },
