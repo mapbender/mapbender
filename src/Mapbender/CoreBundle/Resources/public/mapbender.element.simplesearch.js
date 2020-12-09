@@ -10,13 +10,11 @@ $.widget('mapbender.mbSimpleSearch', {
         label_attribute: null,
         geom_attribute: null,
         geom_format: null,
-        result: {
-            buffer: null,
-            minscale: null,
-            maxscale: null,
-            icon_url: null,
-            icon_offset: null
-        },
+        result_buffer: null,
+        result_minscale: null,
+        result_maxscale: null,
+        result_icon_url: null,
+        result_icon_offset: null,
         sourceSrs: 'EPSG:4326',
         delay: 0
     },
@@ -36,11 +34,11 @@ $.widget('mapbender.mbSimpleSearch', {
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-        if (this.options.result.icon_url) {
-            var offset = (this.options.result.icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
+        if (this.options.result_icon_url) {
+            var offset = (this.options.result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
                 return parseInt(x) || 0;
             });
-            this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result.icon_url, offset[0], offset[1]);
+            this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result_icon_url, offset[0], offset[1]);
         }
 
         // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
@@ -91,10 +89,10 @@ $.widget('mapbender.mbSimpleSearch', {
         }
         var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
 
-        var zoomToFeatureOptions = this.options.result && {
-            maxScale: parseInt(this.options.result.maxscale) || null,
-            minScale: parseInt(this.options.result.minscale) || null,
-            buffer: parseInt(this.options.result.buffer) || null
+        var zoomToFeatureOptions = {
+            maxScale: parseInt(this.options.result_maxscale) || null,
+            minScale: parseInt(this.options.result_minscale) || null,
+            buffer: parseInt(this.options.result_buffer) || null
         };
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
@@ -114,7 +112,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var onMissingIcon = function() {
             layer.addMarker(center.lon, center.lat);
         };
-        if (this.options.result.icon_url) {
+        if (this.options.result_icon_url) {
             layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
         } else {
             onMissingIcon();

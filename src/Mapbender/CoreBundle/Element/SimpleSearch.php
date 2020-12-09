@@ -4,13 +4,15 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Request;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * Simple Search - Just type, select and show result
  *
  * @author Christian Wygoda
  */
-class SimpleSearch extends Element
+class SimpleSearch extends Element implements ConfigMigrationInterface
 {
     public static function getClassTitle()
     {
@@ -54,9 +56,7 @@ class SimpleSearch extends Element
             // @todo: add form field
             'sourceSrs' => 'EPSG:4326',
             'query_ws_replace' => null,
-            'result' => array(
-                'buffer' => 300,
-            )
+            'result_buffer' => 300,
         );
     }
 
@@ -128,4 +128,39 @@ class SimpleSearch extends Element
 
         return $response;
     }
+
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $config = $entity->getConfiguration();
+        if (!empty($config['result']) && \is_array($config['result'])) {
+            if (isset($config['result']['icon_url'])) {
+                $config['result_icon_url'] = $config['result']['icon_url'];
+            }
+            if (isset($config['result']['icon_offset'])) {
+                $config['result_icon_offset'] = $config['result']['icon_offset'];
+            }
+            if (isset($config['result']['buffer'])) {
+                $config['result_buffer'] = $config['result']['buffer'];
+            }
+            if (isset($config['result']['minscale'])) {
+                $config['result_minscale'] = $config['result']['minscale'];
+            }
+            if (isset($config['result']['maxscale'])) {
+                $config['result_maxscale'] = $config['result']['maxscale'];
+            }
+        }
+        unset($config['result']);
+
+        if (!empty($config['token_regex']) && \is_array($config['token_regex'])) {
+            // Legacy example config quirk: documentation has historically suggested using an
+            // invalid array type for token_regex. This works incidentally because JavaScript
+            // RegExp constructor promotes everything to string.
+            // @see https://docs.mapbender.org/3.0.8/en/functions/search/simplesearch.html#yaml-definition
+            // Array values do however break the backend form, causing exceptions when editing
+            // a Yaml application cloned into the database.
+            $config['token_regex'] = implode(',', $config['token_regex']);
+        }
+        $entity->setConfiguration($config);
+    }
+
 }
