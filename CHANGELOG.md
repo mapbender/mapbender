@@ -1,4 +1,4 @@
-## dev-master @ 8fa65a7ee
+## dev-master @ f8c5c04d3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -17,6 +17,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))
 * Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 * Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+* Fix BaseSourceSwitcher highlighting menu items that are not controlling exactly the initially active subset of controllable sources
 * Support automatic scrollbar in unstyled sidepane if content exceeds available height
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
