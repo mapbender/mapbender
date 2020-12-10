@@ -763,8 +763,11 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmViewParams}
          */
         decodeViewParams: function(value) {
-            var parts = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value). slice(1);
-            console.log("Parts?", parts);
+            var matches = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value);
+            if (!matches) {
+                throw new Error("Unsupported view parameter encoding " + value);
+            }
+            var parts = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value).slice(1);
             // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
             var center84 = {
                 x: parseFloat(parts[1]),
@@ -830,6 +833,12 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getInitialResolution: function(olMap, startExtent, mapOptions, srsName) {
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return this.scaleToResolution(shareParams.scale, mapOptions.dpi, shareParams.srsName);
+            } catch (e) {
+                // fall through
+            }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
             var centerOverride = !!urlParams.center;
             var scaleOverride = parseInt(urlParams.scale);
@@ -854,6 +863,12 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getInitialCenter: function(mapOptions, startExtent) {
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return shareParams.center;
+            } catch (e) {
+                // fall through
+            }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
             var centerOverride = urlParams.center;
             centerOverride = (centerOverride || '').split(',').map(parseFloat).filter(function(x) {
@@ -879,6 +894,12 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getInitialSrsCode: function(mapOptions) {
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return shareParams.srsName;
+            } catch (e) {
+                // fall through
+            }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
             var centerOverride = !!urlParams.center;
             var srsOverride = (urlParams.srs || '').toUpperCase();
@@ -921,9 +942,12 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
         },
+        _decodeViewparamFragment: function() {
+            return this.decodeViewParams((window.location.hash || '').replace(/^#/, ''));
+        },
         _applyViewParamFragment: function() {
             try {
-                var params = this.decodeViewParams((window.location.hash || '').replace(/^#/, ''));
+                var params = this._decodeViewparamFragment();
                 this.applyViewParams(params);
             } catch (e) {
                 // do absolutely nothing
