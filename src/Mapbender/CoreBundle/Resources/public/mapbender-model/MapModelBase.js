@@ -748,7 +748,7 @@ window.Mapbender.MapModelBase = (function() {
                 center[0],
                 '/',
                 center[1],
-                '-',
+                'r',
                 parseInt(params.rotation),
                 '@',
                 params.srsName
@@ -760,7 +760,8 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmViewParams}
          */
         decodeViewParams: function(value) {
-            var parts = /^(\d+)@([\d.]+)\/([\d.]+)-(\d+)@(\w+:\d+)$/.exec(value). slice(1);
+            var parts = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value). slice(1);
+            console.log("Parts?", parts);
             // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
             var center84 = {
                 x: parseFloat(parts[1]),
