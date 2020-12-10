@@ -194,16 +194,6 @@ class Map extends Element implements ConfigMigrationInterface
                 }
                 $extra['pois'][] = $poiConfig;
             }
-            // bake position and zoom level of single poi into map initialization
-            // setting center and target scale makes the map initialize in the right place client-side
-            if (count($extra['pois']) === 1) {
-                if (isset($extra['pois'][0]['scale'])) {
-                    $configuration['targetscale'] = intval($extra['pois'][0]['scale']);
-                } else {
-                    // fall back to a hopefully reasonable default scale
-                    $configuration['targetscale'] = 2500;
-                }
-            }
         }
 
         $bbox = $request->get('bbox');
@@ -223,15 +213,9 @@ class Map extends Element implements ConfigMigrationInterface
         $centerArr = $center !== null ? explode(',', $center) : null;
         if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
             $configuration['center'] = array_map('floatval', $centerArr);
-            // remove scale potentially set up by POI
-            unset($configuration['targetscale']);
         }
 
         $configuration['extra'] = $extra;
-        if ($scale = $request->get('scale')) {
-            $configuration['targetscale'] = intval($scale);
-        }
-
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
         } else {

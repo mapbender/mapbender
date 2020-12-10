@@ -40,6 +40,7 @@ window.Mapbender.MapModelBase = (function() {
         var poiOptions = (mbMap.options.extra || {}).pois || [];
         this._poiOptions = poiOptions.map(function(poi) {
             return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
+                scale: poi.scale,
                 label: poi.label
             });
         });
@@ -360,7 +361,7 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return ['visiblelayers'];
+            return ['visiblelayers', 'scale'];
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -816,14 +817,19 @@ window.Mapbender.MapModelBase = (function() {
          * @param {Object} startExtent
          * @param {Object} mapOptions
          * @param {Number} mapOptions.dpi
-         * @param {Number} [mapOptions.targetscale]
          * @param {String} srsName
          * @return {number}
          * @private
          */
         _getInitialResolution: function(olMap, startExtent, mapOptions, srsName) {
-            if (mapOptions.targetscale) {
-                return this.scaleToResolution(mapOptions.targetscale, mapOptions.dpi, srsName);
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = !!urlParams.center;
+            var scaleOverride = parseInt(urlParams.scale);
+            if (!scaleOverride && !centerOverride && this._poiOptions.length) {
+                scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
+            }
+            if (scaleOverride) {
+                return this.scaleToResolution(scaleOverride, mapOptions.dpi, srsName);
             } else {
                 var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
                 return Math.max(
