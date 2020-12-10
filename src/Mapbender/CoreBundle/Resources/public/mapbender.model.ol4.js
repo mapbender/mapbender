@@ -87,6 +87,10 @@ window.Mapbender.MapModelOl4 = (function() {
                 scale: scales[zoom],
                 scaleExact: self._getFractionalScale()
             });
+            mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: mbMap,
+                params: self.getCurrentViewParams()
+            });
         });
         olMap.on("singleclick", function(data) {
             $(mbMap.element).trigger('mbmapclick', {

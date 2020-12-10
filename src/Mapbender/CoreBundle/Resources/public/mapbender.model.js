@@ -151,6 +151,10 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             self.sourceTree.map(function(source) {
                 self._checkSource(source, true);
             });
+            mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: mbMap,
+                params: self.getCurrentViewParams()
+            });
         });
     },
     _onMapClick: function(event) {
@@ -316,6 +320,10 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             zoom: zoom,
             scale: scales[zoom],
             scaleExact: scales[zoom]
+        });
+        this.mbMap.element.trigger('mbmapviewchanged', {
+            mbMap: this.mbMap,
+            params: this.getCurrentViewParams()
         });
     },
     /**
