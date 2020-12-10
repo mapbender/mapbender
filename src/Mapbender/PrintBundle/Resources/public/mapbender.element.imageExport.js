@@ -317,7 +317,15 @@
          * @private
          */
         _changeAxis: function(layer) {
-            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
+            // Overview map projection property is a string, regular map projection is an object.
+            // Normalize to string.
+            var projection = (layer.map.displayProjection || layer.map.getProjection());
+            var projCode;
+            if (typeof projection === 'string') {
+                projCode = projection;
+            } else {
+                projCode = projection.projCode;
+            }
 
             if (layer.params.VERSION === '1.3.0') {
                 if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
