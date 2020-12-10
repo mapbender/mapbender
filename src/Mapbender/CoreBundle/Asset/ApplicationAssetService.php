@@ -84,7 +84,7 @@ class ApplicationAssetService
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent($application->getSlug(), $refs, $type);
+        return $this->compileAssetContent(null, $refs, $type);
     }
 
     public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type)
