@@ -355,6 +355,13 @@ window.Mapbender.MapModelBase = (function() {
                 });
             }
         },
+        /**
+         * @return {Array<String>}
+         * @static
+         */
+        getHandledUrlParams: function() {
+            return ['visiblelayers'];
+        },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
             if (visibleLayersParam) {
