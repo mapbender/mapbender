@@ -1,7 +1,6 @@
 (function ($) {
-    var url = '{{ path('mapbender_core_application_configuration', {'slug': application.slug})  | raw }}';
     $.ajax({
-        url: url + window.location.search,
+        url: window.location.pathname + '/config' + window.location.search,
         contentType: 'json'
     }).done(function (data, textStatus, jqXHR) {
         Mapbender.configuration = data;
