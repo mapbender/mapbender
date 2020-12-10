@@ -152,17 +152,6 @@ class Map extends Element implements ConfigMigrationInterface
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
-        $querySrs = $request->get('srs');
-        if ($querySrs) {
-            if (!$this->hasSrs($srsConfigs, $querySrs)) {
-                $this->container->get('logger')->error(
-                    'The requested srs ' . $querySrs . ' is not supported by this application.');
-                $querySrs = null;
-            } else {
-                $configuration['targetsrs'] = strtoupper($querySrs);
-            }
-        }
-
         $pois = $request->get('poi');
         if ($pois) {
             $extra['pois'] = array();

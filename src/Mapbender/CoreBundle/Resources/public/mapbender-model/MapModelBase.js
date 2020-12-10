@@ -29,7 +29,7 @@ window.Mapbender.MapModelBase = (function() {
         var mapOptions = mbMap.options;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
-        var startProj = this._startProj = mapOptions.targetsrs || mapOptions.srs;
+        var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
         var startExtentArray;
         if (mapOptions.extra && mapOptions.extra.bbox) {
@@ -361,7 +361,7 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return ['visiblelayers', 'scale', 'center'];
+            return ['visiblelayers', 'scale', 'center', 'srs'];
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -862,6 +862,37 @@ window.Mapbender.MapModelBase = (function() {
                     0.5 * (startExtent.bottom + startExtent.top)
                 ];
             }
+        },
+        /**
+         * @param {Object} mapOptions
+         * @param {String} mapOptions.srs
+         * @param {Object} [mapOptions.extra]
+         * @param {Array<Object>} [mapOptions.extra.pois]
+         * @private
+         */
+        _getInitialSrsCode: function(mapOptions) {
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = !!urlParams.center;
+            var srsOverride = (urlParams.srs || '').toUpperCase();
+            var pois = (mapOptions.extra || {}).pois || [];
+            if (pois.length && !centerOverride && pois[0].srs) {
+                srsOverride = pois[0].srs;
+            }
+            if (srsOverride) {
+                if (!/^EPSG:\d+$/.test(srsOverride)) {
+                    console.warn("Ingoring invalid srs code override; must use EPSG:<digits> form", srsOverride);
+                    srsOverride = undefined;
+                } else {
+                    var matches = mapOptions.srsDefs.filter(function(srsDef) {
+                        return srsDef.name === srsOverride;
+                    });
+                    if (!matches.length) {
+                        console.warn("Ingoring srs code override not supported by map element configuration", srsOverride);
+                        srsOverride = undefined;
+                    }
+                }
+            }
+            return srsOverride || mapOptions.srs;
         },
         _comma_dangle_dummy: null
     });
