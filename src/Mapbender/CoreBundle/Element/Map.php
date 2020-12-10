@@ -8,9 +8,7 @@ use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Map element.
