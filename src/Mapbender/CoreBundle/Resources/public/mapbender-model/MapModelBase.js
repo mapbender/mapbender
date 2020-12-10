@@ -19,6 +19,12 @@ window.Mapbender.MapModelBase = (function() {
      * @propery {Number} height
      */
     /**
+     * @typedef {Object} mmViewParams
+     * @property {String} srsName
+     * @property {Array<Number>} center
+     * @property {Number} scale
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -685,8 +691,7 @@ window.Mapbender.MapModelBase = (function() {
             return this.openPopupInternal_(x, y, contentNode);
         },
         /**
-         * @return {{srsName: String, center: Array<Number>, scale: number}}
-         * @todo: add typedef (same as decodeViewParams)
+         * @return {mmViewParams}
          */
         getCurrentViewParams: function() {
             return {
@@ -696,10 +701,7 @@ window.Mapbender.MapModelBase = (function() {
             };
         },
         /**
-         * @param {Object} options
-         * @param {number} [options.scale]
-         * @param {Array<number>} [options.center]
-         * @param {String} [options.srsName]
+         * @param {mmViewParams} options
          */
         applyViewParams: function(options) {
             if (options.srsName) {
@@ -718,10 +720,7 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
-         * @param {Object} params
-         * @param {number} params.scale
-         * @param {Array<number>} params.center
-         * @param {String} params.srsName
+         * @param {mmViewParams} params
          * @return {String}
          */
         encodeViewParams: function(params) {
@@ -753,8 +752,7 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {String} value
-         * @return {{srsName: String, center: Array<Number>, scale: number}}
-         * @todo: add typedef (same as getViewParams)
+         * @return {mmViewParams}
          */
         decodeViewParams: function(value) {
             var parts = /^(\d+)@([\d.]+)\/([\d.]+)@(\w+:\d+)$/.exec(value). slice(1);
