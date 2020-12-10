@@ -721,6 +721,9 @@ window.Mapbender.MapModelBase = (function() {
                 // @todo: fix restore of fractional scale (currently snaps to a configured zoom level)
                 this.centerXy(center[0], center[1], centerOptions);
             }
+            if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
+                this.setViewRotation(options.rotation);
+            }
         },
         /**
          * @param {mmViewParams} params
