@@ -171,15 +171,6 @@ class Map extends Element implements ConfigMigrationInterface
                         continue;
                     }
                     $poiConfig['srs'] = strtoupper($poi['srs']);
-                    if (empty($configuration['targetsrs'])) {
-                        $configuration['targetsrs'] = $poi['srs'];
-                    }
-                } else {
-                    if (!empty($configuration['targetsrs'])) {
-                        $poiConfig['srs'] = $configuration['targetsrs'];
-                    } else {
-                        $poiConfig['srs'] = $srsConfigs[0]['name'];
-                    }
                 }
                 $extra['pois'][] = $poiConfig;
             }
