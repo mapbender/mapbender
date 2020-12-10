@@ -209,12 +209,6 @@ class Map extends Element implements ConfigMigrationInterface
             }
         }
 
-        $center = $request->get('center');
-        $centerArr = $center !== null ? explode(',', $center) : null;
-        if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
-            $configuration['center'] = array_map('floatval', $centerArr);
-        }
-
         $configuration['extra'] = $extra;
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];

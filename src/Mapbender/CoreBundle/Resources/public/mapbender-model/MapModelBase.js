@@ -361,7 +361,7 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return ['visiblelayers', 'scale'];
+            return ['visiblelayers', 'scale', 'center'];
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -846,8 +846,13 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getInitialCenter: function(mapOptions, startExtent) {
-            if (mapOptions.center) {
-                return mapOptions.center;
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = urlParams.center;
+            centerOverride = (centerOverride || '').split(',').map(parseFloat).filter(function(x) {
+                return !isNaN(x);
+            });
+            if (centerOverride.length === 2) {
+                return centerOverride;
             } else if (this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
                 return [singlePoi.x, singlePoi.y];
