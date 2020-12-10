@@ -57,6 +57,7 @@ window.Mapbender.MapModelBase = (function() {
         if (!startExtentArray) {
             throw new Error("Can't initialize map without a start extent");
         }
+        this._startShare();
     }
 
     MapModelBase.prototype = {
@@ -891,6 +892,44 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
             return srsOverride || mapOptions.srs;
+        },
+        /**
+         * @param {mmViewParams} params
+         * @private
+         */
+        _updateViewParamFragment: function(params) {
+            var newHash = this.encodeViewParams(params);
+            // NOTE: hash property getter will return a leading '#'. It doesn't matter if
+            //       we include the '#' when setting a hash via location.hash or pushState / replaceState
+            var currentHash = (window.location.hash || '').replace(/^#/, '');
+            // avoid creating a browser history entry if params are equal
+            if (currentHash !== newHash) {
+                if (!currentHash) {
+                    // Set first state WITHOUT creating a new navigation history entry
+                    window.history.replaceState({}, '', '#' + newHash);
+                } else {
+                    window.history.pushState({}, '', '#' + newHash);
+                }
+            }
+        },
+        _applyViewParamFragment: function() {
+            try {
+                var params = this.decodeViewParams((window.location.hash || '').replace(/^#/, ''));
+                this.applyViewParams(params);
+            } catch (e) {
+                // do absolutely nothing
+            }
+        },
+        _startShare: function() {
+            console.warn("_startShare");
+            var self = this;
+            var updateHandler = function(evt, data) {
+                self._updateViewParamFragment(data.params);
+            };
+            this.mbMap.element.on('mbmapviewchanged', _.debounce(updateHandler, 400));
+            window.addEventListener('hashchange', function() {
+                self._applyViewParamFragment();
+            });
         },
         _comma_dangle_dummy: null
     });
