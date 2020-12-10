@@ -111,11 +111,16 @@ class ApplicationAssetService
     {
         $referenceLists = array(
             $this->getBaseAssetReferences($type),
+        );
+        if ($type === 'js') {
+            $referenceLists[] = array('@MapbenderCoreBundle/Resources/public/init/frontend.js');
+        }
+        $referenceLists = array_merge($referenceLists, array(
             $this->getMapEngineAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
-        );
+        ));
         $references = call_user_func_array('\array_merge', $referenceLists);
         $references = array_unique($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
