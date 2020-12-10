@@ -23,6 +23,7 @@ window.Mapbender.MapModelBase = (function() {
      * @property {String} srsName
      * @property {Array<Number>} center
      * @property {Number} scale
+     * @property {Number} rotation
      */
     /**
      * @param {Object} mbMap
@@ -698,7 +699,8 @@ window.Mapbender.MapModelBase = (function() {
             return {
                 scale: this.getCurrentScale(false),
                 center: this.getCurrentMapCenter(),
-                srsName: this.getCurrentProjectionCode()
+                srsName: this.getCurrentProjectionCode(),
+                rotation: this.getViewRotation()
             };
         },
         /**
@@ -746,6 +748,8 @@ window.Mapbender.MapModelBase = (function() {
                 center[0],
                 '/',
                 center[1],
+                '-',
+                parseInt(params.rotation),
                 '@',
                 params.srsName
             ];
@@ -756,17 +760,18 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmViewParams}
          */
         decodeViewParams: function(value) {
-            var parts = /^(\d+)@([\d.]+)\/([\d.]+)@(\w+:\d+)$/.exec(value). slice(1);
+            var parts = /^(\d+)@([\d.]+)\/([\d.]+)-(\d+)@(\w+:\d+)$/.exec(value). slice(1);
             // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
             var center84 = {
                 x: parseFloat(parts[1]),
                 y: parseFloat(parts[2])
             };
-            var targetSrsName = parts[3];
+            var targetSrsName = parts[4];
             var centerTargetSrs = Mapbender.mapEngine.transformCoordinate(center84, 'WGS84', targetSrsName);
             var params = {
                 scale: parseInt(parts[0]),
                 center: [centerTargetSrs.x, centerTargetSrs.y],
+                rotation: parseInt(parts[3]) || 0,
                 srsName: targetSrsName
             };
             return params;
