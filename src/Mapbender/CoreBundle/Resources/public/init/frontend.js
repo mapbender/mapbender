@@ -1,5 +1,5 @@
 ;!(function($) {
-    var configUrl = window.location.pathname + '/config' + window.location.search;
+    var configUrl = window.applicationConfigUrl + window.location.search;
     $.ajax({
         url: configUrl,
         contentType: 'json'
