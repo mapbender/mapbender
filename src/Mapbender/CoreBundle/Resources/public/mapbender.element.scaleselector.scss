@@ -1,10 +1,10 @@
 .mb-element-scaleselector {
-  .dropdown {
-    text-align: right;  // purely numeric contents
-    min-width: 100px;
+  .labelInput {
+    vertical-align: top;
   }
-  span + .dropdown {
-    // keep label and dropdown on one line
-    float: right;
+  .dropdown {
+    display: inline-block;
+    width: auto;
+    min-width: 100px;
   }
 }
