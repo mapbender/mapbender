@@ -1,9 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\SimpleSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
 
 
 class SimpleSearchAdminType extends AbstractType
@@ -20,6 +22,8 @@ class SimpleSearchAdminType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $defaults = SimpleSearch::getDefaultConfiguration();
+
         $builder
             ->add('query_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Query URL',
@@ -65,6 +69,14 @@ class SimpleSearchAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
                 'required' => true,
+            ))
+            ->add('sourceSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'constraints' => array(
+                    new Constraints\Regex('#^EPSG:\d+$#')
+                ),
+                'attr' => array(
+                    'placeholder' => $defaults['sourceSrs'],
+                ),
             ))
             ->add('delay', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => true,
