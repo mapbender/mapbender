@@ -2,6 +2,12 @@ $(function() {
     var popupCls = Mapbender.Popup;
     function _formJax(options) {
         return $.ajax(options).then(function(response) {
+            if (/^<(!DOCTYPE|html)/i.test(response)) {
+                // Redirected to login
+                // Reload whole page; this will (again) redirect to login
+                window.location.reload();
+                return;
+            }
             var $markup = $(response);
             // support top-level form tag(s)
             var forms = $markup.filter('form').get();
