@@ -1,4 +1,4 @@
-## dev-master @ f8c5c04d3
+## dev-master @ 414dc3c93
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -18,7 +18,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 * Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 * Fix BaseSourceSwitcher highlighting menu items that are not controlling exactly the initially active subset of controllable sources
-* Support automatic scrollbar in unstyled sidepane if content exceeds available height
+* Fix styling differences (label line break) between SrsSelector and ScaleSelector
+* Fix visible overflow / missing scrollbar in unstyled sidepane if content exceeds available height
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
@@ -28,6 +29,7 @@ NOTE: This version extends the database schema and will require running a `doctr
     Value may be one of `all`, `mobile` or `desktop`.
   * NOTE: Responsive filtering is *not* supported when using legacy Openlayers 2 map engine
 * Added built-in support for displaying and highlighting geometries embedded in FeatureInfo html; see [PR#1270](https://github.com/mapbender/mapbender/pull/1270) for markup requirements
+* Support shareable application URL including basic view parameters center, scale, rotation, CRS ([PR#1291](https://github.com/mapbender/mapbender/pull/1291))
 * Added missing editing capabilities for sidepane width / position / initial state in database applications (previously only controllable via `regionProperties` in Yaml applications)
 * Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
 * Replace custom sidepane formatting type widget with a simple dropdown
