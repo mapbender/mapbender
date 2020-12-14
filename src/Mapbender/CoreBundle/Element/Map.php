@@ -152,17 +152,6 @@ class Map extends Element implements ConfigMigrationInterface
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
-        $querySrs = $request->get('srs');
-        if ($querySrs) {
-            if (!$this->hasSrs($srsConfigs, $querySrs)) {
-                $this->container->get('logger')->error(
-                    'The requested srs ' . $querySrs . ' is not supported by this application.');
-                $querySrs = null;
-            } else {
-                $configuration['targetsrs'] = strtoupper($querySrs);
-            }
-        }
-
         $pois = $request->get('poi');
         if ($pois) {
             $extra['pois'] = array();
@@ -182,27 +171,8 @@ class Map extends Element implements ConfigMigrationInterface
                         continue;
                     }
                     $poiConfig['srs'] = strtoupper($poi['srs']);
-                    if (empty($configuration['targetsrs'])) {
-                        $configuration['targetsrs'] = $poi['srs'];
-                    }
-                } else {
-                    if (!empty($configuration['targetsrs'])) {
-                        $poiConfig['srs'] = $configuration['targetsrs'];
-                    } else {
-                        $poiConfig['srs'] = $srsConfigs[0]['name'];
-                    }
                 }
                 $extra['pois'][] = $poiConfig;
-            }
-            // bake position and zoom level of single poi into map initialization
-            // setting center and target scale makes the map initialize in the right place client-side
-            if (count($extra['pois']) === 1) {
-                if (isset($extra['pois'][0]['scale'])) {
-                    $configuration['targetscale'] = intval($extra['pois'][0]['scale']);
-                } else {
-                    // fall back to a hopefully reasonable default scale
-                    $configuration['targetscale'] = 2500;
-                }
             }
         }
 
@@ -219,19 +189,7 @@ class Map extends Element implements ConfigMigrationInterface
             }
         }
 
-        $center = $request->get('center');
-        $centerArr = $center !== null ? explode(',', $center) : null;
-        if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
-            $configuration['center'] = array_map('floatval', $centerArr);
-            // remove scale potentially set up by POI
-            unset($configuration['targetscale']);
-        }
-
         $configuration['extra'] = $extra;
-        if ($scale = $request->get('scale')) {
-            $configuration['targetscale'] = intval($scale);
-        }
-
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
         } else {

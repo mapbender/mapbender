@@ -34,6 +34,13 @@ window.Mapbender.MapModelOl4 = (function() {
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
+        try {
+            var shareParams = this._decodeViewparamFragment();
+            view.setRotation(shareParams.rotation);
+        } catch (e) {
+            // ignore missing / invalid share fragment
+        }
+
         this.olMap = new ol.Map({
             view: view,
             controls: [],
@@ -86,6 +93,10 @@ window.Mapbender.MapModelOl4 = (function() {
                 zoom: zoom,
                 scale: scales[zoom],
                 scaleExact: self._getFractionalScale()
+            });
+            mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: mbMap,
+                params: self.getCurrentViewParams()
             });
         });
         olMap.on("singleclick", function(data) {

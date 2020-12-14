@@ -19,6 +19,13 @@ window.Mapbender.MapModelBase = (function() {
      * @propery {Number} height
      */
     /**
+     * @typedef {Object} mmViewParams
+     * @property {String} srsName
+     * @property {Array<Number>} center
+     * @property {Number} scale
+     * @property {Number} rotation
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -29,7 +36,7 @@ window.Mapbender.MapModelBase = (function() {
         var mapOptions = mbMap.options;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
-        var startProj = this._startProj = mapOptions.targetsrs || mapOptions.srs;
+        var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
         var startExtentArray;
         if (mapOptions.extra && mapOptions.extra.bbox) {
@@ -40,6 +47,7 @@ window.Mapbender.MapModelBase = (function() {
         var poiOptions = (mbMap.options.extra || {}).pois || [];
         this._poiOptions = poiOptions.map(function(poi) {
             return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
+                scale: poi.scale,
                 label: poi.label
             });
         });
@@ -50,6 +58,7 @@ window.Mapbender.MapModelBase = (function() {
         if (!startExtentArray) {
             throw new Error("Can't initialize map without a start extent");
         }
+        this._startShare();
     }
 
     MapModelBase.prototype = {
@@ -354,6 +363,13 @@ window.Mapbender.MapModelBase = (function() {
                     source: source
                 });
             }
+        },
+        /**
+         * @return {Array<String>}
+         * @static
+         */
+        getHandledUrlParams: function() {
+            return ['visiblelayers', 'scale', 'center', 'srs'];
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -677,21 +693,18 @@ window.Mapbender.MapModelBase = (function() {
             return this.openPopupInternal_(x, y, contentNode);
         },
         /**
-         * @return {{srsName: String, center: Array<Number>, scale: number}}
-         * @todo: add typedef (same as decodeViewParams)
+         * @return {mmViewParams}
          */
         getCurrentViewParams: function() {
             return {
                 scale: this.getCurrentScale(false),
                 center: this.getCurrentMapCenter(),
-                srsName: this.getCurrentProjectionCode()
+                srsName: this.getCurrentProjectionCode(),
+                rotation: this.getViewRotation()
             };
         },
         /**
-         * @param {Object} options
-         * @param {number} [options.scale]
-         * @param {Array<number>} [options.center]
-         * @param {String} [options.srsName]
+         * @param {mmViewParams} options
          */
         applyViewParams: function(options) {
             if (options.srsName) {
@@ -708,12 +721,12 @@ window.Mapbender.MapModelBase = (function() {
                 // @todo: fix restore of fractional scale (currently snaps to a configured zoom level)
                 this.centerXy(center[0], center[1], centerOptions);
             }
+            if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
+                this.setViewRotation(options.rotation);
+            }
         },
         /**
-         * @param {Object} params
-         * @param {number} params.scale
-         * @param {Array<number>} params.center
-         * @param {String} params.srsName
+         * @param {mmViewParams} params
          * @return {String}
          */
         encodeViewParams: function(params) {
@@ -738,6 +751,8 @@ window.Mapbender.MapModelBase = (function() {
                 center[0],
                 '/',
                 center[1],
+                'r',
+                parseInt(params.rotation),
                 '@',
                 params.srsName
             ];
@@ -745,21 +760,25 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {String} value
-         * @return {{srsName: String, center: Array<Number>, scale: number}}
-         * @todo: add typedef (same as getViewParams)
+         * @return {mmViewParams}
          */
         decodeViewParams: function(value) {
-            var parts = /^(\d+)@([\d.]+)\/([\d.]+)@(\w+:\d+)$/.exec(value). slice(1);
+            var matches = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value);
+            if (!matches) {
+                throw new Error("Unsupported view parameter encoding " + value);
+            }
+            var parts = /^(\d+)@([\d.]+)\/([\d.]+)r(-?\d+)@(\w+:\d+)$/.exec(value).slice(1);
             // @todo: resolve inconsistent data format getCurrentMapCenter (Array<number>) vs transformCoordinate ({x: number, y: number})
             var center84 = {
                 x: parseFloat(parts[1]),
                 y: parseFloat(parts[2])
             };
-            var targetSrsName = parts[3];
+            var targetSrsName = parts[4];
             var centerTargetSrs = Mapbender.mapEngine.transformCoordinate(center84, 'WGS84', targetSrsName);
             var params = {
                 scale: parseInt(parts[0]),
                 center: [centerTargetSrs.x, centerTargetSrs.y],
+                rotation: parseInt(parts[3]) || 0,
                 srsName: targetSrsName
             };
             return params;
@@ -809,14 +828,25 @@ window.Mapbender.MapModelBase = (function() {
          * @param {Object} startExtent
          * @param {Object} mapOptions
          * @param {Number} mapOptions.dpi
-         * @param {Number} [mapOptions.targetscale]
          * @param {String} srsName
          * @return {number}
          * @private
          */
         _getInitialResolution: function(olMap, startExtent, mapOptions, srsName) {
-            if (mapOptions.targetscale) {
-                return this.scaleToResolution(mapOptions.targetscale, mapOptions.dpi, srsName);
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return this.scaleToResolution(shareParams.scale, mapOptions.dpi, shareParams.srsName);
+            } catch (e) {
+                // fall through
+            }
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = !!urlParams.center;
+            var scaleOverride = parseInt(urlParams.scale);
+            if (!scaleOverride && !centerOverride && this._poiOptions.length) {
+                scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
+            }
+            if (scaleOverride) {
+                return this.scaleToResolution(scaleOverride, mapOptions.dpi, srsName);
             } else {
                 var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
                 return Math.max(
@@ -833,8 +863,19 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getInitialCenter: function(mapOptions, startExtent) {
-            if (mapOptions.center) {
-                return mapOptions.center;
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return shareParams.center;
+            } catch (e) {
+                // fall through
+            }
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = urlParams.center;
+            centerOverride = (centerOverride || '').split(',').map(parseFloat).filter(function(x) {
+                return !isNaN(x);
+            });
+            if (centerOverride.length === 2) {
+                return centerOverride;
             } else if (this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
                 return [singlePoi.x, singlePoi.y];
@@ -844,6 +885,84 @@ window.Mapbender.MapModelBase = (function() {
                     0.5 * (startExtent.bottom + startExtent.top)
                 ];
             }
+        },
+        /**
+         * @param {Object} mapOptions
+         * @param {String} mapOptions.srs
+         * @param {Object} [mapOptions.extra]
+         * @param {Array<Object>} [mapOptions.extra.pois]
+         * @private
+         */
+        _getInitialSrsCode: function(mapOptions) {
+            try {
+                var shareParams = this._decodeViewparamFragment();
+                return shareParams.srsName;
+            } catch (e) {
+                // fall through
+            }
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var centerOverride = !!urlParams.center;
+            var srsOverride = (urlParams.srs || '').toUpperCase();
+            var pois = (mapOptions.extra || {}).pois || [];
+            if (pois.length && !centerOverride && pois[0].srs) {
+                srsOverride = pois[0].srs;
+            }
+            if (srsOverride) {
+                if (!/^EPSG:\d+$/.test(srsOverride)) {
+                    console.warn("Ingoring invalid srs code override; must use EPSG:<digits> form", srsOverride);
+                    srsOverride = undefined;
+                } else {
+                    var matches = mapOptions.srsDefs.filter(function(srsDef) {
+                        return srsDef.name === srsOverride;
+                    });
+                    if (!matches.length) {
+                        console.warn("Ingoring srs code override not supported by map element configuration", srsOverride);
+                        srsOverride = undefined;
+                    }
+                }
+            }
+            return srsOverride || mapOptions.srs;
+        },
+        /**
+         * @param {mmViewParams} params
+         * @private
+         */
+        _updateViewParamFragment: function(params) {
+            var newHash = this.encodeViewParams(params);
+            // NOTE: hash property getter will return a leading '#'. It doesn't matter if
+            //       we include the '#' when setting a hash via location.hash or pushState / replaceState
+            var currentHash = (window.location.hash || '').replace(/^#/, '');
+            // avoid creating a browser history entry if params are equal
+            if (currentHash !== newHash) {
+                if (!currentHash) {
+                    // Set first state WITHOUT creating a new navigation history entry
+                    window.history.replaceState({}, '', '#' + newHash);
+                } else {
+                    window.history.pushState({}, '', '#' + newHash);
+                }
+            }
+        },
+        _decodeViewparamFragment: function() {
+            return this.decodeViewParams((window.location.hash || '').replace(/^#/, ''));
+        },
+        _applyViewParamFragment: function() {
+            try {
+                var params = this._decodeViewparamFragment();
+                this.applyViewParams(params);
+            } catch (e) {
+                // do absolutely nothing
+            }
+        },
+        _startShare: function() {
+            console.warn("_startShare");
+            var self = this;
+            var updateHandler = function(evt, data) {
+                self._updateViewParamFragment(data.params);
+            };
+            this.mbMap.element.on('mbmapviewchanged', _.debounce(updateHandler, 400));
+            window.addEventListener('hashchange', function() {
+                self._applyViewParamFragment();
+            });
         },
         _comma_dangle_dummy: null
     });
