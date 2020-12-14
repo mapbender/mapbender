@@ -47,8 +47,8 @@
                 widget.activate();
             }
 
-            window.addEventListener("message", widget._postMessage.bind(widget));
             if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
+
                 this._createLayerStyle();
 
                 this.highlightLayer = new ol.layer.Vector({
@@ -61,6 +61,9 @@
                 });
 
                 this.target.map.olMap.addLayer(this.highlightLayer);
+                window.addEventListener("message", function(message) {
+                    widget._postMessage(message);
+                });
                 this._createHighlightControl();
             }
 
