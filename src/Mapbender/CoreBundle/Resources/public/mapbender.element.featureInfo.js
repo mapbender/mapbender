@@ -374,12 +374,14 @@
         _postMessage: function(message) {
             var widget = this;
             var data = message.data;
-            var feature;
+            if (data.elementId !== this.element.attr('id')) {
+                return;
+            }
             if (this.isActive && this.highlightLayer && data.ewkts && data.ewkts.length) {
                 widget._populateFeatureInfoLayer(data.ewkts);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
-                feature = this.highlightLayer.getSource().getFeatureById(data.id);
+                var feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
                     if (data.state) {
                         feature.setStyle(this.featureInfoStyle_hover);
@@ -430,6 +432,7 @@
                 'window.history.replaceState = function(){ try { replaceState.apply(this,arguments); } catch(e) {} };',
                 // Highlighting support (generate source-scoped feature ids)
                 ['var sourceId = "', sourceId, '";'].join(''),
+                ['var elementId = ', JSON.stringify(this.element.attr('id')) , ';'].join(''),
                 this.options.iframeInjection,
                 '</script>'
             ];

@@ -21,16 +21,24 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
         parsed = true;
+        var sendHoverCommand = function(node, state) {
+            var id = featureIdFromElement(node);
+            var messageData = {
+                command: 'hover',
+                state: state,
+                id: id,
+                elementId: elementId
+            };
+            window.parent.postMessage(messageData, pmOrigin);
+        };
         Array.from(nodes).forEach(function (node) {
             node.addEventListener('mouseover', function (event) {
-                var id = featureIdFromElement(node);
-                window.parent.postMessage({command: 'hover', state: true, id: id}, pmOrigin);
+                sendHoverCommand(node, true);
             });
             node.addEventListener('mouseout', function (event) {
-                var id = featureIdFromElement(node);
-                window.parent.postMessage({command: 'hover', state: false, id: id}, pmOrigin);
+                sendHoverCommand(node, false);
             });
         });
-        window.parent.postMessage({ewkts: ewkts}, pmOrigin);
+        window.parent.postMessage({ewkts: ewkts, elementId: elementId}, pmOrigin);
     }
 }());
