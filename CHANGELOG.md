@@ -1,4 +1,4 @@
-## dev-master @ 414dc3c93
+## dev-master @ db2296547
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -20,6 +20,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix BaseSourceSwitcher highlighting menu items that are not controlling exactly the initially active subset of controllable sources
 * Fix styling differences (label line break) between SrsSelector and ScaleSelector
 * Fix visible overflow / missing scrollbar in unstyled sidepane if content exceeds available height
+* Fix login form appearing in place of Element form or Layerset title form on session expiration; go to full-window login page instead
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
