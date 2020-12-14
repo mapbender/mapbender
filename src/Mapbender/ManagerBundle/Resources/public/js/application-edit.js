@@ -80,6 +80,12 @@ $(function() {
 
     function startEditElement(formUrl, strings, extraButtons) {
         $.ajax(formUrl).then(function(response) {
+            if (/^<(!DOCTYPE|html)/i.test(response)) {
+                // Redirected to login
+                // Reload whole page; this will (again) redirect to login
+                window.location.reload();
+                return;
+            }
             var popup = new popupCls({
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
