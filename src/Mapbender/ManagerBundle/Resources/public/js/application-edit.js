@@ -1,13 +1,21 @@
 $(function() {
     var popupCls = Mapbender.Popup;
+    function _handleLoginRedirect(html) {
+        if (/^<(!DOCTYPE|html)/i.test(html)) {
+            // Redirected to login
+            // Reload whole page; this will (again) redirect to login
+            window.location.reload();
+            return true;
+        } else {
+            return false;
+        }
+    }
     function _formJax(options) {
         return $.ajax(options).then(function(response) {
-            if (/^<(!DOCTYPE|html)/i.test(response)) {
-                // Redirected to login
-                // Reload whole page; this will (again) redirect to login
-                window.location.reload();
-                return;
+            if (_handleLoginRedirect(response)) {
+                return [];
             }
+
             var $markup = $(response);
             // support top-level form tag(s)
             var forms = $markup.filter('form').get();
@@ -99,6 +107,9 @@ $(function() {
 
     function startEditElement(formUrl, strings, extraButtons) {
         _formJax({url: formUrl}).then(function(nodes) {
+            if (!nodes || !nodes.length) {
+                return;
+            }
             var popup = new popupCls({
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
@@ -138,6 +149,9 @@ $(function() {
         $.ajax({
             url: listUrl
         }).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return;
+            }
             var popup = new popupCls({
                 title: Mapbender.trans(title),
                 subTitle: ' - ' + regionName,
@@ -240,6 +254,9 @@ $(function() {
                                  : 'mb.actions.add';
         e.preventDefault();
         _formJax({url: self.attr("href")}).then(function(nodes) {
+            if (!nodes || !nodes.length) {
+                return;
+            }
             new popupCls({
                 title: Mapbender.trans(popupTitle),
                 content: [nodes],
@@ -285,6 +302,9 @@ $(function() {
         var $target = $(this);
         var layersetTitle = $target.attr('data-layerset-title');
         $.ajax({url: $target.attr("href")}).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return;
+            }
             new popupCls({
                 title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
                 subTitle: " - " + layersetTitle,
