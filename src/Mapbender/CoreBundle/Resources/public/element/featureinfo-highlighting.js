@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
+    // Only parse document features once.
+    // Unguarded, this listener would run again when the iframe is removed from the DOM, readding
+    // features we want to remove when deactivating the FeatureInfo element.
+    var parsed = false;
+    return function() {
+        if (parsed || (document.readyState !== 'interactive' && document.readyState !== 'complete')) {
+            return;
+        }
         var featureIdFromElement = function(element) {
             return [sourceId, element.getAttribute('id')].join('-');
         }
@@ -13,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: featureIdFromElement(node)
             };
         });
+        parsed = true;
         Array.from(nodes).forEach(function (node) {
             node.addEventListener('mouseover', function (event) {
                 var id = featureIdFromElement(node);
@@ -25,4 +33,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         window.parent.postMessage({ewkts: ewkts}, pmOrigin);
     }
-});
+}());
