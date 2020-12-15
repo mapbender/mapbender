@@ -835,6 +835,20 @@ window.Mapbender.MapModelBase = (function() {
             var centerOverride = (urlParams.center || '').split(',').map(parseFloat).filter(function(x) {
                 return !isNaN(x);
             });
+            var scaleOverride = parseInt(urlParams.scale);
+            if (!scaleOverride && centerOverride.length !== 2 && this._poiOptions.length) {
+                scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
+            }
+
+            var startExtent;
+            if (bboxOverride) {
+                startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
+                startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
+            } else {
+                startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
+            }
+
             var params = {
                 rotation: 0,
                 srsName: urlParams.srs || mapOptions.srs
@@ -845,68 +859,26 @@ window.Mapbender.MapModelBase = (function() {
                 var singlePoi = this._poiOptions[0];
                 params.center = [singlePoi.x, singlePoi.y];
             } else {
-                var startExtent;
-                if (bboxOverride) {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
-                } else {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
-                }
-
                 params.center = [
                     0.5 * (startExtent.left + startExtent.right),
                     0.5 * (startExtent.bottom + startExtent.top)
                 ];
             }
-            // Uh-oh
-            params.scale = this.resolutionToScale(this._getInitialResolution(olMap, mapOptions), mapOptions.dpi, params.srsName);
+            if (scaleOverride) {
+                params.scale = scaleOverride;
+            } else {
+                var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
+                var resolution = Math.max(
+                    Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
+                    Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
+                );
+                params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
+            }
 
             return params;
         },
         /**
-         * @param {OpenLayers.Map|ol.PluggableMap} olMap
-         * @param {Object} mapOptions
-         * @param {Number} mapOptions.dpi
-         * @return {number}
-         * @private
-         */
-        _getInitialResolution: function(olMap, mapOptions) {
-            try {
-                var shareParams = this._decodeViewparamFragment();
-                return this.scaleToResolution(shareParams.scale, mapOptions.dpi, shareParams.srsName);
-            } catch (e) {
-                // fall through
-            }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
-            var centerOverride = !!urlParams.center;
-            var scaleOverride = parseInt(urlParams.scale);
-            if (!scaleOverride && !centerOverride && this._poiOptions.length) {
-                scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
-            }
-            if (scaleOverride) {
-                return this.scaleToResolution(scaleOverride, mapOptions.dpi, this._getInitialSrsCode(mapOptions));
-            } else {
-                var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
-                var bboxOverride = this._getStartingBboxFromUrl();
-                var startExtent;
-                if (bboxOverride) {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
-                } else {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
-                }
-
-                return Math.max(
-                    Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
-                    Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
-                );
-            }
-        },
-        /**
          * @return {Array<Number>|null}
-         * @todo: integrate bbox override with _getInitialCenter / _getInitialResolution
          * @private
          */
         _getStartingBboxFromUrl: function() {
