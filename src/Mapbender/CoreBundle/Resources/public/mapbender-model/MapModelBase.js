@@ -46,7 +46,6 @@ window.Mapbender.MapModelBase = (function() {
                 label: poi.label
             });
         });
-        this.mapStartExtent = Mapbender.mapEngine.boundsFromArray(startExtentArray);
         if (!this._startProj) {
             throw new Error("Can't initialize map without srs option");
         }
@@ -60,7 +59,6 @@ window.Mapbender.MapModelBase = (function() {
         constructor: MapModelBase,
         mbMap: null,
         sourceTree: [],
-        mapStartExtent: null,
         mapMaxExtent: null,
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
