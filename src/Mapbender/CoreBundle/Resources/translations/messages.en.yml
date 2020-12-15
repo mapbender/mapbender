@@ -68,6 +68,8 @@ mb:
       error:
         geometry:
           missing: The selected entry does not contain a geometry.
+      admin:
+        sourceSrs: Source SRS
     searchrouter:
       popup:
         btn:

@@ -68,6 +68,8 @@ mb:
       error:
         geometry:
           missing: Der ausgewählte Eintrag enthält keine Geometrie.
+      admin:
+        sourceSrs: Quell-SRS
     searchrouter:
       popup:
         btn:
