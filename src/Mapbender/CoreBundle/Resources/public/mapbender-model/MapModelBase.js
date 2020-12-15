@@ -840,19 +840,20 @@ window.Mapbender.MapModelBase = (function() {
                 scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
             }
 
+            var params = {
+                rotation: 0,
+                srsName: this._getInitialSrsCode(mapOptions)
+            };
+
             var startExtent;
             if (bboxOverride) {
                 startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, params.srsName);
             } else {
                 startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
             }
 
-            var params = {
-                rotation: 0,
-                srsName: urlParams.srs || mapOptions.srs
-            };
             if (centerOverride.length === 2) {
                 params.center = centerOverride;
             } else if (this._poiOptions && this._poiOptions.length === 1) {
