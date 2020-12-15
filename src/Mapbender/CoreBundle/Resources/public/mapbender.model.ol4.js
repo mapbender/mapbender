@@ -35,7 +35,8 @@ window.Mapbender.MapModelOl4 = (function() {
         delete this.viewOptions_['zoom'];
         try {
             var shareParams = this._decodeViewparamFragment();
-            view.setRotation(shareParams.rotation);
+            var deg2rad = 2 * Math.PI / 360;
+            view.setRotation(deg2rad * shareParams.rotation);
         } catch (e) {
             // ignore missing / invalid share fragment
         }
