@@ -171,12 +171,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.olMap.addControl(this.historyControl);
     },
     _setInitialView: function(olMap, mapOptions) {
-        var srsName = this._getInitialSrsCode(mapOptions);
-        var resolution = this._getInitialResolution(olMap, mapOptions);
-        var center = this._getInitialCenter(mapOptions);
-        var scale = this.resolutionToScale(resolution, mapOptions.dpi, srsName);
-        var zoom = this.pickZoomForScale(scale, true);
-        olMap.setCenter(center, zoom);
+        var viewParams = this._getInitialViewParams(olMap, mapOptions);
+        var zoom = this.pickZoomForScale(viewParams.scale, true);
+        olMap.setCenter(viewParams.center, zoom);
     },
     /**
      * @return {String}

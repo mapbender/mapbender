@@ -821,6 +821,29 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {OpenLayers.Map|ol.PluggableMap} olMap
          * @param {Object} mapOptions
+         * @return {mmViewParams}
+         * @private
+         */
+        _getInitialViewParams: function(olMap, mapOptions) {
+            try {
+                return this._decodeViewparamFragment();
+            } catch (e) {
+                // fall through
+            }
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var params = {
+                rotation: 0,
+                srsName: urlParams.srs || mapOptions.srs,
+                center: this._getInitialCenter(mapOptions)
+            };
+            // Uh-oh
+            params.scale = this.resolutionToScale(this._getInitialResolution(olMap, mapOptions), mapOptions.dpi, params.srsName);
+
+            return params;
+        },
+        /**
+         * @param {OpenLayers.Map|ol.PluggableMap} olMap
+         * @param {Object} mapOptions
          * @param {Number} mapOptions.dpi
          * @return {number}
          * @private

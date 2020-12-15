@@ -55,10 +55,10 @@ window.Mapbender.MapModelOl4 = (function() {
         this.processUrlParams();
     },
     _setInitialView: function(olMap, mapOptions) {
-        var resolution = this._getInitialResolution(olMap, mapOptions);
-        var center = this._getInitialCenter(mapOptions);
+        var viewParams = this._getInitialViewParams(olMap, mapOptions);
+        var resolution = this.scaleToResolution(viewParams.scale, mapOptions.dpi, viewParams.srsName);
         var view = olMap.getView();
-        view.setCenter(center);
+        view.setCenter(viewParams.center);
         view.setResolution(resolution);
     },
     /**
