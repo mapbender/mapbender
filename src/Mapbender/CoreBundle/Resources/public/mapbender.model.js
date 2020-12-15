@@ -132,7 +132,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this._setInitialView(this.olMap, this.mbMap.options);
         this.initializeSourceLayers();
         this.processUrlParams();
-        this._setupHistoryControl();
         this._initEvents(this.olMap, this.mbMap);
     },
     _initEvents: function(olMap, mbMap) {
@@ -165,10 +164,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             pixel: [x, y],
             coordinate: [clickLonLat.lon, clickLonLat.lat]
         });
-    },
-    _setupHistoryControl: function() {
-        this.historyControl = new OpenLayers.Control.NavigationHistory();
-        this.olMap.addControl(this.historyControl);
     },
     _setInitialView: function(olMap, mapOptions) {
         var viewParams = this._getInitialViewParams(olMap, mapOptions);
@@ -218,12 +213,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             throw new Error("Unsupported projection " + srscode.toString());
         }
         return null;
-    },
-    historyBack: function() {
-        this.historyControl.previous.trigger();
-    },
-    historyForward: function() {
-        this.historyControl.next.trigger();
     },
     /**
      * Calculates an extent from a geometry with buffer.
