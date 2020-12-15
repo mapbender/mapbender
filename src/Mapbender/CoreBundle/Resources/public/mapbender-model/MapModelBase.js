@@ -38,12 +38,7 @@ window.Mapbender.MapModelBase = (function() {
         this._configProj = mapOptions.srs;
         var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
-        var startExtentArray;
-        if (mapOptions.extra && mapOptions.extra.bbox) {
-            startExtentArray = mapOptions.extra.bbox;
-        } else {
-            startExtentArray = mapOptions.extents.start || mapOptions.extents.max;
-        }
+        var startExtentArray = this._getStartingBboxFromUrl() || mapOptions.extents.start || mapOptions.extents.max;
         var poiOptions = (mbMap.options.extra || {}).pois || [];
         this._poiOptions = poiOptions.map(function(poi) {
             return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
@@ -369,7 +364,7 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return ['visiblelayers', 'scale', 'center', 'srs'];
+            return ['visiblelayers', 'scale', 'center', 'srs', 'bbox'];
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -854,6 +849,16 @@ window.Mapbender.MapModelBase = (function() {
                     Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
                 );
             }
+        },
+        /**
+         * @return {Array<Number>|null}
+         * @todo: integrate bbox override with _getInitialCenter / _getInitialResolution
+         * @private
+         */
+        _getStartingBboxFromUrl: function() {
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var parts = (urlParams.bbox || '').split(',').map(parseFloat);
+            return parts.length === 4 && parts || null;
         },
         /**
          * @param {Object} mapOptions

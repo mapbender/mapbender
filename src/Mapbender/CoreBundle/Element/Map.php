@@ -176,19 +176,6 @@ class Map extends Element implements ConfigMigrationInterface
             }
         }
 
-        $bbox = $request->get('bbox');
-        if (!isset($extra['pois']) && $bbox) {
-            $bbox = explode(',', $bbox);
-            if (count($bbox) === 4) {
-                $extra['bbox'] = array(
-                    floatval($bbox[0]),
-                    floatval($bbox[1]),
-                    floatval($bbox[2]),
-                    floatval($bbox[3])
-                );
-            }
-        }
-
         $configuration['extra'] = $extra;
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
