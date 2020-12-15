@@ -822,11 +822,10 @@ window.Mapbender.MapModelBase = (function() {
          * @param {OpenLayers.Map|ol.PluggableMap} olMap
          * @param {Object} mapOptions
          * @param {Number} mapOptions.dpi
-         * @param {String} srsName
          * @return {number}
          * @private
          */
-        _getInitialResolution: function(olMap, mapOptions, srsName) {
+        _getInitialResolution: function(olMap, mapOptions) {
             try {
                 var shareParams = this._decodeViewparamFragment();
                 return this.scaleToResolution(shareParams.scale, mapOptions.dpi, shareParams.srsName);
@@ -840,7 +839,7 @@ window.Mapbender.MapModelBase = (function() {
                 scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
             }
             if (scaleOverride) {
-                return this.scaleToResolution(scaleOverride, mapOptions.dpi, srsName);
+                return this.scaleToResolution(scaleOverride, mapOptions.dpi, this._getInitialSrsCode(mapOptions));
             } else {
                 var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
                 var bboxOverride = this._getStartingBboxFromUrl();

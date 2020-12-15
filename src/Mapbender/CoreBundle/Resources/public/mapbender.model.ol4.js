@@ -49,13 +49,13 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this._setInitialView(this.olMap, this.mbMap.options, this._startProj);
+        this._setInitialView(this.olMap, this.mbMap.options);
 
         this.initializeSourceLayers();
         this.processUrlParams();
     },
-    _setInitialView: function(olMap, mapOptions, srsName) {
-        var resolution = this._getInitialResolution(olMap, mapOptions, srsName);
+    _setInitialView: function(olMap, mapOptions) {
+        var resolution = this._getInitialResolution(olMap, mapOptions);
         var center = this._getInitialCenter(mapOptions);
         var view = olMap.getView();
         view.setCenter(center);
