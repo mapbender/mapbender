@@ -49,18 +49,25 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this._setInitialView(this.olMap, this.mbMap.options);
+        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
 
         this.initializeSourceLayers();
         this.processUrlParams();
         this._startShare();
     },
+    /**
+     * @param {ol.PluggableMap} olMap
+     * @param {Object} mapOptions
+     * @return {mmViewParams}
+     * @private
+     */
     _setInitialView: function(olMap, mapOptions) {
         var viewParams = this._getInitialViewParams(olMap, mapOptions);
         var resolution = this.scaleToResolution(viewParams.scale, mapOptions.dpi, viewParams.srsName);
         var view = olMap.getView();
         view.setCenter(viewParams.center);
         view.setResolution(resolution);
+        return viewParams;
     },
     /**
      * @param {ol.Map} olMap

@@ -129,7 +129,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
-        this._setInitialView(this.olMap, this.mbMap.options);
+        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
         this.initializeSourceLayers();
         this.processUrlParams();
         this._initEvents(this.olMap, this.mbMap);
@@ -166,10 +166,17 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             coordinate: [clickLonLat.lon, clickLonLat.lat]
         });
     },
+    /**
+     * @param {OpenLayers.Map} olMap
+     * @param {Object} mapOptions
+     * @return {mmViewParams}
+     * @private
+     */
     _setInitialView: function(olMap, mapOptions) {
         var viewParams = this._getInitialViewParams(olMap, mapOptions);
         var zoom = this.pickZoomForScale(viewParams.scale, true);
         olMap.setCenter(viewParams.center, zoom);
+        return viewParams;
     },
     /**
      * @return {String}
