@@ -129,8 +129,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
-        var startExtent = Mapbender.mapEngine.transformBounds(this.mapStartExtent, this._configProj, this._startProj);
-        this._setInitialView(this.olMap, startExtent, this.mbMap.options, this._startProj);
+        this._setInitialView(this.olMap, this.mbMap.options, this._startProj);
         this.initializeSourceLayers();
         this.processUrlParams();
         this._setupHistoryControl();
@@ -171,7 +170,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
         this.olMap.addControl(this.historyControl);
     },
-    _setInitialView: function(olMap, startExtent, mapOptions, srsName) {
+    _setInitialView: function(olMap, mapOptions, srsName) {
         var resolution = this._getInitialResolution(olMap, mapOptions, srsName);
         var center = this._getInitialCenter(mapOptions);
         var scale = this.resolutionToScale(resolution, mapOptions.dpi, srsName);
