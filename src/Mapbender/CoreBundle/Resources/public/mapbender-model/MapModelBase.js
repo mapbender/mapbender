@@ -353,8 +353,15 @@ window.Mapbender.MapModelBase = (function() {
          * @return {Array<String>}
          * @static
          */
+        getViewRelatedUrlParamNames: function() {
+            return ['scale', 'center', 'srs', 'bbox'];
+        },
+        /**
+         * @return {Array<String>}
+         * @static
+         */
         getHandledUrlParams: function() {
-            return ['visiblelayers', 'scale', 'center', 'srs', 'bbox'];
+            return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat(['visiblelayers']);
         },
         processUrlParams: function() {
             var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
@@ -933,7 +940,10 @@ window.Mapbender.MapModelBase = (function() {
             // Afterwards, avoid creating a browser history entry if params are equal
             if (!currentHash) {
                 if (this.encodeViewParams(this.initialViewParams) !== newHash) {
-                    window.history.pushState({}, '', '#' + newHash);
+                    // Canonicalize url on first update, by stripping all view-related query params
+                    var removeParams = this.getViewRelatedUrlParamNames();
+                    var newSearch = Mapbender.Util.removeUrlParams(window.location.search, removeParams, true) || '?';
+                    window.history.pushState({}, '', [newSearch, newHash].join('#'));
                 }
             } else if (currentHash !== newHash) {
                 window.history.pushState({}, '', '#' + newHash);
