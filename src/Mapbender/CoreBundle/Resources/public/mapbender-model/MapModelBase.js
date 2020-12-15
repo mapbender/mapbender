@@ -820,14 +820,13 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {OpenLayers.Map|ol.PluggableMap} olMap
-         * @param {Object} startExtent
          * @param {Object} mapOptions
          * @param {Number} mapOptions.dpi
          * @param {String} srsName
          * @return {number}
          * @private
          */
-        _getInitialResolution: function(olMap, startExtent, mapOptions, srsName) {
+        _getInitialResolution: function(olMap, mapOptions, srsName) {
             try {
                 var shareParams = this._decodeViewparamFragment();
                 return this.scaleToResolution(shareParams.scale, mapOptions.dpi, shareParams.srsName);
@@ -844,6 +843,16 @@ window.Mapbender.MapModelBase = (function() {
                 return this.scaleToResolution(scaleOverride, mapOptions.dpi, srsName);
             } else {
                 var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
+                var bboxOverride = this._getStartingBboxFromUrl();
+                var startExtent;
+                if (bboxOverride) {
+                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
+                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                } else {
+                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                }
+
                 return Math.max(
                     Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
                     Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
