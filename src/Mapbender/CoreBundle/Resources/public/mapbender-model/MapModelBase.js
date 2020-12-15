@@ -885,9 +885,21 @@ window.Mapbender.MapModelBase = (function() {
                 var singlePoi = this._poiOptions[0];
                 return [singlePoi.x, singlePoi.y];
             } else {
+                var bboxOverride = this._getStartingBboxFromUrl();
+                var startExtent_;
+                var startExtentSrs_;
+                if (bboxOverride) {
+                    startExtent_ = Mapbender.mapEngine.boundsFromArray(bboxOverride);
+                    startExtentSrs_ = urlParams.srs || mapOptions.srs;
+                } else {
+                    startExtent_ = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                    startExtentSrs_ = mapOptions.srs;
+                }
+                startExtent_ = Mapbender.mapEngine.transformBounds(startExtent_, startExtentSrs_, this._getInitialSrsCode(mapOptions));
+
                 return [
-                    0.5 * (startExtent.left + startExtent.right),
-                    0.5 * (startExtent.bottom + startExtent.top)
+                    0.5 * (startExtent_.left + startExtent_.right),
+                    0.5 * (startExtent_.bottom + startExtent_.top)
                 ];
             }
         },
