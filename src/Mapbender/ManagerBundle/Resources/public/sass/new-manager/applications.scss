@@ -67,20 +67,21 @@
 
 .subNavItem {
   // border: 1px solid black;
-  border-top: 1px solid rgba(8, 8, 8, 0.4);
-  width: 500px !important;
-  height: 50px;
-  background-color: #ffffff;
+  // border: 1px solid rgba(8, 8, 8, 0.4);
+  width: 15em;
+  // height: 50px;
+  background-color: #efefef;
   position: absolute;
   z-index: 5;
-  left: 0;
+  // left: 30%;
   top: 100%;
   position: absolute;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
   visibility: hidden;
+
 
   li {
     list-style: none;
@@ -231,6 +232,10 @@
 
 .paddingx-5 {
   padding: 0 5px; 
+}
+
+.padding-5 {
+  padding: 2em;
 }
 
 .marginy-5 {
@@ -385,6 +390,34 @@
   position: relative;
   bottom: 13px;
 }
+
+
+/*** Source site ****/
+
+.source-img-container {
+  // border: 2px solid green;
+  display:flex;
+  justify-content: center;
+}
+
+.source-img-innercontainer {
+  // border: 2px solid blue;
+  padding: 1em;
+  width: 130px;
+  border-radius: 15px;
+  background-color: #EAEAEA;
+
+}
+
+.list-filter-source{
+  // border: 2px solid green;
+}
+
+.button-group-source {
+  margin: 5% 0;
+}
+
+/*** End Source site ****/
 
 // @media screen and (max-width: 800px) {
 //   .navigationBar {

@@ -28,7 +28,7 @@
 					</a>							
 				</div>
 
-				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+				<div class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
 					{% if app.user != "" %}			
 						{% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}			
 					{% endif %}
@@ -39,10 +39,10 @@
 					{% if app.user != "" %}
 					
 					{# <div class=" accountBarContainer"> #}
-							<ul id="accountMenu" class="nav navbar-nav accountMenu">
+							<ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
 								<div class="vertical-line visible-lg hidden-sm hidden-md"></div>
 								<li class="dropdown accountOpen">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
+									<a class="dropdown-toggle disable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
 									{{ "fom.core.manager.logged_as"|trans}}:
 									{{ app.user.username }}
 									&nbsp;
@@ -51,7 +51,7 @@
 									{%- if app.user.password -%}
 										<ul class="dropdown-menu">
 											<li>
-												<a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
+												<a class="disable" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
 													<i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
 											</li>
 											<li>
