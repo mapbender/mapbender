@@ -173,7 +173,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     _setInitialView: function(olMap, startExtent, mapOptions, srsName) {
         var resolution = this._getInitialResolution(olMap, startExtent, mapOptions, srsName);
-        var center = this._getInitialCenter(mapOptions, startExtent);
+        var center = this._getInitialCenter(mapOptions);
         var scale = this.resolutionToScale(resolution, mapOptions.dpi, srsName);
         var zoom = this.pickZoomForScale(scale, true);
         olMap.setCenter(center, zoom);

@@ -863,11 +863,10 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {Object} mapOptions
          * @param {Array<Number>} [mapOptions.center]
-         * @param {Object} startExtent
          * @return {Array<Number>}
          * @private
          */
-        _getInitialCenter: function(mapOptions, startExtent) {
+        _getInitialCenter: function(mapOptions) {
             try {
                 var shareParams = this._decodeViewparamFragment();
                 return shareParams.center;
@@ -886,20 +885,20 @@ window.Mapbender.MapModelBase = (function() {
                 return [singlePoi.x, singlePoi.y];
             } else {
                 var bboxOverride = this._getStartingBboxFromUrl();
-                var startExtent_;
-                var startExtentSrs_;
+                var startExtent;
+                var startExtentSrs;
                 if (bboxOverride) {
-                    startExtent_ = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                    startExtentSrs_ = urlParams.srs || mapOptions.srs;
+                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
+                    startExtentSrs = urlParams.srs || mapOptions.srs;
                 } else {
-                    startExtent_ = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                    startExtentSrs_ = mapOptions.srs;
+                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                    startExtentSrs = mapOptions.srs;
                 }
-                startExtent_ = Mapbender.mapEngine.transformBounds(startExtent_, startExtentSrs_, this._getInitialSrsCode(mapOptions));
+                startExtent = Mapbender.mapEngine.transformBounds(startExtent, startExtentSrs, this._getInitialSrsCode(mapOptions));
 
                 return [
-                    0.5 * (startExtent_.left + startExtent_.right),
-                    0.5 * (startExtent_.bottom + startExtent_.top)
+                    0.5 * (startExtent.left + startExtent.right),
+                    0.5 * (startExtent.bottom + startExtent.top)
                 ];
             }
         },

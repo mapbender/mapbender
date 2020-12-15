@@ -57,7 +57,7 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     _setInitialView: function(olMap, startExtent, mapOptions, srsName) {
         var resolution = this._getInitialResolution(olMap, startExtent, mapOptions, srsName);
-        var center = this._getInitialCenter(mapOptions, startExtent);
+        var center = this._getInitialCenter(mapOptions);
         var view = olMap.getView();
         view.setCenter(center);
         view.setResolution(resolution);
