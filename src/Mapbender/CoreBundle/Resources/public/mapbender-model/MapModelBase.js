@@ -45,7 +45,6 @@ window.Mapbender.MapModelBase = (function() {
                 label: poi.label
             });
         });
-        this._startShare();
     }
 
     MapModelBase.prototype = {

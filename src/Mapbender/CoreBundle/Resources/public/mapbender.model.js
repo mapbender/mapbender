@@ -133,6 +133,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.initializeSourceLayers();
         this.processUrlParams();
         this._initEvents(this.olMap, this.mbMap);
+        this._startShare();
     },
     _initEvents: function(olMap, mbMap) {
         var self = this;
