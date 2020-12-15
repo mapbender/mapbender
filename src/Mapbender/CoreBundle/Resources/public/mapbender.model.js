@@ -711,6 +711,20 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return def.promise();
     },
     /**
+     * @param {OpenLayers.Map} olMap
+     * @param {Object} mapOptions
+     * @return {mmViewParams}
+     * @private
+     */
+    _getInitialViewParams: function(olMap, mapOptions) {
+        // No fractional scale support on Openlayers 2
+        // => Limit scale to one of the exact configured scales
+        var params = Mapbender.MapModelBase.prototype._getInitialViewParams.apply(this, arguments);
+        var zoom = this.pickZoomForScale(params.scale);
+        params.scale = (this._getScales())[zoom];
+        return params;
+    },
+    /**
      * @param {OpenLayers.Bounds} extent
      * @param {string|OpenLayers.Projection} fromProj
      * @param {string|OpenLayers.Projection} toProj
