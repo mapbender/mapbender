@@ -959,7 +959,6 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         _startShare: function() {
-            console.warn("_startShare");
             var self = this;
             var updateHandler = function(evt, data) {
                 self._updateViewParamFragment(data.params);
