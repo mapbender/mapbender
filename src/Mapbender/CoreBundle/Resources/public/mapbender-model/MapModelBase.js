@@ -38,7 +38,6 @@ window.Mapbender.MapModelBase = (function() {
         this._configProj = mapOptions.srs;
         var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
-        var startExtentArray = this._getStartingBboxFromUrl() || mapOptions.extents.start || mapOptions.extents.max;
         var poiOptions = (mbMap.options.extra || {}).pois || [];
         this._poiOptions = poiOptions.map(function(poi) {
             return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
@@ -46,9 +45,6 @@ window.Mapbender.MapModelBase = (function() {
                 label: poi.label
             });
         });
-        if (!startExtentArray) {
-            throw new Error("Can't initialize map without a start extent");
-        }
         this._startShare();
     }
 
@@ -845,6 +841,10 @@ window.Mapbender.MapModelBase = (function() {
                 startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
                 startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, params.srsName);
             } else {
+                if (!mapOptions.extents.start && !mapOptions.extents.max) {
+                    throw new Error("Incomplete map configuration: no start extent");
+                }
+
                 startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
                 startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
             }
