@@ -77,6 +77,8 @@ class SimpleSearchAdminType extends AbstractType
                 'attr' => array(
                     'placeholder' => $defaults['sourceSrs'],
                 ),
+                'empty_data' => $defaults['sourceSrs'],
+                'required' => false,
             ))
             ->add('delay', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
                 'required' => true,
