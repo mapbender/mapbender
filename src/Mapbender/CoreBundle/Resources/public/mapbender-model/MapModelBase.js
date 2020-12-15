@@ -896,12 +896,7 @@ window.Mapbender.MapModelBase = (function() {
                 // fall through
             }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
-            var centerOverride = !!urlParams.center;
             var srsOverride = (urlParams.srs || '').toUpperCase();
-            var pois = (mapOptions.extra || {}).pois || [];
-            if (pois.length && !centerOverride && pois[0].srs) {
-                srsOverride = pois[0].srs;
-            }
             var pattern = /^EPSG:\d+$/;
             if (srsOverride) {
                 if (!pattern.test(srsOverride)) {
