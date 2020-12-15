@@ -927,6 +927,15 @@ window.Mapbender.MapModelBase = (function() {
             }
             return srsOverride || mapOptions.srs;
         },
+        _canonicalizeUrl: function(url, viewParamHash) {
+            var removeParams = this.getViewRelatedUrlParamNames();
+            if (viewParamHash) {
+                var newUrl = Mapbender.Util.removeUrlParams((url || '').replace(/#.*$/, ''), removeParams, true) || '?';
+                return [newUrl, viewParamHash].join('#');
+            } else {
+                return url;
+            }
+        },
         /**
          * @param {mmViewParams} params
          * @private
@@ -941,9 +950,8 @@ window.Mapbender.MapModelBase = (function() {
             if (!currentHash) {
                 if (this.encodeViewParams(this.initialViewParams) !== newHash) {
                     // Canonicalize url on first update, by stripping all view-related query params
-                    var removeParams = this.getViewRelatedUrlParamNames();
-                    var newSearch = Mapbender.Util.removeUrlParams(window.location.search, removeParams, true) || '?';
-                    window.history.pushState({}, '', [newSearch, newHash].join('#'));
+                    var canonical = this._canonicalizeUrl(window.location.search, newHash);
+                    window.history.pushState({}, '', canonical);
                 }
             } else if (currentHash !== newHash) {
                 window.history.pushState({}, '', '#' + newHash);
@@ -966,6 +974,18 @@ window.Mapbender.MapModelBase = (function() {
         },
         _startShare: function() {
             var self = this;
+            var currentHash = (window.location.hash || '').replace(/^#/, '');
+            if (currentHash) {
+                try {
+                    this.decodeViewParams(currentHash);
+                    // valid view param hash, canonicalize
+                    var canonicalSearch = this._canonicalizeUrl(window.location.search, currentHash);
+                    window.history.replaceState({}, '', canonicalSearch);
+                } catch (e) {
+                    // invalid view param hash, remove
+                    window.history.replaceState({}, '', '#');
+                }
+            }
             var updateHandler = function(evt, data) {
                 self._updateViewParamFragment(data.params);
             };
