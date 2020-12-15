@@ -934,14 +934,14 @@ window.Mapbender.MapModelBase = (function() {
             // NOTE: hash property getter will return a leading '#'. It doesn't matter if
             //       we include the '#' when setting a hash via location.hash or pushState / replaceState
             var currentHash = (window.location.hash || '').replace(/^#/, '');
-            // avoid creating a browser history entry if params are equal
-            if (currentHash !== newHash) {
-                if (!currentHash) {
-                    // Set first state WITHOUT creating a new navigation history entry
-                    window.history.replaceState({}, '', '#' + newHash);
-                } else {
+            // Defer first hash amendment to the first significant map movement (NOT immediately on startup)
+            // Afterwards, avoid creating a browser history entry if params are equal
+            if (!currentHash) {
+                if (this.encodeViewParams(this.initialViewParams) !== newHash) {
                     window.history.pushState({}, '', '#' + newHash);
                 }
+            } else if (currentHash !== newHash) {
+                window.history.pushState({}, '', '#' + newHash);
             }
         },
         _decodeViewparamFragment: function() {
