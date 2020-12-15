@@ -831,11 +831,34 @@ window.Mapbender.MapModelBase = (function() {
                 // fall through
             }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var bboxOverride = this._getStartingBboxFromUrl();
+            var centerOverride = (urlParams.center || '').split(',').map(parseFloat).filter(function(x) {
+                return !isNaN(x);
+            });
             var params = {
                 rotation: 0,
-                srsName: urlParams.srs || mapOptions.srs,
-                center: this._getInitialCenter(mapOptions)
+                srsName: urlParams.srs || mapOptions.srs
             };
+            if (centerOverride.length === 2) {
+                params.center = centerOverride;
+            } else if (this._poiOptions && this._poiOptions.length === 1) {
+                var singlePoi = this._poiOptions[0];
+                params.center = [singlePoi.x, singlePoi.y];
+            } else {
+                var startExtent;
+                if (bboxOverride) {
+                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
+                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                } else {
+                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                    startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, this._getInitialSrsCode(mapOptions));
+                }
+
+                params.center = [
+                    0.5 * (startExtent.left + startExtent.right),
+                    0.5 * (startExtent.bottom + startExtent.top)
+                ];
+            }
             // Uh-oh
             params.scale = this.resolutionToScale(this._getInitialResolution(olMap, mapOptions), mapOptions.dpi, params.srsName);
 
@@ -890,48 +913,6 @@ window.Mapbender.MapModelBase = (function() {
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
             var parts = (urlParams.bbox || '').split(',').map(parseFloat);
             return parts.length === 4 && parts || null;
-        },
-        /**
-         * @param {Object} mapOptions
-         * @param {Array<Number>} [mapOptions.center]
-         * @return {Array<Number>}
-         * @private
-         */
-        _getInitialCenter: function(mapOptions) {
-            try {
-                var shareParams = this._decodeViewparamFragment();
-                return shareParams.center;
-            } catch (e) {
-                // fall through
-            }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
-            var centerOverride = urlParams.center;
-            centerOverride = (centerOverride || '').split(',').map(parseFloat).filter(function(x) {
-                return !isNaN(x);
-            });
-            if (centerOverride.length === 2) {
-                return centerOverride;
-            } else if (this._poiOptions && this._poiOptions.length === 1) {
-                var singlePoi = this._poiOptions[0];
-                return [singlePoi.x, singlePoi.y];
-            } else {
-                var bboxOverride = this._getStartingBboxFromUrl();
-                var startExtent;
-                var startExtentSrs;
-                if (bboxOverride) {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                    startExtentSrs = urlParams.srs || mapOptions.srs;
-                } else {
-                    startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                    startExtentSrs = mapOptions.srs;
-                }
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, startExtentSrs, this._getInitialSrsCode(mapOptions));
-
-                return [
-                    0.5 * (startExtent.left + startExtent.right),
-                    0.5 * (startExtent.bottom + startExtent.top)
-                ];
-            }
         },
         /**
          * @param {Object} mapOptions
