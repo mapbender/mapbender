@@ -952,7 +952,11 @@ window.Mapbender.MapModelBase = (function() {
                 var params = this._decodeViewparamFragment();
                 this.applyViewParams(params);
             } catch (e) {
-                // do absolutely nothing
+                var hash = (window.location.hash || '').replace(/^#/, '');
+                // Go back to initial view ONLY IF no hash detected
+                if (!hash) {
+                    this.applyViewParams(this.initialViewParams);
+                }
             }
         },
         _startShare: function() {
@@ -961,7 +965,7 @@ window.Mapbender.MapModelBase = (function() {
                 self._updateViewParamFragment(data.params);
             };
             this.mbMap.element.on('mbmapviewchanged', _.debounce(updateHandler, 400));
-            window.addEventListener('hashchange', function() {
+            window.addEventListener('popstate', function() {
                 self._applyViewParamFragment();
             });
         },
