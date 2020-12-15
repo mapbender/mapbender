@@ -46,9 +46,6 @@ window.Mapbender.MapModelBase = (function() {
                 label: poi.label
             });
         });
-        if (!this._startProj) {
-            throw new Error("Can't initialize map without srs option");
-        }
         if (!startExtentArray) {
             throw new Error("Can't initialize map without a start extent");
         }
@@ -906,8 +903,9 @@ window.Mapbender.MapModelBase = (function() {
             if (pois.length && !centerOverride && pois[0].srs) {
                 srsOverride = pois[0].srs;
             }
+            var pattern = /^EPSG:\d+$/;
             if (srsOverride) {
-                if (!/^EPSG:\d+$/.test(srsOverride)) {
+                if (!pattern.test(srsOverride)) {
                     console.warn("Ingoring invalid srs code override; must use EPSG:<digits> form", srsOverride);
                     srsOverride = undefined;
                 } else {
@@ -919,6 +917,12 @@ window.Mapbender.MapModelBase = (function() {
                         srsOverride = undefined;
                     }
                 }
+            }
+            if (!srsOverride && !pattern.test(mapOptions.srs)) {
+                if (!mapOptions.srs) {
+                    throw new Error("Invalid map configuration: missing srs");
+                }
+                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + mapOptions.srs);
             }
             return srsOverride || mapOptions.srs;
         },
