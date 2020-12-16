@@ -498,7 +498,11 @@ window.Mapbender.MapModelOl4 = (function() {
          * @return {Array<Number>}
          */
         getCurrentMapCenter: function() {
-            return this.olMap.getView().getCenter();
+            // Constrain center. This fixes extracting (transient / animating) values that exceed limits allowable
+            // by max extent and which cannot be restored. Unrestorable center breaks view param history.
+            var view = this.olMap.getView();
+            var resolution = view.getConstrainedResolution(view.getResolution());
+            return view.getConstrainedCenter(view.getCenter(), resolution);
         },
         /**
          * @return {Array<Number>}
