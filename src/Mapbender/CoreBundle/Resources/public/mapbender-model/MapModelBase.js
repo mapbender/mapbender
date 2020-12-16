@@ -702,19 +702,23 @@ window.Mapbender.MapModelBase = (function() {
             if (options.srsName) {
                 this.changeProjection(options.srsName);
             }
+            // Apply rotation before center + scale
+            // Rotation interacts with the resolution constraint, and setting it later would
+            // break view parameter history.
+            // @see https://github.com/openlayers/openlayers/blob/v6.3.1/src/ol/View.js#L1562
+            if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
+                this.setViewRotation(options.rotation);
+            }
             var centerOptions = {};
             var center = options.center;
             if (options.scale) {
                 centerOptions.minScale = options.scale;
                 centerOptions.maxScale = options.scale;
-                center = options.center|| this.getCurrentMapCenter();
+                center = options.center || this.getCurrentMapCenter();
             }
             if (center) {
                 // @todo: fix restore of fractional scale (currently snaps to a configured zoom level)
                 this.centerXy(center[0], center[1], centerOptions);
-            }
-            if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
-                this.setViewRotation(options.rotation);
             }
         },
         /**
