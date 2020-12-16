@@ -315,7 +315,11 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     _getFractionalScale: function() {
         var resolution = this.olMap.getView().getResolution();
-        return this.resolutionToScale(resolution);
+        // Constrain resolution. This fixes extracting (transient / animating) values that exceed limits set
+        // by max extent / max scale denominator and which cannot be restored. Unrestorable scales break
+        // view param history
+        var constrained = this.olMap.getView().getConstrainedResolution(resolution);
+        return this.resolutionToScale(constrained);
     },
     zoomIn: function() {
         this.setZoomLevel(this.getCurrentZoomLevel() + 1, true);
