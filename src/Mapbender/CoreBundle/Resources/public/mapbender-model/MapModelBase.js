@@ -736,15 +736,14 @@ window.Mapbender.MapModelBase = (function() {
                 center[ci] = center[ci].toFixed(5);
             }
             // round scale to integer and stringify
-            var scale = params.scale.toFixed(0);
             var parts = [
-                scale,
+                params.scale.toFixed(0),
                 '@',
                 center[0],
                 '/',
                 center[1],
                 'r',
-                parseInt(params.rotation),
+                params.rotation.toFixed(0),
                 '@',
                 params.srsName
             ];
