@@ -80,14 +80,16 @@
                 projection: mainMapModel.getCurrentProjectionCode(),
                 center: center
             };
-            if (this.options.fixed) {
-                var maxExtent = mainMapModel.getMaxExtent();
+            var maxExtent = mainMapModel.getMaxExtent();
+            if (maxExtent) {
                 var projectedWidth = Math.abs(maxExtent.right - maxExtent.left);
                 var projectedHeight = Math.abs(maxExtent.top - maxExtent.bottom);
                 var resolutionH = projectedWidth / this.options.width;
                 var resolutionV = projectedHeight / this.options.height;
-                var resolution = Math.max(resolutionH, resolutionV);
-                viewOptions.resolutions = [resolution];
+                viewOptions.maxResolution = Math.max(resolutionH, resolutionV);
+                if (this.options.fixed) {
+                    viewOptions.resolutions = [maxResolution];
+                }
             }
             var controlOptions = {
                 collapsible: true,
