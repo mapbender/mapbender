@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 6cd141ea0
+## dev-release/3.0.7 @ f057d3e46
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -8,9 +8,10 @@
 - Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))
 - Fix black artifacts around rotated print north arrow
 - Fix broken overview print on axis-inverted WMS 1.3.0 projections
-- Fix logout form appearing in place of Element form on session expiration; go to full-window login page instead
+- Fix login form appearing in place of Element form on session expiration; go to full-window login page instead
 - Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 - Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+- Fix broken PrintClient settings layout with option `legend` disabled
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
