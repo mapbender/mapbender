@@ -23,6 +23,8 @@ class ScreentypeType extends AbstractType
                 'mb.manager.screentype.choice.mobile' => 'mobile',
                 'mb.manager.screentype.choice.desktop' => 'desktop',
             ),
+            'required' => false,
+            'placeholder' => false,
         ));
 
         if (Kernel::MAJOR_VERSION < 3) {
