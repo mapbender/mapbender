@@ -88,7 +88,7 @@
                 var resolutionV = projectedHeight / this.options.height;
                 viewOptions.maxResolution = Math.max(resolutionH, resolutionV);
                 if (this.options.fixed) {
-                    viewOptions.resolutions = [maxResolution];
+                    viewOptions.resolutions = [viewOptions.maxResolution];
                 }
             }
             var controlOptions = {
