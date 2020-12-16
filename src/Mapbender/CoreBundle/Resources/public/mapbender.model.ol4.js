@@ -90,21 +90,8 @@ window.Mapbender.MapModelOl4 = (function() {
     _initEvents: function(olMap, mbMap) {
         var self = this;
         olMap.on('moveend', function() {
-            var scales = self._getScales();
-            var zoom = self.getCurrentZoomLevel();
             self.sourceTree.map(function(source) {
                 self._checkSource(source, true);
-            });
-            // @todo: figure out how to distinguish zoom change from panning
-            mbMap.element.trigger('mbmapzoomchanged', {
-                mbMap: mbMap,
-                zoom: zoom,
-                scale: scales[zoom],
-                scaleExact: self._getFractionalScale()
-            });
-            mbMap.element.trigger('mbmapviewchanged', {
-                mbMap: mbMap,
-                params: self.getCurrentViewParams()
             });
         });
         olMap.on("singleclick", function(data) {
@@ -114,18 +101,39 @@ window.Mapbender.MapModelOl4 = (function() {
                 coordinate: data.coordinate.slice()
             });
         });
-        var initRotation = function(view) {
-            view.on('change:rotation', function() {
-                $(mbMap.element).trigger('mbmaprotationchanged', {
-                    mbMap: mbMap,
-                    degrees: self.getViewRotation()
-                });
-            });
-        };
-        initRotation(olMap.getView());
+        this._initViewEvents(olMap.getView(), mbMap);
         // Rebind view events on replacement of view object (happens on SRS switch)
         olMap.on('change:view', function(e) {
-            initRotation(e.target.getView());
+            self._initViewEvents(e.target.getView(), mbMap);
+        });
+    },
+    _initViewEvents: function(view, mbMap) {
+        var self = this;
+        view.on(['change:resolution', 'change:center', 'change:rotation'], function(e) {
+            switch (e.type) {
+                case 'change:resolution':
+                    var scales = self._getScales();
+                    var zoom = self.getCurrentZoomLevel();
+                    mbMap.element.trigger('mbmapzoomchanged', {
+                        mbMap: mbMap,
+                        zoom: zoom,
+                        scale: scales[zoom],
+                        scaleExact: self._getFractionalScale()
+                    });
+                    break;
+                case 'change:rotation':
+                    $(mbMap.element).trigger('mbmaprotationchanged', {
+                        mbMap: mbMap,
+                        degrees: self.getViewRotation()
+                    });
+                    break;
+                default:
+                    break;
+            }
+            mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: mbMap,
+                params: self.getCurrentViewParams()
+            });
         });
     },
     /**
