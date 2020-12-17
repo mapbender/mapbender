@@ -1,4 +1,4 @@
-## dev-master @ d3da29113
+## dev-master @ 67dc639f8
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -23,6 +23,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Fix styling differences (label line break) between SrsSelector and ScaleSelector
 * Fix visible overflow / missing scrollbar in unstyled sidepane if content exceeds available height
 * Fix login form appearing in place of Element form or Layerset title form on session expiration; go to full-window login page instead
+* [SearchRouter]: Replace manual `type` configuration with auto-detection
+* [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
 * [Framework] Fix broken form theme visualization of "disabled" input state
 * [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 * [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
