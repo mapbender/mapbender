@@ -102,7 +102,7 @@
             if(true === this.options.asDialog) {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
-                        title: this.element.attr('title'),
+                        title: this.element.attr('data-title'),
                         draggable: true,
                         modal: false,
                         closeOnESC: false,
