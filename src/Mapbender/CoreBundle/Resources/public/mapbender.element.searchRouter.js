@@ -14,9 +14,6 @@
             var self = this;
             this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
-            if (!this.useDialog_) {
-                $('.search-action-buttons', this.element).removeClass('hidden');
-            }
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
