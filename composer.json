@@ -40,7 +40,7 @@
         "mapbender/openlayers6-es5": "^0.3.1 || ^1",
         "mapbender/mapquery": "1.x"
     },
-    "replace": {
+    "provide": {
         "mapbender/fom": "3.3"
     },
     "autoload": {
