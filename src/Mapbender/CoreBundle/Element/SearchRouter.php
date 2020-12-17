@@ -55,7 +55,6 @@ class SearchRouter extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip'       => "mb.core.searchrouter.class.title",
             'title'         => "mb.core.searchrouter.class.title",
             "target"        => null,
             "width"         => 700,
