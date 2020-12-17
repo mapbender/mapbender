@@ -40,6 +40,9 @@ $searchRouterInputWidth: 100%;
   .search-action-buttons {
     text-align: right;
   }
+  .popup & .search-action-buttons {
+    display: none;
+  }
   th {
     @extend .subTitle;
     text-align: left;

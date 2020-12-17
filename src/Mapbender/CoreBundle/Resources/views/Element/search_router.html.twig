@@ -1,4 +1,4 @@
-<div class="mb-element mb-element-searchrouter" id="{{ id }}" title="{{ title | trans }}">
+<div class="mb-element mb-element-searchrouter" id="{{ id }}" data-title="{{ title | trans }}">
     {{ form_widget(route_select_form) }}
 
     <div class="search-forms">
@@ -8,7 +8,7 @@
             </form>
         {% endfor %}
     </div>
-    <div class="search-action-buttons hidden">
+    <div class="search-action-buttons">
         <span data-action="reset" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</span>
         <span data-action="search" class="btn btn-sm btn-default">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</span>
     </div>
