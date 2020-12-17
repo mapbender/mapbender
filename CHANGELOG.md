@@ -1,4 +1,4 @@
-## dev-master @ 67dc639f8
+## v3.2.3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
 * Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
