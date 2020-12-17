@@ -551,8 +551,8 @@ window.Mapbender.MapModelOl4 = (function() {
             }
             var fill = olStyle.getFill();
             var stroke = olStyle.getStroke();
+            let scale = (image && image.getScale() ) ? image.getScale() :   1;
 
-            var scale =  image.getScale() || 1;
             if (fill) {
                 Object.assign(style, this._extractColor(fill.getColor(), 'fillColor', 'fillOpacity'));
             }
