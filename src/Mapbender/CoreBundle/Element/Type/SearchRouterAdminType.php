@@ -28,10 +28,6 @@ class SearchRouterAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('dialog', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                // @todo: fix legacy config errors anywhere else, but not on the form level
-                'property_path' => '[asDialog]',
-            ))
             ->add('timeout', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'label' => 'Timeout factor',
                 // @todo: fix legacy config errors anywhere else, but not on the form level

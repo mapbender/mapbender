@@ -63,8 +63,6 @@ class SearchRouter extends Element
             "width"         => 700,
             "height"        => 500,
             "routes"        => array(),
-            // Alternative "dialog" is deprecated
-            "asDialog"      => false,
         );
     }
 
@@ -260,10 +258,6 @@ class SearchRouter extends Element
      */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        if (key_exists('dialog', $configuration)) {
-            $configuration['asDialog'] = $configuration['dialog'];
-            unset($configuration['dialog']);
-        }
         foreach ($configuration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
                 foreach ($configuration['routes'][ $routekey ]['configuration'] as $key => $value) {
