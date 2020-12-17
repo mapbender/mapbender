@@ -43,6 +43,9 @@
     "provide": {
         "mapbender/fom": "3.3"
     },
+    "replace": {
+        "mapbender/fom": "*"
+    },
     "autoload": {
         "psr-4": {
             "Mapbender\\": "src/Mapbender",
