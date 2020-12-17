@@ -58,8 +58,6 @@ class SearchRouter extends Element
             'tooltip'       => "mb.core.searchrouter.class.title",
             'title'         => "mb.core.searchrouter.class.title",
             "target"        => null,
-            // Alternative "timeout" option is deprecated
-            'timeoutFactor' => 3,
             "width"         => 700,
             "height"        => 500,
             "routes"        => array(),

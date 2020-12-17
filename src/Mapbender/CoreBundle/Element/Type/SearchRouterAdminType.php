@@ -28,11 +28,6 @@ class SearchRouterAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('timeout', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
-                'label' => 'Timeout factor',
-                // @todo: fix legacy config errors anywhere else, but not on the form level
-                'property_path' => '[timeoutFactor]',
-            ))
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(

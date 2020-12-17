@@ -2,7 +2,6 @@
 
     $.widget('mapbender.mbSearchRouter', {
         options: {
-            timeoutFactor: 2    // use delay * timeoutFactor before showing
         },
         callbackUrl: null,
         selected: null,
