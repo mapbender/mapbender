@@ -64,9 +64,6 @@ class ApplicationController extends ApplicationControllerBase
         $isProduction = $this->isProduction();
         $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
-            if (!$source) {
-                throw new NotFoundHttpException('The application can not be found.');
-            }
             // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
         } else {
