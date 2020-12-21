@@ -75,6 +75,7 @@ class ApplicationController extends ApplicationControllerBase
         }
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
+            'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
 
         $useCached = $isProduction && file_exists($cacheFile);
@@ -142,6 +143,7 @@ class ApplicationController extends ApplicationControllerBase
         $useCache = $this->isProduction();
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
+            'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
         if ($useCache) {
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
