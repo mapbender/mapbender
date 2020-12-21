@@ -75,6 +75,7 @@ class ElementFormFactory extends BaseElementFactory
         } else {
             $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
+            $options['label'] = false;
         }
 
         $formType->add('configuration', $configurationType, $options);
