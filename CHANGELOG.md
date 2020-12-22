@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ b48af4c9f
+## dev-release/3.0.7 @ 50f3c4c8d
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -16,6 +16,7 @@
 - Fix broken PrintClient settings layout with option `legend` disabled
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
+- Remove unreasonable default button tooltip "button"
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
 - [Framework] Fix broken form theme visualization of "disabled" input state
@@ -23,6 +24,7 @@
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
 - [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 - [Framework] Fix support for ConfigMigrationInterface modifying Element class
+- [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
 
 ## v3.0.8.6
 - Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
