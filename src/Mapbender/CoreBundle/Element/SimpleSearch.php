@@ -54,6 +54,10 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             'delay'           => 300,
             'query_ws_replace' => null,
             'result_buffer' => 300,
+            'result_minscale' => 1000,
+            'result_maxscale' => null,
+            'result_icon_url' => '/bundles/mapbendercore/image/pin_red.png',
+            'result_icon_offset' => '-6,-38',
         );
     }
 
