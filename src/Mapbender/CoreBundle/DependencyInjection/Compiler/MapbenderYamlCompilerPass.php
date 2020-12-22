@@ -146,15 +146,26 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         // @todo: look up and adjust migrated class names as well
         if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
-            $className = $definition['class'];
             $dummyEntity = new Element();
             $nonConfigs = array_intersect_key($definition, array_flip($nonConfigKeys));
             $configBefore = array_diff_key($definition, $nonConfigs);
             $dummyEntity->setConfiguration($configBefore);
-            $className::updateEntityConfig($dummyEntity);
+            do {
+                $className = $definition['class'];
+                $dummyEntity->setClass($className);
+                $className::updateEntityConfig($dummyEntity);
+                // Migration may have changed class name, which may chain to another migration
+                $definition['class'] = $dummyEntity->getClass();
+                if (!\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+                    break;
+                }
+            } while ($className !== $definition['class']);
+
             $configAfter = $dummyEntity->getConfiguration();
-            $this->onElementConfigChange($nonConfigs['class'], $configBefore, $configAfter);
-            $definition = array_replace($configAfter, $nonConfigs);
+            $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
+            $definition = array_replace($configAfter, $nonConfigs, array(
+                'class' => $dummyEntity->getClass(),
+            ));
         }
         $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip($nonConfigKeys)));
         return $definition;
