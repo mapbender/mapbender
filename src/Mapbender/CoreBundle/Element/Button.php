@@ -37,7 +37,7 @@ class Button extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'button',
+            'tooltip' => null,
             'label' => true,
             'icon' => null,
             'target' => null,
