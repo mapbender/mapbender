@@ -20,11 +20,22 @@ $.widget('mapbender.mbSimpleSearch', {
 
     marker: null,
     layer: null,
+    iconUrl_: null,
 
     _create: function() {
+        this.iconUrl_ = this.options.result_icon_url || null;
+        if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
+            // Local, asset-relative
+            var parts = [
+                Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
+                this.options.result_icon_url.replace(/^\//, '')
+            ];
+            this.iconUrl_ = parts.join('/');
+        }
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+
 
         // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
         // same options object
@@ -84,7 +95,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var bounds = feature.geometry.getBounds();
 
         // Add marker
-        if (self.options.result_icon_url) {
+        if (this.iconUrl_) {
             if(!self.marker) {
                 var addMarker = function() {
                     var offset = (self.options.result_icon_offset || '').split(new RegExp('[, ;]'));
@@ -110,7 +121,7 @@ $.widget('mapbender.mbSimpleSearch', {
                 };
 
                 var image = new Image();
-                image.src = self.options.result_icon_url;
+                image.src = this.iconUrl_;
                 image.onload = addMarker;
                 image.onerror = addMarker;
             } else {
