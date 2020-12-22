@@ -20,9 +20,6 @@ class ButtonAdminType extends AbstractType
             ->add('click', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('group', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => false,
-            ))
             ->add('action', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

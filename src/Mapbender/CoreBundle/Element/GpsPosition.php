@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 

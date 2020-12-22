@@ -22,4 +22,16 @@ abstract class BaseButton extends Element
             'icon' => null,
         );
     }
+
+    public function getAssets()
+    {
+        return array(
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
+            ),
+        );
+    }
 }
