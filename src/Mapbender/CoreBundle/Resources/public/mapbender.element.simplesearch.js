@@ -21,8 +21,18 @@ $.widget('mapbender.mbSimpleSearch', {
 
     layer: null,
     mbMap: null,
+    iconUrl_: null,
 
     _create: function() {
+        this.iconUrl_ = this.options.result_icon_url || null;
+        if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
+            // Local, asset-relative
+            var parts = [
+                Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
+                this.options.result_icon_url.replace(/^\//, '')
+            ];
+            this.iconUrl_ = parts.join('/');
+        }
         var self = this;
         Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
             self.mbMap = mbMap;
@@ -34,12 +44,13 @@ $.widget('mapbender.mbSimpleSearch', {
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-        if (this.options.result_icon_url) {
+        if (this.iconUrl_) {
             var offset = (this.options.result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
                 return parseInt(x) || 0;
             });
-            this.layer.addCustomIconMarkerStyle('simplesearch', this.options.result_icon_url, offset[0], offset[1]);
+            this.layer.addCustomIconMarkerStyle('simplesearch', this.iconUrl_, offset[0], offset[1]);
         }
+
 
         // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
         // same options object
@@ -112,7 +123,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var onMissingIcon = function() {
             layer.addMarker(center.lon, center.lat);
         };
-        if (this.options.result_icon_url) {
+        if (this.iconUrl_) {
             layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
         } else {
             onMissingIcon();

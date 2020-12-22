@@ -150,7 +150,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 4f5d424ec
+## dev-release/3.0.7 @ b48af4c9f
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -163,6 +163,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix login form appearing in place of Element form on session expiration; go to full-window login page instead
 - Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 - Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+- Fix incomplete defaults for SimpleSearch `result_*`
+- Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 - Fix broken PrintClient settings layout with option `legend` disabled
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
@@ -171,6 +173,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+- [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
+- [Framework] Fix support for ConfigMigrationInterface modifying Element class
 
 ## v3.0.8.6
 - Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
