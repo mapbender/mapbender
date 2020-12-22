@@ -201,22 +201,8 @@ mb:
     admin:
       button:
         show_label: 'Show label'
-      scaleselector:
-        show_label: 'Show label'
-      corrdsdisplay:
-        label: 'Show title label'
-      srsselector:
-        show_label: 'Show label'
-      gpsposition:
-        show_label: 'Show label'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Show button label'
-    element:
-      be:
-        button:
-          show_label: 'Show label'
     entity:
       app:
         screenshotfile:

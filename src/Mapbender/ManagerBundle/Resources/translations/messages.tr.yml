@@ -161,22 +161,8 @@ mb:
     admin:
       button:
         show_label: 'Etiketi göster'
-      scaleselector:
-        show_label: 'Etiketi göster'
-      corrdsdisplay:
-        label: 'Başlık etiketini göster'
-      srsselector:
-        show_label: 'Etiketi göster'
-      gpsposition:
-        show_label: 'Etiketi göster'
       element:
         autostart: 'Otomatik Başlat'
-      about_dialog:
-        show_label: 'Tuş etiketini göster'
-    element:
-      be:
-        button:
-          show_label: 'Etiketi göster'
     entity:
       app:
         screenshotfile:

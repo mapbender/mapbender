@@ -1,13 +1,12 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
  */
-class AboutDialog extends Element
+class AboutDialog extends BaseButton
 {
 
     /**
@@ -46,10 +45,11 @@ class AboutDialog extends Element
      */
     public static function getDefaultConfiguration()
     {
-        return array(
+        $defaults = array_replace(parent::getDefaultConfiguration(), array(
             "tooltip" => "About",
-            'label' => true,
-        );
+        ));
+        unset($defaults['icon']);
+        return $defaults;
     }
 
     /**
@@ -58,14 +58,6 @@ class AboutDialog extends Element
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\AboutDialogAdminType';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderManagerBundle:Element:about_dialog.html.twig';
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Twig\Extension\AbstractExtension;
@@ -51,13 +52,7 @@ class ElementExtension extends AbstractExtension
     {
         $initialClass = $element->getClass();
         $adjustedClass = $this->inventoryService->getAdjustedElementClassName($initialClass);
-        try {
-            $classExists = class_exists($adjustedClass);
-        } catch (\ErrorException $e) {
-            // thrown by debug mode class loader on Symfony 3.4+
-            $classExists = false;
-        }
-        if ($classExists) {
+        if (ClassUtil::exists($adjustedClass)) {
             /** @var string|\Mapbender\CoreBundle\Component\Element $adjustedClass */
             return $adjustedClass::getClassTitle();
         } else {

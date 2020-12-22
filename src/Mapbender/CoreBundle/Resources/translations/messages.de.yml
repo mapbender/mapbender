@@ -212,9 +212,18 @@ mb:
     button:
       class:
         title: Button
-        description: 'Button '
+        description: 'Button'
       tag:
         button: Button
+    controlbutton:
+      class:
+        description: Steuert ein anderes Element
+    linkbutton:
+      class:
+        title: Link
+        description: Link zu externer URL
+      admin:
+        click: Ziel-URL
     coordinatesdisplay:
       class:
         title: Koordinatenanzeige

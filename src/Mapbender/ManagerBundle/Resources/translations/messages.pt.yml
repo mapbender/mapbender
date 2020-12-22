@@ -170,22 +170,8 @@ mb:
     admin:
       button:
         show_label: 'Mostra rótulo'
-      scaleselector:
-        show_label: 'Mostra rótulo'
-      corrdsdisplay:
-        label: 'Mostrar rótulo'
-      srsselector:
-        show_label: 'Mostrar rótulo'
-      gpsposition:
-        show_label: 'Mostra rótulo'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Show button label'
-    element:
-      be:
-        button:
-          show_label: 'Mostra rótulo'
     entity:
       app:
         screenshotfile:

@@ -170,22 +170,8 @@ mb:
     admin:
       button:
         show_label: 'Mostrar etiqueta'
-      scaleselector:
-        show_label: 'Mostrar etiqueta'
-      corrdsdisplay:
-        label: 'Mostrar etiqueta título'
-      srsselector:
-        show_label: 'Mostrar etiqueta'
-      gpsposition:
-        show_label: 'Mostrar etiqueta'
       element:
         autostart: 'Auto inicio'
-      about_dialog:
-        show_label: 'Mostrar etiqueta botón'
-    element:
-      be:
-        button:
-          show_label: 'Mostrar etiqueta'
     entity:
       app:
         screenshotfile:
