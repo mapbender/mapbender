@@ -180,22 +180,8 @@ mb:
     admin:
       button:
         show_label: 'Mostra label'
-      scaleselector:
-        show_label: 'Mostra label'
-      corrdsdisplay:
-        label: 'Mostra il titolo della label'
-      srsselector:
-        show_label: 'Mostra label'
-      gpsposition:
-        show_label: 'Mostra label'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Mostra label del pulsante'
-    element:
-      be:
-        button:
-          show_label: 'Mostra label'
     entity:
       app:
         screenshotfile:

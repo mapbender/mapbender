@@ -180,22 +180,8 @@ mb:
     admin:
       button:
         show_label: 'Toon label'
-      scaleselector:
-        show_label: 'Toon label'
-      corrdsdisplay:
-        label: 'Toon titel label'
-      srsselector:
-        show_label: 'Toon label'
-      gpsposition:
-        show_label: 'Toon label'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Toon knop label'
-    element:
-      be:
-        button:
-          show_label: 'Toon label'
     entity:
       app:
         screenshotfile:

@@ -181,22 +181,8 @@ mb:
     admin:
       button:
         show_label: 'Afficher l''étiquette'
-      scaleselector:
-        show_label: 'Afficher l''étiquette'
-      corrdsdisplay:
-        label: 'Afficher l''étiquette du titre'
-      srsselector:
-        show_label: 'Afficher l''étiquette'
-      gpsposition:
-        show_label: 'Afficher l''étiquette'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Afficher l''étiquette du bouton'
-    element:
-      be:
-        button:
-          show_label: 'Afficher l''étiquette'
     entity:
       app:
         screenshotfile:

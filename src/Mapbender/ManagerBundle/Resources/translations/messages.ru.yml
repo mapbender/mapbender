@@ -180,22 +180,8 @@ mb:
     admin:
       button:
         show_label: 'Показать отметку'
-      scaleselector:
-        show_label: 'Показать отметку'
-      corrdsdisplay:
-        label: 'Показать название отметки'
-      srsselector:
-        show_label: 'Показать отметкиу'
-      gpsposition:
-        show_label: 'Показать отметкиу'
       element:
         autostart: Автозапуск
-      about_dialog:
-        show_label: 'Показать надпись на кнопке'
-    element:
-      be:
-        button:
-          show_label: 'Показать отметку'
     entity:
       app:
         screenshotfile:

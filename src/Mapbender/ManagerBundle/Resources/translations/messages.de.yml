@@ -184,22 +184,8 @@ mb:
     admin:
       button:
         show_label: 'Beschriftung anzeigen'
-      scaleselector:
-        show_label: 'Beschriftung anzeigen'
-      corrdsdisplay:
-        label: 'Beschriftung anzeigen'
-      srsselector:
-        show_label: 'Beschriftung anzeigen'
-      gpsposition:
-        show_label: 'Beschriftung anzeigen'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Buttontext anzeigen'
-    element:
-      be:
-        button:
-          show_label: 'Beschriftung anzeigen'
     entity:
       app:
         screenshotfile:

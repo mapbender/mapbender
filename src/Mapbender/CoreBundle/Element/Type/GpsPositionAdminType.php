@@ -30,7 +30,7 @@ class GpsPositionAdminType extends AbstractType
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.gpsposition.show_label',
+                'label' => 'mb.core.admin.button.show_label',
             ))
             ->add('autoStart', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

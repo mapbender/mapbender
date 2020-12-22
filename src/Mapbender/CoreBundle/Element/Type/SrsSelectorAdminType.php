@@ -28,7 +28,7 @@ class SrsSelectorAdminType extends AbstractType
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.srsselector.show_label',
+                'label' => 'mb.core.admin.button.show_label',
             ))
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
