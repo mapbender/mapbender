@@ -10,7 +10,7 @@ use Mapbender\CoreBundle\Entity;
  * Class GpsPosition
  * @package Mapbender\CoreBundle\Element
  */
-class GpsPosition extends Element implements ConfigMigrationInterface
+class GpsPosition extends BaseButton implements ConfigMigrationInterface
 {
 
     /**
@@ -60,9 +60,7 @@ class GpsPosition extends Element implements ConfigMigrationInterface
      */
     public static function getDefaultConfiguration()
     {
-        return array(
-            'tooltip' => static::getClassTitle(),
-            'label'                 => true,
+        return array_replace(parent::getDefaultConfiguration(), array(
             'autoStart'             => false,
             'target'                => null,
             'icon' => 'iconGps',
@@ -70,7 +68,7 @@ class GpsPosition extends Element implements ConfigMigrationInterface
             'follow'                => false,
             'centerOnFirstPosition' => true,
             'zoomToAccuracyOnFirstPosition' => true,
-        );
+        ));
     }
 
     /**

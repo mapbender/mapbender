@@ -1,14 +1,14 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * Button element
  *
  * @author Christian Wygoda
  */
-class Button extends Element
+class Button extends BaseButton
 {
     /**
      * @inheritdoc
@@ -36,16 +36,13 @@ class Button extends Element
      */
     public static function getDefaultConfiguration()
     {
-        return array(
-            'tooltip' => null,
-            'label' => true,
-            'icon' => null,
+        return array_replace(parent::getDefaultConfiguration(), array(
             'target' => null,
             'click' => null,
             'group' => null,
             'action' => null,
             'deactivate' => null,
-        );
+        ));
     }
 
     /**
@@ -110,12 +107,5 @@ class Button extends Element
         return "MapbenderCoreBundle:Element:button{$suffix}";
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderManagerBundle:Element:button.html.twig';
-    }
 
 }
