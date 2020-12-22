@@ -1,3 +1,10 @@
+## dev-master @ 00a7d5ea8
+* Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
+* Fix incomplete defaults for SimpleSearch `result_*`
+* Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
+* [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
+* [Framework] Fix support for ConfigMigrationInterface modifying Element class
+
 ## v3.2.3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
 
