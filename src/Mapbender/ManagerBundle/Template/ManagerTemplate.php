@@ -19,7 +19,6 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     '/components/vis-ui.js/vis-ui.js-built.js',
 
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
