@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component;
@@ -110,7 +111,7 @@ class TargetElementType extends AbstractType
             foreach ($application->getElements() as $elementEntity) {
                 /** @var Component\Element|string $elementComponentClass */
                 $elementComponentClass = $elementEntity->getClass();
-                if (class_exists($elementComponentClass)) {
+                if (ClassUtil::exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
                         $elementIds[] = $elementEntity->getId();
                     }
