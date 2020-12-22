@@ -277,6 +277,12 @@ mb:
         description: Button
       tag:
         button: button
+    linkbutton:
+      class:
+        title: Link
+        description: Link to external URL
+      admin:
+        click: Target URL
     coordinatesdisplay:
       class:
         title: 'Coordinates display'
