@@ -22,7 +22,7 @@ class ControlButton extends BaseButton
      */
     public static function getClassDescription()
     {
-        return "mb.core.button.class.description";
+        return "mb.core.controlbutton.class.description";
     }
 
     public function getWidgetName()

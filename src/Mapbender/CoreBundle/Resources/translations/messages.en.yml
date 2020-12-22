@@ -277,6 +277,9 @@ mb:
         description: Button
       tag:
         button: button
+    controlbutton:
+      class:
+        description: Controls another element
     linkbutton:
       class:
         title: Link
