@@ -276,7 +276,10 @@ ul.dropdownList{
     min-height: 600px;
     position: relative;
     padding: $space;
-    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
+    background-color: lighten($contentColor, 2%);
+    @if ($managerContentPatternUrl != "") {
+      background-image: url($managerContentPatternUrl);
+    }
     border-radius: $containerBorderRadius;
     .tabContainer, .containerExchange {
       margin-bottom: $space;
