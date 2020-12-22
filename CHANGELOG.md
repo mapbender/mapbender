@@ -1,9 +1,12 @@
-## dev-master @ 00a7d5ea8
+## dev-master @ 9aff869ca
 * Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 * Fix incomplete defaults for SimpleSearch `result_*`
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
+* Remove unreasonable default button tooltip "button"
+* Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 * [Framework] Fix support for ConfigMigrationInterface modifying Element class
+* [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
 
 ## v3.2.3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
