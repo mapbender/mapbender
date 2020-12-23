@@ -207,6 +207,9 @@ class ApplicationAssetService
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
+                    // form-theme specific widget auto-initialization
+                    '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
