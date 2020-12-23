@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ControlButtonAdminType extends AbstractType
 {
@@ -25,7 +26,8 @@ class ControlButtonAdminType extends AbstractType
             ))
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'application' => $options['application'],
-                'required' => false,
+                'required' => true,
+                'constraints' => array(new NotBlank()),
             ))
         ;
     }
