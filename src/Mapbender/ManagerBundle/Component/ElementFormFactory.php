@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Service for element configuration and acl forms.
@@ -57,10 +58,15 @@ class ElementFormFactory extends BaseElementFactory
     {
         // Create base form shared by all elements
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
-        $formType
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-        ;
         $this->migrateElementConfiguration($element);
+        $titleConstraints = array(
+            new NotBlank(),
+        );
+        $formType
+            ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
+                'constraints' => $titleConstraints,
+            ))
+        ;
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array('application' => $element->getApplication());
