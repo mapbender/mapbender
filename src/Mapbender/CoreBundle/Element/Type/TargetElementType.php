@@ -81,6 +81,13 @@ class TargetElementType extends AbstractType
             'choice_translation_domain' => 'messages',
         ));
         $resolver->setAllowedValues('class', array($fixedParentOptions['class']));
+        $resolver->setNormalizer('element_class', function(Options $options, $elementClassOption) {
+            if (false !== strpos($elementClassOption, '%')) {
+                return null;
+            } else {
+                return $elementClassOption ?: null;
+            }
+        });
     }
 
     /**
@@ -100,11 +107,7 @@ class TargetElementType extends AbstractType
         $filter->add($applicationFilter);
 
         if (!empty($options['element_class'])) {
-            if (is_integer(strpos($options['element_class'], "%"))) {
-                $classComparison = $qb->expr()->like($builderName . '.class', ':class');
-            } else {
-                $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
-            }
+            $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
             $filter->add($classComparison);
             $qb->setParameter('class', $options['element_class']);
         } else {
