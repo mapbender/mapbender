@@ -30,6 +30,6 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
         // Called on norm-to-model transformation.
         // Prevent nulls from reaching Element::setTitle()
         // @todo: make element title column nullable (requires schema update)
-        return $value || '';
+        return $value ?: '';
     }
 }
