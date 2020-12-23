@@ -76,9 +76,13 @@ class ElementFormFactory extends BaseElementFactory
         $titleConstraints = array(
             new NotBlank(),
         );
+        // @todo: support empty titles for all elements (big frontend templating impact, e.g. sidepane headers)
+        $allowEmptyTitle = \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
-                'constraints' => $titleConstraints,
+                'element_class' => $element->getClass(),
+                'required' => !$allowEmptyTitle,
+                'constraints' => $allowEmptyTitle ? array() : $titleConstraints,
             ))
         ;
         $configurationType = $this->getConfigurationFormType($element);
