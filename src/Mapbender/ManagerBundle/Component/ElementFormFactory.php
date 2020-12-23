@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -27,21 +28,27 @@ class ElementFormFactory extends BaseElementFactory
     protected $container;
     /** @var bool */
     protected $strict;
+    /** @var FormRegistryInterface */
+    protected $formRegistry;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
+     * @param FormRegistryInterface $formRegistry
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
                                 ElementInventoryService $inventoryService,
-                                ContainerInterface $container, $strict = false)
+                                ContainerInterface $container,
+                                FormRegistryInterface $formRegistry,
+                                $strict = false)
     {
         parent::__construct($inventoryService);
         $this->formFactory = $formFactory;
         $this->container = $container;
         $this->setStrict($strict);
+        $this->formRegistry = $formRegistry;
     }
 
     public function setStrict($enable)
@@ -69,7 +76,7 @@ class ElementFormFactory extends BaseElementFactory
         ;
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = array('application' => $element->getApplication());
+        $options = array();
         if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
             $options['element'] = $element;
         }
@@ -82,6 +89,12 @@ class ElementFormFactory extends BaseElementFactory
             $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
             $options['label'] = false;
+        }
+
+        $resolvedType = $this->formRegistry->getType($configurationType);
+        if ($resolvedType->getOptionsResolver()->isDefined('application')) {
+            // Only pass the "application" option if the form type requires / declares it.
+            $options['application'] = $element->getApplication();
         }
 
         $formType->add('configuration', $configurationType, $options);
