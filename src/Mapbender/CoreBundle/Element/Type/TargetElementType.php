@@ -119,7 +119,10 @@ class TargetElementType extends AbstractType
                 }
             }
 
-            if (count($elementIds) > 0) {
+            if (!count($elementIds)) {
+                // No targets available. Add an impossible condition to match nothing.
+                $filter->add($qb->expr()->eq(1, 2));
+            } else {
                 $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
                 $qb->setParameter('elm_ids', $elementIds);
             }
