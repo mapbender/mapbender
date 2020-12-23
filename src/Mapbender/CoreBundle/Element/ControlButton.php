@@ -37,6 +37,11 @@ class ControlButton extends BaseButton
         return 'Mapbender\CoreBundle\Element\Type\ControlButtonAdminType';
     }
 
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:control_button.html.twig';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array_replace(parent::getDefaultConfiguration(), array(

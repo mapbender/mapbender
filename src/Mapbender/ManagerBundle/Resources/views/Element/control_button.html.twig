@@ -1,0 +1,15 @@
+{% include 'MapbenderManagerBundle:Element:button.html.twig' %}
+
+<script type="text/javascript">
+    !(function($) {
+        var titleEl = document.getElementById({{ form.title.vars.id | json_encode | raw }});
+        var targetEl = document.getElementById({{ form.configuration.target.vars.id | json_encode | raw }});
+        var initialPlaceholder = titleEl.placeholder || '';
+        var update = function() {
+            var selected = $('option:selected', targetEl).get(0);
+            titleEl.placeholder = (selected && selected.value && $(selected).text()) || initialPlaceholder;
+        };
+        update();
+        $(targetEl).on('change', update);
+    }(jQuery));
+</script>
