@@ -15,8 +15,6 @@ class LayerThemeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'id' => null,
-            'title' => '',
             'useTheme' => true,
             'opened' => true,
             'sourceVisibility' => false,
@@ -30,8 +28,6 @@ class LayerThemeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
             ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))

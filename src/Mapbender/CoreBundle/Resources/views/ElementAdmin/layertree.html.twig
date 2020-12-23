@@ -31,12 +31,13 @@
     {% if form.configuration.themes is defined %}
         <div>
           {{ form_label(form.configuration.themes) }}
-          <table id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
-          {% for theme in form.configuration.themes %}
-            {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
-          {% endfor %}
-          </table>
-          <div class="clearContainer"></div>
+          <div class="inputWrapper">
+              <table class="table" id="{{form.configuration.themes.vars.id}}">
+              {% for theme in form.configuration.themes %}
+                {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
+              {% endfor %}
+              </table>
+          </div>
         </div>
     {% endif %}
 </div>

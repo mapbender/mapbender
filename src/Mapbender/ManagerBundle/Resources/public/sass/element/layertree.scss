@@ -1,23 +1,13 @@
 .elementFormLayerTree {
-  .collectionContainer {
-    border: solid 1px lighten($thirdColor, 15%);
-    background-color: $contentColor;
-    .collectionItem {
-      label {
-        margin-left: 5px;
-        display: inline;
-      }
-      .checkWrapper {
-        float: none;
-      }
-    }
+  /** @todo: remove float from checkbox_widget block globally */
+  .checkWrapper.left {
+    float: none;
+  }
     .theme-settings {
-      text-align: right;
       user-select: none;
       > span {
         display: inline-block;
-        text-align: left;
-        width: 1.5em;
+        min-width: 1.25em;
       }
       .item-opened .iconCheckbox:before {
         content: "\f07b" !important;
@@ -26,5 +16,4 @@
         content: "\f07c" !important;
       }
     }
-  }
 }
