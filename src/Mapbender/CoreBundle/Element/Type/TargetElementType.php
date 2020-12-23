@@ -77,7 +77,8 @@ class TargetElementType extends AbstractType
             // Symfony does not recognize array-style callables
             'query_builder' => function(Options $options) use ($type) {
                 return $type->getChoicesQueryBuilder($options);
-            }
+            },
+            'choice_translation_domain' => 'messages',
         ));
         $resolver->setAllowedValues('class', array($fixedParentOptions['class']));
     }
