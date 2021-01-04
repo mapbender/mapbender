@@ -160,7 +160,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 409880a77
+## dev-release/3.0.7 @ 1293f59e9
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -185,6 +185,9 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+- [Framework] Fix misc form control font color inconsistencies
+- [Framework] Fix TargetElementType offering all elements if all elements are not targettable
+- [Framework] Fix errors if Element configuration form type does not accept / declare an `application` option, even if it isn't used by the form type
 - [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 - [Framework] Fix support for ConfigMigrationInterface modifying Element class
 - [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance

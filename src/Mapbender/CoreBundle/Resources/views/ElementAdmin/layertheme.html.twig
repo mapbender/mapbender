@@ -1,9 +1,8 @@
-<tr id="{{form.configuration.themes.vars.id}}" class="collectionItem">
+<tr class="collectionItem">
     <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
-        {{ form_widget(theme.id) }}
-        <label class="labelInput">{{ theme.vars.data.title }}</label>{{ form_widget(theme.title) }}
+        {{ theme.vars.data.title }}
     </td>
-    <td class="theme-settings">
+    <td class="theme-settings text-nowrap text-right">
         <span title="{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}">
             {{ form_widget(theme.useTheme) }}
         </span>

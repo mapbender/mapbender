@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Element configuration entity
@@ -28,7 +27,6 @@ class Element
     /**
      * @var string|null
      * @ORM\Column(type="string", length=128)
-     * @Assert\NotBlank()
      */
     protected $title;
 

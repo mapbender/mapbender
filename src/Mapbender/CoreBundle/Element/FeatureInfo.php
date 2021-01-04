@@ -65,7 +65,6 @@ class FeatureInfo extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'type' => 'dialog',
             "autoActivate" => false,
             "deactivateOnClose" => true,
             "printResult" => false,

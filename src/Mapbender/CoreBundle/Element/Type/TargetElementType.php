@@ -77,9 +77,17 @@ class TargetElementType extends AbstractType
             // Symfony does not recognize array-style callables
             'query_builder' => function(Options $options) use ($type) {
                 return $type->getChoicesQueryBuilder($options);
-            }
+            },
+            'choice_translation_domain' => 'messages',
         ));
         $resolver->setAllowedValues('class', array($fixedParentOptions['class']));
+        $resolver->setNormalizer('element_class', function(Options $options, $elementClassOption) {
+            if (false !== strpos($elementClassOption, '%')) {
+                return null;
+            } else {
+                return $elementClassOption ?: null;
+            }
+        });
     }
 
     /**
@@ -99,11 +107,7 @@ class TargetElementType extends AbstractType
         $filter->add($applicationFilter);
 
         if (!empty($options['element_class'])) {
-            if (is_integer(strpos($options['element_class'], "%"))) {
-                $classComparison = $qb->expr()->like($builderName . '.class', ':class');
-            } else {
-                $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
-            }
+            $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
             $filter->add($classComparison);
             $qb->setParameter('class', $options['element_class']);
         } else {
@@ -118,7 +122,10 @@ class TargetElementType extends AbstractType
                 }
             }
 
-            if (count($elementIds) > 0) {
+            if (!count($elementIds)) {
+                // No targets available. Add an impossible condition to match nothing.
+                $filter->add($qb->expr()->eq(1, 2));
+            } else {
                 $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
                 $qb->setParameter('elm_ids', $elementIds);
             }
