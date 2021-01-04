@@ -101,10 +101,6 @@
             return features;
         },
 
-        defaultAction: function() {
-            this.activate();
-        },
-
         /**
          * Toggle GPS positioning
          *
