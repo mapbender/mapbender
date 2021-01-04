@@ -1,4 +1,4 @@
-## dev-master @ 9aff869ca
+## dev-master @ c54d80d2e
 * Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 * Fix incomplete defaults for SimpleSearch `result_*`
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
@@ -7,6 +7,9 @@
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 * [Framework] Fix support for ConfigMigrationInterface modifying Element class
 * [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
+* [Framework] Fix misc form control font color inconsistencies
+* [Framework] Fix TargetElementType offering all elements if all elements are not targettable
+* [Framework] Fix errors if Element configuration form type does not accept / declare an `application` option, even if it isn't used by the form type
 
 ## v3.2.3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
