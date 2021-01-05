@@ -17,16 +17,36 @@ trait FomRoleAdapterTrait
      */
     protected function getRoleNamesFromToken(TokenInterface $token)
     {
+        $standardNames = $this->getStandardRoleNamesFromToken($token);
+        $fomGroupRoleNames = $this->getFomGroupRoleNamesFromToken($token);
+        return array_values(array_unique(array_merge($standardNames, $fomGroupRoleNames)));
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @return string[]
+     */
+    protected function getStandardRoleNamesFromToken(TokenInterface $token)
+    {
         $names = array();
         foreach ($token->getRoles() as $tokenRole) {
             $names[] = $tokenRole->getRole();
         }
+        return $names;
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @return string[]
+     */
+    protected function getFomGroupRoleNamesFromToken(TokenInterface $token)
+    {
         $user = $token->getUser();
         if ($user && \is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
             // custom FOM Group entity assignment roles are NOT visible via token->getRoles
             // @todo: fix this in FOM
-            $names = array_values(array_unique(array_merge($names, $user->getRoles())));
+            return $user->getRoles();
         }
-        return $names;
+        return array();
     }
 }
