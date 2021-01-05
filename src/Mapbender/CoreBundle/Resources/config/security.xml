@@ -11,7 +11,7 @@
             <tag name="security.voter" priority="255" />
             <argument type="service" id="security.access.decision_manager" />
         </service>
-        <service id="mb_core.security.voter.unpublished_application" class="%mb_core.security.voter.db_application.class%">
+        <service id="mb_core.security.voter.db_application" class="%mb_core.security.voter.db_application.class%">
             <tag name="security.voter" priority="255" />
             <argument type="service" id="security.access.decision_manager" />
         </service>
