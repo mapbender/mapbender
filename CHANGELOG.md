@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 1293f59e9
+## dev-release/3.0.7 @ 98584501a
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -15,6 +15,7 @@
 - Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 - Fix broken PrintClient settings layout with option `legend` disabled
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
+- Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 - Remove unreasonable default button tooltip "button"
 - Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
