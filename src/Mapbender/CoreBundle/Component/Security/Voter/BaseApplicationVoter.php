@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Component\Security\Voter;
 
+use Mapbender\CoreBundle\Component\Security\FomRoleAdapterTrait;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -12,6 +13,8 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 
 abstract class BaseApplicationVoter extends Voter
 {
+    use FomRoleAdapterTrait;
+
     /** @var AccessDecisionManagerInterface */
     protected $accessDecisionManager;
     /** @var bool[] to speed up repeated oid grants checks */
@@ -75,27 +78,5 @@ abstract class BaseApplicationVoter extends Voter
         }
 
         return $this->oidGrantBuffer[$bufferKey];
-    }
-
-    /**
-     * Get role names from given token INCLUDING roles assigned by special snowflake FOM.
-     * @todo (in FOM): FOM-managed roles should already be on the token
-     *
-     * @param TokenInterface $token
-     * @return string[]
-     */
-    protected function getRoleNamesFromToken(TokenInterface $token)
-    {
-        $names = array();
-        foreach ($token->getRoles() as $tokenRole) {
-            $names[] = $tokenRole->getRole();
-        }
-        $user = $token->getUser();
-        if ($user && \is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
-            // custom FOM Group entity assignment roles are NOT visible via token->getRoles
-            // @todo: fix this in FOM
-            $names = array_values(array_unique(array_merge($names, $user->getRoles())));
-        }
-        return $names;
     }
 }
