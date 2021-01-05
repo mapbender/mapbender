@@ -40,11 +40,8 @@ class WelcomeController extends ApplicationControllerBase
         $allowedApplications = array();
 
         foreach ($allApplications as $application) {
-            try {
-                $this->checkApplicationAccess($application);
+            if ($this->isGranted('VIEW', $application)) {
                 $allowedApplications[] = $application;
-            } catch (AccessDeniedException $e) {
-                // skip silently
             }
         }
 

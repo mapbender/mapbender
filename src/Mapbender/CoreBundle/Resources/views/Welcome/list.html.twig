@@ -32,7 +32,8 @@
             <div class="buttonGroup">
               <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
 
-              {% if is_granted('EDIT', application) %}
+              {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
+              {%- if is_granted('CLONE', application) -%}
                 <a class="iconCopy hover-highlight-effect" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"></a>
               {% endif %}
 
