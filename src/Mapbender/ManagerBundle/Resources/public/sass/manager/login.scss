@@ -4,43 +4,77 @@
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
 .authWrapper {
-  margin-top: 15vh;
+  font-family: Ubuntu;
+/*  margin-top: 15vh; */
   .head {
-    position: absolute;
+    /* position: absolute;
     width: 100%;
-    height: 300px;
+    height: 100px; */
   }
   /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
-  .login-wrapper, .logoContainer {
+  .login-wrapper {
+    /* border: 2px solid red; */
     position: relative; // solve z-index clash vs .head
-    width: 90%;
-    max-width: 340px;
-    margin: 0 auto;
   }
 
   .loginBox {
-    padding: $space;
+    /* border: 3px solid blue; */
     background: lighten($contentColor, 2%);
-    border: {
+    position: absolute;
+    right: 0;
+    /* border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
       radius: $containerBorderRadius;
+    } */
+    width: 50vw;
+     height: 100vh; 
+     display: flex;
+     justify-content: center !important ;
+     /* align-content: center; */
+     flex-direction: column;
+
+  .form-login-container{
+    /* border: 2px solid blue; */
+    width: 70%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
+    margin-left: 15%;
+
+  }
+    .inputWrapper {
+      width: 100%;
+      /* border: 2px solid green; */
+
     }
 
     .input {
-      width: 100%;
-    }
+       /* width: 70%; */
+      height: 3em;
+      border-radius: 8px;
+      border: none;
+     }
+
+     .login-button {
+       font-size: 15px;
+       border-radius: 10px;
+       width: 35%;
+       transform: translateX(70px)
+     }
+
     .labelInput {
-      width: 100%;
-      line-height: 1.414;
+      /* border: 1px solid red; */
+      width: 50%;
+      font-size: 20px;
+      margin: 3% 0;
+    /**  line-height: 1.414; **/
     }
 
-    .inputWrapper {
-      display: block;
-      width: 100%;
-    }
   }
 
   a {
@@ -57,20 +91,33 @@
       max-width: 100%;
     }
   }
-  .loginBox {
+
+ /* .loginBox {
+    border: 1px solid red;
     margin-top: 15px;
-  }
+  } */
+
   .labelInput {
     display: block;
     width: 100%;
-    margin-bottom: 2px;
+    /* margin-bottom: 2px; */
   }
   .input {
-    margin-bottom: $space/2;
+    /* margin-bottom: $space/2; */
   }
 
   .linkButton {
-    margin-right: $space/2;
+    /* margin-right: $space/2; */
+    margin-left: 15%;
+    margin-top: 3%;
+    font-size: 15px;
+  }
+
+  .login-button{
+    width: 50%;
+    height: 5%;
+    margin-left: 25%;
+    margin-top: 5%;
   }
 
   .sitelinks {

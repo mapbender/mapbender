@@ -23,6 +23,10 @@
   font-family: "Ubuntu" !important;
 }
 
+.page{
+  //background-color: #EAEAEA; 
+}
+
 .navigationBar {
   // border-bottom: 1px solid #ebebeb;
   // display: flex;
@@ -104,13 +108,12 @@
 }
 
 .vertical-line {
-  width: 2px;
-  height: 50%;
-  background-color: #efefef;
+  width: 20px;
+  height: 10px;
+  background-color: #000000;
   border-color: 1px solid black;
-  position: absolute;
-  right: 10%;
-  top: 13px;
+  position: relative;
+  top: 15px;
 }
 
 // .accountMenu {
@@ -398,12 +401,15 @@
   // border: 2px solid green;
   display:flex;
   justify-content: center;
+  align-content: center;
+  padding: 10px;
 }
 
 .source-img-innercontainer {
   // border: 2px solid blue;
   padding: 1em;
   width: 130px;
+  height: 110px;
   border-radius: 15px;
   background-color: #EAEAEA;
 
@@ -414,7 +420,8 @@
 }
 
 .button-group-source {
-  margin: 5% 0;
+  margin-top: 5%;
+  padding-left: 0;
 }
 
 /*** End Source site ****/

@@ -1,5 +1,6 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
+
 {% block css %}
 	<link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
 {% endblock %}
@@ -39,8 +40,8 @@
 					{% if app.user != "" %}
 					
 					{# <div class=" accountBarContainer"> #}
+							<!-- <div class="vertical-line visible-lg hidden-sm hidden-md"></div> -->
 							<ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
-								<div class="vertical-line visible-lg hidden-sm hidden-md"></div>
 								<li class="dropdown accountOpen">
 									<a class="dropdown-toggle disable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
 									{{ "fom.core.manager.logged_as"|trans}}:
@@ -62,14 +63,12 @@
 									{%- endif -%}
 								</li>
 							</ul>
-						{% else %}
-						<button class="btn btn-link">							
-							<a class="nav navbar-nav marginy-5" href="{{ path('mapbender_core_login_login') }}">
+							{% else %}
+								<a class="nav navbar-nav btn btn-link marginy-5 navbar-right" href="{{ path('mapbender_core_login_login') }}">
 									<i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}
 								</a>
-						</button>	
-					{# </div> #}
-					{% endif %}
+							{# </div> #}
+							{% endif %}
 					 
 			</div> {# class = navbar-collapse #}
 		</div>

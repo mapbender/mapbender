@@ -22,7 +22,7 @@
       <li class="filterItem row container">
 
 
-        <div class="col1 col-md-3 source-img-container">
+        <div class="col1 col-xs-12 col-md-3 source-img-container">
           <div class="source-img-innercontainer">
             <p class="text-center smallerText">{{ source.id }}</p><br>
             <p class="text-center smallerText">{{ source.type }}</p><br>
@@ -39,7 +39,7 @@
           </a>
 
           <div class="description">{{ source.description }} This is description default</div>
-           <div class="button-group-source">
+           <div class="button-group-source ">
              <div class="buttonGroup col-md-12 col-xs-12 container-fluid marginy-5">
                <button class="btn btn-default btn-app-list">
                  <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}">
