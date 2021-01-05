@@ -8,8 +8,6 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -119,32 +117,9 @@ class ApplicationService
      * @param Entity\Element $element
      * @param string $permission
      * @return bool
-     * @todo: this needs to be a voter
      */
     protected function isElementGranted(Entity\Element $element, $permission = 'VIEW')
     {
-        if ($element->getApplication()->isYamlBased()) {
-            $roles = $element->getYamlRoles();
-            if (!$roles) {
-                // Empty list of roles => allow all
-                return true;
-            }
-            foreach ($roles as $role) {
-                if ($this->authorizationChecker->isGranted($role)) {
-                    return true;
-                }
-            }
-        }
-        $oid = ObjectIdentity::fromDomainObject($element);
-        try {
-            $acl = $this->aclProvider->findAcl($oid);
-            if ($acl->getObjectAces()) {
-                return $this->authorizationChecker->isGranted($permission, $element);
-            } else {
-                return true;
-            }
-        } catch (AclNotFoundException $e) {
-            return true;
-        }
+        return $this->authorizationChecker->isGranted($permission, $element);
     }
 }
