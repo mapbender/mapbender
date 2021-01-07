@@ -45,7 +45,7 @@
                 {{ application.description }}
             </p>
 
-            <p class="buttonGroup">
+            <div class="buttonGroup">
               <button class="btn btn-default">
                 <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
               </button>
@@ -77,7 +77,7 @@
                 ></span>
               </button>
               {% endif %}
-            </p>
+            </div>
           </div>
 
         </li>
