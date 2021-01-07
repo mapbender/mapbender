@@ -1,85 +1,96 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
 {% block css %}
-  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
+	<link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
 {% endblock %}
 
 {% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
-  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
+	{{parent()}}
+	<script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
+	<script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
 {% endblock %}
 
 {% block content %}
-  <div class="head"></div>
-    <div id="wrapper" class="page">
+	<div class="head"></div>
+	<div id="wrapper" class="page">
 
-      <nav class="navigationBar">
-        <div class="logoContainer">
-          <a href="{{ path('mapbender_core_welcome_list') }}">
-          <img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
-          </a>
-        </div>
-        {% if app.user != "" %}
-            {% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}
-        {% endif %}
+		<nav class="navigationBar">
+			<div class="logoContainer">			 
+				<a href="{{ path('mapbender_core_welcome_list') }}">
+					<img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}"/>
+				</a>
+				<div class="hamBtn">
+					<div class="hamMenu"></div>
+					<div class="hamMenu"></div>
+					<div class="hamMenu"></div>
+				</div>				
+			</div>
+			{% if app.user != "" %}
+				{% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}
+			{% endif %}
 
-        <div class="accountBarContainer">
-                    {% if app.user != "" %}
-                      <ul id="accountMenu" class="accountMenu">
-                          <li class="accountOpen">
-                              {{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}&nbsp;<span class="fa fa-chevron-down"></span>
-                              {%- if app.user.password -%}
-                                  <ul class="subAccNav">
-                                      <li>
-                                        <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}"><i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
-                                      </li>
-                                      <li>
-                                        <a href="{{ path('mapbender_core_login_logout') }}"><i class="fa far fa-sign-out"></i>&nbsp;{{ "fom.core.manager.btn.logout"|trans }}</a>
-                                      </li>
-                                  </ul>
-                              {%- endif -%}
-                          </li>
-                      </ul>
-                    {% else %}
-                      <a href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}</a>
-                    {% endif %}
-              </div>
-      </nav>
+			<div class="accountBarContainer">
+				{% if app.user != "" %}
+					<ul id="accountMenu" class="accountMenu">
+						<li class="accountOpen">
+							{{ "fom.core.manager.logged_as"|trans}}:
+							{{ app.user.username }}&nbsp;<span class="fa fa-chevron-down"></span>
+							{%- if app.user.password -%}
+								<ul class="subAccNav">
+									<li>
+										<a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
+											<i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
+									</li>
+									<li>
+										<a href="{{ path('mapbender_core_login_logout') }}">
+											<i class="fa far fa-sign-out"></i>&nbsp;{{ "fom.core.manager.btn.logout"|trans }}</a>
+									</li>
+								</ul>
+							{%- endif -%}
+						</li>
+					</ul>
+				{% else %}
+					<a href="{{ path('mapbender_core_login_login') }}">
+						<i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}</a>
+				{% endif %}
+			</div>
+		</nav>
 
-      <div class="content-list-container">
-          <div class="top">
-              
-              {% set sitelinks = get_sitelinks() %}
-              {% if sitelinks %}
-              <ul class="sitelinks">
-              <h2>This is Sitelinks</h2>
-                {% for sitelink in sitelinks %}
-                  <li class"site-links">{{ loop.first ? '' : '| ' }}
-                  <a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
-                {% endfor %}
-              </ul>
-              {% endif %}
+		<div class="content-list-container">
+			<div class="top">
 
-            {% for key, flash in app.session.bag('flashes').all() %}
-              <div class="flashBox {{ key }}">
-                {{ flash | first }}
-              </div>
-            {% endfor %}
+				{% set sitelinks = get_sitelinks() %}
+				{% if sitelinks %}
+					<ul class="sitelinks">
+						{% for sitelink in sitelinks %}
+							<li class"site-links">{{ loop.first ? '' : '| ' }}
+								<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
 
-          </div>
-        <div class="contentPane">
-          <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
-          <div class="content">
-              {% block heading %}
-              <h1 class="contentTitle">{{ block('title') }}</h1>
-              <div class="underlineTitle"></div>
-              {% endblock %}
-                {% block manager_content %}
-                {% endblock %}
-          </div>
-        </div>
-      </div>
-    </div>
+				{% for key, flash in app.session.bag('flashes').all() %}
+					<div class="flashBox {{ key }}">
+						{{ flash | first }}
+					</div>
+				{% endfor %}
+
+			</div>
+			<div class="contentPane">
+				<div id="version" class="mapbenderVersion smallText">
+					{{ fom.server_version }}</div>
+				<div class="container content">
+					<div class="innerContainer">
+						{% block heading %}
+							<h1 class="contentTitle">{{ block('title') }}</h1>
+							<div class="underlineTitle"></div>
+						{% endblock %}
+						{% block manager_content %}{% endblock %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock %}
