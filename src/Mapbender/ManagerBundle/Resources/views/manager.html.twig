@@ -14,8 +14,8 @@
   <div class="head"></div>
     <div id="wrapper" class="page">
 
-      <nav class="navigation-bar">
-        <div class="logo-container">
+      <nav class="navigationBar">
+        <div class="logoContainer">
           <a href="{{ path('mapbender_core_welcome_list') }}">
           <img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
           </a>
@@ -24,13 +24,13 @@
             {% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}
         {% endif %}
 
-        <div class="account-bar-container">
+        <div class="accountBarContainer">
                     {% if app.user != "" %}
-                      <ul id="accountMenu" class="account-menu">
-                          <li class="account-open">
+                      <ul id="accountMenu" class="accountMenu">
+                          <li class="accountOpen">
                               {{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}&nbsp;<span class="fa fa-chevron-down"></span>
                               {%- if app.user.password -%}
-                                  <ul class="sub-acc-nav">
+                                  <ul class="subAccNav">
                                       <li>
                                         <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}"><i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
                                       </li>
@@ -71,12 +71,12 @@
         <div class="contentPane">
           <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
           <div class="content">
-          {% block heading %}
-          <h1 class="content-title">{{ block('title') }}</h1>
-          <div class="underline-title"></div>
-          {% endblock %}
-            {% block manager_content %}
-            {% endblock %}
+              {% block heading %}
+              <h1 class="contentTitle">{{ block('title') }}</h1>
+              <div class="underlineTitle"></div>
+              {% endblock %}
+                {% block manager_content %}
+                {% endblock %}
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@
             <div class="smallerText">{{ item.id }}</div>
             <div class="smallerText">{{ item.source.type }}</div>
           </div>
+
           <div class="col2 box">
           <div class="contentTitle">
             <div class="buttonGroup button-toolbar pull-right">
@@ -41,9 +42,12 @@
           </div>
           <div>{{ item.source.description }}</div>
           </div>
+
         </li>
+        
       {% endfor %}
       </ul>
+
     {% else %}
         <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
     {% endif %}

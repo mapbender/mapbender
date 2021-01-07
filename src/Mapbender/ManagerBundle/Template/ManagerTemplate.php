@@ -16,7 +16,8 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                 );
             case 'js':
                 return array(
-                    '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderManagerBundle/Resources/public/js/events.js',
+                    // '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
