@@ -9,34 +9,59 @@
 
 {% block manager_content %}
 {% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+     <a class="hidden-sm hidden-lg iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+  <div class="container pull-left filter-input-container">
+    <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label>
+    <input id="inputFilterServices" type="text" class="input listFilterInput">
+  </div>
 
   <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
-      <li class="filterItem">
-        <div class="col1">
-          <span class="smallerText">{{ source.id }}</span><br>
-          <span class="smallerText">{{ source.type }}</span><br>
+      <li class="filterItem row container">
+
+
+        <div class="col1 col-xs-12 col-md-3 source-img-container">
+          <div class="source-img-innercontainer">
+            <p class="text-center smallerText">{{ source.id }}</p><br>
+            <p class="text-center smallerText">{{ source.type }}</p><br>
+          </div>
         </div>
-        <div class="col2 box">
-            <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-              {% if source.id in reloadableIds %}
-              <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
-              {% endif %}
-              {% if is_granted('DELETE', oid) %}
+
+
+
+        <div class="col2 box col-md-9 list-filter-source">
+
+          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
+            {{ source.title }}
+            <span class="smallerText"> {{ source.alias }}</span>
+          </a>
+
+          <div class="description">{{ source.description }} This is description default</div>
+           <div class="button-group-source ">
+             <div class="buttonGroup col-md-12 col-xs-12 container-fluid marginy-5">
+               <button class="btn btn-default btn-app-list">
+                 <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}">
+                 </a>
+               </button>
+               {% if source.id in reloadableIds %}
+               <button class="btn btn-default btn-app-list">
+                 <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+               </button>
+               {% endif %}
+               <button class="btn btn-default btn-app-list">
+                 {% if is_granted('DELETE', oid) %}
                  <a href="#" class="-fn-delete hover-highlight-effect"
-                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
-              {% endif %}
-            </div>
-          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
-          <div class="description">{{ source.description }}</div>
+                             title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
+                             data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
+                             data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
+                 {% endif %}
+               </button>
+             </div>
+           </div>
         </div>
+
       </li>
     {% endfor %}
   </ul>
