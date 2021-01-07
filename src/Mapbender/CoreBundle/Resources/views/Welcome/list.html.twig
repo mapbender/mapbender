@@ -32,21 +32,20 @@
               </div>
             </div>
           </a>
-
-					<div class="col-md-10 col-sm-12 padding-0 listContentContainer">
-
-						<div class="pull-left textContent col-md-12 col-xs-12">
-							<a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="text-left title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
-								{{ application.title }}
-							</a>
-							<p class="smallerText">
-								<b>URL Title:</b>
-								{{ application.slug }}</p>
-							<p class="description">
-								<b>
-									Descriptions:</b>
-								{{ application.description }}</p>
-						</div>
+          <div class="col-md-10 col-sm-12 padding-0">
+            <div class="col-md-12 col-xs-12">
+            <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
+                {{ application.title }}
+            </a>
+            <p>
+                <b>URL Title:</b>
+                {{ application.slug }}
+            </p>
+            <p>
+                <b>Descriptions:</b>
+                {{ application.description }}
+            </p>
+          </div>
 
 						<div class="buttonGroup col-md-12 col-xs-12 container-fluid marginy-5">
 
