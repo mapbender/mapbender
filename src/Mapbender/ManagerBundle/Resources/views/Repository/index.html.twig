@@ -39,29 +39,19 @@
           </a>
 
           <div class="description">{{ source.description }} This is description default</div>
-           <div class="button-group-source ">
-             <div class="buttonGroup col-md-12 col-xs-12 container-fluid marginy-5">
-               <button class="btn btn-default btn-app-list">
-                 <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}">
-                 </a>
-               </button>
-               {% if source.id in reloadableIds %}
-               <button class="btn btn-default btn-app-list">
-                 <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
-               </button>
-               {% endif %}
-               <button class="btn btn-default btn-app-list">
-                 {% if is_granted('DELETE', oid) %}
-                 <a href="#" class="-fn-delete hover-highlight-effect"
-                             title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                             data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                             data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
-                 {% endif %}
-               </button>
+            <div class="buttonGroup">
+              <a class="btn btn-default iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+              {% if source.id in reloadableIds %}
+              <a class="iconReset btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+              {% endif %}
+              {% if is_granted('DELETE', oid) %}
+                 <a href="#" class="btn btn-default -fn-delete hover-highlight-effect"
+                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
+                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
+                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
+              {% endif %}
              </div>
-           </div>
         </div>
-
       </li>
     {% endfor %}
   </ul>
