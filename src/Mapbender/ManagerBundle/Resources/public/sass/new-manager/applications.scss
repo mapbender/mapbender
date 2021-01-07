@@ -23,6 +23,12 @@
   font-family: "Ubuntu" !important;
 }
 
+.listFilterBoxes {
+  a {
+    color: inherit;
+  }
+}
+
 .page{
   //background-color: #EAEAEA; 
 }
@@ -146,7 +152,6 @@
 
   .title {
     font-size: 2em;
-    color: #222222;
     font-weight: 500;
   }
 
@@ -251,11 +256,6 @@
 
 .padding-0 {
   padding: 0 !important;
-}
-
-.app-list-icon {
-  font-size: 15px;
-  color: #222222;
 }
 
 .btn-app-list {
