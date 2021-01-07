@@ -29,61 +29,24 @@
   }
 }
 
-.page{
-  //background-color: #EAEAEA; 
-}
-
 .navigationBar {
-  // border-bottom: 1px solid #ebebeb;
-  // display: flex;
-  // flex-direction: row;
   background-color: transparent;
   padding-top: 3px;
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
 
   .logoContainer {
-    // border: 1px solid red;
-    // position:relative;
-    // left: 50px;
-    // padding: 5px;
 
     .logo {
       width: 120px;
-      // margin: 10px 0;
     }
   }
 }
 
-// #navigationListContainer {
-//   // border: 1px solid black;
-//   width: 80%;
-//   display: flex;
-//   justify-content: center;
-// }
-
-// .navMainItems {
-//   width: 10%;
-
-//   .navMainLink {
-//     height: 100%;
-//   }
-// }
-
-.navbar-container {
-  // border: 1px solid black;
-  
-}
-
-
 .subNavItem {
-  // border: 1px solid black;
-  // border: 1px solid rgba(8, 8, 8, 0.4);
   width: 15em;
-  // height: 50px;
   background-color: #efefef;
   position: absolute;
   z-index: 5;
-  // left: 30%;
   top: 100%;
   position: absolute;
   display: flex;
@@ -107,10 +70,6 @@
 
 .accountBarContainer {
   border: 2px solid blue;
-//   width: 10%;
-//   position: absolute;
-//   right: 8%;
-//   top: 1%;
 }
 
 .vertical-line {
@@ -122,31 +81,12 @@
   top: 15px;
 }
 
-// .accountMenu {
-//   border: 2px solid black;
-// }
-
-// .accountMenu li {
-//   list-style-type: none;
-// }
-
-// .subAccNav {
-//   display: none;
-// }
-
-// .accountOpen:hover .subAccNav {
-//   display: block;
-// }
-
-
 .content {
-  // border: 2px solid green;
   margin-top: 2%;
   display: flex;
   justify-content: center;
 
   .innerContainer {
-    // border: 2px solid blue;
     width: 80%;
   }
 
@@ -156,10 +96,7 @@
   }
 
   .contentTitle {
-    // border: 2px solid palevioletred;
-    // width: 100%;
     position: relative;
-    // left: 25%;
   }
 
   .underlineTitle {
@@ -167,13 +104,11 @@
     height: 5px;
     background-color: #079ee0;
     position: relative;
-    // left: 25%;
     border-radius: 30px;
   }
 }
 
 .filter-input-container {
-  // border: 2px solid #222222;
   position: relative;
   left: 75%;
   box-sizing: border-box;
@@ -197,36 +132,26 @@
 }
 
 .listFilterContainer {
-  // border: 2px solid blue;
   position: relative;
   display: flex;
   flex-direction: column;
-  // left: 25%;
   margin-top: 8%;
 }
 
 
 .filterItem {
-  // border: 2px solid green;
   width: 100%;
   list-style: none;
   margin: 1%;
   padding: 1%;
   border-radius: 15px;
-  // overflow: hidden;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 
   .col1 {
-    // border: 2px solid red;
     position: relative;
-    // left: 7%;
-    // border-radius: 15px;
 
     .cell {
-      // border: 2px solid red;
       position: relative;
-      // margin: 10% 15%;
-      
 
       img {
         max-width: 100%;
@@ -266,123 +191,11 @@
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-// .iconView, .iconCopy, .iconEdit, .iconRemove {
-//   color: black;
-// }
-
-
-// .listContentContainer {
-//   // border: 2px solid cyan;
-//   width: 85%;
-//   display: flex;
-//   // flex-direction: row;
-// }
-
-// .textContent {
-//   // border: 2px solid red;
-//   margin: 0 4%;
-//   flex-grow: 3;
-// }
-
-// .buttonGroup {
-//   // border: 2px solid green;
-//   display: flex;
-//   flex-grow: 2;
-//   justify-content: flex-end;
-// }
-
-// .buttonGroup a {
-//   margin: 0 6px;
-//   font-size: 20px;
-//   color: #222222;
-// }
-// .buttonGroup span {
-//   margin: 0 6px;
-//   font-size: 20px;
-// }
-
-/* new application */ 
-
-// .dropdownValue,
-// .dropdownList {
-//   display: none;
-// }
-
-// .containerSecurity {
-//   display: none;
-//   //   border: 2px solid black;
-// }
-
-// .container {
-//   width: 70%;
-// }
-
-// .containerMainContent {
-//   //   border: 2px solid crimson;
-//   margin-top: 5%;
-// }
-
-// .newAppTabs {
-//   //   border: 2px solid crimson;
-//   display: flex;
-//   justify-content: flex-start;
-//   position: relative;
-//   height: 10%;
-//   //   left: 13%;
-
-//   li {
-//     list-style: none;
-//     margin-right: 5%;
-//     font-size: 20px;
-//   }
-
-//   #tabBaseData {
-//     color: #079ee0;
-//   }
-// }
-
-// .applicationTabContainer {
-//   // border: 1px solid green;
-// }
-
-// .containerBaseData {
-//   // border: 2px solid red;
-//   display: none;
-//   position: relative;
-//   //   left: 13%;
-//   margin-top: 7%;
-// }
-
-// .buttonContainerNewApp {
-//   // border: 2px solid crimson;
-//   width: 50%;
-//   position: relative;
-//   left: 30%;
-//   margin: 15% 0;
-//   display: flex;
-//   justify-content: flex-end;
-
-//   #buttonCreate {
-//     width: 15%;
-//     margin: 0 5%;
-//   }
-
-//   #buttonCancel {
-//     width: 15%;
-
-//     a {
-//       color: #ffffff;
-//       text-decoration: none;
-//     }
-//   }
-// }
-
 .doActive {
   display: block;
 }
 
 .blueTabUnderline {
-  //   border: 1px solid red;
   width: 67px;
   height: 3px;
   border-radius: 50px;
@@ -395,7 +208,6 @@
 /*** Source site ****/
 
 .source-img-container {
-  // border: 2px solid green;
   display:flex;
   justify-content: center;
   align-content: center;
@@ -403,7 +215,6 @@
 }
 
 .source-img-innercontainer {
-  // border: 2px solid blue;
   padding: 1em;
   width: 130px;
   height: 110px;
@@ -412,148 +223,7 @@
 
 }
 
-.list-filter-source{
-  // border: 2px solid green;
-}
-
 .button-group-source {
   margin-top: 5%;
   padding-left: 0;
 }
-
-/*** End Source site ****/
-
-// @media screen and (max-width: 800px) {
-//   .navigationBar {
-//     border-bottom: 1px solid #ebebeb;
-//     display: flex;
-//     flex-direction: column;
-//     padding-top: 3px;
-//     // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
-
-//     .logoContainer {
-//       // border: 1px solid red;
-//       left: 0;
-//       border-bottom: 1px solid #222222;
-//       height: 10vh;
-      
-
-//       .logo {
-//         width: 200px;
-//         margin: 2% 0;
-//       }
-
-//       .hamBtn {
-//         // border: 2px solid black;
-//         border: none;
-//         background-color: transparent;
-//         width: 50px;
-//         height: 50px;
-//         margin: 3% 0;
-//         float: right;
-
-//         .hamMenu {
-//           background-color: #222222;
-//           margin: 5px 5px;
-//           border-radius: 30px;
-//           width: 80%;
-//           height: 5px;
-//         }
-//       }
-//     }
-//   }
-
-//   .navigationListContainer {
-//     // background-color: red;
-//     border-bottom: 1px solid #222222;
-//     width: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     position: relative;
-//     left: 0;
-//     display: none;
-
-//     .navMainItems {
-//       // display: none;
-//       font-size: 26px;
-//     }
-
-//     .subNavItem {
-//       position: relative;
-//       // top: 0;
-//       display: flex;
-//       flex-direction: column;
-//       display: none;
-//       left: 10px;
-//     }
-
-//     .navMainItems:hover .subNavItem {
-//       display: inline-block;
-//       position: relative;
-//       left: 10px;
-//     }
-//   }
-
-//   .navigationListContainerHam {
-//     display: block;
-//   }
-
-//   .subAccNav {
-//     // display: none;
-//   }
-//   .accountBarContainer {
-//     // border: 2px solid red;
-//     width: 100%;
-//     left: 0;
-//     position: relative;
-//     display: none;
-//   }
-
-//   .container {
-//     // border: 1px solid green;
-//     width: 100%;
-//   }
-
-//   .content {
-//     .contentTitle {
-//       // border: 1px solid black;
-//       text-align: center;
-//       margin: 5% 0;
-//     }
-
-//     .underlineTitle {
-//       display: none;
-//     }
-//   }
-
-//   .filter-input-container {
-//     width: 90%;
-//     left: 20%;
-//     margin: 3% 0;
-//     padding: 5%;
-//     box-shadow: none;
-//   }
-
-//   .filterItem {
-//     width: 100%;
-//     margin: 5% 0;
-
-//     .col1 {
-//       // border: 1px solid red;
-//       height: 100%;
-//       display: flex;
-//       align-items: center;
-//       margin: 0 5%;
-//     }
-//   }
-
-//   .listContentContainer {
-//     display: flex;
-//     flex-direction: column;
-//   }
-
-//   .buttonGroup {
-//     justify-content: flex-start;
-//     margin-left: 0.5%;
-//   }
-// }
