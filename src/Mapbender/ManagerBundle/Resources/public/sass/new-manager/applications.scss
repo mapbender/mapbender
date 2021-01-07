@@ -1,59 +1,98 @@
 @import url("components/open-sans/open-sans.css");
 @import url("components/bootstrap/css/bootstrap.min.css");
+@import "libs/icons";
 
-*{
+
+// @import "bundles/mapbendermanager/sass/element/form.scss";
+
+@import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
+
+/* Old class deleted: 
+
+.leftPane
+.navItem
+.navItemLevel2
+.navLevel1
+
+
+*/
+
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: "Ubuntu";
 }
+
 
 .navigation-bar {
-    // border: 1px solid black;
+    border-bottom: 1px solid #ebebeb;
     display: flex;
+    flex-direction: row;
+    padding-top: 3px;
+    // box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+
+
+
+    .logo-container {
+        // border: 1px solid red;
+       
+        padding: 5px;
+
+        .logo {
+            width: 100px;
+        }
+
+    }
 }
 
-.navigation-list {
+.navigation-list-container {
     // border: 1px solid black;
     width: 60%;
     display: flex;
     justify-content: flex-end;
     position: relative;
     left: 10%;
+    
+    .nav-main-items {
+        color: #222222;
+        font-size: 20px;
+        margin: 1% 2%;
+        list-style-type: none;
+
+        
+    }
 }
 
-.nav-main {
-    color: #222222;
-    font-size: 20px;
-}
-
-.navigation-list ul:nth-child(2){
-    border: 1px solid red;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    // display: flex;
-    display: none;
-    flex-direction: row;
-    justify-content: center;
-
-}
-
-.navItem {
-    margin: 1% 2%;
-    list-style-type: none;
-}
-
-.navLevel2 {
+.sub-nav-item {
     // border: 1px solid black;
     display: none;
 }
 
-.nav-main:hover .navLevel2{
+.nav-main-items:hover .sub-nav-item{
     display: block;
+    position: absolute;
+    z-index: 5;
 }
 
-.account-bar-wrap {
+
+// .navigation-list ul:nth-child(2){
+//     border: 1px solid red;
+//     position: absolute;
+//     top: 100%;
+//     right: 0;
+//     width: 100%;
+//     // display: flex;
+//     display: none;
+//     flex-direction: row;
+//     justify-content: center;
+
+// }
+
+
+
+
+.account-bar-container {
     // border: 2px solid blue;
     width: 10%;
     position: absolute;
@@ -61,9 +100,18 @@
     top: 1%;
 }
 
-.accountMenu li{
+.account-menu li{
     list-style-type: none;
 }
+
+.sub-acc-nav {
+    display: none;
+}
+
+.account-open:hover .sub-acc-nav {
+    display: block;
+}
+
 
 .content{
     // border: 2px solid green;
@@ -108,18 +156,99 @@
     box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 }
 
-.filterItem .box {
-    margin: 0 3%;
+.list-content-container {
+    // border: 2px solid cyan;
+    width: 85%;
+    display: flex;
+    // flex-direction: row;
+    
+}
+
+.text-content {
+    // border: 2px solid red;
+    margin: 0 1%;
+    flex-grow: 3;
+}
+
+.button-group{
+    // border: 2px solid green;    
+    display: flex;
+    flex-grow: 2;
+    justify-content: flex-end;
+}
+
+.button-group a {
+    margin: 0 6px;
+    font-size: 20px;
+    color: #222222;
+}
+.button-group span {
+    margin: 0 6px;
+    font-size: 20px
 }
 
 .title {
     font-size: 2em;
+    color: #222222;
+    font-weight: 500;
 }
 
 
-.contentTitle {
+.content-title {
     // border: 2px solid palevioletred;
     width: 20%;
     position: relative;
     left: 25%;
+}
+
+.underline-title {
+    width: 130px;
+    height: 5px;
+    background-color: #079ee0;
+    position: relative;
+    left: 25%;
+    border-radius: 30px;
+}
+
+
+// new application
+
+.dropdownValue, .dropdownList {
+    display: none;
+}
+
+.containerSecurity {
+    display: none;
+}
+
+.container {
+    width: 70%;
+}
+
+.containerMainContent {
+    margin-top: 5%;
+}
+
+.newAppTabs {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    left: 13%;
+
+    li {
+        list-style: none;
+        margin-right: 5%;
+        font-size: 20px;
+    }
+}
+
+.applicationTabContainer {
+    // border: 1px solid green;
+}
+
+.containerBaseData {
+    // border: 2px solid red;
+    position: relative;
+    left: 13%;
+    margin-top: 7%;
 }

@@ -53,8 +53,10 @@
               {% set sitelinks = get_sitelinks() %}
               {% if sitelinks %}
               <ul class="sitelinks">
+              <h2>This is Sitelinks</h2>
                 {% for sitelink in sitelinks %}
-                  <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+                  <li class"site-links">{{ loop.first ? '' : '| ' }}
+                  <a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
                 {% endfor %}
               </ul>
               {% endif %}
@@ -70,9 +72,11 @@
           <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
           <div class="content">
           {% block heading %}
-          <h1 class="contentTitle">{{ block('title') }}</h1>
+          <h1 class="content-title">{{ block('title') }}</h1>
+          <div class="underline-title"></div>
           {% endblock %}
-            {% block manager_content %}{% endblock %}
+            {% block manager_content %}
+            {% endblock %}
           </div>
         </div>
       </div>
