@@ -33,16 +33,14 @@
 						{% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}			
 					{% endif %}
 
-					
-					
+
+
 
 					{% if app.user != "" %}
-					
-					{# <div class=" accountBarContainer"> #}
 							<!-- <div class="vertical-line visible-lg hidden-sm hidden-md"></div> -->
 							<ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
 								<li class="dropdown accountOpen">
-									<a class="dropdown-toggle disable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
+									<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 									{{ "fom.core.manager.logged_as"|trans}}:
 									{{ app.user.username }}
 									&nbsp;
@@ -51,7 +49,7 @@
                           {%- if app.user.password -%}
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="disable" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
+                                    <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
                                         <i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
                                 </li>
                                 <li>
