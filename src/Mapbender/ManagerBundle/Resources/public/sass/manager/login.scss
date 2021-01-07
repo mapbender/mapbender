@@ -3,8 +3,11 @@
 @import "libs/icons";
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
+body {
+  font-family: "Ubuntu", $fontFamily;
+}
+
 .authWrapper {
-  font-family: Ubuntu;
 /*  margin-top: 15vh; */
   .head {
     /* position: absolute;

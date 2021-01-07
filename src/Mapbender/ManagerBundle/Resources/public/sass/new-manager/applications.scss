@@ -1,3 +1,4 @@
+@import "libs/variables";
 @import url("components/open-sans/open-sans.css");
 @import url("components/bootstrap/css/bootstrap.min.css");
 @import "libs/icons";
@@ -16,11 +17,14 @@
 
 */
 
+body {
+  font-family: "Ubuntu", $fontFamily;
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Ubuntu" !important;
 }
 
 .listFilterBoxes {
