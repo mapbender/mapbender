@@ -8,9 +8,12 @@
 {% block manager_content %}
 {# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
     {% if items and items | length %}
-      <div id="search-bar-container">
-        <label for="inputFilter0" class="labelInput">{{ "mb.actions.filter" | trans }}</label>
-        <input id="inputFilter0" type="text" class="input listFilterInput">
+      <div class="text-right">
+        <span class="filter-input-container text-nowrap">
+          <label for="inputFilter0" class="labelInput">{{ "mb.actions.filter" | trans }}</label>
+          <input id="inputFilter0" type="text" class="input listFilterInput">
+          <span class="iconSearch"></span>
+        </span>
       </div>
 
       <ul id="listFilter0" class="listFilterContainer listFilterBoxes listFilterServiceBoxes -fn-instance-list">
