@@ -1,22 +1,21 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
-
 {% block css %}
-	<link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
+  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
 {% endblock %}
 
 {% block js %}
-	{{parent()}}
-	<script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
-	<script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
+  {{parent()}}
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
 {% endblock %}
 
 {% block content %}
-	<div class="head"></div>
-	<div id="wrapper" class="page">
+    <div class="head"></div>
+    <div id="wrapper" class="page">
 
-		<nav class="navbar navbar-default  navigationBar">
-			<div class="container-fluid logoContainer">			 
+		<nav class="navbar navbar-default navigationBar">
+			<div class="container-fluid logoContainer">
 				<div class="navbar-header">
 					<button  type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
 						<span class="sr-only">Toggle navigation</span>
@@ -88,28 +87,25 @@
 					</ul>
 				{% endif %}
 
-				{% for key, flash in app.session.bag('flashes').all() %}
-					<div class="flashBox {{ key }}">
-						{{ flash | first }}
-					</div>
-				{% endfor %}
-
-			</div>
-			<div class="contentPane">
-				<div id="version" class="hidden mapbenderVersion smallText">
-							{{ fom.server_version }}
-					</div>
-				<div class="container content">
-					<div class="innerContainer">
-						{% block heading %}
-							<h1 class="contentTitle">{{ block('title') }}</h1>
-							<div class="underlineTitle"></div>
-						{% endblock %}
-						{% block manager_content %}{% endblock %}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            {% for key, flash in app.session.bag('flashes').all() %}
+              <div class="flashBox {{ key }}">
+                {{ flash | first }}
+              </div>
+            {% endfor %}
+          </div>
+        <div class="contentPane">
+          <div id="version" class="hidden mapbenderVersion smallText">v. {{ fom.server_version }}</div>
+          <div class="container content">
+            <div class="innerContainer">
+              {% block heading %}
+                <h1 class="contentTitle">{{ block('title') }}</h1>
+                <div class="underlineTitle"></div>
+              {% endblock %}
+              {% block manager_content %}{% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 {% endblock %}
