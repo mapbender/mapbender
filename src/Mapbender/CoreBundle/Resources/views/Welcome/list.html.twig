@@ -11,12 +11,13 @@
 
   {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
   {% if applications | length > 0 %}
-
-		<div class="container pull-left filter-input-container">
-			<label for="inputFilterApplications" class="col-md-3 labelInput">{{ "mb.actions.filter" | trans}}</label>
-			<input id="inputFilterApplications" type="text" class="input col-md-7 listFilterInput">
-			<span class="iconSearch col-md-2"></span>
-		</div>
+    <div class="text-right">
+      <span class="filter-input-container text-nowrap">
+        <label for="inputFilterApplications">{{ "mb.actions.filter" | trans}}</label>
+        <input id="inputFilterApplications" type="text" class="input listFilterInput">
+        <span class="iconSearch"></span>
+      </span>
+    </div>
 
     <ul id="listFilterApplications" class="container-fluid listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
       {% for application in applications %}

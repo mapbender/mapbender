@@ -12,9 +12,11 @@
 <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
-  <div class="container pull-left filter-input-container">
-    <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label>
-    <input id="inputFilterServices" type="text" class="input listFilterInput">
+  <div class="text-right">
+      <span class="filter-input-container text-nowrap">
+        <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label>
+        <input id="inputFilterServices" type="text" class="input listFilterInput">
+      </span>
   </div>
 
   <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">

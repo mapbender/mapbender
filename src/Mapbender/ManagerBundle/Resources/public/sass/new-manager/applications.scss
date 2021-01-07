@@ -113,26 +113,16 @@ body {
 }
 
 .filter-input-container {
-  position: relative;
-  left: 75%;
-  box-sizing: border-box;
-  width: 25%;
-  padding: 2%;
+  padding: 1em;
   border-radius: 15px;
-  overflow: hidden;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
-  display: flex;
-  flex-direction: row;
-
-  .labelInput {
-    margin: 0 2%;
-  }
 }
 
 .listFilterInput {
   border: none;
   border-bottom: 1px solid black;
   opacity: 0.4;
+  max-width: 9em;
 }
 
 .listFilterContainer {
