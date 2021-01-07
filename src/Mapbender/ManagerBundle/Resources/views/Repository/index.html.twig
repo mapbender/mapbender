@@ -9,7 +9,7 @@
 
 {% block manager_content %}
 {% if create_permission %}
-     <a class="hidden-sm hidden-lg iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
   <div class="container pull-left filter-input-container">
