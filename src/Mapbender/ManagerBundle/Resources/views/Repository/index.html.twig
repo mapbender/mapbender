@@ -21,19 +21,14 @@
 
   <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
-      <li class="filterItem row container">
-
-
-        <div class="col1 col-xs-12 col-md-3 source-img-container">
+      <li class="filterItem">
+        <div class="col-xs-12 col-md-3 source-img-container">
           <div class="source-img-innercontainer">
             <p class="text-center smallerText">{{ source.id }}</p><br>
             <p class="text-center smallerText">{{ source.type }}</p><br>
           </div>
         </div>
-
-
-
-        <div class="col2 box col-md-9 list-filter-source">
+        <div class="box col-md-9">
 
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
             {{ source.title }}
