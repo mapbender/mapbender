@@ -4,7 +4,7 @@
  */
 $(function() {
     // init tabcontainers --------------------------------------------------------------------
-     var tabs = $(".tabContainer").find(".tab");
+    var tabs = $(".tabContainer").find(".tab");
     tabs.attr("tabindex", 0);
     tabs.bind("click keypress", function(e) {
         if (e.type === "keypress" && e.keyCode !== 13) {
