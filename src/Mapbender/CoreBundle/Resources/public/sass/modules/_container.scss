@@ -5,32 +5,6 @@
 .listFilterBoxes{
   li {
     margin-bottom: $space;
-    display: flex;
-    flex-direction: row;
-  }
-  .col1 {
-    flex: 0 0 auto;  // no growth
-    text-align:center;
-    color:$lightFontColor;
-    background-color:$firstColor;
-  }
-  .col2 {
-    padding:$space/2;
-    flex: 1 1 auto;  // fit available space
-  }
-  .buttonGroup {
-    float: right;
-    font-size: 20px;
-    line-height: 1;
-    white-space: nowrap;
-    > * + * {
-      margin-left: .2em;
-    }
-  }
-  .description{
-    margin-top:$space/2;
-    padding-top:$space/2;
-    border-top:dashed 1px darken(#fff, 30%);
   }
 }
 .messageBox{
