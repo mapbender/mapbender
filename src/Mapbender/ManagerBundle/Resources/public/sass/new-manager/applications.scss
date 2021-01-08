@@ -142,7 +142,7 @@ body {
   list-style: none;
   display: block;
   margin-bottom: 15px;
-  padding: 1%;
+  padding: 10px;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 
@@ -199,21 +199,16 @@ body {
   bottom: 13px;
 }
 
-
-/*** Source site ****/
-
-.source-img-container {
-  display:flex;
-  justify-content: center;
-  align-content: center;
-  padding: 10px;
-}
-
-.source-img-innercontainer {
-  padding: 1em;
-  width: 130px;
-  height: 110px;
+.listFilterBoxes > li .preview-img {
+  width: 120px;
+  height: 120px;
   border-radius: 15px;
+  margin-bottom: 10px;
   background-color: #EAEAEA;
-
+  .placeholder-text {
+    padding: 15px;
+    p {
+      margin: 10px auto;
+    }
+  }
 }

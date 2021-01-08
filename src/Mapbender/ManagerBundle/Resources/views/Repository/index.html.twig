@@ -23,11 +23,13 @@
   <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
       <li class="filterItem">
-        <div class="col-xs-12 col-md-3 source-img-container">
-          <div class="source-img-innercontainer">
-            <p class="text-center smallerText">{{ source.id }}</p><br>
-            <p class="text-center smallerText">{{ source.type }}</p><br>
-          </div>
+        <div class="col-xs-12 col-md-3">
+            <div class="preview-img center-block text-center">
+                <div class="placeholder-text">
+                    <p>{{ source.id }}</p>
+                    <p>{{ source.type }}</p>
+                </div>
+            </div>
         </div>
         <div class="box col-md-9">
 
