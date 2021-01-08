@@ -22,8 +22,8 @@
 
   <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
-      <li class="filterItem">
-        <div class="col-xs-12 col-md-3">
+      <li class="filterItem row">
+        <div class="col-xs-3">
             <div class="preview-img center-block text-center">
                 <div class="placeholder-text">
                     <p>{{ source.id }}</p>
@@ -31,8 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="box col-md-9">
-
+        <div class="col-md-9 col-xs-12">
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
             {{ source.title }}
             <span class="smallerText"> {{ source.alias }}</span>

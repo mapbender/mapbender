@@ -21,13 +21,13 @@
 
     <ul id="listFilterApplications" class="container-fluid listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
       {% for application in applications %}
-        <li class="filterItem">
+        <li class="filterItem row">
           <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
-            <div class="col-md-2 col-xs-12">
+            <div class="col-xs-3">
               {% if application.screenshot is not null %}
-                  <img class="preview-img" src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
+                  <img class="preview-img center-block" src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
               {% else %}
-                  <div class="preview-img">
+                  <div class="preview-img center-block text-center">
                     <div class="placeholder-text">
                       <span class="iconAppDefault"></span>
                     </div>
@@ -35,7 +35,7 @@
               {% endif %}
             </div>
           </a>
-          <div class="col-md-10 col-sm-12">
+          <div class="col-md-9 col-xs-12">
             <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
                 {{ application.title }}
             </a>
