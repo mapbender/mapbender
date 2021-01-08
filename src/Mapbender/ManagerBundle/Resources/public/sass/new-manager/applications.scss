@@ -184,10 +184,13 @@ body {
   border-radius: 15px;
   margin-bottom: 10px;
   background-color: #EAEAEA;
-  .placeholder-text {
+  .placeholder-text, .placeholder-icon {
     padding: 15px;
-    p {
-      margin: 10px auto;
-    }
+  }
+  .placeholder-text p {
+    margin: 10px auto;
+  }
+  .placeholder-icon {
+    font-size: 60px;
   }
 }
