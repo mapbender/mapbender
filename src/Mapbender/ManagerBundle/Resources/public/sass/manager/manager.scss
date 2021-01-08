@@ -134,15 +134,8 @@ div.contentTitle {
   float: right;
 }
 .sitelinks {
-  margin-top: 0.5em;
   li {
     display: inline-block;
-    a, a:visited {
-      color: inherit;
-    }
-    a:hover, a:focus {
-      color: $lightFontColor;
-    }
   }
 }
 
