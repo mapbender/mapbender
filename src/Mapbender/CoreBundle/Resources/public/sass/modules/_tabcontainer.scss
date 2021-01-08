@@ -73,9 +73,12 @@
     padding-bottom:$space;
     z-index:20;
     position:relative;
-    width: 100%;
     &.active{display:block;}
   }
+}
+
+.tabContainer .container, .tabContainerAlt .container {
+  width: auto;  // overrule Bootstrap .container (which has varying width depending on screen size)
 }
 
 .accordionContainer {
