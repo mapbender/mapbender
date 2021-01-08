@@ -13,7 +13,9 @@
         </div>
         <div class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
         {% if app.user != "" %}
-            {% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}
+            <ul class="nav navbar-nav text-center navbar-container navbar-left" id="navigationListContainer">
+                {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
+            </ul>
         {% endif %}
         {% if app.user != "" %}
             <!-- <div class="vertical-line visible-lg hidden-sm hidden-md"></div> -->
