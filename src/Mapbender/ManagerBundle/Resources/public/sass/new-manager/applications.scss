@@ -122,6 +122,9 @@ body {
   padding: 1em;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+  label {
+    margin-right: 1em;
+  }
 }
 
 .listFilterInput {
