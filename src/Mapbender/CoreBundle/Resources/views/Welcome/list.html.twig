@@ -19,7 +19,7 @@
       </span>
     </div>
 
-    <ul id="listFilterApplications" class="container-fluid listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
+    <ul id="listFilterApplications" class="listFilterBoxes">
       {% for application in applications %}
         <li class="filterItem row">
           <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">

@@ -28,6 +28,7 @@ body {
 }
 
 .listFilterBoxes {
+  margin-top: 8%;
   a {
     color: inherit;
   }
@@ -128,13 +129,6 @@ body {
   border-bottom: 1px solid black;
   opacity: 0.4;
   max-width: 9em;
-}
-
-.listFilterContainer {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin-top: 8%;
 }
 
 .listFilterBoxes > li {
