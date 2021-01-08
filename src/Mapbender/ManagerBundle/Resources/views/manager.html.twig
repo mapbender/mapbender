@@ -18,7 +18,7 @@
           <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
               {% if sitelinks %}
-              <ul class="sitelinks">
+              <ul class="sitelinks list-unstyled">
                 {% for sitelink in sitelinks %}
                   <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
                 {% endfor %}
