@@ -1,9 +1,9 @@
 {% for item in items %}
-  <li class="navMainItems {% if item.active %} activeItem{% endif %}">
-    <a class="navMainLink" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
+  <li class="{% if item.active %}activeItem{% endif %}">
+    <a href="{{ path(item.route) }}">{{ item.title|trans }}</a>
     {%- set items = item.subroutes  -%}
     {%- if items|length -%}
-      <ul class="nav navbar-nav subNavItem">
+      <ul class="nav navbar-nav">
           {{ include('MapbenderManagerBundle:Index:menu-items.html.twig') }}
       </ul>
     {%- endif -%}
