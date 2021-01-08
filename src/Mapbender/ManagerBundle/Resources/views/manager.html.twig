@@ -13,8 +13,9 @@
 {% block content %}
     <div id="wrapper">
       {% include 'MapbenderCoreBundle::navbar.html.twig' %}
-      <div class="content-list-container">
-          <div class="top">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
               {% if sitelinks %}
               <ul class="sitelinks">
@@ -23,7 +24,14 @@
                 {% endfor %}
               </ul>
               {% endif %}
-
+          </div>
+          <div class="col-xs-6 text-right" id="version">
+            v. {{ fom.server_version }}
+          </div>
+        </div>
+      </div>
+      <div class="content-list-container">
+          <div class="top">
             {% for key, flash in app.session.bag('flashes').all() %}
               <div class="flashBox {{ key }}">
                 {{ flash | first }}
@@ -31,7 +39,6 @@
             {% endfor %}
           </div>
         <div class="contentPane">
-          <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
           <div class="container content">
             <div class="innerContainer">
               {% block heading %}
