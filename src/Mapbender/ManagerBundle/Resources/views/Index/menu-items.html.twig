@@ -1,5 +1,5 @@
 {% for item in items %}
-  <li class="{% if item.active %}activeItem{% endif %}">
+  <li class="{% if item.active %}active{% endif %}">
     <a href="{{ path(item.route) }}">{{ item.title|trans }}</a>
     {%- set items = item.subroutes  -%}
     {%- if items|length -%}
