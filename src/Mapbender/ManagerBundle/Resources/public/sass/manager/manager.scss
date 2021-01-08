@@ -65,6 +65,10 @@ div.contentTitle {
     margin: 0.5em 0;
   }
 }
+:not(.popup) .contentTitle {
+  // Undo dashed border (rule is for frontend and for popups only)
+  border-bottom: none;
+}
 
 
 // ------------------------------------------------------------------------ PAGE
