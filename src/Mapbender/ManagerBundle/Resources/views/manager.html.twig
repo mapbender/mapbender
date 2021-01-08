@@ -13,61 +13,7 @@
 {% block content %}
     <div class="head"></div>
     <div id="wrapper" class="page">
-
-		<nav class="navbar navbar-default navigationBar">
-			<div class="container-fluid logoContainer">
-				<div class="navbar-header">
-					<button  type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand " href="{{ path('mapbender_core_welcome_list') }}">
-						<img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}"/>
-					</a>
-				</div>
-
-				<div class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
-					{% if app.user != "" %}			
-						{% include 'MapbenderManagerBundle:Index:menu.html.twig' with {menu: mapbender_manager_menu_items(app.request)} %}			
-					{% endif %}
-
-
-
-
-					{% if app.user != "" %}
-							<!-- <div class="vertical-line visible-lg hidden-sm hidden-md"></div> -->
-							<ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
-								<li class="dropdown accountOpen">
-									<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-									{{ "fom.core.manager.logged_as"|trans}}:
-									{{ app.user.username }}
-									&nbsp;
-									<span class="fa fa-chevron-down"></span>
-									</a>
-                          {%- if app.user.password -%}
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
-                                        <i class="fa fas fa-wrench"></i>&nbsp;{{ "fom.core.manager.you_account"|trans }}</a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('mapbender_core_login_logout') }}">
-                                        <i class="fa far fa-sign-out"></i>&nbsp;{{ "fom.core.manager.btn.logout"|trans }}</a>
-                                </li>
-                            </ul>
-                          {%- endif -%}
-                        </li>
-                      </ul>
-                    {% else %}
-                      <a class="nav navbar-nav btn btn-link marginy-5 navbar-right" href="{{ path('mapbender_core_login_login') }}">
-                        <i class="fa fas fa-sign-in"></i>&nbsp;{{ "fom.core.manager.btn.login"|trans}}
-                      </a>
-                    {% endif %}
-                  </div>
-              </div>
-      </nav>
+      {% include 'MapbenderCoreBundle::navbar.html.twig' %}
       <div class="content-list-container">
           <div class="top">
               {% set sitelinks = get_sitelinks() %}
