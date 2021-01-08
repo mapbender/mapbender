@@ -1,18 +1,3 @@
-// ------------------------------------------------------------- SERVICES
-.listFilterServiceBoxes{
-  $col1Width: 60px;
-
-  .col1 {
-    width: $col1Width;
-    padding: $space/4;
-
-    .icon {
-        // undo built-in cursor: pointer on .icon*
-        cursor: default;
-    }
-  }
-}
-
 /**
  * .box adds a border. If a fieldset has .box, that border appears at "strikethrough" height for the fieldset legend,
  * which looks pretty bad. For this combination, remove the standard bottom border and minimize legend width to allow the
