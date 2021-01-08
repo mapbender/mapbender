@@ -140,7 +140,8 @@ body {
 .listFilterBoxes > li {
   width: 100%;
   list-style: none;
-  margin: 1%;
+  display: block;
+  margin-bottom: 15px;
   padding: 1%;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
