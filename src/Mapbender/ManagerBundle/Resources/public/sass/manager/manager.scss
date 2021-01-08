@@ -240,12 +240,7 @@ ul.dropdownList{
 
 .contentPane {
   > .content {
-    min-height: 600px;
-    position: relative;
-    padding: $space;
-    background: lighten($contentColor, 2%);
-    border-radius: $containerBorderRadius;
-    .tabContainer, .containerExchange {
+    .tabContainer {
       margin-bottom: $space;
     }
 
@@ -287,13 +282,6 @@ ul.dropdownList{
     .button-group {
       text-align: right;
       margin: $space 0;
-    }
-
-    border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
     }
   }
 }
