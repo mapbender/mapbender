@@ -72,7 +72,6 @@ div.contentTitle {
 
 // ------------------------------------------------------------------------ PAGE
 .page{
-  top:-$bannerHeight;
   margin: 0 auto;
   width:$pageWidth;
 }
@@ -130,6 +129,11 @@ div.contentTitle {
                                       rgba(255,255,255,0)),
                       url($headPatternUrl));
   hr{@include absolute('' 0 0 0);}
+}
+
+// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
+.head + .page {
+  margin-top: -$bannerHeight;
 }
 
 .account-bar-wrap {
