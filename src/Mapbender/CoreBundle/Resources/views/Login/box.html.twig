@@ -18,18 +18,18 @@
   {% endblock %}
 {% block content %}
   <div class="authWrapper">
-    <div class="head">
-      <hr class="dekoSeperator">
-    </div>
+    <!-- <div class="head" -->
+      <!--  <hr class="dekoSeperator"> -->
+      <!-- </div> -->
     <div class="login-wrapper">
-      <div class="logoContainer">
-        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
-                                                                 src="{{ asset(fom.server_logo) }}"/></a>
-      </div>
+      <!--  <div class="logoContainer"> -->
+        <!-- <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+          src="{{ asset(fom.server_logo) }}"/></a> -->
+        <!-- </div> -->
       {% block box_content %}{% endblock %}
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
-      <ul class="sitelinks">
+      <ul class="sitelinks list-unstyled">
         {% for sitelink in sitelinks %}
           <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
         {% endfor %}
@@ -38,3 +38,5 @@
     </div>
   </div>
 {% endblock %}
+
+

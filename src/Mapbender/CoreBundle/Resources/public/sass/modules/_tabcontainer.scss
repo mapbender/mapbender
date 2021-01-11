@@ -108,6 +108,10 @@
   }
 }
 
+.tabContainer .container, .tabContainerAlt .container {
+  width: auto;  // overrule Bootstrap .container (which has varying width depending on screen size)
+}
+
 .accordionContainer {
   .accordion{
     user-select: none;

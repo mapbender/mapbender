@@ -25,11 +25,7 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
-body {
-  background-image:url($imageBasePath + '/body.png');
-}
-
-.navigation, .accountBar {
+.navigation {
   color: $middleFontColor;
 }
 
@@ -68,6 +64,10 @@ div.contentTitle {
   > p {
     margin: 0.5em 0;
   }
+}
+:not(.popup) .contentTitle {
+  // Undo dashed border (rule is for frontend and for popups only)
+  border-bottom: none;
 }
 
 
@@ -138,41 +138,10 @@ div.contentTitle {
   float: right;
 }
 .sitelinks {
-  margin-top: 0.5em;
   li {
     display: inline-block;
-    a, a:visited {
-      color: inherit;
-    }
-    a:hover, a:focus {
-      color: $lightFontColor;
-    }
   }
 }
-.accountBar {
-  #accountOpen {
-    cursor: pointer;
-  }
-  padding: ($space/4) ($space/2) ($space/4) ($space/2);
-  background-color: $contentColor;
-  border-bottom-left-radius: $containerBorderRadius;
-  border-bottom-right-radius: $containerBorderRadius;
-  > .accountMenu {
-    height: 21px; // root line height (not available as variable)
-    overflow: hidden;
-    @include transition(all 0.2s ease-in-out);
-
-    &.opened {
-      height: 63px;
-    }
-  }
-}
-
-
-
-
-
-
 
 // ------------------------------------------------------------------- PAGE LEFT
 .leftPane{
@@ -261,16 +230,13 @@ ul.dropdownList{
 }
 
 .contentPane {
-  .title, .subTitle {
-    color: $ciColor;
-  }
   > .content {
     min-height: 600px;
     position: relative;
     padding: $space;
     background-color: lighten($contentColor, 2%);
     border-radius: $containerBorderRadius;
-    .tabContainer, .containerExchange {
+    .tabContainer {
       margin-bottom: $space;
     }
 
@@ -313,17 +279,6 @@ ul.dropdownList{
       text-align: right;
       margin: $space 0;
     }
-
-    border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
-    }
-  }
-  .mapbenderVersion{
-    color:$lightFontColor;
-    text-align:right;
   }
 }
 
@@ -333,22 +288,27 @@ ul.dropdownList{
 }
 
 label[for^="inputFilter"] {
-  width: auto;
-  min-width: 80px;
-  margin: 0 1em 0 0;
+  &.labelInput {
+    margin: 0 1em 0 0;
+  }
+  /** FOM templates like to add .left for no particular reason, defeat that */
+  &.left {
+    float: none;
+  }
+}
+
+.listFilterInput.left {
   /** FOM templates like to add .left for no particular reason, defeat that */
   float: none;
 }
 
-.listFilterInput{
-  width: 200px;
-  max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
-  // HACK: The proper way to do this is to wrap label + input into a .form-group, or any other div really,
-  //       and put the margin onto the container. This would require changing FOM-generated markup though...
-  margin-bottom: 1.5 * $space;
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
+// Temporary hacks to circumvent FOM markup expecting a margin-bottom on the listFilterInput
+// All occurrences of listFilterInput in FOM markup are preceded by a table, either immediately, or
+// with a (redundant) div.clearContainer between them
+.listFilterInput ~ table {
+  margin-top: 1.5 * $space;
 }
+
 
 #addElmPermission {
   // Link is outside of element permission markup, but want to display as an ~overlay top right
@@ -391,9 +351,6 @@ label[for^="inputFilter"] {
       text-align: center;
       width: 1.5em;
     }
-  }
-  .listFilterInput{
-    margin-bottom: 0;
   }
   .tagbox {
     font-size: 85%;

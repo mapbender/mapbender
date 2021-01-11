@@ -4,9 +4,11 @@
 
 {% block box_content %}
   <div class="loginBox login">
-    <h1 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h1>
+    <div class="form-login-container">
+      <h1 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h1>
       {{ form_start(form) }}
       {{ form_widget(form) }}
+    </div>
 
       {% if selfregister == true %}
       <a class="linkButton iconLinkButton" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
@@ -15,8 +17,8 @@
       <a class="linkButton iconLinkButton" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
       {% endif %}
 
-      <input type="submit" class="right button" value="{{ 'fom.user.login.login.login' | trans}}" />
-      <div class="clearContainer"></div>
+      <input type="submit" class="btn btn-primary login-button right" value="{{ 'fom.user.login.login.login' | trans}}" />
+      <!-- <div class="clearContainer"></div> -->
     {{ form_end(form) }}
   </div>
 {% endblock %}

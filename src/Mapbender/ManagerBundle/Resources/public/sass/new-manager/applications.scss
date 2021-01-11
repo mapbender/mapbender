@@ -1,0 +1,195 @@
+@import "libs/variables";
+@import url("components/open-sans/open-sans.css");
+@import url("components/bootstrap/css/bootstrap.min.css");
+@import "libs/icons";
+
+// @import "bundles/mapbendermanager/sass/element/form.scss";
+
+@import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
+
+/* Old class deleted: 
+
+.leftPane
+.navItem
+.navItemLevel2
+.navLevel1
+
+
+*/
+
+body {
+  font-family: "Ubuntu", $fontFamily;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.listFilterBoxes {
+  margin-top: 8%;
+  a {
+    color: inherit;
+  }
+}
+
+.navigationBar {
+  background-color: transparent;
+  padding-top: 3px;
+  box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+
+  .navbar-brand {
+    // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
+    padding-top: 5px;
+    padding-bottom: 5px;
+    // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
+    // see https://stackoverflow.com/a/7310398
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+    }
+  }
+  .logo {
+    max-width: 120px;
+    max-height: 100%;
+  }
+  .navbar-brand>img.logo {
+    display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
+  }
+}
+
+.navigationBar .navbar-nav ul.nav {
+  width: 15em;
+  background-color: #efefef;
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+
+  li {
+    // undo upstream .navbar-nav > li { float: left; } to allow li growth to full width
+    float: none;
+  }
+}
+
+.navigationBar .nav > li > ul.nav {
+  display: none;
+}
+
+.navigationBar .nav > li:hover > ul.nav {
+  display: block;
+}
+
+.vertical-line {
+  width: 20px;
+  height: 10px;
+  background-color: #000000;
+  border-color: 1px solid black;
+  position: relative;
+  top: 15px;
+}
+
+.content {
+  margin-top: 2%;
+  display: flex;
+  justify-content: center;
+
+  .innerContainer {
+    width: 80%;
+  }
+
+  .title {
+    font-size: 2em;
+    font-weight: 500;
+  }
+
+  .underlineTitle {
+    width: 130px;
+    height: 5px;
+    background-color: #079ee0;
+    position: relative;
+    border-radius: 30px;
+  }
+}
+
+.filter-input-container {
+  padding: 1em;
+  border-radius: 15px;
+  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+  label {
+    margin-right: 1em;
+  }
+}
+
+.listFilterInput {
+  border: none;
+  border-bottom: 1px solid black;
+  opacity: 0.4;
+  max-width: 9em;
+}
+
+.listFilterBoxes > li {
+  width: 100%;
+  list-style: none;
+  display: block;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+}
+
+.paddingx-5 {
+  padding: 0 5px; 
+}
+
+.padding-5 {
+  padding: 2em;
+}
+
+.marginy-5 {
+  margin: 5px 0;
+}
+
+.padding-left-3 {
+  padding-left: 3px;
+}
+
+.padding-0 {
+  padding: 0 !important;
+}
+
+.listFilterBoxes .buttonGroup .btn {
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px 20px;
+  border: none;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.blueTabUnderline {
+  width: 67px;
+  height: 3px;
+  border-radius: 50px;
+  background-color: #079ee0;
+  position: relative;
+  bottom: 13px;
+}
+
+.listFilterBoxes > li .preview-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  background-color: #EAEAEA;
+  .placeholder-text, .placeholder-icon {
+    padding: 15px;
+  }
+  .placeholder-text p {
+    margin: 10px auto;
+  }
+  .placeholder-icon {
+    font-size: 60px;
+  }
+}

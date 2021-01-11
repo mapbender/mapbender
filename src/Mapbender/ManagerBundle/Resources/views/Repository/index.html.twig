@@ -12,30 +12,44 @@
 <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+  <div class="text-right">
+      <span class="filter-input-container text-nowrap">
+        <label for="inputFilterServices">{{ "mb.actions.filter" | trans }}</label>
+        <input id="inputFilterServices" type="text" class="input listFilterInput">
+        <span class="iconSearch"></span>
+      </span>
+  </div>
 
-  <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
+  <ul id="listFilterServices" class="listFilterBoxes">
     {% for source in sources %}
-      <li class="filterItem">
-        <div class="col1">
-          <span class="smallerText">{{ source.id }}</span><br>
-          <span class="smallerText">{{ source.type }}</span><br>
+      <li class="filterItem row">
+        <div class="col-xs-3">
+            <div class="preview-img center-block text-center">
+                <div class="placeholder-text">
+                    <p>{{ source.id }}</p>
+                    <p>{{ source.type }}</p>
+                </div>
+            </div>
         </div>
-        <div class="col2 box">
+        <div class="col-md-9 col-xs-12">
+          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
+            {{ source.title }}
+            <span class="smallerText"> {{ source.alias }}</span>
+          </a>
+
+            <p>{{ source.description }}</p>
             <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+              <a class="btn btn-default iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
               {% if source.id in reloadableIds %}
-              <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+              <a class="iconReset btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
               {% endif %}
               {% if is_granted('DELETE', oid) %}
-                 <a href="#" class="-fn-delete hover-highlight-effect"
+                 <a href="#" class="btn btn-default -fn-delete hover-highlight-effect"
                   title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                   data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                   data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
               {% endif %}
-            </div>
-          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
-          <div class="description">{{ source.description }}</div>
+             </div>
         </div>
       </li>
     {% endfor %}

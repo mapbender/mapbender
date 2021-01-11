@@ -81,16 +81,6 @@ $(function() {
         }, (idx + 1) * 2000);
     });
 
-    // init user box -------------------------------------------------------------------------
-    $("#accountOpen").bind("click", function(){
-        var menu = $("#accountMenu");
-        if(menu.hasClass("opened")){
-            menu.removeClass("opened");
-        }else{
-            menu.addClass("opened");
-        }
-    });
-
     // init permissions table ----------------------------------------------------------------
     // set permission root state
     function setPermissionsRootState(className, scope){

@@ -9,25 +9,33 @@
 {% endblock %}
 
 {% block manager_content %}
+  <div class="container" id="containerMainContent">
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
-      <ul class="tabs">
-        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
+      <ul class="nav nav-pills newAppTabs" role="tablist">
+          <li role="presentation" class="tab active" id="tabBaseData">
+            <a href="#basedata" aria-controls="basedata" role="tab" data-toggle="tab">
+              {{"mb.manager.admin.application.new.base_data" | trans }}
+            </a>
+          </li>
           {% if form.acl is defined %}
-            <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
+            <li role="presentation" class="tab" id="tabSecurity">
+              <a href="#security" aria-controls="security" role="tab" data-toggle="tab">
+                {{"mb.manager.admin.application.security.title" | trans }}
+              </a>
+            </li>
           {% endif %}
       </ul>
-      <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-          <div class="col-xs-8">
+      <div class="tab-content">
+           <div id="basedata" role="tabpanel" class="tab-pane active containerBaseData">
             {{ form_row(form.template) }}
             {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
-           <div class="col-xs-4">
+           {# <div class="col-xs-4">
                <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-           </div>
-      </div>
+           </div> #}
 
-      <div id="containerSecurity" class="container containerSecurity">
+      <div id="security" class="tab-pane containerSecurity" role="tabpanel">
         {% block securityTab %}
           {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
         {% endblock %}
@@ -35,10 +43,11 @@
     </div>
 
     <div class="button-group">
-      <input type="submit" value="{{ 'mb.manager.admin.application.btn.create' | trans }}" class="button"/>
-      <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.btn.cancel' | trans}}</a>
+        <input type="submit" value="{{ 'mb.manager.admin.application.btn.create' | trans }}" class="button btn btn-success"/>
+        <a href="{{ path('mapbender_manager_application_index') }}" class="btn btn-danger critical">{{ 'mb.manager.admin.application.btn.cancel' | trans}}</a>
     </div>
 
     {{ form_row(form._token) }}
     {{ form_end(form, {"render_rest": false}) }}
+  </div>
 {% endblock %}

@@ -7,7 +7,7 @@ select.numeric {
   }
 }
 
-.dropdown{
+.dropdown:not(.bs-dropdown) {
   cursor:pointer;
   position: relative;
   color: $inputForegroundColor;
