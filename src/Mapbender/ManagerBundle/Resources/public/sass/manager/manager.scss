@@ -79,16 +79,6 @@ div.contentTitle {
 .popupContainer,
 .page{
   position:relative;
-  @media (min-width: 992px){
-    .container {
-      width: auto;
-    }
-  }
-  @media (min-width: 768px){
-    .container {
-      width: auto;
-    }
-  }
 
   // Overrule Bootstrap (very specific selectors) on padding top / bottom
   // Keep left / right padding (8px from Bootstrap .table rules)
