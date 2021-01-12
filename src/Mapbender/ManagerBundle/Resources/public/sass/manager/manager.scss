@@ -73,7 +73,6 @@ div.contentTitle {
 
 // ------------------------------------------------------------------------ PAGE
 .page{
-  top:-$bannerHeight;
   margin: 0 auto;
   width:$pageWidth;
 }
@@ -134,11 +133,15 @@ div.contentTitle {
   }
 }
 
+// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
+.head + .page {
+  margin-top: -$bannerHeight;
+}
+
 .account-bar-wrap {
   float: right;
 }
 .sitelinks {
-  margin-top: 0.5em;
   li {
     display: inline-block;
     a, a:visited {
@@ -149,21 +152,26 @@ div.contentTitle {
     }
   }
 }
+.sitelinks, .accountBar {
+  line-height: 2.5;
+}
+
 .accountBar {
   #accountOpen {
     cursor: pointer;
   }
-  padding: ($space/4) ($space/2) ($space/4) ($space/2);
+  padding: 0 ($space/2);
   background-color: $contentColor;
   border-bottom-left-radius: $containerBorderRadius;
   border-bottom-right-radius: $containerBorderRadius;
   > .accountMenu {
-    height: 21px; // root line height (not available as variable)
+    height: 2.5em; // Legacy hack: clip to exactly one line-height
     overflow: hidden;
     @include transition(all 0.2s ease-in-out);
 
     &.opened {
-      height: 63px;
+      // Legacy hack: assume exactly three lines of content
+      height: 3 * 2.5em;
     }
   }
 }

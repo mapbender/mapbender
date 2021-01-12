@@ -85,10 +85,14 @@ $(function () {
     // init dropdown list --------------------------------------------------------------------
 
     function toggleList() {
+        var opts = $('.hiddenDropdown', this);
+        if (!opts.length) {
+            // Not a redecorated select, probably a Bootstrap dropdown
+            return;
+        }
+        var list = $('.dropdownList', this);
         fixOptions(this);
         var me = $(this);
-        var list = $('.dropdownList', this);
-        var opts = $('.hiddenDropdown', this);
         if (list.css("display") === "block") {
             list.hide();
         } else {
