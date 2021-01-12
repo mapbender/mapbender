@@ -44,25 +44,12 @@
    *
    * http://api.jqueryui.com/tabs/#theming
    */
-  .ui-tabs {
-    @extend .tabContainerAlt;
-  }
   .ui-tabs .ui-tabs-nav {
     margin-bottom: $space / 2;
     padding-bottom: $space / 2;
   }
-  .ui-tabs .ui-tabs-nav li {
-    list-style: none;
-    float: left;
-    position: relative;
-    top: 0;
-    margin: 1px .2em 0 0;
-    padding: 0;
-    white-space: nowrap;
-  }
   .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-    float: left;
-    padding: .5em 1em;
     text-decoration: none;
+    outline: none;
   }
 }
