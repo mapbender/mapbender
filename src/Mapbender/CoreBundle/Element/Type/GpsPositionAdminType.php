@@ -20,6 +20,7 @@ class GpsPositionAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
+            'application' => null,
             'average'     => 1,
         ));
     }
