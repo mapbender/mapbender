@@ -1,5 +1,5 @@
-<div>
-    <button type="button" class="button hidden -fn-toggle-frame">{{ 'mb.core.printclient.btn.activate' | trans }}</button>
+<div class="btn-group">
+    <button type="button" class="btn btn-sm btn-default -fn-toggle-frame">{{ 'mb.core.printclient.btn.activate' | trans }}</button>
 </div>
 
 <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
@@ -90,7 +90,7 @@
 
     <div class="hidden -fn-hidden-fields"></div>
     <div class="text-right">
-        <input type="submit" class="button" value="{{ 'mb.actions.print' | trans }}" />
-        <button type="button" class="button critical buttonCancel popupClose">{{ 'mb.actions.cancel' | trans }}</button>
+        <input type="submit" class="btn btn-success btn-sm" value="{{ 'mb.actions.print' | trans }}" />
+        <button type="button" class="btn btn-danger btn-sm popupClose">{{ 'mb.actions.cancel' | trans }}</button>
     </div>
 </form>
