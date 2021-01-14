@@ -9,6 +9,10 @@
  * @typedef {Object} SourceSettings
  * @property {Number} opacity
  */
+/**
+ * @typedef {Object} SourceSettingsDiff
+ * @property {Number} [opacity]
+ */
 
 window.Mapbender = Mapbender || {};
 
@@ -142,6 +146,20 @@ window.Mapbender.Source = (function() {
             var dirty = this.configuration.options.opacity !== settings.opacity;
             this.setOpacity(settings.opacity);
             return dirty;
+        },
+        /**
+         * @param {SourceSettings} to
+         * @param {SourceSettings} from
+         * @return {SourceSettingsDiff|null}
+         */
+        diffSettings: function(to, from) {
+            if (to.opacity !== from.opacity) {
+                return {
+                    opacity: to.opacity
+                };
+            } else {
+                return null;
+            }
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;

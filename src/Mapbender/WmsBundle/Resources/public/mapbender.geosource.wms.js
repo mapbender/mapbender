@@ -2,6 +2,11 @@
  * @typedef {SourceSettings} WmsSourceSettings
  * @property {Array<String>} selectedIds
  */
+/**
+ * @typedef {SourceSettingsDiff} WmsSourceSettingsDiff
+ * @typedef {Array<String>} [deselectedIds]
+ * @typedef {Array<String>} [selectedIds]
+ */
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
@@ -108,6 +113,30 @@ window.Mapbender.WmsSource = (function() {
                 layer.setSelected(selected);
             });
             return dirty;
+        },
+        /**
+         * @param {WmsSourceSettings} to
+         * @param {WmsSourceSettings} from
+         * @return {WmsSourceSettingsDiff|null}
+         */
+        diffSettings: function(to, from) {
+            var diff = Mapbender.Source.prototype.diffSettings.apply(this, arguments);
+            var selectedExtra = to.selectedIds.filter(function(id) {
+                return -1 === from.selectedIds.indexOf(id);
+            });
+            var deselected = from.selectedIds.filter(function(id) {
+                return -1 === to.selectedIds.indexOf(id);
+            });
+            if (!diff && (selectedExtra.length || deselected.length)) {
+                diff = {};
+            }
+            if (selectedExtra.length) {
+                diff.selectedIds = selectedExtra;
+            }
+            if (deselected.length) {
+                diff.deselected = deselected;
+            }
+            return diff;
         },
         getSelected: function() {
             // delegate to root layer
