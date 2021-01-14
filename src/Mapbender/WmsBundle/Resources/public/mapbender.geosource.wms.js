@@ -7,6 +7,9 @@ window.Mapbender.WmsSourceLayer = (function() {
     WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
     Object.assign(WmsSourceLayer.prototype, {
         constructor: WmsSourceLayer,
+        getId: function() {
+            return this.options.id;
+        },
         getSelected: function() {
             return this.options.treeOptions.selected;
         },
