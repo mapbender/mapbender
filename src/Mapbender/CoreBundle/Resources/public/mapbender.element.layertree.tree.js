@@ -2,7 +2,6 @@
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
-            displaytype: 'tree',
             autoOpen: false,
             useTheme: false,
             target: null,
@@ -16,10 +15,8 @@
             menu: []
         },
         model: null,
-        dlg: null,
         template: null,
         menuTemplate: null,
-        layerconf: null,
         popup: null,
         created: false,
         loadStarted: {},
