@@ -13,6 +13,16 @@ window.Mapbender.WmsSourceLayer = (function() {
         getSelected: function() {
             return this.options.treeOptions.selected;
         },
+        getSelectedList: function() {
+            var selectedLayers = [];
+            if (this.getSelected()) {
+                selectedLayers.push(this);
+            }
+            for (var i = 0; i < this.children.length; ++i) {
+                selectedLayers = selectedLayers.concat(this.children[i].getSelectedList());
+            }
+            return selectedLayers;
+        },
         isInScale: function(scale) {
             // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
             //       equivalently
@@ -66,6 +76,15 @@ window.Mapbender.WmsSource = (function() {
         _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
         createNativeLayers: function(srsName) {
             return [Mapbender.mapEngine.createWmsLayer(this)];
+        },
+        getSettings: function() {
+            var selectedLayers = this.configuration.children[0].getSelectedList();
+            var selectedIds = selectedLayers.map(function(layer) {
+                return layer.getId();
+            });
+            return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+                selectedIds: selectedIds
+            });
         },
         getSelected: function() {
             // delegate to root layer

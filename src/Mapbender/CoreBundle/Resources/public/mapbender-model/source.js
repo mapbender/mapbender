@@ -77,6 +77,7 @@ window.Mapbender.Source = (function() {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
         this.children = this.configuration.children;
+        this.initialSettings = this.getSettings();
     }
     Source.typeMap = {};
     /**
@@ -123,6 +124,11 @@ window.Mapbender.Source = (function() {
         },
         getNativeLayers: function() {
             return this.nativeLayers.slice();
+        },
+        getSettings: function() {
+            return {
+                opacity: this.configuration.options.opacity
+            };
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;
