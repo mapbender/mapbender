@@ -65,8 +65,7 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
-            if (this.created)
-                this._unSortable();
+            $('ul.layers:first', this.element).empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var li_s = this._createSourceTree(sources[i]);
