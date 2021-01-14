@@ -616,6 +616,10 @@ window.Mapbender.MapModelBase = (function() {
                     });
                 }
             }
+            this.mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: this.mbMap,
+                params: this.getCurrentViewParams()
+            });
         },
         _applyLayerSrsChange: function(srsNameFrom, srsNameTo) {
             for (var i = 0; i < this.sourceTree.length; ++i) {
