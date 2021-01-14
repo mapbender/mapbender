@@ -598,6 +598,7 @@ window.Mapbender.MapModelBase = (function() {
                 mbMap: this.mbMap
             });
             this._changeProjectionInternal(srsNameBefore, srsName);
+            this._applyLayerSrsChange(srsNameBefore, srsName);
             this.mbMap.element.trigger('mbmapsrschanged', {
                 from: srsNameBefore,
                 to: srsName,
@@ -615,6 +616,23 @@ window.Mapbender.MapModelBase = (function() {
                     });
                 }
             }
+        },
+        _applyLayerSrsChange: function(srsNameFrom, srsNameTo) {
+            for (var i = 0; i < this.sourceTree.length; ++i) {
+                var source = this.sourceTree[i];
+                if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
+                    var olLayers = source.initializeLayers(srsNameTo);
+                    for (var j = 0; j < olLayers.length; ++j) {
+                        var olLayer = olLayers[j];
+                        Mapbender.mapEngine.setLayerVisibility(olLayer, false);
+                    }
+                    this._spliceLayers(source, olLayers);
+                }
+            }
+            var self = this;
+            self.sourceTree.map(function(source) {
+                self._checkSource(source, false);
+            });
         },
         /**
          * @param {number|null} targetZoom

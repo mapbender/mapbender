@@ -495,21 +495,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        for (i = 0; i < this.sourceTree.length; ++i) {
-            source = this.sourceTree[i];
-            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                olLayers = source.initializeLayers(srsNameTo);
-                for (j = 0; j < olLayers.length; ++j) {
-                    var olLayer = olLayers[j];
-                    engine.setLayerVisibility(olLayer, false);
-                }
-                this._spliceLayers(source, olLayers);
-            }
-        }
-        var self = this;
-        self.sourceTree.map(function(source) {
-            self._checkSource(source, false);
-        });
     },
     /**
      * Injects native layers into the map at the "natural" position for the source.

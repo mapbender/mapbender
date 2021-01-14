@@ -476,21 +476,6 @@ window.Mapbender.MapModelOl4 = (function() {
 
         var newView = new ol.View(newViewOptions);
         this.olMap.setView(newView);
-        for (i = 0; i < this.sourceTree.length; ++i) {
-            source = this.sourceTree[i];
-            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                olLayers = source.initializeLayers(srsNameTo);
-                for (j = 0; j < olLayers.length; ++j) {
-                    var olLayer = olLayers[j];
-                    engine.setLayerVisibility(olLayer, false);
-                }
-                this._spliceLayers(source, olLayers);
-            }
-        }
-        var self = this;
-        self.sourceTree.map(function(source) {
-            self._checkSource(source, false);
-        });
     },
 
         /**
