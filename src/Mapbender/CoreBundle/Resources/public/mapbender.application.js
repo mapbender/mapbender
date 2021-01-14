@@ -351,6 +351,13 @@ $.extend(Mapbender, (function($) {
 
 
     function setup() {
+        // Disable ~"functional" a href="#" links from opening new tab / breaking fragment-based navigation history
+        // This is equivalent to what the (missing) base Bootstrap script does.
+        $(document).on('click', 'a[href="#"]', function(e) {
+            e.preventDefault();
+            // Allow other event handlers to continue processing
+            return true;
+        });
         window.Mapbender.mapEngine = Mapbender.MapEngine.factory(Mapbender.configuration.application.mapEngineCode);
         _initLayersets(Mapbender.configuration.layersets || {});
 
