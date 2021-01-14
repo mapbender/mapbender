@@ -28,7 +28,7 @@ window.Mapbender.MapModelBase = (function() {
     /**
      * @typedef {Object} mmMapSettings
      * @property {mmViewParams} viewParams
-     * @property {Array} sources
+     * @property {Array<{id: string, settings: SourceSettings}>} sources
      */
     /**
      * @param {Object} mbMap
@@ -938,6 +938,29 @@ window.Mapbender.MapModelBase = (function() {
                 })
                 // @todo: capture layersets selected states
             };
+        },
+        /**
+         * @param {mmMapSettings} settings
+         */
+        applySettings: function(settings) {
+            // @todo: restore layersets selected states
+            // @todo: defensive checks if source was actually changed to reduce reloads...?
+            var sources = [], i;
+            for (i = 0; i < settings.sources.length; ++i) {
+                var sourceEntry = settings.sources[i];
+                var source = this.getSourceById(sourceEntry.id);
+                if (source) {
+                    sources.push(source);
+                    // NOTE: this only restores settings properties. It does NOT yet apply them on the map view.
+                    source.applySettings(sourceEntry.settings);
+                }
+            }
+            this.applyViewParams(settings.viewParams);
+            // Perform map view updates for (updated) sources; we deliberately defer this until after the view param
+            // update because out of bounds / scale / CRS applicability checks heavily depend on view params.
+            for (i = 0; i < sources.length; ++i) {
+                this._checkSource(sources[i], true);
+            }
         },
         /**
          * @return {Array<Number>|null}

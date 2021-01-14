@@ -40,6 +40,10 @@
  * @property {Array.<WmtsLayerConfig>} configuration.layers
  * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
  */
+/**
+ * @typedef {SourceSettings} TileSourceSettings
+ * @property {boolean} selected
+ */
 
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmtsTmsBaseSource = (function() {
@@ -65,6 +69,9 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
+        /**
+         * @return {TileSourceSettings}
+         */
         getSettings: function() {
             var fakeRootLayer = this.configuration.children[0];
             return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {

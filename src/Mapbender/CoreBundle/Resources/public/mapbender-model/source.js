@@ -5,6 +5,10 @@
  * @property {Number|null} maxResolution
  * @property {string} url
  */
+/**
+ * @typedef {Object} SourceSettings
+ * @property {Number} opacity
+ */
 
 window.Mapbender = Mapbender || {};
 
@@ -129,6 +133,15 @@ window.Mapbender.Source = (function() {
             return {
                 opacity: this.configuration.options.opacity
             };
+        },
+        /**
+         * @param {SourceSettings} settings
+         * @return {boolean}
+         */
+        applySettings: function(settings) {
+            var dirty = this.configuration.options.opacity !== settings.opacity;
+            this.setOpacity(settings.opacity);
+            return dirty;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;

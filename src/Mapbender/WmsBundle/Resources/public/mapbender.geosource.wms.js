@@ -1,3 +1,7 @@
+/**
+ * @typedef {SourceSettings} WmsSourceSettings
+ * @property {Array<String>} selectedIds
+ */
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
@@ -12,6 +16,9 @@ window.Mapbender.WmsSourceLayer = (function() {
         },
         getSelected: function() {
             return this.options.treeOptions.selected;
+        },
+        setSelected: function(state) {
+            this.options.treeOptions.selected = !!state;
         },
         getSelectedList: function() {
             var selectedLayers = [];
@@ -77,6 +84,9 @@ window.Mapbender.WmsSource = (function() {
         createNativeLayers: function(srsName) {
             return [Mapbender.mapEngine.createWmsLayer(this)];
         },
+        /**
+         * @return {WmsSourceSettings}
+         */
         getSettings: function() {
             var selectedLayers = this.configuration.children[0].getSelectedList();
             var selectedIds = selectedLayers.map(function(layer) {
@@ -85,6 +95,19 @@ window.Mapbender.WmsSource = (function() {
             return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
                 selectedIds: selectedIds
             });
+        },
+        /**
+         * @param {WmsSourceSettings} settings
+         * @return {boolean}
+         */
+        applySettings: function(settings) {
+            var dirty = Mapbender.Source.prototype.applySettings.call(this, settings);
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
+                var selected = -1 !== settings.selectedIds.indexOf(layer.getId());
+                dirty = dirty || (layer.getSelected() !== selected);
+                layer.setSelected(selected);
+            });
+            return dirty;
         },
         getSelected: function() {
             // delegate to root layer
