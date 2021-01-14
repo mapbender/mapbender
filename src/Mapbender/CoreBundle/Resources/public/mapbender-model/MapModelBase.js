@@ -26,6 +26,11 @@ window.Mapbender.MapModelBase = (function() {
      * @property {Number} rotation
      */
     /**
+     * @typedef {Object} mmMapSettings
+     * @property {mmViewParams} viewParams
+     * @property {Array} sources
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -903,6 +908,36 @@ window.Mapbender.MapModelBase = (function() {
             }
 
             return params;
+        },
+        /**
+         * @return {mmMapSettings}
+         */
+        getCurrentSettings: function() {
+            return {
+                viewParams: this.getCurrentViewParams(),
+                sources: this.sourceTree.map(function(source) {
+                    return {
+                        id: source.id,
+                        settings: source.getSettings()
+                    };
+                })
+                // @todo: capture layersets selected states
+            };
+        },
+        /**
+         * @return {mmMapSettings}
+         */
+        getInitialSettings: function() {
+            return {
+                viewParams: Object.assign({}, this.initialViewParams),
+                sources: this.sourceTree.map(function(source) {
+                    return {
+                        id: source.id,
+                        settings: source.initialSettings
+                    };
+                })
+                // @todo: capture layersets selected states
+            };
         },
         /**
          * @return {Array<Number>|null}
