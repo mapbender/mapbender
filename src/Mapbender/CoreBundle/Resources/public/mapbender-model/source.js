@@ -80,6 +80,7 @@ window.Mapbender.Source = (function() {
         }
         this.type = definition.type;
         this.configuration = definition.configuration;
+        this.wmsloader = definition.wmsloader;
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
