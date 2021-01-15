@@ -54,6 +54,7 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
+            $('ul.layers:first', this.element).empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var source = sources[i];

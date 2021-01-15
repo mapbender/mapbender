@@ -284,7 +284,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         },
         intersectsExtent: function(extent, srsName) {
             // Let the source substitute fake root layer for the right one
-            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            var bounds = this.source && this.source.getLayerBounds(this.options.id, 'EPSG:4326', true);
             if (!bounds) {
                 // unlimited extent
                 return true;
