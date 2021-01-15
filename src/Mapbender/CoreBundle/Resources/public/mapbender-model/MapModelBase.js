@@ -1109,6 +1109,40 @@ window.Mapbender.MapModelBase = (function() {
                 self._applyViewParamFragment();
             });
         },
+        getLocalStoragePersistenceKey_: function(entryName) {
+            var parts = [
+                Mapbender.configuration.application.slug,
+                entryName
+            ];
+            return parts.join(':');
+        },
+        restoreLocalStorageSettings: function() {
+            var key = this.getLocalStoragePersistenceKey_('settings');
+            var settings = window.localStorage.getItem(key);
+            settings = settings && JSON.parse(settings);
+            if (settings) {
+                try {
+                    this.applySettings(settings);
+                } catch (e) {
+                    console.warn("Failed to reapply persistent settings", settings, e);
+                }
+            }
+        },
+        startLocalStorageSettingsPersistence: function() {
+            var key = this.getLocalStoragePersistenceKey_('settings');
+            var self = this;
+            var updateHandler = function() {
+                var settings = self.getCurrentSettings();
+                var serialized = JSON.stringify(settings);
+                window.localStorage.setItem(key, serialized);
+            };
+            var listened = [
+                'mbmapviewchanged',
+                'mb.sourcenodeselectionchanged',
+                'mbmapsourcechanged'
+            ];
+            this.mbMap.element.on(listened.join(' '), _.debounce(updateHandler, 1000));
+        },
         _comma_dangle_dummy: null
     });
 
