@@ -1,12 +1,16 @@
-## dev-master @ b873b1686
+## dev-master @ 1c0748662
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
+* Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 * Fix incomplete defaults for SimpleSearch `result_*`
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 * Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
+* Fix fragment history not generating an entry for a pure srs change
+* Fix PrintClient broken nested tab container layout (queue mode active and placed in tabs-style sidepane)
 * Remove unreasonable default button tooltip "button"
 * Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
+* [Backend] Fix account menu and sitelinks alignment vs top of page
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 * [Framework] Fix support for ConfigMigrationInterface modifying Element class
 * [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
