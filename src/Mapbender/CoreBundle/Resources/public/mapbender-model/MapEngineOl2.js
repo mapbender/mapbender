@@ -153,9 +153,11 @@ window.Mapbender.MapEngineOl2 = (function() {
                 }
             }
         },
-        destroyLayer: function(olLayer) {
-            olLayer.clearGrid();
-            olLayer.removeBackBuffer();
+        /**
+         * @param {OpenLayers.Map} olMap
+         * @param {OpenLayers.Layer} olLayer
+         */
+        destroyLayer: function(olMap, olLayer) {
             olLayer.destroy(false);
         },
         /**

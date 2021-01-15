@@ -446,7 +446,7 @@ window.Mapbender.MapModelOl4 = (function() {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
                 Mapbender.mapEngine.removeLayers(this.olMap, source.getNativeLayers());
-                source.destroyLayers();
+                source.destroyLayers(this.olMap);
             } else {
                 olLayers = source.getNativeLayers();
                 for (j = 0; j < olLayers.length; ++ j) {

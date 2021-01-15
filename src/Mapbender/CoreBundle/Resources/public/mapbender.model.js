@@ -469,7 +469,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         Mapbender.MapModelBase.prototype.changeProjection.call(this, srsCode);
     },
     _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
-        var engine = Mapbender.mapEngine;
         var oldProj = this.getProj(srsNameFrom);
         var newProj = this.getProj(srsNameTo);
         var newMaxExtent = this._transformExtent(this.mapMaxExtent, this._configProj, newProj);
@@ -477,7 +476,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                source.destroyLayers();
+                source.destroyLayers(this.olMap);
             } else {
                 olLayers = source.getNativeLayers();
                 for (j = 0; j < olLayers.length; ++ j) {

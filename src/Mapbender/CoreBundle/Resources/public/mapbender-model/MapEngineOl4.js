@@ -140,8 +140,14 @@ window.Mapbender.MapEngineOl4 = (function() {
                 layerCollection.remove(olLayer);
             }
         },
-        destroyLayer: function(olLayer) {
-            console.warn("Not implemented: MapEngineOl4.destroyLayer", olLayer);
+        /**
+         * @param {ol.PluggableMap} olMap
+         * @param {ol.layer.Layer} olLayer
+         */
+        destroyLayer: function(olMap, olLayer) {
+            olMap.removeLayer(olLayer);
+            olLayer.setMap(null);
+            olLayer.dispose();
         },
         getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
             var firstOlLayer = source.getNativeLayer(0);

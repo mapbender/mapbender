@@ -62,8 +62,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         currentActiveLayer: null,
         autoDisabled: null,
         recreateOnSrsSwitch: true,
-        destroyLayers: function() {
-            Mapbender.Source.prototype.destroyLayers.call(this);
+        destroyLayers: function(olMap) {
+            Mapbender.Source.prototype.destroyLayers.call(this, olMap);
             this.currentActiveLayer = null;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {

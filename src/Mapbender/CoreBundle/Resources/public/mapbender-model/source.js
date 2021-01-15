@@ -122,10 +122,10 @@ window.Mapbender.Source = (function() {
         nativeLayers: [],
         recreateOnSrsSwitch: false,
         wmsloader: false,
-        destroyLayers: function() {
+        destroyLayers: function(olMap) {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
-                    Mapbender.mapEngine.destroyLayer(olLayer);
+                    Mapbender.mapEngine.destroyLayer(olMap, olLayer);
                 });
             }
             this.nativeLayers = [];
