@@ -8,6 +8,7 @@
 - Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))
 - Fix black artifacts around rotated print north arrow
 - Fix broken overview print on axis-inverted WMS 1.3.0 projections
+- Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 - Fix login form appearing in place of Element form on session expiration; go to full-window login page instead
 - Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 - Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
