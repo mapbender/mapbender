@@ -367,3 +367,5 @@ mb:
       class:
         title: Reset view
         description: Restores initial map view and source settings
+      admin:
+        resetDynamicSources: Remove dynamically loaded sources

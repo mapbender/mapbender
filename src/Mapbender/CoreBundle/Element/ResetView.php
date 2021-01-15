@@ -50,7 +50,9 @@ class ResetView extends BaseButton
      */
     public static function getDefaultConfiguration()
     {
-        $defaults = parent::getDefaultConfiguration();
+        $defaults = array_replace(parent::getDefaultConfiguration(), array(
+            'resetDynamicSources' => true,
+        ));
         // icon is hard-coded to iconReset (see twig template)
         unset($defaults['icon']);
         return $defaults;

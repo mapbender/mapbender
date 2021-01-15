@@ -2,6 +2,7 @@
     'use strict';
     $.widget('mapbender.resetView', $.mapbender.mbBaseButton, {
         options: {
+            resetDynamicSources: true
         },
         mbMap: null,
         initial: null,
@@ -22,7 +23,18 @@
         },
 
         run: function() {
+            if (this.options.resetDynamicSources) {
+                this.resetDynamicSources();
+            }
             this.mbMap.getModel().applySettings(this.initial);
+        },
+        resetDynamicSources: function() {
+            var model = this.mbMap.getModel();
+            model.sourceTree.forEach(function(source) {
+                if (source.wmsloader) {
+                    model.removeSource(source);
+                }
+            });
         }
     });
 }(jQuery));

@@ -20,5 +20,11 @@ class ResetViewAdminType extends AbstractType
         if ($builder->has('icon')) {
             $builder->remove('icon');
         }
+        $builder
+            ->add('resetDynamicSources', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'label' => 'mb.core.resetView.admin.resetDynamicSources',
+                'required' => false,
+            ))
+        ;
     }
 }
