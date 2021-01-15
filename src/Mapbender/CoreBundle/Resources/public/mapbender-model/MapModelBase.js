@@ -29,6 +29,7 @@ window.Mapbender.MapModelBase = (function() {
      * @typedef {Object} mmMapSettings
      * @property {mmViewParams} viewParams
      * @property {Array<{id: string, settings: SourceSettings}>} sources
+     * @property {Array<{id: string, selected: boolean}>} layersets
      */
     /**
      * @param {Object} mbMap
@@ -48,6 +49,11 @@ window.Mapbender.MapModelBase = (function() {
             return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
                 scale: poi.scale,
                 label: poi.label
+            });
+        });
+        this.initialLayersetSettings = Mapbender.layersets.map(function(layerset) {
+            return Object.assign({}, layerset.getSettings(), {
+                id: layerset.getId()
             });
         });
     }
@@ -210,11 +216,18 @@ window.Mapbender.MapModelBase = (function() {
             return _.findWhere(this.sourceTree, {id: '' + id}) || null;
         },
         /**
+         * @param {Number|String} id
+         * @return {Mapbender.Layerset|null}
+         */
+        getLayersetById: function(id) {
+            return _.findWhere(Mapbender.layersets, {id: '' + id}) || null;
+        },
+        /**
          * @param {Mapbender.Layerset} theme
          * @param {Boolean} state
          */
         controlTheme: function(theme, state) {
-            theme.selected = state;
+            theme.setSelected(state);
             var instances = theme.children;
             for (var i = 0; i < instances.length; ++i) {
                 var instance = instances[i];
@@ -920,8 +933,12 @@ window.Mapbender.MapModelBase = (function() {
                         id: source.id,
                         settings: source.getSettings()
                     };
+                }),
+                layersets: Mapbender.layersets.map(function(layerset) {
+                    return Object.assign({}, layerset.getSettings(), {
+                        id: layerset.getId()
+                    });
                 })
-                // @todo: capture layersets selected states
             };
         },
         /**
@@ -935,8 +952,8 @@ window.Mapbender.MapModelBase = (function() {
                         id: source.id,
                         settings: source.initialSettings
                     };
-                })
-                // @todo: capture layersets selected states
+                }),
+                layersets: this.initialLayersetSettings
             };
         },
         /**
@@ -946,6 +963,12 @@ window.Mapbender.MapModelBase = (function() {
             // @todo: restore layersets selected states
             // @todo: defensive checks if source was actually changed to reduce reloads...?
             var sources = [], i;
+            for (i = 0; i < settings.layersets.length; ++i) {
+                var ls = this.getLayersetById(settings.layersets[i].id);
+                if (ls) {
+                    ls.applySettings(settings.layersets[i]);
+                }
+            }
             for (i = 0; i < settings.sources.length; ++i) {
                 var sourceEntry = settings.sources[i];
                 var source = this.getSourceById(sourceEntry.id);

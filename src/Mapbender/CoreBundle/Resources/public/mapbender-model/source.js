@@ -65,8 +65,24 @@ window.Mapbender.Layerset = (function() {
     Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Layerset.prototype, {
         constructor: Layerset,
+        getId: function() {
+            return this.id;
+        },
         getSelected: function() {
             return this.selected;
+        },
+        setSelected: function(state) {
+            this.selected = !!state;
+        },
+        getSettings: function() {
+            return {
+                selected: this.getSelected()
+            };
+        },
+        applySettings: function(settings) {
+            var dirty = settings.selected !== this.selected;
+            this.setSelected(settings.selected);
+            return dirty;
         }
     });
     return Layerset;
