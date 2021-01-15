@@ -364,6 +364,10 @@ mb:
     redlining:
       class:
         title: Skizzen
+    resetView:
+      class:
+        title: Ansicht zurücksetzen
+        description: Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.
