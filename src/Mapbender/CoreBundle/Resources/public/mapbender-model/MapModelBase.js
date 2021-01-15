@@ -227,7 +227,13 @@ window.Mapbender.MapModelBase = (function() {
          * @param {Boolean} state
          */
         controlTheme: function(theme, state) {
-            theme.setSelected(state);
+            if (theme.getSelected() !== state) {
+                theme.setSelected(state);
+                this.mbMap.element.trigger('mb.sourcenodeselectionchanged', {
+                    node: theme,
+                    selected: theme.getSelected()
+                });
+            }
             var instances = theme.children;
             for (var i = 0; i < instances.length; ++i) {
                 var instance = instances[i];
@@ -965,8 +971,11 @@ window.Mapbender.MapModelBase = (function() {
             var sources = [], i;
             for (i = 0; i < settings.layersets.length; ++i) {
                 var ls = this.getLayersetById(settings.layersets[i].id);
-                if (ls) {
-                    ls.applySettings(settings.layersets[i]);
+                if (ls && ls.applySettings(settings.layersets[i])) {
+                    this.mbMap.element.trigger('mb.sourcenodeselectionchanged', {
+                        node: ls,
+                        selected: ls.getSelected()
+                    });
                 }
             }
             for (i = 0; i < settings.sources.length; ++i) {

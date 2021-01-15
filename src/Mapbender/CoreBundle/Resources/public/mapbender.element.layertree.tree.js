@@ -108,6 +108,15 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
+            $(document).on('mb.sourcenodeselectionchanged', function(e, data) {
+                if (data.node instanceof (Mapbender.Layerset)) {
+                    var themeNodeSelector = '[data-type="theme"][data-layersetid="' + data.node.getId() + '"]';
+                    var checkboxSelector = [themeNodeSelector, ' > .leaveContainer input[name="sourceVisibility"][type="checkbox"]'].join('');
+                    var $checkbox = $(checkboxSelector, self.element);
+                    $checkbox.prop('checked', data.selected);
+                    $checkbox.mbCheckbox();
+                }
+            });
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
                     $('input[name="selected"]', this).click();
