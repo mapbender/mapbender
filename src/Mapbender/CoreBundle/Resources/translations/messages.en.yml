@@ -363,3 +363,9 @@ mb:
     redlining:
       class:
         title: Sketches
+    resetView:
+      class:
+        title: Reset view
+        description: Restores initial map view and source settings
+      admin:
+        resetDynamicSources: Remove dynamically loaded sources
