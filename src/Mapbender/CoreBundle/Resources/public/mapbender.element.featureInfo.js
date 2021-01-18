@@ -69,13 +69,6 @@
 
             widget._trigger('ready');
         },
-        _contentElementId: function(source) {
-            var id = this._getContentManager().contentId(source.id);
-            // verify element is in DOM
-            if ($('#' + id, this.element).length) {
-                return id;
-            }
-        },
         /**
          * Default action for mapbender element
          */
@@ -156,7 +149,6 @@
                     // Bind original url for print interaction
                     var $documentNode = self._getDocumentNode(source.id);
                     $documentNode.attr('data-url', url);
-                    self._triggerHaveResult(source);
                     self._open();
                 }
             });
@@ -174,17 +166,6 @@
                 default:
                     return true;
             }
-        },
-        _triggerHaveResult: function(source) {
-            // only used for mobile hacks
-            // @todo: add mobile hacks here, remove event
-            var eventData = {
-                action: "haveresult",
-                content: this._contentElementId(source),
-                source: source,
-                id: this.element.attr('id')
-            };
-            this._trigger('featureinfo', null, eventData);
         },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
