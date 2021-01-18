@@ -18,7 +18,6 @@
         model: null,
         popup: null,
         context: null,
-        state: null,
         contentManager: null,
         mobilePane: null,
         isActive: false,
@@ -88,12 +87,8 @@
                 this.highlightLayer.getSource().clear();
             }
 
-            if (this.popup) {
-                if (this.popup.$element) {
-                    $('body').append(this.element.addClass('hidden'));
-                    this.popup.destroy();
-                }
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.hide();
             }
             if (this.callback) {
                 (this.callback)();
@@ -221,6 +216,9 @@
             var options = widget.options;
             if (!this.mobilePane.length) {
                 if (!widget.popup || !widget.popup.$element) {
+                    if (this.highlightLayer) {
+                        this.highlightLayer.getSource().clear();
+                    }
                     widget.popup = new Mapbender.Popup2({
                         title: widget.element.attr('data-title'),
                         draggable: true,
@@ -235,28 +233,17 @@
                         buttons: this._getPopupButtonOptions()
                     });
                     widget.popup.$element.on('close', function () {
-                        if (widget.options.deactivateOnClose) {
-                            widget.deactivate();
-                        }
-                        if (widget.popup && widget.popup.$element) {
-                            widget.popup.$element.hide();
-                        }
-                        widget.state = 'closed';
-                    });
-                    widget.popup.$element.on('open', function () {
-                        widget.state = 'opened';
+                        widget._close();
                     });
                 }
-                if (widget.state !== 'opened') {
-                    if (this.highlightLayer) {
-                        this.highlightLayer.getSource().clear();
-                    }
-                    widget.popup.open();
-                }
-
-                if (widget.popup && widget.popup.$element) {
-                    widget.popup.$element.show();
-                }
+                widget.popup.$element.show();
+            }
+        },
+        _close: function() {
+            if (this.options.deactivateOnClose) {
+                this.deactivate();
+            } else if (this.popup && this.popup.$element) {
+                this.popup.$element.hide();
             }
         },
         /**
