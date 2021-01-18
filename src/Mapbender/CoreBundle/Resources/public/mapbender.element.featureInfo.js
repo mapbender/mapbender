@@ -23,6 +23,7 @@
         mobilePane: null,
         isActive: false,
         highlightLayer: null,
+        showingSources: [],
 
 
 
@@ -109,12 +110,21 @@
             }
             var self = this;
             var model = this.target.getModel();
+            var showingPreviously = this.showingSources.slice();
+            this.showingSources.splice(0);  // clear
             $.each(model.getSources(), function (idx, src) {
                 var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
+                    self.showingSources.push(src);
                     self._setInfo(src, url);
                 }
             });
+            for (var i = 0; i < showingPreviously.length; ++i) {
+                var source = showingPreviously[i];
+                if (-1 === this.showingSources.indexOf(source)) {
+                    this._removeContent(source);
+                }
+            }
         },
         _getTabTitle: function(source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
