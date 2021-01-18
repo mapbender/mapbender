@@ -7,6 +7,8 @@ body {
   font-family: "Ubuntu", $fontFamily;
 }
 
+
+
 .authWrapper {
 /*  margin-top: 15vh; */
   .head {
@@ -18,6 +20,17 @@ body {
   .login-wrapper {
     /* border: 2px solid red; */
     position: relative; // solve z-index clash vs .head
+  }
+
+  .container-login-img {
+    /* border: 2px solid red; */
+    background-image: url("/bundles/mapbendercore/image/housing-landscape.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    width: 50vw;
+    height: 100vh;
   }
 
   .loginBox {

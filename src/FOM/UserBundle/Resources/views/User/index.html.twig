@@ -2,17 +2,29 @@
 
 {% block manager_content %}
 
-{% if is_granted('CREATE', oid) %}
-<a class="iconAdd iconBig right" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
-{% endif %}
+
 
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  <label for="inputFilterUsers" class="labelInput left">{{"fom.user.user.index.filter"|trans}}</label>
-  <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
+  <br>
+  
+  <div class="pull-right filter-input-nocontainer"> 
+    <label for="inputFilterUsers" class="labelInput testInputLabel left">{{"fom.user.user.index.filter"|trans}}</label>
+    <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
+    <span class="iconSearch"></span>
+  </div>
 
-  <div class="clearContainer"></div>
-  <table id="listFilterUsers" class="table userControlTable listFilterContainer">
+  <br>
+  
+  {% if is_granted('CREATE', oid) %}
+    <div class="link-button-new">
+      <a class="iconAdd iconBig right" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
+      <span><b>New User</b></span>
+    </div>
+  {% endif %}
+
+
+  <table id="listFilterUsers" class="table container-table">
     <thead id="usersHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.user.index.name" | trans }}</th>
@@ -50,10 +62,10 @@
           {% endif %}
           <td class="iconColumn">
             {% if is_granted('EDIT', user) %}
-              <a class="iconEdit iconSmall" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"></a>
+              <a class="iconEdit iconBig list-icon-position" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"></a>
             {% endif %}
             {% if user.id != 1 and is_granted('DELETE', user) %}
-              <span class="iconRemove iconSmall"
+              <span class="iconRemove iconBig list-icon-position"
                 title="{{"fom.user.user.index.delete_user" | trans}}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"

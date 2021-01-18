@@ -31,19 +31,21 @@
         </div>
       </div>
       <div class="content-list-container">
-          <div class="top">
-            {% for key, flash in app.session.bag('flashes').all() %}
-              <div class="flashBox {{ key }}">
-                {{ flash | first }}
-              </div>
-            {% endfor %}
-          </div>
+          
         <div class="contentPane">
           <div class="container content">
             <div class="innerContainer">
               {% block heading %}
                 <h1>{{ block('title') }}</h1>
                 <div class="underlineTitle"></div>
+                <br>
+                <div class="top">
+                {% for key, flash in app.session.bag('flashes').all() %}
+                  <div class="flashBox alert alert-success {{ key }}" role="alert" >
+                {{ flash | first }}
+              </div>
+            {% endfor %}
+          </div>
               {% endblock %}
               {% block manager_content %}{% endblock %}
             </div>

@@ -24,7 +24,7 @@ span[class^="icon"], span[class*=" icon"] {
 }
 
 .iconBig {
-  font-size: 160%;
+  font-size: 1.3em;
   vertical-align: middle;   // for proper vertical align of following inline element, if any
   &:before {
     display: inline-block;
@@ -33,6 +33,7 @@ span[class^="icon"], span[class*=" icon"] {
 span.iconBig {
   display: inline-block;
 }
+
 
 
 @-webkit-keyframes spin{

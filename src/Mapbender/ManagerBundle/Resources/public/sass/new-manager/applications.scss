@@ -2,7 +2,6 @@
 @import url("components/open-sans/open-sans.css");
 @import url("components/bootstrap/css/bootstrap.min.css");
 @import "libs/icons";
-
 // @import "bundles/mapbendermanager/sass/element/form.scss";
 
 @import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
@@ -123,6 +122,15 @@ body {
   }
 }
 
+.filter-input-nocontainer {
+  padding: 1em;
+  margin-top: 4.8em; 
+
+  label{
+    margin-right: 1em;
+  }
+}
+
 .listFilterInput {
   border: none;
   border-bottom: 1px solid black;
@@ -138,26 +146,6 @@ body {
   padding: 10px;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
-}
-
-.paddingx-5 {
-  padding: 0 5px; 
-}
-
-.padding-5 {
-  padding: 2em;
-}
-
-.marginy-5 {
-  margin: 5px 0;
-}
-
-.padding-left-3 {
-  padding-left: 3px;
-}
-
-.padding-0 {
-  padding: 0 !important;
 }
 
 .listFilterBoxes .buttonGroup .btn {
@@ -192,4 +180,19 @@ body {
   .placeholder-icon {
     font-size: 60px;
   }
+}
+
+
+.link-button-new {
+  margin-top: 10em;
+
+}
+
+.container-table {
+  position: relative;
+  top: 20%;
+}
+
+.list-icon-position {
+  margin: 0 7px;
 }

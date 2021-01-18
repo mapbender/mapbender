@@ -3,7 +3,7 @@
 {% block title %}{{ 'fom.user.acl.index.access_control_lists' | trans }}{% endblock %}
 
 {% block manager_content %}
-<table class="table userControlTable">
+<table class="table userControlTable container-table">
   <thead>
     <tr>
       <th>{{ "fom.user.acl.index.name" | trans }}</th>
@@ -19,7 +19,7 @@
         </td>
         <td class="description">{{ class }}</td>
         <td class="iconColumn">
-          <a class="iconEdit iconSmall" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"></a>
+          <a class="iconEdit iconBig" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"></a>
         </td>
       </tr>
     {% endfor %}

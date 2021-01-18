@@ -7,16 +7,27 @@
 
 {% block manager_content %}
 
-{% if create_permission %}
-<a class="iconAdd iconBig right" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
-{% endif %}
+<br>
 
 {% if groups|length > 0 %}
-  <label for="inputFilterGroups" class="labelInput left">{{"fom.user.group.index.filter"|trans}}</label>
-  <input id="inputFilterGroups" type="text" class="input left listFilterInput"/>
+  <div class="pull-right filter-input-nocontainer"> 
+    <label for="inputFilterGroups" class="labelInput left">{{"fom.user.group.index.filter"|trans}}</label>
+    <input id="inputFilterGroups" type="text" class="input left listFilterInput"/>
+    <span class="iconSearch"></span>
+  </div>
 
+  <br>
+  
+  {% if create_permission %}
+    <div class="link-button-new">
+      <a class="iconAdd iconBig right " href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
+      <span><b>New Group</b></span>
+    </div>
+{% endif %}
+
+  
   <div class="clearContainer"></div>
-  <table id="listFilterGroups" class="table userControlTable listFilterContainer">
+  <table id="listFilterGroups" class="table container-table listFilterContainer">
     <thead id="groupsHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>
@@ -33,10 +44,10 @@
         <td class="description">{{ group.description }}</td>
         <td class="iconColumn">
             {% if is_granted('EDIT', group) %}
-            <a class="iconEdit iconSmall" href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"></a>
+            <a class="iconEdit iconBig list-icon-position" href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"></a>
             {% endif %}
             {% if is_granted('DELETE', group) %}
-            <span class="iconRemove iconSmall"
+            <span class="iconRemove iconBig list-icon-position"
               title="{{"fom.user.group.index.delete_group"|trans}} {{ group.title }}"
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
