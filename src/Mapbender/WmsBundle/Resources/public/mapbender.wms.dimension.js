@@ -12,29 +12,18 @@ Mapbender.Dimension = function(options) {
     }
 };
 
-Mapbender.DimensionScalar = function(options, initDefault) {
-
-    var min, max, value, hasDefaultOptions;
+Mapbender.DimensionScalar = function(options) {
     this.default = null;
 
     if(Object.prototype.toString.call(options.extent) !== '[object Array]') {
         throw 'DimensionScalar extent option has to be type [object Array]:' + Object.prototype.toString.call(options.extent) + 'given'
     }
 
-    if(options.extent.length < 2) {
-
+    if (options.extent.length < 2) {
         throw 'DimensionScalar extent option needs atleast two entries'
     }
 
     this.options = options;
-
-    if(initDefault) {
-        max = this.valueFromPart(1);
-        min = this.valueFromPart(0);
-        hasDefaultOptions = this.options.default !== null;
-        value = !hasDefaultOptions ? options.extent[0] : options['default'];
-        this.setDefault(min, max, value);
-    }
 };
 
 Mapbender.DimensionScalar.Types = {
@@ -122,7 +111,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
             return '' + x;
         });
     }
-    Mapbender.DimensionScalar.call(this, options, false);
+    Mapbender.DimensionScalar.call(this, options);
     try {
         this.template = new Mapbender.DimensionTime.DateTemplate(options.extent[0]);
     } catch (e) {
