@@ -284,10 +284,8 @@
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
             var $container = $('.tabContainer,.accordionContainer', this.element);
-            if (!$('>.active', $container).length) {
-                $('>.tabs .tab, >.accordion', $container).first().addClass('active');
-                $('>.tabContainer >.container', this.element).first().addClass('active');
-                $('>.accordion-container', $container).first().addClass('active');
+            if (!$('.active', $container).length) {
+                $('>.tabs .tab, >.accordion', $container).first().click();
             }
          },
         clearAll: function() {
