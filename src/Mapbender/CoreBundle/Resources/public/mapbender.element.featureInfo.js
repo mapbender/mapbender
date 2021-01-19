@@ -270,13 +270,19 @@
             return buttons;
         },
         _selectorSelfAndSub: function(idStr, classSel) {
+            console.warn("_selectorSelfAndSub", '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel, $('#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel, this.element).get())
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
         _removeContent: function(source) {
-            var manager = this._getContentManager();
-            $('#' + manager.headerId(source.id), this.element).remove();
-            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
+            $('#tab' + source.id + ', #container' + source.id + ', #accordion' + source.id, this.element).remove();
             this._removeFeaturesBySourceId(source.id);
+            // If there are tabs / accordions remaining, ensure at least one of them is active
+            var $container = $('.tabContainer,.accordionContainer', this.element);
+            if (!$('>.active', $container).length) {
+                $('>.tabs .tab, >.accordion', $container).first().addClass('active');
+                $('>.tabContainer >.container', this.element).first().addClass('active');
+                $('>.accordion-container', $container).first().addClass('active');
+            }
          },
         clearAll: function() {
             // Must call getContentManager at least once to "save" template markup
