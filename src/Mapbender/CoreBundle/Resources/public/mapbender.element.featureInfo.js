@@ -83,9 +83,7 @@
         deactivate: function() {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
-            if (this.highlightLayer) {
-                this.highlightLayer.getSource().clear();
-            }
+            this.clearAll();
 
             if (this.popup && this.popup.$element) {
                 this.popup.$element.hide();
@@ -280,6 +278,18 @@
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
             this._removeFeaturesBySourceId(source.id);
          },
+        clearAll: function() {
+            // Must call getContentManager at least once to "save" template markup
+            // @todo: get rid of contentManager to fix all remaining DOM state races
+            this._getContentManager();
+            if (this.highlightLayer) {
+                this.highlightLayer.getSource().clear();
+            }
+            $('>.accordionContainer', this.element).empty();
+            $('>.tabContainer > .tabs', this.element).empty();
+            $('>.tabContainer > :not(.tabs)', this.element).remove();
+            this.showingSources.splice(0);
+        },
         _getDocumentNode: function(sourceId) {
             // @todo: get rid of the content manager
             return $('#' + this._getContentManager().contentId(sourceId), this.element);
