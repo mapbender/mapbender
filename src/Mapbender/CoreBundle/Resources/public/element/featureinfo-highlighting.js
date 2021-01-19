@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var pmOrigin = '*';
         var nodes = document.querySelectorAll('[data-geometry]') || [];
-        var ewkts = Array.from(nodes).map(function (node) {
+        var features = Array.from(nodes).map(function (node) {
             return {
                 srid: node.getAttribute('data-srid'),
                 wkt: node.getAttribute('data-geometry'),
@@ -39,6 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendHoverCommand(node, false);
             });
         });
-        window.parent.postMessage({ewkts: ewkts, elementId: elementId}, pmOrigin);
+        window.parent.postMessage({command: 'features', features: features, elementId: elementId, sourceId: sourceId}, pmOrigin);
     }
 }());

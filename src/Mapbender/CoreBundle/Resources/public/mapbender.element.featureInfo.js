@@ -278,6 +278,7 @@
             var manager = this._getContentManager();
             $('#' + manager.headerId(source.id), this.element).remove();
             $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
+            this._removeFeaturesBySourceId(source.id);
          },
         _getDocumentNode: function(sourceId) {
             // @todo: get rid of the content manager
@@ -358,8 +359,8 @@
             if (data.elementId !== this.element.attr('id')) {
                 return;
             }
-            if (this.isActive && this.highlightLayer && data.ewkts && data.ewkts.length) {
-                widget._populateFeatureInfoLayer(data.ewkts);
+            if (this.isActive && this.highlightLayer && data.command === 'features') {
+                widget._populateFeatureInfoLayer(data);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
                 var feature = this.highlightLayer.getSource().getFeatureById(data.id);
@@ -372,16 +373,28 @@
                 }
             }
         },
-        _populateFeatureInfoLayer: function (ewkts) {
-            var features = ewkts.map(function (ewkt) {
-                var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
-                feature.setId(ewkt.id);
+        _populateFeatureInfoLayer: function (data) {
+            var features = (data.features || []).map(function(featureData) {
+                var feature = Mapbender.Model.parseWktFeature(featureData.wkt, featureData.srid);
+                feature.setId(featureData.id);
+                feature.set('sourceId', data.sourceId);
                 return feature;
             });
 
+            this._removeFeaturesBySourceId(data.sourceId);
             this.highlightLayer.getSource().addFeatures(features);
         },
-
+        _removeFeaturesBySourceId: function(sourceId) {
+            if (this.highlightLayer) {
+                var source = this.highlightLayer.getSource();
+                var features = source.getFeatures().filter(function(feature) {
+                    return feature.get('sourceId') === sourceId;
+                });
+                features.forEach(function(feature) {
+                    source.removeFeature(feature);
+                });
+            }
+        },
         _createHighlightControl: function() {
 
             var widget = this;
