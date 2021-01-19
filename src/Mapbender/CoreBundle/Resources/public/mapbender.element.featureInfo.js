@@ -280,7 +280,7 @@
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
         _removeContent: function(source) {
-            $('#tab' + source.id + ', #container' + source.id + ', #accordion' + source.id, this.element).remove();
+            $('[data-source-id="' + source.id + '"]', this.element).remove();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
             var $container = $('.tabContainer,.accordionContainer', this.element);
@@ -312,6 +312,7 @@
             if ($header.length === 0) {
                 $header = manager.$header.clone();
                 $header.attr('id', headerId);
+                $header.attr('data-source-id', source.id);
                 manager.$headerParent.append($header);
             }
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
@@ -322,6 +323,7 @@
             if ($content.length === 0) {
                 $content = manager.$content.clone();
                 $content.attr('id', contentId);
+                $content.attr('data-source-id', source.id);
                 manager.$contentParent.append($content);
             }
             $content.toggleClass('active', $header.hasClass('active'));
