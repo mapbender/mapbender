@@ -28,12 +28,7 @@ $(function() {
         if (dimension['type'] === 'interval') {
             var dimensionOrig = jQuery.extend(true, {}, dimension);
             dimensionOrig['extent'] = dimensionOrig['origextent'];
-            var dimHandler = Mapbender.Dimension(dimension);
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
-            var rangeMinVal = new Date(dimHandler.valueFromStart()).toISOString();
-            var rangeMaxVal = new Date(dimHandler.valueFromEnd()).toISOString();
-            var rangeMin = dimHandlerOrig.partFromValue(rangeMinVal);// * 100;
-            var rangeMax = dimHandlerOrig.partFromValue(rangeMaxVal);// * 100;
             var inputEdit = $('input[name*="\[extentEdit\]"]', $this);
             var inputExtent = $('input[name*="\[extent\]"]', $this);
             var inputDefault = $('input[name*="\[default\]"]', $this);
@@ -45,15 +40,14 @@ $(function() {
                 var def = dimHandler.partFromValue(new Date(inputDefault.val()).toISOString());
                 inputDefault.val(def >= 1 ? second : def <= 0 ? first : inputDefault.val());
             }
-            intoInput(dimHandlerOrig.valueFromPart(rangeMin), dimHandlerOrig.valueFromPart(rangeMax), dimension['extent'][2]);
+            intoInput(dimension.extent[0], dimension.extent[1], dimension.extent[2]);
             $(".mb-slider", $this).slider({
                 range: true,
                 min: 0,
-                max: 100,
-                steps: dimHandlerOrig.getStepsNum(),
-                values: [rangeMin * 100, rangeMax * 100],
+                max: dimHandlerOrig.getStepsNum(),
+                values: [dimHandlerOrig.getStep(dimension.extent[0]), dimHandlerOrig.getStep(dimension.extent[1])],
                 slide: function(event, ui) {
-                    intoInput(dimHandlerOrig.valueFromPart(ui.values[0] / 100), dimHandlerOrig.valueFromPart(ui.values[1] / 100), dimension['extent'][2]);
+                    intoInput(dimHandlerOrig.valueFromStep(ui.values[0]), dimHandlerOrig.valueFromStep(ui.values[1]), dimension['extent'][2]);
                 }
             });
         }
