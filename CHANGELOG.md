@@ -1,6 +1,9 @@
-## dev-master @ 1d965c0ba
+## dev-master @ 3c0777439
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
+* Fix Layertree Layerset checkboxes not updating on external selection change
+* Fix FeatureInfo visually retaining previously requested data for sources / queryable layers that have been deselected before the current request ([#1268](https://github.com/mapbender/mapbender/issues/1268))
+* Fix FeatureInfo highlight geometries for the same source accumuluating over multiple requests ([#1287](https://github.com/mapbender/mapbender/issues/1287))
 * Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 * Fix incomplete defaults for SimpleSearch `result_*`
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
