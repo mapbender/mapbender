@@ -24,7 +24,6 @@
             var self = this;
             var dimensionset = this.options.dimensionsets[key];
             var dimension = Mapbender.Dimension(dimensionset['dimension']);
-            var def = dimension.partFromValue(dimension.getDefault());
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({

@@ -163,7 +163,7 @@ Mapbender.DimensionTime.prototype.getStep = function(value) {
     }
 };
 
-Mapbender.DimensionTime.prototype.valueFromStep = function valueFromPart(step) {
+Mapbender.DimensionTime.prototype.valueFromStep = function(step) {
     var dateOut = new Date(this.start.toISOString());
     switch (this.step.getType()) {
         case 'year':
