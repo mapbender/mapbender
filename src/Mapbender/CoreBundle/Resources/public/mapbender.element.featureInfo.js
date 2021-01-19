@@ -23,11 +23,20 @@
         isActive: false,
         highlightLayer: null,
         showingSources: [],
+        template: {
+            header: null,
+            content: null
+        },
 
 
 
         _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
+            this.template = {
+                header: $('.js-header', this.element).remove(),
+                content: $('.js-content', this.element).remove()
+            };
+
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
@@ -188,16 +197,14 @@
         _getContentManager: function() {
             if (!this.contentManager) {
                 this.contentManager = {
-                    headerSel: '.js-header',
-                    $headerParent: $('.js-header', this.element).parent(),
-                    $header: $('.js-header', this.element).remove(),
+                    $headerParent: $('.js-header-parent', this.element),
+                    $header: this.template.header,
                     headerContentSel: '.js-header-content',
                     headerId: function (id) {
                         return this.$header.attr('data-idname') + id
                     },
-                    contentSel: '.js-content',
-                    $contentParent: $('.js-content', this.element).parent(),
-                    $content: $('.js-content', this.element).remove(),
+                    $contentParent: $('.js-content-parent', this.element),
+                    $content: this.template.content,
                     contentContentSel: '.js-content-content',
                     contentId: function (id) {
                         return this.$content.attr('data-idname') + id
