@@ -270,7 +270,6 @@
             return buttons;
         },
         _selectorSelfAndSub: function(idStr, classSel) {
-            console.warn("_selectorSelfAndSub", '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel, $('#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel, this.element).get())
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
         _removeContent: function(source) {
