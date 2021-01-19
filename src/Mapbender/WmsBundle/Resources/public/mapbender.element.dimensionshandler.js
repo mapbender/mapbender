@@ -29,17 +29,17 @@
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
                 min: 0,
-                max: 100,
-                value: def * 100,
+                max: dimension.getStepsNum(),
+                value: dimension.getStep(dimension.getDefault()),
                 slide: function (event, ui) {
-                    valarea.text(dimension.valueFromPart(ui.value / 100));
+                    valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
                     $.each(dimensionset.group, function (idx, item) {
                         var source = self.model.getSourceById(item.split('-')[0]);
                         if (source) {
                             var params = {};
-                            params[dimension.getOptions().__name] = dimension.valueFromPart(ui.value / 100);
+                            params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
                             source.addParams(params);
                         }
                     });
