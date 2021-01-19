@@ -783,7 +783,7 @@
                     var dimHandler = Mapbender.Dimension(item);
                     var label = $('#layer-dimension-value-' + item.name, menu);
                     new Dragdealer('layer-dimension-' + item.name, {
-                        x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
+                        x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
@@ -793,7 +793,8 @@
                             self._callDimension(source, inpchkbox);
                         },
                         animationCallback: function(x, y) {
-                            var value = dimHandler.valueFromPart(x);
+                            var step = Math.round(dimHandler.getStepsNum() * x);
+                            var value = dimHandler.valueFromStep(step);
                             label.text(value);
                             updateData({value: value});
                             inpchkbox.attr('data-value', value);
