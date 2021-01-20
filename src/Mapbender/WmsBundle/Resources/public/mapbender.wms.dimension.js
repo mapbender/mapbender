@@ -64,34 +64,10 @@ Mapbender.DimensionScalar.prototype.getStepsNum = function() {
     return this.stepsNum;
 };
 
-Mapbender.DimensionScalar.prototype.partFromValue = function(val) {
-    var valueStep = this.getStep(val);
-    var endStep = this.getStep(this.options.extent[1]);
-    if (endStep) {
-        return valueStep / endStep;
-    } else {
-        return 0.0;
-    }
-};
-
-Mapbender.DimensionScalar.prototype.stepFromPart =  function(part) {
-    return Math.round(part * (this.getStepsNum()));
-};
-
-Mapbender.DimensionScalar.prototype.valueFromPart = function(part) {
-    return this.valueFromStep(this.stepFromPart(part));
-};
 Mapbender.DimensionScalar.prototype.valueFromStep = function(step) {
     return this.options.extent[step];
 };
 
-Mapbender.DimensionScalar.prototype.valueFromStart = function() {
-    return this.options.extent[0];
-};
-
-Mapbender.DimensionScalar.prototype.valueFromEnd = function() {
-    return this.options.extent[this.options.extent.length - 1];
-};
 Mapbender.DimensionScalar.prototype.innerJoin = function() {
     console.warn('DimensionScalar.innerJoin() is not implemented yet!');
     return null;
@@ -132,7 +108,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
         this.end = this.start;
         this.start = swapTmp;
     }
-    this.setDefault(this.getInRange(this.valueFromPart(0), this.valueFromPart(1), this.options['default'] || options.extent[0]));
+    this.setDefault(this.getInRange(this.valueFromStep(0), this.valueFromStep(this.getStepsNum()), this.options['default'] || options.extent[0]));
 };
 
 Mapbender.DimensionTime.prototype = Object.create(Mapbender.DimensionScalar.prototype);
@@ -180,14 +156,6 @@ Mapbender.DimensionTime.prototype.valueFromStep = function(step) {
             throw new Error("Unsupported step type " + this.step.getType());
     }
     return this.template.formatDate(dateOut);
-};
-
-Mapbender.DimensionTime.prototype.valueFromStart = function valueFromStart() {
-    return this.start.toJSON();
-};
-
-Mapbender.DimensionTime.prototype.valueFromEnd = function valueFromEnd() {
-    return this.end.toJSON();
 };
 
 /**
