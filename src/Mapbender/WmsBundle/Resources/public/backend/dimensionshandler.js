@@ -73,19 +73,12 @@ $(function () {
         var $selects = $([collectionSelector, selectSelector].join(' '));
         usedValues = [];
 
-        $selects.each(function(i, el) {
-            var v = $(el).val();
-            usedValues.push(v);
-            $('option[value="' + v + '"]', $selects).not(':selected').prop('disabled', true);
+        $selects.each(function() {
+            usedValues = usedValues.concat($(this).val());
         });
         usedValues = _.uniq(usedValues);
-        $selects.each(function(i, el) {
-            $('option', el).each(function(j, opt) {
-                var $opt = $(opt);
-                if (usedValues.indexOf($opt.attr('val')) === -1) {
-                    $opt.prop('disabled', false);
-                }
-            });
+        $('option', $selects).each(function() {
+            $(this).prop('disabled', (usedValues.indexOf(this.value) !== -1) && !$(this).is(':selected'));
         });
     };
 
