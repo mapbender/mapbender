@@ -62,7 +62,6 @@ class DimensionSubscriber implements EventSubscriberInterface
                 'auto_initialize' => false,
                 'required' => false,
                 'attr' => array(
-                    'data-name' => 'units',
                     'readonly' => 'readonly',
                 ),
             ))
@@ -70,7 +69,6 @@ class DimensionSubscriber implements EventSubscriberInterface
                 'auto_initialize' => false,
                 'required' => false,
                 'attr' => array(
-                    'data-name' => 'unitSymbol',
                     'readonly' => 'readonly',
                 ),
             ))
@@ -150,7 +148,6 @@ class DimensionSubscriber implements EventSubscriberInterface
                 'auto_initialize' => false,
                 'attr' => array(
                     'data-extent' => 'group-dimension-extent',
-                    'data-name' => 'extent',
                 ),
             ))
             ->add('origextent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
@@ -159,7 +156,6 @@ class DimensionSubscriber implements EventSubscriberInterface
                 'mapped' => false,
                 'attr' => array(
                     'data-extent' => 'group-dimension-origextent',
-                    'data-name' => 'origextent',
                 ),
             ))
         ;
