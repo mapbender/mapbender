@@ -195,7 +195,6 @@ Mapbender.DimensionTime.prototype.innerJoin = function innerJoin(another) {
         this.template.formatDate(endDimension.end),
         this.step.toString()
     ];
-    options.origextent = options.extent.slice();
     options.current = this.options.current === another.options.current ? this.options.current : null;
     options.multipleValues = this.options.multipleValues && another.options.multipleValues;
     options.nearestValue = this.options.nearestValue && another.options.nearestValue;
