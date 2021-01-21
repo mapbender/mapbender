@@ -40,9 +40,15 @@ Mapbender.DimensionScalar.prototype.getDefault = function() {
 };
 
 Mapbender.DimensionScalar.prototype.setDefault = function(defaults) {
-
     return this.default = defaults;
+};
 
+Mapbender.DimensionScalar.prototype.getMin = function() {
+    return this.options.extent[0];
+};
+
+Mapbender.DimensionScalar.prototype.getMax = function() {
+    return this.options.extent[1];
 };
 
 /**
