@@ -2,10 +2,13 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
 use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class DimensionInstType extends AbstractType
 {
@@ -78,5 +81,12 @@ class DimensionInstType extends AbstractType
                 ),
             ))
         ;
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var DimensionInst $dimInst */
+        $dimInst = $form->getData();
+        $view->vars['diminstconfig'] = $dimInst->getConfiguration();
     }
 }

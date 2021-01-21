@@ -43,8 +43,6 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
-        $this->addExtentFields($form, $data);
-
         switch ($data->getType()) {
             case DimensionInst::TYPE_MULTIPLE:
                 $extentArray = $data->getData($data->getExtent());
@@ -86,21 +84,5 @@ class DimensionSubscriber implements EventSubscriberInterface
                 ),
             ));
         }
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param DimensionInst $data
-     */
-    protected function addExtentFields($form, $data)
-    {
-        $dimJs = $data->getConfiguration();
-        $form
-            ->add('json', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'required' => true,
-                'data' => json_encode($dimJs),
-                'auto_initialize' => false,
-            ))
-        ;
     }
 }
