@@ -77,14 +77,6 @@ class DimensionInstType extends AbstractType
                     'data-extent' => 'group-dimension-extent',
                 ),
             ))
-            ->add('origextent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'required' => true,
-                'auto_initialize' => false,
-                'mapped' => false,
-                'attr' => array(
-                    'data-extent' => 'group-dimension-origextent',
-                ),
-            ))
         ;
     }
 }
