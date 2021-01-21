@@ -1,7 +1,7 @@
 var Mapbender = Mapbender || {};
 
 Mapbender.Dimension = function(options) {
-    if(options.type === 'interval' && options.name === 'time') {
+    if (options.name === 'time') {
         return new Mapbender.DimensionTime(options);
     } else if(options.type === 'interval') {
         return new Mapbender.DimensionScalar(options);
