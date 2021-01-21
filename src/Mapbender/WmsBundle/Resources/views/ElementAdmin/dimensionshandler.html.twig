@@ -29,8 +29,8 @@
 <div class="elementForm">
     {{ form_row(form.title) }}
     {{ form_rest(form.configuration) }}
-    {% if form.configuration.dimensionsets is not defined %}
-    <span>{{ "mb.wms.dimensionsets.no_dimension" | trans }}</span>
+    {% if form.configuration.dimensionsets.vars.prototype is not defined or (not form.configuration.dimensionsets.vars.prototype.group.vars.choices | length) %}
+        <p>{{ "mb.wms.dimensionsets.no_dimension" | trans }}</p>
     {% endif %}
 </div>
 <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
