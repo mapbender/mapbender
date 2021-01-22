@@ -105,8 +105,11 @@ class DimensionsHandler extends Element
             if (!empty($setConfig['dimension']) && is_object($setConfig['dimension'])) {
                 /** @var DimensionInst $dimension */
                 $dimension = $setConfig['dimension'];
-                $dimensionConfig = $dimension->getConfiguration();
-                $configuration['dimensionsets'][$setKey]['dimension'] = $dimensionConfig;
+                $configuration['dimensionsets'][$setKey]['dimension'] = array(
+                    'name' => $dimension->getName(),
+                    'default' => $dimension->getDefault(),
+                    'extent' => DimensionInst::getData($dimension->getExtent()),
+                );
             }
         }
         return $configuration;
