@@ -146,7 +146,6 @@ class DimensionInst extends Dimension
             'unitSymbol' => $this->getUnitSymbol(),
             'units' => $this->getUnits(),
             'extent' => $this->getData($this->getExtent()) ?: $this->getData($this->getOrigextent()),
-            'origextent' => $this->getData($this->getOrigextent()),
             'type' => $this->getType(),
         );
     }
@@ -162,7 +161,6 @@ class DimensionInst extends Dimension
         $inst->unitSymbol = $config['unitSymbol'];
         $inst->units = $config['units'];
         $inst->extent = $config['extent'];
-        $inst->origextent = $config['origextent'];
         $inst->type = $config['type'];
         return $inst;
     }
