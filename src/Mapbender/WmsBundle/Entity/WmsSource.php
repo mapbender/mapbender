@@ -923,10 +923,7 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
         foreach ($this->getLayers() as $layer) {
             /** @var WmsLayerSource $layer */
             foreach ($layer->getDimension() as $dimension) {
-                $dim = DimensionInst::fromDimension($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
+                $dimensions[] = DimensionInst::fromDimension($dimension);
             }
         }
         return $dimensions;
