@@ -21,10 +21,11 @@ $(function() {
             inputExtent.val(($(this).val() || []).join(','));
         });
         var dimension = $this.data('json');
-        if (dimension['type'] === 'interval') {
+        if ((dimension.origextent || '').indexOf('/') !== -1) {
             var resolution = dimension.extent[2];
             var dimensionOrig = jQuery.extend(true, {}, dimension);
-            dimensionOrig.extent = dimensionOrig.origextent;
+            // @todo: Mapbender.Dimension should support unmangled extent strings directly
+            dimensionOrig.extent = dimension.origextent.split(',')[0].split('/');
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
             var inputDefault = $('input[name*="\[default\]"]', $this);
             function intoInput(first, second) {

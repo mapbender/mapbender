@@ -73,6 +73,8 @@ class DimensionInstType extends AbstractType
     {
         /** @var DimensionInst $dimInst */
         $dimInst = $form->getData();
-        $view->vars['diminstconfig'] = $dimInst->getConfiguration();
+        $view->vars['diminstconfig'] = array_replace($dimInst->getConfiguration(), array(
+            'origextent' => $dimInst->getOrigextent(),
+        ));
     }
 }
