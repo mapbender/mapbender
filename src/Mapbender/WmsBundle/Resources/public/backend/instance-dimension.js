@@ -13,29 +13,22 @@ $(function() {
             $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
         }
     });
-    $('.extendedGroup select').each(function() {
-        if ($(this).attr('name').indexOf('[extentEdit]') > 0) {
-            $(this).on('change', function(e) {
-                var item = $(e.target);
-                var extentId = item.attr('id').substr(0, item.attr('id').indexOf('extentEdit')) + 'extent';
-                $('.extendedGroup #' + extentId).val(item.val());
-            });
-        }
-    });
     $('.on-off-content[data-json]').each(function(idx, item) {
         var $this = $(item);
+        var $rangesSelector = $('select[name*="[extentRanges]"]', item);
+        var inputExtent = $('input[name*="[extent]"]', $this);
+        $rangesSelector.on('change', function() {
+            inputExtent.val(($(this).val() || []).join(','));
+        });
         var dimension = $this.data('json');
         if (dimension['type'] === 'interval') {
             var resolution = dimension.extent[2];
             var dimensionOrig = jQuery.extend(true, {}, dimension);
             dimensionOrig.extent = dimensionOrig.origextent;
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
-            var inputEdit = $('input[name*="\[extentEdit\]"]', $this);
-            var inputExtent = $('input[name*="\[extent\]"]', $this);
             var inputDefault = $('input[name*="\[default\]"]', $this);
             function intoInput(first, second) {
                 inputExtent.val(first + '/' + second + '/' + resolution);
-                inputEdit.val(inputExtent.val());
                 inputDefault.val(dimHandlerOrig.getInRange(first, second, dimHandlerOrig.getMax()));
             }
             intoInput(dimension.extent[0], dimension.extent[1]);

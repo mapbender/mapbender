@@ -25,8 +25,9 @@
         {{ form_row(dim.default) }}
     {% endif %}
     {{ form_row(dim.extent) }}
-    {% if dim.extentEdit is defined %}
-    {{ form_row(dim.extentEdit) }}
+    {% if dim.extentRanges is defined %}
+        {{ form_row(dim.extentRanges) }}
     {% endif %}
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>
+    {{ form_row(dim.type) }}
 </div>

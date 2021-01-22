@@ -62,13 +62,12 @@ class DimensionSubscriber implements EventSubscriberInterface
         ;
         if ($multipleRanges) {
             $choices = array_combine($ranges, $ranges);
-            $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            $form->add('extentRanges', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'data' => explode(',', $data->getExtent()),
                 'mapped' => false,
                 'choices' => $choices,
                 'choices_as_values' => true,
                 'label' => $form->get('extent')->getConfig()->getOption('label'),
-
                 'auto_initialize' => false,
                 'multiple' => true,
                 'required' => true,
