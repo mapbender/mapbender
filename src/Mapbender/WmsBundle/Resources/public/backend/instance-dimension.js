@@ -13,7 +13,7 @@ $(function() {
             $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
         }
     });
-    $('.on-off-content[data-json]').each(function(idx, item) {
+    $('.on-off-content[data-diminstconfig]').each(function(idx, item) {
         var $this = $(item);
         var originalExtent = $this.attr('data-origextent') || '';
         var $rangesSelector = $('select[name*="[extentRanges]"]', item);
@@ -21,7 +21,7 @@ $(function() {
         $rangesSelector.on('change', function() {
             inputExtent.val(($(this).val() || []).join(','));
         });
-        var dimension = $this.data('json');
+        var dimension = JSON.parse($this.attr('data-diminstconfig'));
         if (originalExtent.indexOf('/') !== -1) {
             var resolution = dimension.extent[2];
             var dimensionOrig = jQuery.extend(true, {}, dimension);

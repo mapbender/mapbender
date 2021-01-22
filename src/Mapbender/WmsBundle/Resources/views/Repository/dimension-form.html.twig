@@ -6,7 +6,7 @@
         </div>
     </div>
 </div>
-<div id="dimension{{ num }}-content" class="on-off-content hidden" data-json="{{ dim.vars.diminstconfig | json_encode }}" data-origextent="{{ dim.vars.origextent }}">
+<div id="dimension{{ num }}-content" class="on-off-content hidden" data-diminstconfig="{{ dim.vars.diminstconfig | json_encode }}" data-origextent="{{ dim.vars.origextent }}">
     <div class="row no-gutters">
         <div class="col-xs-3">
             {{ form_row(dim.multipleValues) }}
