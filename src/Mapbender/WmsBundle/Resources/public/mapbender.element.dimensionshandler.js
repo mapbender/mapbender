@@ -22,13 +22,21 @@
                     return compoundId.replace(/-.*$/, '');
                 });
                 this._preconfigureSources(sourceIds, groupConfig.dimension);
-                this._setupGroup(key, groupConfig);
+                this._setupGroup(key, sourceIds, groupConfig.dimension);
             }
             this._trigger('ready');
         },
-        _setupGroup: function(key, groupConfig) {
+        _setupGroup: function(key, sourceIds, settings) {
             var self = this;
-            var dimension = Mapbender.Dimension(groupConfig['dimension']);
+            var dimension;
+            for (var i = 0; i < sourceIds.length; ++i) {
+                var source = this.model.getSourceById(sourceIds[i]);
+                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, settings.name);
+                if (sourceDimensionConfig) {
+                    dimension = Mapbender.Dimension(sourceDimensionConfig);
+                    break;
+                }
+            }
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
@@ -39,16 +47,26 @@
                     valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
-                    $.each(groupConfig.group, function (idx, item) {
-                        var source = self.model.getSourceById(item.split('-')[0]);
+                    for (var i = 0; i < sourceIds.length; ++i) {
+                        var source = self.model.getSourceById(sourceIds[i]);
                         if (source) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
                             source.addParams(params);
                         }
-                    });
+                    }
                 }
             });
+        },
+        _getSourceDimensionConfig: function(source, name) {
+            var sourceDimensions = source && source.configuration.options.dimensions || [];
+            for (var j = 0; j < sourceDimensions.length; ++j) {
+                var sourceDimension = sourceDimensions[j];
+                if (sourceDimension.name === name) {
+                    return sourceDimension;
+                }
+            }
+            return false;
         },
         _preconfigureSources: function(sourceIds, dimensionConfig) {
             for (var i = 0; i < sourceIds.length; ++i) {
@@ -56,23 +74,18 @@
                 this._preconfigureSource(source, dimensionConfig);
             }
         },
-        _preconfigureSource: function(source, dimensionConfig) {
-            var sourceDimensions = source && source.configuration.options.dimensions || [];
-            for (var i = 0; i < sourceDimensions.length; ++i) {
-                var sourceDimension = sourceDimensions[i];
-                if (sourceDimension.name === dimensionConfig.name) {
-                    sourceDimension.extent = dimensionConfig.extent;
-                    sourceDimension.default = dimensionConfig.default;
-                    // apply params
-                    var params = {};
-                    params[sourceDimension.__name] = dimensionConfig.default;
-                    try {
-                        source.addParams(params);
-                    } catch (e) {
-                        // Source is not yet an object, but we made our config changes => error is safe to ignore
-                    }
-                    // Can't have multiple dimension with the same parameter name
-                    break;
+        _preconfigureSource: function(source, settings) {
+            var targetConfig = this._getSourceDimensionConfig(source, settings.name);
+            if (targetConfig) {
+                targetConfig.extent = settings.extent;
+                targetConfig.default = settings.default;
+                // apply params
+                var params = {};
+                params[targetConfig.__name] = settings.default;
+                try {
+                    source.addParams(params);
+                } catch (e) {
+                    // Source is not yet an object, but we made our config changes => error is safe to ignore
                 }
             }
         },
