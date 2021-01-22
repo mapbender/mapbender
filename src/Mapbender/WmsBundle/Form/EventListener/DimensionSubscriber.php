@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
@@ -10,6 +11,16 @@ use Symfony\Component\Form\FormEvent;
 
 class DimensionSubscriber implements EventSubscriberInterface
 {
+    /** @var WmsInstance */
+    protected $instance;
+
+    /**
+     * @param WmsInstance $instance
+     */
+    public function __construct(WmsInstance $instance)
+    {
+        $this->instance = $instance;
+    }
 
     /**
      * Returns defined events
@@ -43,7 +54,9 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
-        $ranges = explode(',', $data->getOrigextent());
+        $originalExtent = $this->getOriginalExtent($this->instance, $data->getName());
+        $ranges = explode(',', $originalExtent);
+
         $multipleRanges = count($ranges) > 1;
         if ($multipleRanges) {
             $extentType = 'Symfony\Component\Form\Extension\Core\Type\HiddenType';
@@ -88,5 +101,15 @@ class DimensionSubscriber implements EventSubscriberInterface
                 ));
             }
         }
+    }
+
+    protected function getOriginalExtent(WmsInstance $instance, $dimensionName)
+    {
+        foreach ($instance->getSource()->dimensionInstancesFactory() as $sourceDimension) {
+            if ($sourceDimension->getName() === $dimensionName) {
+                return $sourceDimension->getExtent();
+            }
+        }
+        return null;
     }
 }

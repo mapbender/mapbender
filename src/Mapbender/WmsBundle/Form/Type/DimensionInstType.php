@@ -3,22 +3,29 @@
 namespace Mapbender\WmsBundle\Form\Type;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
 use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DimensionInstType extends AbstractType
 {
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(array('instance'));
+        $resolver->setAllowedTypes('instance', array('Mapbender\WmsBundle\Entity\WmsInstance'));
+    }
 
     /**
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new DimensionSubscriber();
+        $subscriber = new DimensionSubscriber($options['instance']);
         $builder->addEventSubscriber($subscriber);
         $transformer = new DimensionTransformer();
         $builder->addModelTransformer($transformer);
@@ -73,8 +80,19 @@ class DimensionInstType extends AbstractType
     {
         /** @var DimensionInst $dimInst */
         $dimInst = $form->getData();
-        $view->vars['diminstconfig'] = array_replace($dimInst->getConfiguration(), array(
-            'origextent' => $dimInst->getOrigextent(),
-        ));
+        $view->vars['diminstconfig'] = $dimInst->getConfiguration();
+        /** @var WmsInstance $instance */
+        $instance = $options['instance'];
+        $view->vars['origextent'] = $this->getOriginalExtent($instance, $dimInst->getName());
+    }
+
+    protected function getOriginalExtent(WmsInstance $instance, $dimensionName)
+    {
+        foreach ($instance->getSource()->dimensionInstancesFactory() as $sourceDimension) {
+            if ($sourceDimension->getName() === $dimensionName) {
+                return $sourceDimension->getExtent();
+            }
+        }
+        return null;
     }
 }

@@ -15,17 +15,18 @@ $(function() {
     });
     $('.on-off-content[data-json]').each(function(idx, item) {
         var $this = $(item);
+        var originalExtent = $this.attr('data-origextent') || '';
         var $rangesSelector = $('select[name*="[extentRanges]"]', item);
         var inputExtent = $('input[name*="[extent]"]', $this);
         $rangesSelector.on('change', function() {
             inputExtent.val(($(this).val() || []).join(','));
         });
         var dimension = $this.data('json');
-        if ((dimension.origextent || '').indexOf('/') !== -1) {
+        if (originalExtent.indexOf('/') !== -1) {
             var resolution = dimension.extent[2];
             var dimensionOrig = jQuery.extend(true, {}, dimension);
             // @todo: Mapbender.Dimension should support unmangled extent strings directly
-            dimensionOrig.extent = dimension.origextent.split(',')[0].split('/');
+            dimensionOrig.extent = originalExtent.split(',')[0].split('/');
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
             var inputDefault = $('input[name*="\[default\]"]', $this);
             function intoInput(first, second) {
