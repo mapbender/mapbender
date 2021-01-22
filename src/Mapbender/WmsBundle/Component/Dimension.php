@@ -11,50 +11,25 @@ class Dimension
     const NAME_ELEVATION = 'elevation';
     const NAME_PREFIX = 'dim_';
 
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
+    /** @var string|null */
     public $name;
-
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
+    /** @var string|null */
     public $units;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $unitSymbol;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $default;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
+    /** @var bool */
     public $multipleValues = false;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
+    /** @var bool */
     public $nearestValue = false;
-
-    /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
+    /** @var bool */
     public $current = false;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
+    /** @var string|null */
     public $extent;
 
     /**
-     * Set name
-     *
-     * @param string $value
+     * @param string|null $value
      */
     public function setName($value)
     {
@@ -62,9 +37,7 @@ class Dimension
     }
 
     /**
-     * Get name
-     *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -72,9 +45,7 @@ class Dimension
     }
 
     /**
-     * Set units
-     *
-     * @param string $value
+     * @param string|null $value
      */
     public function setUnits($value)
     {
@@ -82,9 +53,7 @@ class Dimension
     }
 
     /**
-     * Get units
-     *
-     * @return string
+     * @return string|null
      */
     public function getUnits()
     {
@@ -92,9 +61,7 @@ class Dimension
     }
 
     /**
-     * Set unitSymbol
-     *
-     * @param string $value
+     * @param string|null $value
      */
     public function setUnitSymbol($value)
     {
@@ -102,9 +69,7 @@ class Dimension
     }
 
     /**
-     * Get unitSymbol
-     *
-     * @return string
+     * @return string|null
      */
     public function getUnitSymbol()
     {
@@ -112,9 +77,7 @@ class Dimension
     }
 
     /**
-     * Set default
-     *
-     * @param string $value
+     * @param string|null $value
      */
     public function setDefault($value)
     {
@@ -122,8 +85,6 @@ class Dimension
     }
 
     /**
-     * Get default
-     *
      * @return string|null
      */
     public function getDefault()
@@ -132,22 +93,14 @@ class Dimension
     }
 
     /**
-     * Set multipleValues
-     *
      * @param boolean $value
      */
     public function setMultipleValues($value)
     {
-        if (is_bool($value)) {
-            $this->multipleValues = $value;
-        } else {
-            $this->multipleValues = (boolean) $value;
-        }
+        $this->multipleValues = !!$value;
     }
 
     /**
-     * Get multipleValues
-     *
      * @return boolean
      */
     public function getMultipleValues()
@@ -156,22 +109,14 @@ class Dimension
     }
 
     /**
-     * Set nearestValue
-     *
      * @param boolean $value
      */
     public function setNearestValue($value)
     {
-        if (is_bool($value)) {
-            $this->nearestValue = $value;
-        } else {
-            $this->nearestValue = (boolean) $value;
-        }
+        $this->nearestValue = !!$value;
     }
 
     /**
-     * Get nearestValue
-     *
      * @return boolean
      */
     public function getNearestValue()
@@ -180,22 +125,14 @@ class Dimension
     }
 
     /**
-     * Set current
-     *
      * @param boolean $value
      */
     public function setCurrent($value)
     {
-        if (is_bool($value)) {
-            $this->current = $value;
-        } else {
-            $this->current = (boolean) $value;
-        }
+        $this->current = !!$value;
     }
 
     /**
-     * Get current
-     *
      * @return boolean
      */
     public function getCurrent()
@@ -204,9 +141,7 @@ class Dimension
     }
 
     /**
-     * Set extent
-     *
-     * @param string $value
+     * @param string|null $value
      */
     public function setExtent($value)
     {
@@ -214,9 +149,7 @@ class Dimension
     }
 
     /**
-     * Get extent
-     *
-     * @return Dimension
+     * @return string|null
      */
     public function getExtent()
     {
@@ -225,7 +158,7 @@ class Dimension
 
     /**
      * Generates a GET parameter name for this dimension.
-     * @return string parameter name
+     * @return string
      */
     public function getParameterName()
     {
