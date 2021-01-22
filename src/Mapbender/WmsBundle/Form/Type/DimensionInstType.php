@@ -27,13 +27,6 @@ class DimensionInstType extends AbstractType
                 'required' => true,
                 'label' => 'active',
             ))
-            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'auto_initialize' => false,
-                'required' => true,
-                'attr' => array(
-                    'readonly' => 'readonly',
-                ),
-            ))
             ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'auto_initialize' => false,
                 'required' => true,
