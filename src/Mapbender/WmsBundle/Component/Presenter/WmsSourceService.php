@@ -276,13 +276,22 @@ class WmsSourceService extends SourceService
      */
     public function getDimensionsConfiguration(WmsInstance $sourceInstance)
     {
-        $dimensions = array();
+        $dimensionConfigs = array();
+        $sourceDimensions = array();
+        foreach ($sourceInstance->getSource()->dimensionInstancesFactory() as $sourceDimensionInstance) {
+            $sourceDimensions[$sourceDimensionInstance->getName()] = $sourceDimensionInstance;
+        }
         foreach ($sourceInstance->getDimensions() as $dimension) {
-            if ($dimension->getActive()) {
-                $dimensions[] = $dimension->getConfiguration();
+            if ($dimension->getActive() && !empty($sourceDimensions[$dimension->getName()])) {
+                $sourceDimension = $sourceDimensions[$dimension->getName()];
+                $dimensionConfig = $sourceDimension->getConfiguration();
+                $dimensionConfigs[] = array_replace($dimensionConfig, array(
+                    'extent' => $dimension->getData($dimension->getExtent()),
+                    'default' => $dimension->getDefault(),
+                ));
             }
         }
-        return $dimensions;
+        return $dimensionConfigs;
     }
 
     /**
