@@ -60,7 +60,7 @@
             var sourceDimensions = source && source.configuration.options.dimensions || [];
             for (var i = 0; i < sourceDimensions.length; ++i) {
                 var sourceDimension = sourceDimensions[i];
-                if (sourceDimension.type === dimensionConfig.type) {
+                if (sourceDimension.name === dimensionConfig.name) {
                     sourceDimension.extent = dimensionConfig.extent;
                     sourceDimension.default = dimensionConfig.default;
                     // apply params
