@@ -28,7 +28,7 @@ $(function() {
         if (dimension['type'] === 'interval') {
             var resolution = dimension.extent[2];
             var dimensionOrig = jQuery.extend(true, {}, dimension);
-            dimensionOrig['extent'] = dimensionOrig['origextent'];
+            dimensionOrig.extent = dimensionOrig.origextent;
             var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
             var inputEdit = $('input[name*="\[extentEdit\]"]', $this);
             var inputExtent = $('input[name*="\[extent\]"]', $this);
@@ -36,11 +36,7 @@ $(function() {
             function intoInput(first, second) {
                 inputExtent.val(first + '/' + second + '/' + resolution);
                 inputEdit.val(inputExtent.val());
-                if (inputDefault.val() > second) {
-                    inputDefault.val(second);
-                } else if (inputDefault.val() < first) {
-                    inputDefault.val(first);
-                }
+                inputDefault.val(dimHandlerOrig.getInRange(first, second, dimHandlerOrig.getMax()));
             }
             intoInput(dimension.extent[0], dimension.extent[1]);
             $(".mb-slider", $this).slider({

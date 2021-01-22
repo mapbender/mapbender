@@ -114,7 +114,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
         this.end = this.start;
         this.start = swapTmp;
     }
-    this.setDefault(this.getInRange(this.valueFromStep(0), this.valueFromStep(this.getStepsNum()), this.options['default'] || options.extent[0]));
+    this.setDefault(this.getInRange(this.valueFromStep(0), this.valueFromStep(this.getStepsNum()), this.options['default'] || this.getMax()));
 };
 
 Mapbender.DimensionTime.prototype = Object.create(Mapbender.DimensionScalar.prototype);

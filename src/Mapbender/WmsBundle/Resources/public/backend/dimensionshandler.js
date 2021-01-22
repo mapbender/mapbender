@@ -7,12 +7,7 @@ $(function () {
             var min = dimension.valueFromStep(minStep);
             var max = dimension.valueFromStep(maxStep);
             var dimInstanceSettings = JSON.parse($storeInput.val() || '""') || $.extend(true, {}, dimension.getOptions());
-            var defaultValue;
-            if (typeof dimInstanceSettings.default !== 'undefined') {
-                defaultValue = dimension.getInRange(min, max, dimInstanceSettings.default);
-            } else {
-                defaultValue = dimension.getMax();
-            }
+            var defaultValue = dimension.getInRange(min, max, dimension.getMax());
             if (store) {
                 dimInstanceSettings.extent[0] = min;
                 dimInstanceSettings.extent[1] = max;
