@@ -11,17 +11,6 @@ use Symfony\Component\Form\DataTransformerInterface;
 class DimensionTransformer implements DataTransformerInterface
 {
     /**
-     * @return string[]
-     */
-    protected static function getExtentKeys()
-    {
-        return array(
-            'extent',
-            'origextent',
-        );
-    }
-
-    /**
      * Transforms an object to an array.
      *
      * @param DimensionInst $data
@@ -48,39 +37,5 @@ class DimensionTransformer implements DataTransformerInterface
             return "";
         }
         return ArrayObject::arrayToObject('Mapbender\WmsBundle\Component\DimensionInst', $data);
-    }
-
-    /**
-     * @param string $type
-     * @param mixed $extentValue
-     * @return string|null
-     */
-    protected function transformExtent($type, $extentValue)
-    {
-        switch ($type) {
-            case DimensionInst::TYPE_MULTIPLE:
-                return explode(',', $extentValue);
-            case DimensionInst::TYPE_INTERVAL:
-                return explode('/', $extentValue);
-            default:
-                throw new \RuntimeException("Unhandled type " . var_export($type, true));
-        }
-    }
-
-    /**
-     * @param string $type
-     * @param mixed $extentValue
-     * @return string|null
-     */
-    protected function revTransformExtent($type, $extentValue)
-    {
-        switch ($type) {
-            case DimensionInst::TYPE_MULTIPLE:
-                return implode(',', $extentValue);
-            case DimensionInst::TYPE_INTERVAL:
-                return implode('/', $extentValue);
-            default:
-                throw new \RuntimeException("Unhandled type " . var_export($type, true));
-        }
     }
 }
