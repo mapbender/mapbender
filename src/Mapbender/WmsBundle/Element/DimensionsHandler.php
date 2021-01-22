@@ -3,15 +3,13 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 
 /**
  * Dimensions handler
  * @author Paul Schmidt
  */
-class DimensionsHandler extends Element implements BoundConfigMutator
+class DimensionsHandler extends Element
 {
 
     /**
@@ -112,58 +110,5 @@ class DimensionsHandler extends Element implements BoundConfigMutator
             }
         }
         return $configuration;
-    }
-
-    /**
-     * Replace dimension entries in generated frontend config with our desired values.
-     *
-     * @param mixed[] $appConfig
-     * @return mixed[]
-     */
-    public function updateAppConfig($appConfig)
-    {
-        $configuration = parent::getConfiguration();
-        $instances = array();
-        foreach ($configuration['dimensionsets'] as $key => $value) {
-            foreach (ArrayUtil::getDefault($value, 'group', array()) as $group) {
-                $item = explode("-", $group);
-                $instances[$item[0]] = $value['dimension'];
-            }
-        }
-        if (!$instances) {
-            // nothing to do, skip looping over all the layer configs
-            return $appConfig;
-        }
-
-        foreach ($appConfig['layersets'] as &$layerList) {
-            foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (empty($instances[$layerId]) || empty($layerDef['configuration']['options']['dimensions'])) {
-                        // layer is not controllable through DimHandler, leave its config alone
-                        continue;
-                    }
-                    $dimConfig = $instances[$layerId]->getConfiguration();
-                    $this->updateDimensionConfig($layerDef['configuration']['options']['dimensions'], $dimConfig);
-                }
-            }
-        }
-        return $appConfig;
-    }
-
-    /**
-     * Updates the $target list of dimension config arrays by reference with our own settings (from backend).
-     * Matching is by type. If a dimension config entry matches on type, we copy our "extent" and "default" into it.
-     *
-     * @param mixed[] $target
-     * @param mixed[] $dimensionConfig
-     */
-    public static function updateDimensionConfig(&$target, $dimensionConfig)
-    {
-        foreach ($target as &$dimensionDef) {
-            if ($dimensionDef['type'] == $dimensionConfig['type']) {
-                $dimensionDef['extent'] = $dimensionConfig['extent'];
-                $dimensionDef['default'] = $dimensionConfig['default'];
-            }
-        }
     }
 }

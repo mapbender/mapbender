@@ -16,14 +16,19 @@
             this.model = mbMap.getModel();
             var dimensionUuids = Object.keys(this.options.dimensionsets);
             for (var i = 0; i < dimensionUuids.length; ++i) {
-                this._setupGroup(dimensionUuids[i]);
+                var key = dimensionUuids[i];
+                var groupConfig = this.options.dimensionsets[dimensionUuids[i]];
+                var sourceIds = (groupConfig.group || []).map(function(compoundId) {
+                    return compoundId.replace(/-.*$/, '');
+                });
+                this._preconfigureSources(sourceIds, groupConfig.dimension);
+                this._setupGroup(key, groupConfig);
             }
             this._trigger('ready');
         },
-        _setupGroup: function (key) {
+        _setupGroup: function(key, groupConfig) {
             var self = this;
-            var dimensionset = this.options.dimensionsets[key];
-            var dimension = Mapbender.Dimension(dimensionset['dimension']);
+            var dimension = Mapbender.Dimension(groupConfig['dimension']);
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
@@ -34,7 +39,7 @@
                     valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
-                    $.each(dimensionset.group, function (idx, item) {
+                    $.each(groupConfig.group, function (idx, item) {
                         var source = self.model.getSourceById(item.split('-')[0]);
                         if (source) {
                             var params = {};
@@ -44,6 +49,32 @@
                     });
                 }
             });
+        },
+        _preconfigureSources: function(sourceIds, dimensionConfig) {
+            for (var i = 0; i < sourceIds.length; ++i) {
+                var source = this.model.getSourceById(sourceIds[i]);
+                this._preconfigureSource(source, dimensionConfig);
+            }
+        },
+        _preconfigureSource: function(source, dimensionConfig) {
+            var sourceDimensions = source && source.configuration.options.dimensions || [];
+            for (var i = 0; i < sourceDimensions.length; ++i) {
+                var sourceDimension = sourceDimensions[i];
+                if (sourceDimension.type === dimensionConfig.type) {
+                    sourceDimension.extent = dimensionConfig.extent;
+                    sourceDimension.default = dimensionConfig.default;
+                    // apply params
+                    var params = {};
+                    params[sourceDimension.__name] = dimensionConfig.default;
+                    try {
+                        source.addParams(params);
+                    } catch (e) {
+                        // Source is not yet an object, but we made our config changes => error is safe to ignore
+                    }
+                    // Can't have multiple dimension with the same parameter name
+                    break;
+                }
+            }
         },
         _destroy: $.noop
     });
