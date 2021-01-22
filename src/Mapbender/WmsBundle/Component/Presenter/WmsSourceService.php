@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -278,17 +279,28 @@ class WmsSourceService extends SourceService
     {
         $dimensionConfigs = array();
         $sourceDimensions = array();
-        foreach ($sourceInstance->getSource()->dimensionInstancesFactory() as $sourceDimensionInstance) {
-            $sourceDimensions[$sourceDimensionInstance->getName()] = $sourceDimensionInstance;
+        foreach ($sourceInstance->getSource()->getDimensions() as $sourceDimension) {
+            $sourceDimensions[$sourceDimension->getName()] = $sourceDimension;
         }
-        foreach ($sourceInstance->getDimensions() as $dimension) {
-            if ($dimension->getActive() && !empty($sourceDimensions[$dimension->getName()])) {
-                $sourceDimension = $sourceDimensions[$dimension->getName()];
-                $dimensionConfig = $sourceDimension->getConfiguration();
-                $dimensionConfigs[] = array_replace($dimensionConfig, array(
-                    'extent' => $dimension->getData($dimension->getExtent()),
-                    'default' => $dimension->getDefault(),
-                ));
+
+        foreach ($sourceInstance->getDimensions() as $dimensionInstance) {
+            if ($dimensionInstance->getActive() && !empty($sourceDimensions[$dimensionInstance->getName()])) {
+                $sourceDimension = $sourceDimensions[$dimensionInstance->getName()];
+                $dimensionConfigs[] = array(
+                    // Instance-editables
+                    'default' => $dimensionInstance->getDefault(),
+                    'extent' => DimensionInst::getData($dimensionInstance->getExtent()),
+                    // Magic auto-inferred type, still used by some client-side code
+                    'type' => DimensionInst::findType($dimensionInstance->getExtent()),
+                    // Rest from source dimension
+                    'name' => $sourceDimension->getName(),
+                    '__name' => $sourceDimension->getParameterName(),
+                    'current' => $sourceDimension->getCurrent(),
+                    'multipleValues' => $sourceDimension->getMultipleValues(),
+                    'nearestValue' => $sourceDimension->getNearestValue(),
+                    'unitSymbol' => $sourceDimension->getUnitSymbol(),
+                    'units' => $sourceDimension->getUnits(),
+                );
             }
         }
         return $dimensionConfigs;
