@@ -43,46 +43,51 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
-        switch ($data->getType()) {
-            case DimensionInst::TYPE_MULTIPLE:
-                $extentArray = $data->getData($data->getExtent());
-                $origExtentArray = $data->getData($data->getOrigextent());
-                $choices = array_combine($origExtentArray, $origExtentArray);
-                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                    'data' => $extentArray,
-                    'mapped' => false,
-                    'choices' => $choices,
-                    'choices_as_values' => true,
-                    'label' => 'Extent',
-                    'auto_initialize' => false,
-                    'multiple' => true,
-                    'required' => true,
-                ));
-                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                    'choices' => $choices,
-                    'choices_as_values' => true,
-                    'auto_initialize' => false,
-                ));
-                break;
-            case DimensionInst::TYPE_SINGLE:
-            case DimensionInst::TYPE_INTERVAL:
-                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                    'label' => 'Extent',
-                    'required' => true,
-                    'auto_initialize' => false,
-                ));
-                break;
-            default:
-                break;
+        $ranges = explode(',', $data->getOrigextent());
+        $multipleRanges = count($ranges) > 1;
+        if ($multipleRanges) {
+            $extentType = 'Symfony\Component\Form\Extension\Core\Type\HiddenType';
+        } else {
+            $extentType = 'Symfony\Component\Form\Extension\Core\Type\TextType';
         }
-        if ($data->getType() === DimensionInst::TYPE_INTERVAL) {
-            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        $form
+            ->add('extent', $extentType, array(
+                'required' => true,
                 'auto_initialize' => false,
-                'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
                 ),
+                'label' => 'Extent',
+            ))
+        ;
+        if ($multipleRanges) {
+            $choices = array_combine($ranges, $ranges);
+            $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'data' => explode(',', $data->getExtent()),
+                'mapped' => false,
+                'choices' => $choices,
+                'choices_as_values' => true,
+                'label' => $form->get('extent')->getConfig()->getOption('label'),
+
+                'auto_initialize' => false,
+                'multiple' => true,
+                'required' => true,
             ));
+            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'choices' => $choices,
+                'choices_as_values' => true,
+                'auto_initialize' => false,
+            ));
+        } else {
+            if (count($ranges) > 0 && count(explode('/', $ranges[0])) > 1) {
+                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                    'auto_initialize' => false,
+                    'required' => false,
+                    'attr' => array(
+                        'readonly' => 'readonly',
+                    ),
+                ));
+            }
         }
     }
 }

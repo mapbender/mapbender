@@ -24,8 +24,9 @@
     {% if dim.default is defined %}
         {{ form_row(dim.default) }}
     {% endif %}
+    {{ form_row(dim.extent) }}
+    {% if dim.extentEdit is defined %}
     {{ form_row(dim.extentEdit) }}
-    <div class="dimension-type">{{ form_widget(dim.type) }}</div>
-    <div class="dimension-exent">{{ form_widget(dim.extent) }}</div>
+    {% endif %}
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>
 </div>
