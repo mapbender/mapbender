@@ -21,17 +21,18 @@
                 var sourceIds = (groupConfig.group || []).map(function(compoundId) {
                     return compoundId.replace(/-.*$/, '');
                 });
-                this._preconfigureSources(sourceIds, groupConfig.dimension);
-                this._setupGroup(key, sourceIds, groupConfig.dimension);
+                var dimensionName = groupConfig.dimension.name;
+                this._preconfigureSources(sourceIds, dimensionName, groupConfig.dimension.extent);
+                this._setupGroup(key, sourceIds, dimensionName);
             }
             this._trigger('ready');
         },
-        _setupGroup: function(key, sourceIds, settings) {
+        _setupGroup: function(key, sourceIds, dimensionName) {
             var self = this;
             var dimension;
             for (var i = 0; i < sourceIds.length; ++i) {
                 var source = this.model.getSourceById(sourceIds[i]);
-                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, settings.name);
+                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, dimensionName);
                 if (sourceDimensionConfig) {
                     dimension = Mapbender.Dimension(sourceDimensionConfig);
                     break;
@@ -66,18 +67,19 @@
                     return sourceDimension;
                 }
             }
+            console.warn("No such dimension", name, source);
             return false;
         },
-        _preconfigureSources: function(sourceIds, dimensionConfig) {
+        _preconfigureSources: function(sourceIds, dimensionName, extent) {
             for (var i = 0; i < sourceIds.length; ++i) {
                 var source = this.model.getSourceById(sourceIds[i]);
-                this._preconfigureSource(source, dimensionConfig);
+                this._preconfigureSource(source, dimensionName, extent);
             }
         },
-        _preconfigureSource: function(source, settings) {
-            var targetConfig = this._getSourceDimensionConfig(source, settings.name);
+        _preconfigureSource: function(source, dimensionName, extent) {
+            var targetConfig = this._getSourceDimensionConfig(source, dimensionName);
             if (targetConfig) {
-                targetConfig.extent = settings.extent;
+                targetConfig.extent = extent;
                 var dimension = Mapbender.Dimension(targetConfig);
                 // Apply (newly restrained by modified range) default param value to source
                 var params = {};
