@@ -159,7 +159,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
 
     protected function getOriginalExtent(WmsInstance $instance, $dimensionName)
     {
-        foreach ($instance->getSource()->dimensionInstancesFactory() as $sourceDimension) {
+        foreach ($instance->getSource()->getDimensions() as $sourceDimension) {
             if ($sourceDimension->getName() === $dimensionName) {
                 return $sourceDimension->getExtent();
             }
