@@ -21,16 +21,14 @@ $(function () {
             var dimInstanceSettings = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
             return (dimInstanceSettings.extent || false) && {
                 min: dimInstanceSettings.extent[0],
-                max: dimInstanceSettings.extent[1],
-                default: dimInstanceSettings.default
+                max: dimInstanceSettings.extent[1]
             };
         },
         getDimension: function($item) {
-            var dimensionOptions = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
             var dimension;
             var $selected = $(selectSelector + ' option:selected', $item);
             for (var i = 0; i < $selected.length; ++i) {
-                dimensionOptions = JSON.parse($($selected.get(i)).attr('data-config'));
+                var dimensionOptions = JSON.parse($($selected.get(i)).attr('data-config'));
                 var nextDim = Mapbender.Dimension(dimensionOptions);
                 if (dimension) {
                     dimension = dimension.innerJoin(nextDim) || dimension;
