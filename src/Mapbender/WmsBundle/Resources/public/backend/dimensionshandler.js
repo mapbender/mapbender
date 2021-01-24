@@ -14,7 +14,7 @@ $(function () {
                 dimInstanceSettings.default = defaultValue;
                 $storeInput.val(JSON.stringify(dimInstanceSettings || ''));
             }
-            var displayText = [[min, max, dimension.options.extent[2]].join('/'), defaultValue].join(' - ');
+            var displayText = [[min, max, dimension.getResolutionText()].join('/'), defaultValue].join(' - ');
             $('input[data-name="extentDisplay"]', $item).val(displayText);
         },
         getSliderSettings: function($item) {
