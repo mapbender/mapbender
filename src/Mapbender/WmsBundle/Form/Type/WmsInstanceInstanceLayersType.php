@@ -96,6 +96,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
                 'allow_add' => true,
                 'allow_delete' => true,
+                'entry_options' => array(
+                    'by_reference' => false,
+                ),
             ))
             ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
