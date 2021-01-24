@@ -102,12 +102,18 @@ class DimensionsHandler extends Element
     {
         $configuration = parent::getConfiguration();
         foreach ($configuration['dimensionsets'] as $setKey => $setConfig) {
+            $templateDimensionName = null;
+            foreach ($setConfig['group'] as $targetDimension) {
+                $templateDimensionName = \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
+                break;
+            }
             if (!empty($setConfig['dimension']) && is_object($setConfig['dimension'])) {
                 /** @var DimensionInst $dimension */
                 $dimension = $setConfig['dimension'];
                 $configuration['dimensionsets'][$setKey]['dimension'] = array(
-                    'name' => $dimension->getName(),
                     'extent' => DimensionInst::getData($dimension->getExtent()),
+                    // Name is used in template only
+                    'name' => $templateDimensionName,
                 );
             }
         }

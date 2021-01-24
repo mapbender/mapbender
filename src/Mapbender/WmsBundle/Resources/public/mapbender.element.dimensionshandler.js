@@ -18,21 +18,24 @@
             for (var i = 0; i < dimensionUuids.length; ++i) {
                 var key = dimensionUuids[i];
                 var groupConfig = this.options.dimensionsets[dimensionUuids[i]];
-                var sourceIds = (groupConfig.group || []).map(function(compoundId) {
-                    return compoundId.replace(/-.*$/, '');
+                var targetDimensions = (groupConfig.group || []).map(function(compoundId) {
+                    return {
+                        sourceId: compoundId.replace(/-.*$/, ''),
+                        dimensionName: compoundId.replace(/^.*-(\w+)-\w*$/, '$1')
+                    };
                 });
-                var dimensionName = groupConfig.dimension.name;
-                this._preconfigureSources(sourceIds, dimensionName, groupConfig.dimension.extent);
-                this._setupGroup(key, sourceIds, dimensionName);
+                this._preconfigureSources(targetDimensions, groupConfig.dimension.extent);
+                this._setupGroup(key, targetDimensions);
             }
             this._trigger('ready');
         },
-        _setupGroup: function(key, sourceIds, dimensionName) {
+        _setupGroup: function(key, targetDimensions) {
             var self = this;
             var dimension;
-            for (var i = 0; i < sourceIds.length; ++i) {
-                var source = this.model.getSourceById(sourceIds[i]);
-                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, dimensionName);
+            for (var i = 0; i < targetDimensions.length; ++i) {
+                var targetDimension = targetDimensions[i];
+                var source = this.model.getSourceById(targetDimension.sourceId);
+                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, targetDimension.dimensionName);
                 if (sourceDimensionConfig) {
                     dimension = Mapbender.Dimension(sourceDimensionConfig);
                     break;
@@ -48,8 +51,8 @@
                     valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
-                    for (var i = 0; i < sourceIds.length; ++i) {
-                        var source = self.model.getSourceById(sourceIds[i]);
+                    for (var i = 0; i < targetDimensions.length; ++i) {
+                        var source = self.model.getSourceById(targetDimensions[i].sourceId);
                         if (source) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
@@ -67,13 +70,13 @@
                     return sourceDimension;
                 }
             }
-            console.warn("No such dimension", name, source);
             return false;
         },
-        _preconfigureSources: function(sourceIds, dimensionName, extent) {
-            for (var i = 0; i < sourceIds.length; ++i) {
-                var source = this.model.getSourceById(sourceIds[i]);
-                this._preconfigureSource(source, dimensionName, extent);
+        _preconfigureSources: function(targetDimensions, extent) {
+            for (var i = 0; i < targetDimensions.length; ++i) {
+                var targetDimension = targetDimensions[i];
+                var source = this.model.getSourceById(targetDimension.sourceId);
+                this._preconfigureSource(source, targetDimension.dimensionName, extent);
             }
         },
         _preconfigureSource: function(source, dimensionName, extent) {
