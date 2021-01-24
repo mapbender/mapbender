@@ -107,7 +107,6 @@ class DimensionsHandler extends Element
                 $dimension = $setConfig['dimension'];
                 $configuration['dimensionsets'][$setKey]['dimension'] = array(
                     'name' => $dimension->getName(),
-                    'default' => $dimension->getDefault(),
                     'extent' => DimensionInst::getData($dimension->getExtent()),
                 );
             }

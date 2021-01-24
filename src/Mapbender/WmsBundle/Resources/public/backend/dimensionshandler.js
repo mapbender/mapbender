@@ -11,7 +11,6 @@ $(function () {
             if (store) {
                 dimInstanceSettings.extent[0] = min;
                 dimInstanceSettings.extent[1] = max;
-                dimInstanceSettings.default = defaultValue;
                 $storeInput.val(JSON.stringify(dimInstanceSettings || ''));
             }
             var displayText = [[min, max, dimension.getResolutionText()].join('/'), defaultValue].join(' - ');

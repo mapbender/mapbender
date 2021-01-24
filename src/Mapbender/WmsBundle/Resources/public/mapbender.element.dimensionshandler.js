@@ -78,10 +78,10 @@
             var targetConfig = this._getSourceDimensionConfig(source, settings.name);
             if (targetConfig) {
                 targetConfig.extent = settings.extent;
-                targetConfig.default = settings.default;
-                // apply params
+                var dimension = Mapbender.Dimension(targetConfig);
+                // Apply (newly restrained by modified range) default param value to source
                 var params = {};
-                params[targetConfig.__name] = settings.default;
+                params[targetConfig.__name] = dimension.getDefault();
                 try {
                     source.addParams(params);
                 } catch (e) {
