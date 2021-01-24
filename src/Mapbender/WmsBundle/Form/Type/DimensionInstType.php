@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Form\Type;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +19,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     {
         $resolver->setRequired(array('instance'));
         $resolver->setAllowedTypes('instance', array('Mapbender\WmsBundle\Entity\WmsInstance'));
+        $resolver->setDefault('data_class', 'Mapbender\WmsBundle\Component\DimensionInst');
     }
 
     /**
@@ -28,8 +28,6 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this);
-        $transformer = new DimensionTransformer();
-        $builder->addModelTransformer($transformer);
         $builder
             ->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => true,

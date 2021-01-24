@@ -88,6 +88,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'allow_delete' => false,
                 'entry_options' => array(
                     'instance' => $instance,
+                    'by_reference' => false,
                 ),
             ))
             ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
