@@ -11,17 +11,6 @@ use Symfony\Component\Form\FormEvent;
 
 class DimensionSubscriber implements EventSubscriberInterface
 {
-    /** @var WmsInstance */
-    protected $instance;
-
-    /**
-     * @param WmsInstance $instance
-     */
-    public function __construct(WmsInstance $instance)
-    {
-        $this->instance = $instance;
-    }
-
     /**
      * Returns defined events
      *
@@ -54,7 +43,8 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
-        $originalExtent = $this->getOriginalExtent($this->instance, $data->getName());
+        $instance = $form->getConfig()->getOption('instance');
+        $originalExtent = $this->getOriginalExtent($instance, $data->getName());
         $ranges = explode(',', $originalExtent);
 
         $multipleRanges = count($ranges) > 1;
