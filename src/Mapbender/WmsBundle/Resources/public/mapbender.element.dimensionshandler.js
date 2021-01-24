@@ -24,7 +24,7 @@
                         dimensionName: compoundId.replace(/^.*-(\w+)-\w*$/, '$1')
                     };
                 });
-                this._preconfigureSources(targetDimensions, groupConfig.dimension.extent);
+                this._preconfigureSources(targetDimensions, groupConfig.extent);
                 this._setupGroup(key, targetDimensions);
             }
             this._trigger('ready');
@@ -82,7 +82,9 @@
         _preconfigureSource: function(source, dimensionName, extent) {
             var targetConfig = this._getSourceDimensionConfig(source, dimensionName);
             if (targetConfig) {
-                targetConfig.extent = extent;
+                // @todo: support original string extent format in Mapbender.Dimension
+                var extentParts = extent.split('/').slice(0, 2);
+                targetConfig.extent.splice(0, 2, extentParts[0], extentParts[1]);
                 var dimension = Mapbender.Dimension(targetConfig);
                 // Apply (newly restrained by modified range) default param value to source
                 var params = {};

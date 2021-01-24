@@ -3,24 +3,22 @@ $(function () {
     var selectSelector = 'select[data-name="group"]';
     var dimHandler = {
         update: function($item, dimension, minStep, maxStep, store) {
-            var $storeInput = $('input[data-name="dimension"]', $item);
+            var $storeInput = $('input[name*="[extent]"]', $item);
             var min = dimension.valueFromStep(minStep);
             var max = dimension.valueFromStep(maxStep);
-            var dimInstanceSettings = JSON.parse($storeInput.val() || '""') || $.extend(true, {}, dimension.getOptions());
             var defaultValue = dimension.getInRange(min, max, dimension.getMax());
             if (store) {
-                dimInstanceSettings.extent[0] = min;
-                dimInstanceSettings.extent[1] = max;
-                $storeInput.val(JSON.stringify(dimInstanceSettings || ''));
+                $storeInput.val([min, max, dimension.getResolutionText()].join('/'));
             }
             var displayText = [[min, max, dimension.getResolutionText()].join('/'), defaultValue].join(' - ');
             $('input[data-name="extentDisplay"]', $item).val(displayText);
         },
         getSliderSettings: function($item) {
-            var dimInstanceSettings = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
-            return (dimInstanceSettings.extent || false) && {
-                min: dimInstanceSettings.extent[0],
-                max: dimInstanceSettings.extent[1]
+            var extent = $('input[name*="[extent]"]', $item).val();
+            var parts = (extent || '').split('/');
+            return (parts.length >= 2) && {
+                min: parts[0],
+                max: parts[1]
             };
         },
         getDimension: function($item) {
