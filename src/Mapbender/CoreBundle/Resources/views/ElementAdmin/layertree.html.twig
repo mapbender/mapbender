@@ -9,6 +9,12 @@
             </table>
         </div>
     {% endblock %}
+    {% block _form_configuration_themes_entry_opened_row %}
+        <span class="item-opened" title="{{ form.vars.attr.title | trans }}">
+            <i class="fa fas fa-fw {{ form.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
+            <span class="hidden">{{ form_widget(form) }}</span>
+        </span>
+    {% endblock %}
     {% block _form_configuration_themes_entry_row %}
         <tr>
             <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
@@ -18,9 +24,7 @@
                 <span title="{{ form.useTheme.vars.attr.title | trans }}">
                     {{ form_row(form.useTheme) }}
                 </span>
-                <span class="item-opened" title="{{ form.opened.vars.attr.title | trans }}">
-                    {{ form_row(form.opened) }}
-                </span>
+                {{ form_row(form.opened) }}
                 <span title="{{ form.sourceVisibility.vars.attr.title | trans }}">
                     {{ form_row(form.sourceVisibility) }}
                 </span>
@@ -64,5 +68,14 @@
     {{ form_row(form.configuration.useTheme) }}
     {% if form.configuration.themes is defined %}
         {{ form_row(form.configuration.themes) }}
+        <script type="text/javascript">
+            $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
+                var $cb = $('input[type="checkbox"]', this);
+                var $icon = $('>i', this);
+                $cb.prop('checked', !$cb.prop('checked'));
+                $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
+                $icon.toggleClass('fa-folder', !$cb.prop('checked'));
+            });
+        </script>
     {% endif %}
 </div>
