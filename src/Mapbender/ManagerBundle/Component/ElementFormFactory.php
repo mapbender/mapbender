@@ -8,6 +8,7 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -63,7 +64,13 @@ class ElementFormFactory extends BaseElementFactory
      */
     public function getConfigurationForm($element, $options = array())
     {
-        // Create base form shared by all elements
+        // Add class and element id data attributes for functional test support
+        $options += array('attr' => array());
+        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form');
+        if ($element->getId()) {
+            $options['attr']['data-ft-element-id'] = $element->getId();
+        }
+
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $this->migrateElementConfiguration($element);
         $titleConstraints = array(
