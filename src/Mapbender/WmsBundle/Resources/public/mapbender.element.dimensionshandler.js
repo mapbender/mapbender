@@ -18,20 +18,24 @@
             for (var i = 0; i < dimensionUuids.length; ++i) {
                 var key = dimensionUuids[i];
                 var groupConfig = this.options.dimensionsets[dimensionUuids[i]];
-                var sourceIds = (groupConfig.group || []).map(function(compoundId) {
-                    return compoundId.replace(/-.*$/, '');
+                var targetDimensions = (groupConfig.group || []).map(function(compoundId) {
+                    return {
+                        sourceId: compoundId.replace(/-.*$/, ''),
+                        dimensionName: compoundId.replace(/^.*-(\w+)-\w*$/, '$1')
+                    };
                 });
-                this._preconfigureSources(sourceIds, groupConfig.dimension);
-                this._setupGroup(key, sourceIds, groupConfig.dimension);
+                this._preconfigureSources(targetDimensions, groupConfig.extent);
+                this._setupGroup(key, targetDimensions);
             }
             this._trigger('ready');
         },
-        _setupGroup: function(key, sourceIds, settings) {
+        _setupGroup: function(key, targetDimensions) {
             var self = this;
             var dimension;
-            for (var i = 0; i < sourceIds.length; ++i) {
-                var source = this.model.getSourceById(sourceIds[i]);
-                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, settings.name);
+            for (var i = 0; i < targetDimensions.length; ++i) {
+                var targetDimension = targetDimensions[i];
+                var source = this.model.getSourceById(targetDimension.sourceId);
+                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, targetDimension.dimensionName);
                 if (sourceDimensionConfig) {
                     dimension = Mapbender.Dimension(sourceDimensionConfig);
                     break;
@@ -47,8 +51,8 @@
                     valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
-                    for (var i = 0; i < sourceIds.length; ++i) {
-                        var source = self.model.getSourceById(sourceIds[i]);
+                    for (var i = 0; i < targetDimensions.length; ++i) {
+                        var source = self.model.getSourceById(targetDimensions[i].sourceId);
                         if (source) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
@@ -68,20 +72,23 @@
             }
             return false;
         },
-        _preconfigureSources: function(sourceIds, dimensionConfig) {
-            for (var i = 0; i < sourceIds.length; ++i) {
-                var source = this.model.getSourceById(sourceIds[i]);
-                this._preconfigureSource(source, dimensionConfig);
+        _preconfigureSources: function(targetDimensions, extent) {
+            for (var i = 0; i < targetDimensions.length; ++i) {
+                var targetDimension = targetDimensions[i];
+                var source = this.model.getSourceById(targetDimension.sourceId);
+                this._preconfigureSource(source, targetDimension.dimensionName, extent);
             }
         },
-        _preconfigureSource: function(source, settings) {
-            var targetConfig = this._getSourceDimensionConfig(source, settings.name);
+        _preconfigureSource: function(source, dimensionName, extent) {
+            var targetConfig = this._getSourceDimensionConfig(source, dimensionName);
             if (targetConfig) {
-                targetConfig.extent = settings.extent;
-                targetConfig.default = settings.default;
-                // apply params
+                // @todo: support original string extent format in Mapbender.Dimension
+                var extentParts = extent.split('/').slice(0, 2);
+                targetConfig.extent.splice(0, 2, extentParts[0], extentParts[1]);
+                var dimension = Mapbender.Dimension(targetConfig);
+                // Apply (newly restrained by modified range) default param value to source
                 var params = {};
-                params[targetConfig.__name] = settings.default;
+                params[targetConfig.__name] = dimension.getDefault();
                 try {
                     source.addParams(params);
                 } catch (e) {

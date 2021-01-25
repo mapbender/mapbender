@@ -43,14 +43,9 @@ class DimensionSetAdminType extends AbstractType
                     'data-name' => 'group',
                 ),
             ))
-            ->add('dimension', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+            ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
-                'mapped' => true,
-                'attr' => array(
-                    'data-name' => 'dimension',
-                ),
             ))
         ;
-        $builder->get('dimension')->addModelTransformer(new DimensionSetDimensionTransformer());
     }
 }

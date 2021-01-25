@@ -328,7 +328,7 @@ class Importer extends RefreshableSourceLoader
     private function updateInstanceDimensions(WmsInstance $instance)
     {
         $dimensionsOld = $instance->getDimensions();
-        $sourceDimensions = $instance->getSource()->dimensionInstancesFactory();
+        $sourceDimensions = $instance->getSource()->getDimensions();
         $dimensions = array();
         foreach ($sourceDimensions as $sourceDimension) {
             $newDimension = null;

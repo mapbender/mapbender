@@ -51,6 +51,10 @@ Mapbender.DimensionScalar.prototype.getMax = function() {
     return this.options.extent[1];
 };
 
+Mapbender.DimensionScalar.prototype.getResolutionText = function() {
+    return this.options.extent[2];
+};
+
 /**
  * @returns {int}
  */
