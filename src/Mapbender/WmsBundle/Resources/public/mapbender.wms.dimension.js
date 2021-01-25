@@ -1,7 +1,7 @@
 var Mapbender = Mapbender || {};
 
 Mapbender.Dimension = function(options) {
-    if(options.type === 'interval' && options.name === 'time') {
+    if (options.name === 'time') {
         return new Mapbender.DimensionTime(options);
     } else if(options.type === 'interval') {
         return new Mapbender.DimensionScalar(options);
@@ -12,29 +12,18 @@ Mapbender.Dimension = function(options) {
     }
 };
 
-Mapbender.DimensionScalar = function(options, initDefault) {
-
-    var min, max, value, hasDefaultOptions;
+Mapbender.DimensionScalar = function(options) {
     this.default = null;
 
     if(Object.prototype.toString.call(options.extent) !== '[object Array]') {
         throw 'DimensionScalar extent option has to be type [object Array]:' + Object.prototype.toString.call(options.extent) + 'given'
     }
 
-    if(options.extent.length < 2) {
-
+    if (options.extent.length < 2) {
         throw 'DimensionScalar extent option needs atleast two entries'
     }
 
     this.options = options;
-
-    if(initDefault) {
-        max = this.valueFromPart(1);
-        min = this.valueFromPart(0);
-        hasDefaultOptions = this.options.default !== null;
-        value = !hasDefaultOptions ? options.extent[0] : options['default'];
-        this.setDefault(min, max, value);
-    }
 };
 
 Mapbender.DimensionScalar.Types = {
@@ -51,9 +40,15 @@ Mapbender.DimensionScalar.prototype.getDefault = function() {
 };
 
 Mapbender.DimensionScalar.prototype.setDefault = function(defaults) {
-
     return this.default = defaults;
+};
 
+Mapbender.DimensionScalar.prototype.getMin = function() {
+    return this.options.extent[0];
+};
+
+Mapbender.DimensionScalar.prototype.getMax = function() {
+    return this.options.extent[1];
 };
 
 /**
@@ -75,34 +70,10 @@ Mapbender.DimensionScalar.prototype.getStepsNum = function() {
     return this.stepsNum;
 };
 
-Mapbender.DimensionScalar.prototype.partFromValue = function(val) {
-    var valueStep = this.getStep(val);
-    var endStep = this.getStep(this.options.extent[1]);
-    if (endStep) {
-        return valueStep / endStep;
-    } else {
-        return 0.0;
-    }
-};
-
-Mapbender.DimensionScalar.prototype.stepFromPart =  function(part) {
-    return Math.round(part * (this.getStepsNum()));
-};
-
-Mapbender.DimensionScalar.prototype.valueFromPart = function(part) {
-    return this.valueFromStep(this.stepFromPart(part));
-};
 Mapbender.DimensionScalar.prototype.valueFromStep = function(step) {
     return this.options.extent[step];
 };
 
-Mapbender.DimensionScalar.prototype.valueFromStart = function() {
-    return this.options.extent[0];
-};
-
-Mapbender.DimensionScalar.prototype.valueFromEnd = function() {
-    return this.options.extent[this.options.extent.length - 1];
-};
 Mapbender.DimensionScalar.prototype.innerJoin = function() {
     console.warn('DimensionScalar.innerJoin() is not implemented yet!');
     return null;
@@ -122,7 +93,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
             return '' + x;
         });
     }
-    Mapbender.DimensionScalar.call(this, options, false);
+    Mapbender.DimensionScalar.call(this, options);
     try {
         this.template = new Mapbender.DimensionTime.DateTemplate(options.extent[0]);
     } catch (e) {
@@ -143,7 +114,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
         this.end = this.start;
         this.start = swapTmp;
     }
-    this.setDefault(this.getInRange(this.valueFromPart(0), this.valueFromPart(1), this.options['default'] || options.extent[0]));
+    this.setDefault(this.getInRange(this.valueFromStep(0), this.valueFromStep(this.getStepsNum()), this.options['default'] || this.getMax()));
 };
 
 Mapbender.DimensionTime.prototype = Object.create(Mapbender.DimensionScalar.prototype);
@@ -174,7 +145,7 @@ Mapbender.DimensionTime.prototype.getStep = function(value) {
     }
 };
 
-Mapbender.DimensionTime.prototype.valueFromStep = function valueFromPart(step) {
+Mapbender.DimensionTime.prototype.valueFromStep = function(step) {
     var dateOut = new Date(this.start.toISOString());
     switch (this.step.getType()) {
         case 'year':
@@ -191,14 +162,6 @@ Mapbender.DimensionTime.prototype.valueFromStep = function valueFromPart(step) {
             throw new Error("Unsupported step type " + this.step.getType());
     }
     return this.template.formatDate(dateOut);
-};
-
-Mapbender.DimensionTime.prototype.valueFromStart = function valueFromStart() {
-    return this.start.toJSON();
-};
-
-Mapbender.DimensionTime.prototype.valueFromEnd = function valueFromEnd() {
-    return this.end.toJSON();
 };
 
 /**
@@ -232,7 +195,6 @@ Mapbender.DimensionTime.prototype.innerJoin = function innerJoin(another) {
         this.template.formatDate(endDimension.end),
         this.step.toString()
     ];
-    options.origextent = options.extent.slice();
     options.current = this.options.current === another.options.current ? this.options.current : null;
     options.multipleValues = this.options.multipleValues && another.options.multipleValues;
     options.nearestValue = this.options.nearestValue && another.options.nearestValue;

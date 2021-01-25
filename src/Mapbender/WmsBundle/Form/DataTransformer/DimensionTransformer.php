@@ -67,38 +67,4 @@ class DimensionTransformer implements DataTransformerInterface
         $dimInst->setExtent($withDefaults['extent']);
         return $dimInst;
     }
-
-    /**
-     * @param string $type
-     * @param mixed $extentValue
-     * @return string|null
-     */
-    protected function transformExtent($type, $extentValue)
-    {
-        switch ($type) {
-            case DimensionInst::TYPE_MULTIPLE:
-                return explode(',', $extentValue);
-            case DimensionInst::TYPE_INTERVAL:
-                return explode('/', $extentValue);
-            default:
-                throw new \RuntimeException("Unhandled type " . var_export($type, true));
-        }
-    }
-
-    /**
-     * @param string $type
-     * @param mixed $extentValue
-     * @return string|null
-     */
-    protected function revTransformExtent($type, $extentValue)
-    {
-        switch ($type) {
-            case DimensionInst::TYPE_MULTIPLE:
-                return implode(',', $extentValue);
-            case DimensionInst::TYPE_INTERVAL:
-                return implode('/', $extentValue);
-            default:
-                throw new \RuntimeException("Unhandled type " . var_export($type, true));
-        }
-    }
 }

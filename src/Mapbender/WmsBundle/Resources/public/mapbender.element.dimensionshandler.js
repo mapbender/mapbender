@@ -16,35 +16,78 @@
             this.model = mbMap.getModel();
             var dimensionUuids = Object.keys(this.options.dimensionsets);
             for (var i = 0; i < dimensionUuids.length; ++i) {
-                this._setupGroup(dimensionUuids[i]);
+                var key = dimensionUuids[i];
+                var groupConfig = this.options.dimensionsets[dimensionUuids[i]];
+                var sourceIds = (groupConfig.group || []).map(function(compoundId) {
+                    return compoundId.replace(/-.*$/, '');
+                });
+                this._preconfigureSources(sourceIds, groupConfig.dimension);
+                this._setupGroup(key, sourceIds, groupConfig.dimension);
             }
             this._trigger('ready');
         },
-        _setupGroup: function (key) {
+        _setupGroup: function(key, sourceIds, settings) {
             var self = this;
-            var dimensionset = this.options.dimensionsets[key];
-            var dimension = Mapbender.Dimension(dimensionset['dimension']);
-            var def = dimension.partFromValue(dimension.getDefault());
+            var dimension;
+            for (var i = 0; i < sourceIds.length; ++i) {
+                var source = this.model.getSourceById(sourceIds[i]);
+                var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, settings.name);
+                if (sourceDimensionConfig) {
+                    dimension = Mapbender.Dimension(sourceDimensionConfig);
+                    break;
+                }
+            }
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
                 min: 0,
-                max: 100,
-                value: def * 100,
+                max: dimension.getStepsNum(),
+                value: dimension.getStep(dimension.getDefault()),
                 slide: function (event, ui) {
-                    valarea.text(dimension.valueFromPart(ui.value / 100));
+                    valarea.text(dimension.valueFromStep(ui.value));
                 },
                 stop: function (event, ui) {
-                    $.each(dimensionset.group, function (idx, item) {
-                        var source = self.model.getSourceById(item.split('-')[0]);
+                    for (var i = 0; i < sourceIds.length; ++i) {
+                        var source = self.model.getSourceById(sourceIds[i]);
                         if (source) {
                             var params = {};
-                            params[dimension.getOptions().__name] = dimension.valueFromPart(ui.value / 100);
+                            params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
                             source.addParams(params);
                         }
-                    });
+                    }
                 }
             });
+        },
+        _getSourceDimensionConfig: function(source, name) {
+            var sourceDimensions = source && source.configuration.options.dimensions || [];
+            for (var j = 0; j < sourceDimensions.length; ++j) {
+                var sourceDimension = sourceDimensions[j];
+                if (sourceDimension.name === name) {
+                    return sourceDimension;
+                }
+            }
+            return false;
+        },
+        _preconfigureSources: function(sourceIds, dimensionConfig) {
+            for (var i = 0; i < sourceIds.length; ++i) {
+                var source = this.model.getSourceById(sourceIds[i]);
+                this._preconfigureSource(source, dimensionConfig);
+            }
+        },
+        _preconfigureSource: function(source, settings) {
+            var targetConfig = this._getSourceDimensionConfig(source, settings.name);
+            if (targetConfig) {
+                targetConfig.extent = settings.extent;
+                targetConfig.default = settings.default;
+                // apply params
+                var params = {};
+                params[targetConfig.__name] = settings.default;
+                try {
+                    source.addParams(params);
+                } catch (e) {
+                    // Source is not yet an object, but we made our config changes => error is safe to ignore
+                }
+            }
         },
         _destroy: $.noop
     });

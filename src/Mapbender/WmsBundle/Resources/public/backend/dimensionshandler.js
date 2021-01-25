@@ -2,36 +2,40 @@ $(function () {
     var collectionSelector = '#form_configuration_dimensionsets .collectionItem';
     var selectSelector = 'select[data-name="group"]';
     var dimHandler = {
-        updateExtents: function ($item, extent, default_) {
-            var text = extent && ([extent.join('/'), default_].join(' - ')) || '';
-            $('input[data-name="extentDisplay"]', $item).val(text);
-        },
-        setVals: function ($item, dimension, extent) {
-            var gopts;
-            if (dimension) {
-                gopts = dimension.getOptions();
-                if (extent) {
-                    gopts = _.assign({}, gopts, {extent: extent});
-                }
-                $('input[data-name="dimension"]', $item).val(JSON.stringify(gopts || ''));
-                this.updateExtents($item, gopts.extent, dimension.getDefault());
-            } else {
-                $('input[data-name="dimension"]', $item).val('');
-                this.updateExtents($item, null, null);
+        update: function($item, dimension, minStep, maxStep, store) {
+            var $storeInput = $('input[data-name="dimension"]', $item);
+            var min = dimension.valueFromStep(minStep);
+            var max = dimension.valueFromStep(maxStep);
+            var dimInstanceSettings = JSON.parse($storeInput.val() || '""') || $.extend(true, {}, dimension.getOptions());
+            var defaultValue = dimension.getInRange(min, max, dimension.getMax());
+            if (store) {
+                dimInstanceSettings.extent[0] = min;
+                dimInstanceSettings.extent[1] = max;
+                dimInstanceSettings.default = defaultValue;
+                $storeInput.val(JSON.stringify(dimInstanceSettings || ''));
             }
+            var displayText = [[min, max, dimension.options.extent[2]].join('/'), defaultValue].join(' - ');
+            $('input[data-name="extentDisplay"]', $item).val(displayText);
+        },
+        getSliderSettings: function($item) {
+            var dimInstanceSettings = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
+            return (dimInstanceSettings.extent || false) && {
+                min: dimInstanceSettings.extent[0],
+                max: dimInstanceSettings.extent[1],
+                default: dimInstanceSettings.default
+            };
         },
         getDimension: function($item) {
             var dimensionOptions = JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
-            var dimension = Mapbender.Dimension(dimensionOptions);
+            var dimension;
             var $selected = $(selectSelector + ' option:selected', $item);
             for (var i = 0; i < $selected.length; ++i) {
                 dimensionOptions = JSON.parse($($selected.get(i)).attr('data-config'));
                 var nextDim = Mapbender.Dimension(dimensionOptions);
-                if (!dimension) {
+                if (dimension) {
+                    dimension = dimension.innerJoin(nextDim) || dimension;
+                } else {
                     dimension = nextDim;
-                } else if (nextDim) {
-                    var merged = dimension.innerJoin(nextDim);
-                    dimension = merged || dimension;
                 }
             }
             return dimension;
@@ -39,28 +43,28 @@ $(function () {
         initSlider: function ($item) {
             var self = this;
             var $slider = $('.mb-slider', $item);
+            var currentSettings = this.getSliderSettings($item);
             var dimension = this.getDimension($item);
-            this.setVals($item, dimension);
 
             if (dimension) {
-                var gopts = dimension.getOptions();
-                var sliderValues = [dimension.getStep(gopts.extent[0]), dimension.getStep(gopts.extent[1])];
-                var sliderRange = [dimension.getStep(gopts.origextent[0]), dimension.getStep(gopts.origextent[1])];
+                var sliderRange = [0, dimension.getStepsNum()];
+                var sliderValues = currentSettings && [
+                    Math.max(0, dimension.getStep(currentSettings.min)),
+                    Math.min(sliderRange[1], dimension.getStep(currentSettings.max))
+                ];
+                sliderValues = sliderValues || sliderRange.slice();
+                this.update($item, dimension, sliderValues[0], sliderValues[1], false);
                 $slider.slider({
                     range: true,
                     min: sliderRange[0],
                     max: sliderRange[1],
-                    steps: 1,
                     values: sliderValues,
                     slide: function (event, ui) {
-                        var extent = [dimension.valueFromStep(ui.values[0]), dimension.valueFromStep(ui.values[1]), gopts.origextent[2]];
-                        dimension.setDefault(dimension.getInRange(extent[0], extent[1], dimension.getDefault()));
-                        self.setVals($item, dimension, extent);
+                        self.update($item, dimension, ui.values[0], ui.values[1], true);
                     }
                 });
                 $slider.addClass('-created');
             } else {
-                this.setVals($item, null);
                 if ($slider.hasClass('-created')) {
                     $slider.slider("destroy");
                     $slider.removeClass('-created');
@@ -73,19 +77,12 @@ $(function () {
         var $selects = $([collectionSelector, selectSelector].join(' '));
         usedValues = [];
 
-        $selects.each(function(i, el) {
-            var v = $(el).val();
-            usedValues.push(v);
-            $('option[value="' + v + '"]', $selects).not(':selected').prop('disabled', true);
+        $selects.each(function() {
+            usedValues = usedValues.concat($(this).val());
         });
         usedValues = _.uniq(usedValues);
-        $selects.each(function(i, el) {
-            $('option', el).each(function(j, opt) {
-                var $opt = $(opt);
-                if (usedValues.indexOf($opt.attr('val')) === -1) {
-                    $opt.prop('disabled', false);
-                }
-            });
+        $('option', $selects).each(function() {
+            $(this).prop('disabled', (usedValues.indexOf(this.value) !== -1) && !$(this).is(':selected'));
         });
     };
 

@@ -527,7 +527,7 @@
                 } else if (item.type === 'multiple' || item.type === 'interval') {
                     var dimHandler = Mapbender.Dimension(item);
                     dragHandlers.push(new Dragdealer($('.layer-dimension-bar', $control).get(0), {
-                        x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
+                        x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
@@ -537,7 +537,8 @@
                             self._callDimension(source, inpchkbox);
                         },
                         animationCallback: function(x) {
-                            var value = dimHandler.valueFromPart(x);
+                            var step = Math.round(dimHandler.getStepsNum() * x);
+                            var value = dimHandler.valueFromStep(step);
                             label.text(value);
                             updateData(dimDataKey, {value: value});
                             inpchkbox.attr('data-value', value);

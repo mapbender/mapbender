@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
-use Mapbender\WmsBundle\Element\Type\Transformer\DimensionSetTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -52,6 +51,6 @@ class DimensionSetAdminType extends AbstractType
                 ),
             ))
         ;
-        $builder->addModelTransformer(new DimensionSetTransformer($options['dimensions']));
+        $builder->get('dimension')->addModelTransformer(new DimensionSetDimensionTransformer());
     }
 }

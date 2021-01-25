@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
@@ -10,6 +11,16 @@ use Symfony\Component\Form\FormEvent;
 
 class DimensionSubscriber implements EventSubscriberInterface
 {
+    /** @var WmsInstance */
+    protected $instance;
+
+    /**
+     * @param WmsInstance $instance
+     */
+    public function __construct(WmsInstance $instance)
+    {
+        $this->instance = $instance;
+    }
 
     /**
      * Returns defined events
@@ -43,134 +54,62 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     protected function addFields($form, $data)
     {
+        $originalExtent = $this->getOriginalExtent($this->instance, $data->getName());
+        $ranges = explode(',', $originalExtent);
+
+        $multipleRanges = count($ranges) > 1;
+        if ($multipleRanges) {
+            $extentType = 'Symfony\Component\Form\Extension\Core\Type\HiddenType';
+        } else {
+            $extentType = 'Symfony\Component\Form\Extension\Core\Type\TextType';
+        }
         $form
-            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'auto_initialize' => false,
+            ->add('extent', $extentType, array(
                 'required' => true,
+                'auto_initialize' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
                 ),
-            ))
-            ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'auto_initialize' => false,
-                'required' => true,
-                'attr' => array(
-                    'readonly' => 'readonly',
-                ),
-            ))
-            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'auto_initialize' => false,
-                'required' => false,
-                'attr' => array(
-                    'data-name' => 'units',
-                    'readonly' => 'readonly',
-                ),
-            ))
-            ->add('unitSymbol', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'auto_initialize' => false,
-                'required' => false,
-                'attr' => array(
-                    'data-name' => 'unitSymbol',
-                    'readonly' => 'readonly',
-                ),
-            ))
-            ->add('multipleValues', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'auto_initialize' => false,
-                'label' => 'multiple',
-                'disabled' => true,
-                'required' => false,
-            ))
-            ->add('nearestValue', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'auto_initialize' => false,
-                'label' => 'nearest',
-                'disabled' => true,
-                'required' => false,
-            ))
-            ->add('current', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'auto_initialize' => false,
-                'label' => 'current',
-                'disabled' => true,
-                'required' => false,
+                'label' => 'Extent',
             ))
         ;
-        $this->addExtentFields($form, $data);
-
-        switch ($data->getType()) {
-            case DimensionInst::TYPE_MULTIPLE:
-                $extentArray = $data->getData($data->getExtent());
-                $origExtentArray = $data->getData($data->getOrigextent());
-                $choices = array_combine($origExtentArray, $origExtentArray);
-                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                    'data' => $extentArray,
-                    'mapped' => false,
-                    'choices' => $choices,
-                    'choices_as_values' => true,
-                    'label' => 'Extent',
-                    'auto_initialize' => false,
-                    'multiple' => true,
-                    'required' => true,
-                ));
-                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                    'choices' => $choices,
-                    'choices_as_values' => true,
-                    'auto_initialize' => false,
-                ));
-                break;
-            case DimensionInst::TYPE_SINGLE:
-            case DimensionInst::TYPE_INTERVAL:
-                $form->add('extentEdit', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                    'label' => 'Extent',
-                    'required' => true,
-                    'auto_initialize' => false,
-                ));
-                break;
-            default:
-                break;
-        }
-        if ($data->getType() === DimensionInst::TYPE_INTERVAL) {
-            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        if ($multipleRanges) {
+            $choices = array_combine($ranges, $ranges);
+            $form->add('extentRanges', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'data' => explode(',', $data->getExtent()),
+                'mapped' => false,
+                'choices' => $choices,
+                'choices_as_values' => true,
+                'label' => $form->get('extent')->getConfig()->getOption('label'),
                 'auto_initialize' => false,
-                'required' => false,
-                'attr' => array(
-                    'readonly' => 'readonly',
-                ),
+                'multiple' => true,
+                'required' => true,
             ));
+            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'choices' => $choices,
+                'choices_as_values' => true,
+                'auto_initialize' => false,
+            ));
+        } else {
+            if (count($ranges) > 0 && count(explode('/', $ranges[0])) > 1) {
+                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                    'auto_initialize' => false,
+                    'required' => false,
+                    'attr' => array(
+                        'readonly' => 'readonly',
+                    ),
+                ));
+            }
         }
     }
 
-    /**
-     * @param FormInterface $form
-     * @param DimensionInst $data
-     */
-    protected function addExtentFields($form, $data)
+    protected function getOriginalExtent(WmsInstance $instance, $dimensionName)
     {
-        $form
-            ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'required' => true,
-                'auto_initialize' => false,
-                'attr' => array(
-                    'data-extent' => 'group-dimension-extent',
-                    'data-name' => 'extent',
-                ),
-            ))
-            ->add('origextent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'required' => true,
-                'auto_initialize' => false,
-                'mapped' => false,
-                'attr' => array(
-                    'data-extent' => 'group-dimension-origextent',
-                    'data-name' => 'origextent',
-                ),
-            ))
-        ;
-
-        $dimJs = $data->getConfiguration();
-        $form
-            ->add('json', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'required' => true,
-                'data' => json_encode($dimJs),
-                'auto_initialize' => false,
-            ))
-        ;
+        foreach ($instance->getSource()->dimensionInstancesFactory() as $sourceDimension) {
+            if ($sourceDimension->getName() === $dimensionName) {
+                return $sourceDimension->getExtent();
+            }
+        }
+        return null;
     }
 }

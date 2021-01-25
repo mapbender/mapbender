@@ -121,7 +121,11 @@ $(function() {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
                         cssClass: 'button',
                         callback: function() {
-                            elementFormSubmit(this.$element, formUrl);
+                            elementFormSubmit(this.$element, formUrl).then(function(success) {
+                                if (success) {
+                                    window.location.reload();
+                                }
+                            })
                         }
                     },
                     {
@@ -207,17 +211,15 @@ $(function() {
     function elementFormSubmit(scope, submitUrl) {
         var $form = $('form', scope),
             data = $form.serialize(),
-            url = submitUrl || $form.attr('action'),
-            self = this;
+            url = submitUrl || $form.attr('action')
+        ;
 
-        $.ajax({
+        return $.ajax({
             url: url,
             method: 'POST',
-            data: data,
-            error: function (e, statusCode, message) {
-                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
-            },
-            success: function(data) {
+            data: data
+        }).then(
+            function(data) {
                 if (data.length > 0) {
                     var dirty = $form.data('dirty');
                     var body = $form.parent();
@@ -225,12 +227,15 @@ $(function() {
                     $form = $('form', body);
                     $form.data('dirty', dirty);
                     $form.data('discard', false);
+                    return false;
                 } else {
-                    self.close();
-                    window.location.reload();
+                    return true;
                 }
+            },
+            function (e, statusCode, message) {
+                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
             }
-        });
+        );
     }
 
     // Delete element

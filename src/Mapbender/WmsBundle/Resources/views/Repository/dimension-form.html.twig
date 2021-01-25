@@ -6,7 +6,7 @@
         </div>
     </div>
 </div>
-<div id="dimension{{ num }}-content" class="on-off-content hidden" data-json="{{ dim.json.vars.data }}">
+<div id="dimension{{ num }}-content" class="on-off-content hidden" data-diminstconfig="{{ dim.vars.diminstconfig | json_encode }}" data-origextent="{{ dim.vars.origextent }}">
     <div class="row no-gutters">
         <div class="col-xs-3">
             {{ form_row(dim.multipleValues) }}
@@ -24,8 +24,9 @@
     {% if dim.default is defined %}
         {{ form_row(dim.default) }}
     {% endif %}
-    {{ form_row(dim.extentEdit) }}
-    <div class="dimension-type">{{ form_widget(dim.type) }}</div>
-    <div class="dimension-exent">{{ form_widget(dim.extent) }}</div>
+    {{ form_row(dim.extent) }}
+    {% if dim.extentRanges is defined %}
+        {{ form_row(dim.extentRanges) }}
+    {% endif %}
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>
 </div>
