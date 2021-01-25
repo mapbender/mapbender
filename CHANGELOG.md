@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 11ce8cc43
+## dev-release/3.0.7 @ 6be636c85
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -17,6 +17,11 @@
 - Fix broken PrintClient settings layout with option `legend` disabled
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
+- Fix Wms dimension range editing rounding errors in instance backend
+- Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
+- Fix broken enforcement of dimension exclusivity in DimensionsHandler form
+- Fix DimensionsHandler trying to control random dimension on source with multiple dimensions
+- Prefer maximum value of configured range as the (not directly editable) Wms dimension default
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 - Remove unreasonable default button tooltip "button"
 - Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
