@@ -4,87 +4,19 @@
 
 <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
     {% block printclient_form_top %}
-    {# render required extra fields on top of the form if configured #}
-        {% if configuration.optional_fields is defined and configuration.required_fields_first is defined and configuration.required_fields_first %}
-        {% for key,field in configuration.optional_fields ?: [] %}
-            {% if field.options.required %}
-                <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
-                    <span class="required">*</span>
-                </label>
-                <input type="text" class="input" name="extra[{{ key }}]" required="required">
-            {% endif %}
-        {% endfor %}
-    {% endif %}
+        {{ form_widget(settingsForm.custom_top) }}
     {% endblock printclient_form_top %}
 
-    <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
-    <div class="dropdown">
-        <select name="template" class="hiddenDropdown">
-            {% for template in configuration.templates %}
-                <option value="{{ template.template }}">{{ template.label }}</option>
-            {% endfor %}
-        </select>
-        <div class="dropdownValue iconDown"></div>
-        <ul class="dropdownList"></ul>
-    </div>
+    {{ form_row(settingsForm.template) }}
+    {{ form_row(settingsForm.quality) }}
+    {{ form_row(settingsForm.scale_select) }}
+    {{ form_row(settingsForm.rotation) }}
 
-    <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
-    <div class="dropdown">
-        <select name="quality" class="hiddenDropdown">
-            {% for qualityLevel in configuration.quality_levels %}
-                <option value="{{ qualityLevel.dpi }}">{{ qualityLevel.label }}</option>
-            {% endfor %}
-        </select>
-        <div class="dropdownValue iconDown"></div>
-        <ul class="dropdownList"></ul>
-    </div>
-
-    <label class="labelInput">{{ 'mb.core.printclient.label.scale' | trans }}</label>
-    <div class="dropdown">
-        <select name="scale_select" class="hiddenDropdown">
-            {% for key in configuration.scales %}
-                <option value="{{ key }}">1:{{ key }}</option>
-            {% endfor %}
-        </select>
-        <div class="dropdownValue iconDown"></div>
-        <ul class="dropdownList"></ul>
-    </div>
-
-    {% if configuration.rotatable is defined and configuration.rotatable == 1 %}
-        <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
-        <input class="input" type="text" name="rotation" value="0"/>
- {% else %}
-<input class="input" type="text" name="rotation" value="0" style="display: none"/>
-    {% endif %}
-
-    {# render non-required extra fields here #}
-    {% if configuration.optional_fields is defined %}
-        {% for key,field in configuration.optional_fields ?: [] %}
-            {% if configuration.required_fields_first is not defined or not configuration.required_fields_first or not field.options.required %}
-                <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
-                {% if field.options.required %}
-                    <span class="required">*</span></label>
-                    <input type="text" class="input" name="extra[{{ key }}]" required="required">
-                {% else %}
-                    </label>
-                    <input type="text" class="input" name="extra[{{ key }}]">
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
+    {{ form_widget(settingsForm.custom_bottom) }}
 
     {% block printclient_form_bottom %}
-    {% if configuration.legend is defined and configuration.legend == 1 %}
-        {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour is empty %}
-            <span class="checkWrapper iconCheckbox">
-                <input class="checkbox" type="checkbox" name="printLegend">
-            </span>
-        {% else %}
-            <span class="checkWrapper iconCheckbox iconCheckboxActive">
-                <input class="checkbox" type="checkbox" name="printLegend" checked="checked">
-            </span>
-        {% endif %}
-        <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
+    {% if settingsForm.printLegend is defined %}
+        {{ form_row(settingsForm.printLegend) }}
     {% endif %}
     {% endblock printclient_form_bottom %}
 

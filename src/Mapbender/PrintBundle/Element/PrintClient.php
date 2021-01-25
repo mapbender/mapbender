@@ -13,6 +13,7 @@ use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Mapbender\Utils\MemoryUtil;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -197,9 +198,10 @@ class PrintClient extends Element implements ConfigMigrationInterface
             'action' => $this->getSubmitAction(),
         ));
         $vars = array(
-            'configuration' => $config,
+            'configuration' => $config,     // for legacy custom templates only
             'submitUrl' => $submitUrl,
             'settingsTemplate' => $this->getSettingsTemplate(),
+            'settingsForm' => $this->getSettingsForm()->createView(),
         );
         if ($this->isQueueModeEnabled()) {
             $submitFrameName = $this->getSubmitFrameName();
@@ -217,6 +219,36 @@ class PrintClient extends Element implements ConfigMigrationInterface
     protected function getSettingsTemplate()
     {
         return 'MapbenderPrintBundle:Element:printclient-settings.html.twig';
+    }
+
+    protected function getSettingsFormType()
+    {
+        return 'Mapbender\PrintBundle\Form\PrintClientSettingsType';
+    }
+
+    protected function getSettingsForm()
+    {
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        $formType = $this->getSettingsFormType();
+        $config = $this->entity->getConfiguration();
+        $options = array(
+            'templates' => ArrayUtil::getDefault($config, 'templates', array()),
+            'required_fields_first' => ArrayUtil::getDefault($config, 'required_fields_first', false),
+            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', array()),
+            'quality_levels' => ArrayUtil::getDefault($config, 'quality_levels', array()),
+            'scales' => ArrayUtil::getDefault($config, 'scales', array()),
+            'show_rotation' => ArrayUtil::getDefault($config, 'rotatable', true),
+            'show_printLegend' => ArrayUtil::getDefault($config, 'legend', true),
+            'compound' => true,
+        );
+        $data = array(
+            'rotation' => '0',
+            'printLegend' => !!ArrayUtil::getDefault($config, 'legend_default_behaviour', true),
+        );
+
+        // NOTE: null name prevents generation of nested property paths
+        return $formFactory->createNamed(null, $formType, $data, $options);
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
