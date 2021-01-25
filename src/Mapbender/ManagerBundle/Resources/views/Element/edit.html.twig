@@ -1,4 +1,5 @@
     {{ form_start(form, {'attr': {
+        'class': ((form.vars.attr.class | default('')) ~ ' elementForm') | trim,
         novalidate: 'novalidate', id: 'elementForm'
     }}) }}
 
