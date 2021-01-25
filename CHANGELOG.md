@@ -203,6 +203,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 - Fix Wms dimension range editing rounding errors in instance backend
+- Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
 - Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
 - Fix broken enforcement of dimension exclusivity in DimensionsHandler form
 - Fix DimensionsHandler trying to control random dimension on source with multiple dimensions

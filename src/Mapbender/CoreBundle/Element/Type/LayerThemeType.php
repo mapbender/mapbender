@@ -28,9 +28,17 @@ class LayerThemeType extends AbstractType
         $builder
             ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => false,
+                'attr' => array(
+                    'title' => 'mb.core.admin.layertree.label.theme.useTheme',
+                ),
             ))
             ->add('opened', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => false,
+                'attr' => array(
+                    'title' => 'mb.core.admin.layertree.label.theme.opened',
+                ),
             ))
         ;
     }
