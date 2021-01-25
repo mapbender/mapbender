@@ -1,4 +1,4 @@
-## dev-master @ 3c0777439
+## dev-master @ 73a6713a7
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -10,6 +10,13 @@
 * Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 * Fix fragment history not generating an entry for a pure srs change
 * Fix PrintClient broken nested tab container layout (queue mode active and placed in tabs-style sidepane)
+* Fix Wms dimension range editing rounding errors in instance backend
+* Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
+* Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
+* Fix shared instances not included in DimensionsHandler instance selection ([#1284](https://github.com/mapbender/mapbender/issues/1284))
+* Fix broken enforcement of dimension exclusivity in DimensionsHandler form
+* Fix DimensionsHandler trying to control random dimension on source with multiple dimensions
+* Prefer maximum value of configured range as the (not directly editable) Wms dimension default
 * Remove unreasonable default button tooltip "button"
 * Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
