@@ -10,14 +10,22 @@
     margin-bottom: inherit;
     line-height: $labelHeight;
     height: $labelHeight;
+    display: block;
   }
-  .input, .dropdown {
+  .input, .dropdown, .inputWrapper {
     min-width: 190px;
     width: 100%;
     margin-bottom: $space/2;
   }
+  .inputWrapper .input {
+    margin-bottom: 0;
+  }
   .button.active {
     background-color: #538e24;
+  }
+  .checkWrapper.left {
+    // @todo: undo checkbox float globally
+    float: none;
   }
 
   .job-list {
