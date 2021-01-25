@@ -192,7 +192,7 @@ class PrintClient extends Element implements ConfigMigrationInterface
             'action' => $this->getSubmitAction(),
         ));
         $vars = array(
-            'configuration' => $config,
+            'configuration' => $config,     // for legacy custom templates only
             'submitUrl' => $submitUrl,
             'settingsTemplate' => $this->getSettingsTemplate(),
             'settingsForm' => $this->getSettingsForm()->createView(),

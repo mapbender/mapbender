@@ -6,6 +6,8 @@ namespace Mapbender\PrintBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -47,6 +49,12 @@ class PrintClientSettingsType extends AbstractType
             $rotationType = 'Symfony\Component\Form\Extension\Core\Type\HiddenType';
         }
         $builder
+            ->add('custom_top', 'Symfony\Component\Form\Extension\Core\Type\FormType', array(
+                'compound' => true,
+                'inherit_data' => true,
+                'mapped' => false,
+                'property_path' => 'extra',
+            ))
             ->add('template', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
                 'choices' => $templateChoices,
                 'label' => 'mb.core.printclient.label.template',
@@ -62,6 +70,12 @@ class PrintClientSettingsType extends AbstractType
             ->add('rotation', $rotationType, array(
                 'label' => 'mb.core.printclient.label.rotation',
             ))
+            ->add('custom_bottom', 'Symfony\Component\Form\Extension\Core\Type\FormType', array(
+                'compound' => true,
+                'inherit_data' => true,
+                'mapped' => false,
+                'property_path' => 'extra',
+            ))
         ;
         if ($options['show_printLegend']) {
             $builder
@@ -70,6 +84,34 @@ class PrintClientSettingsType extends AbstractType
                     'required' => false,
                 ))
             ;
+        }
+        foreach ($options['custom_fields'] as $key => $fieldConfig) {
+            $isRequired = !empty($fieldConfig['options']['required']);
+            if ($options['required_fields_first'] && $isRequired) {
+                $targetName = 'custom_top';
+            } else {
+                $targetName = 'custom_bottom';
+            }
+            $fieldName = 'extra_' . $key . '';
+            $builder->get($targetName)->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => $isRequired,
+                'mapped' => false,
+                'inherit_data' => false,
+                'data' => '',
+                'label' => $fieldConfig['label'],
+            ));
+        }
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        // Mangle input names (~submit property paths) of custom fields to keep data format compatible with print
+        // backend / frontend / stored jobs
+        foreach ($view['custom_bottom']->children as $k => $child) {
+            $child->vars['full_name'] = 'extra[' . preg_replace('#^extra_#', '', $k) . ']';
+        }
+        foreach ($view['custom_top']->children as $k => $child) {
+            $child->vars['full_name'] = 'extra[' . preg_replace('#^extra_#', '', $k) . ']';
         }
     }
 }
