@@ -16,7 +16,7 @@
         setup: function(mbMap) {
             var self = this;
             this.mbMap = mbMap;
-            this.initial = mbMap.getModel().getInitialSettings();
+            this.initial = mbMap.getModel().getConfiguredSettings();
             this.element.on('click', function() {
                 self.run();
             });

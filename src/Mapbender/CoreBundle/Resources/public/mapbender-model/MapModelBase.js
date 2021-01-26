@@ -51,7 +51,7 @@ window.Mapbender.MapModelBase = (function() {
                 label: poi.label
             });
         });
-        this.initialLayersetSettings = Mapbender.layersets.map(function(layerset) {
+        this.configuredLayersetSettings = Mapbender.layersets.map(function(layerset) {
             return Object.assign({}, layerset.getSettings(), {
                 id: layerset.getId()
             });
@@ -952,7 +952,7 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @return {mmMapSettings}
          */
-        getInitialSettings: function() {
+        getConfiguredSettings: function() {
             return {
                 viewParams: Object.assign({}, this.initialViewParams),
                 sources: this.sourceTree.map(function(source) {
@@ -960,7 +960,7 @@ window.Mapbender.MapModelBase = (function() {
                         id: source.id
                     });
                 }),
-                layersets: this.initialLayersetSettings
+                layersets: this.configuredLayersetSettings
             };
         },
         /**
