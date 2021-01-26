@@ -30,7 +30,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
         var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj);
 
-        this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
+        this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
@@ -465,8 +465,12 @@ window.Mapbender.MapModelOl4 = (function() {
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
 
+        var fakeViewParams = {
+            srsName: srsNameTo,
+            rotation: 0     // Not worth doing rad2deg + deg2rad; we will replace it anyway
+        };
         var mbMapOptions = this.mbMap.options;
-        var resolutionOptions = this.calculateViewOptions_(srsNameTo, mbMapOptions.scales, newMaxExtent, mbMapOptions.dpi);
+        var resolutionOptions = this.calculateViewOptions_(fakeViewParams, mbMapOptions.scales, newMaxExtent, mbMapOptions.dpi);
         var newViewOptions = Object.assign({}, this.viewOptions_, resolutionOptions, {
             projection: srsNameTo,
             center: newCenter,
@@ -648,19 +652,22 @@ window.Mapbender.MapModelOl4 = (function() {
             return def.promise();
         },
         /**
-         * @param {String} srsName
+         * @param {mmViewParams} viewParams
          * @param {Array<Number>}scales
          * @param {Array<Number>=} [maxExtent]
          * @param {Number=} [dpi]
          * @return {{}}
          * @private
          */
-        calculateViewOptions_: function(srsName, scales, maxExtent, dpi) {
+        calculateViewOptions_: function(viewParams, scales, maxExtent, dpi) {
+            var deg2rad = 2 * Math.PI / 360;
+
             var viewOptions = {
-                projection: srsName
+                projection: viewParams.srsName,
+                rotation: deg2rad * viewParams.rotation
             };
             if (scales && scales.length) {
-                var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName);
+                var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(viewParams.srsName);
                 var inchesPerMetre = 39.37;
                 var dpi_ = dpi || 72;
                 viewOptions['resolutions'] = scales.map(function(scale) {
