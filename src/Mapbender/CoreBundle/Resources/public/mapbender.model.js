@@ -79,8 +79,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
 
     map: null,
     _initMap: function _initMap() {
-        this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
-
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
@@ -185,23 +183,18 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (this.olMap) {
             return this.olMap.getProjection();
         } else {
-            return this._startProj;
+            return this.initialViewParams.srsName;
         }
     },
     getCurrentProjectionUnits: function() {
-        var proj;
-        if (this.olMap) {
-            proj = this.getProj(this.olMap.getProjection());
-        } else {
-            proj = this.getProj(this._startProj);
-        }
+        var proj = this.getCurrentProj();
         return proj.proj.units || 'degrees';
     },
     getCurrentProj: function() {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjectionObject();
         } else {
-            return this.getProj(this._startProj);
+            return this.getProj(this.viewParams.srsName);
         }
     },
     /**

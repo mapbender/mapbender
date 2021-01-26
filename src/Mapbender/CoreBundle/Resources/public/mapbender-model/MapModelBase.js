@@ -42,7 +42,8 @@ window.Mapbender.MapModelBase = (function() {
         var mapOptions = mbMap.options;
         this.sourceTree = [];
         this._configProj = mapOptions.srs;
-        var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
+        this.initialViewParams = this._getInitialViewParams(mapOptions, false);
+        var startProj = this.initialViewParams.srsName;
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
         var poiOptions = (mbMap.options.extra || {}).pois || [];
         this._poiOptions = poiOptions.map(function(poi) {
@@ -65,8 +66,6 @@ window.Mapbender.MapModelBase = (function() {
         mapMaxExtent: null,
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
-        /** Actual initial projection, determined by a combination of several URL parameters */
-        _startProj: null,
         /**
          * @param {boolean} [closest] round to nearest configured map scale (default true if omitted)
          * @return {number}

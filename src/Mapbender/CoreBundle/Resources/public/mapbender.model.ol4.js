@@ -27,7 +27,6 @@ window.Mapbender.MapModelOl4 = (function() {
 
 
     _initMap: function() {
-        this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
         var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName);
 
         this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
@@ -332,7 +331,7 @@ window.Mapbender.MapModelOl4 = (function() {
         if (this.olMap) {
             proj = this.olMap.getView().getProjection();
         } else {
-            proj = ol.proj.get(this._startProj);
+            proj = ol.proj.get(this.initialViewParams.srsName);
         }
         return proj.getUnits() || 'degrees';
     },
@@ -343,7 +342,7 @@ window.Mapbender.MapModelOl4 = (function() {
         if (this.olMap) {
             return this.olMap.getView().getProjection().getCode();
         } else {
-            return this._startProj;
+            return this.initialViewParams.srsName;
         }
     },
     /**
