@@ -695,7 +695,11 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmDimension}
          */
         getCurrentViewportSize: function() {
-            return Mapbender.mapEngine.getCurrentViewportSize(this.olMap);
+            var node = this.mbMap.element.get(0);
+            return {
+                width: node.clientWidth || node.offsetWidth || parseInt(node.style.width),
+                height: node.clientHeight || node.offsetHeight || parseInt(node.style.height)
+            };
         },
         displayPois: function(poiOptions) {
             if (!poiOptions.length) {
@@ -921,7 +925,7 @@ window.Mapbender.MapModelBase = (function() {
             if (scaleOverride) {
                 params.scale = scaleOverride;
             } else {
-                var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
+                var viewportSize = this.getCurrentViewportSize();
                 var resolution = Math.max(
                     Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
                     Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height

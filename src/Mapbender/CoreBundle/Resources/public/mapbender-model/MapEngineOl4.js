@@ -200,13 +200,6 @@ window.Mapbender.MapEngineOl4 = (function() {
         getFeatureProperties: function(olFeature) {
             return olFeature.getProperties();
         },
-        getCurrentViewportSize: function(olMap) {
-            var s = olMap.getSize();
-            return {
-                width: s[0],
-                height: s[1]
-            };
-        },
         supportsRotation: function() {
             return true;
         },
