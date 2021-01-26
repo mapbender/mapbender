@@ -79,6 +79,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
 
     map: null,
     _initMap: function _initMap() {
+        this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
+
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
@@ -129,7 +131,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
-        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
+        this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
         this.initializeSourceLayers();
         this.processUrlParams();
         this._initEvents(this.olMap, this.mbMap);
@@ -168,15 +170,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     /**
      * @param {OpenLayers.Map} olMap
+     * @param {mmViewParams} viewParams
      * @param {Object} mapOptions
-     * @return {mmViewParams}
      * @private
      */
-    _setInitialView: function(olMap, mapOptions) {
-        var viewParams = this._getInitialViewParams(mapOptions, false);
+    _setInitialView: function(olMap, viewParams, mapOptions) {
         var zoom = this.pickZoomForScale(viewParams.scale, true);
         olMap.setCenter(viewParams.center, zoom);
-        return viewParams;
     },
     /**
      * @return {String}
@@ -429,14 +429,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
-        var baseLayer = this.map.olMap.baseLayer;
-        if (!(baseLayer && baseLayer.scales && baseLayer.scales.length)) {
-            console.error("No base layer, or scales not populated", baseLayer, this.map.olMap);
-            throw new Error("No base layer, or scales not populated");
-        }
-        return baseLayer.scales.map(function(s) {
-            return parseInt('' + Math.round(s));
-        });
+        return this.mbMap.options.scales;
     },
     _countScales: function() {
         return this._getScales().length;

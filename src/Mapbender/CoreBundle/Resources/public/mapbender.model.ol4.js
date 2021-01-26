@@ -27,6 +27,7 @@ window.Mapbender.MapModelOl4 = (function() {
 
 
     _initMap: function() {
+        this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
         var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj);
 
         this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
@@ -50,7 +51,8 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
+
+        this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
 
         this.initializeSourceLayers();
         this.processUrlParams();
@@ -58,17 +60,15 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     /**
      * @param {ol.PluggableMap} olMap
+     * @param {mmViewParams} viewParams
      * @param {Object} mapOptions
-     * @return {mmViewParams}
      * @private
      */
-    _setInitialView: function(olMap, mapOptions) {
-        var viewParams = this._getInitialViewParams(mapOptions);
+    _setInitialView: function(olMap, viewParams, mapOptions) {
         var resolution = this.scaleToResolution(viewParams.scale, mapOptions.dpi, viewParams.srsName);
         var view = olMap.getView();
         view.setCenter(viewParams.center);
         view.setResolution(resolution);
-        return viewParams;
     },
     /**
      * @param {ol.Map} olMap
