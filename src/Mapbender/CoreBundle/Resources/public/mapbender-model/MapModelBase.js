@@ -935,10 +935,9 @@ window.Mapbender.MapModelBase = (function() {
             return {
                 viewParams: this.getCurrentViewParams(),
                 sources: this.sourceTree.map(function(source) {
-                    return {
-                        id: source.id,
-                        settings: source.getSettings()
-                    };
+                    return Object.assign({}, source.getSettings(), {
+                        id: source.id
+                    });
                 }),
                 layersets: Mapbender.layersets.map(function(layerset) {
                     return Object.assign({}, layerset.getSettings(), {
@@ -954,10 +953,9 @@ window.Mapbender.MapModelBase = (function() {
             return {
                 viewParams: Object.assign({}, this.initialViewParams),
                 sources: this.sourceTree.map(function(source) {
-                    return {
-                        id: source.id,
-                        settings: source.initialSettings
-                    };
+                    return Object.assign({}, source.initialSettings, {
+                        id: source.id
+                    });
                 }),
                 layersets: this.initialLayersetSettings
             };
@@ -984,7 +982,7 @@ window.Mapbender.MapModelBase = (function() {
                 if (source) {
                     sources.push(source);
                     // NOTE: this only restores settings properties. It does NOT yet apply them on the map view.
-                    source.applySettings(sourceEntry.settings);
+                    source.applySettings(sourceEntry);
                 }
             }
             this.applyViewParams(settings.viewParams);
