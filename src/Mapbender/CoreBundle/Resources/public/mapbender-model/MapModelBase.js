@@ -954,7 +954,7 @@ window.Mapbender.MapModelBase = (function() {
          */
         getConfiguredSettings: function() {
             return {
-                viewParams: Object.assign({}, this.initialViewParams),
+                viewParams: Object.assign({}, this._getInitialViewParams(this.olMap, this.mbMap.options, true)),
                 sources: this.sourceTree.map(function(source) {
                     return Object.assign({}, source.initialSettings, {
                         id: source.id
