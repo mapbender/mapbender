@@ -102,7 +102,7 @@ window.Mapbender.Source = (function() {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
         this.children = this.configuration.children;
-        this.initialSettings = this.getSettings();
+        this.configuredSettings_ = this.getSettings();
     }
     Source.typeMap = {};
     /**
@@ -154,6 +154,9 @@ window.Mapbender.Source = (function() {
             return {
                 opacity: this.configuration.options.opacity
             };
+        },
+        getConfiguredSettings: function() {
+            return Object.assign({}, this.configuredSettings_);
         },
         /**
          * @param {SourceSettings} settings
