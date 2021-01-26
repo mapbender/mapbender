@@ -28,7 +28,7 @@ window.Mapbender.MapModelOl4 = (function() {
 
     _initMap: function() {
         this.initialViewParams = this._getInitialViewParams(this.mbMap.options, false);
-        var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj);
+        var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName);
 
         this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
         var view = new ol.View(this.viewOptions_);

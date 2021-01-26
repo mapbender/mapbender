@@ -84,16 +84,16 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
-            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
-            projection: this._startProj
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName).toArray(),
+            projection: this.initialViewParams.srsName
         });
         var mapOptions = {
-            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName).toArray(),
             maxResolution: 'auto',
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
-            projection: this._startProj,
-            displayProjection: this._startProj,
-            units: this.getProj(this._startProj).proj.units || 'degrees',
+            projection: this.initialViewParams.srsName,
+            displayProjection: this.initialViewParams.srsName,
+            units: this.getProj(this.initialViewParams.srsName).proj.units || 'degrees',
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
