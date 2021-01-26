@@ -867,17 +867,20 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {OpenLayers.Map|ol.PluggableMap} olMap
          * @param {Object} mapOptions
+         * @param {boolean} [configured]
          * @return {mmViewParams}
          * @private
          */
-        _getInitialViewParams: function(olMap, mapOptions) {
-            try {
-                return this._decodeViewparamFragment();
-            } catch (e) {
-                // fall through
+        _getInitialViewParams: function(olMap, mapOptions, configured) {
+            if (!configured) {
+                try {
+                    return this._decodeViewparamFragment();
+                } catch (e) {
+                    // fall through
+                }
             }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
-            var bboxOverride = this._getStartingBboxFromUrl();
+            var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
+            var bboxOverride = !configured && this._getStartingBboxFromUrl();
             var centerOverride = (urlParams.center || '').split(',').map(parseFloat).filter(function(x) {
                 return !isNaN(x);
             });
@@ -888,7 +891,7 @@ window.Mapbender.MapModelBase = (function() {
 
             var params = {
                 rotation: 0,
-                srsName: this._getInitialSrsCode(mapOptions)
+                srsName: this._getInitialSrsCode(mapOptions, configured)
             };
 
             var startExtent;
@@ -906,7 +909,7 @@ window.Mapbender.MapModelBase = (function() {
 
             if (centerOverride.length === 2) {
                 params.center = centerOverride;
-            } else if (this._poiOptions && this._poiOptions.length === 1) {
+            } else if (!configured && this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
                 params.center = [singlePoi.x, singlePoi.y];
             } else {
@@ -1006,16 +1009,17 @@ window.Mapbender.MapModelBase = (function() {
          * @param {String} mapOptions.srs
          * @param {Object} [mapOptions.extra]
          * @param {Array<Object>} [mapOptions.extra.pois]
+         * @param {boolean} [configured]
          * @private
          */
-        _getInitialSrsCode: function(mapOptions) {
+        _getInitialSrsCode: function(mapOptions, configured) {
             try {
                 var shareParams = this._decodeViewparamFragment();
                 return shareParams.srsName;
             } catch (e) {
                 // fall through
             }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+            var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
             var srsOverride = (urlParams.srs || '').toUpperCase();
             var pattern = /^EPSG:\d+$/;
             if (srsOverride) {
