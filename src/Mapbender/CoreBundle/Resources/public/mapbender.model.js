@@ -173,7 +173,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @private
      */
     _setInitialView: function(olMap, mapOptions) {
-        var viewParams = this._getInitialViewParams(olMap, mapOptions, false);
+        var viewParams = this._getInitialViewParams(mapOptions, false);
         var zoom = this.pickZoomForScale(viewParams.scale, true);
         olMap.setCenter(viewParams.center, zoom);
         return viewParams;
@@ -695,13 +695,12 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return def.promise();
     },
     /**
-     * @param {OpenLayers.Map} olMap
      * @param {Object} mapOptions
      * @param {boolean} [configured]
      * @return {mmViewParams}
      * @private
      */
-    _getInitialViewParams: function(olMap, mapOptions, configured) {
+    _getInitialViewParams: function(mapOptions, configured) {
         // No fractional scale support on Openlayers 2
         // => Limit scale to one of the exact configured scales
         var params = Mapbender.MapModelBase.prototype._getInitialViewParams.apply(this, arguments);

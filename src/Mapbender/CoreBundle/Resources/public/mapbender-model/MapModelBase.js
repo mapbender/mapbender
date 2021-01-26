@@ -869,13 +869,12 @@ window.Mapbender.MapModelBase = (function() {
             return bounds;
         },
         /**
-         * @param {OpenLayers.Map|ol.PluggableMap} olMap
          * @param {Object} mapOptions
          * @param {boolean} [configured]
          * @return {mmViewParams}
          * @private
          */
-        _getInitialViewParams: function(olMap, mapOptions, configured) {
+        _getInitialViewParams: function(mapOptions, configured) {
             if (!configured) {
                 try {
                     return this._decodeViewparamFragment();
@@ -958,7 +957,7 @@ window.Mapbender.MapModelBase = (function() {
          */
         getConfiguredSettings: function() {
             return {
-                viewParams: Object.assign({}, this._getInitialViewParams(this.olMap, this.mbMap.options, true)),
+                viewParams: Object.assign({}, this._getInitialViewParams(this.mbMap.options, true)),
                 sources: this.sourceTree.map(function(source) {
                     return Object.assign({}, source.getConfiguredSettings(), {
                         id: source.id
