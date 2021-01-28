@@ -195,6 +195,7 @@ class ApplicationAssetService
         switch ($type) {
             case 'js':
                 return array(
+                    '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
@@ -202,7 +203,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
