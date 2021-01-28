@@ -152,30 +152,6 @@ class Map extends Element implements ConfigMigrationInterface
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
-        $pois = $request->get('poi');
-        if ($pois) {
-            $extra['pois'] = array();
-            if (array_key_exists('point', $pois)) {
-                $pois = array($pois);
-            }
-            foreach ($pois as $poi) {
-                $point = explode(',', $poi['point']);
-                $poiConfig  = array(
-                    'x' => floatval($point[0]),
-                    'y' => floatval($point[1]),
-                    'label' => isset($poi['label']) ? $poi['label'] : null,
-                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
-                );
-                if (!empty($poi['srs'])) {
-                    if (!$this->hasSrs($srsConfigs, $poi['srs'])) {
-                        continue;
-                    }
-                    $poiConfig['srs'] = strtoupper($poi['srs']);
-                }
-                $extra['pois'][] = $poiConfig;
-            }
-        }
-
         $configuration['extra'] = $extra;
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
