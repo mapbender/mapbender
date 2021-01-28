@@ -328,3 +328,125 @@ Mapbender.Util.removeSignature = function(url) {
     return url;
 };
 
+/**
+ *
+ * @param {String} url
+ * @returns {Promise<HTMLImageElement>}
+ */
+Mapbender.Util.preloadImageAsset = function(url) {
+    var fullUrl;
+    if (/^(\/)|([\w-]*:?\/\/)/.test(url)) {
+        fullUrl = url;
+    } else {
+        // amend relative url with asset base path
+        fullUrl = [Mapbender.configuration.application.urls.asset.replace(/\/$/, ''), url].join('/');
+    }
+
+    var deferred = $.Deferred();
+    var image = new Image();
+    image.onload = function() {
+        deferred.resolveWith(null, [image]);
+    };
+    image.onerror = function() {
+        deffered.reject();
+    };
+    image.src = fullUrl;
+    return deferred.promise();
+};
+
+/**
+ * Extracts all query param assignments from given url into a list of "name=value" assignment strings.
+ * ('?name1=value1&name2&name3[k]=value3') => ['name1=value1', 'name2', 'name3[k]=value3']
+ *
+ * This method does NOT perform any URI component decoding (to preserve potentially encoded "=" in names and values)
+ *
+ * @param {String} url
+ * @return {Array<String>}
+ */
+Mapbender.Util.splitUrlQueryParams = function(url) {
+    return (url || '')
+        // Reduce to pure query string; becomes empty if no "?" in url
+        .replace(/^[^?]*\??([^#]*).*$/, '$1')
+        // Reduce consecutive "&"s to single "&"
+        .replace(/&+/, '&')
+        // Remove trailing &, if any
+        .replace(/&$/, '')
+        .split('&')
+    ;
+};
+
+/**
+ * Extracts all query param assignments from given url into a shallow object.
+ * ('?name1=value1&name2&name3[k]=value3') => [{name1: 'value1', name2: true, 'name3[k]': 'value3'}
+ *
+ * Names and values will be decoded.
+ *
+ * @param {String} url
+ * @param {boolean} [plusToSpace] default true
+ * @return {Object<String, String>}
+ */
+Mapbender.Util.getUrlQueryParams = function(url, plusToSpace) {
+    var assignments = Mapbender.Util.splitUrlQueryParams(url);
+    var params = {};
+    for (var i = 0; i < assignments.length; ++i) {
+        var assignment = assignments[i];
+        if (plusToSpace || (typeof plusToSpace === 'undefined')) {
+            assignment = assignment.replace(/\+/g, '%20');
+        }
+        var parts = assignment.split('=').map(decodeURIComponent);
+        // Re-join potential extra "=" characters in value; fall back to boolean true if param present but without
+        // explicit value.
+        var value = parts.slice(1).join('=') || true;
+        params[parts[0]] = value;
+    }
+    return params;
+};
+
+/**
+ * Extracts ONE "flat" (value keys still include square brackets) array / mapping style parameter into a nested object.
+ *
+ * unpackObjectParam(getUrlQueryParams(url)) is an (incomplete) reversal of jQuery.param for object-type input parameters,
+ * such as used in Poi element.
+ * @see https://api.jquery.com/jQuery.param/
+ *
+ * ({'pn[scalar]': 'vs', 'pn[sub0][sub1]': 'nested', 'something': 'else', pn) => {scalar: 'vs', sub0: {sub1: 'nested'}}
+ *
+ * List-style entries and subentries (from urls such as '?k1[]=k1v&k[]=k2v&k[][sub]=subv') are currently NOT supported.
+ *
+ * @param {Object<String, String>} values
+ * @param {String} name
+ * @return {Object}
+ */
+Mapbender.Util.unpackObjectParam = function(values, name) {
+    var params = {};
+    var prefix = [name, '['].join('');
+    var fullNames = Object.keys(values).filter(function(name) {
+        return 0 === name.indexOf(prefix);
+    });
+    for (var i = 0; i < fullNames.length; ++i) {
+        var fullName = fullNames[i];
+        var value = values[fullName];
+        var match, paramPath = [name];
+        // Iterate through param name suffixes in square brackets.
+        // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec
+        var bracketMatcher = new RegExp(/\[[^\]]*\]/g);
+        while (match = bracketMatcher.exec(fullName)) {
+            paramPath.unshift(match[0].slice(1, -1));
+        }
+        var target = params;
+        for (var j = paramPath.length - 1; j >= 0; --j) {
+            var subPath = paramPath[j];
+            if (!subPath) {
+                throw new Error("Unsupported array-style parameter name" + fullName)
+            }
+            if (j === 0) {
+                target[subPath] = value;
+            } else if (!target[subPath]) {
+                target[subPath] = {};
+            }
+            target = target[subPath];
+        }
+    }
+
+    return params[name] || null;
+};
