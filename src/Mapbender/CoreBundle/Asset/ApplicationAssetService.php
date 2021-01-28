@@ -196,6 +196,7 @@ class ApplicationAssetService
             case 'js':
                 return array(
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
+                    '@MapbenderCoreBundle/Resources/public/util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
