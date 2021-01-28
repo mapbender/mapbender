@@ -26,10 +26,13 @@ window.Mapbender.MapModelBase = (function() {
      * @property {Number} rotation
      */
     /**
-     * @typedef {Object} mmMapSettings
-     * @property {mmViewParams} viewParams
-     * @property {Array<{id: string, settings: SourceSettings}>} sources
+     * @typedef {Object} mmMapSourceSettings
+     * @property {Array<{(SourceSettings|{id: String})}>} sources
      * @property {Array<{id: string, selected: boolean}>} layersets
+     */
+    /**
+     * @typedef {mmMapSourceSettings} mmMapSettings
+     * @property {mmViewParams} viewParams
      */
     /**
      * @param {Object} mbMap
@@ -54,6 +57,9 @@ window.Mapbender.MapModelBase = (function() {
             return Object.assign({}, layerset.getSettings(), {
                 id: layerset.getId()
             });
+        });
+        this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
+            viewParams: this._getInitialViewParams(mapOptions, true)
         });
     }
 
@@ -951,11 +957,10 @@ window.Mapbender.MapModelBase = (function() {
             return params;
         },
         /**
-         * @return {mmMapSettings}
+         * @return {mmMapSourceSettings}
          */
-        getCurrentSettings: function() {
+        getCurrentSourceSettings: function() {
             return {
-                viewParams: this.getCurrentViewParams(),
                 sources: this.sourceTree.map(function(source) {
                     return Object.assign({}, source.getSettings(), {
                         id: source.id
@@ -971,16 +976,16 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @return {mmMapSettings}
          */
+        getCurrentSettings: function() {
+            return Object.assign(this.getCurrentSourceSettings(), {
+                viewParams: this.getCurrentViewParams()
+            });
+        },
+        /**
+         * @return {mmMapSettings}
+         */
         getConfiguredSettings: function() {
-            return {
-                viewParams: Object.assign({}, this._getInitialViewParams(this.mbMap.options, true)),
-                sources: this.sourceTree.map(function(source) {
-                    return Object.assign({}, source.getConfiguredSettings(), {
-                        id: source.id
-                    });
-                }),
-                layersets: this.configuredLayersetSettings
-            };
+            return Object.assign({}, this.configuredSettings_);
         },
         /**
          * @param {mmMapSettings} settings
