@@ -1146,17 +1146,10 @@ window.Mapbender.MapModelBase = (function() {
             ];
             return parts.join(':');
         },
-        restoreLocalStorageSettings: function() {
+        getLocalStorageSettings: function() {
             var key = this.getLocalStoragePersistenceKey_('settings');
             var settings = window.localStorage.getItem(key);
-            settings = settings && JSON.parse(settings);
-            if (settings) {
-                try {
-                    this.applySettings(settings);
-                } catch (e) {
-                    console.warn("Failed to reapply persistent settings", settings, e);
-                }
-            }
+            return settings && JSON.parse(settings);
         },
         startLocalStorageSettingsPersistence: function() {
             var key = this.getLocalStoragePersistenceKey_('settings');
