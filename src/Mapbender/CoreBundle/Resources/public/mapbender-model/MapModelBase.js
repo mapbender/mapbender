@@ -936,7 +936,8 @@ window.Mapbender.MapModelBase = (function() {
                 params.center = centerOverride;
             } else if (!configured && this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
-                params.center = [singlePoi.x, singlePoi.y];
+                var transformedPoi = Mapbender.mapEngine.transformCoordinate(singlePoi, singlePoi.srs || params.srsName, params.srsName);
+                params.center = [transformedPoi.x, transformedPoi.y];
             } else {
                 params.center = [
                     0.5 * (startExtent.left + startExtent.right),
