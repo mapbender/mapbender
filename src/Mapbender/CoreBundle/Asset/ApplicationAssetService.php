@@ -248,8 +248,9 @@ class ApplicationAssetService
         switch ($type) {
             case 'js':
                 return array(
-                    '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
+                    '@MapbenderCoreBundle/Resources/public/stubs.js',
+                    '@MapbenderCoreBundle/Resources/public/util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
