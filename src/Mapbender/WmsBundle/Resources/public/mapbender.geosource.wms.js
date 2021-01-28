@@ -20,12 +20,8 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
         },
         intersectsExtent: function(extent, srsName) {
-            var layerExtent = this.getBounds(srsName, false);
-            if (layerExtent === null) {
-                // unlimited layer extent
-                return true;
-            }
-            return Mapbender.Util.extentsIntersect(extent, layerExtent);
+            // temporary deactivate intersect extent check
+            return true;
         }
     });
     return WmsSourceLayer;
