@@ -902,8 +902,28 @@ window.Mapbender.MapModelBase = (function() {
                     // fall through
                 }
             }
+
+            var params = {
+                rotation: 0,
+                srsName: this._getInitialSrsCode(mapOptions, configured)
+            };
+
+            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
+            startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
+            params.center = [
+                0.5 * (startExtent.left + startExtent.right),
+                0.5 * (startExtent.bottom + startExtent.top)
+            ];
+
+            var viewportSize = this.getCurrentViewportSize();
+            var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);
+            params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
+
             var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
             var bboxOverride = !configured && this._getStartingBboxFromUrl();
+            bboxOverride = bboxOverride && Mapbender.mapEngine.boundsFromArray(bboxOverride);
+            bboxOverride = bboxOverride && Mapbender.mapEngine.transformBounds(bboxOverride, urlParams.srs || mapOptions.srs, params.srsName);
+
             var centerOverride = (urlParams.center || '').split(',').map(parseFloat).filter(function(x) {
                 return !isNaN(x);
             });
@@ -912,40 +932,22 @@ window.Mapbender.MapModelBase = (function() {
                 scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
             }
 
-            var params = {
-                rotation: 0,
-                srsName: this._getInitialSrsCode(mapOptions, configured)
-            };
-
-            var startExtent;
-            if (bboxOverride) {
-                startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, params.srsName);
-            } else {
-                startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
-            }
-
             if (centerOverride.length === 2) {
                 params.center = centerOverride;
             } else if (!configured && this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
                 var transformedPoi = Mapbender.mapEngine.transformCoordinate(singlePoi, singlePoi.srs || params.srsName, params.srsName);
                 params.center = [transformedPoi.x, transformedPoi.y];
-            } else {
+            } else if (bboxOverride) {
                 params.center = [
-                    0.5 * (startExtent.left + startExtent.right),
-                    0.5 * (startExtent.bottom + startExtent.top)
+                    0.5 * (bboxOverride.left + bboxOverride.right),
+                    0.5 * (bboxOverride.bottom + bboxOverride.top)
                 ];
             }
             if (scaleOverride) {
                 params.scale = scaleOverride;
-            } else {
-                var viewportSize = this.getCurrentViewportSize();
-                var resolution = Math.max(
-                    Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
-                    Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
-                );
+            } else if (bboxOverride) {
+                resolution = this._getExtentResolution(bboxOverride, viewportSize.width, viewportSize.height);
                 params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
             }
 
@@ -1153,6 +1155,19 @@ window.Mapbender.MapModelBase = (function() {
                 'mbmapsourcechanged'
             ];
             this.mbMap.element.on(listened.join(' '), _.debounce(updateHandler, 1000));
+        },
+        /**
+         * @param {{left: Number, right: Number, top: Number, bottom: Number}} extent
+         * @param {Number} viewportWidth
+         * @param {Number} viewportHeight
+         * @return {Number}
+         * @private
+         */
+        _getExtentResolution: function(extent, viewportWidth, viewportHeight) {
+            return Math.max(
+                Math.abs(extent.right - extent.left) / viewportWidth,
+                Math.abs(extent.top - extent.bottom) / viewportHeight
+            );
         },
         _comma_dangle_dummy: null
     });

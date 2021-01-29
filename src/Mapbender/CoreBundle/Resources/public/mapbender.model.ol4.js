@@ -644,7 +644,6 @@ window.Mapbender.MapModelOl4 = (function() {
             olMap.addOverlay(overlay);
             overlay.setPosition([x, y]);
             $popup.one('click', '.-fn-close', function() {
-                console.log("Are we closing?", this, arguments);
                 olMap.removeOverlay(overlay);
                 def.resolve();
             });
