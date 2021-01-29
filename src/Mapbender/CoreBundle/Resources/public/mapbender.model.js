@@ -680,13 +680,20 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         olMap.addPopup(popup);
         return def.promise();
     },
+    _getConfiguredViewParams: function(mapOptions) {
+        // No fractional scale support on Openlayers 2
+        // => Limit scale to one of the exact configured scales
+        var params = Mapbender.MapModelBase.prototype._getConfiguredViewParams.apply(this, arguments);
+        var zoom = this.pickZoomForScale(params.scale);
+        params.scale = (this._getScales())[zoom];
+        return params;
+    },
     /**
      * @param {Object} mapOptions
-     * @param {boolean} [configured]
      * @return {mmViewParams}
      * @private
      */
-    _getInitialViewParams: function(mapOptions, configured) {
+    _getInitialViewParams: function(mapOptions) {
         // No fractional scale support on Openlayers 2
         // => Limit scale to one of the exact configured scales
         var params = Mapbender.MapModelBase.prototype._getInitialViewParams.apply(this, arguments);

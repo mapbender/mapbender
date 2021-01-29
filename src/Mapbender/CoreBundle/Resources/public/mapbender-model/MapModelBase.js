@@ -51,10 +51,10 @@ window.Mapbender.MapModelBase = (function() {
             console.warn("Ignoring poi param parsing error", e);
             this._poiOptions = [];
         }
-        this.initialViewParams = this._getInitialViewParams(mapOptions, false);
+        this.initialViewParams = this._getInitialViewParams(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
-            viewParams: this._getInitialViewParams(mapOptions, true)
+            viewParams: this._getConfiguredViewParams(mapOptions)
         });
     }
 
@@ -910,24 +910,21 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {Object} mapOptions
-         * @param {boolean} [configured]
          * @return {mmViewParams}
          * @private
          */
-        _getInitialViewParams: function(mapOptions, configured) {
-            if (!configured) {
-                try {
-                    return this._decodeViewparamFragment();
-                } catch (e) {
-                    // fall through
-                }
+        _getInitialViewParams: function(mapOptions) {
+            try {
+                return this._decodeViewparamFragment();
+            } catch (e) {
+                // fall through
             }
 
             var params = this._getConfiguredViewParams(mapOptions);
-            params.srsName = this._getInitialSrsCode(mapOptions, configured);
+            params.srsName = this._getInitialSrsCode(mapOptions, false);
 
-            var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
-            var bboxOverride = !configured && this._getStartingBboxFromUrl();
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters || {};
+            var bboxOverride = this._getStartingBboxFromUrl();
             bboxOverride = bboxOverride && Mapbender.mapEngine.boundsFromArray(bboxOverride);
             bboxOverride = bboxOverride && Mapbender.mapEngine.transformBounds(bboxOverride, urlParams.srs || mapOptions.srs, params.srsName);
 
@@ -941,7 +938,7 @@ window.Mapbender.MapModelBase = (function() {
 
             if (centerOverride.length === 2) {
                 params.center = centerOverride;
-            } else if (!configured && this._poiOptions && this._poiOptions.length === 1) {
+            } else if (this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
                 var transformedPoi = Mapbender.mapEngine.transformCoordinate(singlePoi, singlePoi.srs || params.srsName, params.srsName);
                 params.center = [transformedPoi.x, transformedPoi.y];
