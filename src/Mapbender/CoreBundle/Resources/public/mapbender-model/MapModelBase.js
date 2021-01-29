@@ -254,6 +254,9 @@ window.Mapbender.MapModelBase = (function() {
          */
         updateSource: function(source) {
             this._checkSource(source, false);
+            this.triggerSourceChanged_(source);
+        },
+        triggerSourceChanged_: function(source) {
             $(this.mbMap.element).trigger('mbmapsourcechanged', {
                 mbMap: this.mbMap,
                 source: source
@@ -365,10 +368,7 @@ window.Mapbender.MapModelBase = (function() {
             var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale, extent, srsName);
             source.updateEngine();
             if (fireSourceChangedEvent && changedStates) {
-                $(this.mbMap.element).trigger('mbmapsourcechanged', {
-                    mbMap: this.mbMap,
-                    source: source
-                });
+                this.triggerSourceChanged_(source);
             }
         },
         /**
@@ -639,10 +639,7 @@ window.Mapbender.MapModelBase = (function() {
                     // WMTS / TMS special: send another change event for each root layer, which
                     // may potentially just have been disabled / reenabled. This will update the
                     // Layertree visual
-                    $(this.mbMap.element).trigger('mbmapsourcechanged', {
-                        mbMap: this.mbMap,
-                        source: source
-                    });
+                    this.triggerSourceChanged_(source);
                 }
             }
             this.mbMap.element.trigger('mbmapviewchanged', {
@@ -1024,7 +1021,9 @@ window.Mapbender.MapModelBase = (function() {
                 if (source) {
                     sources.push(source);
                     // NOTE: this only restores settings properties. It does NOT yet apply them on the map view.
-                    source.applySettings(sourceEntry);
+                    if (source.applySettings(sourceEntry)) {
+                        this.triggerSourceChanged_(source);
+                    }
                 }
             }
             this.applyViewParams(settings.viewParams);
