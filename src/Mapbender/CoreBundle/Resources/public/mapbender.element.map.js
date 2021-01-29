@@ -21,6 +21,19 @@
         _create: function(){
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if (!this.options.extents.start && !this.options.extents.max) {
+                throw new Error("Incomplete map configuration: no start extent");
+            }
+            if (!this.options.extents.start) {
+                this.options.extents.start = this.options.extents.max.slice();
+            }
+            if (!this.options.srs) {
+                throw new Error("Invalid map configuration: missing srs");
+            }
+            if (!this.validateSrsOption(this.options.srs)) {
+                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + this.options.srs);
+            }
+
             this.model = Mapbender.mapEngine.mapModelFactory(this);
             // HACK: place the model instance globally at Mapbender.Model
             if (window.Mapbender.Model) {
@@ -79,7 +92,15 @@
          */
         zoomToFullExtent: function() {
             this.model.zoomToFullExtent();
-        }
+        },
+        /**
+         * @param {String} srsName
+         * @return {boolean}
+         */
+        validateSrsOption: function(srsName) {
+            return (typeof srsName === 'string') && /^EPSG:\d+$/.test(srsName);
+        },
+        _comma_dangle_dummy: null
     });
 
 })(jQuery);

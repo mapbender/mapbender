@@ -922,11 +922,7 @@ window.Mapbender.MapModelBase = (function() {
                 startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
                 startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, params.srsName);
             } else {
-                if (!mapOptions.extents.start && !mapOptions.extents.max) {
-                    throw new Error("Incomplete map configuration: no start extent");
-                }
-
-                startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
+                startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
                 startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
             }
 
@@ -1060,9 +1056,6 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
             if (!srsOverride && !pattern.test(mapOptions.srs)) {
-                if (!mapOptions.srs) {
-                    throw new Error("Invalid map configuration: missing srs");
-                }
                 throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + mapOptions.srs);
             }
             return srsOverride || mapOptions.srs;
