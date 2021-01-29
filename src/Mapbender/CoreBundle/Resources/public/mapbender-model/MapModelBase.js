@@ -53,11 +53,6 @@ window.Mapbender.MapModelBase = (function() {
         }
         this.initialViewParams = this._getInitialViewParams(mapOptions, false);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
-        this.configuredLayersetSettings = Mapbender.layersets.map(function(layerset) {
-            return Object.assign({}, layerset.getSettings(), {
-                id: layerset.getId()
-            });
-        });
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
             viewParams: this._getInitialViewParams(mapOptions, true)
         });
