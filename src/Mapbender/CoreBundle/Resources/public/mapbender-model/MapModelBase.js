@@ -494,22 +494,26 @@ window.Mapbender.MapModelBase = (function() {
             console.error("Cannot infer source configuration from given input", source);
             throw new Error("Cannot infer source configuration from given input");
         },
-        initializeSourceLayers: function() {
-            var self = this;
+        getConfiguredSources_: function() {
             // Array.protoype.reverse is in-place
             // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
             // Do not use .reverse on centrally shared values without making your own copy
-            $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-                var theme = Mapbender.layersets.filter(function(x) {
-                    return x.id === layersetId || ('' + x.id === '' + layersetId);
-                })[0];
+            var layersetNames = this.mbMap.options.layersets.slice().reverse();
+            var sources = [];
+            for (var i = 0; i < layersetNames.length; ++i) {
+                var theme = this.getLayersetById(layersetNames[i]);
                 if (!theme) {
                     throw new Error("No layerset with id " + layersetId);
                 }
-                theme.children.slice().reverse().map(function(instance) {
-                    self.addSource(instance);
-                });
-            });
+                sources = sources.concat.apply(sources, theme.children.slice().reverse());
+            }
+            return sources;
+        },
+        initializeSourceLayers: function() {
+            var sources = this.getConfiguredSources_();
+            for (var i = 0; i < sources.length; ++i) {
+                this.addSource(sources[i]);
+            }
         },
         /**
          * @param {Mapbender.Source} source
