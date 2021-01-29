@@ -1,4 +1,4 @@
-## dev-master @ 73a6713a7
+## dev-master @ 5a31fbbf7
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -9,6 +9,7 @@
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 * Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 * Fix fragment history not generating an entry for a pure srs change
+* Fix ZoomBar rotation indicator not showing initial non-zero rotation
 * Fix PrintClient broken nested tab container layout (queue mode active and placed in tabs-style sidepane)
 * Fix Wms dimension range editing rounding errors in instance backend
 * Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
