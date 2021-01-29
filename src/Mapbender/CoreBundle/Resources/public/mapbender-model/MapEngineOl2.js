@@ -121,7 +121,9 @@ window.Mapbender.MapEngineOl2 = (function() {
         transformCoordinate: function(coordinate, fromProj, toProj) {
             var from_ = this._getProj(fromProj).proj;
             var to_ = this._getProj(toProj).proj;
-            return Proj4js.transform(from_, to_, coordinate);
+            // Proj4 modifies coordinate in place => make a copy
+            var coordinate_ = (Array.isArray(coordinate) && coordinate.slice()) || Object.assign({}, coordinate);
+            return Proj4js.transform(from_, to_, coordinate_);
         },
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
