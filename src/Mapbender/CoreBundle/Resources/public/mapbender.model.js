@@ -130,7 +130,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
         this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
-        this.initializeSourceLayers();
+        this.initializeSourceLayers(this.sourceTree);
         this.processUrlParams();
         this._initEvents(this.olMap, this.mbMap);
         this._startShare();

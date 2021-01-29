@@ -43,7 +43,6 @@ window.Mapbender.MapModelBase = (function() {
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
         this.mbMap = mbMap;
         var mapOptions = mbMap.options;
-        this.sourceTree = [];
         this._configProj = mapOptions.srs;
         try {
             this._poiOptions = this._parsePoiParameter(window.location.href);
@@ -53,6 +52,7 @@ window.Mapbender.MapModelBase = (function() {
         }
         this.initialViewParams = this._getInitialViewParams(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
+        this.sourceTree = this.getConfiguredSources_();
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
             viewParams: this._getConfiguredViewParams(mapOptions)
         });
@@ -509,10 +509,21 @@ window.Mapbender.MapModelBase = (function() {
             }
             return sources;
         },
-        initializeSourceLayers: function() {
-            var sources = this.getConfiguredSources_();
+        /**
+         * @param {Array<Mapbender.Source>} sources
+         */
+        initializeSourceLayers: function(sources) {
+            var projCode = this.getCurrentProjectionCode();
             for (var i = 0; i < sources.length; ++i) {
-                this.addSource(sources[i]);
+                var source = sources[i];
+                var olLayers = source.initializeLayers(projCode);
+                for (var j = 0; j < olLayers.length; ++j) {
+                    var olLayer = olLayers[j];
+                    Mapbender.mapEngine.setLayerVisibility(olLayer, false);
+                }
+
+                this._spliceLayers(source, olLayers);
+                this._checkSource(source, false);
             }
         },
         /**
@@ -520,16 +531,8 @@ window.Mapbender.MapModelBase = (function() {
          */
         addSource: function(source) {
             this.sourceTree.push(source);
-            var projCode = this.getCurrentProjectionCode();
 
-            var olLayers = source.initializeLayers(projCode);
-            for (var i = 0; i < olLayers.length; ++i) {
-                var olLayer = olLayers[i];
-                Mapbender.mapEngine.setLayerVisibility(olLayer, false);
-            }
-
-            this._spliceLayers(source, olLayers);
-            this._checkSource(source, false);
+            this.initializeSourceLayers([source]);
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,

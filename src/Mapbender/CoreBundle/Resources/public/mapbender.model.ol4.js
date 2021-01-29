@@ -53,7 +53,7 @@ window.Mapbender.MapModelOl4 = (function() {
 
         this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
 
-        this.initializeSourceLayers();
+        this.initializeSourceLayers(this.sourceTree);
         this.processUrlParams();
         this._startShare();
     },
