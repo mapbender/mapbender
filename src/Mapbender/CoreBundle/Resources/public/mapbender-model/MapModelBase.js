@@ -921,9 +921,15 @@ window.Mapbender.MapModelBase = (function() {
             }
 
             var params = this._getConfiguredViewParams(mapOptions);
-            params.srsName = this._getInitialSrsCode(mapOptions, false);
-
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters || {};
+            var srsOverride = this._filterSrsOverride(mapOptions, urlParams.srs);
+            if (srsOverride) {
+                var centerXyOriginal = {x: params.center[0], y: params.center[1]};
+                var transformedCenterXy = Mapbender.mapEngine.transformCoordinate(centerXyOriginal, params.srsName, srsOverride);
+                params.center = [transformedCenterXy.x, transformedCenterXy.y];
+                params.srsName = srsOverride;
+            }
+
             var bboxOverride = this._getStartingBboxFromUrl();
             bboxOverride = bboxOverride && Mapbender.mapEngine.boundsFromArray(bboxOverride);
             bboxOverride = bboxOverride && Mapbender.mapEngine.transformBounds(bboxOverride, urlParams.srs || mapOptions.srs, params.srsName);
@@ -1033,20 +1039,11 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {Object} mapOptions
          * @param {String} mapOptions.srs
-         * @param {Object} [mapOptions.extra]
-         * @param {Array<Object>} [mapOptions.extra.pois]
-         * @param {boolean} [configured]
+         * @param {String} value
          * @private
          */
-        _getInitialSrsCode: function(mapOptions, configured) {
-            try {
-                var shareParams = this._decodeViewparamFragment();
-                return shareParams.srsName;
-            } catch (e) {
-                // fall through
-            }
-            var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
-            var srsOverride = (urlParams.srs || '').toUpperCase();
+        _filterSrsOverride: function(mapOptions, value) {
+            var srsOverride = (value || '').toUpperCase();
             var pattern = /^EPSG:\d+$/;
             if (srsOverride) {
                 if (!pattern.test(srsOverride)) {
@@ -1062,10 +1059,7 @@ window.Mapbender.MapModelBase = (function() {
                     }
                 }
             }
-            if (!srsOverride && !pattern.test(mapOptions.srs)) {
-                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + mapOptions.srs);
-            }
-            return srsOverride || mapOptions.srs;
+            return srsOverride || null;
         },
         _canonicalizeUrl: function(url, viewParamHash) {
             var removeParams = this.getViewRelatedUrlParamNames();
