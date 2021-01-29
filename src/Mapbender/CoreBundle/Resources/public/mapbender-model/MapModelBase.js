@@ -890,6 +890,26 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {Object} mapOptions
+         * @return {mmViewParams}
+         * @private
+         */
+        _getConfiguredViewParams: function(mapOptions) {
+            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
+            startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, mapOptions.srs);
+            var viewportSize = this.getCurrentViewportSize();
+            var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);
+            return {
+                rotation: 0,
+                srsName: mapOptions.srs,
+                scale: this.resolutionToScale(resolution, mapOptions.dpi, mapOptions.srs),
+                center: [
+                    0.5 * (startExtent.left + startExtent.right),
+                    0.5 * (startExtent.bottom + startExtent.top)
+                ]
+            };
+        },
+        /**
+         * @param {Object} mapOptions
          * @param {boolean} [configured]
          * @return {mmViewParams}
          * @private
@@ -903,21 +923,8 @@ window.Mapbender.MapModelBase = (function() {
                 }
             }
 
-            var params = {
-                rotation: 0,
-                srsName: this._getInitialSrsCode(mapOptions, configured)
-            };
-
-            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
-            startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
-            params.center = [
-                0.5 * (startExtent.left + startExtent.right),
-                0.5 * (startExtent.bottom + startExtent.top)
-            ];
-
-            var viewportSize = this.getCurrentViewportSize();
-            var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);
-            params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
+            var params = this._getConfiguredViewParams(mapOptions);
+            params.srsName = this._getInitialSrsCode(mapOptions, configured);
 
             var urlParams = !configured && (new Mapbender.Util.Url(window.location.href)).parameters || {};
             var bboxOverride = !configured && this._getStartingBboxFromUrl();
@@ -947,7 +954,8 @@ window.Mapbender.MapModelBase = (function() {
             if (scaleOverride) {
                 params.scale = scaleOverride;
             } else if (bboxOverride) {
-                resolution = this._getExtentResolution(bboxOverride, viewportSize.width, viewportSize.height);
+                var viewportSize = this.getCurrentViewportSize();
+                var resolution = this._getExtentResolution(bboxOverride, viewportSize.width, viewportSize.height);
                 params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
             }
 
