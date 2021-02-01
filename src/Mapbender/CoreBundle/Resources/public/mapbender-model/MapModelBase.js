@@ -56,6 +56,16 @@ window.Mapbender.MapModelBase = (function() {
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
             viewParams: this._getConfiguredViewParams(mapOptions)
         });
+        if (Mapbender.configuration.application.persistentView) {
+            try {
+                var settings = this.getLocalStorageSettings();
+                if (settings) {
+                    this.applySourceSettings(settings);
+                }
+            } catch (e) {
+                console.error("Restoration of local storage source selection settings failed, ignoring");
+            }
+        }
     }
 
     MapModelBase.prototype = {
@@ -1008,8 +1018,7 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {mmMapSettings} settings
          */
-        applySettings: function(settings) {
-            // @todo: restore layersets selected states
+        applySourceSettings: function(settings) {
             // @todo: defensive checks if source was actually changed to reduce reloads...?
             var sources = [], i;
             for (i = 0; i < settings.layersets.length; ++i) {
@@ -1032,10 +1041,17 @@ window.Mapbender.MapModelBase = (function() {
                     }
                 }
             }
+            return sources;
+        },
+        /**
+         * @param {mmMapSettings} settings
+         */
+        applySettings: function(settings) {
+            var sources = this.applySourceSettings(settings);
             this.applyViewParams(settings.viewParams);
             // Perform map view updates for (updated) sources; we deliberately defer this until after the view param
             // update because out of bounds / scale / CRS applicability checks heavily depend on view params.
-            for (i = 0; i < sources.length; ++i) {
+            for (var i = 0; i < sources.length; ++i) {
                 this._checkSource(sources[i], true);
             }
         },
