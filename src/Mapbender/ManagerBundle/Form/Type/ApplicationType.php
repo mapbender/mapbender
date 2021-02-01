@@ -96,6 +96,10 @@ class ApplicationType extends AbstractType
                 'required' => true,
                 'empty_data' => Application::MAP_ENGINE_OL2,
             ))
+            ->add('persistentView', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.manager.application.persistentView',
+            ))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))

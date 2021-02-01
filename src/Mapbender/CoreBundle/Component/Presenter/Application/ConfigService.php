@@ -80,6 +80,7 @@ class ConfigService
             'slug'          => $entity->getSlug(),
             'debug'         => ($this->container->get('kernel')->getEnvironment() !== 'prod'),
             'mapEngineCode' => $entity->getMapEngineCode(),
+            'persistentView' => $entity->getPersistentView(),
         );
     }
 

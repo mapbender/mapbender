@@ -116,6 +116,9 @@ class ApplicationYAMLMapper
         if (isset($definition['mapEngineCode'])) {
             $application->setMapEngineCode($definition['mapEngineCode']);
         }
+        if (isset($definition['persistentView'])) {
+            $application->setPersistentView($definition['persistentView']);
+        }
  
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);

@@ -110,11 +110,7 @@
             $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
             $(document).on('mb.sourcenodeselectionchanged', function(e, data) {
                 if (data.node instanceof (Mapbender.Layerset)) {
-                    var themeNodeSelector = '[data-type="theme"][data-layersetid="' + data.node.getId() + '"]';
-                    var checkboxSelector = [themeNodeSelector, ' > .leaveContainer input[name="sourceVisibility"][type="checkbox"]'].join('');
-                    var $checkbox = $(checkboxSelector, self.element);
-                    $checkbox.prop('checked', data.selected);
-                    $checkbox.mbCheckbox();
+                    self._updateThemeNode(data.node);
                 }
             });
             if (this._mobilePane) {
@@ -192,7 +188,15 @@
             $li.toggleClass('showLeaves', options.opened);
             $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
+            this._updateThemeNode(layerset, $li);
             return $li;
+        },
+        _updateThemeNode: function(layerset, $node) {
+            var $node_ = $node || this._findThemeNode(layerset);
+            var $checkbox = $('> .leaveContainer input[name="sourceVisibility"][type="checkbox"]', $node_);
+            console.warn("Checkbox found?", layerset, $node_.get(), $checkbox.get());
+            $checkbox.prop('checked', layerset.getSelected());
+            $checkbox.mbCheckbox();
         },
         _getThemeOptions: function(layerset) {
             var matches =  (this.options.themes || []).filter(function(item) {

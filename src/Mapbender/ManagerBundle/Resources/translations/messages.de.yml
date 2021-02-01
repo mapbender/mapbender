@@ -53,6 +53,8 @@ mb:
       reusable_assigned_to_application: Die freie Instanz wurde der Anwendung hinzugefügt
       create_reusable: Freie Instanz erzeugen
       created_reusable: Neue freie Instanz erzeugt
+    application:
+      persistentView: Kartenzustand merken
     admin:
       sources: Datenquellen
       source:
