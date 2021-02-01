@@ -1,4 +1,4 @@
-## dev-master @ 5a31fbbf7
+## dev-master @ bb4758073
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -21,6 +21,7 @@
 * Remove unreasonable default button tooltip "button"
 * Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
+* Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
 * [Backend] Fix account menu and sitelinks alignment vs top of page
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
