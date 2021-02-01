@@ -924,7 +924,13 @@ window.Mapbender.MapModelBase = (function() {
                 // fall through
             }
 
-            var params = this._getConfiguredViewParams(mapOptions);
+            var params;
+            var lsPersisted = Mapbender.configuration.application.persistentView && this.getLocalStorageSettings();
+            if (lsPersisted && lsPersisted.viewParams) {
+                params = lsPersisted.viewParams;
+            } else {
+                params = this._getConfiguredViewParams(mapOptions);
+            }
             var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters || {};
             var srsOverride = this._filterSrsOverride(mapOptions, urlParams.srs);
             if (srsOverride) {
@@ -1113,6 +1119,9 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         _startShare: function() {
+            if (Mapbender.configuration.application.persistentView) {
+                this.startLocalStorageSettingsPersistence();
+            }
             var self = this;
             var currentHash = (window.location.hash || '').replace(/^#/, '');
             if (currentHash) {
