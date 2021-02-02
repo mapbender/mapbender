@@ -1174,6 +1174,10 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var projCode = this.getCurrentProjectionCode();
 
         sourceDef.mqlid = this.map.trackSource(sourceDef).id;
+        this.mbMap.element.trigger('mbconfiguringsource', {
+            mbMap: this.mbMap,
+            source: sourceDef
+        });
         var olLayers = sourceDef.initializeLayers(projCode);
         for (i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
