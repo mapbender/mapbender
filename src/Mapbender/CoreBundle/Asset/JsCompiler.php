@@ -71,6 +71,8 @@ class JsCompiler extends AssetFactoryBase
             '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
             // update for reliance on robloach/component-installer
             '/components/jquerydialogextendjs/jquerydialogextendjs-built.js' => '/../vendor/wheregroup/jquerydialogextendjs/build/jquery.dialogextend.min.js',
+            // Select2: sourcing from vendor makes i18n sub-path inaccessible; this is ok, because the legacy robloach build does not contain i18n either
+            '/components/select2/select2-built.js' => '/../vendor/select2/select2/dist/js/select2.js',
         );
     }
 }

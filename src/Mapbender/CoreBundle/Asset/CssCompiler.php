@@ -117,4 +117,13 @@ class CssCompiler extends AssetFactoryBase
         $context = $this->router->getContext();
         return $context->getBaseUrl() . $context->getPathInfo();
     }
+
+    protected function getMigratedReferencesMapping()
+    {
+        return array(
+            // updates for reliance on robloach/component-installer
+            // select2 CSS works fine standalone (no url references) and can be sourced directly from vendor
+            '/components/select2/select2-built.css' => '/../vendor/select2/select2/dist/css/select2.css',
+        );
+    }
 }
