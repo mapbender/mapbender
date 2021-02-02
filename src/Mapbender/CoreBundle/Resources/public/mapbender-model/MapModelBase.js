@@ -526,6 +526,10 @@ window.Mapbender.MapModelBase = (function() {
             var projCode = this.getCurrentProjectionCode();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
+                this.mbMap.element.trigger('mbconfiguringsource', {
+                    mbMap: this.mbMap,
+                    source: source
+                });
                 var olLayers = source.initializeLayers(projCode);
                 for (var j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
