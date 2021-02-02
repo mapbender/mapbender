@@ -311,12 +311,6 @@ $tabSize: 32px;
   z-index: 20;
   display: none;
 
-  &.notCollapsable {
-    .sidePaneTabs {
-      display: none;
-    }
-  }
-
   &.left {
     @include absolute(120px '' $space*3 0);
     .sidePaneTabs {
