@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 6be636c85
+## dev-release/3.0.7 @ ac2360a86
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -26,6 +26,8 @@
 - Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
 - Remove unreasonable default button tooltip "button"
 - Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
+- Fix PrintClient frontend settings form bypassing / conflicting with form theme
+- Fix Layertree backend form bypassing / conflicting with form theme
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
 - Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
@@ -41,6 +43,12 @@
 - [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
 - [Framework] Fix functional links (with `href="#"`) opening a new Application tab in frontend
 - [Framework] Fix CSS conflicts of custom tab containers vs Bootstrap `.container`
+- [Framework] Fix (Digitizer et al) external select2 usages depending on (abandoned) robloach/component-installer
+- [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
+- [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
+- Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
+- Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
+- Misc functional testing support
 
 ## v3.0.8.6
 - Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
