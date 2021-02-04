@@ -191,6 +191,7 @@ mb:
     zoombar:
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
+      zoom_home: Zurück zum Anfang
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:

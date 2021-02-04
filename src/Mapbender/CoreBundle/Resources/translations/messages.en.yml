@@ -190,6 +190,7 @@ mb:
     zoombar:
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'
+      zoom_home: Back to start
       zoomin: Zoom in
       zoomout: Zoom out
       class:

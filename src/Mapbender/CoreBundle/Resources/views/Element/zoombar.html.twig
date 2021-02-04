@@ -32,6 +32,11 @@
         <i class="fa fa-globe fas fa-globe-americas"></i>
       </li>
     {% endif %}
+    {%- if 'zoom_home' in configuration.components -%}
+        <li class="clickable toolbar-button-hover-effect -fn-zoom-home" title="{{ "mb.core.zoombar.zoom_home" | trans }}">
+          <i class="fa fas fa-home"></i>
+        </li>
+    {%- endif -%}
     {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
         {% if 'zoom_in_out' in configuration.components %}

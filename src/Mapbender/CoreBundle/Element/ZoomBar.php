@@ -57,6 +57,7 @@ class ZoomBar extends Element
             'components' => array(
                 "rotation",
                 "zoom_max",
+                'zoom_home',
                 "zoom_in_out",
                 "zoom_slider",
             ),

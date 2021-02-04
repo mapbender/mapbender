@@ -92,6 +92,10 @@ $.widget("mapbender.mbZoomBar", {
         this.element.on('click', '.zoom-world', function() {
             self._worldZoom();
         });
+        this.element.on('click', '.-fn-zoom-home', function() {
+            var m = self.mbMap.getModel();
+            m.applyViewParams(m.getConfiguredSettings().viewParams);
+        });
     },
     /**
      * Set slider to reflect map zoom level

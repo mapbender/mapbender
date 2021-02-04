@@ -30,6 +30,7 @@ class ZoomBarAdminType extends AbstractType
                 'choices' => array(
                     "Rotation" => "rotation",
                     "zoom to max extent" => "zoom_max",
+                    'mb.core.zoombar.zoom_home' => 'zoom_home',
                     "Zoom in/out" => "zoom_in_out",
                     "Zoom slider" => "zoom_slider",
                 ),
