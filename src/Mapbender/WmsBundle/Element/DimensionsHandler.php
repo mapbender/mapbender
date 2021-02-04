@@ -65,9 +65,6 @@ class DimensionsHandler extends Element implements ConfigMigrationInterface
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
                 '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
-            'trans' => array(
-                'MapbenderWmsBundle:Element:dimensionshandler.json.twig',
-            ),
         );
     }
 
