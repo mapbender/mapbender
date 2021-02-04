@@ -1,4 +1,4 @@
-## dev-master @ bb4758073
+## dev-master @ 0b3c802ee
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -20,6 +20,8 @@
 * Prefer maximum value of configured range as the (not directly editable) Wms dimension default
 * Remove unreasonable default button tooltip "button"
 * Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
+* Fix PrintClient frontend settings form bypassing / conflicting with form theme
+* Fix Layertree backend form bypassing / conflicting with form theme
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
 * Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
@@ -32,6 +34,12 @@
 * [Framework] Fix errors if Element configuration form type does not accept / declare an `application` option, even if it isn't used by the form type
 * [Framework] Fix functional links (with `href="#"`) opening a new Application tab in frontend
 * [Framework] Fix CSS conflicts of custom tab containers vs Bootstrap `.container
+* [Framework] Fix (Digitizer et al) external select2 usages depending on (abandoned) robloach/component-installer
+* [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
+* [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
+* Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
+* Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
+* Misc functional testing support
 
 ## v3.2.3
 NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
