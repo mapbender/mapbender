@@ -98,7 +98,6 @@ class MapbenderCoreExtension extends Extension
             'mapbender.yml',
             'constraints.yml',
             'formTypes.yml',
-            'components.yml',
             'migrations.yml',
         ];
     }
