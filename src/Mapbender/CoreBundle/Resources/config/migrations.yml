@@ -47,26 +47,4 @@ services:
         class: Doctrine\DBAL\Migrations\Configuration\Configuration
         arguments:
             - '@doctrine.dbal.default_connection'
-            - '@mapbender.migration.output.writer'
-        calls:
-            - method: setMigrationsFinder
-              arguments:
-                  - '@mapbender.migration.finder'
 
-
-    #
-    # Mapbender Migrations Components
-    #
-    mapbender.migration.finder:
-        class: Mapbender\Component\DoctrineMigrationsHelper\MigrationFinder
-
-    mapbender.migration.output.writer:
-        class: Mapbender\Component\DoctrineMigrationsHelper\MigrationsOutputWriter
-        arguments:
-            - '@symfony.console.output'
-
-    #
-    # Symfony console output
-    #
-    symfony.console.output:
-        class: Symfony\Component\Console\Output\ConsoleOutput
