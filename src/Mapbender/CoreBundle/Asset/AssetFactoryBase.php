@@ -67,10 +67,14 @@ class AssetFactoryBase
                 foreach ($normalizedReferences as $normalizedReference) {
                     if (empty($uniqueRefs[$normalizedReference])) {
                         $realAssetPath = $this->locateAssetFile($normalizedReference);
-                        if ($debug) {
-                            $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                        if ($realAssetPath) {
+                            if ($debug) {
+                                $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                            }
+                            $parts[] = file_get_contents($realAssetPath);
+                        } elseif ($debug) {
+                            $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
                         }
-                        $parts[] = file_get_contents($realAssetPath);
                         $uniqueRefs[$normalizedReference] = true;
                     }
                 }
@@ -109,7 +113,7 @@ class AssetFactoryBase
 
     /**
      * @param string $input reference to an asset file
-     * @return string resolved absolute path to file
+     * @return string|null resolved absolute path to file, or null if file is missing (and should be ignored)
      */
     protected function locateAssetFile($input)
     {
@@ -119,7 +123,16 @@ class AssetFactoryBase
                 return realpath($inWeb);
             }
         }
-        return $this->fileLocator->locate($input);
+        try {
+            return $this->fileLocator->locate($input);
+        } catch (\InvalidArgumentException $e) {
+            if (preg_match('#^[/.]*?/vendor/#', $input)) {
+                // Ignore /vendor/ reference (avoid depending on internal package structure)
+                return null;
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**
