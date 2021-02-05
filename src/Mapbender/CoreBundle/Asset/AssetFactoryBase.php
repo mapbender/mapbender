@@ -50,17 +50,29 @@ class AssetFactoryBase
                 $input->load();
                 $parts[] = $input->getContent();
             } else {
-                $normalizedReference = $this->normalizeReference($input);
-                while (!empty($migratedRefMapping[$normalizedReference])) {
-                    $normalizedReference = $migratedRefMapping[$normalizedReference];
-                }
-                if (empty($uniqueRefs[$normalizedReference])) {
-                    $realAssetPath = $this->locateAssetFile($normalizedReference);
-                    if ($debug) {
-                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                $normalizedReferences = array($this->normalizeReference($input));
+                while (true) {
+                    foreach ($normalizedReferences as $k => $normalizedReference) {
+                        if (!empty($migratedRefMapping[$normalizedReference])) {
+                            $replacements = (array)$migratedRefMapping[$normalizedReference];
+                            \array_splice($normalizedReferences, $k, 1, $replacements);
+                            if ($debug) {
+                                $parts[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
+                            }
+                            continue 2;
+                        }
                     }
-                    $parts[] = file_get_contents($realAssetPath);
-                    $uniqueRefs[$normalizedReference] = true;
+                    break;
+                }
+                foreach ($normalizedReferences as $normalizedReference) {
+                    if (empty($uniqueRefs[$normalizedReference])) {
+                        $realAssetPath = $this->locateAssetFile($normalizedReference);
+                        if ($debug) {
+                            $parts[] = $this->getDebugHeader($realAssetPath, $input);
+                        }
+                        $parts[] = file_get_contents($realAssetPath);
+                        $uniqueRefs[$normalizedReference] = true;
+                    }
                 }
             }
         }
