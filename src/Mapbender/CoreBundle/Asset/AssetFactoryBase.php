@@ -77,21 +77,14 @@ class AssetFactoryBase
             }
             $normalizedReferences = array();
         } else {
-            $normalizedReferences = array($normalizedReferenceBeforeRemap);
-        }
-        while (true) {
-            foreach ($normalizedReferences as $k => $normalizedReference) {
-                if (!empty($migratedRefMapping[$normalizedReference])) {
-                    $replacements = (array)$migratedRefMapping[$normalizedReference];
-                    \array_splice($normalizedReferences, $k, 1, $replacements);
-                    if ($debug) {
-                        $parts[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
-                    }
-                    continue 2;
-                }
+            if ($debug) {
+                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $parts);
+            } else {
+                $dummy = array();   // Let's all thank PHP for its sane reference passing semantics
+                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $dummy);
             }
-            break;
         }
+
         foreach ($normalizedReferences as $normalizedReference) {
             if (empty($uniqueRefs[$normalizedReference])) {
                 $realAssetPath = $this->locateAssetFile($normalizedReference);
@@ -110,6 +103,29 @@ class AssetFactoryBase
         }
         $uniqueRefs[$normalizedReferenceBeforeRemap] = true;
         return implode("\n", $parts);
+    }
+
+    /**
+     * @param string $normalizedReference
+     * @param array $migratedRefMapping
+     * @param string[] &$debugOutput
+     * @return string[]
+     */
+    protected function rewriteReference($normalizedReference, $migratedRefMapping, &$debugOutput)
+    {
+        $refsOut = array();
+        if (!empty($migratedRefMapping[$normalizedReference])) {
+            $replacements = (array)$migratedRefMapping[$normalizedReference];
+            $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
+            foreach ($replacements as $replacement) {
+                foreach ($this->rewriteReference($replacement, $migratedRefMapping, $debugOutput) as $refOut) {
+                    $refsOut[] = $refOut;
+                }
+            }
+        } else {
+            $refsOut[] = $normalizedReference;
+        }
+        return $refsOut;
     }
 
     /**
