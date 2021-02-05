@@ -69,8 +69,16 @@ class AssetFactoryBase
     protected function loadFileReference($input, $debug, $migratedRefMapping, &$uniqueRefs)
     {
         $parts = array();
+        $normalizedReferenceBeforeRemap = $this->normalizeReference($input);
 
-        $normalizedReferences = array($this->normalizeReference($input));
+        if (!empty($uniqueRefs[$normalizedReferenceBeforeRemap])) {
+            if ($debug) {
+                $parts[] = "/** !!! Skipping duplicate handling of {$normalizedReferenceBeforeRemap} (from original reference {$input}) */";
+            }
+            $normalizedReferences = array();
+        } else {
+            $normalizedReferences = array($normalizedReferenceBeforeRemap);
+        }
         while (true) {
             foreach ($normalizedReferences as $k => $normalizedReference) {
                 if (!empty($migratedRefMapping[$normalizedReference])) {
@@ -100,6 +108,7 @@ class AssetFactoryBase
                 $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
             }
         }
+        $uniqueRefs[$normalizedReferenceBeforeRemap] = true;
         return implode("\n", $parts);
     }
 
