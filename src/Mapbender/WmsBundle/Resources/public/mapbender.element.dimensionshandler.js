@@ -25,25 +25,37 @@
                     };
                 });
                 this._preconfigureSources(targetDimensions, groupConfig.extent);
-                this._setupGroup(key, targetDimensions);
+                var dimHandler = this._setupGroup(key, targetDimensions);
+                if (dimHandler) {
+                    this._initializeSlider(key, dimHandler, targetDimensions);
+                } else {
+                    console.error("Target dimension not found! Source deactivated or removed?", targetDimensions, groupConfig);
+                }
             }
             this._trigger('ready');
         },
         _setupGroup: function(key, targetDimensions) {
-            var self = this;
-            var dimension;
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
                 var source = this.model.getSourceById(targetDimension.sourceId);
                 var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, targetDimension.dimensionName);
                 if (sourceDimensionConfig) {
-                    dimension = Mapbender.Dimension(sourceDimensionConfig);
-                    break;
+                    return Mapbender.Dimension(sourceDimensionConfig);
                 }
             }
-            var valarea = $('#' + key + ' .dimensionset-value', this.element);
+            return null;
+        },
+        /**
+         * @param {string} id
+         * @param dimension
+         * @param targetDimensions
+         * @private
+         */
+        _initializeSlider: function(id, dimension, targetDimensions) {
+            var self = this;
+            var valarea = $('#' + id + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
-            $('#' + key + ' .mb-slider', this.element).slider({
+            $('#' + id + ' .mb-slider', this.element).slider({
                 min: 0,
                 max: dimension.getStepsNum(),
                 value: dimension.getStep(dimension.getDefault()),
