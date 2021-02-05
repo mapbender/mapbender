@@ -53,36 +53,51 @@ class AssetFactoryBase
                 }
                 $parts[] = $input->getContent();
             } else {
-                $normalizedReferences = array($this->normalizeReference($input));
-                while (true) {
-                    foreach ($normalizedReferences as $k => $normalizedReference) {
-                        if (!empty($migratedRefMapping[$normalizedReference])) {
-                            $replacements = (array)$migratedRefMapping[$normalizedReference];
-                            \array_splice($normalizedReferences, $k, 1, $replacements);
-                            if ($debug) {
-                                $parts[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
-                            }
-                            continue 2;
-                        }
+                $parts[] = $this->loadFileReference($input, $debug, $migratedRefMapping, $uniqueRefs);
+            }
+        }
+        return implode("\n", $parts);
+    }
+
+    /**
+     * @param string $input
+     * @param bool $debug
+     * @param array $migratedRefMapping
+     * @param string[] $uniqueRefs
+     * @return string
+     */
+    protected function loadFileReference($input, $debug, $migratedRefMapping, &$uniqueRefs)
+    {
+        $parts = array();
+
+        $normalizedReferences = array($this->normalizeReference($input));
+        while (true) {
+            foreach ($normalizedReferences as $k => $normalizedReference) {
+                if (!empty($migratedRefMapping[$normalizedReference])) {
+                    $replacements = (array)$migratedRefMapping[$normalizedReference];
+                    \array_splice($normalizedReferences, $k, 1, $replacements);
+                    if ($debug) {
+                        $parts[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
                     }
-                    break;
+                    continue 2;
                 }
-                foreach ($normalizedReferences as $normalizedReference) {
-                    if (empty($uniqueRefs[$normalizedReference])) {
-                        $realAssetPath = $this->locateAssetFile($normalizedReference);
-                        if ($realAssetPath) {
-                            if ($debug) {
-                                $parts[] = $this->getDebugHeader($realAssetPath, $input);
-                            }
-                            $parts[] = file_get_contents($realAssetPath);
-                        } elseif ($debug) {
-                            $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
-                        }
-                        $uniqueRefs[$normalizedReference] = true;
-                    } elseif ($debug) {
-                        $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
+            }
+            break;
+        }
+        foreach ($normalizedReferences as $normalizedReference) {
+            if (empty($uniqueRefs[$normalizedReference])) {
+                $realAssetPath = $this->locateAssetFile($normalizedReference);
+                if ($realAssetPath) {
+                    if ($debug) {
+                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
                     }
+                    $parts[] = file_get_contents($realAssetPath);
+                } elseif ($debug) {
+                    $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
                 }
+                $uniqueRefs[$normalizedReference] = true;
+            } elseif ($debug) {
+                $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
             }
         }
         return implode("\n", $parts);
