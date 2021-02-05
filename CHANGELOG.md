@@ -1,4 +1,4 @@
-## dev-master @ 0b3c802ee
+## dev-master @ cb1b2197a
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -25,6 +25,7 @@
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
 * Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
+* Add ZoomBar component `zoom_home` to restore initial center / scale / SRS / rotation
 * [Backend] Fix account menu and sitelinks alignment vs top of page
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 * [Framework] Fix support for ConfigMigrationInterface modifying Element class
@@ -35,6 +36,7 @@
 * [Framework] Fix functional links (with `href="#"`) opening a new Application tab in frontend
 * [Framework] Fix CSS conflicts of custom tab containers vs Bootstrap `.container
 * [Framework] Fix (Digitizer et al) external select2 usages depending on (abandoned) robloach/component-installer
+* [Framework] Fix vis-ui.js usages depending on (abandoned) robloach/component-installer ([PR#1306](https://github.com/mapbender/mapbender/pull/1306))
 * [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
 * [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
 * Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
