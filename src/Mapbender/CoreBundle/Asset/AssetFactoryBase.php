@@ -48,6 +48,9 @@ class AssetFactoryBase
         foreach ($inputs as $input) {
             if ($input instanceof StringAsset) {
                 $input->load();
+                if ($debug) {
+                    $parts[] = "/** !!! Emitting StringAsset content */";
+                }
                 $parts[] = $input->getContent();
             } else {
                 $normalizedReferences = array($this->normalizeReference($input));
@@ -76,6 +79,8 @@ class AssetFactoryBase
                             $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
                         }
                         $uniqueRefs[$normalizedReference] = true;
+                    } elseif ($debug) {
+                        $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
                     }
                 }
             }
