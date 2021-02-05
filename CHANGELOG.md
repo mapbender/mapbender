@@ -193,7 +193,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ ac2360a86
+## dev-release/3.0.7 @ b1e8d6be1
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -239,6 +239,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix functional links (with `href="#"`) opening a new Application tab in frontend
 - [Framework] Fix CSS conflicts of custom tab containers vs Bootstrap `.container`
 - [Framework] Fix (Digitizer et al) external select2 usages depending on (abandoned) robloach/component-installer
+- [Framework] Fix vis-ui.js usages depending on (abandoned) robloach/component-installer ([PR#1306](https://github.com/mapbender/mapbender/pull/1306))
 - [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
 - [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
 - Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
