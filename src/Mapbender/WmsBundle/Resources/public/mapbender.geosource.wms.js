@@ -102,17 +102,20 @@ window.Mapbender.WmsSource = (function() {
             });
         },
         /**
-         * @param {WmsSourceSettings} settings
-         * @return {boolean}
+         * @param {WmsSourceSettingsDiff|null} diff
          */
-        applySettings: function(settings) {
-            var dirty = Mapbender.Source.prototype.applySettings.call(this, settings);
-            Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
-                var selected = -1 !== settings.selectedIds.indexOf(layer.getId());
-                dirty = dirty || (layer.getSelected() !== selected);
-                layer.setSelected(selected);
-            });
-            return dirty;
+        applySettingsDiff: function(diff) {
+            Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
+            if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
+                Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
+                    if (-1 !== (diff.activate || []).indexOf(layer.getId())) {
+                        layer.setSelected(true);
+                    }
+                    if (-1 !== (diff.deactivate || []).indexOf(layer.getId())) {
+                        layer.setSelected(false);
+                    }
+                });
+            }
         },
         /**
          * @param {WmsSourceSettings} to

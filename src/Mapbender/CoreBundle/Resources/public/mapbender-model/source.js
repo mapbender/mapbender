@@ -163,9 +163,21 @@ window.Mapbender.Source = (function() {
          * @return {boolean}
          */
         applySettings: function(settings) {
-            var dirty = this.configuration.options.opacity !== settings.opacity;
-            this.setOpacity(settings.opacity);
-            return dirty;
+            var diff = this.diffSettings(settings, this.getSettings());
+            if (diff) {
+                this.applySettingsDiff(diff);
+                return true;
+            } else {
+                return false;
+            }
+        },
+        /**
+         * @param {SourceSettingsDiff} diff
+         */
+        applySettingsDiff: function(diff) {
+            if (diff && typeof (diff.opacity) !== 'undefined') {
+                this.setOpacity(diff.opacity);
+            }
         },
         /**
          * @param {SourceSettings} to

@@ -83,6 +83,15 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             });
         },
         /**
+         * @param {TileSourceSettingsDiff|null} diff
+         */
+        applySettingsDiff: function(diff) {
+            var fakeRootLayer = this.configuration.children[0];
+            if (diff.activate || diff.deactivate) {
+                fakeRootLayer.options.treeOptions.selected = !!(diff.activate || []).length;
+            }
+        },
+        /**
          * @param {TileSourceSettings} from
          * @param {TileSourceSettings} to
          * @return {TileSourceSettingsDiff|null}
