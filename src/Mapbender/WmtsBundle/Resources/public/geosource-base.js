@@ -40,15 +40,6 @@
  * @property {Array.<WmtsLayerConfig>} configuration.layers
  * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
  */
-/**
- * @typedef {SourceSettings} TileSourceSettings
- * @property {boolean} selected
- */
-/**
- * @typedef {SourceSettingsDiff} TileSourceSettingsDiff
- * @property {Array<String>} [activate]
- * @property {Array<String>} [deactivate]
- */
 
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmtsTmsBaseSource = (function() {
@@ -75,41 +66,26 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             return true;
         },
         /**
-         * @return {TileSourceSettings}
+         * @return {SourceSettings}
          */
         getSettings: function() {
-            return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
-                selected: this.getSelected()
+            var diff = Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+                selectedIds: []
             });
+            // Use a (single-item) layer id list
+            if (this.getSelected()) {
+                diff.selectedIds.push(this.id);
+            }
+            return diff;
         },
         /**
-         * @param {TileSourceSettingsDiff|null} diff
+         * @param {SourceSettingsDiff|null} diff
          */
         applySettingsDiff: function(diff) {
             var fakeRootLayer = this.configuration.children[0];
             if (diff.activate || diff.deactivate) {
                 fakeRootLayer.options.treeOptions.selected = !!(diff.activate || []).length;
             }
-        },
-        /**
-         * @param {TileSourceSettings} from
-         * @param {TileSourceSettings} to
-         * @return {TileSourceSettingsDiff|null}
-         */
-        diffSettings: function(from, to) {
-            var diff = Mapbender.Source.prototype.diffSettings.apply(this, arguments);
-            if (from.selected !== to.selected) {
-                diff = diff || {};
-                // Use a (single-item) layer id list to homogenize format with WmsSourceSettingsDiff
-                var fakeLayerIdList = [this.id];
-                if (to.selected) {
-                    diff.activate = fakeLayerIdList;
-                } else {
-                    // assert(!to.selected)
-                    diff.deactivate = fakeLayerIdList;
-                }
-            }
-            return diff;
         },
         getSelected: function() {
             var fakeRootLayer = this.configuration.children[0];

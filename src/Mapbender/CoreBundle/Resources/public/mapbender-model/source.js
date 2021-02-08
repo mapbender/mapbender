@@ -8,10 +8,13 @@
 /**
  * @typedef {Object} SourceSettings
  * @property {Number} opacity
+ * @property {Array<String>} selectedIds
  */
 /**
  * @typedef {Object} SourceSettingsDiff
  * @property {Number} [opacity]
+ * @property {Array<String>} [activate]
+ * @property {Array<String>} [deactivate]
  */
 
 window.Mapbender = Mapbender || {};
@@ -185,13 +188,25 @@ window.Mapbender.Source = (function() {
          * @return {SourceSettingsDiff|null}
          */
         diffSettings: function(to, from) {
+            var diff = {
+                activate: to.selectedIds.filter(function(id) {
+                    return -1 === from.selectedIds.indexOf(id);
+                }),
+                deactivate: from.selectedIds.filter(function(id) {
+                    return -1 === to.selectedIds.indexOf(id);
+                })
+            };
             if (to.opacity !== from.opacity) {
-                return {
-                    opacity: to.opacity
-                };
-            } else {
-                return null;
+                diff.opacity = to.opacity
             }
+            if (!diff.activate.length) {
+                delete(diff.activate);
+            }
+            if (!diff.deactivate.length) {
+                delete(diff.deactivate);
+            }
+            // null if completely empty
+            return Object.keys(diff).length && diff || null;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;

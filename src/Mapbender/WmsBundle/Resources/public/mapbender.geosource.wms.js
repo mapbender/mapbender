@@ -1,12 +1,4 @@
-/**
- * @typedef {SourceSettings} WmsSourceSettings
- * @property {Array<String>} selectedIds
- */
-/**
- * @typedef {SourceSettingsDiff} WmsSourceSettingsDiff
- * @property {Array<String>} [activate]
- * @property {Array<String>} [deactivate]
- */
+
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
@@ -90,7 +82,7 @@ window.Mapbender.WmsSource = (function() {
             return [Mapbender.mapEngine.createWmsLayer(this)];
         },
         /**
-         * @return {WmsSourceSettings}
+         * @return {SourceSettings}
          */
         getSettings: function() {
             var selectedLayers = this.configuration.children[0].getSelectedList();
@@ -102,7 +94,7 @@ window.Mapbender.WmsSource = (function() {
             });
         },
         /**
-         * @param {WmsSourceSettingsDiff|null} diff
+         * @param {SourceSettingsDiff|null} diff
          */
         applySettingsDiff: function(diff) {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
@@ -116,29 +108,6 @@ window.Mapbender.WmsSource = (function() {
                     }
                 });
             }
-        },
-        /**
-         * @param {WmsSourceSettings} to
-         * @param {WmsSourceSettings} from
-         * @return {WmsSourceSettingsDiff|null}
-         */
-        diffSettings: function(to, from) {
-            var diff = Object.assign(Mapbender.Source.prototype.diffSettings.apply(this, arguments) || {}, {
-                activate: to.selectedIds.filter(function(id) {
-                    return -1 === from.selectedIds.indexOf(id);
-                }),
-                deactivate: from.selectedIds.filter(function(id) {
-                    return -1 === to.selectedIds.indexOf(id);
-                })
-            });
-            if (!diff.activate.length) {
-                delete(diff.activate);
-            }
-            if (!diff.deactivate.length) {
-                delete(diff.deactivate);
-            }
-            // null if completely empty
-            return Object.keys(diff).length && diff || null;
         },
         getSelected: function() {
             // delegate to root layer
