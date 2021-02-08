@@ -35,6 +35,17 @@ window.Mapbender.MapModelBase = (function() {
      * @property {mmViewParams} viewParams
      */
     /**
+     * @typedef {Object} mmMapSettingsLayersetsDiff
+     * @property {Array<String>} activate
+     * @property {Array<String>} deactivate
+     */
+    /**
+     * @typedef {Object} mmMapSettingsDiff
+     * @property {mmViewParams} viewParams
+     * @property {Array<mmMapSettingsLayersetsDiff>} layersets
+     * @property {Array<SourceSettingsDiff>} sources
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -1018,6 +1029,57 @@ window.Mapbender.MapModelBase = (function() {
          */
         getConfiguredSettings: function() {
             return Object.assign({}, this.configuredSettings_);
+        },
+        /**
+         * @param {mmMapSettings} from
+         * @param {mmMapSettings} to
+         * @return {mmMapSettingsDiff}
+         */
+        diffSettings: function(from, to) {
+            // Always include viewParams fully (not worth the effort to diff them)
+            var diff = {
+                viewParams: to.viewParams,
+                layersets: {
+                    activate: [],
+                    deactivate: []
+                },
+                sources: []
+            };
+            var i, toMatches;
+            for (i = 0; i < from.layersets.length; ++i) {
+                var fromLsSettings = from.layersets[i];
+                toMatches = to.layersets.filter(function(toLayerset) {
+                    return ('' + toLayerset.id) === ('' + fromLsSettings.id);
+                });
+                if (toMatches.length && fromLsSettings.selected !== toMatches[0].selected) {
+                    var lsId = '' + toMatches[0].id;
+                    if (toMatches[0].selected) {
+                        diff.layersets.activate.push(lsId);
+                    } else {
+                        diff.layersets.deactivate.push(lsId);
+                    }
+                }
+            }
+            for (i = 0; i < from.sources.length; ++i) {
+                var fromSourceSettings = from.sources[i];
+                toMatches = to.sources.filter(function(toSource) {
+                    return ('' + toSource.id) === ('' + fromSourceSettings.id);
+                });
+                if (toMatches.length) {
+                    var baseDiff = Mapbender.Source.prototype.diffSettings.call(null, fromSourceSettings, toMatches[0]);
+                    if (baseDiff) {
+                        diff.sources.push(Object.assign({id: fromSourceSettings.id}, baseDiff));
+                    }
+                } else {
+                    // Source not present in target settings => deactivate all layers
+                    diff.sources.push({
+                        id: fromSourceSettings.id,
+                        deactivate: fromSourceSettings.selectedIds.slice(),
+                        activate: []
+                    });
+                }
+            }
+            return diff;
         },
         /**
          * @param {mmMapSettings} settings
