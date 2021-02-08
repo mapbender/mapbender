@@ -4,8 +4,8 @@
  */
 /**
  * @typedef {SourceSettingsDiff} WmsSourceSettingsDiff
- * @typedef {Array<String>} [deselectedIds]
- * @typedef {Array<String>} [selectedIds]
+ * @property {Array<String>} [activate]
+ * @property {Array<String>} [deactivate]
  */
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmsSourceLayer = (function() {
@@ -120,23 +120,22 @@ window.Mapbender.WmsSource = (function() {
          * @return {WmsSourceSettingsDiff|null}
          */
         diffSettings: function(to, from) {
-            var diff = Mapbender.Source.prototype.diffSettings.apply(this, arguments);
-            var selectedExtra = to.selectedIds.filter(function(id) {
-                return -1 === from.selectedIds.indexOf(id);
+            var diff = Object.assign(Mapbender.Source.prototype.diffSettings.apply(this, arguments) || {}, {
+                activate: to.selectedIds.filter(function(id) {
+                    return -1 === from.selectedIds.indexOf(id);
+                }),
+                deactivate: from.selectedIds.filter(function(id) {
+                    return -1 === to.selectedIds.indexOf(id);
+                })
             });
-            var deselected = from.selectedIds.filter(function(id) {
-                return -1 === to.selectedIds.indexOf(id);
-            });
-            if (!diff && (selectedExtra.length || deselected.length)) {
-                diff = {};
+            if (!diff.activate.length) {
+                delete(diff.activate);
             }
-            if (selectedExtra.length) {
-                diff.selectedIds = selectedExtra;
+            if (!diff.deactivate.length) {
+                delete(diff.deactivate);
             }
-            if (deselected.length) {
-                diff.deselected = deselected;
-            }
-            return diff;
+            // null if completely empty
+            return Object.keys(diff).length && diff || null;
         },
         getSelected: function() {
             // delegate to root layer
