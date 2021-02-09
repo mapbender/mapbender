@@ -1,0 +1,19 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{# @todo: translate #}Titel</th>
+            <th>{# @todo: translate #}Datum</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {%- for record in records -%}
+            {% include 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig' with {'record': record} %}
+        {%- endfor -%}
+        <tr class="placeholder-row">
+            <td colspan="3" class="text-center">
+                {#@todo: translate #}&ndash; keine Daten &ndash;
+            </td>
+        </tr>
+    </tbody>
+</table>
