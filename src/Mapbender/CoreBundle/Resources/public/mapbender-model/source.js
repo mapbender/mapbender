@@ -166,7 +166,7 @@ window.Mapbender.Source = (function() {
          * @return {boolean}
          */
         applySettings: function(settings) {
-            var diff = this.diffSettings(settings, this.getSettings());
+            var diff = this.diffSettings(this.getSettings(), settings);
             if (diff) {
                 this.applySettingsDiff(diff);
                 return true;
@@ -183,11 +183,11 @@ window.Mapbender.Source = (function() {
             }
         },
         /**
-         * @param {SourceSettings} to
          * @param {SourceSettings} from
+         * @param {SourceSettings} to
          * @return {SourceSettingsDiff|null}
          */
-        diffSettings: function(to, from) {
+        diffSettings: function(from, to) {
             var diff = {
                 activate: to.selectedIds.filter(function(id) {
                     return -1 === from.selectedIds.indexOf(id);
