@@ -27,7 +27,7 @@ class ApplicationSwitcher extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'open_in_new_tab' => true,
+            'open_in_new_tab' => false,
             'applications' => array(),
         );
     }
