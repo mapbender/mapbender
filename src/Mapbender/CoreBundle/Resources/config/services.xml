@@ -53,6 +53,8 @@
         <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
         <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
         <parameter key="assetic.filter.sass.timeout">null</parameter>
+        <!-- Element related -->
+        <parameter key="mb.element.application_switcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
     </parameters>
 
     <services>
@@ -262,6 +264,13 @@
         <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Element related -->
+        <service id="mb.element.application_switcher.http_handler" class="%mb.element.application_switcher.http_handler.class%">
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
     </services>
 </container>

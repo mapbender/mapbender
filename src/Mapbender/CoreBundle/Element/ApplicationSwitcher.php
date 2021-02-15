@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Kernel;
 
 class ApplicationSwitcher extends Element
@@ -86,5 +87,12 @@ class ApplicationSwitcher extends Element
         return array(
             'form' => $form->createView(),
         );
+    }
+
+    public function handleHttpRequest(Request $request)
+    {
+        /** @var ApplicationSwitcherHttpHandler $handler */
+        $handler = $this->container->get('mb.element.application_switcher.http_handler');
+        return $handler->handleHttpRequest($this->entity, $request);
     }
 }

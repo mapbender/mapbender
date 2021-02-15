@@ -15,6 +15,9 @@
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             });
+            $.ajax([this.elementUrl, 'granted'].join('/')).then(function(response) {
+                self._filterGranted(response);
+            });
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
@@ -25,6 +28,18 @@
             this.element.on('change', 'select', function() {
                 self._switchApplication($(this).val());
             });
+        },
+        _filterGranted: function(slugs) {
+            var $options = $('select option', this.element);
+            for (var i = 0; i < $options.length; ++i) {
+                var value = $options[i].value;
+                if (value && -1 === slugs.indexOf(value)) {
+                    $options.eq(i).remove();
+                    // Custom dropdown widget support needs separate removal of display element corresponding to option
+                    $('.dropdownList [data-value="' + value + '"]', this.element).remove();
+                }
+            }
+            $('select', this.element).trigger('dropdown.changevisual');
         },
         _switchApplication: function(slug) {
             var targetApplicationUrl = [this.baseUrl, slug].join('');
