@@ -370,3 +370,6 @@ mb:
         description: Restores initial map view and source settings
       admin:
         resetDynamicSources: Remove dynamically loaded sources
+    applicationSwitcher:
+      admin:
+        open_in_new_tab: Open in new tab

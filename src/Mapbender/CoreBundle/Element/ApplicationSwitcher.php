@@ -31,6 +31,11 @@ class ApplicationSwitcher extends Element
         );
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType';
+    }
+
     public function getWidgetName()
     {
         return 'mapbender.mbApplicationSwitcher';
