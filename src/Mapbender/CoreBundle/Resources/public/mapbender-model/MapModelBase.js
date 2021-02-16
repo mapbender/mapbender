@@ -479,42 +479,6 @@ window.Mapbender.MapModelBase = (function() {
                 source: source
             });
         },
-        /**
-         * @param {OpenLayers.Layer.HTTPRequest|Object} source
-         * @param {boolean} [initializePod] to auto-instantiate a Mapbender.Source object from plain-old-data (default true)
-         * @param {boolean} [initializeLayers] to also auto-instantiate layers after instantiating Mapbender.Source (default false)
-         * @return {Mapbender.Source}
-         * @deprecated should work with Source class instances directly
-         * engine-agnostic
-         */
-        getMbConfig: function(source, initializePod, initializeLayers) {
-            var _s;
-            var projCode;
-            if (source.mbConfig) {
-                // monkey-patched OpenLayers.Layer
-                _s =  source.mbConfig;
-            } else if (source.source) {
-                // MapQuery layer
-                _s = source.source;
-            } else if (source.configuration && source.configuration.children) {
-                _s = source;
-            }
-            if (_s) {
-                if (initializePod || typeof initializePod === 'undefined') {
-                    if (!(_s instanceof Mapbender.Source)) {
-                        var sourceObj = Mapbender.Source.factory(_s);
-                        if (initializeLayers) {
-                            projCode = projCode || this.getCurrentProjectionCode();
-                            sourceObj.initializeLayers(projCode);
-                        }
-                        return sourceObj;
-                    }
-                }
-                return _s;
-            }
-            console.error("Cannot infer source configuration from given input", source);
-            throw new Error("Cannot infer source configuration from given input");
-        },
         getConfiguredSources_: function() {
             // Array.protoype.reverse is in-place
             // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
