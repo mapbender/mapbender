@@ -50,7 +50,7 @@ class ApplicationSwitcher extends Element
                 '@MapbenderCoreBundle/Resources/public/element/mbApplicationSwitcher.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/element/mbApplicationSwitcher.css',
+                '@MapbenderCoreBundle/Resources/public/element/mbApplicationSwitcher.scss',
             ),
         );
     }
