@@ -1046,6 +1046,91 @@ window.Mapbender.MapModelBase = (function() {
             return diff;
         },
         /**
+         * Transforms a settings diff into a compact and url-transportable shallow object form.
+         * NOTE: view param entry from diff is ignored (already transportable via fragment encoding)
+         *
+         * @param {mmMapSettingsDiff} diff
+         * @return {Object<String>}
+         */
+        encodeSettingsDiff: function(diff) {
+            var paramParts = {
+                lson: ((diff && diff.layersets || {}).activate || []).slice(),      // =Layersets on
+                lsoff: ((diff && diff.layersets || {}).deactivate || []).slice(),   // =Layersets off
+                slon: [],
+                sloff: [],
+                op: []
+            };
+            var i, j;
+            for (i = 0; i < (diff && diff.sources || []).length; ++i) {
+                var sourceDiffEntry = diff.sources[i];
+                for (j = 0; j < (sourceDiffEntry.activate || []).length; ++j) {
+                    paramParts.slon.push([sourceDiffEntry.id, sourceDiffEntry.activate[j]].join(':'));
+                }
+                for (j = 0; j < (sourceDiffEntry.deactivate || []).length; ++j) {
+                    paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j]].join(':'));
+                }
+                if (typeof (sourceDiffEntry.opacity) !== 'undefined') {
+                    paramParts.op.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
+                }
+            }
+            // Collapse lists to comma-separated
+            var params = {};
+            var paramNames = Object.keys(paramParts);
+            for (i = 0; i < paramNames.length; ++i) {
+                var paramName = paramNames[i];
+                if (paramParts[paramName].length) {
+                    params[paramName] = paramParts[paramName].join(',');
+                }
+            }
+            return params;
+        },
+        /**
+         * Reverse of encodeSettingsDiff
+         * @param {Object<String>} params
+         * @param {mmViewParams} [viewParams]
+         * @return {mmMapSettingsDiff}
+         */
+        decodeSettingsDiff: function(params, viewParams) {
+            var diff = {
+                layersets: {
+                    activate: (params.lson || '').split(','),
+                    deactivate: (params.lsoff || '').split(',')
+                },
+                sources: []
+            };
+            var sourceDiffs = {};
+            if (typeof viewParams !== 'undefined') {
+                diff.viewParams = viewParams;
+            }
+            var i, parts;
+            var sourceParamParts = {
+                slon: (params.slon || '').split(','),
+                sloff: (params.sloff || '').split(','),
+                op: (params.op || '').split(',')
+            };
+            var _getSourceDiffRef = function(id) {
+                if (!sourceDiffs[id]) {
+                    sourceDiffs[id] = {id: id, activate: [], deactivate: []};
+                    diff.sources.push(sourceDiffs[parts[0]]);
+                }
+                return sourceDiffs[id];
+            };
+
+            for (i = 0; i < sourceParamParts.slon.length; ++i) {
+                parts = sourceParamParts.slon[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).activate.push(parts[1]);
+            }
+            for (i = 0; i < sourceParamParts.sloff.length; ++i) {
+                parts = sourceParamParts.sloff[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).deactivate.push(parts[1]);
+            }
+            for (i = 0; i < sourceParamParts.op.length; ++i) {
+                parts = sourceParamParts.op[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).opacity = parseFloat(parts[1]);
+            }
+            return diff;
+        },
+        /**
          * @param {mmMapSettings} settings
          */
         applySourceSettings: function(settings) {
