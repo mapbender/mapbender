@@ -1,4 +1,4 @@
-## dev-master @ cb1b2197a
+## dev-master @ a4a59df58
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -24,6 +24,7 @@
 * Fix Layertree backend form bypassing / conflicting with form theme
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
 * Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
+* Add ApplicationSwitcher Element to jump between applications maintaining current map location (see [PR#1307](https://github.com/mapbender/mapbender/pull/1307))
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
 * Add ZoomBar component `zoom_home` to restore initial center / scale / SRS / rotation
 * [Backend] Fix account menu and sitelinks alignment vs top of page
