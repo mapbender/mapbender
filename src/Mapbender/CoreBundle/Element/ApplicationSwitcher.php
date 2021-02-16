@@ -4,7 +4,10 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +78,7 @@ class ApplicationSwitcher extends Element
             $choices[$current] = $current;
         }
         $options = array(
-            'choices' => $choices,
+            'choices' => $this->getApplicationChoices($this->entity),
             'attr' => array(
                 'title' => $this->entity->getTitle(),
             ),
@@ -94,5 +97,37 @@ class ApplicationSwitcher extends Element
         /** @var ApplicationSwitcherHttpHandler $handler */
         $handler = $this->container->get('mb.element.application_switcher.http_handler');
         return $handler->handleHttpRequest($this->entity, $request);
+    }
+
+    protected function getApplicationChoices(Entity\Element $element)
+    {
+        // @todo: provide a combined yaml+db repository for Application entities
+        /** @var EntityManagerInterface $em */
+        $em = $this->container->get('doctrine.orm.default_entity_manager');
+        $dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
+        /** @var ApplicationYAMLMapper $yamlRepository */
+        $yamlRepository = $this->container->get('mapbender.application.yaml_entity_repository');
+
+        $currentApplication = $element->getApplication();
+        $choices = array();
+
+        // Always offer the Application this Element is part of
+        $choices[$currentApplication->getTitle()] = $currentApplication->getSlug();
+
+        $slugsConfigured = ArrayUtil::getDefault($element->getConfiguration(), 'applications', array());
+
+        foreach ($slugsConfigured as $slug) {
+            if (\in_array($slug, $choices)) {
+                continue;
+            }
+            $application = $yamlRepository->getApplication($slug);
+            if (!$application) {
+                $application = $dbRepository->findOneBy(array('slug' => $slug));
+            }
+            if ($application) {
+                $choices[$application->getTitle()] = $application->getSlug();
+            }
+        }
+        return $choices;
     }
 }
