@@ -371,6 +371,12 @@ mb:
         description: Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her
       admin:
         resetDynamicSources: Hinzugeladene Quellen entfernen
+    applicationSwitcher:
+      class:
+        title: Anwendung wechseln
+        description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
+      admin:
+        open_in_new_tab: In neuem Tab öffnen
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.
