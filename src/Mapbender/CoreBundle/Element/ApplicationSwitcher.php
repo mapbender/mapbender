@@ -17,14 +17,12 @@ class ApplicationSwitcher extends Element
 {
     public static function getClassTitle()
     {
-        // @todo: translation
-        return 'Application switcher';
+        return 'mb.core.applicationSwitcher.class.title';
     }
 
     public static function getClassDescription()
     {
-        // @todo: translation
-        return 'Switches to another application while maintaining current map position';
+        return 'mb.core.applicationSwitcher.class.description';
     }
 
     public static function getDefaultConfiguration()

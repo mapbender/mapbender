@@ -371,5 +371,8 @@ mb:
       admin:
         resetDynamicSources: Remove dynamically loaded sources
     applicationSwitcher:
+      class:
+        title: Application switcher
+        description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
