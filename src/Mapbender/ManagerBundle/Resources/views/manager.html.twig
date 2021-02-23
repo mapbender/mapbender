@@ -12,8 +12,9 @@
 
 {% block content %}
     <div id="wrapper">
+
       {% include 'MapbenderCoreBundle::navbar.html.twig' %}
-      <div class="container-fluid">
+      <div class="container-fluid hidden-md hidden-lg">
         <div class="row">
           <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
@@ -47,7 +48,8 @@
             {% endfor %}
           </div>
               {% endblock %}
-              {% block manager_content %}{% endblock %}
+              {% block manager_content %}
+              {% endblock %}
             </div>
           </div>
         </div>

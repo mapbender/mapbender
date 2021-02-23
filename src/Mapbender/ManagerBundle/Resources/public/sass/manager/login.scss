@@ -52,17 +52,7 @@ body {
      /* align-content: center; */
      flex-direction: column;
 
-  .form-login-container{
-    /* border: 2px solid blue; */
-    width: 70%;
-    height: 30%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-content: center;
-    margin-left: 15%;
-
-  }
+  
     .inputWrapper {
       width: 100%;
       /* border: 2px solid green; */
@@ -80,7 +70,9 @@ body {
        font-size: 15px;
        border-radius: 10px;
        width: 35%;
-       transform: translateX(70px)
+       height: 5%;
+       margin-left: calc(100% / 3);
+       margin-top: 5%;
      }
 
     .labelInput {
@@ -89,6 +81,8 @@ body {
       font-size: 20px;
       margin: 3% 0;
     /**  line-height: 1.414; **/
+      display: block;
+      width: 100%;
     }
 
   }
@@ -98,44 +92,46 @@ body {
   }
 
   .logoContainer {
+    /* border: 2px solid red; */
+    position: relative;
     text-align: center;
     display: block;
     height: auto;
     padding-top: 15px;
+    top: -10%;
     .logo {
       max-height: 120px;
       max-width: 100%;
     }
   }
 
- /* .loginBox {
-    border: 1px solid red;
-    margin-top: 15px;
-  } */
-
-  .labelInput {
-    display: block;
-    width: 100%;
-    /* margin-bottom: 2px; */
-  }
-  .input {
-    /* margin-bottom: $space/2; */
+  .contentTitle{
+    /* border: 1px solid green; */
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 5%;
+    opacity: 0.8;
+    visibility: hidden;
   }
 
+  .form-login-container{
+    /* border: 2px solid blue; */
+    width: 70%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
+    margin-left: 15%;
+    margin-top: 5%;
+
+  }
   .linkButton {
     /* margin-right: $space/2; */
     margin-left: 15%;
-    margin-top: 3%;
-    font-size: 15px;
+    margin-top: 5.5%;
+    font-size: 1.3em;
   }
-
-  .login-button{
-    width: 50%;
-    height: 5%;
-    margin-left: 25%;
-    margin-top: 5%;
-  }
-
   .sitelinks {
     text-align: right;
     li {

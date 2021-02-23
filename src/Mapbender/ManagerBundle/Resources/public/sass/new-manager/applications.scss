@@ -7,17 +7,15 @@
 @import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
 
 /* Old class deleted: 
-
 .leftPane
 .navItem
 .navItemLevel2
 .navLevel1
-
-
 */
 
 body {
   font-family: "Ubuntu", $fontFamily;
+  background-color: #f8f8f8;
 }
 
 * {
@@ -27,21 +25,26 @@ body {
 }
 
 .listFilterBoxes {
-  margin-top: 8%;
+  margin-top: 10%;
+  transform: translateY(4em);
   a {
     color: inherit;
   }
 }
 
+
 .navigationBar {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 1);
   padding-top: 3px;
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
+  padding: 0.8em;
+  /* border-bottom: 1px solid #121212; */
 
   .navbar-brand {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
     padding-top: 5px;
     padding-bottom: 5px;
+    padding-left: 6.25em;
     // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
     // see https://stackoverflow.com/a/7310398
     &:before {
@@ -60,16 +63,57 @@ body {
   }
 }
 
+
 .navigationBar .navbar-nav ul.nav {
   width: 15em;
   background-color: #efefef;
   position: absolute;
   z-index: 5;
   top: 100%;
-
   li {
     // undo upstream .navbar-nav > li { float: left; } to allow li growth to full width
     float: none;
+  }
+}
+
+.main-nav-container {
+  ul:nth-child(1){
+    padding-left: 27%;
+
+    li { 
+      padding-right: 3em ;
+
+      & > a {
+      color: #121212;
+      }
+    }  
+  }
+
+  ul:nth-child(2){
+    padding-right: 10%;
+    color: #121212;
+    font-weight: 300;
+
+    li > a {
+      color: #121212;
+    }
+  }
+  
+  .vertical-line{
+    content: '';
+    width: 1px;
+    height: 2em;
+    background-color: #ddd;
+    position: absolute;
+    right: 20em;
+    top:1.5em;
+    /* transform: translateX(-2.125em) translateY(0.63em); */
+  
+  }
+
+
+  ul > li > a {
+    font-size: 1.25em;
   }
 }
 
@@ -79,6 +123,12 @@ body {
 
 .navigationBar .nav > li:hover > ul.nav {
   display: block;
+  margin-top: 18px;
+  padding: 20px;
+
+  li > a {
+  font-size: 1.25em;
+  }
 }
 
 .vertical-line {
@@ -91,12 +141,20 @@ body {
 }
 
 .content {
-  margin-top: 2%;
+  /* border: 1px solid black; */
+  margin-top: 100px;
+  margin-bottom: 100px;
   display: flex;
   justify-content: center;
 
   .innerContainer {
-    width: 80%;
+    width: 90%;
+    margin-bottom:10%;
+
+
+    h1 {
+    font-size: 2.9em;
+    }
   }
 
   .title {
@@ -105,7 +163,7 @@ body {
   }
 
   .underlineTitle {
-    width: 130px;
+    max-width: 65px;
     height: 5px;
     background-color: #079ee0;
     position: relative;
@@ -113,37 +171,52 @@ body {
   }
 }
 
+
+.container-filter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6%;
+  margin-right: 2%;
+}
+
+
 .filter-input-container {
+  background-color: rgba(255, 255, 255, 1);
   padding: 1em;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
   label {
     margin-right: 1em;
+    font-size: 1.4em;
   }
 }
 
-.filter-input-nocontainer {
+.filter-input-table {
+  background-color: rgba(255, 255, 255, 1);
   padding: 1em;
-  margin-top: 4.8em; 
-
-  label{
+  border-radius: 15px;
+  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+  label {
     margin-right: 1em;
+    font-size: 1.4em;
   }
 }
+
 
 .listFilterInput {
   border: none;
-  border-bottom: 1px solid black;
-  opacity: 0.4;
-  max-width: 9em;
+  border-bottom: 1px solid rgba(0,0,0,0.5);
+  width: 15em;
+  background-color: transparent;
 }
 
 .listFilterBoxes > li {
+  background-color: rgba(255, 255, 255, 1);
   width: 100%;
   list-style: none;
   display: block;
   margin-bottom: 15px;
-  padding: 10px;
+  padding: 20px;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 }
@@ -166,10 +239,10 @@ body {
 }
 
 .listFilterBoxes > li .preview-img {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 15px;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   background-color: #EAEAEA;
   .placeholder-text, .placeholder-icon {
     padding: 15px;
@@ -183,16 +256,105 @@ body {
 }
 
 
+.preview-info {
+  width: 140px;
+  height: 140px;
+  border-radius: 15px;
+  background-color: #EAEAEA;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(3em);
+  
+  .placeholder-text {
+    padding: 15px;
+    text-align: center;
+
+    h4 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    }
+  }
+}
+
+
 .link-button-new {
-  margin-top: 10em;
+  transform: translateY(7em);
+  a {
+    color: #121212;
+    font-size: 1.6em;
+  }
+
+  span {
+    font-size: 1.3em;
+    margin-left: 0.5%;
+    font-weight: 300;
+  }
 
 }
 
 .container-table {
   position: relative;
-  top: 20%;
+  margin-top: 6.25em;
+  font-size: 1.25em;
+  transform: translateY(4em);
+  
+  thead > tr > th {
+    font-weight: 500;
+  }
+
+  /* td > a, td > ul > li > a   */
+
+  tbody {
+    td > a, td > ul > li > a  {
+      color: #121212; 
+      font-weight: 300;
+      font-size: 1.1em;
+   }
+   tr > td  {
+     color: #121212; 
+     font-weight: 300;
+     font-size: 1.1em;
+     border-bottom: 1px solid #ddd;
+   } 
+  }
 }
 
 .list-icon-position {
   margin: 0 7px;
 }
+
+@media (max-width: 1300px){
+
+  .navigationBar {
+
+    .navbar-brand{
+      padding-left: 2.25em;
+  }
+
+}
+
+.main-nav-container {
+
+  ul:nth-child(1){
+    padding-left: 17%;
+
+    li {
+      padding-right: 1em;
+    }
+  }
+
+  ul:nth-child(2){
+    padding-right: 5%;
+    
+  }
+}
+
+  .innerContainer{
+    padding :0 10%;
+  }
+
+
+}
+

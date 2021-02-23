@@ -6,20 +6,11 @@
 
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  <br>
-  
-  <div class="pull-right filter-input-nocontainer"> 
-    <label for="inputFilterUsers" class="labelInput testInputLabel left">{{"fom.user.user.index.filter"|trans}}</label>
-    <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
-    <span class="iconSearch"></span>
-  </div>
-
-  <br>
-  
+  {% include "MapbenderManagerBundle:Element:filter-table.html.twig" %}
   {% if is_granted('CREATE', oid) %}
     <div class="link-button-new">
       <a class="iconAdd iconBig right" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
-      <span><b>New User</b></span>
+      <span>New User</span>
     </div>
   {% endif %}
 

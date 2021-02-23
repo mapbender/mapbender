@@ -17,13 +17,13 @@
 }
 .button{
   padding:($space/4) ($space/2);
-  height: 24px;
+  height: 50px;
   line-height: 1;
   display: inline-block;
   margin:0;
   text-decoration: none;
 
-  border-width: 1px;
+  border-width: 5px;
   border-style: solid;
   @extend .buttonCore;
   @include transition(all, 0.3s, ease-in-out);

@@ -7,21 +7,21 @@
 
 {% block manager_content %}
 
-<br>
-
 {% if groups|length > 0 %}
-  <div class="pull-right filter-input-nocontainer"> 
+
+ <div class="container-filter">
+  <div class="pull-right filter-input-container"> 
     <label for="inputFilterGroups" class="labelInput left">{{"fom.user.group.index.filter"|trans}}</label>
     <input id="inputFilterGroups" type="text" class="input left listFilterInput"/>
     <span class="iconSearch"></span>
   </div>
+</div>
 
-  <br>
   
   {% if create_permission %}
     <div class="link-button-new">
       <a class="iconAdd iconBig right " href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
-      <span><b>New Group</b></span>
+      <span>New Group</span>
     </div>
 {% endif %}
 

@@ -9,16 +9,15 @@
 
 {% block manager_content %}
 
-  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
-  {% if applications | length > 0 %}
-    <div class="text-right">
-      <span class="filter-input-container text-nowrap">
-        <label for="inputFilterApplications">{{ "mb.actions.filter" | trans}}</label>
-        <input id="inputFilterApplications" type="text" class="input listFilterInput">
-        <span class="iconSearch"></span>
-      </span>
-    </div>
 
+   
+  {% if applications | length > 0 %}
+    
+  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" %}
+  <div class="link-button-new">
+    {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+    <span>New Application</span>
+  </div> 
     <ul id="listFilterApplications" class="listFilterBoxes">
       {% for application in applications %}
         <li class="filterItem row">

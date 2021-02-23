@@ -8,11 +8,13 @@
 {% endblock %}
 
 {% block manager_content %}
-{% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
-{% endif %}
 {% if sources|length > 0 %}
-  <div class="text-right">
+
+
+  {% include 'MapbenderManagerBundle:Element:filter-container.html.twig' with {filterTargetId: 'listFilterApplications' } %}
+
+
+  <div class="container-filter">
       <span class="filter-input-container text-nowrap">
         <label for="inputFilterServices">{{ "mb.actions.filter" | trans }}</label>
         <input id="inputFilterServices" type="text" class="input listFilterInput">
@@ -20,18 +22,27 @@
       </span>
   </div>
 
+
+  {% if create_permission %}
+  <div class="link-button-new">
+    <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+    <span>New Source</span>
+  </div>
+  {% endif %}
+
   <ul id="listFilterServices" class="listFilterBoxes">
     {% for source in sources %}
       <li class="filterItem row">
-        <div class="col-xs-3">
-            <div class="preview-img center-block text-center">
+        <div class="col-md-3 col-xs-3">
+            <div class="preview-info">
                 <div class="placeholder-text">
-                    <p>{{ source.id }}</p>
+                    <h4>{{ source.id }}</h4>
+                    <div class="text-divider"></div>
                     <p>{{ source.type }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-9 col-xs-12">
+        <div class="col-md-8 col-xs-12">
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
             {{ source.title }}
             <span class="smallerText"> {{ source.alias }}</span>
