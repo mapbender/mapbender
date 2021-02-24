@@ -432,14 +432,11 @@ window.Mapbender.MapModelBase = (function() {
                     var source = self.getSourceById(sourceId);
                     var layer = source && source.getLayerById(layerId);
                     if (layer) {
-                        layer.options.treeOptions.selected = true;
                         layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
-                        var parent = layer.parent;
-                        while (parent) {
-                            parent.options.treeOptions.selected = true;
-                            parent = parent.parent;
-                        }
-                        self.updateSource(source);
+                    }
+                    while (layer) {
+                        layer.setSelected(true);
+                        layer = layer.parent;
                     }
                 }
             });
