@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Templating\EngineInterface;
@@ -41,6 +42,8 @@ class ViewManagerHttpHandler
                 return $this->getListingResponse($element, $request);
             case 'save':
                 return $this->getSaveResponse($element, $request);
+            case 'delete':
+                return $this->getDeleteResponse($element, $request);
         }
     }
 
@@ -79,6 +82,20 @@ class ViewManagerHttpHandler
             'dateFormat' => $this->getDateFormat($request),
         ));
         return new Response($content);
+    }
+
+    protected function getDeleteResponse(Entity\Element $element, Request $request)
+    {
+        $id = $request->query->get('id');
+        if (!$id) {
+            throw new BadRequestHttpException("Missing id");
+        }
+        $record = $records = $this->getRepository()->find($id);
+        if ($record) {
+            $this->em->remove($record);
+            $this->em->flush();
+        }
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     /**

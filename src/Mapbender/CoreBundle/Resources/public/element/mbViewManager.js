@@ -32,6 +32,12 @@
             this.element.on('click', '.-fn-apply', function() {
                 self._apply(self._decodeDiff(this));
             });
+            this.element.on('click', '.-fn-delete[data-id]', function() {
+                var $row = $(this).closest('tr');
+                self._delete($(this).attr('data-id')).then(function() {
+                    $row.remove();
+                });
+            });
         },
         _load: function() {
             var $loadingPlaceholder = $('.-fn-loading-placeholder')
@@ -67,6 +73,12 @@
             }).then(function(response) {
                 $('table tbody', self.element).prepend(response);
             })
+        },
+        _delete: function(id) {
+            var params = {id: id};
+            return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
+                method: 'DELETE'
+            });
         },
         /**
          * @param {Element} node
