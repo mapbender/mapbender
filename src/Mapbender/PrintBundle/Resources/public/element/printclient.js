@@ -619,7 +619,12 @@
         },
         _collectOverview: function() {
             if (this.overviewWidget_ && typeof (this.overviewWidget_.getPrintData) === 'function') {
-                return this.overviewWidget_.getPrintData();
+                try {
+                    return this.overviewWidget_.getPrintData();
+                } catch (e) {
+                    console.warn("Error collecting overview print data, skipping", e);
+                    return null;
+                }
             } else {
                 return null;
             }
