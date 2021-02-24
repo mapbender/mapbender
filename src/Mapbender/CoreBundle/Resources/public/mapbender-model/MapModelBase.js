@@ -1075,7 +1075,7 @@ window.Mapbender.MapModelBase = (function() {
          * NOTE: view param entry from diff is ignored (already transportable via fragment encoding)
          *
          * @param {mmMapSettingsDiff} diff
-         * @return {Object<String>}
+         * @return {Object.<String, String>}
          */
         encodeSettingsDiff: function(diff) {
             var paramParts = {
@@ -1111,7 +1111,7 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * Reverse of encodeSettingsDiff
-         * @param {Object<String>} params
+         * @param {Object.<String, String>} params
          * @param {mmViewParams} [viewParams]
          * @return {mmMapSettingsDiff}
          */

@@ -377,13 +377,13 @@ Mapbender.Util.splitUrlQueryParams = function(url) {
 
 /**
  * Extracts all query param assignments from given url into a shallow object.
- * ('?name1=value1&name2&name3[k]=value3') => [{name1: 'value1', name2: true, 'name3[k]': 'value3'}
+ * ('?name1=value1&name2&name3[k]=value3') => {name1: 'value1', name2: true, 'name3[k]': 'value3'}
  *
  * Names and values will be decoded.
  *
  * @param {String} url
  * @param {boolean} [plusToSpace] default true
- * @return {Object<String, String>}
+ * @return {Object.<String, String>}
  */
 Mapbender.Util.getUrlQueryParams = function(url, plusToSpace) {
     var assignments = Mapbender.Util.splitUrlQueryParams(url);
