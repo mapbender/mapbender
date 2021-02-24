@@ -407,7 +407,8 @@ window.Mapbender.MapModelBase = (function() {
             return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat(['visiblelayers']);
         },
         processUrlParams: function() {
-            var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
+            var params = Mapbender.Util.getUrlQueryParams(window.location.href, true);
+            var visibleLayersParam = params['visiblelayers'];
             if (visibleLayersParam) {
                 this.processVisibleLayersParam(visibleLayersParam);
             }
