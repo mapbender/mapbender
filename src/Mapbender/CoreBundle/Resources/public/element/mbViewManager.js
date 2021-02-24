@@ -27,7 +27,9 @@
         _initEvents: function() {
             var self = this;
             this.element.on('click', '.-fn-save-new', function() {
-                self._saveNew();
+                self._saveNew().then(function() {
+                    self._updatePlaceholder();
+                });
             });
             this.element.on('click', '.-fn-apply', function() {
                 self._apply(self._decodeDiff(this));
@@ -36,15 +38,18 @@
                 var $row = $(this).closest('tr');
                 self._delete($(this).attr('data-id')).then(function() {
                     $row.remove();
+                    self._updatePlaceholder();
                 });
             });
         },
         _load: function() {
             var $loadingPlaceholder = $('.-fn-loading-placeholder')
+            var self = this;
             $.ajax([this.elementUrl, 'listing'].join('/'))
                 .then(function(response) {
                     var $content = $(response);
                     $loadingPlaceholder.replaceWith($content);
+                    self._updatePlaceholder();
                 }, function() {
                     $loadingPlaceholder.hide()
                 })
@@ -67,7 +72,7 @@
             };
 
             var self = this;
-            $.ajax([this.elementUrl, 'save'].join('/'), {
+            return $.ajax([this.elementUrl, 'save'].join('/'), {
                 method: 'POST',
                 data: data
             }).then(function(response) {
@@ -79,6 +84,12 @@
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE'
             });
+        },
+        _updatePlaceholder: function() {
+            var $rows = $('table tbody tr', this.element);
+            var $plch = $rows.filter('.placeholder-row');
+            var $dataRows = $rows.not($plch);
+            $plch.toggleClass('hidden', !!$dataRows.length);
         },
         /**
          * @param {Element} node
