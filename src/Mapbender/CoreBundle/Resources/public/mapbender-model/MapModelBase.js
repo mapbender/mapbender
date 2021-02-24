@@ -1090,8 +1090,8 @@ window.Mapbender.MapModelBase = (function() {
         decodeSettingsDiff: function(params, viewParams) {
             var diff = {
                 layersets: {
-                    activate: (params.lson || '').split(','),
-                    deactivate: (params.lsoff || '').split(',')
+                    activate: params.lson && params.lson.split(',') || [],
+                    deactivate: params.lsoff && params.lsoff.split(',') || []
                 },
                 sources: []
             };
@@ -1101,9 +1101,9 @@ window.Mapbender.MapModelBase = (function() {
             }
             var i, parts;
             var sourceParamParts = {
-                slon: (params.slon || '').split(','),
-                sloff: (params.sloff || '').split(','),
-                op: (params.op || '').split(',')
+                slon: params.slon && params.slon.split(',') || [],
+                sloff: params.sloff && params.sloff.split(',') || [],
+                op: params.op && params.op.split(',') || []
             };
             var _getSourceDiffRef = function(id) {
                 if (!sourceDiffs[id]) {
