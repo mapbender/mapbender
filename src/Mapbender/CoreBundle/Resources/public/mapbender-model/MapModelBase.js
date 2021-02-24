@@ -412,6 +412,33 @@ window.Mapbender.MapModelBase = (function() {
             if (visibleLayersParam) {
                 this.processVisibleLayersParam(visibleLayersParam);
             }
+            try {
+                var settingsDiff = this.decodeSettingsDiff(params);
+                // @todo: extract / fold with applySettings
+                var i, ls;
+                for (i = 0; i < settingsDiff.layersets.activate.length; ++i) {
+                    ls = this.getLayersetById(settingsDiff.layersets.activate[i]);
+                    if (ls) {
+                        ls.setSelected(true);
+                    }
+                }
+                for (i = 0; i < settingsDiff.layersets.deactivate.length; ++i) {
+                    ls = this.getLayersetById(settingsDiff.layersets.deactivate[i]);
+                    if (ls) {
+                        ls.setSelected(false);
+                    }
+                }
+                for (i = 0; i < settingsDiff.sources.length; ++i) {
+                    var sourceDiff = settingsDiff.sources[i];
+                    var source = this.getSourceById(sourceDiff.id);
+                    if (source) {
+                        source.applySettingsDiff(sourceDiff);
+                    }
+                }
+
+            } catch (e) {
+                console.warn("Error applying extra url params, ignoring", params, e);
+            }
         },
         /**
          * Activate specific layers on specific sources by interpreting a (comma-separated list of)
