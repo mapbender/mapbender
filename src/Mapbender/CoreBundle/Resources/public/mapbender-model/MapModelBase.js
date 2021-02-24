@@ -1083,7 +1083,7 @@ window.Mapbender.MapModelBase = (function() {
                 lsoff: ((diff && diff.layersets || {}).deactivate || []).slice(),   // =Layersets off
                 slon: [],
                 sloff: [],
-                op: []
+                sop: []
             };
             var i, j;
             for (i = 0; i < (diff && diff.sources || []).length; ++i) {
@@ -1095,7 +1095,7 @@ window.Mapbender.MapModelBase = (function() {
                     paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j]].join(':'));
                 }
                 if (typeof (sourceDiffEntry.opacity) !== 'undefined') {
-                    paramParts.op.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
+                    paramParts.sop.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
                 }
             }
             // Collapse lists to comma-separated
@@ -1131,7 +1131,7 @@ window.Mapbender.MapModelBase = (function() {
             var sourceParamParts = {
                 slon: params.slon && params.slon.split(',') || [],
                 sloff: params.sloff && params.sloff.split(',') || [],
-                op: params.op && params.op.split(',') || []
+                sop: params.sop && params.sop.split(',') || []
             };
             var _getSourceDiffRef = function(id) {
                 if (!sourceDiffs[id]) {
@@ -1149,8 +1149,8 @@ window.Mapbender.MapModelBase = (function() {
                 parts = sourceParamParts.sloff[i].split(':', 2);
                 _getSourceDiffRef(parts[0]).deactivate.push(parts[1]);
             }
-            for (i = 0; i < sourceParamParts.op.length; ++i) {
-                parts = sourceParamParts.op[i].split(':', 2);
+            for (i = 0; i < sourceParamParts.sop.length; ++i) {
+                parts = sourceParamParts.sop[i].split(':', 2);
                 _getSourceDiffRef(parts[0]).opacity = parseFloat(parts[1]);
             }
             return diff;
