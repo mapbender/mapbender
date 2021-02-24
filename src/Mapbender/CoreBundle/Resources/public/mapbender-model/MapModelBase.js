@@ -404,7 +404,14 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat(['visiblelayers']);
+            return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat([
+                'visiblelayers',
+                'slon',
+                'sloff',
+                'lson',
+                'lsoff',
+                'sop'
+            ]);
         },
         processUrlParams: function() {
             var params = Mapbender.Util.getUrlQueryParams(window.location.href, true);
