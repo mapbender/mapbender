@@ -13,7 +13,9 @@
    
   {% if applications | length > 0 %}
     
-  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" %}
+
+    {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+
   <div class="link-button-new">
     {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
     <span>New Application</span>

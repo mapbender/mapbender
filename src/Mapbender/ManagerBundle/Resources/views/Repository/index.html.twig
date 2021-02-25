@@ -2,72 +2,63 @@
 
 {% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
-{% endblock %}
+  {% block js %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
+  {% endblock %}
 
-{% block manager_content %}
-{% if sources|length > 0 %}
-
-
-  {% include 'MapbenderManagerBundle:Element:filter-container.html.twig' with {filterTargetId: 'listFilterApplications' } %}
+  {% block manager_content %}
+    {% if sources|length > 0 %}
 
 
-  <div class="container-filter">
-      <span class="filter-input-container text-nowrap">
-        <label for="inputFilterServices">{{ "mb.actions.filter" | trans }}</label>
-        <input id="inputFilterServices" type="text" class="input listFilterInput">
-        <span class="iconSearch"></span>
-      </span>
-  </div>
 
+      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
 
-  {% if create_permission %}
-  <div class="link-button-new">
-    <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
-    <span>New Source</span>
-  </div>
-  {% endif %}
+      {% if create_permission %}
+        <div class="link-button-new">
+          <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+          <span>New Source</span>
+        </div>
+      {% endif %}
 
-  <ul id="listFilterServices" class="listFilterBoxes">
-    {% for source in sources %}
-      <li class="filterItem row">
-        <div class="col-md-3 col-xs-3">
-            <div class="preview-info">
+      <ul id="listFilterApplications" class="listFilterBoxes">
+        {% for source in sources %}
+          <li class="filterItem row">
+            <div class="col-md-3 col-xs-3">
+              <div class="preview-info">
                 <div class="placeholder-text">
-                    <h4>{{ source.id }}</h4>
-                    <div class="text-divider"></div>
-                    <p>{{ source.type }}</p>
+                  <h4>{{ source.id }}</h4>
+                  <div class="text-divider"></div>
+                  <p>{{ source.type }}</p>
                 </div>
+              </div>
             </div>
-        </div>
-        <div class="col-md-8 col-xs-12">
-          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
-            {{ source.title }}
-            <span class="smallerText"> {{ source.alias }}</span>
-          </a>
+            <div class="col-md-8 col-xs-12">
+              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">
+                {{ source.title }}
+                <span class="smallerText"> {{ source.alias }}</span>
+              </a>
 
-            <p>{{ source.description }}</p>
-            <div class="buttonGroup">
-              <a class="btn btn-default iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-              {% if source.id in reloadableIds %}
-              <a class="iconReset btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
-              {% endif %}
-              {% if is_granted('DELETE', oid) %}
-                 <a href="#" class="btn btn-default -fn-delete hover-highlight-effect"
-                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
-              {% endif %}
-             </div>
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-    <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
-{% endif %}
+              <p>{{ source.description }}</p>
+              <div class="buttonGroup">
+                <a class="btn btn-default iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+                {% if source.id in reloadableIds %}
+                  <a class="iconReset btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+                {% endif %}
+                {% if is_granted('DELETE', oid) %}
+                  <a href="#" class="btn btn-default -fn-delete hover-highlight-effect"
+                              title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
+                              data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
+                              data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
+                {% endif %}
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
+    {% endif %}
 
-<div class="clearContainer"></div>
-{% endblock %}
+    <div class="clearContainer"></div>
+  {% endblock %}

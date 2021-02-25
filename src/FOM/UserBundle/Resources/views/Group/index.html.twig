@@ -9,15 +9,9 @@
 
 {% if groups|length > 0 %}
 
- <div class="container-filter">
-  <div class="pull-right filter-input-container"> 
-    <label for="inputFilterGroups" class="labelInput left">{{"fom.user.group.index.filter"|trans}}</label>
-    <input id="inputFilterGroups" type="text" class="input left listFilterInput"/>
-    <span class="iconSearch"></span>
-  </div>
-</div>
-
   
+  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+
   {% if create_permission %}
     <div class="link-button-new">
       <a class="iconAdd iconBig right " href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
@@ -27,7 +21,7 @@
 
   
   <div class="clearContainer"></div>
-  <table id="listFilterGroups" class="table container-table listFilterContainer">
+  <table id="listFilterApplications" class="table container-table listFilterContainer">
     <thead id="groupsHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>
