@@ -52,6 +52,7 @@ class Map extends Element implements ConfigMigrationInterface
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
+            'fixedZoomSteps' => false,
         );
     }
 

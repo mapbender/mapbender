@@ -29,7 +29,7 @@ window.Mapbender.MapModelOl4 = (function() {
     _initMap: function() {
         var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName);
 
-        this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
+        this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options, maxExtent);
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
@@ -469,7 +469,7 @@ window.Mapbender.MapModelOl4 = (function() {
             rotation: 0     // Not worth doing rad2deg + deg2rad; we will replace it anyway
         };
         var mbMapOptions = this.mbMap.options;
-        var resolutionOptions = this.calculateViewOptions_(fakeViewParams, mbMapOptions.scales, newMaxExtent, mbMapOptions.dpi);
+        var resolutionOptions = this.calculateViewOptions_(fakeViewParams, mbMapOptions, newMaxExtent);
         var newViewOptions = Object.assign({}, this.viewOptions_, resolutionOptions, {
             projection: srsNameTo,
             center: newCenter,
@@ -651,14 +651,15 @@ window.Mapbender.MapModelOl4 = (function() {
         },
         /**
          * @param {mmViewParams} viewParams
-         * @param {Array<Number>}scales
+         * @param {Object} mapOptions
          * @param {Array<Number>=} [maxExtent]
-         * @param {Number=} [dpi]
          * @return {{}}
          * @private
          */
-        calculateViewOptions_: function(viewParams, scales, maxExtent, dpi) {
+        calculateViewOptions_: function(viewParams, mapOptions, maxExtent) {
             var deg2rad = 2 * Math.PI / 360;
+            var scales = mapOptions.scales;
+            var dpi = mapOptions.dpi || 72;
 
             var viewOptions = {
                 projection: viewParams.srsName,
@@ -667,9 +668,8 @@ window.Mapbender.MapModelOl4 = (function() {
             if (scales && scales.length) {
                 var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(viewParams.srsName);
                 var inchesPerMetre = 39.37;
-                var dpi_ = dpi || 72;
                 viewOptions['resolutions'] = scales.map(function(scale) {
-                    return scale * upm / (inchesPerMetre * dpi_);
+                    return scale * upm / (inchesPerMetre * dpi);
                 });
             } else {
                 viewOptions.zoom = 7; // hope for the best
@@ -677,6 +677,9 @@ window.Mapbender.MapModelOl4 = (function() {
             if (maxExtent) {
                 viewOptions.extent = maxExtent;
             }
+            /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/View.js#L148 */
+            viewOptions.constrainResolution = !!mapOptions.fixedZoomSteps;
+
             return viewOptions;
         }
     });
