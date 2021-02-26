@@ -1,4 +1,4 @@
-## dev-master @ a4a59df58
+## dev-master @ e26632af0
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -10,6 +10,7 @@
 * Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 * Fix fragment history not generating an entry for a pure srs change
 * Fix ZoomBar rotation indicator not showing initial non-zero rotation
+* Fix error printing if overview element exists but started closed, and was never opened
 * Fix PrintClient broken nested tab container layout (queue mode active and placed in tabs-style sidepane)
 * Fix Wms dimension range editing rounding errors in instance backend
 * Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
@@ -27,6 +28,7 @@
 * Add ApplicationSwitcher Element to jump between applications maintaining current map location (see [PR#1307](https://github.com/mapbender/mapbender/pull/1307))
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
 * Add ZoomBar component `zoom_home` to restore initial center / scale / SRS / rotation
+* Add Map configuration option `fixedZoomSteps` (disables fractional zoom; see [PR#1312](https://github.com/mapbender/mapbender/pull/1312))
 * [Backend] Fix account menu and sitelinks alignment vs top of page
 * [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
 * [Framework] Fix support for ConfigMigrationInterface modifying Element class
