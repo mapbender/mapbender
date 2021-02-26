@@ -54,6 +54,10 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'label' => 'mb.manager.admin.map.start_extent',
                 'property_path' => '[extents][start]',
             ))
+            ->add('fixedZoomSteps', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'label' => 'mb.core.map.admin.fixedZoomSteps',
+                'required' => false,
+            ))
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Scales (csv)',
                 'required' => true,

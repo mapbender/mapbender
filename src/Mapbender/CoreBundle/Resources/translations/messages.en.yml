@@ -249,6 +249,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS properties for %srslist% are not found'
+      admin:
+        fixedZoomSteps: Fixed zoom steps
     scalebar:
       class:
         title: 'Scale bar'

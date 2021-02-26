@@ -250,6 +250,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
+      admin:
+        fixedZoomSteps: Feste Maßstabsstufen
     scalebar:
       class:
         title: Maßstabsleiste
