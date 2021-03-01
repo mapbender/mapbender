@@ -262,7 +262,7 @@ class WmcEditor extends WmcBase
         /** @var Form $form */
         $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcType', $wmc);
         if ($request->getMethod() === 'POST') {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
                 if ($wmc->getId() !== null) {
                     /** @var Wmc|null $wmc */

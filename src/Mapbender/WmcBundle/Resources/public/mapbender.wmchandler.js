@@ -100,7 +100,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
                 source.configuration.status = source.configuration.status ? source.configuration.status : 'ok';
-                this.mapWidget.addSource(source, true);
+                this.mapWidget.addSource(source, false);
             }
         }
         this.mapWidget.fireModelEvent({
