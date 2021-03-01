@@ -25,6 +25,13 @@ class ElementInventoryService
     protected $fullInventory = array();
     /** @var string[] */
     protected $noCreationClassNames = array();
+    /** @var string[] */
+    protected $disabledClassesFromConfig = array();
+
+    public function __construct($disabledClasses)
+    {
+        $this->disabledClassesFromConfig = $disabledClasses ?: array();
+    }
 
     /**
      * @param string $classNameIn
@@ -112,5 +119,15 @@ class ElementInventoryService
     public function getRawInventory()
     {
         return array_values($this->fullInventory);
+    }
+
+    protected function getDisabledClasses()
+    {
+        return $this->disabledClassesFromConfig;
+    }
+
+    public function isClassDisabled($className)
+    {
+        return \in_array($className, $this->disabledClassesFromConfig);
     }
 }
