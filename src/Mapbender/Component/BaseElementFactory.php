@@ -77,16 +77,9 @@ class BaseElementFactory
      * @param Element $element
      * @return bool
      */
-    public function isElementTypeDisabled(Element $element)
+    public function isTypeOfElementDisabled(Element $element)
     {
-        $disabled = $this->isClassDisabled($element->getClass());
-        if (!$disabled && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target) {
-                $disabled = $this->isClassDisabled($target->getClass());
-            }
-        }
-        return $disabled;
+        return $this->inventoryService->isTypeOfElementDisabled($element);
     }
 
     /**

@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\CoreBundle\Entity;
+
 /**
  * Maintains inventory of Element Component classes
  *
@@ -129,5 +131,17 @@ class ElementInventoryService
     public function isClassDisabled($className)
     {
         return \in_array($className, $this->disabledClassesFromConfig);
+    }
+
+    public function isTypeOfElementDisabled(Entity\Element $element)
+    {
+        $disabled = $this->isClassDisabled($element->getClass());
+        if (!$disabled && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+            $target = $element->getTargetElement();
+            if ($target) {
+                $disabled = $this->isClassDisabled($target->getClass());
+            }
+        }
+        return $disabled;
     }
 }

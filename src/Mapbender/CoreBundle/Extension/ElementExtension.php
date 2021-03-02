@@ -42,6 +42,7 @@ class ElementExtension extends AbstractExtension
             'element_class_title' => new TwigFunction('element_class_title', array($this, 'element_class_title')),
             'element_default_title' => new TwigFunction('element_default_title', array($this, 'element_default_title')),
             'element_title' => new TwigFunction('element_title', array($this, 'element_title')),
+            'is_typeof_element_disabled' => new TwigFunction('is_typeof_element_disabled', array($this, 'is_typeof_element_disabled')),
         );
     }
 
@@ -88,5 +89,10 @@ class ElementExtension extends AbstractExtension
             }
         }
         return $this->element_class_title($element);
+    }
+
+    public function is_typeof_element_disabled(Element $element)
+    {
+        return $this->inventoryService->isTypeOfElementDisabled($element);
     }
 }
