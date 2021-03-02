@@ -136,11 +136,8 @@ class ElementInventoryService
     public function isTypeOfElementDisabled(Entity\Element $element)
     {
         $disabled = $this->isClassDisabled($element->getClass());
-        if (!$disabled && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target) {
-                $disabled = $this->isClassDisabled($target->getClass());
-            }
+        if (!$disabled && ($target = $element->getTargetElement())) {
+            $disabled = $this->isClassDisabled($target->getClass());
         }
         return $disabled;
     }
