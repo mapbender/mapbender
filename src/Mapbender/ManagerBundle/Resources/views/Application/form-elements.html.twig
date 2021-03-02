@@ -42,7 +42,7 @@
           </tr>
         </thead>
         <tbody>
-        {% for element in application.getElementsByRegion(region) %}
+        {% for element in application.getElementsByRegion(region) if not is_typeof_element_disabled(element) %}
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
