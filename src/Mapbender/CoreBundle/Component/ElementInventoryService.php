@@ -108,7 +108,7 @@ class ElementInventoryService
         foreach ($moved as $original => $replacement) {
             $inventoryCopy[$original] = $replacement;
         }
-        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames));
+        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames, $this->getDisabledClasses()));
     }
 
     /**
