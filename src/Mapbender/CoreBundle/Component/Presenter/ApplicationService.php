@@ -106,7 +106,8 @@ class ApplicationService
     {
         $entitiesOut = array();
         foreach ($entities as $entity) {
-            if ($entity->getEnabled() && (!$requireGrant || $this->isElementGranted($entity))) {
+            $enabled = !$this->elementFactory->isClassDisabled($entity->getClass()) && $entity->getEnabled();
+            if ($enabled && (!$requireGrant || $this->isElementGranted($entity))) {
                 $entitiesOut[] = $entity;
             }
         }
