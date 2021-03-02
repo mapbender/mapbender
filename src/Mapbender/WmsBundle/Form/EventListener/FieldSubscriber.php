@@ -34,15 +34,6 @@ class FieldSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $arrStyles = $data->getSourceItem()->getStyles(true);
-        $styleOpt = array(" " => "");
-        foreach ($arrStyles as $style) {
-            if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification
-                $styleOpt[$style->getTitle()] = $style->getName();
-            }
-        }
-
-        $form->remove('style');
         $form
             ->add('style', 'Mapbender\CoreBundle\Form\Type\InstanceLayerStyleChoiceType', array(
                 'label' => 'Style',
