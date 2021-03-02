@@ -1,4 +1,4 @@
-## dev-master @ aeb3ca2e9
+## dev-master @ 5d0d53053
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -7,6 +7,7 @@
 * Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 * Fix incomplete defaults for SimpleSearch `result_*`
 * Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
+* Fix SimpleSearch errors when receiving invalid headers ([#1303](https://github.com/mapbender/mapbender/issues/1303))
 * Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 * Fix fragment history not generating an entry for a pure srs change
 * Fix ZoomBar rotation indicator not showing initial non-zero rotation
@@ -48,6 +49,7 @@
 * [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
 * Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
 * Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
+* Drop incompatible / no longer supported Wmc Element code (WmcList, WmcEditor, WmcLoader)
 * Misc functional testing support
 
 ## v3.2.3
