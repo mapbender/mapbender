@@ -27,13 +27,14 @@ class InstanceLayerStyleChoiceType extends AbstractType
                 /** @var WmsInstanceLayer $layer */
                 $layer = $options['layer'];
                 $arrStyles = $layer->getSourceItem()->getStyles(true);
-                $styleOpt = array(" " => "");
+                $styleOpt = array('default' => '');
                 foreach ($arrStyles as $style) {
-                    if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification
+                    if(strtolower($style->getName()) !== 'default') {
                         $styleOpt[$style->getTitle()] = $style->getName();
                     }
+
                 }
-                return $arrStyles;
+                return $styleOpt;
             },
         ));
         // Symfony 2 only

@@ -54,7 +54,7 @@
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn description">{{ element.title | trans }}</td>
+                <td class="titleColumn description">{{ element_title(element) | trans }}</td>
                 <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
                   <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"

@@ -198,7 +198,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ b1e8d6be1
+## dev-release/3.0.7 @ e46e14901
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -219,6 +219,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 - Fix Wms dimension range editing rounding errors in instance backend
 - Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
+- Fix Wms instance layer style editing ([#1314](https://github.com/mapbender/mapbender/issues/1314))
 - Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
 - Fix broken enforcement of dimension exclusivity in DimensionsHandler form
 - Fix DimensionsHandler trying to control random dimension on source with multiple dimensions
@@ -228,9 +229,11 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 - Fix PrintClient frontend settings form bypassing / conflicting with form theme
 - Fix Layertree backend form bypassing / conflicting with form theme
+- Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
 - Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
+- Give reasonable (target dependent) titles to ControlButton Elements with empty / omitted titles (see [PR#1316](https://github.com/mapbender/mapbender/pull/1316))
 - [Backend] Fix account menu and sitelinks alignment vs top of page
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
