@@ -1,4 +1,4 @@
-## dev-master @ e26632af0
+## dev-master @ 8c1356f0f
 * [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
@@ -15,6 +15,7 @@
 * Fix Wms dimension range editing rounding errors in instance backend
 * Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
 * Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
+* Fix Wms instance layer style editing ([#1314](https://github.com/mapbender/mapbender/issues/1314))
 * Fix shared instances not included in DimensionsHandler instance selection ([#1284](https://github.com/mapbender/mapbender/issues/1284))
 * Fix broken enforcement of dimension exclusivity in DimensionsHandler form
 * Fix DimensionsHandler trying to control random dimension on source with multiple dimensions
@@ -23,7 +24,9 @@
 * Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 * Fix PrintClient frontend settings form bypassing / conflicting with form theme
 * Fix Layertree backend form bypassing / conflicting with form theme
+* Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
+* Give reasonable (target dependent) titles to ControlButton Elements with empty / omitted titles (see [PR#1316](https://github.com/mapbender/mapbender/pull/1316))
 * Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
 * Add ApplicationSwitcher Element to jump between applications maintaining current map location (see [PR#1307](https://github.com/mapbender/mapbender/pull/1307))
 * Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
