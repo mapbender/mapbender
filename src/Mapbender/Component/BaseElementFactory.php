@@ -65,6 +65,24 @@ class BaseElementFactory
     }
 
     /**
+     * @param string $className
+     * @return bool
+     */
+    public function isClassDisabled($className)
+    {
+        return $this->inventoryService->isClassDisabled($className);
+    }
+
+    /**
+     * @param Element $element
+     * @return bool
+     */
+    public function isTypeOfElementDisabled(Element $element)
+    {
+        return $this->inventoryService->isTypeOfElementDisabled($element);
+    }
+
+    /**
      * @param Element $element
      * @return string|\Mapbender\CoreBundle\Component\Element
      */

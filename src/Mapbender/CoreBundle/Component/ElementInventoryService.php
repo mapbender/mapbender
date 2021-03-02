@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\CoreBundle\Entity;
+
 /**
  * Maintains inventory of Element Component classes
  *
@@ -26,6 +28,13 @@ class ElementInventoryService
     protected $fullInventory = array();
     /** @var string[] */
     protected $noCreationClassNames = array();
+    /** @var string[] */
+    protected $disabledClassesFromConfig = array();
+
+    public function __construct($disabledClasses)
+    {
+        $this->disabledClassesFromConfig = $disabledClasses ?: array();
+    }
 
     /**
      * @param string $classNameIn
@@ -102,7 +111,7 @@ class ElementInventoryService
         foreach ($moved as $original => $replacement) {
             $inventoryCopy[$original] = $replacement;
         }
-        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames));
+        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames, $this->getDisabledClasses()));
     }
 
     /**
@@ -113,5 +122,27 @@ class ElementInventoryService
     public function getRawInventory()
     {
         return array_values($this->fullInventory);
+    }
+
+    protected function getDisabledClasses()
+    {
+        return $this->disabledClassesFromConfig;
+    }
+
+    public function isClassDisabled($className)
+    {
+        return \in_array($className, $this->disabledClassesFromConfig);
+    }
+
+    public function isTypeOfElementDisabled(Entity\Element $element)
+    {
+        $disabled = $this->isClassDisabled($element->getClass());
+        if (!$disabled && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+            $target = $element->getTargetElement();
+            if ($target) {
+                $disabled = $this->isClassDisabled($target->getClass());
+            }
+        }
+        return $disabled;
     }
 }
