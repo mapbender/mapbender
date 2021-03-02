@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+
 class ControlButton extends BaseButton
 {
     // Disable being targetted by any other Button
@@ -35,6 +37,11 @@ class ControlButton extends BaseButton
         return 'Mapbender\CoreBundle\Element\Type\ControlButtonAdminType';
     }
 
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:control_button.html.twig';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array_replace(parent::getDefaultConfiguration(), array(
@@ -60,4 +67,26 @@ class ControlButton extends BaseButton
         return 'MapbenderCoreBundle:Element:control_button.html.twig';
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $title = $this->entity->getTitle();
+        if (!$title) {
+            $target = $this->entity->getTargetElement('target');
+            if ($target) {
+                $title = $target->getTitle();
+                if ($target && $target->getClass()) {
+                    /** @var MinimalInterface|string $targetClass */
+                    $targetClass = $target->getClass();
+                    $title = $targetClass::getClassTitle();
+                }
+            }
+        }
+        if (!$title) {
+            $title = $this->getClassTitle();
+        }
+        return array(
+            'configuration' => $this->entity->getConfiguration(),
+            'title' => $title,
+        );
+    }
 }
