@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 09b5f7b59
+## dev-release/3.0.7 @ 75ead2c37
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -14,6 +14,7 @@
 - Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
 - Fix incomplete defaults for SimpleSearch `result_*`
 - Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
+- Fix SimpleSearch errors when receiving invalid headers ([#1303](https://github.com/mapbender/mapbender/issues/1303))
 - Fix broken PrintClient settings layout with option `legend` disabled
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
