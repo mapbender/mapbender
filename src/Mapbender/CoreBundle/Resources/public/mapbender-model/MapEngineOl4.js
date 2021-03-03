@@ -68,13 +68,14 @@ window.Mapbender.MapEngineOl4 = (function() {
                             // numeric sort, descending
                             return b - a;
                         });
+                        var tileSize = Math.max(128, parseInt(mapOptions.tileSize) || 512);
 
-                        // Replace upstream-initialized TileGrid instance with a new one, replacing (only) resolutions
+                        // Replace upstream-initialized TileGrid instance with a new one, replacing resolutions and tile size
                         tileGrid = new (tileGrid.constructor)({
                             resolutions: mergedResolutions,
                             origin: tileGrid.getOrigin(),
                             extent: tileGrid.getExtent(),
-                            tileSize: tileGrid.getTileSize()
+                            tileSize: [tileSize, tileSize]
                         });
                         this.tileGridForProjection[projKey] = tileGrid;
                     }
