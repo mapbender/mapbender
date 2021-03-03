@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Extension\ElementExtension;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -27,17 +28,21 @@ class ApplicationService
     protected $authorizationChecker;
     /** @var AclProviderInterface */
     protected $aclProvider;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
 
     public function __construct(ElementFactory $elementFactory,
                                 UploadsManager $uploadsManager,
                                 AuthorizationCheckerInterface $authorizationChecker,
-                                AclProviderInterface $aclProvider)
+                                AclProviderInterface $aclProvider,
+                                ElementExtension $elementExtension)
     {
         $this->elementFactory = $elementFactory;
         $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->aclProvider = $aclProvider;
+        $this->elementExtension = $elementExtension;
     }
 
     /**
@@ -89,6 +94,9 @@ class ApplicationService
         foreach ($entities as $entity) {
             try {
                 $components[] = $this->elementFactory->componentFromEntity($entity, true);
+                if (!$entity->getTitle()) {
+                    $entity->setTitle($this->elementExtension->element_default_title($entity));
+                }
             } catch (ElementErrorException $e) {
                 // for frontend presentation, incomplete / invalid elements are silently suppressed
                 // => do nothing
