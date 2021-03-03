@@ -19,6 +19,11 @@
          * Creates the map widget
          */
         _create: function(){
+            var defaultDpi = 25.4 / 0.28; // ~90.7142857142857
+            if (!this.options.dpi || Math.abs(this.options.dpi - defaultDpi) <= 0.05) {
+                this.options.dpi = defaultDpi;
+            }
+
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if (!this.options.extents.start && !this.options.extents.max) {
