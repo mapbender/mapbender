@@ -28,34 +28,9 @@ window.Mapbender.MapEngineOl4 = (function() {
         setLayerVisibility: function(olLayer, state) {
             olLayer.setVisible(state);
         },
-        /**
-         * @param {Mapbender.Source} source
-         * @param {Object} [mapOptions]
-         * @return {Object}
-         */
-        createWmsLayer: function(source, mapOptions) {
-            var sourceOpts = {
-                url: source.configuration.options.url,
-                transition: 0,
-                params: source.getGetMapRequestBaseParams()
-            };
-
-            var olSourceClass;
-            var olLayerClass;
-            if (source.configuration.options.tiled) {
-                olSourceClass = ol.source.TileWMS;
-                olLayerClass = ol.layer.Tile;
-            } else {
-                olSourceClass = ol.source.ImageWMS;
-                olLayerClass = ol.layer.Image;
-            }
-
-            var layerOptions = {
-                opacity: source.configuration.options.opacity,
-                source: new (olSourceClass)(sourceOpts)
-            };
-            if (source.configuration.options.tiled && ((mapOptions || {}).scales || []).length) {
-                var tileSource = layerOptions.source;
+        createWmsTileSource_: function(sourceOptions, mapOptions) {
+            var tileSource = new ol.source.TileWMS(sourceOptions);
+            if ((mapOptions.scales || []).length) {
                 /**
                  * Patch (caching) tile grid getter to ensure our precondigured scales can and will be queried directly from the
                  * WMS, with no scaling.
@@ -106,6 +81,34 @@ window.Mapbender.MapEngineOl4 = (function() {
                     return tileGrid;
                 };
             }
+            return tileSource;
+        },
+        /**
+         * @param {Mapbender.Source} source
+         * @param {Object} [mapOptions]
+         * @return {Object}
+         */
+        createWmsLayer: function(source, mapOptions) {
+            var sourceOpts = {
+                url: source.configuration.options.url,
+                transition: 0,
+                params: source.getGetMapRequestBaseParams()
+            };
+
+            var olSource;
+            var olLayerClass;
+            if (source.configuration.options.tiled) {
+                olSource = this.createWmsTileSource_(sourceOpts, mapOptions || {});
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSource = new ol.source.ImageWMS(sourceOpts);
+                olLayerClass = ol.layer.Image;
+            }
+
+            var layerOptions = {
+                opacity: source.configuration.options.opacity,
+                source: olSource
+            };
             // todo: transparent
             // todo: exception format
             return new (olLayerClass)(layerOptions);
