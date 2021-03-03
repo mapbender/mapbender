@@ -90,6 +90,7 @@
             <tag name="form.type" alias="target_element"/>
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.twig.element_class" />
         </service>
 
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
