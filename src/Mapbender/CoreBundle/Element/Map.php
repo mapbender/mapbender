@@ -44,7 +44,7 @@ class Map extends Element implements ConfigMigrationInterface
         /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
             'layersets' => array(),
-            'dpi' => 90.714, // DPI for WMTS: 90.714285714
+            'dpi' => 25.4 / 0.28,
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'tileSize' => 512,
