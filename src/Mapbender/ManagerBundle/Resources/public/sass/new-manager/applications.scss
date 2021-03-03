@@ -78,13 +78,15 @@ body {
 
 .main-nav-container {
   ul:nth-child(1){
-    padding-left: 27%;
+    transform: translateX(35vw);
 
     li { 
       padding-right: 3em ;
 
       & > a {
+      /* border: 1px solid black; */
       color: #121212;
+      height: 100%;
       }
     }  
   }
@@ -123,7 +125,7 @@ body {
 
 .navigationBar .nav > li:hover > ul.nav {
   display: block;
-  margin-top: 18px;
+  /* margin-top: 18px; */
   padding: 20px;
 
   li > a {
@@ -141,7 +143,6 @@ body {
 }
 
 .content {
-  /* border: 1px solid black; */
   margin-top: 100px;
   margin-bottom: 100px;
   display: flex;

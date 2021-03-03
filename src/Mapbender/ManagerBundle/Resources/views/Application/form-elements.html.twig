@@ -4,31 +4,31 @@
 </div>
 
 {% form_theme form _self %}
-{# Define block without immediate output #}
-{%- if false -%}
+  {# Define block without immediate output #}
+  {%- if false -%}
 
-{% block region_settings_widget %}
+  {% block region_settings_widget %}
     <div {{ block('widget_container_attributes') }}>
-        {%- if not form.rendered and form.children | length -%}
-          {%- set _popover_id = 'popover_' ~ form.vars.id -%}
-          <div class="static-popover-wrap">
-            <span data-toggle-target="#{{ _popover_id }}">
-                <i class="fa fa-cog"></i></span>
-            {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
-              <div class="popover left hidden" id="{{ _popover_id }}">
-                  <div class="arrow"></div>
-                  <div class="popover-content form-horizontal">
-                      {{ form_rest(form) }}
-                  </div>
-              </div>
+      {%- if not form.rendered and form.children | length -%}
+      {%- set _popover_id = 'popover_' ~ form.vars.id -%}
+      <div class="static-popover-wrap">
+        <span data-toggle-target="#{{ _popover_id }}">
+          <i class="fa fa-cog"></i></span>
+        {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
+        <div class="popover left hidden" id="{{ _popover_id }}">
+          <div class="arrow"></div>
+          <div class="popover-content form-horizontal">
+            {{ form_rest(form) }}
           </div>
-        {%- endif -%}
+        </div>
+      </div>
+      {%- endif -%}
     </div>
-{% endblock %}
-{%- endif -%}
+  {% endblock %}
+  {%- endif -%}
 
-{% for region in regions %}
-  <div class="{{region}} region">
+  {% for region in regions %}
+    <div class="{{region}} region">
       <table class="application-component-table smallText elementsTable" data-region="{{ region }}">
         <thead>
           <tr>
@@ -37,7 +37,7 @@
             </th>
             <th colspan="2" class="regionProperties"  data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
               {% if form.regionProperties[region] is defined %}
-                  {{ form_widget(form.regionProperties[region]) }}
+                {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
             </th>
           </tr>
@@ -50,53 +50,51 @@
           </tr>
         </thead>
         <tbody>
-        {% for element in application.getElementsByRegion(region) %}
-              <tr class="element" {% if is_map_element(element) -%}
-                  id="-ft-map-element"
+          {% for element in application.getElementsByRegion(region) %}
+            <tr class="element" {% if is_map_element(element) -%}
+                id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn description">{{ element.title | trans }}</td>
-                <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
-                <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
-                       title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
-                       data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input
-                           data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
-                           data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
-                  </div>
-                  {% if allow_screentypes %}
+              <td class="titleColumn description">{{ element.title | trans }}</td>
+              <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
+              <td class="iconColumn">
+                <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
+                     title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
+                     data-icon-off="iconPublish" data-icon-on="iconPublishActive">
+                  <input
+                    data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
+                    data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
+                </div>
+                {% if allow_screentypes %}
                   <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
                     {%- set _element_screentype = element.getScreenType() -%}
                     <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-fw fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
                     <i data-screentype="desktop" class="screentype-icon fa fa-fw fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
                   </span>
-                  {% endif %}
-                  <span class="iconEdit editElement hover-highlight-effect"
-                        title="{{ 'mb.actions.edit' | trans }}"
-                        data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
-                  {% set _aces = mapbender_manager_object_aces(element) %}
-                  <span class="iconKey secureElement {% if _aces | length %}has {% endif %}hover-highlight-effect"
-                        title="{{ "mb.manager.managerbundle.acl_element"|trans }} {% if _aces | length %}
-
-
-{% for ace in _aces %}
-{{ace.type}}: {{ ace.name }}
-{% endfor %}{% endif %}"
-                        data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}"></span>
-                  <span class="iconRemove removeElement hover-highlight-effect"
-                        title="{{ 'mb.actions.delete' | trans }}"
-                        data-slug="{{ application.slug }}"
-                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
-                </td>
-              </tr>
-        {% else %}
+                {% endif %}
+                <span class="iconEdit editElement hover-highlight-effect"
+                      title="{{ 'mb.actions.edit' | trans }}"
+                      data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
+                {% set _aces = mapbender_manager_object_aces(element) %}
+                <span class="iconKey secureElement {% if _aces | length %}has {% endif %}hover-highlight-effect"
+                      title="{{ "mb.manager.managerbundle.acl_element"|trans }} {% if _aces | length %}
+                      {% for ace in _aces %}
+                        {{ace.type}}: {{ ace.name }}
+                      {% endfor %}{% endif %}"
+                      data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}"></span>
+                <span class="iconRemove removeElement hover-highlight-effect"
+                      title="{{ 'mb.actions.delete' | trans }}"
+                      data-slug="{{ application.slug }}"
+                      data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
+              </td>
+            </tr>
+          {% else %}
             <tr class="dummy">
               <td class="description">{{"mb.manager.admin.element.no_element_added."|trans}}</td>
               <td></td>
               <td></td>
             </tr>
-        {% endfor %}
+          {% endfor %}
         </tbody>
       </table>
-  </div>
-{% endfor %}
+    </div>
+  {% endfor %}
