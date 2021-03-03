@@ -54,6 +54,58 @@ window.Mapbender.MapEngineOl4 = (function() {
                 opacity: source.configuration.options.opacity,
                 source: new (olSourceClass)(sourceOpts)
             };
+            if (source.configuration.options.tiled && ((mapOptions || {}).scales || []).length) {
+                var tileSource = layerOptions.source;
+                /**
+                 * Patch (caching) tile grid getter to ensure our precondigured scales can and will be queried directly from the
+                 * WMS, with no scaling.
+                 * @see https://github.com/openlayers/openlayers/blob/v6.5.0/src/ol/source/TileImage.js#L240
+                 */
+                var getTileGridForProjectionOriginal = tileSource.getTileGridForProjection;
+                var scales = mapOptions.scales.map(parseFloat).filter(function(scale) {
+                    return scale && !isNaN(scale);
+                });
+                tileSource.getTileGridForProjection = function(projection) {
+                    var projKey = ol.getUid(projection);
+                    var patched = !!this.tileGridForProjection[projKey];
+                    var tileGrid = getTileGridForProjectionOriginal.apply(this, arguments);
+                    if (!patched && tileGrid) {
+                        var upm = 1.0 / projection.getMetersPerUnit();
+                        var ipm = 39.37;
+                        var resolutionFromScaleFactor = upm / (ipm * (mapOptions.dpi || 72));
+                        var exactScaleResolutions = scales.map(function(scale) {
+                            return scale * resolutionFromScaleFactor;
+                        });
+                        var defaultResolutions = tileGrid.getResolutions();
+                        var mergedResolutions = exactScaleResolutions.slice();
+                        // Combine with default resolutions to produce more upper / lower, and a few intermediate steps
+                        for (var i = 0; i < defaultResolutions.length; ++i) {
+                            var defaultResolution = defaultResolutions[i];
+                            for (var j = 0; j < exactScaleResolutions.length; ++j) {
+                                var exactResolution = exactScaleResolutions[j];
+                                if ((exactResolution * 1.75 >= defaultResolution) && (defaultResolution * 1.75 >= exactResolution)) {
+                                    mergedResolutions.push(defaultResolution);
+                                    break;
+                                }
+                            }
+                        }
+                        mergedResolutions.sort(function(a, b) {
+                            // numeric sort, descending
+                            return b - a;
+                        });
+
+                        // Replace upstream-initialized TileGrid instance with a new one, replacing (only) resolutions
+                        tileGrid = new (tileGrid.constructor)({
+                            resolutions: mergedResolutions,
+                            origin: tileGrid.getOrigin(),
+                            extent: tileGrid.getExtent(),
+                            tileSize: tileGrid.getTileSize()
+                        });
+                        this.tileGridForProjection[projKey] = tileGrid;
+                    }
+                    return tileGrid;
+                };
+            }
             // todo: transparent
             // todo: exception format
             return new (olLayerClass)(layerOptions);
