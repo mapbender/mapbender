@@ -78,8 +78,13 @@ window.Mapbender.WmsSource = (function() {
         customParams: {},
         // ... but we will not remember the following ~standard WMS params the same way
         _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
-        createNativeLayers: function(srsName) {
-            return [Mapbender.mapEngine.createWmsLayer(this)];
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
+            return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
         },
         /**
          * @return {SourceSettings}

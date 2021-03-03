@@ -31,7 +31,12 @@ window.Mapbender.MapEngineOl2 = (function() {
         setLayerVisibility: function(olLayer, state) {
             olLayer.setVisibility(state);
         },
-        createWmsLayer: function(source) {
+        /**
+         * @param {Mapbender.Source} source
+         * @param {Object} [mapOptions]
+         * @return {Object}
+         */
+        createWmsLayer: function(source, mapOptions) {
             var options = getNativeLayerOptions(source);
             var params = getNativeLayerParams(source);
             var url = source.configuration.options.url;

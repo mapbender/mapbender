@@ -28,7 +28,12 @@ window.Mapbender.MapEngineOl4 = (function() {
         setLayerVisibility: function(olLayer, state) {
             olLayer.setVisible(state);
         },
-        createWmsLayer: function(source) {
+        /**
+         * @param {Mapbender.Source} source
+         * @param {Object} [mapOptions]
+         * @return {Object}
+         */
+        createWmsLayer: function(source, mapOptions) {
             var sourceOpts = {
                 url: source.configuration.options.url,
                 transition: 0,

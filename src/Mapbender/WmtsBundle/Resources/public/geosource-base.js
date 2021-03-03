@@ -91,7 +91,12 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var fakeRootLayer = this.configuration.children[0];
             return fakeRootLayer && fakeRootLayer.options.treeOptions.selected || false;
         },
-        createNativeLayers: function(srsName) {
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
             var compatibleLayer = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!compatibleLayer) {

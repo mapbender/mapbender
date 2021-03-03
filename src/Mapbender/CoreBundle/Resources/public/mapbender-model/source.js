@@ -122,12 +122,22 @@ window.Mapbender.Source = (function() {
     Source.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Source.prototype, {
         constructor: Source,
-        createNativeLayers: function(srsName) {
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
             console.error("Layer creation not implemented", this);
             throw new Error("Layer creation not implemented");
         },
-        initializeLayers: function(srsName) {
-            this.nativeLayers = this.createNativeLayers(srsName);
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        initializeLayers: function(srsName, mapOptions) {
+            this.nativeLayers = this.createNativeLayers(srsName, mapOptions);
             return this.nativeLayers;
         },
         getActive: function() {
