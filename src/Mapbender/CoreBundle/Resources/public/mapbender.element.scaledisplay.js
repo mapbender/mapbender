@@ -33,8 +33,10 @@
             $(this.mbMap.element).on('mbmapzoomchanged', function(e, data) {
                 self._updateDisplay(data.scaleExact);
             });
-
-            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
+            $(this.mbMap.element).on('mbmapsrschanged', function() {
+                self._autoUpdate();
+            });
+            this._autoUpdate();
             this._trigger('ready');
         },
         _updateDisplay: function(scale) {
@@ -60,7 +62,7 @@
             }
             $(this.element).text(parts.join(''));
         },
-        _changeSrs: function(event, srs){
+        _autoUpdate: function() {
             this._updateDisplay(this.mbMap.getModel().getCurrentScale(false));
         }
     });
