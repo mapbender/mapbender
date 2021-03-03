@@ -73,16 +73,10 @@ class ElementFormFactory extends BaseElementFactory
 
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $this->migrateElementConfiguration($element);
-        $titleConstraints = array(
-            new NotBlank(),
-        );
-        // @todo: support empty titles for all elements (big frontend templating impact, e.g. sidepane headers)
-        $allowEmptyTitle = \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
                 'element_class' => $element->getClass(),
-                'required' => !$allowEmptyTitle,
-                'constraints' => $allowEmptyTitle ? array() : $titleConstraints,
+                'required' => false,
             ))
         ;
         $configurationType = $this->getConfigurationFormType($element);
