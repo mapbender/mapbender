@@ -118,7 +118,6 @@ class Mapbender
         $elements             = array();
         /** @var Layerset[] $layerSetMap */
         $layerSetMap = array();
-        $translator           = $this->container->get("translator");
 
         // @todo: move all the following code into the YamlApplicationImporter service
 
@@ -141,9 +140,7 @@ class Mapbender
          * Save elements
          */
         foreach ($application->getElements() as $elm) {
-            $elements[ $elm->getId() ] = $elm;
-            $title                     = $translator->trans($elm->getTitle());
-            $elm->setTitle($title);
+            $elements[$elm->getId()] = $elm;
             $this->manager->persist($elm);
         }
 
