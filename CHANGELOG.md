@@ -1,4 +1,4 @@
-## dev-master @ 507e97ae6
+## v3.2.4
 * Fix poor tiled Wms quality despite best-effort resolution matching (mapproxy vs Map config "scales") on Openlayers 6
 * Fix missing application of configured tileSize on Openlayers 6 with tiled WMS instance
 * Increase precision of default dpi (OGC-recommended 0.28mm² pixels); Replace configured dpi values very close to recommended dpi to exactly recommended dpi
