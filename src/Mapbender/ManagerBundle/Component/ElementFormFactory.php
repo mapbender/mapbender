@@ -8,6 +8,7 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Extension\ElementExtension;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -31,18 +32,22 @@ class ElementFormFactory extends BaseElementFactory
     protected $strict;
     /** @var FormRegistryInterface */
     protected $formRegistry;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
      * @param FormRegistryInterface $formRegistry
+     * @param ElementExtension $elementExtension
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
                                 ElementInventoryService $inventoryService,
                                 ContainerInterface $container,
                                 FormRegistryInterface $formRegistry,
+                                ElementExtension $elementExtension,
                                 $strict = false)
     {
         parent::__construct($inventoryService);
@@ -50,6 +55,7 @@ class ElementFormFactory extends BaseElementFactory
         $this->container = $container;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
+        $this->elementExtension = $elementExtension;
     }
 
     public function setStrict($enable)
@@ -186,5 +192,14 @@ class ElementFormFactory extends BaseElementFactory
             $this->deprecated("Located undeclared servicy form type {$automaticServiceId} for {$componentClassName}; return the fully qualified class name of the form type from your element's getType instead");
         }
         return $automaticService; // may also be null
+    }
+
+    public function migrateElementConfiguration(Element $element, $migrateClass = true)
+    {
+        parent::migrateElementConfiguration($element, $migrateClass);
+        $defaultTitle = $this->elementExtension->element_default_title($element);
+        if ($element->getTitle() === $defaultTitle) {
+            $element->setTitle('');    // @todo: allow null (requires schema update)
+        }
     }
 }
