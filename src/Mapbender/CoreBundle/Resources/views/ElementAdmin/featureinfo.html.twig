@@ -19,3 +19,9 @@
     {{ form_row(form.configuration.height) }}
     {{ form_rest(form.configuration) }}
 </div>
+<script type="text/javascript">
+    !(function($) {
+        var $pickers = $('#{{ form.configuration.featureColorDefault.vars.id | raw }},#{{ form.configuration.featureColorHover.vars.id | raw}}');
+        $pickers.colorpicker();
+    }(jQuery));
+</script>

@@ -75,6 +75,8 @@ class FeatureInfo extends Element
             "height" => 500,
             "maxCount" => 100,
             'highlighting' => false,
+            'featureColorDefault' => '#ffa500',
+            'featureColorHover' => '#ff0000',
         );
     }
 
