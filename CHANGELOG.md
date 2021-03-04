@@ -1,5 +1,9 @@
-## dev-master @ 5d0d53053
-* [Regression] Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
+## dev-master @ 507e97ae6
+* Fix poor tiled Wms quality despite best-effort resolution matching (mapproxy vs Map config "scales") on Openlayers 6
+* Fix missing application of configured tileSize on Openlayers 6 with tiled WMS instance
+* Increase precision of default dpi (OGC-recommended 0.28mm² pixels); Replace configured dpi values very close to recommended dpi to exactly recommended dpi
+* Fix empty initial displayed scale in ScaleSelector and ScaleDisplay
+* Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
 * Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
 * Fix Layertree Layerset checkboxes not updating on external selection change
 * Fix FeatureInfo visually retaining previously requested data for sources / queryable layers that have been deselected before the current request ([#1268](https://github.com/mapbender/mapbender/issues/1268))
@@ -28,6 +32,8 @@
 * Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 * Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
 * Give reasonable (target dependent) titles to ControlButton Elements with empty / omitted titles (see [PR#1316](https://github.com/mapbender/mapbender/pull/1316))
+* Fix locale-locking of Yaml applications on import to database ([#931](https://github.com/mapbender/mapbender/issues/931))
+* Element titles are now optional in both Yaml applications and DB-/backend-maintained applications; effective default titles are shown in title field placeholder
 * Allow suppressing entire types of Element via configuration (see [PR#1317](https://github.com/mapbender/mapbender/pull/1317))
 * Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
 * Add ApplicationSwitcher Element to jump between applications maintaining current map location (see [PR#1307](https://github.com/mapbender/mapbender/pull/1307))
