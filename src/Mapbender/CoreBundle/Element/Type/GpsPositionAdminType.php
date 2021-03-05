@@ -52,6 +52,9 @@ class GpsPositionAdminType extends AbstractType
             ->add('zoomToAccuracyOnFirstPosition', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
+            ->add('adjustOrientation', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+            ))
         ;
     }
 }

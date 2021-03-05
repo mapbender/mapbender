@@ -69,6 +69,7 @@ class GpsPosition extends BaseButton implements ConfigMigrationInterface
             'follow'                => false,
             'centerOnFirstPosition' => true,
             'zoomToAccuracyOnFirstPosition' => true,
+            'adjustOrientation' => false,
         ));
     }
 

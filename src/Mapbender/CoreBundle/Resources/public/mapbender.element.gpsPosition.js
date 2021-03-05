@@ -12,7 +12,8 @@
             follow: false,
             average: 1,
             centerOnFirstPosition: true,
-            zoomToAccuracyOnFirstPosition: true
+            zoomToAccuracyOnFirstPosition: true,
+            adjustOrientation: true
         },
         map: null,
         observer: null,
@@ -24,6 +25,7 @@
         internalProjection: null,
         metricProjection: null,
         geolocationProvider_: null,
+        toggleOn: false,
 
         _create: function () {
             if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
@@ -45,6 +47,7 @@
         _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            this.toggleOrientationTracking(this);
             if (this.options.autoStart === true) {
                 this.activate();
             }
@@ -160,6 +163,19 @@
                 this.activate();
             }
         },
+
+        toggleOrientationTracking: function (_this) {
+            window.addEventListener(
+                'deviceorientation', function (e) {
+                    if (_this.options.adjustOrientation && _this.toggleOn)
+                        _this._setOrientation(e);
+                });
+        },
+
+        _setOrientation: function (e) {
+            this.map.getModel().setViewRotation(e.alpha, false);
+        },
+
         /**
          * @param {(*|GeolocationPosition)} position see https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
          * @private
@@ -208,6 +224,7 @@
          */
         activate: function () {
             var widget = this;
+            this.toggleOn = true;
             this.layer.show();
             Mapbender.vectorLayerPool.raiseElementLayers(this);
 
@@ -231,6 +248,7 @@
          * @returns {object}
          */
         deactivate: function() {
+            this.toggleOn = false;
             if (this.observer) {
                 this.geolocationProvider_.clearWatch(this.observer);
                 this.observer = null;
