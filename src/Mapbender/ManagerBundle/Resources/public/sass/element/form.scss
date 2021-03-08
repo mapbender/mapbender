@@ -5,7 +5,6 @@
     margin-bottom: $space/2;
   }
   textarea {
-    height: 150px;
     resize: none;
   }
   select {
@@ -97,7 +96,7 @@
     clear: both;
   }
   textarea {
-    height: 100px;
+    min-height: 100px;
     margin-bottom: $space;
   }
   .inputWrapper textarea {
