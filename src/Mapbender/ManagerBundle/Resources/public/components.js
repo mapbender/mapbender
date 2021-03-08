@@ -121,10 +121,10 @@ $(function() {
         var count = body.find("tr").length;
         $('input[type="checkbox"]:checked', $sidSelector).each(function() {
             // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var $row = $(this).closest('tr');
-            var sid = $('span.hide', $row).text();
+            var $checkbox = $(this);
+            var sid = $checkbox.val();
             var sidType = (sid.split(':')[0]).toUpperCase();
-            var text = $row.find(".labelInput").text().trim();
+            var text = $checkbox.attr('data-label');
             var newEl = $(proto.replace(/__name__/g, count++));
             newEl.addClass('new');
             newEl.attr('data-sid', sid);
@@ -148,7 +148,7 @@ $(function() {
         $('tbody tr.filterItem', $content).each(function() {
             var groupUserItem = $(this);
             // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var newItemSid = $('span.hide', groupUserItem).text();
+            var newItemSid = $('input[type="checkbox"]', groupUserItem).first().val();
             $('tbody .userType', $permissionsTable).each(function() {
                 var existingRowSid = $(this).closest('tr').attr('data-sid');
 
