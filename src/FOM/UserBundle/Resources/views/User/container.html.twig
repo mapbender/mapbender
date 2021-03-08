@@ -40,21 +40,18 @@
       <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
       <div class="clearContainer"></div>
 
-      <table id="listFilterUsers" class="listFilterContainer tableCore tableUserGroups">
+      <table id="listFilterUsers" class="listFilterContainer table table-striped">
         <thead>
           <tr class="doNotFilter">
             <th>{{"fom.user.user.container.name"|trans}}</th>
-            <th class="description"><span id="selectedUsersGroups">{{user.groups | length}}</span> {{ 'fom.user.user.container.users_of_selected' | trans ({'%users_count%': form.groups|length }) }}</th>
+            <th class="description text-right"><span id="selectedUsersGroups">{{user.groups | length}}</span> {{ 'fom.user.user.container.users_of_selected' | trans ({'%users_count%': form.groups|length }) }}</th>
           </tr>
         </thead>
         <tbody>
           {% for group in form.groups %}
             <tr class="filterItem">
               <td colspan="2">
-                <div class="tdContentWrapper iconGroup">
-                  {{ form_label(group) }}
-                  {{ form_widget(group) }}
-                </div>
+                  {{ form_row(group) }}
               </td>
             </tr>
           {% endfor %}

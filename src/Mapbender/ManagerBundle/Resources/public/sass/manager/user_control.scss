@@ -1,8 +1,5 @@
 // --------------------------------------------------------- USER/GROUP
 .tableUserGroups{
-  .description{
-    text-align: right;
-  }
   .checkWrapper {
     // HACK: markup puts label first, checkbox second (same cell). We want the checkbox left of the label...
     position: absolute;
