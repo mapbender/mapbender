@@ -1,4 +1,4 @@
-<div id="userGroupTabContainer" class="tabContainer userGroupTabContainer userTabContainer">
+<div class="tabContainer">
   <ul class="tabs">
     <li id="tabBaseData" class="tab active">{{"fom.user.user.container.base_data" | trans }}</li>
     {% if form.profile is defined %}
@@ -12,7 +12,7 @@
     {% endif %}
   </ul>
 
-  <div id="containerBaseData" class="container active containerBaseData">
+  <div id="containerBaseData" class="container active">
       {{ form_row(form.username) }}
       {{ form_row(form.email) }}
       {{ form_row(form.password) }}
