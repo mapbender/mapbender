@@ -384,11 +384,6 @@ label[for^="inputFilter"] {
   }
   td{
     .input{display:none;}
-    .iconGroup:before, .iconUser:before{
-      display: inline-block;
-      text-align: center;
-      width: 1.5em;
-    }
   }
   .listFilterInput{
     margin-bottom: 0;

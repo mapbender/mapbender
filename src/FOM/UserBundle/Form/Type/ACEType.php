@@ -33,9 +33,9 @@ class ACEType extends AbstractType
     {
         $builder->addModelTransformer($this->modelTransformer);
 
-        $builder->add('sid', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        $builder->add('sid', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
             'required' => true,
-            'label' => 'Role or user',
+            'label' => false,
             'attr' => array(
                 'autocomplete' => 'off',
                 'readonly' => true,
