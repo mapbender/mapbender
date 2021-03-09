@@ -404,16 +404,6 @@ label[for^="inputFilter"] {
   }
 }
 
-.tableGroupsAndUsers{
-  border:{
-    top:solid 3px $firstColor;
-    left:solid 1px $thirdColor;
-    right:solid 1px $thirdColor;
-    bottom:solid 1px $thirdColor;
-  }
-  @include border-bottom-radius($radius);
-}
-
 .form-horizontal {
   // transitional support for legacy form markup inside bootstrap .form-horizontal
   // NOTE: deliberately no rules for bootstrap .form-group, .form-control etc
