@@ -379,12 +379,6 @@ label[for^="inputFilter"] {
     color: inherit;
   }
 
-  th, td {
-    padding:5px 0;
-  }
-  td{
-    .input{display:none;}
-  }
   .listFilterInput{
     margin-bottom: 0;
   }
@@ -413,9 +407,6 @@ label[for^="inputFilter"] {
       &.operator, &.master, &.owner {
         background-color: #FF702A;
       }
-    }
-    input {
-      display: none;
     }
   }
 }
