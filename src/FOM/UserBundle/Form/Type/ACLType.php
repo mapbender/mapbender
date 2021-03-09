@@ -148,7 +148,7 @@ class ACLType extends AbstractType
     {
         $aceOptions = array(
             'entry_type' => 'FOM\UserBundle\Form\Type\ACEType',
-            'label' => 'Permissions',
+            'label' => false,
             'allow_add' => true,
             'allow_delete' => true,
             'prototype' => true,

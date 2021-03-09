@@ -1,5 +1,7 @@
-<div id="addElmPermission" href="{{ path('fom_user_acl_overview') }}" class="right"
-   title="{{ 'mb.manager.managerbundle.add_user_group'|trans }}"><span class="iconAdd iconBig"></span>
+<div class="text-right">
+    <span id="addElmPermission" data-href="{{ path('fom_user_acl_overview') }}" title="{{ 'mb.manager.managerbundle.add_user_group'|trans }}" class="hover-highlight-effect">
+        <i class="fa fas fa-plus fa-2x"></i>
+    </span>
 </div>
 
 {{ form_start(form, {'attr': {

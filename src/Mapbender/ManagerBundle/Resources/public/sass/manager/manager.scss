@@ -348,12 +348,12 @@ label[for^="inputFilter"] {
   float: none;
 }
 
-#addElmPermission {
-  // Link is outside of element permission markup, but want to display as an ~overlay top right
-  position: relative;
-  top: 30px;
+#listFilterPermission {
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
+  & ~ * .collectionAdd {
+    display: none;
+  }
   & + form {
     .collectionAdd, .labelInput.required {
       display: none;
