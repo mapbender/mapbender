@@ -262,22 +262,22 @@
 {% endblock tagbox_widget %}
 
 {% block ace_widget %}
-  {% spaceless %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ form['sid'].vars.value }}">
+    {%- set _sid_value = form.sid.vars.value -%}
+    {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
+    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
       <td>
         <div class="{% if form.sid.vars.value|slice(0, 1) == "u" %}iconUser{% else %}iconGroup{% endif %} userType">&nbsp;
-        <span class="labelInput">{{ form.sid.vars.value|slice(2)|split(':')|first }}</span>
+        <span class="labelInput">{{ _sid_label }}</span>
           {{ form_row(form.sid) }}
       </td>
 
-      {% for child in form if child != (form.sid) %}
+      {%- for child in form if child != (form.sid) -%}
         <td>
             {{ form_widget(child) }}
         </td>
-      {% endfor %}
+      {%- endfor -%}
       <td class="iconColumn">
         <span class="iconRemove removeUserGroup hover-highlight-effect"></span>
       </td>
     </tr>
-  {% endspaceless %}
 {% endblock %}
