@@ -6,6 +6,19 @@
 
 @import url("https://fonts.google.com/specimen/Ubuntu?selection.family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
 
+@import "bundles/mapbendermanager/sass/manager/variables.scss";
+@import "libs/mixins";
+
+
+@import "bundles/mapbendermanager/sass/element/form.scss";
+@import "bundles/mapbendermanager/sass/element/layertree.scss";
+@import "bundles/mapbendermanager/sass/element/map.scss";
+@import "bundles/mapbendermanager/sass/element/printclient.scss";
+@import "bundles/mapbendermanager/sass/manager/services.scss";
+@import "bundles/mapbendermanager/sass/manager/user_control.scss";
+
+
+
 /* Old class deleted: 
 .leftPane
 .navItem
@@ -88,8 +101,10 @@ body {
       color: #121212;
       height: 100%;
       }
-    }  
   }
+
+  }
+  
 
   ul:nth-child(2){
     padding-right: 10%;
@@ -100,8 +115,8 @@ body {
       color: #121212;
     }
   }
-  
-  .vertical-line{
+
+  .accountMenu::before{
     content: '';
     width: 1px;
     height: 2em;
@@ -109,10 +124,8 @@ body {
     position: absolute;
     right: 20em;
     top:1.5em;
-    /* transform: translateX(-2.125em) translateY(0.63em); */
-  
-  }
 
+  }
 
   ul > li > a {
     font-size: 1.25em;
@@ -133,14 +146,6 @@ body {
   }
 }
 
-.vertical-line {
-  width: 20px;
-  height: 10px;
-  background-color: #000000;
-  border-color: 1px solid black;
-  position: relative;
-  top: 15px;
-}
 
 .content {
   margin-top: 100px;
@@ -324,6 +329,48 @@ body {
 
 .list-icon-position {
   margin: 0 7px;
+}
+
+
+
+
+.heading-content {
+  /* border: 1px solid black; */
+  position: relative;
+  margin-top: 2%;
+  transform: translateY(4em);
+
+  .subinfo-text{
+      font-size: 1.5em;
+  }
+
+  .badge {
+    padding: 1em 0.8750em;
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: 400;
+    background-color:#EBE8E8;
+    color: #121212;
+
+  }
+
+
+  .form-group {
+
+    .right{
+      
+      .btn-success{
+        padding:0.62em  1.75em;
+      }
+    }
+  }
+  
+
+}
+
+.instanceContainer {
+position: relative;
+top: 7em;
 }
 
 @media (max-width: 1300px){

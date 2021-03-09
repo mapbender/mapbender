@@ -8,15 +8,10 @@
 {% block manager_content %}
 {# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
     {% if items and items | length %}
-      <div class="text-right">
-        <span class="filter-input-container text-nowrap">
-          <label for="inputFilter0">{{ "mb.actions.filter" | trans }}</label>
-          <input id="inputFilter0" type="text" class="input listFilterInput">
-          <span class="iconSearch"></span>
-        </span>
-      </div>
+     
+      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
 
-      <ul id="listFilter0" class="listFilterBoxes -fn-instance-list">
+      <ul id="listFilterApplications" class="listFilterBoxes -fn-instance-list">
         {% for item in items -%}
         <li class="filterItem row">
           <div class="col-xs-3">

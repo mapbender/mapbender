@@ -12,14 +12,14 @@
             </a>
         </div>
         <div class="collapse navbar-collapse main-nav-container" id="navigation-main">
-        {% if app.user != "" %}
-            <ul class="nav navbar-nav navbar-container" id="navigationListContainer">
-                {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
-            </ul>
-        {% endif %}
-        <div class="vertical-line visible-lg hidden-sm hidden-md"></div>
-        <ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
-        {% if app.user != "" %}
+            {% if app.user != "" %}
+                <ul class="nav navbar-nav navbar-container" id="navigationListContainer">
+                    {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
+                </ul>
+            {% endif %}
+            <div class="vertical-line visible-lg hidden-sm hidden-md"></div>
+            <ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
+                {% if app.user != "" %}
                 <li class="dropdown bs-dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     {{ "fom.core.manager.logged_as"|trans}}:
@@ -43,7 +43,7 @@
                 {%- endif -%}
                 </li>
           {% else %}
-            <li>
+            <li class="navbar-right">
               <a href="{{ path('mapbender_core_login_login') }}">
                 <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
               </a>
