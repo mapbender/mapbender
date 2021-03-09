@@ -220,10 +220,14 @@ $(function() {
     });
     $(".permissionsTable").on("click", '.iconRemove', function() {
         var $row = $(this).closest('tr');
-        var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
+        var sidLabel = $('.labelInput', $row).first().text();
+        var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
+
         var content = [
             '<div>',
-            Mapbender.trans('mb.manager.components.popup.delete_user_group.content',{'userGroup': userGroup}),
+            Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+                'userGroup': [typePrefix, sidLabel].join(" ")
+            }),
             '</div>'
             ].join('');
         var labels = {
@@ -336,8 +340,10 @@ $(function() {
         });
         $permissionsTable.on("click", 'tbody .iconRemove', function() {
             var $row = $(this).closest('tr');
-            var userGroup =($row.find(".iconUser").length ? "user " : "group ") + $row.find(".labelInput").text();
-            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {'userGroup': userGroup}));
+            var sidLabel = $('.labelInput', $row).first().text();
+            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+                'userGroup': sidLabel
+            }));
             $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
             $('.buttonRemove', popup.$element).data('target-row', $row);
             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
