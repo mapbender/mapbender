@@ -137,8 +137,8 @@ $(function() {
                 $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
             });
             $('.userType', newEl)
-                .toggleClass('iconGroup', sidType === 'R')
-                .toggleClass('iconUser', sidType === 'U')
+                .toggleClass('fa-group', sidType === 'R')
+                .toggleClass('fa-user', sidType === 'U')
             ;
         });
         // if table was previously empty, reveal it and hide placeholder text

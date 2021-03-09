@@ -17,7 +17,7 @@
               <label>
                 <input type="checkbox" data-label="{{ user.getUsername }}"
                        value="u:{{ user.getUsername }}{{ user.getClass is defined ? (':'~user.getClass()) : '' }}" />
-                <i class="fa fa-user"></i>&nbsp;{{ user.getUsername }}
+                <i class="fa fas fa-user"></i>&nbsp;{{ user.getUsername }}
               </label>
             </div>
           </td>
@@ -30,7 +30,7 @@
               <label>
                 <input type="checkbox" data-label="{{ group.getTitle() }}"
                        value="r:{{ group.getRole() }}" />
-                <i class="fa fa-group"></i>&nbsp;{{ group.getTitle() }}
+                <i class="fa fas fa-group"></i>&nbsp;{{ group.getTitle() }}
               </label>
             </div>
           </td>

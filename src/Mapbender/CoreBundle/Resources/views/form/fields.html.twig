@@ -266,7 +266,7 @@
     {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
     <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
       <td>
-        <div class="{% if form.sid.vars.value|slice(0, 1) == "u" %}iconUser{% else %}iconGroup{% endif %} userType">&nbsp;
+        <i class="userType fa fas {{ form.sid.vars.value|slice(0, 1) == "u" ? 'fa-user' : 'fa-group' }}"></i>&nbsp;
         <span class="labelInput">{{ _sid_label }}</span>
           {{ form_row(form.sid) }}
       </td>
