@@ -410,18 +410,6 @@ label[for^="inputFilter"] {
     }
   }
 }
-#elementSecurity {
-  // Prevent sizeless collection add icon from overflowing the sized content
-  // @todo: fix icon integration in FOM
-  min-height: 150px;
-  .permissionsTable {
-    thead th:last-child {
-      // Expand cell to contain the sizeless collection add icon
-      // @todo: fix icon integration in FOM
-      min-width: 32px;
-    }
-  }
-}
 
 .tableGroupsAndUsers{
   border:{
