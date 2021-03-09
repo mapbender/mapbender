@@ -113,7 +113,7 @@
             // with too low label font size.
             // Also avoid calculating less than 96dpi, to never perform client-side upscaling of Wms images
             var dpr = window.devicePixelRatio || 1;
-            return 96. * Math.max(1, dpr / Math.max(1, Math.floor(dpr + 0.25)));
+            return 96. * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
         },
         _comma_dangle_dummy: null
     });
