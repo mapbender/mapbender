@@ -25,7 +25,7 @@
             // with too low label font size.
             // Also avoid calculating less than 96dpi, to never perform client-side upscaling of Wms images
             var dpr = window.devicePixelRatio || 1;
-            this.options.dpi = 96. * Math.max(1, dpr / Math.round(dpr));
+            this.options.dpi = 96. * Math.max(1, dpr / Math.floor(dpr + 0.25));
 
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
