@@ -128,9 +128,11 @@ $(function() {
             var newEl = $(proto.replace(/__name__/g, count++));
             newEl.addClass('new');
             newEl.attr('data-sid', sid);
+            var $sidInput = $('input[type="hidden"]', newEl).first();
+            $sidInput.attr('value', sid);
             $('.labelInput', newEl).text(text);
             body.prepend(newEl);
-            newEl.find(".input").attr("value", sid);
+
             (defaultPermissions || []).map(function(permissionName) {
                 $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
             });
