@@ -131,7 +131,7 @@ $(function() {
             newEl.attr('data-sid-label', text);
             var $sidInput = $('input[type="hidden"]', newEl).first();
             $sidInput.attr('value', sid);
-            $('.labelInput', newEl).text(text);
+            $('.sid-label', newEl).text(text);
             body.prepend(newEl);
 
             (defaultPermissions || []).map(function(permissionName) {

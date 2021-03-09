@@ -372,13 +372,6 @@ label[for^="inputFilter"] {
     }
 
   }
-  tbody .labelInput {
-    // Undo .labelInput completely; @todo: fix FOM markup to not use labelInput
-    margin: 0;
-    display: initial;
-    color: inherit;
-  }
-
   .listFilterInput{
     margin-bottom: 0;
   }
