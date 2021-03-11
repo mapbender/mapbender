@@ -76,8 +76,11 @@ class ElementFormFactory extends BaseElementFactory
             $options['attr']['data-ft-element-id'] = $element->getId();
         }
 
-        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
+        $this->addConfigurationDefaults($element);
         $this->migrateElementConfiguration($element);
+        $this->addConfigurationDefaults($element);
+
+        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
                 'element_class' => $element->getClass(),
