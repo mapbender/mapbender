@@ -1,4 +1,4 @@
-<div class="elementForm">
+<div class="extraWideLabelForm">
     <div>
         <div class="left">
             {{ form_row(form.configuration.autoActivate) }}
@@ -9,6 +9,9 @@
         <div class="left">
             {{ form_row(form.configuration.printResult) }}
         </div>
+        <div class="left">
+            {{ form_row(form.configuration.onlyValid) }}
+        </div>
         <div class="clearContainer"></div>
     </div>
     {{ form_row(form.title) }}
@@ -17,6 +20,8 @@
     {{ form_row(form.configuration.maxCount) }}
     {{ form_row(form.configuration.width) }}
     {{ form_row(form.configuration.height) }}
+    <h3>{{ 'mb.core.admin.featureinfo.label.highlighting_group' | trans }}</h3>
+    {{ form_row(form.configuration.highlighting) }}
     {{ form_rest(form.configuration) }}
 </div>
 <script type="text/javascript">

@@ -297,7 +297,10 @@ mb:
           deactivateonclose: 'Beim Schließen deaktivieren'
           autoopen: 'Automatisches Öffnen'
           onlyvalid: 'Nur valide zeigen'
-          highlighting: 'Highlighting'
+          highlighting_group: 'Highlighting'
+          highlighting: Highlighting aktiv
+          featureColorDefault: Grundfarbe
+          featureColorHover: Hover-Farbe
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'
