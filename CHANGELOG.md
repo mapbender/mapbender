@@ -1,3 +1,7 @@
+## dev-master @ d07ebb40b
+* Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* Misc legacy CSS cleanups
+
 ## v3.2.4
 * Fix poor tiled Wms quality despite best-effort resolution matching (mapproxy vs Map config "scales") on Openlayers 6
 * Fix missing application of configured tileSize on Openlayers 6 with tiled WMS instance
