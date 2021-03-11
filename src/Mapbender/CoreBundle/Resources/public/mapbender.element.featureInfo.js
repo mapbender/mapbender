@@ -10,6 +10,8 @@
             onlyValid: false,
             iframeInjection: null,
             highlighting: false,
+            featureColorDefault: '#ffa500',
+            featureColorHover: 'ff0000',
             maxCount: 100,
             width: 700,
             height: 500
@@ -347,28 +349,27 @@
         },
 
         _createLayerStyle: function () {
+            var strokeStyle = new ol.style.Stroke({
+                color: '#ff00ff', //rgba(255, 255, 255, 1)',
+                lineCap: 'round',
+                width: 1
+            });
+            var defaultColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorDefault).slice(0, 3).concat(0.4);
+            var hoverColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorHover).slice(0, 3).concat(0.7);
             this.featureInfoStyle = function (feature) {
                 return new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 255, 255, 1)',
-                        lineCap: 'round',
-                        width: 1
-                    }),
+                    stroke: strokeStyle,
                     fill: new ol.style.Fill({
-                        color: 'rgba(255, 165, 0, 0.4)'
+                        color: defaultColorComponents
                     })
                 });
             };
 
             this.featureInfoStyle_hover = function (feature) {
                 return new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 255, 255, 1)',
-                        lineCap: 'round',
-                        width: 1
-                    }),
+                    stroke: strokeStyle,
                     fill: new ol.style.Fill({
-                        color: 'rgba(255, 0, 0, 0.7)'
+                        color: hoverColorComponents
                     }),
                     zIndex: 1000
                 });

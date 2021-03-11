@@ -296,7 +296,10 @@ mb:
           autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
           onlyvalid: 'Only valid'
-          highlighting: 'Highlighting'
+          highlighting_group: 'Highlighting'
+          highlighting: 'Highlighting enabled'
+          featureColorDefault: Default color
+          featureColorHover: Hover color
       printclient:
         label:
           autoopen: Auto-open

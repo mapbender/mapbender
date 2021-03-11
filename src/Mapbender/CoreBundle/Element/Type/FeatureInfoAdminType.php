@@ -66,6 +66,14 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.highlighting',
             ))
+            ->add('featureColorDefault', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => true,
+                'label' => 'mb.core.admin.featureinfo.label.featureColorDefault',
+            ))
+            ->add('featureColorHover', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => true,
+                'label' => 'mb.core.admin.featureinfo.label.featureColorHover',
+            ))
         ;
     }
 }
