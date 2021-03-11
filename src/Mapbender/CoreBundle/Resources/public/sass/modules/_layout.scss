@@ -6,3 +6,25 @@
   height:0;
   @extend .clear;
 }
+/*
+   This is the original Bootstrap 4 declaration for a gutter-less grid.
+   See https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
+   We haven't universally adopted Bootstrap 4 yet, but this should remain compatible
+   if / when we do.
+ */
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  > .col,
+  > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+// Also support .no-gutters on .form-horizontal. On Bootstrap 3, margin from .form-horizontal .form-group
+// would otherwise win out
+.form-horizontal .form-group.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
