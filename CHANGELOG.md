@@ -1,4 +1,5 @@
-## dev-master @ d07ebb40b
+## dev-master @ ca3d4face
+* Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * Misc legacy CSS cleanups
 
