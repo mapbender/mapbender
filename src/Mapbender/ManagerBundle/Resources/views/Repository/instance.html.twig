@@ -10,7 +10,9 @@
         {% set _columnClass = ('checkboxColumn ' ~ (form.vars.columnClass | default(''))) | trim %}
         {% set _tagName = tagName | default('td') %}
         <{{ _tagName }} class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
-          {{- block('checkbox_widget') -}}
+            <div class="checkWrapper {{ checked ? 'iconCheckboxActive' : 'iconCheckbox' }}">
+                <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            </div>
         </{{ _tagName }}>
     {% else %}
         <div>
