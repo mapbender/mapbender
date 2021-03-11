@@ -27,6 +27,6 @@
 <script type="text/javascript">
     !(function($) {
         var $pickers = $('#{{ form.configuration.featureColorDefault.vars.id | raw }},#{{ form.configuration.featureColorHover.vars.id | raw}}');
-        $pickers.colorpicker();
+        $pickers.colorpicker({format: 'hex'});
     }(jQuery));
 </script>
