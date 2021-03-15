@@ -16,7 +16,8 @@
                 self._setup(mbMap);
             });
             $.ajax([this.elementUrl, 'granted'].join('/')).then(function(response) {
-                self._filterGranted(response);
+                var slugs = response.concat([Mapbender.configuration.application.slug]);
+                self._filterGranted(slugs);
             });
         },
         _setup: function(mbMap) {
