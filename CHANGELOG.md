@@ -1,6 +1,8 @@
-## dev-master @ ca3d4face
+## dev-master @ 4688621ca
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
+* [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
 * Misc legacy CSS cleanups
 
 ## v3.2.4
