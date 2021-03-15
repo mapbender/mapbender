@@ -284,6 +284,7 @@ mb:
       class:
         title: URL teilen
         description: Teilt die aktuelle Kartenansicht über eine URL
+      copied_to_clipboard: URL in Zischenablage kopiert
     admin:
       poi:
         label:

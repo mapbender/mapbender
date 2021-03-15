@@ -43,6 +43,9 @@ class ShareUrl extends BaseButton
                 '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
                 '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.scss',
             ),
+            'trans' => array(
+                'mb.core.ShareUrl.*',
+            ),
         );
     }
 

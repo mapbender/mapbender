@@ -25,7 +25,7 @@
                 $(this).attr('href', url);
                 if (useClipboard) {
                     self._copyToClipboard(url);
-                    Mapbender.info('Copied to clipboard');
+                    Mapbender.info(Mapbender.trans('mb.core.ShareUrl.copied_to_clipboard'));
                     evt.preventDefault();
                     evt.stopPropagation();
                     return false;

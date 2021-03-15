@@ -283,6 +283,7 @@ mb:
       class:
         title: Share URL
         description: Share current map view via url
+      copied_to_clipboard: URL copied to clipboard
     admin:
       poi:
         label:
