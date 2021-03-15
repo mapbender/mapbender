@@ -26,6 +26,11 @@ class ShareUrl extends BaseButton
         return 'mapbender.mbShareUrl';
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ShareUrlAdminType';
+    }
+
     /**
      * @inheritdoc
      */
