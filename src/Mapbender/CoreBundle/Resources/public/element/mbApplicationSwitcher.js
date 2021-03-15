@@ -31,15 +31,21 @@
         },
         _filterGranted: function(slugs) {
             var $options = $('select option', this.element);
+            var optionsCount = $options.length;
             for (var i = 0; i < $options.length; ++i) {
                 var value = $options[i].value;
                 if (value && -1 === slugs.indexOf(value)) {
                     $options.eq(i).remove();
+                    --optionsCount;
                     // Custom dropdown widget support needs separate removal of display element corresponding to option
                     $('.dropdownList [data-value="' + value + '"]', this.element).remove();
                 }
             }
             $('select', this.element).trigger('dropdown.changevisual');
+            // If we have nothing left to switch to (deleted yaml applications...), remove from DOM
+            if (optionsCount <= 1) {
+                this.element.remove();
+            }
         },
         _switchApplication: function(slug) {
             var targetApplicationUrl = [this.baseUrl, slug].join('');
