@@ -112,23 +112,47 @@
             if (!this.isActive) {
                 return;
             }
-            var self = this;
+            var self = this, i;
             var model = this.target.getModel();
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
-            $.each(model.getSources(), function (idx, src) {
-                var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
-                if (url) {
-                    self.showingSources.push(src);
-                    self._setInfo(src, url);
-                }
+            var sourceUrlPairs = model.getSources().map(function(source) {
+                var url = model.getPointFeatureInfoUrl(source, x, y, self.options.maxCount);
+                return url && {
+                    source: source,
+                    url: url
+                };
+            }).filter(function(x) { return !!x; });
+            var validSources = sourceUrlPairs.map(function(sourceUrlEntry) {
+                return sourceUrlEntry.source;
             });
-            for (var i = 0; i < showingPreviously.length; ++i) {
-                var source = showingPreviously[i];
-                if (-1 === this.showingSources.indexOf(source)) {
-                    this._removeContent(source);
+            for (i = 0; i < showingPreviously.length; ++i) {
+                if (-1 === validSources.indexOf(showingPreviously[i])) {
+                    this._removeContent(showingPreviously[i]);
                 }
             }
+            var requestsPending = sourceUrlPairs.length;
+            sourceUrlPairs.forEach(function(entry) {
+                var source = entry.source;
+                var url = entry.url;
+                self._setInfo(source, url).then(function(success) {
+                    if (success) {
+                        self.showingSources.push(source);
+                        self._open();
+                    } else {
+                        self._removeContent(source);
+                    }
+                }, function() {
+                    self._removeContent(source);
+                }).always(function() {
+                    --requestsPending;
+                    if (!requestsPending && !self.showingSources.length) {
+                        // No response content to display, no more requests pending
+                        // Remain active, but hide popup
+                        self._hide();
+                    }
+                });
+            });
         },
         _getTabTitle: function(source) {
             // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
@@ -150,26 +174,24 @@
                 };
                 ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
-            var request = $.ajax(ajaxOptions);
-            request.done(function (data, textStatus, jqXHR) {
+            var request = $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    self._removeContent(source);
+                    return false;
                 } else {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                     // Bind original url for print interaction
                     var $documentNode = self._getDocumentNode(source.id);
                     $documentNode.attr('data-url', url);
-                    self._open();
+                    return true;
                 }
-            });
-            request.fail(function (jqXHR, textStatus, errorThrown) {
+            }, function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                self._removeContent(source);
             });
+            return request;
         },
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
@@ -246,11 +268,16 @@
                 widget.popup.$element.show();
             }
         },
+        _hide: function() {
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.hide();
+            }
+        },
         _close: function() {
             if (this.options.deactivateOnClose) {
                 this.deactivate();
-            } else if (this.popup && this.popup.$element) {
-                this.popup.$element.hide();
+            } else {
+                this._hide();
             }
         },
         /**
