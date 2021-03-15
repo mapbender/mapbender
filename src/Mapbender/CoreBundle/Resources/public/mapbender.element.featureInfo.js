@@ -132,6 +132,9 @@
                 }
             }
             var requestsPending = sourceUrlPairs.length;
+            if (!requestsPending) {
+                self._handleZeroResponses();
+            }
             sourceUrlPairs.forEach(function(entry) {
                 var source = entry.source;
                 var url = entry.url;
@@ -149,7 +152,7 @@
                     if (!requestsPending && !self.showingSources.length) {
                         // No response content to display, no more requests pending
                         // Remain active, but hide popup
-                        self._hide();
+                        self._handleZeroResponses();
                     }
                 });
             });
@@ -279,6 +282,10 @@
             } else {
                 this._hide();
             }
+        },
+        _handleZeroResponses: function() {
+            // @todo mobile-style display: no popup, cannot hide popup; show placeholder text instead
+            this._hide();
         },
         /**
          * @returns {Array<Object>}
