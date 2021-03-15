@@ -280,6 +280,10 @@ mb:
       tag:
         srs: SRS
         selector: Auswahl
+    ShareUrl:
+      class:
+        title: URL teilen
+        description: Teilt die aktuelle Kartenansicht über eine URL
     admin:
       poi:
         label:

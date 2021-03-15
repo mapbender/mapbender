@@ -279,6 +279,10 @@ mb:
       tag:
         srs: SRS
         selector: selector
+    ShareUrl:
+      class:
+        title: Share URL
+        description: Share current map view via url
     admin:
       poi:
         label:

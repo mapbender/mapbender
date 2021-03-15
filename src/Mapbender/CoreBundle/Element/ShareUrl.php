@@ -11,14 +11,12 @@ class ShareUrl extends BaseButton
 
     public static function getClassTitle()
     {
-        // @todo: translate
-        return 'Share url';
+        return 'mb.core.ShareUrl.class.title';
     }
 
     public static function getClassDescription()
     {
-        // @todo: translate
-        return 'Share current map view via url';
+        return 'mb.core.ShareUrl.class.description';
     }
 
     public function getWidgetName()
