@@ -36,7 +36,6 @@ class ShareUrl extends BaseButton
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
                 '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.js',
             ),
             'css' => array(
