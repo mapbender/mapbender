@@ -42,6 +42,20 @@ class ViewManager extends Element
         );
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ViewManagerAdminType';
+    }
+
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'publicEntries' => 'ro',
+            'privateEntries' => 'rw',
+            'allowAnonymousSave' => false,
+        );
+    }
+
     public function handleHttpRequest(Request $request)
     {
         /** @var ViewManagerHttpHandler $handler */
