@@ -7,11 +7,14 @@ namespace Mapbender\CoreBundle\Element;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\MapViewDiff;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class ViewManagerHttpHandler
@@ -20,11 +23,14 @@ class ViewManagerHttpHandler
     protected $templating;
     /** @var EntityManagerInterface */
     protected $em;
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
 
-    public function __construct(EngineInterface $templating, EntityManagerInterface $em)
+    public function __construct(EngineInterface $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
     {
         $this->templating = $templating;
         $this->em = $em;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -54,9 +60,20 @@ class ViewManagerHttpHandler
      */
     protected function getListingResponse(Entity\Element $element, Request $request)
     {
-        $records = $this->getRepository()->findBy(array(
-            'applicationSlug' => $element->getApplication()->getSlug(),
-        ));
+        $config = $element->getConfiguration();
+        $records = array();
+        if ($config['publicEntries']) {
+            $records = array_merge($records, $this->getRepository()->findBy(array(
+                'applicationSlug' => $element->getApplication()->getSlug(),
+                'userId' => null,
+            )));
+        }
+        if ($config['privateEntries'] && !$this->isCurrentUserAnonymous()) {
+            $records = array_merge($records, $this->getRepository()->findBy(array(
+                'applicationSlug' => $element->getApplication()->getSlug(),
+                'userId' => $this->getUserId(),
+            )));
+        }
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', array(
             'records' => $records,
             'dateFormat' => $this->getDateFormat($request),
@@ -66,7 +83,7 @@ class ViewManagerHttpHandler
 
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
-        $record = new Entity\MapViewDiff();
+        $record = new MapViewDiff();
         // @todo: store user
         $record->setApplicationSlug($element->getApplication()->getSlug());
         $record->setTitle($request->request->get('title'));
@@ -116,5 +133,20 @@ class ViewManagerHttpHandler
         /** @var EntityRepository */
         $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\MapViewDiff');
         return $repository;
+    }
+
+    protected function isCurrentUserAnonymous()
+    {
+        $token = $this->tokenStorage->getToken();
+        return !$token || ($token instanceof AnonymousToken);
+    }
+
+    protected function getUserId()
+    {
+        $token = $this->tokenStorage->getToken();
+        if ($token && !($token instanceof AnonymousToken)) {
+            return $token->getUser()->getUsername();
+        }
+        return null;
     }
 }

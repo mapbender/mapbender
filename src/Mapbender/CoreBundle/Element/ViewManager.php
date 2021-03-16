@@ -69,6 +69,8 @@ class ViewManager extends Element
     {
         /** @var ViewManagerHttpHandler $handler */
         $handler = $this->container->get('mb.element.view_manager.http_handler');
+        // Extend with defaults
+        $this->entity->setConfiguration($this->entity->getConfiguration() + $this->getDefaultConfiguration());
         return $handler->handleHttpRequest($this->entity, $request);
     }
 }
