@@ -88,7 +88,7 @@ class ViewManagerHttpHandler
         $record = new MapViewDiff();
         $record->setApplicationSlug($element->getApplication()->getSlug());
         $record->setTitle($request->request->get('title'));
-        $record->setUserId($request->request->get('savePublic') ? $this->getUserId() : null);
+        $record->setUserId($request->request->get('savePublic') ? null : $this->getUserId());
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
         $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
