@@ -71,10 +71,15 @@
             ;
         },
         _saveNew: function() {
-            var title = $('input[name="title"]', this.element).val();
+            var $titleInput = $('input[name="title"]', this.element);
+            var title = $titleInput.val();
             if (!title) {
-                // @todo: error feedback
-                throw new Error("Cannot save with empty title");
+                var $titleGroup = $titleInput.closest('.form-group');
+                $titleGroup.addClass('has-error');
+                $titleInput.one('keydown', function() {
+                    $titleGroup.removeClass('has-error');
+                });
+                return $.Deferred().reject().promise();
             }
             var $savePublicCb = $('input[name="save-as-public"]', this.element);
             var savePublic;
@@ -101,7 +106,7 @@
                 data: data
             }).then(function(response) {
                 $('table tbody', self.element).prepend(response);
-            })
+            });
         },
         _delete: function(id) {
             var params = {id: id};
