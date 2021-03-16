@@ -50,7 +50,7 @@
             });
         },
         _load: function() {
-            var $loadingPlaceholder = $('.-fn-loading-placeholder')
+            var $loadingPlaceholder = $('.-fn-loading-placeholder', this.element)
             var self = this;
             $.ajax([this.elementUrl, 'listing'].join('/'))
                 .then(function(response) {
