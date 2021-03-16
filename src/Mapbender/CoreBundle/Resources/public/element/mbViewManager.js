@@ -83,11 +83,14 @@
                 savePublic: $row.attr('data-visibility-group') === 'public' && '1' || ''
             });
             var params = {id: id};
+            var self = this;
             return $.ajax([[this.elementUrl, 'save'].join('/'), $.param(params)].join('?'), {
                 method: 'POST',
                 data: data
             }).then(function(response) {
-                $row.replaceWith(response);
+                var newRow = $.parseHTML(response);
+                $row.replaceWith(newRow);
+                self._flash($(newRow), '#88ff88');
             });
         },
         _saveNew: function() {
@@ -113,7 +116,9 @@
                 method: 'POST',
                 data: data
             }).then(function(response) {
-                $('table tbody', self.element).prepend(response);
+                var newRow = $.parseHTML(response);
+                $('table tbody', self.element).prepend(newRow);
+                self._flash($(newRow), '#88ff88');
             });
         },
         _delete: function(id) {
@@ -196,6 +201,20 @@
 
             this.mbMap.getModel().applyViewParams(diff.viewParams);
             this.mbMap.getModel().applySettings(settings);
+        },
+        _flash: function($el, color) {
+            $el.css({
+                'background-color': color
+            });
+            window.setTimeout(function() {
+                $el.css({
+                    'transition': 'background-color 1s',
+                    'background-color': ''
+                });
+                window.setTimeout(function() {
+                    $el.css('transition', '');
+                }, 1000);
+            });
         },
         __dummy__: null
     });
