@@ -80,6 +80,7 @@
             var title = $('input[name="title"]', this.element).val() || $row.attr('data-title');
             var data = Object.assign(this._getCommonSaveData(), {
                 title: title,
+                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
                 savePublic: $row.attr('data-visibility-group') === 'public' && '1' || ''
             });
             var params = {id: id};
@@ -104,9 +105,6 @@
                 });
                 return $.Deferred().reject().promise();
             }
-            return this._saveCommon(title);
-        },
-        _saveCommon: function(title) {
             var data = Object.assign(this._getCommonSaveData(), {
                 title: title
             });
