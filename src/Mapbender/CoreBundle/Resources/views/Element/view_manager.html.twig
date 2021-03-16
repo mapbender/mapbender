@@ -1,4 +1,5 @@
 <div id="{{ id }}" class="mb-element mb-element-viewmanager">
+    {%- if showSaving -%}
     <div>
         <div class="form-group">
             <div class="input-group">
@@ -8,7 +9,13 @@
                 </span>
             </div>
         </div>
+        {%- if showListSelector -%}
+        <div class="form-group checkbox">
+            <label><input name="save-target" type="checkbox">{# @todo: translate #}Öffentlicher Eintrag</label>
+        </div>
+        {%- endif -%}
     </div>
+    {%- endif -%}
     <div class="ui-helper-clearfix -fn-loading-placeholder">
         <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
     </div>

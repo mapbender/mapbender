@@ -56,6 +56,15 @@ class ViewManager extends Element
         );
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $config = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
+        return array(
+            'showSaving' => ($config['publicEntries'] === 'rw' || $config['privateEntries'] === 'rw'),
+            'showListSelector' => !empty($config['publicEntries']) && !empty($config['privateEntries']),
+        );
+    }
+
     public function handleHttpRequest(Request $request)
     {
         /** @var ViewManagerHttpHandler $handler */
