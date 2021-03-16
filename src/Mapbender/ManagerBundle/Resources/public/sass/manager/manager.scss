@@ -407,14 +407,16 @@ label[for^="inputFilter"] {
 .form-horizontal {
   // transitional support for legacy form markup inside bootstrap .form-horizontal
   // NOTE: deliberately no rules for bootstrap .form-group, .form-control etc
-  .labelInput {
-    width: 50% !important;  // defeat super-sepcific ".contentPane > .content form .labelInput" rule
-    margin-right: 4%;
+  :not(.form-group) {
+    .labelInput {
+      width: 45%;  // defeat super-sepcific ".contentPane > .content form .labelInput" rule
+      margin-right: 4%;
+    }
+    .inputWrapper, .dropdown {
+      width: 50%;    // defeat super-sepcific ".contentPane > .content form .inputWrapper" rule
+    }
   }
   .inputWrapper, .dropdown {
-    width: 45% !important;    // defeat super-sepcific ".contentPane > .content form .inputWrapper" rule
-  }
-  .dropdown {
     display: inline-block;
   }
 }

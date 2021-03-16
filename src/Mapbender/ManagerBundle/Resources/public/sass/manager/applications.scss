@@ -245,6 +245,15 @@
       margin-left: auto;
     }
   }
+  .regionProperties .form-horizontal {
+    .labelInput {
+      width: 45%;
+      margin-right: 4%;
+    }
+    .inputWrapper, .dropdown {
+      width: 50%;
+    }
+  }
 
   tbody {
     tr {
