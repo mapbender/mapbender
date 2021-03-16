@@ -77,6 +77,8 @@ class ViewManagerHttpHandler
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', array(
             'records' => $records,
             'dateFormat' => $this->getDateFormat($request),
+            'savePrivate' => $config['publicEntries'] === 'rw',
+            'savePublic' => $config['privateEntries'] === 'rw',
         ));
         return new Response($content);
     }
