@@ -80,7 +80,8 @@
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
             var data = {
                 title: title,
-                savePublic: savePublic,
+                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
+                savePublic: savePublic && '1' || '',
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
                 layersetsDiff: diff.layersets,
                 sourcesDiff: diff.sources
