@@ -2,11 +2,11 @@
 <tr data-visibility-group="{{ _is_private ? 'private' : 'public' }}">
     <td>{{ record.title }}</td>
     <td>{{ record.mtime | date(dateFormat) }}</td>
-    <td class="text-nowrap">
-        <i class="-fn-apply fa fas fa-folder-open clickable hover-highlight-effect" title="{# @todo: translate #}Abrufen" data-diff="{{ record.encode() | json_encode }}"></i>
-        {%- if (savePrivate and _is_private) or (savePublic and not _is_private) %}
+    <td class="text-nowrap text-right">
+        {%- if (savePrivate and _is_private) or (savePublic and not _is_private) -%}
         <i class="-fn-update fa fas fa-save clickable hover-highlight-effect" title="{# @todo: translate #}Überschreiben" data-id="{{ record.id }}"></i>
         <i class="-fn-delete fa fas fa-times clickable hover-highlight-effect" title="{# @todo: translate #}Löschen" data-id="{{ record.id }}"></i>
-        {%- endif -%}
+        {%- endif %}
+        <i class="-fn-apply fa fas fa-folder-open clickable hover-highlight-effect" title="{# @todo: translate #}Abrufen" data-diff="{{ record.encode() | json_encode }}"></i>
     </td>
 </tr>

@@ -128,7 +128,7 @@ class ViewManagerHttpHandler
     protected function getDateFormat(Request $request)
     {
         // @todo: locale-dependent format
-        return 'Y-m-d H:m:i';
+        return 'Y-m-d'; // . ' H:m:i';
     }
 
     /**
