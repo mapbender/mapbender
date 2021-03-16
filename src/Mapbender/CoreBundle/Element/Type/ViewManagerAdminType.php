@@ -18,7 +18,7 @@ class ViewManagerAdminType extends AbstractType
         }
         $accessChoices = array(
             // @todo: translate choice labels
-            'Do not show' => null,
+            'Do not show' => '',
             'Read only' => 'ro',
             'Allow saving' => 'rw',
         );
