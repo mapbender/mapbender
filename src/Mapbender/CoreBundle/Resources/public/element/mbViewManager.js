@@ -1,9 +1,15 @@
 ;!(function($) {
     "use strict";
     $.widget("mapbender.mbViewManager", {
+        options: {
+            publicEntries: null,
+            privateEntries: null,
+            allowAnonymousSave: false
+        },
         mbMap: null,
         elementUrl: null,
         referenceSettings: null,
+        defaultSavePublic: false,
 
         _create: function() {
             var self = this;
@@ -12,6 +18,7 @@
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             });
+            this.defaultSavePublic = (this.options.publicEntries === 'rw');
             this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
@@ -61,11 +68,19 @@
                 // @todo: error feedback
                 throw new Error("Cannot save with empty title");
             }
+            var $savePublicCb = $('input[name="save-as-public"]', this.element);
+            var savePublic;
+            if (!$savePublicCb.length) {
+                savePublic = this.defaultSavePublic;
+            } else {
+                savePublic = $savePublicCb.prop('checked');
+            }
 
             var currentSettings = this.mbMap.getModel().getCurrentSettings();
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
             var data = {
                 title: title,
+                savePublic: savePublic,
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
                 layersetsDiff: diff.layersets,
                 sourcesDiff: diff.sources

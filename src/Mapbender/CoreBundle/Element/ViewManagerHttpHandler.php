@@ -86,9 +86,9 @@ class ViewManagerHttpHandler
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
         $record = new MapViewDiff();
-        // @todo: store user
         $record->setApplicationSlug($element->getApplication()->getSlug());
         $record->setTitle($request->request->get('title'));
+        $record->setUserId($request->request->get('savePublic') ? $this->getUserId() : null);
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
         $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
@@ -96,9 +96,13 @@ class ViewManagerHttpHandler
 
         $this->em->persist($record);
         $this->em->flush();
+
+        $config = $element->getConfiguration();
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', array(
             'record' => $record,
             'dateFormat' => $this->getDateFormat($request),
+            'savePrivate' => $config['publicEntries'] === 'rw',
+            'savePublic' => $config['privateEntries'] === 'rw',
         ));
         return new Response($content);
     }
