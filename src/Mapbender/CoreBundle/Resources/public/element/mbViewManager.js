@@ -10,6 +10,7 @@
         elementUrl: null,
         referenceSettings: null,
         defaultSavePublic: false,
+        deleteConfirmationContent: null,
 
         _create: function() {
             var self = this;
@@ -19,6 +20,9 @@
                 self._setup(mbMap);
             });
             this.defaultSavePublic = (this.options.publicEntries === 'rw');
+            this.deleteConfirmationContent = $('.-js-delete-confirmation-content', this.element)
+                .remove().removeClass('hidden').html()
+            ;
             this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
@@ -42,10 +46,14 @@
                 self._apply(self._decodeDiff(this));
             });
             this.element.on('click', '.-fn-delete[data-id]', function() {
+                // @todo: put id data on the row instead
+                var rowId = $(this).attr('data-id');
                 var $row = $(this).closest('tr');
-                self._delete($(this).attr('data-id')).then(function() {
-                    $row.remove();
-                    self._updatePlaceholder();
+                self._confirm($row, self.deleteConfirmationContent).then(function() {
+                    self._delete(rowId).then(function() {
+                        $row.remove();
+                        self._updatePlaceholder();
+                    });
                 });
             });
         },
@@ -100,6 +108,25 @@
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE'
             });
+        },
+        _confirm: function($row, content) {
+            var deferred = $.Deferred();
+            var $popover = $(document.createElement('div'))
+                .addClass('popover bottom')
+                .append($(document.createElement('div')).addClass('arrow'))
+                .append(content)
+            ;
+            $popover.on('click', '.-fn-confirm', function() {
+                deferred.resolve();
+                $popover.remove();
+            });
+            $popover.on('click', '.-fn-cancel', function() {
+                $popover.remove();
+                deferred.reject();
+            });
+            $('.-js-confirmation-anchor-delete', $row).append($popover);
+
+            return deferred.promise();
         },
         _updatePlaceholder: function() {
             var $rows = $('table tbody tr', this.element);

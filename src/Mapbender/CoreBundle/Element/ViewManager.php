@@ -37,7 +37,9 @@ class ViewManager extends Element
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/element/mbViewManager.js',
             ),
-            'css' => array(),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/element/mbViewManager.scss',
+            ),
             'trans' => array(),
         );
     }

@@ -19,4 +19,11 @@
     <div class="ui-helper-clearfix -fn-loading-placeholder">
         <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
     </div>
+    <div class="hidden -js-delete-confirmation-content">
+        <p>{# @todo: translate #}Eintrag löschen?</p>
+        <div>
+            <button type="button" class="btn btn-sm btn-danger -fn-confirm">{{ 'mb.actions.delete' | trans }}</button>
+            <button type="button" class="btn btn-sm btn-info -fn-cancel">{{ 'mb.actions.cancel' | trans }}</button>
+        </div>
+    </div>
 </div>
