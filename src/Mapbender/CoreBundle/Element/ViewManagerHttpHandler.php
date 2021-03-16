@@ -61,19 +61,19 @@ class ViewManagerHttpHandler
     protected function getListingResponse(Entity\Element $element, Request $request)
     {
         $config = $element->getConfiguration();
-        $records = array();
-        if ($config['publicEntries']) {
-            $records = array_merge($records, $this->getRepository()->findBy(array(
-                'applicationSlug' => $element->getApplication()->getSlug(),
-                'userId' => null,
-            )));
+        $isAnon = $this->isCurrentUserAnonymous();
+        $showPublic = !!$config['publicEntries'] || ($isAnon && $config['privateEntries']);
+        $showPrivate = !!$config['privateEntries'] && !$isAnon;
+        $criteria = array(
+            'applicationSlug' => $element->getApplication()->getSlug(),
+        );
+        if ($showPublic && !$showPrivate) {
+            $criteria['userId'] = null;
+        } elseif ($showPrivate && !$showPublic) {
+            $criteria['userId'] = $this->getUserId();
         }
-        if ($config['privateEntries'] && !$this->isCurrentUserAnonymous()) {
-            $records = array_merge($records, $this->getRepository()->findBy(array(
-                'applicationSlug' => $element->getApplication()->getSlug(),
-                'userId' => $this->getUserId(),
-            )));
-        }
+        $records = $this->getRepository()->findBy($criteria);
+
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', array(
             'records' => $records,
             'dateFormat' => $this->getDateFormat($request),
