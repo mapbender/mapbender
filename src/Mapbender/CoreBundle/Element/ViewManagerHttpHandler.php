@@ -72,13 +72,14 @@ class ViewManagerHttpHandler
         } elseif ($showPrivate && !$showPublic) {
             $criteria['userId'] = $this->getUserId();
         }
+
         $records = $this->getRepository()->findBy($criteria);
 
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', array(
             'records' => $records,
             'dateFormat' => $this->getDateFormat($request),
-            'savePrivate' => $config['publicEntries'] === 'rw',
-            'savePublic' => $config['privateEntries'] === 'rw',
+            'savePrivate' => $config['privateEntries'] === 'rw',
+            'savePublic' => $config['publicEntries'] === 'rw',
         ));
         return new Response($content);
     }
@@ -101,8 +102,8 @@ class ViewManagerHttpHandler
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', array(
             'record' => $record,
             'dateFormat' => $this->getDateFormat($request),
-            'savePrivate' => $config['publicEntries'] === 'rw',
-            'savePublic' => $config['privateEntries'] === 'rw',
+            'savePrivate' => $config['privateEntries'] === 'rw',
+            'savePublic' => $config['publicEntries'] === 'rw',
         ));
         return new Response($content);
     }
