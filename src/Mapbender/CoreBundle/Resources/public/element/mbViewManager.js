@@ -129,9 +129,7 @@
             return diff;
         },
         _apply: function(diff) {
-            console.log("Trying to apply diff", diff);
             var settings = this.mbMap.getModel().mergeSettings(this.referenceSettings, diff);
-            console.log("Produced complete settings", settings);
 
             this.mbMap.getModel().applyViewParams(diff.viewParams);
             this.mbMap.getModel().applySettings(settings);
