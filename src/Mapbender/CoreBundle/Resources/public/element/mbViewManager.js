@@ -56,6 +56,12 @@
                     });
                 });
             });
+            this.element.on('click', '.-fn-update[data-id]', function() {
+                var $clickTarget = $(this);
+                var recordId = $clickTarget.attr('data-id');
+                var $row = $clickTarget.closest('tr');
+                self._replace($row, recordId);
+            });
         },
         _load: function() {
             var $loadingPlaceholder = $('.-fn-loading-placeholder', this.element)
@@ -70,6 +76,20 @@
                 })
             ;
         },
+        _replace: function($row, id) {
+            var title = $('input[name="title"]', this.element).val() || $row.attr('data-title');
+            var data = Object.assign(this._getCommonSaveData(), {
+                title: title,
+                savePublic: $row.attr('data-visibility-group') === 'public' && '1' || ''
+            });
+            var params = {id: id};
+            return $.ajax([[this.elementUrl, 'save'].join('/'), $.param(params)].join('?'), {
+                method: 'POST',
+                data: data
+            }).then(function(response) {
+                $row.replaceWith(response);
+            });
+        },
         _saveNew: function() {
             var $titleInput = $('input[name="title"]', this.element);
             var title = $titleInput.val();
@@ -81,24 +101,12 @@
                 });
                 return $.Deferred().reject().promise();
             }
-            var $savePublicCb = $('input[name="save-as-public"]', this.element);
-            var savePublic;
-            if (!$savePublicCb.length) {
-                savePublic = this.defaultSavePublic;
-            } else {
-                savePublic = $savePublicCb.prop('checked');
-            }
-
-            var currentSettings = this.mbMap.getModel().getCurrentSettings();
-            var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
-            var data = {
-                title: title,
-                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
-                savePublic: savePublic && '1' || '',
-                viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
-                layersetsDiff: diff.layersets,
-                sourcesDiff: diff.sources
-            };
+            return this._saveCommon(title);
+        },
+        _saveCommon: function(title) {
+            var data = Object.assign(this._getCommonSaveData(), {
+                title: title
+            });
 
             var self = this;
             return $.ajax([this.elementUrl, 'save'].join('/'), {
@@ -113,6 +121,28 @@
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE'
             });
+        },
+        _getSavePublic: function() {
+            var $savePublicCb = $('input[name="save-as-public"]', this.element);
+            var savePublic
+            if (!$savePublicCb.length) {
+                savePublic = this.defaultSavePublic;
+            } else {
+                savePublic = $savePublicCb.prop('checked');
+            }
+            // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
+            return savePublic && '1' || '';
+        },
+        _getCommonSaveData: function() {
+            var currentSettings = this.mbMap.getModel().getCurrentSettings();
+            var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
+            return {
+                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
+                savePublic: this._getSavePublic(),
+                viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
+                layersetsDiff: diff.layersets,
+                sourcesDiff: diff.sources
+            };
         },
         _confirm: function($row, content) {
             var deferred = $.Deferred();

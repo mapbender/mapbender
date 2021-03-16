@@ -86,14 +86,20 @@ class ViewManagerHttpHandler
 
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
-        $record = new MapViewDiff();
-        $record->setApplicationSlug($element->getApplication()->getSlug());
-        $record->setTitle($request->request->get('title'));
-        $record->setUserId($request->request->get('savePublic') ? null : $this->getUserId());
-        // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
-        $record->setViewParams($request->request->get('viewParams'));
-        $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
-        $record->setSourceDiffs($request->request->get('sourcesDiff', array()));
+        if ($id = $request->query->get('id')) {
+            $record = $this->getRepository()->find($id);
+            if (!$record) {
+                throw new NotFoundHttpException();
+            }
+            if ($newTitle = $request->request->get('title')) {
+                $record->setTitle($newTitle);
+            }
+        } else {
+            $record = new MapViewDiff();
+            $record->setApplicationSlug($element->getApplication()->getSlug());
+            $record->setTitle($request->request->get('title'));
+        }
+        $this->updateRecord($record, $request);
 
         $this->em->persist($record);
         $this->em->flush();
@@ -120,6 +126,15 @@ class ViewManagerHttpHandler
             $this->em->flush();
         }
         return new Response('', Response::HTTP_NO_CONTENT);
+    }
+
+    protected function updateRecord(MapviewDiff $record, Request $request)
+    {
+        $record->setUserId($request->request->get('savePublic') ? null : $this->getUserId());
+        // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
+        $record->setViewParams($request->request->get('viewParams'));
+        $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
+        $record->setSourceDiffs($request->request->get('sourcesDiff', array()));
     }
 
     /**

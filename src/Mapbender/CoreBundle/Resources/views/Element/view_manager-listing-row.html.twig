@@ -1,5 +1,5 @@
 {%- set _is_private = record.userId is not empty -%}
-<tr data-visibility-group="{{ _is_private ? 'private' : 'public' }}">
+<tr data-visibility-group="{{ _is_private ? 'private' : 'public' }}" data-title="{{ record.title }}">
     <td>{{ record.title }}</td>
     <td>{{ record.mtime | date(dateFormat) }}</td>
     <td class="text-nowrap text-right">
