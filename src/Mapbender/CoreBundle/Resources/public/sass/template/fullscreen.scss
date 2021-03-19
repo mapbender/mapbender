@@ -31,7 +31,6 @@ body {
 
   &.confirm-dialog{
     padding: 5px;
-    text-shadow: 0px 1px 0px #fff;
   }
 
   .nav.nav-tabs.ui-tabs-nav {
@@ -44,20 +43,9 @@ body {
   }
 
   label {
-    margin-bottom: 0px;
     font-size: 11px;
     color: #707070;
     text-shadow: 0px 1px 0px #fff;
-  }
-
-  textarea,
-  select,
-  input
-  {
-    &:-webkit-autofill {
-      background-color: #E0FBCF;
-      color: #858585;
-    }
   }
 
   textarea,
@@ -69,39 +57,15 @@ body {
   input[type="file"] {
     font-size: 11px;
     border-radius: 0;
-    &.mandatory {
-      background-color: #f2b17f;
-    }
   }
-
-  input[type="checkbox"],
-  input[type="radio"] {
-    margin-left: -17px;
-  }
-
 
   hr {
     display: block;
     clear: both;
     height: 1px;
-    background-color: #c0c0c0;
-    //    border-top: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
     margin-top: 10px;
     margin-bottom: 10px;
-  }
-
-  .btn {
-    $mainColor: #6FB536;
-    border-radius: 0;
-    font-size: 11px;
-    padding: 4px 9px;
-    border-color: #538E24;
-    background-color: $mainColor;
-    color: #ffffff;
-    &:hover, &:focus {
-      background-color: darken($mainColor, 10%);
-    }
   }
 
   // Tab-Navigator
@@ -116,41 +80,6 @@ body {
       display: inline-block;
       padding-right: 15px;
     }
-  }
-}
-
-form {
-  // Form holder, needed to disable group form elements.
-  // Example: <fieldset disabled="disabled">...</fieldset>
-  > fieldset {
-    border: none;
-    padding: 0;
-  }
-
-  //  label{
-  //    color: #2A2929;
-  //  }
-
-  .form-group {
-
-    > label {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.checkbox-container {
-  .checkbox-inline {
-    clear: both;
-    label {
-      white-space: nowrap;
-    }
-  }
-}
-
-form {
-  input[type='submit'].hidden {
-    display: none;
   }
 }
 
