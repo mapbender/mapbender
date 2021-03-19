@@ -38,7 +38,7 @@ textarea.input {
   }
 }
 .inputWrapper{
-  .input {
+  .input, > select {
       width: 100%;
   }
 }
