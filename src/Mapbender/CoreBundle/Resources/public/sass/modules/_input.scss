@@ -1,4 +1,4 @@
-.input{
+.input {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
   line-height:$lineHeight;
@@ -27,9 +27,16 @@ textarea.input {
    min-height: 150px;
 }
 
-.inputWrapper{
+.inputWrapper, .dropdown {
   position: relative;
-  display: inline-block;
+  .form-horizontal &, .form-horizontal .labelInput + & {
+    display: inline-block;
+  }
+  .form-horizontal [class*="col-"] > & {
+    display: block;
+  }
+}
+.inputWrapper{
   .input {
       width: 100%;
   }

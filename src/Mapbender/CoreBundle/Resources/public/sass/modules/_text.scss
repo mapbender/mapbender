@@ -42,9 +42,12 @@ h4, .h4, .bigText {
 .labelInput, .labelCheck {
   color:$middleFontColor;
 }
-.labelInput{
-  display: inline-block;
-  margin-right:$space/2;
+.labelInput {
+  .form-horizontal & {
+    display: inline-block;
+    margin-right: $space/2;
+    vertical-align: top;
+  }
   line-height:$lineHeight + 8;
 
   &.required:after {
