@@ -47,6 +47,9 @@ h4, .h4, .bigText {
     display: inline-block;
     margin-right: $space/2;
     vertical-align: top;
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: $space/2;
+    }
   }
   line-height:$lineHeight + 8;
 
