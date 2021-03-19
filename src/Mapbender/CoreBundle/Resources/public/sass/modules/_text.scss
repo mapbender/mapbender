@@ -43,15 +43,15 @@ h4, .h4, .bigText {
   color:$middleFontColor;
 }
 .labelInput {
+  line-height: 2;
   .form-horizontal & {
-    display: inline-block;
+    line-height: $inputHeight;
     margin-right: $space/2;
     vertical-align: top;
     &, &+.inputWrapper, &+.dropdown {
       margin-bottom: $space/2;
     }
   }
-  line-height:$lineHeight + 8;
 
   &.required:after {
     margin-left: 0.25em;
