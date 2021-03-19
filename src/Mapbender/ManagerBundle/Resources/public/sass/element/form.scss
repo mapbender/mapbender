@@ -11,7 +11,7 @@
     padding-left: 5px;
   }
   .inputWrapper, .dropdown {
-    width: 70%;
+    width: calc(100% - #{$labelWidth + $space});
   }
   .validationMsgBox{
     min-width: 28%;
@@ -63,26 +63,22 @@
   .inputWrapper, .dropdown {
     width: calc(100% - #{$label + $space});
   }
+  .collectionItem {
+    .inputWrapper, .dropdown {
+    }
+  }
 }
 
 .collectionItem {
-  clear: both;
   position: relative;
-  .labelInput {
-    clear: both;
-  }
   textarea {
     min-height: 100px;
-    margin-bottom: $space;
-  }
-  .inputWrapper textarea {
-    margin-bottom: 0;
   }
 }
 
 .collectionRemove {
   line-height: $inputHeight;
   position: absolute;
-  right: 31px;
+  right: -1em;
   z-index: 1;
 }
