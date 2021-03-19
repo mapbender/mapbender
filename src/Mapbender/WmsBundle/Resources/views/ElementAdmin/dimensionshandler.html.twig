@@ -19,7 +19,7 @@
     {% block _form_configuration_dimensionsets_entry_row %}
         <div class="collectionItem">
           {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
-            <a href="#delete" class="collectionRemove hover-highlight-effect iconRemove"></a>
+              <span class="collectionRemove hover-highlight-effect"><i class="fa fas fa-times"></i></span>
           {% endif %}
           {{ block('_form_configuration_dimensionsets_entry_rows') }}
         </div>
