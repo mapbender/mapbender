@@ -29,16 +29,10 @@
     }
     .sortableItem {
       cursor: move;
-      .checkWrapper, label {
-        margin: 0;
-      }
       label {
         cursor: inherit;
-        width: 92%; // for browser without calc
-        // Width taken by checkbox is exactly $fontSize
-        // No immediate variable refs inside calc(): https://github.com/sass/sass/issues/818
-        width: calc(100% - #{$fontSize} - 2px);  // subtract fontsize (=checkbox width) plus 2 extra pixels for safety
-        padding-left: 0.2em;
+        max-width: 90%; // Prevent breaking to new line if content is very long
+        margin-bottom: 0;
       }
       &:hover {
         background-color: darken($inputBackgroundColor, 10%);
