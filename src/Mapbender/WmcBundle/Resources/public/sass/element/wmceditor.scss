@@ -6,12 +6,13 @@
   tr{vertical-align:top;}
 }
 .elementFormWMC{
-  .labelInput{
-    width:110px;
-    float:left;
+  .labelInput {
+    width: 110px;
   }
-  .inputWrapper{margin-bottom:$space/2;}
-  .input{width:300px;}
+  .inputWrapper {
+    margin-bottom: $space/2;
+    width: 300px;
+  }
 
   textarea {height: 100px;}
 }
