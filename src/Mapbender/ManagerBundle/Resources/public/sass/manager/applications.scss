@@ -303,3 +303,20 @@
     }
   }
 }
+
+.static-popover-wrap {
+  position: relative; // for anchoring of absolute-positioned .popover
+  .popover {
+    display: initial;
+    &.left {
+      right: 2em;
+    }
+    &.left, &.right {
+      top: -1em;
+      .arrow {
+        top: 1em;
+        margin-top: 0;
+      }
+    }
+  }
+}
