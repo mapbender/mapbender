@@ -1,7 +1,10 @@
-.input {
+.input, .dropdown {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
+  font-size: 0.85rem;
+}
+.input {
+  line-height: $lineHeight;
   &:not(textarea) {
     height:$inputHeight;
   }
@@ -20,8 +23,6 @@
     color: mix($inputBackgroundColor, $inputForegroundColor, 50%);
     opacity: 1;   // counter Firefox default opacity
   }
-
-  @extend .smallText;
 }
 textarea.input {
    min-height: 150px;

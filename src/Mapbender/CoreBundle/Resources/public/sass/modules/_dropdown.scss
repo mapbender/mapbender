@@ -1,8 +1,5 @@
-.dropdown{
-  cursor:pointer;
-  position: relative;
-  color: $inputForegroundColor;
-  border: solid 1px lighten($thirdColor, 15%);
+.dropdown {
+  cursor: pointer;
   .toolBar & {
     text-align: left;
   }
@@ -50,6 +47,4 @@
   .hiddenDropdown{
     display:none;
   }
-
-  @extend .smallText;
 }
