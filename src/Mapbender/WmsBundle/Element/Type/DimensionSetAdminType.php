@@ -43,7 +43,7 @@ class DimensionSetAdminType extends AbstractType
                     'data-name' => 'group',
                 ),
             ))
-            ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+            ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
             ))
         ;
