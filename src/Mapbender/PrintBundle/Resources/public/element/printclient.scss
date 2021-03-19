@@ -1,24 +1,14 @@
 .mb-element-printclient {
-  $labelHeight: 23px;
 
   display: none;
   overflow: visible;
 
   label.labelInput {
-    width: auto;
-    font-weight: inherit;
-    margin-bottom: inherit;
-    line-height: $labelHeight;
-    height: $labelHeight;
-    display: block;
-  }
-  .input, .dropdown, .inputWrapper {
-    min-width: 190px;
-    width: 100%;
-    margin-bottom: $space/2;
-  }
-  .inputWrapper .input {
+    line-height: 2;
     margin-bottom: 0;
+  }
+  .dropdown, .inputWrapper {
+    margin-bottom: $space/2;
   }
   .button.active {
     background-color: #538e24;
