@@ -31,6 +31,12 @@
     white-space: nowrap;
     color: fade-out($lightFontColor, .3);
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+    // Workaround for dropdown-style Element markup where an (optional) label is rendered OUTSIDE of the
+    // .mb-element node
+    > .labelInput + .mb-element {
+      display: inline-block;
+      margin-left: 0.5em;
+    }
     &:hover {
       color: $lightFontColor;
     }
