@@ -288,26 +288,11 @@ ul.dropdownList{
     }
 
     form {
-
       &:after{
         content: "";
         display: block;
         visibility: hidden;
         clear: both;
-      }
-
-      .inputWrapper{
-        textarea,
-        input[type="password"],
-        input[type="number"],
-        input[type="email"],
-        input[type="text"]{
-          width: 100%;
-        }
-      }
-      select[multiple="multiple"]{
-        width: 100%;
-        margin-bottom: 10px;
       }
     }
 
