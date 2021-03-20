@@ -52,6 +52,11 @@ h4, .h4, .bigText {
       margin-bottom: $space/2;
     }
   }
+  .form-horizontal .form-group & {
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: 0;
+    }
+  }
 
   &.required:after {
     margin-left: 0.25em;
