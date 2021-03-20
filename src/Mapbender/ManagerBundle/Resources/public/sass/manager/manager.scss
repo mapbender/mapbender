@@ -78,11 +78,6 @@ div.contentTitle {
 .popupContainer,
 .page{
   position:relative;
-  a {
-    &:hover{
-      color: $darkFontColor;
-    }
-  }
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
   }
@@ -198,10 +193,13 @@ div.contentTitle {
   }
 }
 
-
+.leftPane, .rightPane {
+  display: inline-block;
+}
 .rightPane {
   width: $contentPaneWidth;
-  @include absolute(0 0 '' $navWidth);
+  position: absolute;
+  top: 0;
   .top {
     height: $space * 6;
   }
