@@ -181,7 +181,6 @@ fieldset.box {
   }
 
   tbody{
-    .dropdown{min-width:100%;}
     .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn {
       .checkWrapper {
@@ -210,21 +209,17 @@ fieldset.box {
     &:not(.hidden) {
       display: initial;
     }
-    left: unset;
+    left: initial;
   }
   min-width: 260px;
-  right: 2.5em;
 
-  .labelText, label {
-    width: 4.5em;
-    display:inline-block;
+  .labelInput {
+    width: 40px;
   }
-  // also revert 100% set by .instanceTable... selector
-  .dropdown, .instanceTable tbody & .dropdown {
-    min-width: 130px;
-  }
-  // also revert 100% set by contentPane... selector
   .dropdown, .contentPane > .content form & .dropdown {
-    width: auto;
+    width: 170px;
+  }
+  .inputWrapper, .contentPane > .content form & .inputWrapper {
+    width: 170px;
   }
 }

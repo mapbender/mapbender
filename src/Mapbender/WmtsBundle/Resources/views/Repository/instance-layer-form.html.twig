@@ -7,21 +7,21 @@
     {{ form_row(form.selected) }}
     {{ form_row(form.allowinfo) }}
     {{ form_row(form.info) }}
-    <td class="moreColumn">
+    <td class="moreColumn text-right">
     <div class="static-popover-wrap">
       <div class="infoMsgBox popover left hidden">
         <div class="arrow"></div>
-        <div class="popover-content">
+        <div class="popover-content form-horizontal">
           <div>
-            <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}">{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span>
+              <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</label><div class="inputWrapper" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}"><input type="text" class="input" readonly="readonly" value="{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}"></div>
           </div>
           <div>
-              <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form.vars.data.sourceItem.identifier }}</span>
+              <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</label><div class="inputWrapper"><input type="text" class="input" readonly="readonly" value="{{ form.vars.data.sourceItem.identifier }}"></div>
           </div>
-        {{ form_row(form.style) }}
+          {{- form_row(form.style) -}}
         </div>
       </div>
       <span class="-fn-toggle-layer-detail" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
-      </div>
+    </div>
     </td>
 </tr>
