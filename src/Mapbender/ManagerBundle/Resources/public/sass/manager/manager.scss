@@ -83,17 +83,6 @@ div.contentTitle {
       color: $darkFontColor;
     }
   }
-  @media (min-width: 992px){
-    .container {
-      width: auto;
-    }
-  }
-  @media (min-width: 768px){
-    .container {
-      width: auto;
-    }
-  }
-
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
   }
