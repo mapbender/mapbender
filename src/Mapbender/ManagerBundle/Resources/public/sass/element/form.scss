@@ -63,10 +63,6 @@
   .inputWrapper, .dropdown {
     width: calc(100% - #{$label + $space});
   }
-  .collectionItem {
-    .inputWrapper, .dropdown {
-    }
-  }
 }
 
 .collectionItem {

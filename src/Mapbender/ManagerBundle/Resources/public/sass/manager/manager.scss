@@ -96,13 +96,7 @@ div.contentTitle {
 
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
-
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
   }
-
 }
 .iconBig, .iconSmall{
   &:before {
@@ -302,11 +296,7 @@ ul.dropdownList{
         clear: both;
       }
 
-      .dropdown{
-        width: 100%;
-      }
       .inputWrapper{
-        width: 100%;
         textarea,
         input[type="password"],
         input[type="number"],
@@ -318,10 +308,6 @@ ul.dropdownList{
       select[multiple="multiple"]{
         width: 100%;
         margin-bottom: 10px;
-      }
-
-      input[type='submit']{
-        min-width: 20px;
       }
     }
 

@@ -159,35 +159,31 @@ fieldset.box {
 
   &.table {
     background-color: lighten($contentColor, 2%);
-    > thead > tr > .checkboxColumn {
-      padding-left: 2px;
-      padding-right: 2px;
+    tbody tr td {
+      line-height: $inputHeight;
     }
-    > tbody > tr > td {
-      &.titleColumn {
-        width: 260px;
-      }
-      &.itemType {
-        padding-right: 0;
-        padding-left: 0;
-        cursor:ns-resize;
-        line-height:$inputHeight;
-      }
-      &.minScaleColumn,
-      &.maxScaleColumn {
+    > tbody > tr > td, > thead > tr > th {
+      padding-left: 0;
+      padding-right: 8px;
+      &.checkboxColumn {
+        width: 1%;
         padding-left: 4px;
+        padding-right: 4px;
       }
+    }
+    .titleColumn {
+      width: 260px;
+    }
+    .itemType {
+      cursor:ns-resize;
     }
   }
 
   tbody{
-    .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn {
       .checkWrapper {
         display: inline-block;
-        line-height: $inputHeight;
         float: none;
-        width: 1em;
       }
     }
   }
@@ -197,12 +193,6 @@ fieldset.box {
   .level3 .itemType{margin-left:22px;}
   .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
-  .moreColumn {
-    position: relative;
-    line-height:$inputHeight;
-  }
-  .input{width:80px;}
-  .titleColumn .input{width:200px;}
 }
 .infoMsgBox {
   &.popover {

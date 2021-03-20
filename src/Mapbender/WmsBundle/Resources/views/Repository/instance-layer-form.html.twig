@@ -12,8 +12,8 @@
             <td class="level{{ level }} itemType"><span class="itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} hover-highlight-effect"></span></td>
             <td class="titleColumn" title="{{ form_layer.title.vars.label | trans }}">{{ form_widget(form_layer.title) }}</td>
 
-            <td class="minScaleColumn" title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
-            <td class="maxScaleColumn" title="{{ form_layer.maxScale.vars.label | trans }}">{{ form_widget(form_layer.maxScale) }}</td>
+            <td title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
+            <td title="{{ form_layer.maxScale.vars.label | trans }}">{{ form_widget(form_layer.maxScale) }}</td>
             {{ form_row(form_layer.active) }}
             {{ form_row(form_layer.allowselected) }}
             {{ form_row(form_layer.selected) }}
@@ -22,7 +22,7 @@
             {{ form_row(form_layer.allowtoggle) }}
             {{ form_row(form_layer.toggle) }}
             {{ form_row(form_layer.allowreorder) }}
-            <td class="moreColumn text-right">
+            <td class="text-right">
             <div class="static-popover-wrap">
               <div class="infoMsgBox popover left hidden">
                   <div class="arrow"></div>
