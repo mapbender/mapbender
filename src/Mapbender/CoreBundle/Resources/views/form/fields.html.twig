@@ -65,19 +65,17 @@
   </div>
 {% endblock textarea_widget %}
 
-{% block choice_widget %}
-  {% spaceless %}
-    {% if expanded %}
-      {% if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined %}
-        {{ block('choice_widget_expanded_sortable') }}
-      {% else %}
-        {{ block('choice_widget_expanded') }}
-      {% endif %}
-    {% else %}
-      {{ block('choice_widget_collapsed') }}
-    {% endif %}
-  {% endspaceless %}
-{% endblock choice_widget %}
+{%- block choice_widget -%}
+    {%- if expanded -%}
+      {%- if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined -%}
+        {{- block('choice_widget_expanded_sortable') -}}
+      {%- else -%}
+        {{- block('choice_widget_expanded') -}}
+      {%- endif -%}
+    {%- else -%}
+      {{- block('choice_widget_collapsed') -}}
+    {%- endif -%}
+{%- endblock choice_widget -%}
 
 {% block choice_widget_expanded_sortable %}
   {% spaceless %}
