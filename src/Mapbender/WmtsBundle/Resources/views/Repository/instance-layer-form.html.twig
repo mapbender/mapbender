@@ -12,12 +12,9 @@
       <div class="infoMsgBox popover left hidden">
         <div class="arrow"></div>
         <div class="popover-content form-horizontal">
-          <div>
-              <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</label><div class="inputWrapper" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}"><input type="text" class="input" readonly="readonly" value="{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}"></div>
-          </div>
-          <div>
-              <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</label><div class="inputWrapper"><input type="text" class="input" readonly="readonly" value="{{ form.vars.data.sourceItem.identifier }}"></div>
-          </div>
+          {%- set layer = form.vars.data -%}
+          {{- form_row(form.displayId, {'value': layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id}) -}}
+          {{- form_row(form.displayName, {'value': layer.sourceItem.identifier }) -}}
           {{- form_row(form.style) -}}
         </div>
       </div>

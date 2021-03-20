@@ -28,13 +28,9 @@
                   <div class="arrow"></div>
                   <div class="popover-content form-horizontal">
                     <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
-                    <div>
-                      <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</label><div class="inputWrapper" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}"><input type="text" class="input" readonly="readonly" value="{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}"></div>
-                    </div>
-                    <div>
-                      <label class="labelInput">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</label><div class="inputWrapper"><input type="text" readonly="readonly" class="input" value="{{ form_layer.vars.data.sourceItem.name}}"></div>
-                    </div>
-                    {{ form_row(form_layer.style) }}
+                    {{- form_row(form_layer.displayId, {'value': layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id}) -}}
+                    {{- form_row(form_layer.displayName, {'value': layer.sourceItem.name }) -}}
+                    {{- form_row(form_layer.style) -}}
                   </div>
               </div>
               <span class="-fn-toggle-layer-detail" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
