@@ -194,9 +194,6 @@ fieldset.box {
 }
 .infoMsgBox {
   &.popover {
-    &:not(.hidden) {
-      display: initial;
-    }
     left: initial;
   }
   min-width: 260px;
