@@ -4,7 +4,7 @@
 }
 .tableCore {
   td, th {
-    padding: $space/4 8px;    // NOTE: 8px (all directions) is Bootstrap default on .table
+    padding: 8px; // NOTE: 8px (all directions) is Bootstrap default on .table
   }
 }
 .tableCore, .table {

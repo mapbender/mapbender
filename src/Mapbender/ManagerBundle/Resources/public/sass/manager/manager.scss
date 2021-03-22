@@ -337,14 +337,10 @@ label[for^="inputFilter"] {
 
 .permissionsTable{
   tr{
-    border-bottom: solid 1px darken($contentColor, 10%);
     &.new{
       .labelInput, .iconGroup, .iconUser{color:green;}
       background-color: #f0ffed;
     }
-  }
-  th, td {
-    padding:5px 0;
   }
   td{
     .input{display:none;}
@@ -395,5 +391,4 @@ label[for^="inputFilter"] {
     right:solid 1px $thirdColor;
     bottom:solid 1px $thirdColor;
   }
-  @include border-bottom-radius($radius);
 }
