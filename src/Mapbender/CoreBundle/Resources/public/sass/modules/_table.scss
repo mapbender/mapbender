@@ -1,10 +1,13 @@
-.tableCore{
+.tableCore, .table {
   width: 100%;
   background-color:$contentColor;
-
+}
+.tableCore {
   td, th {
     padding: $space/4 8px;    // NOTE: 8px (all directions) is Bootstrap default on .table
   }
+}
+.tableCore, .table {
   thead{border-bottom: solid 5px darken($contentColor, 15%);}
   th {
     font-weight:normal;
@@ -23,8 +26,6 @@
   }
 }
 .table{
-  @extend .tableCore;
-
   border:{
     top:solid 3px $firstColor;
     left:solid 1px $thirdColor;
