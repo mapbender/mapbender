@@ -47,8 +47,6 @@ class LayertreeSubscriber implements EventSubscriberInterface
             $themesAll,
             isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array()
         );
-        $data["themes"] = $themesAll;
-        $event->setData($data);
         if ($themesData) {
             $form->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'label' => 'mb.core.admin.layertree.label.themes',
