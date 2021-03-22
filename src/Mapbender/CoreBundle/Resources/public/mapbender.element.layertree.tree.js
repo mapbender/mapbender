@@ -196,13 +196,9 @@
         },
         _getThemeOptions: function(layerset) {
             var matches =  (this.options.themes || []).filter(function(item) {
-                 return item.id === layerset.id;
+                return item.useTheme && ('' + item.id) === ('' + layerset.id);
             });
-            if (!matches.length || !matches[0].useTheme) {
-                return null;
-            } else {
-                return matches[0];
-            }
+            return matches[0] || null;
         },
         _findThemeNode: function(layerset) {
             return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);

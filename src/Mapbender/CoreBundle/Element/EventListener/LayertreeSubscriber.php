@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\EventListener;
 
+use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -40,12 +41,8 @@ class LayertreeSubscriber implements EventSubscriberInterface
      */
     public function preSetData(FormEvent $event)
     {
-        $data = $event->getData();
-        if (null === $data) {
-            return;
-        }
         $form = $event->getForm();
-        $themesAll = isset($data["target"]) && $data["target"] !== null ? $this->getThemes($data) : array();
+        $themesAll = $this->getThemes($event->getForm()->get('target')->getData());
         $themesData = $this->checkDataThemes(
             $themesAll,
             isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array()
@@ -58,25 +55,19 @@ class LayertreeSubscriber implements EventSubscriberInterface
                 'data' => $themesData,
                 'required' => false,
                 'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
-                'auto_initialize' => false,
-                'label_attr' => array(
-                    'class' => 'left',
-                ),
             ));
         }
     }
 
-    private function getThemes($data)
+    private function getThemes($mapId)
     {
-        if (!$data || !isset($data['target'])) {
+        if (!$mapId) {
             return array();
         }
-        $mapEl = null;
-        foreach ($this->application->getElements() as $element) {
-            if (strval($element->getId()) === strval($data['target'])) {
-                $mapEl = $element;
-                break;
-            }
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('id', $mapId));
+        $mapEl = $this->application->getElements()->matching($criteria)->first();
+        if (!$mapEl) {
+            return array();
         }
         $themes = array();
         if ($mapEl) {
@@ -99,23 +90,19 @@ class LayertreeSubscriber implements EventSubscriberInterface
     private function checkDataThemes($themesAll, $themesData)
     {
         $themes = array();
-        if (count($themesAll) === 0 || count($themesData) === 0) {
-            return $themes;
-        } else {
-            for ($i = 0; $i < count($themesAll); $i++) {
-                $found = false;
-                for ($j = 0; $j < count($themesData); $j++) {
-                    if (strval($themesAll[$i]['id']) === strval($themesData[$j]['id'])) {
-                        $arr = $themesData[$j];
-                        $arr['title'] = $themesAll[$i]['title'];
-                        $themes[] = $arr;
-                        $found = true;
-                        break;
-                    }
+        foreach ($themesAll as $availableTheme) {
+            $found = false;
+            foreach ($themesData as $configuredTheme) {
+                if (strval($availableTheme['id']) === strval($configuredTheme['id'])) {
+                    $themes[] = array_replace($configuredTheme, array(
+                        'title' => $availableTheme['title'],
+                    ));
+                    $found = true;
+                    break;
                 }
-                if (!$found) {
-                    $themes[] = $themesAll[$i];
-                }
+            }
+            if (!$found) {
+                $themes[] = $availableTheme;
             }
         }
         return $themes;
