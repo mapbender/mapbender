@@ -88,13 +88,12 @@
                 //        then through source instances in the layerset, so the layerset is already known
                 // @todo 3.1.0: this should happen server-side
                 var layerset = this._findLayersetWithSource(source);
-                var theme = {};
-                $.each(this.options.themes, function(idx, item) {
-                    if (item.id === layerset.id)
-                        theme = item;
+                var themesMatches = layerset && this.options.themes.filter(function(themeConfig) {
+                    return themeConfig.useTheme && ('' + themeConfig.id) === ('' + layerset.id);
                 });
-                if (theme.useTheme) {
-                    var $layersetEl = this._createThemeNode(layerset, theme);
+                var themeOptions = themesMatches.length && themesMatches[0];
+                if (themeOptions) {
+                    var $layersetEl = this._createThemeNode(layerset, themeOptions);
                     $targetList = $("ul.layers:first", $layersetEl);
                 }
             }
