@@ -1,4 +1,5 @@
-## dev-master @ e38e983b8
+## dev-master @ fba073e70
+* [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
 * Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320]((https://github.com/mapbender/mapbender/issues/1320))
@@ -7,7 +8,6 @@
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
 * [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
 * Misc legacy CSS cleanups
-
 
 ## v3.2.4
 * Fix poor tiled Wms quality despite best-effort resolution matching (mapproxy vs Map config "scales") on Openlayers 6
