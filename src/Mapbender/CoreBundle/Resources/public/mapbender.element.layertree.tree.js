@@ -16,7 +16,6 @@
         template: null,
         menuTemplate: null,
         popup: null,
-        created: false,
         consts: {
             source: "source",
             theme: "theme",
@@ -43,9 +42,8 @@
             this.themeTemplate.removeClass('hidden -fn-theme-template');
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
-            if (this.options.type === 'element') {
-                this._createTree();
-            } else if (this.options.type === 'dialog' && this.options.autoOpen) {
+            this._createTree();
+            if (this.options.type === 'dialog' && this.options.autoOpen) {
                 this.open();
             }
             this.element.removeClass('hidden');
@@ -75,7 +73,6 @@
             }
 
             this._reset();
-            this.created = true;
         },
         _reset: function() {
             if (this.options.allowReorder) {
@@ -194,7 +191,6 @@
         _updateThemeNode: function(layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
             var $checkbox = $('> .leaveContainer input[name="sourceVisibility"][type="checkbox"]', $node_);
-            console.warn("Checkbox found?", layerset, $node_.get(), $checkbox.get());
             $checkbox.prop('checked', layerset.getSelected());
             $checkbox.mbCheckbox();
         },
@@ -623,7 +619,6 @@
             if (this.options.type === 'dialog') {
                 var self = this;
                 if (!this.popup || !this.popup.$element) {
-                    this._createTree();
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('data-title'),
                         modal: false,
@@ -645,27 +640,20 @@
                             }
                         }
                     });
-                    this._reset();
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
-                    this._reset();
-                    this.popup.open();
+                    this.popup.$element.show();
                 }
             }
+            this._reset();
         },
         /**
          * closes a dialog with a layertree (if options.type == 'dialog')
          */
         close: function() {
             if (this.options.type === 'dialog') {
-                if (this.popup) {
-                    $("ul.layers:first", this.element).empty();
-                    $(this.element).hide().appendTo("body");
-                    this.created = false;
-                    if (this.popup.$element) {
-                        this.popup.destroy();
-                    }
-                    this.popup = null;
+                if (this.popup && this.popup.$element) {
+                    this.popup.$element.hide();
                 }
             }
             if (this.callback) {
