@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ c8d956f50
+## dev-release/3.0.7 @ 2b8e9ef31
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -30,6 +30,7 @@
 - Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
 - Fix PrintClient frontend settings form bypassing / conflicting with form theme
 - Fix Layertree backend form bypassing / conflicting with form theme
+- Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311]((https://github.com/mapbender/mapbender/issues/1311))
 - Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
@@ -56,6 +57,7 @@
 - [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
 - Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
 - Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
+- Resolved misc Bootstrap CSS conflicts
 - Misc functional testing support
 
 ## v3.0.8.6
