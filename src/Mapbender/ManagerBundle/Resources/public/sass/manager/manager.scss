@@ -84,8 +84,6 @@ div.contentTitle {
   // Keep left / right padding (8px from Bootstrap .table rules)
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
-    padding-top: $space/4;
-    padding-bottom: $space/4;
   }
 }
 .iconBig, .iconSmall {
@@ -207,10 +205,13 @@ div.contentTitle {
   }
 }
 
-
+.leftPane, .rightPane {
+  display: inline-block;
+}
 .rightPane {
   width: $contentPaneWidth;
-  @include absolute(0 0 '' $navWidth);
+  position: absolute;
+  top: 0;
   .top {
     height: $space * 6;
   }
@@ -273,37 +274,11 @@ ul.dropdownList{
     }
 
     form {
-
       &:after{
         content: "";
         display: block;
         visibility: hidden;
         clear: both;
-      }
-
-      label.labelInput {
-        margin: 0;
-      }
-      .dropdown{
-        width: 100%;
-      }
-      .inputWrapper{
-        width: 100%;
-        textarea,
-        input[type="password"],
-        input[type="number"],
-        input[type="email"],
-        input[type="text"]{
-          width: 100%;
-        }
-      }
-      select[multiple="multiple"]{
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      input[type='submit']{
-        min-width: 20px;
       }
     }
 
@@ -362,15 +337,13 @@ label[for^="inputFilter"] {
 }
 
 .permissionsTable{
-  tr {
-    border-bottom: solid 1px darken($contentColor, 10%);
+  tr{
     &.new{
       td:first-child {
         color: green;
       }
       background-color: #f0ffed;
     }
-
   }
   .listFilterInput{
     margin-bottom: 0;
@@ -401,23 +374,6 @@ label[for^="inputFilter"] {
         background-color: #FF702A;
       }
     }
-  }
-}
-
-.form-horizontal {
-  // transitional support for legacy form markup inside bootstrap .form-horizontal
-  // NOTE: deliberately no rules for bootstrap .form-group, .form-control etc
-  :not(.form-group) {
-    .labelInput {
-      width: 45%;  // defeat super-sepcific ".contentPane > .content form .labelInput" rule
-      margin-right: 4%;
-    }
-    .inputWrapper, .dropdown {
-      width: 50%;    // defeat super-sepcific ".contentPane > .content form .inputWrapper" rule
-    }
-  }
-  .inputWrapper, .dropdown {
-    display: inline-block;
   }
 }
 

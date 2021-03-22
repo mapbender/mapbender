@@ -29,15 +29,15 @@
 {%- endif -%}
 {%- endblock form_errors_inline %}
 
-{% block form_widget_simple %}
+{%- block form_widget_simple -%}
   {% spaceless %}
-    {% set type = type|default('text') %}
+    {%- set type = type|default('text') -%}
     {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
       <div class="inputWrapper">
         <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
       </div>
   {% endspaceless %}
-{% endblock form_widget_simple %}
+{%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
   {% spaceless %}
@@ -65,19 +65,17 @@
   </div>
 {% endblock textarea_widget %}
 
-{% block choice_widget %}
-  {% spaceless %}
-    {% if expanded %}
-      {% if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined %}
-        {{ block('choice_widget_expanded_sortable') }}
-      {% else %}
-        {{ block('choice_widget_expanded') }}
-      {% endif %}
-    {% else %}
-      {{ block('choice_widget_collapsed') }}
-    {% endif %}
-  {% endspaceless %}
-{% endblock choice_widget %}
+{%- block choice_widget -%}
+    {%- if expanded -%}
+      {%- if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined -%}
+        {{- block('choice_widget_expanded_sortable') -}}
+      {%- else -%}
+        {{- block('choice_widget_expanded') -}}
+      {%- endif -%}
+    {%- else -%}
+      {{- block('choice_widget_collapsed') -}}
+    {%- endif -%}
+{%- endblock choice_widget -%}
 
 {% block choice_widget_expanded_sortable %}
   {% spaceless %}
@@ -120,7 +118,9 @@
 
 {%- block choice_widget_collapsed -%}
   {%- if multiple -%}
-    {{- block('symfony_choice_widget_collapsed') -}}
+    <div class="inputWrapper">
+      {{- block('symfony_choice_widget_collapsed') -}}
+    </div>
   {%- else -%}
     <div class="dropdown">
     {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
@@ -176,7 +176,7 @@
   {%- else -%}
     {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
   {%- endif -%}
-  {{ block('div_form_label') }}
+  {{- block('div_form_label') -}}
 {% endblock form_label %}
 
 {% block checkbox_row %}

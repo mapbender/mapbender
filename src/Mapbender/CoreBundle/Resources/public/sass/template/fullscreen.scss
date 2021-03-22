@@ -37,7 +37,6 @@ body {
 .modal-body {
   &.confirm-dialog{
     padding: 5px;
-    text-shadow: 0px 1px 0px #fff;
   }
 
   .nav.nav-tabs.ui-tabs-nav {
@@ -50,20 +49,9 @@ body {
   }
 
   label {
-    margin-bottom: 0px;
     font-size: 11px;
     color: #707070;
     text-shadow: 0px 1px 0px #fff;
-  }
-
-  textarea,
-  select,
-  input
-  {
-    &:-webkit-autofill {
-      background-color: #E0FBCF;
-      color: #858585;
-    }
   }
 
   textarea,
@@ -75,23 +63,12 @@ body {
   input[type="file"] {
     font-size: 11px;
     border-radius: 0;
-    &.mandatory {
-      background-color: #f2b17f;
-    }
   }
-
-  input[type="checkbox"],
-  input[type="radio"] {
-    margin-left: -17px;
-  }
-
 
   hr {
     display: block;
     clear: both;
     height: 1px;
-    background-color: #c0c0c0;
-    //    border-top: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -123,63 +100,6 @@ body {
       padding-right: 15px;
     }
   }
-}
-
-form {
-  // Form holder, needed to disable group form elements.
-  // Example: <fieldset disabled="disabled">...</fieldset>
-  > fieldset {
-    border: none;
-    padding: 0;
-  }
-
-  //  label{
-  //    color: #2A2929;
-  //  }
-
-  .form-group {
-
-    > label {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.checkbox-container {
-  .checkbox-inline {
-    clear: both;
-    label {
-      white-space: nowrap;
-    }
-  }
-}
-
-form {
-  input[type='submit'].hidden {
-    display: none;
-  }
-}
-
-.has-spinner {
-  &.active {
-    cursor: progress;
-    &.spinner {
-      opacity: 1;
-      width: auto; /* This doesn't work, just fix for unknown width elements */
-    }
-  }
-
-  .spinner {
-    display: inline-block;
-    opacity: 0;
-    width: 0;
-
-    -webkit-transition: opacity 0.25s, width 0.25s;
-    -moz-transition: opacity 0.25s, width 0.25s;
-    -o-transition: opacity 0.25s, width 0.25s;
-    transition: opacity 0.25s, width 0.25s;
-  }
-
 }
 
 /**

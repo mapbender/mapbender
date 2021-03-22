@@ -19,7 +19,9 @@
 }
 .fom-popup {
   .popupButtons{
-    @include absolute('' $space $space 0);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 .mapbender-popup {
@@ -59,6 +61,9 @@
 .fom-popup {
   .popupContent {
     padding:0 20px;
+  }
+  .popupButtons {
+    padding: 0 20px 20px 20px;
   }
 }
 .popup {

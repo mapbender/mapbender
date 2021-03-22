@@ -28,18 +28,6 @@
       bottom: solid 5px $thirdColor;
       radius: $containerBorderRadius;
     }
-
-    .input {
-      width: 100%;
-    }
-    .labelInput {
-      width: 100%;
-      line-height: 1.414;
-    }
-
-    .inputWrapper {
-      width: 100%;
-    }
   }
 
   a {
@@ -58,11 +46,6 @@
   }
   .loginBox {
     margin-top: 15px;
-  }
-  .labelInput {
-    display: block;
-    width: 100%;
-    margin-bottom: 2px;
   }
   .input {
     margin-bottom: $space/2;

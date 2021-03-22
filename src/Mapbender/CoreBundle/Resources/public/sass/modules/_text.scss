@@ -38,10 +38,21 @@ h4, .h4, .bigText {
 .labelInput, .labelCheck {
   color:$middleFontColor;
 }
-.labelInput{
-  display: inline-block;
-  margin-right:$space/2;
-  line-height:$lineHeight + 8;
+.labelInput {
+  line-height: 2;
+  .form-horizontal & {
+    line-height: $inputHeight;
+    margin-right: $space/2;
+    vertical-align: top;
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: $space/2;
+    }
+  }
+  .form-horizontal .form-group & {
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: 0;
+    }
+  }
 
   &.required:after {
     margin-left: 0.25em;

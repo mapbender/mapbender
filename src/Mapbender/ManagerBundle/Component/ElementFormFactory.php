@@ -71,7 +71,7 @@ class ElementFormFactory extends BaseElementFactory
     {
         // Add class and element id data attributes for functional test support
         $options += array('attr' => array());
-        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form');
+        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form form-horizontal');
         if ($element->getId()) {
             $options['attr']['data-ft-element-id'] = $element->getId();
         }

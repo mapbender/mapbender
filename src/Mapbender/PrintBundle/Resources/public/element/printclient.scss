@@ -1,17 +1,8 @@
 .mb-element-printclient {
   overflow: visible;
 
-  label.labelInput {
-    display: block;
-    line-height: 1.5;
-  }
-  .input, .dropdown, .inputWrapper {
-    min-width: 190px;
-    width: 100%;
+  .dropdown, .inputWrapper {
     margin-bottom: $space/2;
-  }
-  .inputWrapper .input {
-    margin-bottom: 0;
   }
   .button.active {
     background-color: #538e24;
