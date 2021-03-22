@@ -27,7 +27,8 @@
             $wrapper.removeClass([data.iconOn, iconOnDefault].join(' '));
         }
     }
-    $.fn.mbCheckbox = function() {
+    $.fn.mbCheckbox = function(options) {
+        var listen_ = !options || (typeof (options.listen) === 'undefined' || options.listen);
         this.filter('.checkWrapper input[type="checkbox"]').each(function() {
             var $this = $(this);
             // Skip already initialized nodes, avoids binding events more than once
@@ -45,7 +46,7 @@
                 $this.on('change', function() {
                     propagateToWrapper.call(this);
                 });
-                $this.closest('.checkWrapper').on('click', function(e) {
+                if (listen_) $this.closest('.checkWrapper').on('click', function(e) {
                     $('input[type="checkbox"]', this).trigger('click');
                     // prevent bubbling to globally document-bound FOM initCheckbox binding
                     e.stopPropagation();
