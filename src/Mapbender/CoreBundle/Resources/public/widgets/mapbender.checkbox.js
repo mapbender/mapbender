@@ -1,6 +1,7 @@
 (function($) {
     var iconOnDefault = "iconCheckboxActive";
     var iconOffDefault = "iconCheckbox";
+    var iconIndeterminate = 'iconCheckboxHalf';
 
     /**
      * Replacement for fom/src/FOM/CoreBundle/Resources/public/js/widgets/checkbox.js:initCheckbox.
@@ -19,12 +20,16 @@
         var data = $cb.data('mbCheckbox');
         var $wrapper = $cb.parents('.checkWrapper');
         $wrapper.toggleClass('checkboxDisabled', $cb.prop('disabled'));
-        if ($cb.prop('checked')) {
+        var indeterminate = this.indeterminate;
+        if (indeterminate) {
+            $wrapper.addClass(iconIndeterminate);
+            $wrapper.removeClass([data.iconOn, iconOnDefault, data.iconOff, iconOffDefault].join(' '));
+        } else if ($cb.prop('checked')) {
             $wrapper.addClass(data.iconOn);
-            $wrapper.removeClass([data.iconOff, iconOffDefault].join(' '));
+            $wrapper.removeClass([data.iconOff, iconOffDefault, iconIndeterminate].join(' '));
         } else {
             $wrapper.addClass(data.iconOff);
-            $wrapper.removeClass([data.iconOn, iconOnDefault].join(' '));
+            $wrapper.removeClass([data.iconOn, iconOnDefault, iconIndeterminate].join(' '));
         }
     }
     $.fn.mbCheckbox = function(options) {
