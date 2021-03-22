@@ -118,8 +118,12 @@ class AssetFactoryBase
             $replacements = (array)$migratedRefMapping[$normalizedReference];
             $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
             foreach ($replacements as $replacement) {
-                foreach ($this->rewriteReference($replacement, $migratedRefMapping, $debugOutput) as $refOut) {
-                    $refsOut[] = $refOut;
+                if ($replacement === $normalizedReference) {
+                    $refsOut[] = $replacement;
+                } else {
+                    foreach ($this->rewriteReference($replacement, $migratedRefMapping, $debugOutput) as $refOut) {
+                        $refsOut[] = $refOut;
+                    }
                 }
             }
         } else {
