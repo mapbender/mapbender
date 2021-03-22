@@ -103,7 +103,9 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $keyword->setReferenceObject($wmts);
             $keywords->add($keyword);
         }
-        $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
+        if ($feesValue = $this->getValue("./ows:Fees/text()", $contextElm)) {
+            $wmts->setFees(mb_substr($feesValue, 0, 255));
+        }
         $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
     }
 
