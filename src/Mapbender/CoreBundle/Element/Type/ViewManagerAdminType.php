@@ -36,6 +36,10 @@ class ViewManagerAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.allowAnonymousSave',
             ))
+            ->add('allowNonAdminDelete', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.viewManager.admin.allowNonAdminDelete',
+            ))
         ;
     }
 }

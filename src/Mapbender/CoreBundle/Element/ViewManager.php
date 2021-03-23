@@ -47,12 +47,18 @@ class ViewManager extends Element
         return 'Mapbender\CoreBundle\Element\Type\ViewManagerAdminType';
     }
 
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:view_manager.html.twig';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array(
             'publicEntries' => 'ro',
             'privateEntries' => 'rw',
             'allowAnonymousSave' => false,
+            'allowNonAdminDelete' => false,
         );
     }
 

@@ -297,6 +297,8 @@ mb:
         access.rw: Allow saving
         publicEntries: Public list
         privateEntries: Private list
+        adminDeleteHint: "Note: the administrator can always delete entries"
+        allowNonAdminDelete: Allow deletion of public entries
         allowAnonymousSave: Allow saving to anonymous users
     admin:
       poi:
