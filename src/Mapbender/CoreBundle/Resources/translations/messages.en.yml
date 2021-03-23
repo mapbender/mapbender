@@ -285,6 +285,19 @@ mb:
         title: Share URL
         description: Share current map view via url
       copied_to_clipboard: URL copied to clipboard
+    viewManager:
+      class:
+        title: View manager
+        description: Saves map states for later restoration
+      saveAsPublic: Save as public
+      confirmDelete: Confirm deletion
+      admin:
+        access.none: Do not show
+        access.ro: Read only
+        access.rw: Allow saving
+        publicEntries: Public list
+        privateEntries: Private list
+        allowAnonymousSave: Allow saving to anonymous users
     admin:
       poi:
         label:

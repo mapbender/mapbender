@@ -11,7 +11,7 @@
         </div>
         {%- if showListSelector -%}
         <div class="form-group checkbox">
-            <label><input name="save-as-public" type="checkbox">{# @todo: translate #}Öffentlicher Eintrag</label>
+            <label><input name="save-as-public" type="checkbox">{{ 'mb.core.viewManager.saveAsPublic' | trans }}</label>
         </div>
         {%- endif -%}
     </div>
@@ -20,7 +20,7 @@
         <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
     </div>
     <div class="hidden -js-delete-confirmation-content">
-        <p>{# @todo: translate #}Eintrag löschen?</p>
+        <p>{{ 'mb.core.viewManager.confirmDelete' | trans }}</p>
         <div class="text-nowrap">
             <button type="button" class="btn btn-sm btn-danger -fn-confirm">{{ 'mb.actions.delete' | trans }}</button>
             <button type="button" class="btn btn-sm btn-info -fn-cancel">{{ 'mb.actions.cancel' | trans }}</button>

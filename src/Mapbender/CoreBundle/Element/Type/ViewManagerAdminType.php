@@ -17,25 +17,24 @@ class ViewManagerAdminType extends AbstractType
             $choiceOptions['choices_as_values'] = true;
         }
         $accessChoices = array(
-            // @todo: translate choice labels
-            'Do not show' => '',
-            'Read only' => 'ro',
-            'Allow saving' => 'rw',
+            'mb.core.viewManager.admin.access.none' => '',
+            'mb.core.viewManager.admin.access.ro' => 'ro',
+            'mb.core.viewManager.admin.access.rw' => 'rw',
         );
         $builder
            ->add('publicEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
-               // @todo: supply translatable label
                'choices' => $accessChoices,
                'required' => false,
+               'label' => 'mb.core.viewManager.admin.publicEntries',
            ))
             ->add('privateEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
-                    // @todo: supply translatable label
                 'choices' => $accessChoices,
                 'required' => false,
+                'label' => 'mb.core.viewManager.admin.privateEntries',
             ))
             ->add('allowAnonymousSave', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                // @todo: supply translatable label
                 'required' => false,
+                'label' => 'mb.core.viewManager.admin.allowAnonymousSave',
             ))
         ;
     }

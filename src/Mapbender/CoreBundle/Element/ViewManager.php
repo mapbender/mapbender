@@ -11,14 +11,12 @@ class ViewManager extends Element
 {
     public static function getClassTitle()
     {
-        // @todo: translate me
-        return 'View manager';
+        return 'mb.core.viewManager.class.title';
     }
 
     public static function getClassDescription()
     {
-        // @todo: translate me
-        return 'Stores and restores map state';
+        return 'mb.core.viewManager.class.description';
     }
 
     public function getWidgetName()
