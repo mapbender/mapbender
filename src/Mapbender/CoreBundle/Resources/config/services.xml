@@ -278,9 +278,5 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
-        <service id="mb.element.view_manager.http_handler" class="%mb.element.view_manager.http_handler.class%">
-            <argument type="service" id="templating" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-        </service>
     </services>
 </container>
