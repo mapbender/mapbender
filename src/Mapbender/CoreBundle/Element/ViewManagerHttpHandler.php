@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\MapViewDiff;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,12 +76,11 @@ class ViewManagerHttpHandler
 
         $records = $this->getRepository()->findBy($criteria);
 
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', array(
+        $vars = $this->getGrantsVariables($config) + array(
             'records' => $records,
             'dateFormat' => $this->getDateFormat($request),
-            'savePrivate' => $config['privateEntries'] === 'rw',
-            'savePublic' => $config['publicEntries'] === 'rw',
-        ));
+        );
+        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
         return new Response($content);
     }
 
@@ -104,13 +104,11 @@ class ViewManagerHttpHandler
         $this->em->persist($record);
         $this->em->flush();
 
-        $config = $element->getConfiguration();
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', array(
+        $vars = $this->getGrantsVariables($element->getConfiguration()) + array(
             'record' => $record,
             'dateFormat' => $this->getDateFormat($request),
-            'savePrivate' => $config['privateEntries'] === 'rw',
-            'savePublic' => $config['publicEntries'] === 'rw',
-        ));
+        );
+        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', $vars);
         return new Response($content);
     }
 
@@ -170,5 +168,26 @@ class ViewManagerHttpHandler
             return $token->getUser()->getUsername();
         }
         return null;
+    }
+
+    protected function isAdmin()
+    {
+        $token = $this->tokenStorage->getToken();
+        if ($token && !($token instanceof AnonymousToken)) {
+            $user = $token->getUser();
+            if (\is_object($user) && ($user instanceof User)) {
+                return $user->isAdmin();
+            }
+        }
+        return false;
+    }
+
+    protected function getGrantsVariables($config)
+    {
+        return array(
+            'savePublic' => $config['publicEntries'] === 'rw',
+            'savePrivate' => $config['privateEntries'] === 'rw',
+            'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
+        );
     }
 }
