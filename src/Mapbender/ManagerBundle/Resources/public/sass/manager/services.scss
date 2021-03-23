@@ -130,6 +130,9 @@ fieldset.box {
     }
     .on-off-content{
       background-color: darken($contentColor, 9%);
+      .collectionItem:last-child {
+        margin-bottom: 0;
+      }
     }
     .vendorspecific-content,.on-off-content .on-off-content{
       padding: $space/2 $space/2 $space/2 $space/2;
