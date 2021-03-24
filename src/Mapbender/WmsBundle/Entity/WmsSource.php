@@ -921,9 +921,13 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     public function getDimensions()
     {
         $dimensions = array();
+        $uniqueNames = array();
         foreach ($this->getLayers() as $layer) {
             foreach ($layer->getDimension() as $dimension) {
-                $dimensions[] = $dimension;
+                if (!in_array($dimension->getName(), $uniqueNames)) {
+                    $uniqueNames[] = $dimension->getName();
+                    $dimensions[] = $dimension;
+                }
             }
         }
         return $dimensions;

@@ -110,7 +110,6 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
         $form
             ->add('extent', $extentType, array(
                 'required' => true,
-                'auto_initialize' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
                 ),
@@ -129,22 +128,14 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'multiple' => true,
                 'required' => true,
             ));
-            $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'choices' => $choices,
-                'choices_as_values' => true,
-                'auto_initialize' => false,
-            ));
-        } else {
-            if (count($ranges) > 0 && count(explode('/', $ranges[0])) > 1) {
-                $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                    'auto_initialize' => false,
-                    'required' => false,
-                    'attr' => array(
-                        'readonly' => 'readonly',
-                    ),
-                ));
-            }
         }
+
+        $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'readonly',
+            ),
+        ));
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
