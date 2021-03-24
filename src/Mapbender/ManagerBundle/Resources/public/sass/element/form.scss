@@ -35,11 +35,6 @@
       &:hover {
         background-color: darken($inputBackgroundColor, 10%);
       }
-      .checkbox {
-        // Redistribute padding (default: 7px top only)
-        padding-top: 3px;
-        padding-bottom: 3px;
-      }
     }
   }
   // add margin between consecutive "inline" checkboxes with .left
