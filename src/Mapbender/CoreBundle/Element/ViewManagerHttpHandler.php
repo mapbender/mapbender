@@ -190,7 +190,7 @@ class ViewManagerHttpHandler
     {
         return array(
             'savePublic' => $config['publicEntries'] === ViewManager::ACCESS_READWRITE,
-            'savePrivate' => $config['privateEntries'] === ViewManager::ACCESS_READWRITE,
+            'savePrivate' => !!$config['privateEntries'],
             'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
         );
     }

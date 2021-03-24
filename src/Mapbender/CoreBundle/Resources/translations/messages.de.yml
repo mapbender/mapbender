@@ -297,7 +297,7 @@ mb:
         access.ro: Nur lesen
         access.rw: Speichern erlauben
         publicEntries: Öffentliche Liste
-        privateEntries: Private Liste
+        privateEntries: Private Liste anzeigen
         adminDeleteHint: "Hinweis: Administratoren dürfen immer löschen"
         allowNonAdminDelete: Löschen öffentlicher Einträge erlauben
         allowAnonymousSave: Anonyme Besucher dürfen speichern

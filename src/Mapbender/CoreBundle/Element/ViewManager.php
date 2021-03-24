@@ -59,7 +59,7 @@ class ViewManager extends Element
     {
         return array(
             'publicEntries' => self::ACCESS_READONLY,
-            'privateEntries' => self::ACCESS_READWRITE,
+            'privateEntries' => true,
             'allowAnonymousSave' => false,
             'allowNonAdminDelete' => false,
         );
@@ -69,8 +69,8 @@ class ViewManager extends Element
     {
         $config = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
         return array(
-            'showSaving' => ($config['publicEntries'] === self::ACCESS_READWRITE || $config['privateEntries'] === self::ACCESS_READWRITE),
-            'showListSelector' => !empty($config['publicEntries']) && !empty($config['privateEntries']),
+            'showSaving' => ($config['publicEntries'] === self::ACCESS_READWRITE || $config['privateEntries']),
+            'showListSelector' => !empty($config['publicEntries']) && $config['privateEntries'],
         );
     }
 

@@ -28,8 +28,7 @@ class ViewManagerAdminType extends AbstractType
                'required' => false,
                'label' => 'mb.core.viewManager.admin.publicEntries',
            ))
-            ->add('privateEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
-                'choices' => $accessChoices,
+            ->add('privateEntries', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.privateEntries',
             ))
