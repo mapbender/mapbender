@@ -127,6 +127,9 @@ fieldset.box {
       .inputWrapper, div.dropdown {
         width:200px;
       }
+      .collectionItem .collectionRemove {
+        left: #{80px + $space + 200px};
+      }
     }
     .on-off-content{
       background-color: darken($contentColor, 9%);
