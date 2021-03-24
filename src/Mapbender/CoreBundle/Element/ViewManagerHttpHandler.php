@@ -135,11 +135,17 @@ class ViewManagerHttpHandler
         if (!$id) {
             throw new BadRequestHttpException("Missing id");
         }
-        if (!$this->checkGrant($element, 'delete')) {
-            throw new AccessDeniedHttpException();
-        }
+        /** @var MapViewDiff|null $record */
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
+            if (!$record->getUserId()) {
+                if (!$this->isAdmin()) {
+                    if (($record->getUserId() !== $this->getUserId() || !$this->checkGrant($element, 'delete'))) {
+                        throw new AccessDeniedHttpException();
+                    }
+                }
+            }
+
             $this->em->remove($record);
             $this->em->flush();
         }
@@ -219,7 +225,7 @@ class ViewManagerHttpHandler
             default:
                 false;
             case 'delete':
-                return false;
+                return $grantsVariables['allowDelete'];
             case 'savePublic':
                 return $grantsVariables['savePublic'];
             case 'savePrivate':
