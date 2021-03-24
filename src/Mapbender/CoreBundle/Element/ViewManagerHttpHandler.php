@@ -189,8 +189,8 @@ class ViewManagerHttpHandler
     protected function getGrantsVariables($config)
     {
         return array(
-            'savePublic' => $config['publicEntries'] === 'rw',
-            'savePrivate' => $config['privateEntries'] === 'rw',
+            'savePublic' => $config['publicEntries'] === ViewManager::ACCESS_READWRITE,
+            'savePrivate' => $config['privateEntries'] === ViewManager::ACCESS_READWRITE,
             'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
         );
     }

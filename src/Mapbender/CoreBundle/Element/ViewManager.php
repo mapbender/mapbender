@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ViewManager extends Element
 {
+    const ACCESS_READWRITE = 'rw';
+    const ACCESS_READONLY = 'ro';
+
     public static function getClassTitle()
     {
         return 'mb.core.viewManager.class.title';
@@ -55,8 +58,8 @@ class ViewManager extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'publicEntries' => 'ro',
-            'privateEntries' => 'rw',
+            'publicEntries' => self::ACCESS_READONLY,
+            'privateEntries' => self::ACCESS_READWRITE,
             'allowAnonymousSave' => false,
             'allowNonAdminDelete' => false,
         );
@@ -66,7 +69,7 @@ class ViewManager extends Element
     {
         $config = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
         return array(
-            'showSaving' => ($config['publicEntries'] === 'rw' || $config['privateEntries'] === 'rw'),
+            'showSaving' => ($config['publicEntries'] === self::ACCESS_READWRITE || $config['privateEntries'] === self::ACCESS_READWRITE),
             'showListSelector' => !empty($config['publicEntries']) && !empty($config['privateEntries']),
         );
     }

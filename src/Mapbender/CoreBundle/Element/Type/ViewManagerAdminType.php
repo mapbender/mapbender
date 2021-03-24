@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 
+use Mapbender\CoreBundle\Element\ViewManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -18,8 +19,8 @@ class ViewManagerAdminType extends AbstractType
         }
         $accessChoices = array(
             'mb.core.viewManager.admin.access.none' => '',
-            'mb.core.viewManager.admin.access.ro' => 'ro',
-            'mb.core.viewManager.admin.access.rw' => 'rw',
+            'mb.core.viewManager.admin.access.ro' => ViewManager::ACCESS_READONLY,
+            'mb.core.viewManager.admin.access.rw' => ViewManager::ACCESS_READWRITE,
         );
         $builder
            ->add('publicEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
