@@ -21,9 +21,7 @@
     {{ form_row(dim.name) }}
     {{ form_row(dim.units) }}
     {{ form_row(dim.unitSymbol) }}
-    {% if dim.default is defined %}
-        {{ form_row(dim.default) }}
-    {% endif %}
+    {{ form_row(dim.default) }}
     {{ form_row(dim.extent) }}
     {% if dim.extentRanges is defined %}
         {{ form_row(dim.extentRanges) }}
