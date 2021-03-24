@@ -1,13 +1,14 @@
 .elementFormLayerTree {
-  /** @todo: remove float from checkbox_widget block globally */
-  .checkWrapper.left {
-    float: none;
+  .theme-settings {
+    user-select: none;
   }
-    .theme-settings {
-      user-select: none;
-      > span {
-        display: inline-block;
-        min-width: 1.25em;
-      }
-    }
+  table .form-group {
+    margin-bottom: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  table .checkbox {
+    padding-top: 0;
+    min-height: initial;
+  }
 }
