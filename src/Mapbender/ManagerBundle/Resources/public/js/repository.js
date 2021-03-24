@@ -10,7 +10,7 @@ $(function() {
         var rowCount = checkboxes.length;
         var checkedCount = checkboxes.filter(':checked').length;
         rootCb.prop('checked', rowCount === checkedCount);
-        rootCb.prop('indeterminate', rowCount && rowCount !== checkedCount);
+        rootCb.prop('indeterminate', checkedCount && rowCount !== checkedCount);
     }
     // toggle all permissions
     function toggleAllStates(groupId, state, $scope) {
