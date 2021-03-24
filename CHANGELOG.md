@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ a941f6c0c
+## dev-release/3.0.7 @ 16fa7349b
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
