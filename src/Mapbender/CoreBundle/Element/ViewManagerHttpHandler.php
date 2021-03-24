@@ -211,11 +211,12 @@ class ViewManagerHttpHandler
 
     public function getGrantsVariables($config)
     {
-        $saveDefault = $this->isCurrentUserAnonymous() ? $config['allowAnonymousSave'] : true;
+        $isAdmin = $this->isAdmin();
+        $saveDefault = $isAdmin || $this->isCurrentUserAnonymous() ? $config['allowAnonymousSave'] : true;
         return array(
-            'savePublic' => $saveDefault && $config['publicEntries'] === ViewManager::ACCESS_READWRITE,
-            'savePrivate' => $saveDefault && $config['privateEntries'],
-            'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
+            'savePublic' => $isAdmin || ($saveDefault && $config['publicEntries'] === ViewManager::ACCESS_READWRITE),
+            'savePrivate' => $isAdmin || ($saveDefault && $config['privateEntries']),
+            'allowDelete' => $isAdmin || $config['allowNonAdminDelete'],
         );
     }
 
