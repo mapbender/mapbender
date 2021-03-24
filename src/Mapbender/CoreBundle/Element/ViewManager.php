@@ -68,18 +68,28 @@ class ViewManager extends Element
     public function getFrontendTemplateVars()
     {
         $config = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
+        $grants = $this->getHttpHandler()->getGrantsVariables($config);
+
         return array(
-            'showSaving' => ($config['publicEntries'] === self::ACCESS_READWRITE || $config['privateEntries']),
+            'showSaving' => $grants['savePublic'] || $grants['savePrivate'],
             'showListSelector' => !empty($config['publicEntries']) && $config['privateEntries'],
         );
     }
 
     public function handleHttpRequest(Request $request)
     {
-        /** @var ViewManagerHttpHandler $handler */
-        $handler = $this->container->get('mb.element.view_manager.http_handler');
         // Extend with defaults
         $this->entity->setConfiguration($this->entity->getConfiguration() + $this->getDefaultConfiguration());
-        return $handler->handleHttpRequest($this->entity, $request);
+        return $this->getHttpHandler()->handleHttpRequest($this->entity, $request);
+    }
+
+    /**
+     * @return ViewManagerHttpHandler
+     */
+    public function getHttpHandler()
+    {
+        /** @var ViewManagerHttpHandler $handler */
+        $handler = $this->container->get('mb.element.view_manager.http_handler');
+        return $handler;
     }
 }

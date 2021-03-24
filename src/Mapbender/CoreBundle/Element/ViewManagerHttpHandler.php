@@ -209,11 +209,12 @@ class ViewManagerHttpHandler
         return false;
     }
 
-    protected function getGrantsVariables($config)
+    public function getGrantsVariables($config)
     {
+        $saveDefault = $this->isCurrentUserAnonymous() ? $config['allowAnonymousSave'] : true;
         return array(
-            'savePublic' => $config['publicEntries'] === ViewManager::ACCESS_READWRITE,
-            'savePrivate' => !!$config['privateEntries'],
+            'savePublic' => $saveDefault && $config['publicEntries'] === ViewManager::ACCESS_READWRITE,
+            'savePrivate' => $saveDefault && $config['privateEntries'],
             'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
         );
     }
