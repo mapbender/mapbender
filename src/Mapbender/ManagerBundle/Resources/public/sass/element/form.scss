@@ -46,6 +46,10 @@
   .left .labelCheck {
     margin-right: $space;
   }
+  .left .checkbox {
+    display: inline-block;
+    margin-right: $space;
+  }
 }
 
 .wideLabelForm {

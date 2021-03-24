@@ -15,9 +15,10 @@
             </div>
         </{{ _tagName }}>
     {% else %}
-        <div>
-            {{ form_widget(form) }}
-            {{ form_label(form) }}
+        {# @todo: figure out how to use original block declaration #}
+        <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
+          {{- block('checkbox_widget') -}}
+          {{- block('form_errors_inline') -}}
         </div>
     {% endif %}
 {% endblock %}
