@@ -138,7 +138,8 @@ class ViewManagerHttpHandler
         /** @var MapViewDiff|null $record */
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
-            if (!$record->getUserId()) {
+            $isPrivate = $record->getUserId() || $record->getIsAnon() && $this->isCurrentUserAnonymous();
+            if (!$isPrivate) {
                 if (!$this->isAdmin()) {
                     if (($record->getUserId() !== $this->getUserId() || !$this->checkGrant($element, 'delete'))) {
                         throw new AccessDeniedHttpException();
