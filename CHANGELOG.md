@@ -1,8 +1,10 @@
-## dev-master @ fba073e70
+## dev-master @ adde6854d
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
 * Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320]((https://github.com/mapbender/mapbender/issues/1320))
+* Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
+* Fix same Wms dimension appearing multiple times in new Wms instance if endorsed by multiple layers
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
