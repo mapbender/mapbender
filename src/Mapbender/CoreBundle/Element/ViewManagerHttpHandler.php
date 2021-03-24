@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\MapViewDiff;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -118,6 +119,9 @@ class ViewManagerHttpHandler
         if (!$id) {
             throw new BadRequestHttpException("Missing id");
         }
+        if (!$this->checkGrant($element, 'delete')) {
+            throw new AccessDeniedHttpException();
+        }
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
             $this->em->remove($record);
@@ -189,5 +193,20 @@ class ViewManagerHttpHandler
             'savePrivate' => $config['privateEntries'] === 'rw',
             'allowDelete' => $config['allowNonAdminDelete'] || $this->isAdmin(),
         );
+    }
+
+    protected function checkGrant(Entity\Element $element, $operation)
+    {
+        $grantsVariables = $this->getGrantsVariables($element->getConfiguration());
+        switch ($operation) {
+            default:
+                false;
+            case 'delete':
+                return false;
+            case 'savePublic':
+                return $grantsVariables['savePublic'];
+            case 'savePrivate':
+                return $grantsVariables['savePrivate'];
+        }
     }
 }
