@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
@@ -63,21 +65,33 @@ class ViewManagerHttpHandler
     protected function getListingResponse(Entity\Element $element, Request $request)
     {
         $config = $element->getConfiguration();
+        $showPublic = !!$config['publicEntries'];
+        $showPrivate = !!$config['privateEntries'];
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $element->getApplication()->getSlug()));
         $isAnon = $this->isCurrentUserAnonymous();
-        $showPublic = !!$config['publicEntries'] || ($isAnon && $config['privateEntries']);
-        $showPrivate = !!$config['privateEntries'] && !$isAnon;
-        $criteria = array(
-            'applicationSlug' => $element->getApplication()->getSlug(),
-        );
+
         if ($showPublic && !$showPrivate) {
-            $criteria['userId'] = null;
-        } elseif ($showPrivate && !$showPublic) {
-            $criteria['userId'] = $this->getUserId();
+            $criteria->andWhere(Criteria::expr()->eq('userId', null));
         } else {
-            $criteria['userId'] = array($this->getUserId(), null);
+            if ($isAnon) {
+                $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
+                    Criteria::expr()->gt('isAnon', 0),
+                    Criteria::expr()->eq('userId', null),
+                ));
+            } else {
+                $privateExpression = Criteria::expr()->eq('userId', $this->getUserId());
+            }
+            if ($showPrivate && !$showPublic) {
+                $criteria->andWhere($privateExpression);
+            } else {
+                $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, array(
+                    $privateExpression,
+                    Criteria::expr()->eq('userId', null),
+                )));
+            }
         }
 
-        $records = $this->getRepository()->findBy($criteria);
+        $records = $this->getRepository()->matching($criteria);
 
         $vars = $this->getGrantsVariables($config) + array(
             'records' => $records,
@@ -135,6 +149,7 @@ class ViewManagerHttpHandler
     protected function updateRecord(MapviewDiff $record, Request $request)
     {
         $record->setUserId($request->request->get('savePublic') ? null : $this->getUserId());
+        $record->setIsAnon($this->isCurrentUserAnonymous());
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
         $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));

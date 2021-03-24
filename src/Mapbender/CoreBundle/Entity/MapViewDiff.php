@@ -37,6 +37,12 @@ class MapViewDiff
     protected $userId;
 
     /**
+     * @var bool
+     * @ORM\Column(type="integer", name="is_anon", nullable=false, options={"default"="0"})
+     */
+    protected $isAnon = 0;
+
+    /**
      * Date and time of last modification
      *
      * @var \DateTime|null
@@ -116,6 +122,22 @@ class MapViewDiff
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setIsAnon($value)
+    {
+        $this->isAnon = $value ? 1 : 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsAnon()
+    {
+        return !!$this->isAnon;
     }
 
     /**
