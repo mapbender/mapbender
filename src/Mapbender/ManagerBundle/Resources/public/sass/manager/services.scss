@@ -160,9 +160,9 @@ fieldset.box {
 .instanceTable{
   margin-top:$space;
   margin-bottom:$space;
-  .checkWrapper.left {
-    /** @todo: remove float from checkbox_widget block globally */
-    float: none;
+  .checkbox {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .checkboxColumn{
@@ -192,14 +192,6 @@ fieldset.box {
     }
   }
 
-  tbody{
-    .checkboxColumn {
-      .checkWrapper {
-        display: inline-block;
-        float: none;
-      }
-    }
-  }
   .level0 .itemType{margin-left:4px;}
   .level1 .itemType{margin-left:10px;}
   .level2 .itemType{margin-left:16px;}
