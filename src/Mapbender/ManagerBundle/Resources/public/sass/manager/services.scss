@@ -142,6 +142,13 @@ fieldset.box {
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
+      .form-group {
+        margin-bottom: 0;
+      }
+      .checkbox {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
     }
     .blockgroup {
       margin-bottom: 1em;
