@@ -73,6 +73,8 @@ class ViewManagerHttpHandler
             $criteria['userId'] = null;
         } elseif ($showPrivate && !$showPublic) {
             $criteria['userId'] = $this->getUserId();
+        } else {
+            $criteria['userId'] = array($this->getUserId(), null);
         }
 
         $records = $this->getRepository()->findBy($criteria);
