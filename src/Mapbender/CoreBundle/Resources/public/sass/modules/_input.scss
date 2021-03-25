@@ -22,8 +22,8 @@
     border:1px solid lighten($ciColor, 20%);
   }
   &::placeholder {
-    color: mix($inputBackgroundColor, $inputForegroundColor, 50%);
-    opacity: 1;   // counter Firefox default opacity
+    color: inherit;
+    opacity: 0.55;
   }
 }
 textarea.input {
