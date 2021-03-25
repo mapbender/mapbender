@@ -1,7 +1,6 @@
 .input, .dropdown {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
-  font-size: 0.85rem;
 }
 .input {
   line-height: $lineHeight;

@@ -35,10 +35,14 @@ h4, .h4, .bigText {
   font-size:$fontSize;
   color:$ciColor;
 }
-.labelInput, .labelText, .labelCheck {
+.labelText, .labelCheck {
   @extend .smallText;
   user-select: none;
 }
+.labelInput, .inputWrapper, .dropdown {
+  font-size: 0.85rem;
+}
+
 .labelInput, .labelCheck {
   color:$middleFontColor;
 }
