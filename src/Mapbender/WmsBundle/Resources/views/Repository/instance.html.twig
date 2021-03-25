@@ -26,7 +26,7 @@
         <div class="blockgroup">
           <!-- todo: the header should be part of the "dimensions" input widget -->
           <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-          <div id="dimension-content" class="on-off-content hidden form-horizontal">
+          <div id="dimension-content" class="on-off-content hidden">
               {% for dim in form.dimensions %}
                   {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
               {% endfor %}
@@ -36,7 +36,7 @@
     <div class="blockgroup">
       <!-- todo: the header should be part of the "vendorspecifics" input widget -->
       <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
-      <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden form-horizontal">
+      <div id="vendorspecific-content" class="on-off-content hidden form-horizontal">
           {{ form_widget(form.vendorspecifics) }}
       </div>
     </div>
