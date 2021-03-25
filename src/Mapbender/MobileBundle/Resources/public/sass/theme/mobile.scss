@@ -32,7 +32,6 @@
   }
   @include border-radius($radius);
 }
-
 /* -------------------------------------------------------------------- POPUP */
 .overlay{
   user-select: none;
@@ -162,10 +161,6 @@
   @include absolute(0 0 0 0);
 }
 .contentPane{@include absolute(0 0 0 0);}
-.dropdown{
-  text-align: left;
-  min-width: 200px;
-}
 
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper {
