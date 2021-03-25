@@ -47,24 +47,15 @@ body {
     margin-bottom: 5px;
     position: relative;
   }
-
   label {
-    font-size: 11px;
     color: #707070;
-    text-shadow: 0px 1px 0px #fff;
   }
-
-  textarea,
-  select,
-  input[type="text"],
-  input[type="password"],
-  input[type="email"],
-  input[type="number"],
-  input[type="file"] {
-    font-size: 11px;
+  label, .form-control {
+    font-size: 11px
+  }
+  .form-control {
     border-radius: 0;
   }
-
   hr {
     display: block;
     clear: both;

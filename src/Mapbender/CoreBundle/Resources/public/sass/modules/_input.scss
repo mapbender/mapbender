@@ -1,15 +1,17 @@
 .input, .dropdown {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
-  font-size: 0.85rem;
 }
+.input, .inputWrapper select {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .input {
   line-height: $lineHeight;
   &:not(textarea) {
     height: $inputHeight;
   }
-  padding-left: 5px;
-  padding-right: 5px;
   background-color: $inputBackgroundColor;
   &[disabled] {
     background: darken($inputBackgroundColor, 10%)
@@ -42,7 +44,7 @@ textarea.input {
 }
 
 .inputWrapper{
-  .input, > select {
+  .input, select {
       width: 100%;
   }
 }
