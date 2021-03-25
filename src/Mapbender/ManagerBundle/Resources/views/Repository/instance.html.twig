@@ -32,9 +32,8 @@
     <div class="contentTitle">
         <h1>
           {{ _h1_text | default(title) }}
-          <div class="clear"></div>
+            <div class="underlineTitle"></div>
         </h1>
-        <div class="underlineTitle"></div>
         <div class="container-filter">
           <a class="btn btn-default" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>
         </div>

@@ -39,8 +39,7 @@
           <div class="container content">
             <div class="innerContainer">
               {% block heading %}
-                <h1>{{ block('title') }}</h1>
-                <div class="underlineTitle"></div>
+                <h1 class="contentTitle">{{ block('title') }}<div class="underlineTitle"></div></h1>
                 <br>
                 <div class="top">
                 {% for key, flash in app.session.bag('flashes').all() %}
