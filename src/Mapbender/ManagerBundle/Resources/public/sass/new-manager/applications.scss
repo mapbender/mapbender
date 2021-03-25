@@ -151,9 +151,13 @@ body {
   justify-content: center;
 
   .innerContainer {
-    width: 90%;
+    width: 70%;
+    @media (max-width: 1300px) {
+      & {
+        width: 90%;
+      }
+    }
     margin-bottom:10%;
-
 
     h1 {
     font-size: 2.9em;
@@ -394,11 +398,5 @@ top: 7em;
     
   }
 }
-
-  .innerContainer{
-    padding :0 10%;
-  }
-
-
 }
 
