@@ -13,14 +13,12 @@ select.numeric {
   color: $inputForegroundColor;
   border: solid 1px lighten($thirdColor, 15%);
   padding-right: $space + $space/2;
-  background-color: $inputBackgroundColor;
   &.numeric {
     text-align: right;
   }
 
   .dropdownValue, .dropdownList {
     user-select: none;
-    line-height: $inputHeight;
   }
   .dropdownValue {
     min-height: $inputHeight;   // =line-height; fixes visual collapse with empty initial value
@@ -32,6 +30,7 @@ select.numeric {
     }
   }
   .dropdownList {
+    line-height: $inputHeight;
     background-color: inherit;
     margin-left: 0 !important;  // defeat icon follower margin inside .toolBar
     position: absolute;

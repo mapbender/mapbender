@@ -1,33 +1,37 @@
 .input, .dropdown {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
+  background-color: $inputBackgroundColor;
 }
 .input, .inputWrapper select {
   padding-left: 5px;
   padding-right: 5px;
 }
 
+.input:not(textarea), .dropdown {
+  height: $inputHeight;
+}
+.dropdown {
+  line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
+}
 .input {
-  line-height: $lineHeight;
-  &:not(textarea) {
-    height: $inputHeight;
-  }
-  background-color: $inputBackgroundColor;
   &[disabled] {
     background: darken($inputBackgroundColor, 10%)
   }
 
-  &:focus{
-    outline:none;
-    border:1px solid lighten($ciColor, 20%);
-  }
   &::placeholder {
-    color: mix($inputBackgroundColor, $inputForegroundColor, 50%);
-    opacity: 1;   // counter Firefox default opacity
+    color: inherit;
+    opacity: 0.55;
   }
 }
 textarea.input {
    min-height: 150px;
+}
+.input, .inputWrapper select {
+  &:focus{
+    outline:none;
+    border:1px solid lighten($ciColor, 20%);
+  }
 }
 
 .inputWrapper, .dropdown {
