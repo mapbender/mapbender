@@ -15,7 +15,6 @@
   line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
 }
 .input {
-  line-height: $lineHeight;
   &[disabled] {
     background: darken($inputBackgroundColor, 10%)
   }
