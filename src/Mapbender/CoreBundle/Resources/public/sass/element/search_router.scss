@@ -1,13 +1,8 @@
-$searchRouterInputWidth: 100%;
 .mb-element-searchrouter {
   font-size: 11px;
 
   .dropdown, .inputWrapper {
-    width: $searchRouterInputWidth;
     margin-bottom: $space/2;
-  }
-  .ui-helper-hidden-accessible {
-    display: none;
   }
   .search-results {
     overflow: auto;
@@ -28,7 +23,6 @@ $searchRouterInputWidth: 100%;
         border-bottom: 1px solid #d3d3d3;
         &:hover {
           color: $ciColor;
-          background-color: $contentColor;
         }
         td {
           padding-left: 2px;
@@ -50,11 +44,7 @@ $searchRouterInputWidth: 100%;
   }
   th {
     @extend .subTitle;
-    text-align: left;
     padding-right: 3px;
-  }
-  td {
-    padding-right: $space/2;
   }
   .result-counter {
     text-align: right;
