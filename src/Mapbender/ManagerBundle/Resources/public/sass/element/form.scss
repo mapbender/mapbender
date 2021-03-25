@@ -6,9 +6,6 @@
   textarea {
     resize: none;
   }
-  select {
-    padding-left: 5px;
-  }
   .inputWrapper, .dropdown {
     width: calc(100% - #{$labelWidth + $space});
   }
