@@ -36,10 +36,6 @@ body {
 
 .listFilterBoxes {
   margin-top: 10%;
-  transform: translateY(4em);
-  a {
-    color: inherit;
-  }
 }
 
 
@@ -48,7 +44,6 @@ body {
   padding-top: 3px;
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
   padding: 0.8em;
-  /* border-bottom: 1px solid #121212; */
 
   .navbar-brand {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
@@ -286,9 +281,8 @@ body {
 
 
 .link-button-new {
-  transform: translateY(7em);
+  margin-top: 7em;
   a {
-    color: #121212;
     font-size: 1.6em;
   }
 
