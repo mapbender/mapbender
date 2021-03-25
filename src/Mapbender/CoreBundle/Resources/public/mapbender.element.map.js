@@ -18,9 +18,28 @@
         /**
          * Creates the map widget
          */
-        _create: function(){
+        _create: function() {
+            delete this.options.dpi;
             var self = this;
+            Object.defineProperty(this.options, 'dpi', {
+                get: function() {
+                    return self.detectDpi_();
+                }
+            });
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if (!this.options.extents.start && !this.options.extents.max) {
+                throw new Error("Incomplete map configuration: no start extent");
+            }
+            if (!this.options.extents.start) {
+                this.options.extents.start = this.options.extents.max.slice();
+            }
+            if (!this.options.srs) {
+                throw new Error("Invalid map configuration: missing srs");
+            }
+            if (!this.validateSrsOption(this.options.srs)) {
+                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + this.options.srs);
+            }
+
             this.model = Mapbender.mapEngine.mapModelFactory(this);
             // HACK: place the model instance globally at Mapbender.Model
             if (window.Mapbender.Model) {
@@ -79,7 +98,24 @@
          */
         zoomToFullExtent: function() {
             this.model.zoomToFullExtent();
-        }
+        },
+        /**
+         * @param {String} srsName
+         * @return {boolean}
+         */
+        validateSrsOption: function(srsName) {
+            return (typeof srsName === 'string') && /^EPSG:\d+$/.test(srsName);
+        },
+        detectDpi_: function() {
+            // Auto-calculate dpi from device pixel ratio, to maintain reasonable canvas quality
+            // see https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
+            // Avoid calculating dpi >= 1.5*96dpi to avoid pushing (Mapproxy) caches into a resolution
+            // with too low label font size.
+            // Also avoid calculating less than 96dpi, to never perform client-side upscaling of Wms images
+            var dpr = window.devicePixelRatio || 1;
+            return 96. * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
+        },
+        _comma_dangle_dummy: null
     });
 
 })(jQuery);

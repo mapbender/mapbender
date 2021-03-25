@@ -19,7 +19,9 @@
 }
 .fom-popup {
   .popupButtons{
-    @include absolute('' $space $space 0);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 .mapbender-popup {
@@ -59,6 +61,9 @@
 .fom-popup {
   .popupContent {
     padding:0 20px;
+  }
+  .popupButtons {
+    padding: 0 20px 20px 20px;
   }
 }
 .popup {
@@ -168,19 +173,3 @@
   @include absolute(70px 0 $space*3 0);
 }
 
-/*
-   This is the original Bootstrap 4 declaration for a gutter-less grid.
-   See https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
-   We haven't universally adopted Bootstrap 4 yet, but this should remain compatible
-   if / when we do.
- */
-.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-
-  > .col,
-  > [class*="col-"] {
-    padding-right: 0;
-    padding-left: 0;
-  }
-}

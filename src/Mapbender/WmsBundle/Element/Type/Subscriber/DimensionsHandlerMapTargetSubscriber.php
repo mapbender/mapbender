@@ -29,19 +29,22 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
     public function preSetData(FormEvent $event)
     {
         $mapId = $event->getForm()->get('target')->getData();
-        if ($mapId && $dimensions = $this->collectDimensions($this->application, $mapId)) {
-            $event->getForm()
-                ->add('dimensionsets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
-                    'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'auto_initialize' => false,
-                    'entry_options' => array(
-                        'dimensions' => $dimensions,
-                    ),
-                ))
-            ;
+        if ($mapId) {
+            $dimensions = $this->collectDimensions($this->application, $mapId);
+        } else {
+            $dimensions = array();
         }
+        $event->getForm()
+            ->add('dimensionsets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
+                'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
+                'allow_add' => !!count($dimensions),
+                'allow_delete' => true,
+                'auto_initialize' => false,
+                'entry_options' => array(
+                    'dimensions' => $dimensions,
+                ),
+            ))
+        ;
     }
 
     /**
@@ -53,7 +56,7 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
     {
         $dimensions = array();
         foreach ($this->getMapLayersets($application, $mapId) as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances(true) as $instance) {
                 if ($instance->getEnabled() && ($instance instanceof WmsInstance)) {
                     foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
                         /** @var DimensionInst $dimension */

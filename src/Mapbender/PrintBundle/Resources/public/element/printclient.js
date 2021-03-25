@@ -619,7 +619,12 @@
         },
         _collectOverview: function() {
             if (this.overviewWidget_ && typeof (this.overviewWidget_.getPrintData) === 'function') {
-                return this.overviewWidget_.getPrintData();
+                try {
+                    return this.overviewWidget_.getPrintData();
+                } catch (e) {
+                    console.warn("Error collecting overview print data, skipping", e);
+                    return null;
+                }
             } else {
                 return null;
             }
@@ -859,8 +864,9 @@
             $('.tab-container', this.element).tabs({
                 active: 0,
                 classes: {
-                    // inherit colors etc from .tabContainerAlt.tab onto ui-tabs-tab
-                    "ui-tabs-tab": "tab"
+                    "ui-tabs-nav": "btn-group btn-group-sm list-unstyled",
+                    "ui-tabs-tab": "btn btn-default",
+                    "ui-tabs-active": "active"
                 },
                 activate: function (event, ui) {
                     if (ui.newPanel.hasClass('job-list')) {

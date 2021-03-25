@@ -328,13 +328,15 @@ class Importer extends RefreshableSourceLoader
     private function updateInstanceDimensions(WmsInstance $instance)
     {
         $dimensionsOld = $instance->getDimensions();
-        $sourceDimensions = $instance->getSource()->dimensionInstancesFactory();
+        $sourceDimensions = $instance->getSource()->getDimensions();
         $dimensions = array();
         foreach ($sourceDimensions as $sourceDimension) {
             $newDimension = null;
             foreach ($dimensionsOld as $oldDimension) {
-                if ($sourceDimension->compare($oldDimension)) {
+                if ($sourceDimension->getName() === $oldDimension->getName()) {
+                    // @todo: reset extent on unit change, clamp extent to updated values
                     /* replace attribute values */
+                    $oldDimension->setUnits($sourceDimension->getUnits());
                     $oldDimension->setUnitSymbol($sourceDimension->getUnitSymbol());
                     $oldDimension->setNearestValue($sourceDimension->getNearestValue());
                     $oldDimension->setCurrent($sourceDimension->getCurrent());

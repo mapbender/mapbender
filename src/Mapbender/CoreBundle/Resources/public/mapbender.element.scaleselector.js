@@ -37,6 +37,8 @@
 
             this._updateScale();
             initDropdown.call(this.$select.parent());
+            // Do it again after initDropdown (which clears the value display if the current text is not also an option text)
+            this._updateScale();
 
             $(document).on('mbmapzoomchanged', function(e, data) {
                 if (data.mbMap === self.mbMap) {

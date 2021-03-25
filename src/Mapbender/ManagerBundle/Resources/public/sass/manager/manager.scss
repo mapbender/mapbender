@@ -73,30 +73,17 @@ div.contentTitle {
 
 // ------------------------------------------------------------------------ PAGE
 .page{
-  top:-$bannerHeight;
   margin: 0 auto;
   width:$pageWidth;
 }
 .popupContainer,
 .page{
   position:relative;
-  @media (min-width: 992px){
-    .container {
-      width: auto;
-    }
-  }
-  @media (min-width: 768px){
-    .container {
-      width: auto;
-    }
-  }
 
   // Overrule Bootstrap (very specific selectors) on padding top / bottom
   // Keep left / right padding (8px from Bootstrap .table rules)
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
-    padding-top: $space/4;
-    padding-bottom: $space/4;
   }
 }
 .iconBig, .iconSmall {
@@ -132,6 +119,11 @@ div.contentTitle {
     border-bottom:solid 1px $firstColor;
     background:url($imageBasePath + "/line.png");
   }
+}
+
+// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
+.head + .page {
+  margin-top: -$bannerHeight;
 }
 
 .account-bar-wrap {
@@ -178,10 +170,13 @@ div.contentTitle {
   }
 }
 
-
+.leftPane, .rightPane {
+  display: inline-block;
+}
 .rightPane {
   width: $contentPaneWidth;
-  @include absolute(0 0 '' $navWidth);
+  position: absolute;
+  top: 0;
   .top {
     height: $space * 6;
   }
@@ -241,37 +236,11 @@ ul.dropdownList{
     }
 
     form {
-
       &:after{
         content: "";
         display: block;
         visibility: hidden;
         clear: both;
-      }
-
-      label.labelInput {
-        margin: 0;
-      }
-      .dropdown{
-        width: 100%;
-      }
-      .inputWrapper{
-        width: 100%;
-        textarea,
-        input[type="password"],
-        input[type="number"],
-        input[type="email"],
-        input[type="text"]{
-          width: 100%;
-        }
-      }
-      select[multiple="multiple"]{
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      input[type='submit']{
-        min-width: 20px;
       }
     }
 
@@ -302,20 +271,12 @@ label[for^="inputFilter"] {
   float: none;
 }
 
-// Temporary hacks to circumvent FOM markup expecting a margin-bottom on the listFilterInput
-// All occurrences of listFilterInput in FOM markup are preceded by a table, either immediately, or
-// with a (redundant) div.clearContainer between them
-.listFilterInput ~ table {
-  margin-top: 1.5 * $space;
-}
-
-
-#addElmPermission {
-  // Link is outside of element permission markup, but want to display as an ~overlay top right
-  position: relative;
-  top: 30px;
+#listFilterPermission {
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
+  & ~ * .collectionAdd {
+    display: none;
+  }
   & + form {
     .collectionAdd, .labelInput.required {
       display: none;
@@ -324,32 +285,12 @@ label[for^="inputFilter"] {
 }
 
 .permissionsTable{
-  tr {
-    border-bottom: solid 1px darken($contentColor, 10%);
+  tr{
     &.new{
       td:first-child {
         color: green;
       }
       background-color: #f0ffed;
-    }
-
-  }
-  tbody .labelInput {
-    // Undo .labelInput completely; @todo: fix FOM markup to not use labelInput
-    margin: 0;
-    display: initial;
-    color: inherit;
-  }
-
-  th, td {
-    padding:5px 0;
-  }
-  td{
-    .input{display:none;}
-    .iconGroup:before, .iconUser:before{
-      display: inline-block;
-      text-align: center;
-      width: 1.5em;
     }
   }
   .tagbox {
@@ -378,46 +319,6 @@ label[for^="inputFilter"] {
         background-color: #FF702A;
       }
     }
-    input {
-      display: none;
-    }
-  }
-}
-#elementSecurity {
-  // Prevent sizeless collection add icon from overflowing the sized content
-  // @todo: fix icon integration in FOM
-  min-height: 150px;
-  .permissionsTable {
-    thead th:last-child {
-      // Expand cell to contain the sizeless collection add icon
-      // @todo: fix icon integration in FOM
-      min-width: 32px;
-    }
-  }
-}
-
-.tableGroupsAndUsers{
-  border:{
-    top:solid 3px $firstColor;
-    left:solid 1px $thirdColor;
-    right:solid 1px $thirdColor;
-    bottom:solid 1px $thirdColor;
-  }
-  @include border-bottom-radius($radius);
-}
-
-.form-horizontal {
-  // transitional support for legacy form markup inside bootstrap .form-horizontal
-  // NOTE: deliberately no rules for bootstrap .form-group, .form-control etc
-  .labelInput {
-    width: 50% !important;  // defeat super-sepcific ".contentPane > .content form .labelInput" rule
-    margin-right: 4%;
-  }
-  .inputWrapper, .dropdown {
-    width: 45% !important;    // defeat super-sepcific ".contentPane > .content form .inputWrapper" rule
-  }
-  .dropdown {
-    display: inline-block;
   }
 }
 

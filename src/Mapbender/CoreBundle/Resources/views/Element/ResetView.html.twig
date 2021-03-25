@@ -1,0 +1,3 @@
+{# Generate same markup as control button, but predefine some (not configurable) expected variables #}
+{% set _config = configuration | merge({icon: 'iconReset', group: null}) %}
+{% include 'MapbenderCoreBundle:Element:control_button.html.twig' with {configuration: _config } %}

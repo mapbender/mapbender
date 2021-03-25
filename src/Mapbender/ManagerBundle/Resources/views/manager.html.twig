@@ -2,12 +2,14 @@
 
 {% block css %}
   <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
+  <link rel="stylesheet" href="{{ asset('components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}" />
 {% endblock %}
 
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
+  <script type="text/javascript" src="{{ asset('components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}

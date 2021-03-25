@@ -5,6 +5,17 @@
  * @property {Number|null} maxResolution
  * @property {string} url
  */
+/**
+ * @typedef {Object} SourceSettings
+ * @property {Number} opacity
+ * @property {Array<String>} selectedIds
+ */
+/**
+ * @typedef {Object} SourceSettingsDiff
+ * @property {Number} [opacity]
+ * @property {Array<String>} [activate]
+ * @property {Array<String>} [deactivate]
+ */
 
 window.Mapbender = Mapbender || {};
 
@@ -57,8 +68,24 @@ window.Mapbender.Layerset = (function() {
     Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Layerset.prototype, {
         constructor: Layerset,
+        getId: function() {
+            return this.id;
+        },
         getSelected: function() {
             return this.selected;
+        },
+        setSelected: function(state) {
+            this.selected = !!state;
+        },
+        getSettings: function() {
+            return {
+                selected: this.getSelected()
+            };
+        },
+        applySettings: function(settings) {
+            var dirty = settings.selected !== this.selected;
+            this.setSelected(settings.selected);
+            return dirty;
         }
     });
     return Layerset;
@@ -72,11 +99,13 @@ window.Mapbender.Source = (function() {
         }
         this.type = definition.type;
         this.configuration = definition.configuration;
+        this.wmsloader = definition.wmsloader;
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
         this.children = this.configuration.children;
+        this.configuredSettings_ = this.getSettings();
     }
     Source.typeMap = {};
     /**
@@ -93,12 +122,22 @@ window.Mapbender.Source = (function() {
     Source.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Source.prototype, {
         constructor: Source,
-        createNativeLayers: function(srsName) {
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
             console.error("Layer creation not implemented", this);
             throw new Error("Layer creation not implemented");
         },
-        initializeLayers: function(srsName) {
-            this.nativeLayers = this.createNativeLayers(srsName);
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        initializeLayers: function(srsName, mapOptions) {
+            this.nativeLayers = this.createNativeLayers(srsName, mapOptions);
             return this.nativeLayers;
         },
         getActive: function() {
@@ -113,16 +152,71 @@ window.Mapbender.Source = (function() {
         nativeLayers: [],
         recreateOnSrsSwitch: false,
         wmsloader: false,
-        destroyLayers: function() {
+        destroyLayers: function(olMap) {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function(olLayer) {
-                    Mapbender.mapEngine.destroyLayer(olLayer);
+                    Mapbender.mapEngine.destroyLayer(olMap, olLayer);
                 });
             }
             this.nativeLayers = [];
         },
         getNativeLayers: function() {
             return this.nativeLayers.slice();
+        },
+        getSettings: function() {
+            return {
+                opacity: this.configuration.options.opacity
+            };
+        },
+        getConfiguredSettings: function() {
+            return Object.assign({}, this.configuredSettings_);
+        },
+        /**
+         * @param {SourceSettings} settings
+         * @return {boolean}
+         */
+        applySettings: function(settings) {
+            var diff = this.diffSettings(this.getSettings(), settings);
+            if (diff) {
+                this.applySettingsDiff(diff);
+                return true;
+            } else {
+                return false;
+            }
+        },
+        /**
+         * @param {SourceSettingsDiff} diff
+         */
+        applySettingsDiff: function(diff) {
+            if (diff && typeof (diff.opacity) !== 'undefined') {
+                this.setOpacity(diff.opacity);
+            }
+        },
+        /**
+         * @param {SourceSettings} from
+         * @param {SourceSettings} to
+         * @return {SourceSettingsDiff|null}
+         */
+        diffSettings: function(from, to) {
+            var diff = {
+                activate: to.selectedIds.filter(function(id) {
+                    return -1 === from.selectedIds.indexOf(id);
+                }),
+                deactivate: from.selectedIds.filter(function(id) {
+                    return -1 === to.selectedIds.indexOf(id);
+                })
+            };
+            if (to.opacity !== from.opacity) {
+                diff.opacity = to.opacity
+            }
+            if (!diff.activate.length) {
+                delete(diff.activate);
+            }
+            if (!diff.deactivate.length) {
+                delete(diff.deactivate);
+            }
+            // null if completely empty
+            return Object.keys(diff).length && diff || null;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;

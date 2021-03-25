@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
@@ -115,7 +116,10 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         if (!empty($definition['elements'])) {
             foreach ($definition['elements'] as $region => $elementDefinitionList) {
                 foreach ($elementDefinitionList as $elementIndex => $elementDefinition) {
-                    $definition['elements'][$region][$elementIndex] = $this->processElementDefinition($elementDefinition);
+                    $processedDefinition = $this->processElementDefinition($elementDefinition);
+                    if ($processedDefinition) {
+                        $definition['elements'][$region][$elementIndex] = $processedDefinition;
+                    }
                 }
             }
         } else {
@@ -138,11 +142,14 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
 
     /**
      * @param array $definition
-     * @return array
+     * @return array|null
      */
     protected function processElementDefinition($definition)
     {
         $nonConfigKeys = $this->getTopLevelElementKeys();
+        if ($definition['class'] && !ClassUtil::exists($definition['class'])) {
+            return null;
+        }
         // @todo: look up and adjust migrated class names as well
         if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */

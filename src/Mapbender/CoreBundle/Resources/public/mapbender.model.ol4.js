@@ -27,9 +27,9 @@ window.Mapbender.MapModelOl4 = (function() {
 
 
     _initMap: function() {
-        var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this._startProj);
+        var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName);
 
-        this.viewOptions_ = this.calculateViewOptions_(this._startProj, this.mbMap.options.scales, maxExtent, this.mbMap.options.dpi);
+        this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options, maxExtent);
         var view = new ol.View(this.viewOptions_);
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
@@ -50,25 +50,24 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
 
-        this.initializeSourceLayers();
+        this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
+
         this.processUrlParams();
+        this.initializeSourceLayers(this.sourceTree);
         this._startShare();
     },
     /**
      * @param {ol.PluggableMap} olMap
+     * @param {mmViewParams} viewParams
      * @param {Object} mapOptions
-     * @return {mmViewParams}
      * @private
      */
-    _setInitialView: function(olMap, mapOptions) {
-        var viewParams = this._getInitialViewParams(olMap, mapOptions);
+    _setInitialView: function(olMap, viewParams, mapOptions) {
         var resolution = this.scaleToResolution(viewParams.scale, mapOptions.dpi, viewParams.srsName);
         var view = olMap.getView();
         view.setCenter(viewParams.center);
         view.setResolution(resolution);
-        return viewParams;
     },
     /**
      * @param {ol.Map} olMap
@@ -332,7 +331,7 @@ window.Mapbender.MapModelOl4 = (function() {
         if (this.olMap) {
             proj = this.olMap.getView().getProjection();
         } else {
-            proj = ol.proj.get(this._startProj);
+            proj = ol.proj.get(this.initialViewParams.srsName);
         }
         return proj.getUnits() || 'degrees';
     },
@@ -343,7 +342,7 @@ window.Mapbender.MapModelOl4 = (function() {
         if (this.olMap) {
             return this.olMap.getView().getProjection().getCode();
         } else {
-            return this._startProj;
+            return this.initialViewParams.srsName;
         }
     },
     /**
@@ -446,7 +445,7 @@ window.Mapbender.MapModelOl4 = (function() {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
                 Mapbender.mapEngine.removeLayers(this.olMap, source.getNativeLayers());
-                source.destroyLayers();
+                source.destroyLayers(this.olMap);
             } else {
                 olLayers = source.getNativeLayers();
                 for (j = 0; j < olLayers.length; ++ j) {
@@ -465,8 +464,12 @@ window.Mapbender.MapModelOl4 = (function() {
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
 
+        var fakeViewParams = {
+            srsName: srsNameTo,
+            rotation: 0     // Not worth doing rad2deg + deg2rad; we will replace it anyway
+        };
         var mbMapOptions = this.mbMap.options;
-        var resolutionOptions = this.calculateViewOptions_(srsNameTo, mbMapOptions.scales, newMaxExtent, mbMapOptions.dpi);
+        var resolutionOptions = this.calculateViewOptions_(fakeViewParams, mbMapOptions, newMaxExtent);
         var newViewOptions = Object.assign({}, this.viewOptions_, resolutionOptions, {
             projection: srsNameTo,
             center: newCenter,
@@ -476,21 +479,6 @@ window.Mapbender.MapModelOl4 = (function() {
 
         var newView = new ol.View(newViewOptions);
         this.olMap.setView(newView);
-        for (i = 0; i < this.sourceTree.length; ++i) {
-            source = this.sourceTree[i];
-            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                olLayers = source.initializeLayers(srsNameTo);
-                for (j = 0; j < olLayers.length; ++j) {
-                    var olLayer = olLayers[j];
-                    engine.setLayerVisibility(olLayer, false);
-                }
-                this._spliceLayers(source, olLayers);
-            }
-        }
-        var self = this;
-        self.sourceTree.map(function(source) {
-            self._checkSource(source, false);
-        });
     },
 
         /**
@@ -656,30 +644,32 @@ window.Mapbender.MapModelOl4 = (function() {
             olMap.addOverlay(overlay);
             overlay.setPosition([x, y]);
             $popup.one('click', '.-fn-close', function() {
-                console.log("Are we closing?", this, arguments);
                 olMap.removeOverlay(overlay);
                 def.resolve();
             });
             return def.promise();
         },
         /**
-         * @param {String} srsName
-         * @param {Array<Number>}scales
+         * @param {mmViewParams} viewParams
+         * @param {Object} mapOptions
          * @param {Array<Number>=} [maxExtent]
-         * @param {Number=} [dpi]
          * @return {{}}
          * @private
          */
-        calculateViewOptions_: function(srsName, scales, maxExtent, dpi) {
+        calculateViewOptions_: function(viewParams, mapOptions, maxExtent) {
+            var deg2rad = 2 * Math.PI / 360;
+            var scales = mapOptions.scales;
+            var dpi = mapOptions.dpi || 72;
+
             var viewOptions = {
-                projection: srsName
+                projection: viewParams.srsName,
+                rotation: deg2rad * viewParams.rotation
             };
             if (scales && scales.length) {
-                var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(srsName);
+                var upm = Mapbender.mapEngine.getProjectionUnitsPerMeter(viewParams.srsName);
                 var inchesPerMetre = 39.37;
-                var dpi_ = dpi || 72;
                 viewOptions['resolutions'] = scales.map(function(scale) {
-                    return scale * upm / (inchesPerMetre * dpi_);
+                    return scale * upm / (inchesPerMetre * dpi);
                 });
             } else {
                 viewOptions.zoom = 7; // hope for the best
@@ -687,6 +677,9 @@ window.Mapbender.MapModelOl4 = (function() {
             if (maxExtent) {
                 viewOptions.extent = maxExtent;
             }
+            /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/View.js#L148 */
+            viewOptions.constrainResolution = !!mapOptions.fixedZoomSteps;
+
             return viewOptions;
         }
     });

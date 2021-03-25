@@ -11,7 +11,6 @@
 @import "bundles/mapbendermanager/sass/element/map.scss";
 @import "bundles/mapbendermanager/sass/element/printclient.scss";
 @import "bundles/mapbendermanager/sass/manager/services.scss";
-@import "bundles/mapbendermanager/sass/manager/user_control.scss";
 
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
@@ -152,8 +151,6 @@
       }
   }
 
-  textarea, input, .dropdown{min-width: 300px;}
-  textarea{height:100px;}
   .alert-info, /** @deprecated: */.messageBox.hint {
     // instruction box
     margin-left: 1em;
@@ -223,6 +220,15 @@
       width: 22em;
       min-width: 22em;
       margin-left: auto;
+    }
+  }
+  .regionProperties .form-horizontal {
+    .labelInput {
+      width: 45%;
+      margin-right: 4%;
+    }
+    .inputWrapper, .dropdown {
+      width: 50%;
     }
   }
 

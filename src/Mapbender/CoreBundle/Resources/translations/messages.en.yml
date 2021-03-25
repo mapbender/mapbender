@@ -190,6 +190,7 @@ mb:
     zoombar:
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'
+      zoom_home: Back to start
       zoomin: Zoom in
       zoomout: Zoom out
       class:
@@ -248,6 +249,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS properties for %srslist% are not found'
+      admin:
+        fixedZoomSteps: Fixed zoom steps
     scalebar:
       class:
         title: 'Scale bar'
@@ -276,6 +279,11 @@ mb:
       tag:
         srs: SRS
         selector: selector
+    ShareUrl:
+      class:
+        title: Share URL
+        description: Share current map view via url
+      copied_to_clipboard: URL copied to clipboard
     admin:
       poi:
         label:
@@ -293,7 +301,10 @@ mb:
           autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
           onlyvalid: 'Only valid'
-          highlighting: 'Highlighting'
+          highlighting_group: 'Highlighting'
+          highlighting: 'Highlighting enabled'
+          featureColorDefault: Default color
+          featureColorHover: Hover color
       printclient:
         label:
           autoopen: Auto-open
@@ -363,3 +374,15 @@ mb:
     redlining:
       class:
         title: Sketches
+    resetView:
+      class:
+        title: Reset view
+        description: Restores initial map view and source settings
+      admin:
+        resetDynamicSources: Remove dynamically loaded sources
+    applicationSwitcher:
+      class:
+        title: Application switcher
+        description: Switches to another application while maintaining current map position
+      admin:
+        open_in_new_tab: Open in new tab

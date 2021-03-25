@@ -3,7 +3,7 @@
   <input id="inputFilterGroupsAndUsers" autofocus="autofocus" type="text" class="input left listFilterInput"/>
   <div class="clearContainer"></div>
 
-  <table id="listFilterGroupsAndUsers" class="listFilterContainer tableCore tableUserGroups tableGroupsAndUsers">
+  <table id="listFilterGroupsAndUsers" class="listFilterContainer table">
     <thead>
       <tr class="doNotFilter">
         <th>{{ "fom.user.acl.groups_users.name"|trans }} </th>
@@ -13,10 +13,12 @@
       {% for user in users %}
         <tr class="filterItem">
           <td>
-            <div class="tdContentWrapper iconUser">
-              <label class="labelInput">{{user.getUsername}}</label>
-              <span class="hide">u:{{user.getUsername}}{% if user.getClass is defined %}:{{ user.getClass }}{% endif %}</span>
-              <div class="checkWrapper iconCheckbox"><input class="checkbox" type="checkbox"/></div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" data-label="{{ user.getUsername }}"
+                       value="u:{{ user.getUsername }}{{ user.getClass is defined ? (':'~user.getClass()) : '' }}" />
+                <i class="fa fas fa-user"></i>&nbsp;{{ user.getUsername }}
+              </label>
             </div>
           </td>
         </tr>
@@ -24,10 +26,12 @@
       {% for group in groups %}
         <tr class="filterItem">
           <td>
-            <div class="tdContentWrapper iconGroup">
-              <label class="labelInput">{{ group.getTitle }}</label>
-              <span class="hide">r:{{ group.getRole() }}</span>
-              <div class="checkWrapper iconCheckbox"><input class="checkbox" type="checkbox"/></div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" data-label="{{ group.getTitle() }}"
+                       value="r:{{ group.getRole() }}" />
+                <i class="fa fas fa-group"></i>&nbsp;{{ group.getTitle() }}
+              </label>
             </div>
           </td>
         </tr>

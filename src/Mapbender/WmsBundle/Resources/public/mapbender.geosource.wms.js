@@ -1,3 +1,4 @@
+
 window.Mapbender = Mapbender || {};
 window.Mapbender.WmsSourceLayer = (function() {
     function WmsSourceLayer() {
@@ -7,8 +8,24 @@ window.Mapbender.WmsSourceLayer = (function() {
     WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
     Object.assign(WmsSourceLayer.prototype, {
         constructor: WmsSourceLayer,
+        getId: function() {
+            return this.options.id;
+        },
         getSelected: function() {
             return this.options.treeOptions.selected;
+        },
+        setSelected: function(state) {
+            this.options.treeOptions.selected = !!state;
+        },
+        getSelectedList: function() {
+            var selectedLayers = [];
+            if (this.getSelected()) {
+                selectedLayers.push(this);
+            }
+            for (var i = 0; i < this.children.length; ++i) {
+                selectedLayers = selectedLayers.concat(this.children[i].getSelectedList());
+            }
+            return selectedLayers;
         },
         isInScale: function(scale) {
             // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
@@ -61,8 +78,41 @@ window.Mapbender.WmsSource = (function() {
         customParams: {},
         // ... but we will not remember the following ~standard WMS params the same way
         _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
-        createNativeLayers: function(srsName) {
-            return [Mapbender.mapEngine.createWmsLayer(this)];
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
+            return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
+        },
+        /**
+         * @return {SourceSettings}
+         */
+        getSettings: function() {
+            var selectedLayers = this.configuration.children[0].getSelectedList();
+            var selectedIds = selectedLayers.map(function(layer) {
+                return layer.getId();
+            });
+            return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+                selectedIds: selectedIds
+            });
+        },
+        /**
+         * @param {SourceSettingsDiff|null} diff
+         */
+        applySettingsDiff: function(diff) {
+            Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
+            if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
+                Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
+                    if (-1 !== (diff.activate || []).indexOf(layer.getId())) {
+                        layer.setSelected(true);
+                    }
+                    if (-1 !== (diff.deactivate || []).indexOf(layer.getId())) {
+                        layer.setSelected(false);
+                    }
+                });
+            }
         },
         getSelected: function() {
             // delegate to root layer

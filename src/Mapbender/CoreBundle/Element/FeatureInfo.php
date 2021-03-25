@@ -56,7 +56,7 @@ class FeatureInfo extends Element
             $iframeScripts[] = $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js');
         }
         $config['iframeInjection'] = implode("\n\n", $iframeScripts);
-        return $config;
+        return $config + $defaults;
     }
 
     /**
@@ -75,6 +75,8 @@ class FeatureInfo extends Element
             "height" => 500,
             "maxCount" => 100,
             'highlighting' => false,
+            'featureColorDefault' => '#ffa500',
+            'featureColorHover' => '#ff0000',
         );
     }
 

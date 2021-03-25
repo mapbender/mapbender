@@ -16,7 +16,6 @@
         template: null,
         menuTemplate: null,
         popup: null,
-        created: false,
         consts: {
             source: "source",
             theme: "theme",
@@ -43,9 +42,8 @@
             this.themeTemplate.removeClass('hidden -fn-theme-template');
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
-            if (this.options.type === 'element') {
-                this._createTree();
-            } else if (this.options.type === 'dialog' && this.options.autoOpen) {
+            this._createTree();
+            if (this.options.type === 'dialog' && this.options.autoOpen) {
                 this.open();
             }
             this.element.removeClass('hidden');
@@ -54,6 +52,7 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
+            $('ul.layers:first', this.element).empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var source = sources[i];
@@ -74,7 +73,6 @@
             }
 
             this._reset();
-            this.created = true;
         },
         _reset: function() {
             if (this.options.allowReorder) {
@@ -107,6 +105,11 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
+            $(document).on('mb.sourcenodeselectionchanged', function(e, data) {
+                if (data.node instanceof (Mapbender.Layerset)) {
+                    self._updateThemeNode(data.node);
+                }
+            });
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
                     $('input[name="selected"]', this).click();
@@ -182,17 +185,20 @@
             $li.toggleClass('showLeaves', options.opened);
             $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
+            this._updateThemeNode(layerset, $li);
             return $li;
+        },
+        _updateThemeNode: function(layerset, $node) {
+            var $node_ = $node || this._findThemeNode(layerset);
+            var $checkbox = $('> .leaveContainer input[name="sourceVisibility"][type="checkbox"]', $node_);
+            $checkbox.prop('checked', layerset.getSelected());
+            $checkbox.mbCheckbox();
         },
         _getThemeOptions: function(layerset) {
             var matches =  (this.options.themes || []).filter(function(item) {
-                 return item.id === layerset.id;
+                return item.useTheme && ('' + item.id) === ('' + layerset.id);
             });
-            if (!matches.length || !matches[0].useTheme) {
-                return null;
-            } else {
-                return matches[0];
-            }
+            return matches[0] || null;
         },
         _findThemeNode: function(layerset) {
             return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
@@ -517,7 +523,7 @@
                 } else if (item.type === 'multiple' || item.type === 'interval') {
                     var dimHandler = Mapbender.Dimension(item);
                     dragHandlers.push(new Dragdealer($('.layer-dimension-bar', $control).get(0), {
-                        x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
+                        x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
@@ -527,7 +533,8 @@
                             self._callDimension(source, inpchkbox);
                         },
                         animationCallback: function(x) {
-                            var value = dimHandler.valueFromPart(x);
+                            var step = Math.round(dimHandler.getStepsNum() * x);
+                            var value = dimHandler.valueFromStep(step);
                             label.text(value);
                             updateData(dimDataKey, {value: value});
                             inpchkbox.attr('data-value', value);
@@ -608,7 +615,6 @@
             if (this.options.type === 'dialog') {
                 var self = this;
                 if (!this.popup || !this.popup.$element) {
-                    this._createTree();
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('data-title'),
                         modal: false,
@@ -630,27 +636,20 @@
                             }
                         }
                     });
-                    this._reset();
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
-                    this._reset();
-                    this.popup.open();
+                    this.popup.$element.show();
                 }
             }
+            this._reset();
         },
         /**
          * closes a dialog with a layertree (if options.type == 'dialog')
          */
         close: function() {
             if (this.options.type === 'dialog') {
-                if (this.popup) {
-                    $("ul.layers:first", this.element).empty();
-                    $(this.element).hide().appendTo("body");
-                    this.created = false;
-                    if (this.popup.$element) {
-                        this.popup.destroy();
-                    }
-                    this.popup = null;
+                if (this.popup && this.popup.$element) {
+                    this.popup.$element.hide();
                 }
             }
             if (this.callback) {

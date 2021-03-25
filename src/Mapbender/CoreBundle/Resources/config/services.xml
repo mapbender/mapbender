@@ -47,12 +47,15 @@
         <parameter key="mapbender.yaml_application_dirs" type="collection">
             <parameter>%kernel.root_dir%/config/applications</parameter>
         </parameter>
+        <parameter key="mapbender.disabled_elements" type="collection" />
         <parameter key="mapbender.uploads_dir">uploads</parameter>
         <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
              try setting /usr/bin/sassc -->
         <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
         <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
         <parameter key="assetic.filter.sass.timeout">null</parameter>
+        <!-- Element related -->
+        <parameter key="mb.element.application_switcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
     </parameters>
 
     <services>
@@ -87,6 +90,7 @@
             <tag name="form.type" alias="target_element"/>
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.twig.element_class" />
         </service>
 
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
@@ -166,6 +170,7 @@
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="mapbender.twig.element_class" />
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
@@ -245,7 +250,8 @@
             <argument type="service" id="logger" on-invalid="null" />
         </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
-            <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
+            <!-- NOTE: base Element class availability is not an argument, but added via compiler passes; this is not configurable -->
+            <argument>%mapbender.disabled_elements%</argument>
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.event_listener" event="postConnect" />
@@ -262,6 +268,13 @@
         <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Element related -->
+        <service id="mb.element.application_switcher.http_handler" class="%mb.element.application_switcher.http_handler.class%">
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
     </services>
 </container>

@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -915,19 +916,31 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
+     * @return Dimension[]
+     */
+    public function getDimensions()
+    {
+        $dimensions = array();
+        $uniqueNames = array();
+        foreach ($this->getLayers() as $layer) {
+            foreach ($layer->getDimension() as $dimension) {
+                if (!in_array($dimension->getName(), $uniqueNames)) {
+                    $uniqueNames[] = $dimension->getName();
+                    $dimensions[] = $dimension;
+                }
+            }
+        }
+        return $dimensions;
+    }
+
+    /**
      * @return DimensionInst[]
      */
     public function dimensionInstancesFactory()
     {
         $dimensions = array();
-        foreach ($this->getLayers() as $layer) {
-            /** @var WmsLayerSource $layer */
-            foreach ($layer->getDimension() as $dimension) {
-                $dim = DimensionInst::fromDimension($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
-            }
+        foreach ($this->getDimensions() as $dimension) {
+            $dimensions[] = DimensionInst::fromDimension($dimension);
         }
         return $dimensions;
     }

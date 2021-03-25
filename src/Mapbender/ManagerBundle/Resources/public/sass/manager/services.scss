@@ -111,12 +111,16 @@ fieldset.box {
       .labelInput{width:80px;}
       .inputWrapper, div.dropdown {
         width:200px;
-        margin:0.25em 0;
-        display: inline-block;
+      }
+      .collectionItem .collectionRemove {
+        left: #{80px + $space + 200px};
       }
     }
     .on-off-content{
       background-color: darken($contentColor, 9%);
+      .collectionItem:last-child {
+        margin-bottom: 0;
+      }
     }
     .vendorspecific-content,.on-off-content .on-off-content{
       padding: $space/2 $space/2 $space/2 $space/2;
@@ -126,12 +130,6 @@ fieldset.box {
     }
     .blockgroup {
       margin-bottom: 1em;
-    }
-    .vendorspecific-content{
-      input {width:100%;}
-      a.collectionRemove {
-        float: right;
-      }
     }
     .mb-slider{margin-top: $space/2;}
   }
@@ -152,33 +150,31 @@ fieldset.box {
 
   &.table {
     background-color: lighten($contentColor, 2%);
-    > thead > tr > .checkboxColumn {
-      padding-left: 2px;
-      padding-right: 2px;
+    tbody tr td {
+      line-height: $inputHeight;
     }
-    > tbody > tr > td {
-      &.titleColumn {
-        width: 260px;
-      }
-      &.itemType {
-        padding-right: 0;
-        padding-left: 0;
-        cursor:ns-resize;
-        line-height:$inputHeight;
-      }
-      &.minScaleColumn,
-      &.maxScaleColumn {
+    > tbody > tr > td, > thead > tr > th {
+      padding-left: 0;
+      padding-right: 8px;
+      &.checkboxColumn {
+        width: 1%;
         padding-left: 4px;
+        padding-right: 4px;
       }
+    }
+    .titleColumn {
+      width: 260px;
+    }
+    .itemType {
+      cursor:ns-resize;
     }
   }
 
   tbody{
-    .dropdown{min-width:100%;}
-    .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn {
       .checkWrapper {
-        line-height: $inputHeight;
+        display: inline-block;
+        float: none;
       }
     }
   }
@@ -188,33 +184,20 @@ fieldset.box {
   .level3 .itemType{margin-left:22px;}
   .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
-  .moreColumn {
-    position: relative;
-    line-height:$inputHeight;
-  }
-  .input{width:80px;}
-  .titleColumn .input{width:200px;}
 }
 .infoMsgBox {
   &.popover {
-    &:not(.hidden) {
-      display: initial;
-    }
-    left: unset;
+    left: initial;
   }
   min-width: 260px;
-  right: 2.5em;
 
-  .labelText, label {
-    width: 4.5em;
-    display:inline-block;
+  .labelInput {
+    width: 40px;
   }
-  // also revert 100% set by .instanceTable... selector
-  .dropdown, .instanceTable tbody & .dropdown {
-    min-width: 130px;
-  }
-  // also revert 100% set by contentPane... selector
   .dropdown, .contentPane > .content form & .dropdown {
-    width: auto;
+    width: 170px;
+  }
+  .inputWrapper, .contentPane > .content form & .inputWrapper {
+    width: 170px;
   }
 }

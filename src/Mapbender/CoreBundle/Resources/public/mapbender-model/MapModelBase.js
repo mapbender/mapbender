@@ -26,6 +26,26 @@ window.Mapbender.MapModelBase = (function() {
      * @property {Number} rotation
      */
     /**
+     * @typedef {Object} mmMapSourceSettings
+     * @property {Array<{(SourceSettings|{id: String})}>} sources
+     * @property {Array<{id: string, selected: boolean}>} layersets
+     */
+    /**
+     * @typedef {mmMapSourceSettings} mmMapSettings
+     * @property {mmViewParams} viewParams
+     */
+    /**
+     * @typedef {Object} mmMapSettingsLayersetsDiff
+     * @property {Array<String>} activate
+     * @property {Array<String>} deactivate
+     */
+    /**
+     * @typedef {Object} mmMapSettingsDiff
+     * @property {mmViewParams} viewParams
+     * @property {Array<mmMapSettingsLayersetsDiff>} layersets
+     * @property {Array<SourceSettingsDiff>} sources
+     */
+    /**
      * @param {Object} mbMap
      * @constructor
      */
@@ -34,17 +54,29 @@ window.Mapbender.MapModelBase = (function() {
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
         this.mbMap = mbMap;
         var mapOptions = mbMap.options;
-        this.sourceTree = [];
         this._configProj = mapOptions.srs;
-        var startProj = this._startProj = this._getInitialSrsCode(mapOptions);
+        try {
+            this._poiOptions = this._parsePoiParameter(window.location.href);
+        } catch (e) {
+            console.warn("Ignoring poi param parsing error", e);
+            this._poiOptions = [];
+        }
+        this.initialViewParams = this._getInitialViewParams(mapOptions);
         this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
-        var poiOptions = (mbMap.options.extra || {}).pois || [];
-        this._poiOptions = poiOptions.map(function(poi) {
-            return Object.assign({}, Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || startProj, startProj), {
-                scale: poi.scale,
-                label: poi.label
-            });
+        this.sourceTree = this.getConfiguredSources_();
+        this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
+            viewParams: this._getConfiguredViewParams(mapOptions)
         });
+        if (Mapbender.configuration.application.persistentView) {
+            try {
+                var settings = this.getLocalStorageSettings();
+                if (settings) {
+                    this.applySourceSettings(settings);
+                }
+            } catch (e) {
+                console.error("Restoration of local storage source selection settings failed, ignoring");
+            }
+        }
     }
 
     MapModelBase.prototype = {
@@ -54,8 +86,6 @@ window.Mapbender.MapModelBase = (function() {
         mapMaxExtent: null,
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
-        /** Actual initial projection, determined by a combination of several URL parameters */
-        _startProj: null,
         /**
          * @param {boolean} [closest] round to nearest configured map scale (default true if omitted)
          * @return {number}
@@ -205,11 +235,24 @@ window.Mapbender.MapModelBase = (function() {
             return _.findWhere(this.sourceTree, {id: '' + id}) || null;
         },
         /**
+         * @param {Number|String} id
+         * @return {Mapbender.Layerset|null}
+         */
+        getLayersetById: function(id) {
+            return _.findWhere(Mapbender.layersets, {id: '' + id}) || null;
+        },
+        /**
          * @param {Mapbender.Layerset} theme
          * @param {Boolean} state
          */
         controlTheme: function(theme, state) {
-            theme.selected = state;
+            if (theme.getSelected() !== state) {
+                theme.setSelected(state);
+                this.mbMap.element.trigger('mb.sourcenodeselectionchanged', {
+                    node: theme,
+                    selected: theme.getSelected()
+                });
+            }
             var instances = theme.children;
             for (var i = 0; i < instances.length; ++i) {
                 var instance = instances[i];
@@ -232,6 +275,9 @@ window.Mapbender.MapModelBase = (function() {
          */
         updateSource: function(source) {
             this._checkSource(source, false);
+            this.triggerSourceChanged_(source);
+        },
+        triggerSourceChanged_: function(source) {
             $(this.mbMap.element).trigger('mbmapsourcechanged', {
                 mbMap: this.mbMap,
                 source: source
@@ -343,10 +389,7 @@ window.Mapbender.MapModelBase = (function() {
             var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, scale, extent, srsName);
             source.updateEngine();
             if (fireSourceChangedEvent && changedStates) {
-                $(this.mbMap.element).trigger('mbmapsourcechanged', {
-                    mbMap: this.mbMap,
-                    source: source
-                });
+                this.triggerSourceChanged_(source);
             }
         },
         /**
@@ -361,12 +404,47 @@ window.Mapbender.MapModelBase = (function() {
          * @static
          */
         getHandledUrlParams: function() {
-            return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat(['visiblelayers']);
+            return MapModelBase.prototype.getViewRelatedUrlParamNames.call().concat([
+                'visiblelayers',
+                'slon',
+                'sloff',
+                'lson',
+                'lsoff',
+                'sop'
+            ]);
         },
         processUrlParams: function() {
-            var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
+            var params = Mapbender.Util.getUrlQueryParams(window.location.href, true);
+            var visibleLayersParam = params['visiblelayers'];
             if (visibleLayersParam) {
                 this.processVisibleLayersParam(visibleLayersParam);
+            }
+            try {
+                var settingsDiff = this.decodeSettingsDiff(params);
+                // @todo: extract / fold with applySettings
+                var i, ls;
+                for (i = 0; i < settingsDiff.layersets.activate.length; ++i) {
+                    ls = this.getLayersetById(settingsDiff.layersets.activate[i]);
+                    if (ls) {
+                        ls.setSelected(true);
+                    }
+                }
+                for (i = 0; i < settingsDiff.layersets.deactivate.length; ++i) {
+                    ls = this.getLayersetById(settingsDiff.layersets.deactivate[i]);
+                    if (ls) {
+                        ls.setSelected(false);
+                    }
+                }
+                for (i = 0; i < settingsDiff.sources.length; ++i) {
+                    var sourceDiff = settingsDiff.sources[i];
+                    var source = this.getSourceById(sourceDiff.id);
+                    if (source) {
+                        source.applySettingsDiff(sourceDiff);
+                    }
+                }
+
+            } catch (e) {
+                console.warn("Error applying extra url params, ignoring", params, e);
             }
         },
         /**
@@ -389,14 +467,11 @@ window.Mapbender.MapModelBase = (function() {
                     var source = self.getSourceById(sourceId);
                     var layer = source && source.getLayerById(layerId);
                     if (layer) {
-                        layer.options.treeOptions.selected = true;
                         layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
-                        var parent = layer.parent;
-                        while (parent) {
-                            parent.options.treeOptions.selected = true;
-                            parent = parent.parent;
-                        }
-                        self.updateSource(source);
+                    }
+                    while (layer) {
+                        layer.setSelected(true);
+                        layer = layer.parent;
                     }
                 }
             });
@@ -436,74 +511,49 @@ window.Mapbender.MapModelBase = (function() {
                 source: source
             });
         },
-        /**
-         * @param {OpenLayers.Layer.HTTPRequest|Object} source
-         * @param {boolean} [initializePod] to auto-instantiate a Mapbender.Source object from plain-old-data (default true)
-         * @param {boolean} [initializeLayers] to also auto-instantiate layers after instantiating Mapbender.Source (default false)
-         * @return {Mapbender.Source}
-         * @deprecated should work with Source class instances directly
-         * engine-agnostic
-         */
-        getMbConfig: function(source, initializePod, initializeLayers) {
-            var _s;
-            var projCode;
-            if (source.mbConfig) {
-                // monkey-patched OpenLayers.Layer
-                _s =  source.mbConfig;
-            } else if (source.source) {
-                // MapQuery layer
-                _s = source.source;
-            } else if (source.configuration && source.configuration.children) {
-                _s = source;
-            }
-            if (_s) {
-                if (initializePod || typeof initializePod === 'undefined') {
-                    if (!(_s instanceof Mapbender.Source)) {
-                        var sourceObj = Mapbender.Source.factory(_s);
-                        if (initializeLayers) {
-                            projCode = projCode || this.getCurrentProjectionCode();
-                            sourceObj.initializeLayers(projCode);
-                        }
-                        return sourceObj;
-                    }
-                }
-                return _s;
-            }
-            console.error("Cannot infer source configuration from given input", source);
-            throw new Error("Cannot infer source configuration from given input");
-        },
-        initializeSourceLayers: function() {
-            var self = this;
+        getConfiguredSources_: function() {
             // Array.protoype.reverse is in-place
             // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
             // Do not use .reverse on centrally shared values without making your own copy
-            $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-                var theme = Mapbender.layersets.filter(function(x) {
-                    return x.id === layersetId || ('' + x.id === '' + layersetId);
-                })[0];
+            var layersetNames = this.mbMap.options.layersets.slice().reverse();
+            var sources = [];
+            for (var i = 0; i < layersetNames.length; ++i) {
+                var theme = this.getLayersetById(layersetNames[i]);
                 if (!theme) {
                     throw new Error("No layerset with id " + layersetId);
                 }
-                theme.children.slice().reverse().map(function(instance) {
-                    self.addSource(instance);
+                sources = sources.concat.apply(sources, theme.children.slice().reverse());
+            }
+            return sources;
+        },
+        /**
+         * @param {Array<Mapbender.Source>} sources
+         */
+        initializeSourceLayers: function(sources) {
+            var projCode = this.getCurrentProjectionCode();
+            for (var i = 0; i < sources.length; ++i) {
+                var source = sources[i];
+                this.mbMap.element.trigger('mbconfiguringsource', {
+                    mbMap: this.mbMap,
+                    source: source
                 });
-            });
+                var olLayers = source.initializeLayers(projCode, this.mbMap.options);
+                for (var j = 0; j < olLayers.length; ++j) {
+                    var olLayer = olLayers[j];
+                    Mapbender.mapEngine.setLayerVisibility(olLayer, false);
+                }
+
+                this._spliceLayers(source, olLayers);
+                this._checkSource(source, false);
+            }
         },
         /**
          * @param {Mapbender.Source} source
          */
         addSource: function(source) {
             this.sourceTree.push(source);
-            var projCode = this.getCurrentProjectionCode();
 
-            var olLayers = source.initializeLayers(projCode);
-            for (var i = 0; i < olLayers.length; ++i) {
-                var olLayer = olLayers[i];
-                Mapbender.mapEngine.setLayerVisibility(olLayer, false);
-            }
-
-            this._spliceLayers(source, olLayers);
-            this._checkSource(source, false);
+            this.initializeSourceLayers([source]);
 
             this.mbMap.element.trigger('mbmapsourceadded', {
                 mbMap: this.mbMap,
@@ -598,6 +648,7 @@ window.Mapbender.MapModelBase = (function() {
                 mbMap: this.mbMap
             });
             this._changeProjectionInternal(srsNameBefore, srsName);
+            this._applyLayerSrsChange(srsNameBefore, srsName);
             this.mbMap.element.trigger('mbmapsrschanged', {
                 from: srsNameBefore,
                 to: srsName,
@@ -609,12 +660,30 @@ window.Mapbender.MapModelBase = (function() {
                     // WMTS / TMS special: send another change event for each root layer, which
                     // may potentially just have been disabled / reenabled. This will update the
                     // Layertree visual
-                    $(this.mbMap.element).trigger('mbmapsourcechanged', {
-                        mbMap: this.mbMap,
-                        source: source
-                    });
+                    this.triggerSourceChanged_(source);
                 }
             }
+            this.mbMap.element.trigger('mbmapviewchanged', {
+                mbMap: this.mbMap,
+                params: this.getCurrentViewParams()
+            });
+        },
+        _applyLayerSrsChange: function(srsNameFrom, srsNameTo) {
+            for (var i = 0; i < this.sourceTree.length; ++i) {
+                var source = this.sourceTree[i];
+                if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
+                    var olLayers = source.initializeLayers(srsNameTo, this.mbMap.options);
+                    for (var j = 0; j < olLayers.length; ++j) {
+                        var olLayer = olLayers[j];
+                        Mapbender.mapEngine.setLayerVisibility(olLayer, false);
+                    }
+                    this._spliceLayers(source, olLayers);
+                }
+            }
+            var self = this;
+            self.sourceTree.map(function(source) {
+                self._checkSource(source, false);
+            });
         },
         /**
          * @param {number|null} targetZoom
@@ -649,7 +718,30 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmDimension}
          */
         getCurrentViewportSize: function() {
-            return Mapbender.mapEngine.getCurrentViewportSize(this.olMap);
+            var node = this.mbMap.element.get(0);
+            return {
+                width: node.clientWidth || node.offsetWidth || parseInt(node.style.width),
+                height: node.clientHeight || node.offsetHeight || parseInt(node.style.height)
+            };
+        },
+        _parsePoiParameter: function(url) {
+            var params = Mapbender.Util.unpackObjectParam(Mapbender.Util.getUrlQueryParams(url), 'poi');
+            if (params && params.point) {
+                if (params.srs && !Mapbender.Projection.isDefined(params.srs)) {
+                    return [];
+                }
+                // Produce Same format as previously generated by server-side Map Element
+                var coords = params.point.split(',').map(parseFloat);
+                params.x = coords[0];
+                params.y = coords[1];
+                delete(params.point);
+                if (params.scale) {
+                    params.scale = parseInt(params.scale);
+                }
+                return [params];
+            } else {
+                return [];
+            }
         },
         displayPois: function(poiOptions) {
             if (!poiOptions.length) {
@@ -662,9 +754,12 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         displayPoi: function(layer, poi) {
-            layer.addMarker(poi.x, poi.y);
+            var targetSrs = this.getCurrentProjectionCode();
+            var coords = Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || targetSrs, targetSrs);
+
+            layer.addMarker(coords.x, coords.y);
             if (poi.label) {
-                this.openPopup(poi.x, poi.y, poi.label);
+                this.openPopup(coords.x, coords.y, poi.label);
             }
         },
         /**
@@ -819,19 +914,57 @@ window.Mapbender.MapModelBase = (function() {
             return bounds;
         },
         /**
-         * @param {OpenLayers.Map|ol.PluggableMap} olMap
          * @param {Object} mapOptions
          * @return {mmViewParams}
          * @private
          */
-        _getInitialViewParams: function(olMap, mapOptions) {
+        _getConfiguredViewParams: function(mapOptions) {
+            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
+            startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, mapOptions.srs);
+            var viewportSize = this.getCurrentViewportSize();
+            var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);
+            return {
+                rotation: 0,
+                srsName: mapOptions.srs,
+                scale: this.resolutionToScale(resolution, mapOptions.dpi, mapOptions.srs),
+                center: [
+                    0.5 * (startExtent.left + startExtent.right),
+                    0.5 * (startExtent.bottom + startExtent.top)
+                ]
+            };
+        },
+        /**
+         * @param {Object} mapOptions
+         * @return {mmViewParams}
+         * @private
+         */
+        _getInitialViewParams: function(mapOptions) {
             try {
                 return this._decodeViewparamFragment();
             } catch (e) {
                 // fall through
             }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
+
+            var params;
+            var lsPersisted = Mapbender.configuration.application.persistentView && this.getLocalStorageSettings();
+            if (lsPersisted && lsPersisted.viewParams) {
+                params = lsPersisted.viewParams;
+            } else {
+                params = this._getConfiguredViewParams(mapOptions);
+            }
+            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters || {};
+            var srsOverride = this._filterSrsOverride(mapOptions, urlParams.srs);
+            if (srsOverride) {
+                var centerXyOriginal = {x: params.center[0], y: params.center[1]};
+                var transformedCenterXy = Mapbender.mapEngine.transformCoordinate(centerXyOriginal, params.srsName, srsOverride);
+                params.center = [transformedCenterXy.x, transformedCenterXy.y];
+                params.srsName = srsOverride;
+            }
+
             var bboxOverride = this._getStartingBboxFromUrl();
+            bboxOverride = bboxOverride && Mapbender.mapEngine.boundsFromArray(bboxOverride);
+            bboxOverride = bboxOverride && Mapbender.mapEngine.transformBounds(bboxOverride, urlParams.srs || mapOptions.srs, params.srsName);
+
             var centerOverride = (urlParams.center || '').split(',').map(parseFloat).filter(function(x) {
                 return !isNaN(x);
             });
@@ -840,47 +973,234 @@ window.Mapbender.MapModelBase = (function() {
                 scaleOverride = parseInt(this._poiOptions[0].scale || '2500');
             }
 
-            var params = {
-                rotation: 0,
-                srsName: this._getInitialSrsCode(mapOptions)
-            };
-
-            var startExtent;
-            if (bboxOverride) {
-                startExtent = Mapbender.mapEngine.boundsFromArray(bboxOverride);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, urlParams.srs || mapOptions.srs, params.srsName);
-            } else {
-                if (!mapOptions.extents.start && !mapOptions.extents.max) {
-                    throw new Error("Incomplete map configuration: no start extent");
-                }
-
-                startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start || mapOptions.extents.max);
-                startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, params.srsName);
-            }
-
             if (centerOverride.length === 2) {
                 params.center = centerOverride;
             } else if (this._poiOptions && this._poiOptions.length === 1) {
                 var singlePoi = this._poiOptions[0];
-                params.center = [singlePoi.x, singlePoi.y];
-            } else {
+                var transformedPoi = Mapbender.mapEngine.transformCoordinate(singlePoi, singlePoi.srs || params.srsName, params.srsName);
+                params.center = [transformedPoi.x, transformedPoi.y];
+            } else if (bboxOverride) {
                 params.center = [
-                    0.5 * (startExtent.left + startExtent.right),
-                    0.5 * (startExtent.bottom + startExtent.top)
+                    0.5 * (bboxOverride.left + bboxOverride.right),
+                    0.5 * (bboxOverride.bottom + bboxOverride.top)
                 ];
             }
             if (scaleOverride) {
                 params.scale = scaleOverride;
-            } else {
-                var viewportSize = Mapbender.mapEngine.getCurrentViewportSize(olMap);
-                var resolution = Math.max(
-                    Math.abs(startExtent.right - startExtent.left) / viewportSize.width,
-                    Math.abs(startExtent.top - startExtent.bottom) / viewportSize.height
-                );
+            } else if (bboxOverride) {
+                var viewportSize = this.getCurrentViewportSize();
+                var resolution = this._getExtentResolution(bboxOverride, viewportSize.width, viewportSize.height);
                 params.scale = this.resolutionToScale(resolution, mapOptions.dpi, params.srsName);
             }
 
             return params;
+        },
+        /**
+         * @return {mmMapSourceSettings}
+         */
+        getCurrentSourceSettings: function() {
+            return {
+                sources: this.sourceTree.map(function(source) {
+                    return Object.assign({}, source.getSettings(), {
+                        id: source.id
+                    });
+                }),
+                layersets: Mapbender.layersets.map(function(layerset) {
+                    return Object.assign({}, layerset.getSettings(), {
+                        id: layerset.getId()
+                    });
+                })
+            };
+        },
+        /**
+         * @return {mmMapSettings}
+         */
+        getCurrentSettings: function() {
+            return Object.assign(this.getCurrentSourceSettings(), {
+                viewParams: this.getCurrentViewParams()
+            });
+        },
+        /**
+         * @return {mmMapSettings}
+         */
+        getConfiguredSettings: function() {
+            return Object.assign({}, this.configuredSettings_);
+        },
+        /**
+         * @param {mmMapSettings} from
+         * @param {mmMapSettings} to
+         * @return {mmMapSettingsDiff}
+         */
+        diffSettings: function(from, to) {
+            // Always include viewParams fully (not worth the effort to diff them)
+            var diff = {
+                viewParams: to.viewParams,
+                layersets: {
+                    activate: [],
+                    deactivate: []
+                },
+                sources: []
+            };
+            var i, toMatches;
+            for (i = 0; i < from.layersets.length; ++i) {
+                var fromLsSettings = from.layersets[i];
+                toMatches = to.layersets.filter(function(toLayerset) {
+                    return ('' + toLayerset.id) === ('' + fromLsSettings.id);
+                });
+                if (toMatches.length && fromLsSettings.selected !== toMatches[0].selected) {
+                    var lsId = '' + toMatches[0].id;
+                    if (toMatches[0].selected) {
+                        diff.layersets.activate.push(lsId);
+                    } else {
+                        diff.layersets.deactivate.push(lsId);
+                    }
+                }
+            }
+            for (i = 0; i < from.sources.length; ++i) {
+                var fromSourceSettings = from.sources[i];
+                toMatches = to.sources.filter(function(toSource) {
+                    return ('' + toSource.id) === ('' + fromSourceSettings.id);
+                });
+                if (toMatches.length) {
+                    var baseDiff = Mapbender.Source.prototype.diffSettings.call(null, fromSourceSettings, toMatches[0]);
+                    if (baseDiff) {
+                        diff.sources.push(Object.assign({id: fromSourceSettings.id}, baseDiff));
+                    }
+                } else {
+                    // Source not present in target settings => deactivate all layers
+                    diff.sources.push({
+                        id: fromSourceSettings.id,
+                        deactivate: fromSourceSettings.selectedIds.slice(),
+                        activate: []
+                    });
+                }
+            }
+            return diff;
+        },
+        /**
+         * Transforms a settings diff into a compact and url-transportable shallow object form.
+         * NOTE: view param entry from diff is ignored (already transportable via fragment encoding)
+         *
+         * @param {mmMapSettingsDiff} diff
+         * @return {Object.<String, String>}
+         */
+        encodeSettingsDiff: function(diff) {
+            var paramParts = {
+                lson: ((diff && diff.layersets || {}).activate || []).slice(),      // =Layersets on
+                lsoff: ((diff && diff.layersets || {}).deactivate || []).slice(),   // =Layersets off
+                slon: [],
+                sloff: [],
+                sop: []
+            };
+            var i, j;
+            for (i = 0; i < (diff && diff.sources || []).length; ++i) {
+                var sourceDiffEntry = diff.sources[i];
+                for (j = 0; j < (sourceDiffEntry.activate || []).length; ++j) {
+                    paramParts.slon.push([sourceDiffEntry.id, sourceDiffEntry.activate[j]].join(':'));
+                }
+                for (j = 0; j < (sourceDiffEntry.deactivate || []).length; ++j) {
+                    paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j]].join(':'));
+                }
+                if (typeof (sourceDiffEntry.opacity) !== 'undefined') {
+                    paramParts.sop.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
+                }
+            }
+            // Collapse lists to comma-separated
+            var params = {};
+            var paramNames = Object.keys(paramParts);
+            for (i = 0; i < paramNames.length; ++i) {
+                var paramName = paramNames[i];
+                if (paramParts[paramName].length) {
+                    params[paramName] = paramParts[paramName].join(',');
+                }
+            }
+            return params;
+        },
+        /**
+         * Reverse of encodeSettingsDiff
+         * @param {Object.<String, String>} params
+         * @param {mmViewParams} [viewParams]
+         * @return {mmMapSettingsDiff}
+         */
+        decodeSettingsDiff: function(params, viewParams) {
+            var diff = {
+                layersets: {
+                    activate: params.lson && params.lson.split(',') || [],
+                    deactivate: params.lsoff && params.lsoff.split(',') || []
+                },
+                sources: []
+            };
+            var sourceDiffs = {};
+            if (typeof viewParams !== 'undefined') {
+                diff.viewParams = viewParams;
+            }
+            var i, parts;
+            var sourceParamParts = {
+                slon: params.slon && params.slon.split(',') || [],
+                sloff: params.sloff && params.sloff.split(',') || [],
+                sop: params.sop && params.sop.split(',') || []
+            };
+            var _getSourceDiffRef = function(id) {
+                if (!sourceDiffs[id]) {
+                    sourceDiffs[id] = {id: id, activate: [], deactivate: []};
+                    diff.sources.push(sourceDiffs[parts[0]]);
+                }
+                return sourceDiffs[id];
+            };
+
+            for (i = 0; i < sourceParamParts.slon.length; ++i) {
+                parts = sourceParamParts.slon[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).activate.push(parts[1]);
+            }
+            for (i = 0; i < sourceParamParts.sloff.length; ++i) {
+                parts = sourceParamParts.sloff[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).deactivate.push(parts[1]);
+            }
+            for (i = 0; i < sourceParamParts.sop.length; ++i) {
+                parts = sourceParamParts.sop[i].split(':', 2);
+                _getSourceDiffRef(parts[0]).opacity = parseFloat(parts[1]);
+            }
+            return diff;
+        },
+        /**
+         * @param {mmMapSettings} settings
+         */
+        applySourceSettings: function(settings) {
+            // @todo: defensive checks if source was actually changed to reduce reloads...?
+            var sources = [], i;
+            for (i = 0; i < settings.layersets.length; ++i) {
+                var ls = this.getLayersetById(settings.layersets[i].id);
+                if (ls && ls.applySettings(settings.layersets[i])) {
+                    this.mbMap.element.trigger('mb.sourcenodeselectionchanged', {
+                        node: ls,
+                        selected: ls.getSelected()
+                    });
+                }
+            }
+            for (i = 0; i < settings.sources.length; ++i) {
+                var sourceEntry = settings.sources[i];
+                var source = this.getSourceById(sourceEntry.id);
+                if (source) {
+                    sources.push(source);
+                    // NOTE: this only restores settings properties. It does NOT yet apply them on the map view.
+                    if (source.applySettings(sourceEntry)) {
+                        this.triggerSourceChanged_(source);
+                    }
+                }
+            }
+            return sources;
+        },
+        /**
+         * @param {mmMapSettings} settings
+         */
+        applySettings: function(settings) {
+            var sources = this.applySourceSettings(settings);
+            this.applyViewParams(settings.viewParams);
+            // Perform map view updates for (updated) sources; we deliberately defer this until after the view param
+            // update because out of bounds / scale / CRS applicability checks heavily depend on view params.
+            for (var i = 0; i < sources.length; ++i) {
+                this._checkSource(sources[i], true);
+            }
         },
         /**
          * @return {Array<Number>|null}
@@ -894,19 +1214,11 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {Object} mapOptions
          * @param {String} mapOptions.srs
-         * @param {Object} [mapOptions.extra]
-         * @param {Array<Object>} [mapOptions.extra.pois]
+         * @param {String} value
          * @private
          */
-        _getInitialSrsCode: function(mapOptions) {
-            try {
-                var shareParams = this._decodeViewparamFragment();
-                return shareParams.srsName;
-            } catch (e) {
-                // fall through
-            }
-            var urlParams = (new Mapbender.Util.Url(window.location.href)).parameters;
-            var srsOverride = (urlParams.srs || '').toUpperCase();
+        _filterSrsOverride: function(mapOptions, value) {
+            var srsOverride = (value || '').toUpperCase();
             var pattern = /^EPSG:\d+$/;
             if (srsOverride) {
                 if (!pattern.test(srsOverride)) {
@@ -922,13 +1234,7 @@ window.Mapbender.MapModelBase = (function() {
                     }
                 }
             }
-            if (!srsOverride && !pattern.test(mapOptions.srs)) {
-                if (!mapOptions.srs) {
-                    throw new Error("Invalid map configuration: missing srs");
-                }
-                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + mapOptions.srs);
-            }
-            return srsOverride || mapOptions.srs;
+            return srsOverride || null;
         },
         _canonicalizeUrl: function(url, viewParamHash) {
             var removeParams = this.getViewRelatedUrlParamNames();
@@ -976,6 +1282,9 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         _startShare: function() {
+            if (Mapbender.configuration.application.persistentView) {
+                this.startLocalStorageSettingsPersistence();
+            }
             var self = this;
             var currentHash = (window.location.hash || '').replace(/^#/, '');
             if (currentHash) {
@@ -996,6 +1305,46 @@ window.Mapbender.MapModelBase = (function() {
             window.addEventListener('popstate', function() {
                 self._applyViewParamFragment();
             });
+        },
+        getLocalStoragePersistenceKey_: function(entryName) {
+            var parts = [
+                Mapbender.configuration.application.slug,
+                entryName
+            ];
+            return parts.join(':');
+        },
+        getLocalStorageSettings: function() {
+            var key = this.getLocalStoragePersistenceKey_('settings');
+            var settings = window.localStorage.getItem(key);
+            return settings && JSON.parse(settings);
+        },
+        startLocalStorageSettingsPersistence: function() {
+            var key = this.getLocalStoragePersistenceKey_('settings');
+            var self = this;
+            var updateHandler = function() {
+                var settings = self.getCurrentSettings();
+                var serialized = JSON.stringify(settings);
+                window.localStorage.setItem(key, serialized);
+            };
+            var listened = [
+                'mbmapviewchanged',
+                'mb.sourcenodeselectionchanged',
+                'mbmapsourcechanged'
+            ];
+            this.mbMap.element.on(listened.join(' '), _.debounce(updateHandler, 1000));
+        },
+        /**
+         * @param {{left: Number, right: Number, top: Number, bottom: Number}} extent
+         * @param {Number} viewportWidth
+         * @param {Number} viewportHeight
+         * @return {Number}
+         * @private
+         */
+        _getExtentResolution: function(extent, viewportWidth, viewportHeight) {
+            return Math.max(
+                Math.abs(extent.right - extent.left) / viewportWidth,
+                Math.abs(extent.top - extent.bottom) / viewportHeight
+            );
         },
         _comma_dangle_dummy: null
     });

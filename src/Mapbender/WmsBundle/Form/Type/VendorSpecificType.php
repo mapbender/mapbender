@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
-use Mapbender\WmsBundle\Form\DataTransformer\VendorSpecificTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,6 +19,7 @@ class VendorSpecificType extends AbstractType
             'name' => '',
             'vstype' => VS::TYPE_VS_SIMPLE,
             'hidden' => false,
+            'data_class' => 'Mapbender\WmsBundle\Component\VendorSpecific',
         ));
     }
 
@@ -47,7 +47,6 @@ class VendorSpecificType extends AbstractType
             ->add('hidden', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
             ))
-            ->addModelTransformer(new VendorSpecificTransformer())
         ;
     }
 

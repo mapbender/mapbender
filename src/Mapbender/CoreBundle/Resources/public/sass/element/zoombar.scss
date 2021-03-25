@@ -28,14 +28,12 @@
     }
   }
   .toolPane {
-    > li {
-      text-align: center;
-    }
-  }
-  .zoom-in, .zoom-out, .zoom-world {
     font-size: 1.6rem;
     .mobile-template & {
       font-size: 2.3rem;
+    }
+    > li {
+      text-align: center;
     }
   }
   ul.zoomSliderLevels {

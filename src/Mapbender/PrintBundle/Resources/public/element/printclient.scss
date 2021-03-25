@@ -1,17 +1,15 @@
 .mb-element-printclient {
   overflow: visible;
 
-  label.labelInput {
-    display: block;
-    line-height: 1.5;
-  }
-  .input, .dropdown {
-    min-width: 190px;
-    width: 100%;
+  .dropdown, .inputWrapper {
     margin-bottom: $space/2;
   }
   .button.active {
     background-color: #538e24;
+  }
+  .checkWrapper.left {
+    // @todo: undo checkbox float globally
+    float: none;
   }
 
   .job-list {
@@ -44,25 +42,11 @@
    *
    * http://api.jqueryui.com/tabs/#theming
    */
-  .ui-tabs {
-    @extend .tabContainerAlt;
-  }
-  .ui-tabs .ui-tabs-nav {
+  .btn-group {
     margin-bottom: $space / 2;
-    padding-bottom: $space / 2;
-  }
-  .ui-tabs .ui-tabs-nav li {
-    list-style: none;
-    float: left;
-    position: relative;
-    top: 0;
-    margin: 1px .2em 0 0;
-    padding: 0;
-    white-space: nowrap;
   }
   .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-    float: left;
-    padding: .5em 1em;
     text-decoration: none;
+    outline: none;
   }
 }

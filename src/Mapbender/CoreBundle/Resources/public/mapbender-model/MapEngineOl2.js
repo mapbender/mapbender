@@ -31,7 +31,12 @@ window.Mapbender.MapEngineOl2 = (function() {
         setLayerVisibility: function(olLayer, state) {
             olLayer.setVisibility(state);
         },
-        createWmsLayer: function(source) {
+        /**
+         * @param {Mapbender.Source} source
+         * @param {Object} [mapOptions]
+         * @return {Object}
+         */
+        createWmsLayer: function(source, mapOptions) {
             var options = getNativeLayerOptions(source);
             var params = getNativeLayerParams(source);
             var url = source.configuration.options.url;
@@ -121,7 +126,9 @@ window.Mapbender.MapEngineOl2 = (function() {
         transformCoordinate: function(coordinate, fromProj, toProj) {
             var from_ = this._getProj(fromProj).proj;
             var to_ = this._getProj(toProj).proj;
-            return Proj4js.transform(from_, to_, coordinate);
+            // Proj4 modifies coordinate in place => make a copy
+            var coordinate_ = (Array.isArray(coordinate) && coordinate.slice()) || Object.assign({}, coordinate);
+            return Proj4js.transform(from_, to_, coordinate_);
         },
         transformBounds: function(bounds, fromProj, toProj) {
             var from = this._getProj(fromProj, true);
@@ -153,9 +160,11 @@ window.Mapbender.MapEngineOl2 = (function() {
                 }
             }
         },
-        destroyLayer: function(olLayer) {
-            olLayer.clearGrid();
-            olLayer.removeBackBuffer();
+        /**
+         * @param {OpenLayers.Map} olMap
+         * @param {OpenLayers.Layer} olLayer
+         */
+        destroyLayer: function(olMap, olLayer) {
             olLayer.destroy(false);
         },
         /**
@@ -207,13 +216,6 @@ window.Mapbender.MapEngineOl2 = (function() {
         },
         getFeatureProperties: function(olFeature) {
             return olFeature.data;
-        },
-        getCurrentViewportSize: function(olMap) {
-            var s = olMap.getCurrentSize();
-            return {
-                width: s.w,
-                height: s.h
-            };
         },
         supportsRotation: function() {
             return false;

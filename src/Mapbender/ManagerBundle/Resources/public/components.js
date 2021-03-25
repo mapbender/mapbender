@@ -111,22 +111,25 @@ $(function() {
         var count = body.find("tr").length;
         $('input[type="checkbox"]:checked', $sidSelector).each(function() {
             // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var $row = $(this).closest('tr');
-            var sid = $('span.hide', $row).text();
+            var $checkbox = $(this);
+            var sid = $checkbox.val();
             var sidType = (sid.split(':')[0]).toUpperCase();
-            var text = $row.find(".labelInput").text().trim();
+            var text = $checkbox.attr('data-label');
             var newEl = $(proto.replace(/__name__/g, count++));
             newEl.addClass('new');
             newEl.attr('data-sid', sid);
-            $('.labelInput', newEl).text(text);
+            newEl.attr('data-sid-label', text);
+            var $sidInput = $('input[type="hidden"]', newEl).first();
+            $sidInput.attr('value', sid);
+            $('.sid-label', newEl).text(text);
             body.prepend(newEl);
-            newEl.find(".input").attr("value", sid);
+
             (defaultPermissions || []).map(function(permissionName) {
                 $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
             });
             $('.userType', newEl)
-                .toggleClass('iconGroup', sidType === 'R')
-                .toggleClass('iconUser', sidType === 'U')
+                .toggleClass('fa-group', sidType === 'R')
+                .toggleClass('fa-user', sidType === 'U')
             ;
         });
         // if table was previously empty, reveal it and hide placeholder text
@@ -138,7 +141,7 @@ $(function() {
         $('tbody tr.filterItem', $content).each(function() {
             var groupUserItem = $(this);
             // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var newItemSid = $('span.hide', groupUserItem).text();
+            var newItemSid = $('input[type="checkbox"]', groupUserItem).first().val();
             $('tbody .userType', $permissionsTable).each(function() {
                 var existingRowSid = $(this).closest('tr').attr('data-sid');
 
@@ -210,10 +213,14 @@ $(function() {
     });
     $(".permissionsTable").on("click", '.iconRemove', function() {
         var $row = $(this).closest('tr');
-        var userGroup = ($('.iconUser', $row).length  ? "user " : "group ") + $('.labelInput', $row).text();
+        var sidLabel = $row.attr('data-sid-label');
+        var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
+
         var content = [
             '<div>',
-            Mapbender.trans('mb.manager.components.popup.delete_user_group.content',{'userGroup': userGroup}),
+            Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+                'userGroup': [typePrefix, sidLabel].join(" ")
+            }),
             '</div>'
             ].join('');
         var labels = {
@@ -326,8 +333,10 @@ $(function() {
         });
         $permissionsTable.on("click", 'tbody .iconRemove', function() {
             var $row = $(this).closest('tr');
-            var userGroup =($row.find(".iconUser").length ? "user " : "group ") + $row.find(".labelInput").text();
-            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {'userGroup': userGroup}));
+            var sidLabel = $row.attr('data-sid-label');
+            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+                'userGroup': sidLabel
+            }));
             $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
             $('.buttonRemove', popup.$element).data('target-row', $row);
             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');

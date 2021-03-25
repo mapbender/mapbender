@@ -7,6 +7,8 @@ namespace Mapbender\ManagerBundle\Component;
 use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -29,18 +31,22 @@ class ElementFormFactory extends BaseElementFactory
     protected $strict;
     /** @var FormRegistryInterface */
     protected $formRegistry;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
      * @param FormRegistryInterface $formRegistry
+     * @param ElementExtension $elementExtension
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
                                 ElementInventoryService $inventoryService,
                                 ContainerInterface $container,
                                 FormRegistryInterface $formRegistry,
+                                ElementExtension $elementExtension,
                                 $strict = false)
     {
         parent::__construct($inventoryService);
@@ -48,6 +54,7 @@ class ElementFormFactory extends BaseElementFactory
         $this->container = $container;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
+        $this->elementExtension = $elementExtension;
     }
 
     public function setStrict($enable)
@@ -62,15 +69,22 @@ class ElementFormFactory extends BaseElementFactory
      */
     public function getConfigurationForm($element, $options = array())
     {
-        // Create base form shared by all elements
-        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
+        // Add class and element id data attributes for functional test support
+        $options += array('attr' => array());
+        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form form-horizontal');
+        if ($element->getId()) {
+            $options['attr']['data-ft-element-id'] = $element->getId();
+        }
+
+        $this->addConfigurationDefaults($element);
         $this->migrateElementConfiguration($element);
-        $titleConstraints = array(
-            new NotBlank(),
-        );
+        $this->addConfigurationDefaults($element);
+
+        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
-                'constraints' => $titleConstraints,
+                'element_class' => $element->getClass(),
+                'required' => false,
             ))
         ;
         $configurationType = $this->getConfigurationFormType($element);
@@ -123,4 +137,12 @@ class ElementFormFactory extends BaseElementFactory
         return null;
     }
 
+    public function migrateElementConfiguration(Element $element, $migrateClass = true)
+    {
+        parent::migrateElementConfiguration($element, $migrateClass);
+        $defaultTitle = $this->elementExtension->element_default_title($element);
+        if ($element->getTitle() === $defaultTitle) {
+            $element->setTitle('');    // @todo: allow null (requires schema update)
+        }
+    }
 }

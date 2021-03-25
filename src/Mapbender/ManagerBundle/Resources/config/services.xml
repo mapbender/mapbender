@@ -19,6 +19,7 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="service_container" />
             <argument type="service" id="form.registry" />
+            <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
@@ -44,6 +45,11 @@
         <service id="mabender.form_type.source_instance_item" class="Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType">
             <tag name="form.type" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+        </service>
+        <service class="Mapbender\ManagerBundle\Form\Type\ApplicationChoiceType">
+            <tag name="form.type" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
     </services>
 </container>

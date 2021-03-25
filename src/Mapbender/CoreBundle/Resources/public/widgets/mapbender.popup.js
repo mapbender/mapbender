@@ -41,12 +41,6 @@
         return container_;
     }
 
-    $(document).on('click', '.popupContainer.modal .overlay', function(e) {
-        if (currentModal_ && currentModal_.options.closeOnOutsideClick) {
-            currentModal_.close();
-        }
-    });
-
     /**
      * Popup constructor.
      *

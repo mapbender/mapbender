@@ -53,6 +53,8 @@ mb:
       reusable_assigned_to_application: Die freie Instanz wurde der Anwendung hinzugefügt
       create_reusable: Freie Instanz erzeugen
       created_reusable: Neue freie Instanz erzeugt
+    application:
+      persistentView: Kartenzustand merken
     admin:
       sources: Datenquellen
       source:
@@ -98,7 +100,7 @@ mb:
       instance:
         add: 'Instanz hinzufügen'
         show_hide: 'Instanz an/aus'
-        edit: 'Instanz editieren'
+        edit: 'Instanz bearbeiten'
         delete:  
           title: 'Instanz löschen'
           confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'       
@@ -177,11 +179,11 @@ mb:
         add_element:
           title: 'Element hinzufügen'
         edit_element:
-          title: 'Element editieren'
+          title: 'Element bearbeiten'
         delete_element:
           title: 'Löschen bestätigen'
         add_edit_layerset:
-          title_edit: 'Layerset editieren'
+          title_edit: 'Layerset bearbeiten'
           title_add: 'Layerset hinzufügen'
         delete_layerset:
           title: 'Layerset löschen'

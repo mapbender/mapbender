@@ -67,18 +67,12 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    protected $dimensions;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
     protected $resourceUrl;
 
     public function __construct()
     {
         $this->infoformats = array();
         $this->styles = array();
-        $this->dimensions = array();
         $this->resourceUrl = array();
         $this->tilematrixSetlinks = array();
         $this->boundingBoxes = array();
@@ -295,38 +289,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlink)
     {
         $this->tilematrixSetlinks[] = $tilematrixSetlink;
-        return $this;
-    }
-
-
-    /**
-     * Gets dimensions.
-     * @return Dimension[]
-     */
-    public function getDimensions()
-    {
-        return $this->dimensions;
-    }
-
-    /**
-     * Sets dimensions.
-     * @param Dimension[] $dimensions
-     * @return $this
-     */
-    public function setDimensions(array $dimensions = array())
-    {
-        $this->dimensions = $dimensions;
-        return $this;
-    }
-
-    /**
-     * Adds dimension.
-     * @param Dimension $dimension
-     * @return $this
-     */
-    public function addDimension($dimension)
-    {
-        $this->dimensions[] = $dimension;
         return $this;
     }
 

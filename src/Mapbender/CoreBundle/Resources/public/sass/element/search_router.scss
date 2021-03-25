@@ -1,39 +1,24 @@
-$searchRouterInputWidth: 100%;
 .mb-element-searchrouter {
   font-size: 11px;
 
   .dropdown, .inputWrapper {
-    width: $searchRouterInputWidth;
     margin-bottom: $space/2;
-  }
-  .ui-helper-hidden-accessible {
-    display: none;
   }
   .search-results {
     overflow: auto;
-    > table {
+    table {
       margin-top: 2px;
       margin-bottom: 5px;
-      > thead {
+      thead {
         background-color: #c0c0c0;
-        > th {
-          padding-left: 3px;
-          padding-right: 3px;
-          text-align: left;
-          font-weight: bold;
-          white-space: nowrap;
-        }
       }
       tr {
-        border-bottom: 1px solid #d3d3d3;
         &:hover {
           color: $ciColor;
-          background-color: $contentColor;
         }
-        td {
-          padding-left: 2px;
-          padding-right: 2px;
-        }
+      }
+      >tbody>tr>td, >thead>tr>th, td, th {
+        padding: 3px;
       }
     }
   }
@@ -42,14 +27,6 @@ $searchRouterInputWidth: 100%;
   }
   .popup & .search-action-buttons {
     display: none;
-  }
-  th {
-    @extend .subTitle;
-    text-align: left;
-    padding-right: 3px;
-  }
-  td {
-    padding-right: $space/2;
   }
   .result-counter {
     text-align: right;

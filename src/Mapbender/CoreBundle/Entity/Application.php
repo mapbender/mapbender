@@ -83,6 +83,12 @@ class Application
     protected $map_engine_code = self::MAP_ENGINE_CURRENT;
 
     /**
+     * @ORM\Column(type="boolean", name="persistent_view", options={"default": false})
+     * @var bool
+     */
+    protected $persistentView = false;
+
+    /**
      * @var RegionProperties[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
      * @ORM\OrderBy({"id" = "asc"})
@@ -644,6 +650,22 @@ class Application
     public function getMapEngineCode()
     {
         return $this->map_engine_code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPersistentView()
+    {
+        return $this->persistentView;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setPersistentView($value)
+    {
+        $this->persistentView = $value;
     }
 
     /**

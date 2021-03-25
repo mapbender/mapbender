@@ -191,6 +191,7 @@ mb:
     zoombar:
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
+      zoom_home: Zurück zum Anfang
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:
@@ -249,6 +250,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
+      admin:
+        fixedZoomSteps: Feste Maßstabsstufen
     scalebar:
       class:
         title: Maßstabsleiste
@@ -277,6 +280,11 @@ mb:
       tag:
         srs: SRS
         selector: Auswahl
+    ShareUrl:
+      class:
+        title: URL teilen
+        description: Teilt die aktuelle Kartenansicht über eine URL
+      copied_to_clipboard: URL in Zwischenablage kopiert
     admin:
       poi:
         label:
@@ -294,7 +302,10 @@ mb:
           deactivateonclose: 'Beim Schließen deaktivieren'
           autoopen: 'Automatisches Öffnen'
           onlyvalid: 'Nur valide zeigen'
-          highlighting: 'Highlighting'
+          highlighting_group: 'Highlighting'
+          highlighting: Highlighting aktiv
+          featureColorDefault: Grundfarbe
+          featureColorHover: Hover-Farbe
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'
@@ -364,6 +375,18 @@ mb:
     redlining:
       class:
         title: Skizzen
+    resetView:
+      class:
+        title: Ansicht zurücksetzen
+        description: Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her
+      admin:
+        resetDynamicSources: Hinzugeladene Quellen entfernen
+    applicationSwitcher:
+      class:
+        title: Anwendung wechseln
+        description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
+      admin:
+        open_in_new_tab: In neuem Tab öffnen
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

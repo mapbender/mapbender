@@ -51,6 +51,15 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
             ol.proj.proj4.register(window.proj4);
         }
     },
+    isDefined: function(name) {
+        if (window.Proj4js) {
+            return !!Proj4js.defs[name];
+        }
+        if (window.proj4) {
+            return !!proj4.defs(name);
+        }
+        return false;
+    },
 
     /**
      * Transform coordinates between srs

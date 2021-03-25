@@ -9,11 +9,5 @@
         display: inline-block;
         min-width: 1.25em;
       }
-      .item-opened .iconCheckbox:before {
-        content: "\f07b" !important;
-      }
-      .item-opened .iconCheckboxActive:before {
-        content: "\f07c" !important;
-      }
     }
 }

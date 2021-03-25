@@ -29,15 +29,15 @@
 {%- endif -%}
 {%- endblock form_errors_inline %}
 
-{% block form_widget_simple %}
+{%- block form_widget_simple -%}
   {% spaceless %}
-    {% set type = type|default('text') %}
+    {%- set type = type|default('text') -%}
     {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
       <div class="inputWrapper">
         <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
       </div>
   {% endspaceless %}
-{% endblock form_widget_simple %}
+{%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
   {% spaceless %}
@@ -65,19 +65,17 @@
   </div>
 {% endblock textarea_widget %}
 
-{% block choice_widget %}
-  {% spaceless %}
-    {% if expanded %}
-      {% if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined %}
-        {{ block('choice_widget_expanded_sortable') }}
-      {% else %}
-        {{ block('choice_widget_expanded') }}
-      {% endif %}
-    {% else %}
-      {{ block('choice_widget_collapsed') }}
-    {% endif %}
-  {% endspaceless %}
-{% endblock choice_widget %}
+{%- block choice_widget -%}
+    {%- if expanded -%}
+      {%- if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined -%}
+        {{- block('choice_widget_expanded_sortable') -}}
+      {%- else -%}
+        {{- block('choice_widget_expanded') -}}
+      {%- endif -%}
+    {%- else -%}
+      {{- block('choice_widget_collapsed') -}}
+    {%- endif -%}
+{%- endblock choice_widget -%}
 
 {% block choice_widget_expanded_sortable %}
   {% spaceless %}
@@ -120,7 +118,9 @@
 
 {%- block choice_widget_collapsed -%}
   {%- if multiple -%}
-    {{- block('symfony_choice_widget_collapsed') -}}
+    <div class="inputWrapper">
+      {{- block('symfony_choice_widget_collapsed') -}}
+    </div>
   {%- else -%}
     <div class="dropdown">
     {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
@@ -176,7 +176,7 @@
   {%- else -%}
     {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
   {%- endif -%}
-  {{ block('div_form_label') }}
+  {{- block('div_form_label') -}}
 {% endblock form_label %}
 
 {% block checkbox_row %}
@@ -262,25 +262,22 @@
 {% endblock tagbox_widget %}
 
 {% block ace_widget %}
-  {% spaceless %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ form['sid'].vars.value }}">
-      {% for child in form %}
+    {%- set _sid_value = form.sid.vars.value -%}
+    {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
+    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
+      <td>
+        <i class="userType fa fas {{ form.sid.vars.value|slice(0, 1) == "u" ? 'fa-user' : 'fa-group' }}"></i>&nbsp;
+        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ _sid_label }}</span>
+          {{ form_row(form.sid) }}
+      </td>
+
+      {%- for child in form if child != (form.sid) -%}
         <td>
-          {% if 'text' in child.vars.block_prefixes %}
-              <div class="{% if child.vars.value|slice(0, 1) == "u" %}iconUser {% else %} iconGroup{% endif %} userType">
-              <span class="labelInput">{{ child.vars.value|slice(2)|split(':')|first }}</span>
-            </div>
             {{ form_widget(child) }}
-          {% else %}
-              {% if child.vars.attr.class is defined %}
-                {{ form_widget(child) }}
-              {% endif %}
-          {% endif %}
         </td>
-      {% endfor %}
+      {%- endfor -%}
       <td class="iconColumn">
         <span class="iconRemove removeUserGroup hover-highlight-effect"></span>
       </td>
     </tr>
-  {% endspaceless %}
 {% endblock %}

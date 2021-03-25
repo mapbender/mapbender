@@ -8,6 +8,7 @@ use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Extension\ElementExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,11 +31,16 @@ class TargetElementType extends AbstractType
     protected $repository;
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
-    public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(TranslatorInterface $translator,
+                                EntityManagerInterface $entityManager,
+                                ElementExtension $elementExtension)
     {
         $this->translator = $translator;
         $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
+        $this->elementExtension = $elementExtension;
     }
 
     /**
@@ -67,11 +73,14 @@ class TargetElementType extends AbstractType
             'class' => 'Mapbender\CoreBundle\Entity\Element',
         );
         $type = $this;
+        $elementExt = $this->elementExtension;
         $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
             'class' => 'Mapbender\CoreBundle\Entity\Element',
-            'choice_label' => 'title',
+            'choice_label' => function($element) use ($elementExt) {
+                return $element->getTitle() ?: $elementExt->element_default_title($element);
+            },
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',
             // Symfony does not recognize array-style callables

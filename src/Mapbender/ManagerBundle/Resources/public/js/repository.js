@@ -4,24 +4,14 @@ $(function() {
         if (!root.length) {
             root = $('#instanceTableCheckHead th[data-check-identifier="' + groupId + '"] .checkWrapper');
         }
+        var rootCb = !root.is('.checkWrapper') && root || $('>input[type=checkbox]', root);
         var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
         var checkboxes = $('input[type="checkbox"]:not(:disabled)', column);
         var rowCount = checkboxes.length;
         var checkedCount = checkboxes.filter(':checked').length;
-
-        if (rowCount === checkedCount) {
-            root.removeClass("iconCheckbox iconCheckboxHalf");
-            root.addClass("iconCheckboxActive");
-            $('input[type="checkbox"]', root).prop('checked', true);
-        } else if (checkedCount === 0) {
-            root.removeClass("iconCheckboxActive iconCheckboxHalf");
-            root.addClass("iconCheckbox");
-            $('input[type="checkbox"]', root).prop('checked', false);
-        } else {
-            root.removeClass("iconCheckbox iconCheckboxActive");
-            root.addClass("iconCheckboxHalf");
-            $('input[type="checkbox"]', root).prop('checked', false);
-        }
+        rootCb.prop('checked', rowCount === checkedCount);
+        rootCb.prop('indeterminate', checkedCount && rowCount !== checkedCount);
+        initCheckbox.call(rootCb);
     }
     // toggle all permissions
     function toggleAllStates(groupId, state, $scope) {

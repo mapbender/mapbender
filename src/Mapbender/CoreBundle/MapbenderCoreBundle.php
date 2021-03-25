@@ -12,21 +12,12 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPa
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * CoreBundle.
- *
  * @author Christian Wygoda
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
 
     /**
-     * Builds the bundle.
-     *
-     * It is only ever called once when the cache is empty.
-     *
-     * This method can be overridden to register compilation passes,
-     * other extensions, ...
-     *
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
     public function build(ContainerBuilder $container)
@@ -68,6 +59,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ActivityIndicator',
+            'Mapbender\CoreBundle\Element\ApplicationSwitcher',
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\ControlButton',
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
@@ -81,11 +73,13 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',
+            'Mapbender\CoreBundle\Element\ResetView',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleDisplay',
             'Mapbender\CoreBundle\Element\ScaleSelector',
             'Mapbender\CoreBundle\Element\SearchRouter',
+            'Mapbender\CoreBundle\Element\ShareUrl',
             'Mapbender\CoreBundle\Element\SimpleSearch',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\ZoomBar',

@@ -58,18 +58,45 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         currentActiveLayer: null,
         autoDisabled: null,
         recreateOnSrsSwitch: true,
-        destroyLayers: function() {
-            Mapbender.Source.prototype.destroyLayers.call(this);
+        destroyLayers: function(olMap) {
+            Mapbender.Source.prototype.destroyLayers.call(this, olMap);
             this.currentActiveLayer = null;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
+        /**
+         * @return {SourceSettings}
+         */
+        getSettings: function() {
+            var diff = Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+                selectedIds: []
+            });
+            // Use a (single-item) layer id list
+            if (this.getSelected()) {
+                diff.selectedIds.push(this.id);
+            }
+            return diff;
+        },
+        /**
+         * @param {SourceSettingsDiff|null} diff
+         */
+        applySettingsDiff: function(diff) {
+            var fakeRootLayer = this.configuration.children[0];
+            if (diff.activate || diff.deactivate) {
+                fakeRootLayer.options.treeOptions.selected = !!(diff.activate || []).length;
+            }
+        },
         getSelected: function() {
             var fakeRootLayer = this.configuration.children[0];
-            return fakeRootLayer.options.treeOptions.selected;
+            return fakeRootLayer && fakeRootLayer.options.treeOptions.selected || false;
         },
-        createNativeLayers: function(srsName) {
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
             var compatibleLayer = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!compatibleLayer) {
@@ -271,7 +298,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         },
         intersectsExtent: function(extent, srsName) {
             // Let the source substitute fake root layer for the right one
-            var bounds = this.source && this.source.getLayerBounds(this.options.id, srsName, true);
+            var bounds = this.source && this.source.getLayerBounds(this.options.id, 'EPSG:4326', true);
             if (!bounds) {
                 // unlimited extent
                 return true;

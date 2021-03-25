@@ -82,16 +82,16 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
-            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
-            projection: this._startProj
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName).toArray(),
+            projection: this.initialViewParams.srsName
         });
         var mapOptions = {
-            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName).toArray(),
             maxResolution: 'auto',
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
-            projection: this._startProj,
-            displayProjection: this._startProj,
-            units: this.getProj(this._startProj).proj.units || 'degrees',
+            projection: this.initialViewParams.srsName,
+            displayProjection: this.initialViewParams.srsName,
+            units: this.getProj(this.initialViewParams.srsName).proj.units || 'degrees',
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
@@ -129,9 +129,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         })(this.olMap);
         this.olMap.addControl(new OpenLayers.Control.KeyboardDefaults());
 
-        this.initialViewParams = this._setInitialView(this.olMap, this.mbMap.options);
-        this.initializeSourceLayers();
+        this._setInitialView(this.olMap, this.initialViewParams, this.mbMap.options);
         this.processUrlParams();
+        this.initializeSourceLayers(this.sourceTree);
         this._initEvents(this.olMap, this.mbMap);
         this._startShare();
     },
@@ -168,15 +168,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     /**
      * @param {OpenLayers.Map} olMap
+     * @param {mmViewParams} viewParams
      * @param {Object} mapOptions
-     * @return {mmViewParams}
      * @private
      */
-    _setInitialView: function(olMap, mapOptions) {
-        var viewParams = this._getInitialViewParams(olMap, mapOptions);
+    _setInitialView: function(olMap, viewParams, mapOptions) {
         var zoom = this.pickZoomForScale(viewParams.scale, true);
         olMap.setCenter(viewParams.center, zoom);
-        return viewParams;
     },
     /**
      * @return {String}
@@ -185,23 +183,18 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (this.olMap) {
             return this.olMap.getProjection();
         } else {
-            return this._startProj;
+            return this.initialViewParams.srsName;
         }
     },
     getCurrentProjectionUnits: function() {
-        var proj;
-        if (this.olMap) {
-            proj = this.getProj(this.olMap.getProjection());
-        } else {
-            proj = this.getProj(this._startProj);
-        }
+        var proj = this.getCurrentProj();
         return proj.proj.units || 'degrees';
     },
     getCurrentProj: function() {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjectionObject();
         } else {
-            return this.getProj(this._startProj);
+            return this.getProj(this.viewParams.srsName);
         }
     },
     /**
@@ -429,14 +422,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
-        var baseLayer = this.map.olMap.baseLayer;
-        if (!(baseLayer && baseLayer.scales && baseLayer.scales.length)) {
-            console.error("No base layer, or scales not populated", baseLayer, this.map.olMap);
-            throw new Error("No base layer, or scales not populated");
-        }
-        return baseLayer.scales.map(function(s) {
-            return parseInt('' + Math.round(s));
-        });
+        return this.mbMap.options.scales;
     },
     _countScales: function() {
         return this._getScales().length;
@@ -469,7 +455,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         Mapbender.MapModelBase.prototype.changeProjection.call(this, srsCode);
     },
     _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
-        var engine = Mapbender.mapEngine;
         var oldProj = this.getProj(srsNameFrom);
         var newProj = this.getProj(srsNameTo);
         var newMaxExtent = this._transformExtent(this.mapMaxExtent, this._configProj, newProj);
@@ -477,7 +462,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                source.destroyLayers();
+                source.destroyLayers(this.olMap);
             } else {
                 olLayers = source.getNativeLayers();
                 for (j = 0; j < olLayers.length; ++ j) {
@@ -495,21 +480,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        for (i = 0; i < this.sourceTree.length; ++i) {
-            source = this.sourceTree[i];
-            if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                olLayers = source.initializeLayers(srsNameTo);
-                for (j = 0; j < olLayers.length; ++j) {
-                    var olLayer = olLayers[j];
-                    engine.setLayerVisibility(olLayer, false);
-                }
-                this._spliceLayers(source, olLayers);
-            }
-        }
-        var self = this;
-        self.sourceTree.map(function(source) {
-            self._checkSource(source, false);
-        });
     },
     /**
      * Injects native layers into the map at the "natural" position for the source.
@@ -710,13 +680,20 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         olMap.addPopup(popup);
         return def.promise();
     },
+    _getConfiguredViewParams: function(mapOptions) {
+        // No fractional scale support on Openlayers 2
+        // => Limit scale to one of the exact configured scales
+        var params = Mapbender.MapModelBase.prototype._getConfiguredViewParams.apply(this, arguments);
+        var zoom = this.pickZoomForScale(params.scale);
+        params.scale = (this._getScales())[zoom];
+        return params;
+    },
     /**
-     * @param {OpenLayers.Map} olMap
      * @param {Object} mapOptions
      * @return {mmViewParams}
      * @private
      */
-    _getInitialViewParams: function(olMap, mapOptions) {
+    _getInitialViewParams: function(mapOptions) {
         // No fractional scale support on Openlayers 2
         // => Limit scale to one of the exact configured scales
         var params = Mapbender.MapModelBase.prototype._getInitialViewParams.apply(this, arguments);

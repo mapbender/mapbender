@@ -35,12 +35,6 @@
         .accordion-cell {
           padding-top: 0;
         }
-        .container-accordion.active {
-          // avoid cutting off / producing vertical scroll from not using all space in the cell
-          .accordion-wrapper, .accordion-wrapper .js-content-content {
-              height: 100%;
-          }
-        }
       }
     }
   }

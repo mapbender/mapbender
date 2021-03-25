@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Simple Search - Just type, select and show result
@@ -122,7 +123,9 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             foreach (explode('.', $configuration['collection_path']) as $key) {
                 $data = $data[ $key ];
             }
-            $response->setContent(json_encode($data));
+            // Rebuild entire response from scratch to discard potentially invalid upstream headers etc
+            // see https://github.com/mapbender/mapbender/issues/1303
+            $response = new JsonResponse($data);
         }
 
         // In dev environment, add query URL as response header for easier debugging

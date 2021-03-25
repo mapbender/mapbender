@@ -10,6 +10,8 @@
             onlyValid: false,
             iframeInjection: null,
             highlighting: false,
+            featureColorDefault: '#ffa500',
+            featureColorHover: 'ff0000',
             maxCount: 100,
             width: 700,
             height: 500
@@ -18,16 +20,25 @@
         model: null,
         popup: null,
         context: null,
-        state: null,
         contentManager: null,
         mobilePane: null,
         isActive: false,
         highlightLayer: null,
+        showingSources: [],
+        template: {
+            header: null,
+            content: null
+        },
 
 
 
         _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
+            this.template = {
+                header: $('.js-header', this.element).remove(),
+                content: $('.js-content', this.element).remove()
+            };
+
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
@@ -69,13 +80,6 @@
 
             widget._trigger('ready');
         },
-        _contentElementId: function(source) {
-            var id = this._getContentManager().contentId(source.id);
-            // verify element is in DOM
-            if ($('#' + id, this.element).length) {
-                return id;
-            }
-        },
         /**
          * Default action for mapbender element
          */
@@ -90,16 +94,10 @@
         deactivate: function() {
             this.target.element.removeClass('mb-feature-info-active');
             this.isActive = false;
-            if (this.highlightLayer) {
-                this.highlightLayer.getSource().clear();
-            }
+            this.clearAll();
 
-            if (this.popup) {
-                if (this.popup.$element) {
-                    $('body').append(this.element.addClass('hidden'));
-                    this.popup.destroy();
-                }
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.hide();
             }
             if (this.callback) {
                 (this.callback)();
@@ -114,13 +112,49 @@
             if (!this.isActive) {
                 return;
             }
-            var self = this;
+            var self = this, i;
             var model = this.target.getModel();
-            $.each(model.getSources(), function (idx, src) {
-                var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
-                if (url) {
-                    self._setInfo(src, url);
+            var showingPreviously = this.showingSources.slice();
+            this.showingSources.splice(0);  // clear
+            var sourceUrlPairs = model.getSources().map(function(source) {
+                var url = model.getPointFeatureInfoUrl(source, x, y, self.options.maxCount);
+                return url && {
+                    source: source,
+                    url: url
+                };
+            }).filter(function(x) { return !!x; });
+            var validSources = sourceUrlPairs.map(function(sourceUrlEntry) {
+                return sourceUrlEntry.source;
+            });
+            for (i = 0; i < showingPreviously.length; ++i) {
+                if (-1 === validSources.indexOf(showingPreviously[i])) {
+                    this._removeContent(showingPreviously[i]);
                 }
+            }
+            var requestsPending = sourceUrlPairs.length;
+            if (!requestsPending) {
+                self._handleZeroResponses();
+            }
+            sourceUrlPairs.forEach(function(entry) {
+                var source = entry.source;
+                var url = entry.url;
+                self._setInfo(source, url).then(function(success) {
+                    if (success) {
+                        self.showingSources.push(source);
+                        self._open();
+                    } else {
+                        self._removeContent(source);
+                    }
+                }, function() {
+                    self._removeContent(source);
+                }).always(function() {
+                    --requestsPending;
+                    if (!requestsPending && !self.showingSources.length) {
+                        // No response content to display, no more requests pending
+                        // Remain active, but hide popup
+                        self._handleZeroResponses();
+                    }
+                });
             });
         },
         _getTabTitle: function(source) {
@@ -143,27 +177,24 @@
                 };
                 ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
-            var request = $.ajax(ajaxOptions);
-            request.done(function (data, textStatus, jqXHR) {
+            var request = $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
                 if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
                     Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    self._removeContent(source);
+                    return false;
                 } else {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                     // Bind original url for print interaction
                     var $documentNode = self._getDocumentNode(source.id);
                     $documentNode.attr('data-url', url);
-                    self._triggerHaveResult(source);
-                    self._open();
+                    return true;
                 }
-            });
-            request.fail(function (jqXHR, textStatus, errorThrown) {
+            }, function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
-                self._removeContent(source);
             });
+            return request;
         },
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
@@ -175,23 +206,12 @@
                     return true;
             }
         },
-        _triggerHaveResult: function(source) {
-            // only used for mobile hacks
-            // @todo: add mobile hacks here, remove event
-            var eventData = {
-                action: "haveresult",
-                content: this._contentElementId(source),
-                source: source,
-                id: this.element.attr('id')
-            };
-            this._trigger('featureinfo', null, eventData);
-        },
         _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     var script = self._getInjectionScript(source.id);
-                    var iframe = $('<iframe sandbox="allow-scripts">');
+                    var iframe = $('<iframe sandbox="allow-scripts allow-popups">');
                     iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
                     break;
@@ -204,16 +224,14 @@
         _getContentManager: function() {
             if (!this.contentManager) {
                 this.contentManager = {
-                    headerSel: '.js-header',
-                    $headerParent: $('.js-header', this.element).parent(),
-                    $header: $('.js-header', this.element).remove(),
+                    $headerParent: $('.js-header-parent', this.element),
+                    $header: this.template.header,
                     headerContentSel: '.js-header-content',
                     headerId: function (id) {
                         return this.$header.attr('data-idname') + id
                     },
-                    contentSel: '.js-content',
-                    $contentParent: $('.js-content', this.element).parent(),
-                    $content: $('.js-content', this.element).remove(),
+                    $contentParent: $('.js-content-parent', this.element),
+                    $content: this.template.content,
                     contentContentSel: '.js-content-content',
                     contentId: function (id) {
                         return this.$content.attr('data-idname') + id
@@ -230,6 +248,9 @@
             var options = widget.options;
             if (!this.mobilePane.length) {
                 if (!widget.popup || !widget.popup.$element) {
+                    if (this.highlightLayer) {
+                        this.highlightLayer.getSource().clear();
+                    }
                     widget.popup = new Mapbender.Popup2({
                         title: widget.element.attr('data-title'),
                         draggable: true,
@@ -244,29 +265,27 @@
                         buttons: this._getPopupButtonOptions()
                     });
                     widget.popup.$element.on('close', function () {
-                        if (widget.options.deactivateOnClose) {
-                            widget.deactivate();
-                        }
-                        if (widget.popup && widget.popup.$element) {
-                            widget.popup.$element.hide();
-                        }
-                        widget.state = 'closed';
-                    });
-                    widget.popup.$element.on('open', function () {
-                        widget.state = 'opened';
+                        widget._close();
                     });
                 }
-                if (widget.state !== 'opened') {
-                    if (this.highlightLayer) {
-                        this.highlightLayer.getSource().clear();
-                    }
-                    widget.popup.open();
-                }
-
-                if (widget.popup && widget.popup.$element) {
-                    widget.popup.$element.show();
-                }
+                widget.popup.$element.show();
             }
+        },
+        _hide: function() {
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.hide();
+            }
+        },
+        _close: function() {
+            if (this.options.deactivateOnClose) {
+                this.deactivate();
+            } else {
+                this._hide();
+            }
+        },
+        _handleZeroResponses: function() {
+            // @todo mobile-style display: no popup, cannot hide popup; show placeholder text instead
+            this._hide();
         },
         /**
          * @returns {Array<Object>}
@@ -297,10 +316,26 @@
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
         _removeContent: function(source) {
-            var manager = this._getContentManager();
-            $('#' + manager.headerId(source.id), this.element).remove();
-            $(this._selectorSelfAndSub(manager.contentId(source.id), manager.contentContentSel), this.element).remove();
+            $('[data-source-id="' + source.id + '"]', this.element).remove();
+            this._removeFeaturesBySourceId(source.id);
+            // If there are tabs / accordions remaining, ensure at least one of them is active
+            var $container = $('.tabContainer,.accordionContainer', this.element);
+            if (!$('.active', $container).length) {
+                $('>.tabs .tab, >.accordion', $container).first().click();
+            }
          },
+        clearAll: function() {
+            // Must call getContentManager at least once to "save" template markup
+            // @todo: get rid of contentManager to fix all remaining DOM state races
+            this._getContentManager();
+            if (this.highlightLayer) {
+                this.highlightLayer.getSource().clear();
+            }
+            $('>.accordionContainer', this.element).empty();
+            $('>.tabContainer > .tabs', this.element).empty();
+            $('>.tabContainer > :not(.tabs)', this.element).remove();
+            this.showingSources.splice(0);
+        },
         _getDocumentNode: function(sourceId) {
             // @todo: get rid of the content manager
             return $('#' + this._getContentManager().contentId(sourceId), this.element);
@@ -313,6 +348,7 @@
             if ($header.length === 0) {
                 $header = manager.$header.clone();
                 $header.attr('id', headerId);
+                $header.attr('data-source-id', source.id);
                 manager.$headerParent.append($header);
             }
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
@@ -323,6 +359,7 @@
             if ($content.length === 0) {
                 $content = manager.$content.clone();
                 $content.attr('id', contentId);
+                $content.attr('data-source-id', source.id);
                 manager.$contentParent.append($content);
             }
             $content.toggleClass('active', $header.hasClass('active'));
@@ -346,28 +383,27 @@
         },
 
         _createLayerStyle: function () {
+            var strokeStyle = new ol.style.Stroke({
+                color: '#ff00ff', //rgba(255, 255, 255, 1)',
+                lineCap: 'round',
+                width: 1
+            });
+            var defaultColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorDefault).slice(0, 3).concat(0.4);
+            var hoverColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorHover).slice(0, 3).concat(0.7);
             this.featureInfoStyle = function (feature) {
                 return new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 255, 255, 1)',
-                        lineCap: 'round',
-                        width: 1
-                    }),
+                    stroke: strokeStyle,
                     fill: new ol.style.Fill({
-                        color: 'rgba(255, 165, 0, 0.4)'
+                        color: defaultColorComponents
                     })
                 });
             };
 
             this.featureInfoStyle_hover = function (feature) {
                 return new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 255, 255, 1)',
-                        lineCap: 'round',
-                        width: 1
-                    }),
+                    stroke: strokeStyle,
                     fill: new ol.style.Fill({
-                        color: 'rgba(255, 0, 0, 0.7)'
+                        color: hoverColorComponents
                     }),
                     zIndex: 1000
                 });
@@ -380,8 +416,8 @@
             if (data.elementId !== this.element.attr('id')) {
                 return;
             }
-            if (this.isActive && this.highlightLayer && data.ewkts && data.ewkts.length) {
-                widget._populateFeatureInfoLayer(data.ewkts);
+            if (this.isActive && this.highlightLayer && data.command === 'features') {
+                widget._populateFeatureInfoLayer(data);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
                 var feature = this.highlightLayer.getSource().getFeatureById(data.id);
@@ -394,16 +430,28 @@
                 }
             }
         },
-        _populateFeatureInfoLayer: function (ewkts) {
-            var features = ewkts.map(function (ewkt) {
-                var feature = Mapbender.Model.parseWktFeature(ewkt.wkt, ewkt.srid);
-                feature.setId(ewkt.id);
+        _populateFeatureInfoLayer: function (data) {
+            var features = (data.features || []).map(function(featureData) {
+                var feature = Mapbender.Model.parseWktFeature(featureData.wkt, featureData.srid);
+                feature.setId(featureData.id);
+                feature.set('sourceId', data.sourceId);
                 return feature;
             });
 
+            this._removeFeaturesBySourceId(data.sourceId);
             this.highlightLayer.getSource().addFeatures(features);
         },
-
+        _removeFeaturesBySourceId: function(sourceId) {
+            if (this.highlightLayer) {
+                var source = this.highlightLayer.getSource();
+                var features = source.getFeatures().filter(function(feature) {
+                    return feature.get('sourceId') === sourceId;
+                });
+                features.forEach(function(feature) {
+                    source.removeFeature(feature);
+                });
+            }
+        },
         _createHighlightControl: function() {
 
             var widget = this;

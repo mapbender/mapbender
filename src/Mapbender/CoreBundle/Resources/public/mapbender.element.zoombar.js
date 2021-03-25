@@ -72,12 +72,14 @@ $.widget("mapbender.mbZoomBar", {
         $('.reset-rotation', $rotationElement).on('click', function() {
             model.setViewRotation(0, true);
         });
-        this.mbMap.element.on('mbmaprotationchanged', function() {
+        var updateRotationDisplay = function() {
             var degrees = model.getViewRotation() + rotationBias;
             $('i',$resetElement).css({
                 transform: 'rotate(' + degrees + 'deg)'
             });
-        });
+        };
+        updateRotationDisplay();
+        this.mbMap.element.on('mbmaprotationchanged', updateRotationDisplay);
     },
     _setupZoomButtons: function() {
         var self = this;
@@ -89,6 +91,10 @@ $.widget("mapbender.mbZoomBar", {
         });
         this.element.on('click', '.zoom-world', function() {
             self._worldZoom();
+        });
+        this.element.on('click', '.-fn-zoom-home', function() {
+            var m = self.mbMap.getModel();
+            m.applyViewParams(m.getConfiguredSettings().viewParams);
         });
     },
     /**

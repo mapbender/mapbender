@@ -70,9 +70,16 @@ class ElementFactory extends BaseElementFactory
             ->setClass($componentClass)
             ->setRegion($region)
             ->setWeight(0)
-            ->setTitle($this->translator->trans($component->getClassTitle()))
             ->setConfiguration($configuration)
         ;
+        if (!$componentClass || !\is_a($componentClass, 'Mapbender\CoreBundle\Element\ControlButton')) {
+            // Leave title empty. Will be resolved to target title when rendering
+            // @todo: make title column nullable (will require schema update)
+            $entity->setTitle('');
+        } else {
+            // @todo: reevaluate translation; translation should be done on presentation, not persisted
+            $entity->setTitle($this->translator->trans($component->getClassTitle()));
+        }
         if ($application) {
             $entity->setApplication($application);
         }

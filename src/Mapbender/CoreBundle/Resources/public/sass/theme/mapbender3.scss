@@ -45,6 +45,23 @@
     }
     white-space: nowrap;
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+    // Workaround for dropdown-style Element markup where an (optional) label is rendered OUTSIDE of the
+    // .mb-element node
+    > .labelInput + .mb-element {
+      display: inline-block;
+      margin-left: 0.5em;
+    }
+    .labelInput {
+      vertical-align: top;  // for vertical alignment when followed by empty .dropdown
+      display: inline-block;  // required when using <span> tag instead of <label>
+    }
+    span.labelInput {
+    }
+    .labelInput + .dropdown {
+      display: inline-block;
+      margin-left: 0.5em;
+    }
+    //
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
     [class^="icon"], [class*=" icon"] {

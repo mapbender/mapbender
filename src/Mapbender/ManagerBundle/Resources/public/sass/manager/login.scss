@@ -84,7 +84,6 @@ body {
       display: block;
       width: 100%;
     }
-
   }
 
   a {
@@ -112,6 +111,13 @@ body {
     margin-top: 5%;
     opacity: 0.8;
     visibility: hidden;
+  }
+
+  .loginBox {
+    margin-top: 15px;
+  }
+  .input {
+    margin-bottom: $space/2;
   }
 
   .form-login-container{

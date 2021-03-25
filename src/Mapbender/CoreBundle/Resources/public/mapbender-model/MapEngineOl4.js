@@ -28,26 +28,87 @@ window.Mapbender.MapEngineOl4 = (function() {
         setLayerVisibility: function(olLayer, state) {
             olLayer.setVisible(state);
         },
-        createWmsLayer: function(source) {
+        createWmsTileSource_: function(sourceOptions, mapOptions) {
+            var tileSource = new ol.source.TileWMS(sourceOptions);
+            if ((mapOptions.scales || []).length) {
+                /**
+                 * Patch (caching) tile grid getter to ensure our precondigured scales can and will be queried directly from the
+                 * WMS, with no scaling.
+                 * @see https://github.com/openlayers/openlayers/blob/v6.5.0/src/ol/source/TileImage.js#L240
+                 */
+                var getTileGridForProjectionOriginal = tileSource.getTileGridForProjection;
+                var scales = mapOptions.scales.map(parseFloat).filter(function(scale) {
+                    return scale && !isNaN(scale);
+                });
+                tileSource.getTileGridForProjection = function(projection) {
+                    var projKey = ol.getUid(projection);
+                    var patched = !!this.tileGridForProjection[projKey];
+                    var tileGrid = getTileGridForProjectionOriginal.apply(this, arguments);
+                    if (!patched && tileGrid) {
+                        var upm = 1.0 / projection.getMetersPerUnit();
+                        var ipm = 39.37;
+                        var resolutionFromScaleFactor = upm / (ipm * (mapOptions.dpi || 72));
+                        var exactScaleResolutions = scales.map(function(scale) {
+                            return scale * resolutionFromScaleFactor;
+                        });
+                        var defaultResolutions = tileGrid.getResolutions();
+                        var mergedResolutions = exactScaleResolutions.slice();
+                        // Combine with default resolutions to produce more upper / lower, and a few intermediate steps
+                        for (var i = 0; i < defaultResolutions.length; ++i) {
+                            var defaultResolution = defaultResolutions[i];
+                            for (var j = 0; j < exactScaleResolutions.length; ++j) {
+                                var exactResolution = exactScaleResolutions[j];
+                                if ((exactResolution * 1.75 >= defaultResolution) && (defaultResolution * 1.75 >= exactResolution)) {
+                                    mergedResolutions.push(defaultResolution);
+                                    break;
+                                }
+                            }
+                        }
+                        mergedResolutions.sort(function(a, b) {
+                            // numeric sort, descending
+                            return b - a;
+                        });
+                        var tileSize = Math.max(128, parseInt(mapOptions.tileSize) || 512);
+
+                        // Replace upstream-initialized TileGrid instance with a new one, replacing resolutions and tile size
+                        tileGrid = new (tileGrid.constructor)({
+                            resolutions: mergedResolutions,
+                            origin: tileGrid.getOrigin(),
+                            extent: tileGrid.getExtent(),
+                            tileSize: [tileSize, tileSize]
+                        });
+                        this.tileGridForProjection[projKey] = tileGrid;
+                    }
+                    return tileGrid;
+                };
+            }
+            return tileSource;
+        },
+        /**
+         * @param {Mapbender.Source} source
+         * @param {Object} [mapOptions]
+         * @return {Object}
+         */
+        createWmsLayer: function(source, mapOptions) {
             var sourceOpts = {
                 url: source.configuration.options.url,
                 transition: 0,
                 params: source.getGetMapRequestBaseParams()
             };
 
-            var olSourceClass;
+            var olSource;
             var olLayerClass;
             if (source.configuration.options.tiled) {
-                olSourceClass = ol.source.TileWMS;
+                olSource = this.createWmsTileSource_(sourceOpts, mapOptions || {});
                 olLayerClass = ol.layer.Tile;
             } else {
-                olSourceClass = ol.source.ImageWMS;
+                olSource = new ol.source.ImageWMS(sourceOpts);
                 olLayerClass = ol.layer.Image;
             }
 
             var layerOptions = {
                 opacity: source.configuration.options.opacity,
-                source: new (olSourceClass)(sourceOpts)
+                source: olSource
             };
             // todo: transparent
             // todo: exception format
@@ -140,8 +201,14 @@ window.Mapbender.MapEngineOl4 = (function() {
                 layerCollection.remove(olLayer);
             }
         },
-        destroyLayer: function(olLayer) {
-            console.warn("Not implemented: MapEngineOl4.destroyLayer", olLayer);
+        /**
+         * @param {ol.PluggableMap} olMap
+         * @param {ol.layer.Layer} olLayer
+         */
+        destroyLayer: function(olMap, olLayer) {
+            olMap.removeLayer(olLayer);
+            olLayer.setMap(null);
+            olLayer.dispose();
         },
         getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
             var firstOlLayer = source.getNativeLayer(0);
@@ -193,13 +260,6 @@ window.Mapbender.MapEngineOl4 = (function() {
         },
         getFeatureProperties: function(olFeature) {
             return olFeature.getProperties();
-        },
-        getCurrentViewportSize: function(olMap) {
-            var s = olMap.getSize();
-            return {
-                width: s[0],
-                height: s[1]
-            };
         },
         supportsRotation: function() {
             return true;
