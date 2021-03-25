@@ -146,14 +146,18 @@ fieldset.box {
         margin-bottom: 0;
       }
       .checkbox {
-        padding-top: 0;
-        padding-bottom: 0;
+        margin: 0;
       }
     }
     .blockgroup {
       margin-bottom: 1em;
     }
     .mb-slider{margin-top: $space/2;}
+  }
+  .extendedGroup, .popover {
+    .form-group {
+      margin-bottom: 0.35em;
+    }
   }
 }
 
