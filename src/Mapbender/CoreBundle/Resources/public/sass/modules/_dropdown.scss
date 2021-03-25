@@ -10,8 +10,6 @@ select.numeric {
 .dropdown{
   cursor:pointer;
   position: relative;
-  color: $inputForegroundColor;
-  border: solid 1px lighten($thirdColor, 15%);
   padding-right: $space + $space/2;
   &.numeric {
     text-align: right;
@@ -21,7 +19,8 @@ select.numeric {
     user-select: none;
   }
   .dropdownValue {
-    min-height: $inputHeight;   // =line-height; fixes visual collapse with empty initial value
+    height: #{$inputHeight - 4px};    // Deliberately downsize to fix weird vertical gaps after .dropdown
+    overflow-y: hidden;
     padding-left: 5px;
     &.iconDown:before{
       position: absolute;
