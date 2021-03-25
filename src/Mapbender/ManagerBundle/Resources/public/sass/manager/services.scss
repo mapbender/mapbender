@@ -122,11 +122,14 @@ fieldset.box {
         margin-bottom: 0;
       }
     }
-    .vendorspecific-content,.on-off-content .on-off-content{
+    .form-horizontal {
       padding: $space/2 $space/2 $space/2 $space/2;
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
+      .labelCheck {
+        margin-bottom: 0;
+      }
     }
     .blockgroup {
       margin-bottom: 1em;
