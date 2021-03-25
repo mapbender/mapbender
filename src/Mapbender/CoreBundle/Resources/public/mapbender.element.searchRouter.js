@@ -306,14 +306,14 @@
             }
 
             var headers = currentRoute.results.headers;
+            var $headers = $(document.createElement('tr'));
 
-            var table = $('<table></table>'),
-                thead = $('<thead><tr></tr></thead>').appendTo(table);
+            var table = $('<table></table>');
 
-            for(var header in headers){
-                thead.append($('<th>' + headers[header] + '</th>'));
+            for (var header in headers) {
+                $headers.append($(document.createElement('th')).text(headers[header]));
             }
-
+            table.append($(document.createElement('thead')).append($headers));
             table.append($('<tbody></tbody>'));
 
             container.append(table);
