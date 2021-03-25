@@ -11,7 +11,6 @@
     line-height: $inputHeight;
   }
   .dropdownValue {
-    min-height: $inputHeight;   // =line-height; fixes visual collapse with empty initial value
     padding-left: 5px;
     &.iconDown:before{@include absolute(0 5px '' '');}
   }
