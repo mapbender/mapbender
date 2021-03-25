@@ -17,10 +17,6 @@
     background: darken($inputBackgroundColor, 10%)
   }
 
-  &:focus{
-    outline:none;
-    border:1px solid lighten($ciColor, 20%);
-  }
   &::placeholder {
     color: inherit;
     opacity: 0.55;
@@ -28,6 +24,12 @@
 }
 textarea.input {
    min-height: 150px;
+}
+.input, .inputWrapper select {
+  &:focus{
+    outline:none;
+    border:1px solid lighten($ciColor, 20%);
+  }
 }
 
 .inputWrapper, .dropdown {
