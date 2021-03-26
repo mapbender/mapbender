@@ -33,28 +33,23 @@
           </div>
         </div>
       </div>
-      <div class="content-list-container">
-          
         <div class="contentPane">
           <div class="content">
             <div class="innerContainer">
-              {% block heading %}
+            {% block heading %}
                 <h1 class="contentTitle">{{ block('title') }}<div class="underlineTitle"></div></h1>
-                <br>
-                <div class="top">
-                {% for key, flash in app.session.bag('flashes').all() %}
-                  <div class="flashBox alert alert-success {{ key }}" role="alert" >
+            {% endblock %}
+
+            {% for key, flash in app.session.bag('flashes').all() %}
+              <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
                 {{ flash | first }}
               </div>
             {% endfor %}
-          </div>
-              {% endblock %}
-              {% block manager_content %}
-              {% endblock %}
+
+            {% block manager_content %}{% endblock %}
             </div>
           </div>
         </div>
       </div>
-    </div>
 
 {% endblock %}
