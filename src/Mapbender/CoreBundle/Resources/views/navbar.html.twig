@@ -20,15 +20,9 @@
             <div class="vertical-line visible-lg hidden-sm hidden-md"></div>
             <ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
                 {% if app.user != "" %}
-                <li class="dropdown bs-dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    {{ "fom.core.manager.logged_as"|trans}}:
-                    {{ app.user.username }}
-                    &nbsp;
-                    <span class="fa fa-chevron-down"></span>
-                    </a>
+                <li class="navbar-text">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
                     {%- if app.user.password -%}
-                    <ul class="dropdown-menu">
+                    <ul class="nav navbar-nav">
                       <li>
                           <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
                               <i class="fa fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
@@ -43,7 +37,7 @@
                 {%- endif -%}
                 </li>
           {% else %}
-            <li class="navbar-right">
+            <li>
               <a href="{{ path('mapbender_core_login_login') }}">
                 <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
               </a>
