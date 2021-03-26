@@ -12,7 +12,15 @@ body {
 .authWrapper {
   /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
   .login-wrapper {
-    position: relative; // solve z-index clash vs .head
+    padding: $space;
+    background-color: lighten($contentColor, 2%);
+    position: absolute;
+    right: 0;
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
   }
 
   .container-login-img {
@@ -26,24 +34,13 @@ body {
   }
 
   .loginBox {
-    padding: $space;
-    background-color: lighten($contentColor, 2%);
-    position: absolute;
-    right: 0;
-    width: 50vw;
-     height: 100vh; 
+     width: 70%;
+     margin-left: auto;
+     margin-right: auto;
      display: flex;
-     justify-content: center !important ;
-     /* align-content: center; */
      flex-direction: column;
 
   
-    .inputWrapper {
-      width: 100%;
-      /* border: 2px solid green; */
-
-    }
-
     .input {
        /* width: 70%; */
       height: 3em;
@@ -68,12 +65,9 @@ body {
   }
 
   .logoContainer {
-    /* border: 2px solid red; */
     position: relative;
-    text-align: center;
     display: block;
-    height: auto;
-    padding-top: 15px;
+    margin: 0 auto;
     top: -10%;
     .logo {
       max-height: 120px;
@@ -98,8 +92,7 @@ body {
   }
 
   .form-login-container, .linkButton {
-    width: 70%;
-    margin: 0 auto 5.5%;
+    margin-bottom: 5.5%;
   }
   .linkButton {
     font-size: 1.3rem;
@@ -119,7 +112,6 @@ body {
 @media only screen and (max-width: 1024px) {
   .authWrapper {
     margin-top: 0;
-    .head {}
 
     > .logoContainer {
       .logo {

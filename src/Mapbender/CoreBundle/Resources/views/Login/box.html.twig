@@ -18,8 +18,12 @@
   {% endblock %}
 {% block content %}
   <div class="authWrapper">
+    <div class="container-login-img"></div>
     <div class="login-wrapper">
-      <div class="container-login-img"></div>
+      <div class="logoContainer">
+        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+                                                                 src="/bundles/mapbendercore/image/logo_mb3.png"></a>
+      </div>
       {% block box_content %}{% endblock %}
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
@@ -32,5 +36,3 @@
     </div>
   </div>
 {% endblock %}
-
-
