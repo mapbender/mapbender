@@ -19,11 +19,11 @@
       <a class="linkButton iconLinkButton" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
       {% endif %}
       {% if reset_password == true %}
-      <a class="linkButton iconLinkButton login-pass-reset" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
+      <a class="linkButton iconLinkButton" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
       {% endif %}
-
-      <input type="submit" class="btn btn-primary login-button right" value="{{ 'fom.user.login.login.login' | trans}}" />
-      <!-- <div class="clearContainer"></div> -->
+      <div class="text-center">
+        <input type="submit" class="btn btn-primary btn-lg login-button" value="{{ 'fom.user.login.login.login' | trans}}" />
+      </div>
     {{ form_end(form) }}
   </div>
 {% endblock %}
