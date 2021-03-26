@@ -7,6 +7,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
 
+@import "modules/base";
 
 @import "bundles/mapbendermanager/sass/element/form.scss";
 @import "bundles/mapbendermanager/sass/element/layertree.scss";
@@ -24,14 +25,7 @@
 */
 
 body {
-  font-family: "Ubuntu", $fontFamily;
   background-color: #f8f8f8;
-}
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
 }
 
 .listFilterBoxes {
@@ -265,12 +259,10 @@ body {
 
   tbody {
     td > a, td > ul > li > a  {
-      color: #121212; 
       font-weight: 300;
       font-size: 1.1em;
    }
    tr > td  {
-     color: #121212; 
      font-weight: 300;
      font-size: 1.1em;
      border-bottom: 1px solid #ddd;
@@ -299,8 +291,6 @@ body {
     font-size: 1em;
     font-weight: 400;
     background-color:#EBE8E8;
-    color: #121212;
-
   }
 }
 
