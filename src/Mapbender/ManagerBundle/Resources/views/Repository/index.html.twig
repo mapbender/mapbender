@@ -40,7 +40,7 @@
               </a>
 
               <p>{{ source.description }}</p>
-              <div class="buttonGroup">
+              <div class="btn-toolbar">
                 <a class="btn btn-default iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
                 {% if source.id in reloadableIds %}
                   <a class="iconReset btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
