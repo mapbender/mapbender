@@ -146,8 +146,7 @@ body {
 .container-filter {
   display: flex;
   justify-content: flex-end;
-  margin-top: 6%;
-  margin-right: 2%;
+  margin-bottom: 2rem;
 }
 
 
@@ -251,7 +250,7 @@ body {
 
 
 .link-button-new {
-  margin-top: 7em;
+  margin-bottom: 2rem;
   a {
     font-size: 1.6em;
   }
@@ -299,10 +298,8 @@ body {
 
 
 .heading-content {
-  /* border: 1px solid black; */
   position: relative;
   margin-top: 2%;
-  transform: translateY(4em);
 
   .subinfo-text{
       font-size: 1.5em;
