@@ -139,12 +139,16 @@ body {
   text-align: right;
 }
 
-.filter-input-container {
-  display: inline-block;
+.filter-input-container, .listFilterBoxes > li {
   background-color: rgba(255, 255, 255, 1);
-  padding: 1em;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+}
+
+.filter-input-container {
+  display: inline-block;
+  padding: 1em;
+  border-radius: 15px;
   label {
     margin-right: 1em;
     font-size: 1.4em;
@@ -156,14 +160,6 @@ body {
   border-bottom: 1px solid rgba(0,0,0,0.5);
   width: 15em;
   background-color: transparent;
-}
-
-.listFilterBoxes > li {
-  background-color: rgba(255, 255, 255, 1);
-  margin-bottom: 15px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 }
 
 .listFilterBoxes .btn {
@@ -185,6 +181,8 @@ body {
   bottom: 13px;
 }
 .listFilterBoxes > li {
+  margin-bottom: 15px;
+  padding: 20px;
   .preview-box {
     width: 140px;
     min-height: 140px;
