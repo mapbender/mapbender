@@ -2,19 +2,17 @@
 
 {% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
 
-  {% block js %}
-    {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
-  {% endblock %}
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
+{% endblock %}
 
-  {% block manager_content %}
-
-
-
-    {% if applications | length > 0 %}
+{% block manager_content %}
 
 
-      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+
+  {% if applications | length > 0 %}
+    {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
 
       {% if app.user != "" %}
         <div class="link-button-new">
@@ -75,25 +73,25 @@
                   </button>
                 {% endif %}
 
-                {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-                  <button class="btn btn-default">
-                    <span class="iconRemove hover-highlight-effect"
-                          title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
-                          data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
-                          data-slug="{{ application.slug }}"
-                          ></span>
-                  </button>
-                {% endif %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
+              <button class="btn btn-default">
+                <span class="iconRemove hover-highlight-effect"
+                      title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
+                      data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
+                      data-slug="{{ application.slug }}"
+                ></span>
+              </button>
+              {% endif %}
               </div>
             </div>
 
-          </li>
-        {% endfor %}
-      </ul>
-      <div class="clearContainer"></div>
-    {% else %}
-      <span class="description">{{ 'mb.manager.admin.application.no_application' | trans }}</span>
-    {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
     <div class="clearContainer"></div>
+  {% else %}
+    <span class="description">{{ 'mb.manager.admin.application.no_application' | trans }}</span>
+  {% endif %}
+  <div class="clearContainer"></div>
 
-  {% endblock %}
+{% endblock %}
