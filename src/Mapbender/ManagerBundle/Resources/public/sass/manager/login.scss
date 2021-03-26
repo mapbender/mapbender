@@ -41,23 +41,10 @@ body {
      flex-direction: column;
 
   
-    .input {
-       /* width: 70%; */
-      height: 3em;
-      border-radius: 8px;
-      border: none;
-     }
-
      .login-button {
        border-radius: 10px;
        width: 35%;
      }
-
-    .labelInput {
-      font-size: 20px;
-      display: block;
-      width: 100%;
-    }
   }
 
   a {
@@ -73,8 +60,16 @@ body {
     }
   }
 
-  .input {
+  .labelInput, .inputWrapper, .linkButton {
+    font-size: 1.3rem;
+  }
+  .inputWrapper {
+    height: 1.5em;
     margin-bottom: $space/2;
+  }
+  .input {
+    border-radius: 8px;
+    border: none;
   }
 
   .form-login-container, .linkButton {
