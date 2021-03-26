@@ -3,7 +3,6 @@
 {% block title %} {{ 'fom.user.login.error_notocken.password_reset' | trans}} {% endblock %}
 
 {% block box_content %}
-    <div class="loginBox">
         <h2 class="contentTitle">{{ 'fom.user.login.error_notocken.sorry' | trans}}</h2>
         <p class="description">{{ 'fom.user.login.error_notocken.no_such_tocken' | trans }}</p>
         {% if site_email is defined %}
@@ -11,5 +10,4 @@
         {% endif %}
         <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.login.error_notocken.back_to_login"|trans}}</a>
         <div class="clearContainer"></div>
-    </div>
 {% endblock %}

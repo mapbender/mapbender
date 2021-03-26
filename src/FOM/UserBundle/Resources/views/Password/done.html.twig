@@ -3,9 +3,7 @@
 {% block title %} {{ 'fom.user.password.done.password_reset' | trans}} {% endblock %}
 
 {% block box_content %}
-    <div class="loginBox">
         <h2 class="contentTitle">{{ 'fom.user.password.done.congratulations' | trans }}</h2>
         <p class="description">{{ "fom.user.password.done.password_been_reset" | trans }}</p>
         <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.password.done.back_to_login"|trans}}</a>
-    </div>
 {% endblock %}

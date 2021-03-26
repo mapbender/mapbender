@@ -65,10 +65,8 @@ body {
   }
 
   .logoContainer {
-    position: relative;
     display: block;
-    margin: 0 auto;
-    top: -10%;
+    margin: 0 auto 10%;
     .logo {
       max-height: 120px;
       max-width: 100%;
@@ -84,9 +82,6 @@ body {
     visibility: hidden;
   }
 
-  .loginBox {
-    margin-top: 15px;
-  }
   .input {
     margin-bottom: $space/2;
   }
@@ -102,21 +97,14 @@ body {
     position: absolute;
     top: $space;
     right: $space;
-    li {
-      display: inline-block;
-      a, a:visited {
-        color: inherit;
-      }
-    }
   }
 }
 
 // Mobile resonsive
 @media only screen and (max-width: 1024px) {
   .authWrapper {
-    margin-top: 0;
 
-    > .logoContainer {
+    .logoContainer {
       .logo {
         max-height: 10vh;
       }

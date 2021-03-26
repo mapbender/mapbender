@@ -3,7 +3,6 @@
 {% block title %}{{ 'fom.user.login.login.title' | trans}}{% endblock %}
 
 {% block box_content %}
-  <div class="loginBox login">
     <h1 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h1>
     <div class="form-login-container">
       {{ form_start(form) }}
@@ -20,5 +19,4 @@
         <input type="submit" class="btn btn-primary btn-lg login-button" value="{{ 'fom.user.login.login.login' | trans}}" />
       </div>
     {{ form_end(form) }}
-  </div>
 {% endblock %}
