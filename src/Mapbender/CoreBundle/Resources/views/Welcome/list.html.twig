@@ -32,16 +32,16 @@
               </a>
             </div>
             <div class="col-md-9 col-xs-12">
-              <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
-                {{ application.title }}
+              <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
+                <h2>{{ application.title }}</h2>
               </a>
               <p>
-              <b>URL Title:</b>
-              {{ application.slug }}
-              </p>
-              <p>
-              <b>Descriptions:</b>
-              {{ application.description }}
+                <div>
+                  <label>{{ 'mb.manager.admin.application.url.title' | trans }}:</label> {{ application.slug }}
+                </div>
+                <div>
+                  <label>{{ 'mb.manager.admin.application.description' | trans }}:</label> {{ application.description }}
+                </div>
               </p>
 
               <div class="btn-toolbar">

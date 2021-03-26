@@ -16,6 +16,12 @@
 @import "bundles/mapbendermanager/sass/manager/services.scss";
 
 
+h1 {
+  font-size: 2.9rem;
+}
+h2 {
+  font-size: 2rem;
+}
 
 /* Old class deleted: 
 .leftPane
@@ -117,15 +123,6 @@ body {
       }
     }
     margin-bottom:10%;
-
-    h1 {
-    font-size: 2.9em;
-    }
-  }
-
-  .title {
-    font-size: 2em;
-    font-weight: 500;
   }
 
   .underlineTitle {
@@ -211,6 +208,9 @@ body {
   .placeholder-icon {
     font-size: 60px;
     padding-top: 40%;
+  }
+  h2, p {
+    margin-bottom: 0.75rem;
   }
 }
 
