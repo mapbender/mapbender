@@ -34,10 +34,6 @@ body {
   background-color: #f8f8f8;
 }
 
-.listFilterBoxes {
-  margin-top: 10%;
-}
-
 
 .navigationBar {
   background-color: rgba(255, 255, 255, 1);
@@ -242,10 +238,14 @@ body {
   }
 }
 
+.instanceContainer, .container-table, .listFilterBoxes {
+  margin-top: 10%;
+}
+
 .container-table {
-  position: relative;
-  margin-top: 11.25rem;
-  font-size: 1.25rem;
+  table {
+    font-size: 1.25rem;
+  }
   th {
     font-weight: 500;
   }
@@ -281,9 +281,3 @@ div.contentTitle {
   }
   // New design end
 }
-
-.instanceContainer {
-position: relative;
-top: 7em;
-}
-
