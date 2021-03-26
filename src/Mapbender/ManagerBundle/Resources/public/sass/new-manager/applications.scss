@@ -41,7 +41,6 @@ body {
 
 .navigationBar {
   background-color: rgba(255, 255, 255, 1);
-  padding-top: 3px;
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
   padding: 0.8em;
 
@@ -49,7 +48,7 @@ body {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-left: 6.25em;
+    padding-left: 2.25em;
     // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
     // see https://stackoverflow.com/a/7310398
     &:before {
@@ -78,34 +77,13 @@ body {
   li {
     // undo upstream .navbar-nav > li { float: left; } to allow li growth to full width
     float: none;
+    font-weight: 300;
   }
 }
 
 .main-nav-container {
-  ul:nth-child(1){
-    transform: translateX(35vw);
-
-    li { 
-      padding-right: 3em ;
-
-      & > a {
-      /* border: 1px solid black; */
-      color: #121212;
-      height: 100%;
-      }
-  }
-
-  }
-  
-
-  ul:nth-child(2){
-    padding-right: 10%;
-    color: #121212;
-    font-weight: 300;
-
-    li > a {
-      color: #121212;
-    }
+  > .nav > li {
+    font-size: 1.25rem;
   }
 
   .accountMenu::before{
@@ -119,23 +97,15 @@ body {
 
   }
 
-  ul > li > a {
-    font-size: 1.25em;
-  }
 }
 
 .navigationBar .nav > li > ul.nav {
   display: none;
+  padding: 20px;
 }
 
 .navigationBar .nav > li:hover > ul.nav {
   display: block;
-  /* margin-top: 18px; */
-  padding: 20px;
-
-  li > a {
-  font-size: 1.25em;
-  }
 }
 
 
@@ -352,32 +322,5 @@ body {
 .instanceContainer {
 position: relative;
 top: 7em;
-}
-
-@media (max-width: 1300px){
-
-  .navigationBar {
-
-    .navbar-brand{
-      padding-left: 2.25em;
-  }
-
-}
-
-.main-nav-container {
-
-  ul:nth-child(1){
-    padding-left: 17%;
-
-    li {
-      padding-right: 1em;
-    }
-  }
-
-  ul:nth-child(2){
-    padding-right: 5%;
-    
-  }
-}
 }
 
