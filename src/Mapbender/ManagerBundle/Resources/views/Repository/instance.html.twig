@@ -30,12 +30,14 @@
 
 {% block heading %}
     <div class="contentTitle">
-        <h1>
-          {{ _h1_text | default(title) }}
+        <div class="row">
+          <h1 class="col-xs-8 col-8">
+            {{ _h1_text | default(title) }}
             <div class="underlineTitle"></div>
-        </h1>
-        <div class="container-filter">
-          <a class="btn btn-default" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>
+          </h1>
+          <div class="col-xs-4 col-4 text-right">
+            <a class="btn btn-default" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>
+          </div>
         </div>
         <p>{{ _h1_subtext }}</p>
         {% if _is_reusable_instance %}
