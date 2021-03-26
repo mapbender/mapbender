@@ -13,21 +13,20 @@
   {% endif %}
   {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
   {% if applications | length > 0 %}
-      <ul id="listFilterApplications" class="listFilterBoxes">
-        {% for application in applications %}
-          <li class="filterItem row">
-            <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
-              <div class="col-xs-3">
-                {% if application.screenshot is not null %}
-                  <img class="preview-img center-block" src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
-                {% else %}
-                  <div class="preview-img center-block text-center">
-                    <div class="placeholder-icon">
-                      <span class="iconAppDefault"></span>
-                    </div>
+    <ul id="listFilterApplications" class="listFilterBoxes">
+      {% for application in applications %}
+        <li class="filterItem">
+          <div class="row">
+            <a class="col-xs-3" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
+              {% if application.screenshot is not null %}
+                <img class="preview-img center-block" src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
+              {% else %}
+                <div class="preview-img center-block text-center">
+                  <div class="placeholder-icon">
+                    <span class="iconAppDefault"></span>
                   </div>
-                {% endif %}
-              </div>
+                </div>
+              {% endif %}
             </a>
             <div class="col-md-9 col-xs-12">
               <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
@@ -76,7 +75,7 @@
               {% endif %}
               </div>
             </div>
-
+          </div>
         </li>
       {% endfor %}
     </ul>
