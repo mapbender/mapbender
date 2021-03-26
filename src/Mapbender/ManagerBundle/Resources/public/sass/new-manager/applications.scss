@@ -244,26 +244,13 @@ body {
 
 .container-table {
   position: relative;
-  margin-top: 6.25em;
-  font-size: 1.25em;
-  transform: translateY(4em);
-  
-  thead > tr > th {
+  margin-top: 11.25rem;
+  font-size: 1.25rem;
+  th {
     font-weight: 500;
   }
-
-  /* td > a, td > ul > li > a   */
-
-  tbody {
-    td > a, td > ul > li > a  {
-      font-weight: 300;
-      font-size: 1.1em;
-   }
-   tr > td  {
-     font-weight: 300;
-     font-size: 1.1em;
-     border-bottom: 1px solid #ddd;
-   } 
+  td {
+    font-weight: 300;
   }
 }
 
