@@ -188,14 +188,19 @@ body {
   position: relative;
   bottom: 13px;
 }
-
-.listFilterBoxes > li .preview-img {
-  width: 140px;
-  height: 140px;
-  border-radius: 15px;
-  /* margin-bottom: 10px; */
-  background-color: #EAEAEA;
-  .placeholder-text, .placeholder-icon {
+.listFilterBoxes > li {
+  .preview-box {
+    width: 140px;
+    min-height: 140px;
+    background-color: #EAEAEA;
+    img {
+      width: 100%;
+    }
+  }
+  .preview-box, .preview-box img {
+    border-radius: 15px;
+  }
+  .placeholder-text {
     padding: 15px;
   }
   .placeholder-text p {
@@ -203,6 +208,7 @@ body {
   }
   .placeholder-icon {
     font-size: 60px;
+    padding-top: 40%;
   }
 }
 
