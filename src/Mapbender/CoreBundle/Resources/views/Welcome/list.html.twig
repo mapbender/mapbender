@@ -8,18 +8,11 @@
 {% endblock %}
 
 {% block manager_content %}
-
-
-
   {% if applications | length > 0 %}
     {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
-
-      {% if app.user != "" %}
-        <div class="link-button-new">
-          {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
-          <span>New Application</span>
-        </div> 
-      {% endif %}
+  {% endif %}
+  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+  {% if applications | length > 0 %}
       <ul id="listFilterApplications" class="listFilterBoxes">
         {% for application in applications %}
           <li class="filterItem row">

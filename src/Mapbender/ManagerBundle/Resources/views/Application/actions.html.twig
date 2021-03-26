@@ -1,14 +1,8 @@
-{% if create_permission is defined %}
-    {% set actions = {
-        'create': {
-            'display': create_permission,
-            'url': path('mapbender_manager_application_new'),
-            'title': 'mb.manager.admin.application.new.title',
-            'attr': {
-                'class': 'iconAdd iconBig right'
-            }
-        }
-    }
-    %}
+{% if create_permission is not empty %}
+    <div class="link-button-new">
+        <a href="{{ path('mapbender_manager_application_new') }}" title="{{ 'mb.manager.admin.application.new.title' | trans }}">
+            <i class="fa fas fa-plus fa-lg"></i>
+            <span>{{ 'mb.manager.admin.application.new.title' | trans }}</span>
+        </a>
+    </div>
 {% endif %}
-{% include "MapbenderManagerBundle:Manager:actions.html.twig" %}
