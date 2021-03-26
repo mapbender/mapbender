@@ -98,7 +98,10 @@ body {
     font-size: 1.3rem;
   }
   .sitelinks {
-    text-align: right;
+    // HACK: position absolute to get around flex + justify-content
+    position: absolute;
+    top: $space;
+    right: $space;
     li {
       display: inline-block;
       a, a:visited {
