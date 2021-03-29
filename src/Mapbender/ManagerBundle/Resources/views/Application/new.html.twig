@@ -18,13 +18,10 @@
           {% endif %}
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-          <div class="col-xs-8">
-            {{ form_row(form.template) }}
-            {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
-           </div>
-           <div class="col-xs-4">
-               <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-           </div>
+          <div class="col-xs-12 col-12">
+            <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
+          </div>
+          {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
 
       <div id="containerSecurity" class="container containerSecurity">
