@@ -224,8 +224,8 @@
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
-            <label for="inputFilterPermission" class="labelInput left">{{"fom.core.fields.filter"|trans}}</label>
-            <input id="inputFilterPermission" type="text" class="input left listFilterInput"/>
+            <label for="inputFilterPermission" class="labelInput">{{"fom.core.fields.filter"|trans}}</label>
+            <input id="inputFilterPermission" type="text" class="input listFilterInput"/>
           </th>
           {% for child in form.ace.vars.prototype %}
             {% if child.vars.attr.class is defined %}
