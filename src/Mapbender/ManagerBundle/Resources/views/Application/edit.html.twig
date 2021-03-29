@@ -31,17 +31,7 @@
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-
-        <div class="col-xs-8">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
-        <div class="col-xs-4">
-            <div class="screenshot_img{{ screenshot is empty ? ' default' }}">
-                <div class="cell_edit">
-                    <div class="delete button critical hidden">X</div>
-                    <img alt="Load" data-load=true class="screenshot" src="{{ screenshot }}" />
-                    <i class="iconAppDefault"></i>
-                </div>
-            </div>
-        </div>
+        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
       <div id="containerLayout" class="container">
         {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}

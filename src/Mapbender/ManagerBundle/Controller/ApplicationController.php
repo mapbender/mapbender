@@ -778,9 +778,6 @@ class ApplicationController extends WelcomeController
     private function createApplicationForm(Application $application)
     {
         return $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application, array(
-            'maxFileSize'          => 2097152,
-            'screenshotWidth'      => 200,
-            'screenshotHeight'     => 200,
             'include_acl' => $this->allowAclEditing($application),
         ));
     }
