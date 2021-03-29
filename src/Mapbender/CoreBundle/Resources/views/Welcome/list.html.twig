@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
 {% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
 
@@ -8,14 +8,15 @@
 {% endblock %}
 
 {% block manager_content %}
-  {% if applications | length > 0 %}
-    {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
-  {% endif %}
+  {%- set items = applications -%}
+  {%- set list_id = 'listFilterApplications' -%}
+  {%- set list_class = 'listFilterApplicationBoxes' -%}
   {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
-  {% if applications | length > 0 %}
-    <ul id="listFilterApplications" class="listFilterBoxes list-unstyled">
-      {% for application in applications %}
-        <li class="filterItem">
+  {{ parent() }}
+{% endblock %}
+
+{%- block boxlist_item_content -%}
+{%- set application = item -%}
           <div class="row">
             <div class="col-xs-3">
               <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"
@@ -76,13 +77,8 @@
               </div>
             </div>
           </div>
-        </li>
-      {% endfor %}
-    </ul>
-    <div class="clearContainer"></div>
-  {% else %}
-    <span class="description">{{ 'mb.manager.admin.application.no_application' | trans }}</span>
-  {% endif %}
-  <div class="clearContainer"></div>
+{%- endblock -%}
 
-{% endblock %}
+{%- block boxlist_placeholder_content -%}
+{{- 'mb.manager.admin.application.no_application' | trans -}}
+{%- endblock -%}

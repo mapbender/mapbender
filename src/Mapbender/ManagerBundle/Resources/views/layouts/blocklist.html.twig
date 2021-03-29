@@ -1,0 +1,21 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block manager_content %}
+  {%- set list_id = list_id | default('listFilter0') -%}
+  {%- set filter_input_id = list_id | replace({'listFilter': 'inputFilter'}) %}
+  {%- if items -%}
+  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
+  <ul id="{{ list_id }}" class="listFilterContainer clear listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
+    {%- for item in items -%}
+    <li class="filterItem">
+      {% block boxlist_item_content %}{% endblock %}
+    </li>
+    {%- endfor -%}
+  </ul>
+  <div class="clearContainer"></div>
+  {%- endif -%}
+  <p class="description{{ items ? ' hidden' : ''}}">
+    {% block boxlist_placeholder_content %}{% endblock %}
+  </p>
+  <div class="clearContainer"></div>
+{% endblock %}

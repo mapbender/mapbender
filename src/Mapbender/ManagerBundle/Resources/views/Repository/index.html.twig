@@ -1,29 +1,29 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
 {% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
-  {% block js %}
-    {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
-  {% endblock %}
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
+{% endblock %}
 
-  {% block manager_content %}
-    {% if sources|length > 0 %}
+{% block manager_content %}
+{% if create_permission %}
+    <div class="link-button-new">
+      <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+      <span>New Source</span>
+    </div>
+{% endif %}
+    {%- set items = sources -%}
+    {%- set list_id = 'listFilterServices' -%}
+    {%- set list_class = 'listFilterServiceBoxes' -%}
+    {{ parent() }}
+{% endblock %}
 
-
-
-      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterServices"} only %}
-
-      {% if create_permission %}
-        <div class="link-button-new">
-          <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
-          <span>New Source</span>
-        </div>
-      {% endif %}
-
-      <ul id="listFilterServices" class="listFilterBoxes list-unstyled">
-        {% for source in sources %}
-          <li class="filterItem row">
+{%- block boxlist_item_content -%}
+{%- set source = item -%}
+{# @todo: fold design logic shared / sharable with SourceInstance/list.html.twig into common base template #}
+          <div class="row">
             <div class="col-md-3 col-xs-3">
               <div class="preview-info">
                 <div class="placeholder-text">
@@ -53,12 +53,9 @@
                 {% endif %}
               </div>
             </div>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
-    {% endif %}
+          </div>
+{%- endblock -%}
 
-    <div class="clearContainer"></div>
-  {% endblock %}
+{%- block boxlist_placeholder_content -%}
+{{- 'mb.manager.admin.source.no_source' | trans -}}
+{%- endblock -%}

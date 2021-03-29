@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
 {% block js %}
   {{parent()}}
@@ -6,14 +6,13 @@
 {% endblock %}
 
 {% block manager_content %}
-{# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
-    {% if items and items | length %}
-     
-      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+    {%- set list_class = '-fn-instance-list' %}
+    {{ parent() }}
+{% endblock %}
 
-      <ul id="listFilterApplications" class="listFilterBoxes -fn-instance-list list-unstyled">
-        {% for item in items -%}
-        <li class="filterItem row">
+{%- block boxlist_item_content -%}
+{# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
+        <div class="row">
           <div class="col-xs-3">
             <div class="preview-img center-block text-center">
               <div class="placeholder-text">
@@ -40,10 +39,9 @@
             {# @todo: link to instance editing #}
             {# <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a> #}
           </div>
-        </li>
-      {% endfor %}
-      </ul>
-    {% else %}
-        <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
-    {% endif %}
-{% endblock %}
+        </div>
+{%- endblock -%}
+
+{%- block boxlist_placeholder_content -%}
+{{- 'mb.manager.admin.source.no_source' | trans -}}
+{%- endblock -%}
