@@ -14,9 +14,9 @@ class ApplicationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'maxFileSize' => 0,
-            'screenshotHeight' => 0,
-            'screenshotWidth' => 0,
+            'maxFileSize' => 2097152,
+            'screenshotHeight' => 200,
+            'screenshotWidth' => 200,
             'include_acl' => true,
         ));
     }
@@ -61,10 +61,13 @@ class ApplicationType extends AbstractType
                 'required' => false,
                 'attr' => array(
                     'accept'=>'image/*',
+                    'data-max-size' => $options['maxFileSize'],
+                    'data-min-width' => $options['screenshotWidth'],
+                    'data-min-height' => $options['screenshotHeight'],
                 ),
                 'constraints' => array(
                     new Constraints\Image(array(
-                        'maxSize' => '2M',
+                        'maxSize' => $options['maxFileSize'],
                         'mimeTypesMessage' => 'mb.core.entity.app.screenshotfile.format_error',
                         'minWidth' => $options['screenshotWidth'],
                         'minHeight' => $options['screenshotHeight'],
@@ -73,18 +76,6 @@ class ApplicationType extends AbstractType
             ))
             ->add('removeScreenShot', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
-            ))
-            ->add('maxFileSize', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['maxFileSize'],
-            ))
-            ->add('screenshotWidth', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['screenshotWidth'],
-            ))
-            ->add('screenshotHeight', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['screenshotHeight'],
             ))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,

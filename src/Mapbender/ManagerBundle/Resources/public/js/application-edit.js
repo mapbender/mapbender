@@ -357,9 +357,9 @@ $(function() {
         $box.text(message || '');
         $box.toggle(!!message);
     }
-    var maxFileSize = applicationForm.find('#application_maxFileSize').val();
-    var minWidth = applicationForm.find('#application_screenshotWidth').val();
-    var minHeight = applicationForm.find('#application_screenshotHeight').val();
+    var maxFileSize = fileInput.attr('data-max-size');
+    var minWidth = fileInput.attr('data-min-width');
+    var minHeight = fileInput.attr('data-min-height');
 
     fileInput.on('change', function(e) {
         setUploadFilename(e);

@@ -17,14 +17,10 @@
                 {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
             </span>
             {{ form_widget(form.screenshotFile) }}
-            {{ form_widget(form.maxFileSize) }}
-            {{ form_widget(form.screenshotWidth) }}
-            {{ form_widget(form.screenshotHeight) }}
-
+            {{ form_widget(form.removeScreenShot) }}
         </div>
     </div>
 </div>
 <div class="form-group">
     {{ form_row(form.description) }}
 </div>
-{{ form_widget(form.removeScreenShot) }}
