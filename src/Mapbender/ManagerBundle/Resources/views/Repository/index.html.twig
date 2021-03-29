@@ -12,7 +12,7 @@
 
 
 
-      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+      {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterServices"} only %}
 
       {% if create_permission %}
         <div class="link-button-new">
@@ -21,7 +21,7 @@
         </div>
       {% endif %}
 
-      <ul id="listFilterApplications" class="listFilterBoxes list-unstyled">
+      <ul id="listFilterServices" class="listFilterBoxes list-unstyled">
         {% for source in sources %}
           <li class="filterItem row">
             <div class="col-md-3 col-xs-3">

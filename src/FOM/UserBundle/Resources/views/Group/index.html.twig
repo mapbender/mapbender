@@ -10,7 +10,7 @@
 {% if groups|length > 0 %}
 
   
-  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
+  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterGroups"} only %}
 
   {% if create_permission %}
     <div class="link-button-new">
@@ -21,7 +21,7 @@
 
   
   <div class="clearContainer"></div>
-  <table id="listFilterApplications" class="table container-table listFilterContainer">
+  <table id="listFilterGroups" class="table container-table listFilterContainer">
     <thead id="groupsHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>
