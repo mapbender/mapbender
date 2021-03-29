@@ -349,10 +349,10 @@ $(function() {
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
-        var $box = $('.validationMsgBox', fileGroup);
+        var $box = $('.alert-danger', fileGroup);
         if (!$box.length) {
-            $box = $('<span/>').addClass('validationMsgBox');
-            fileInput.after($box);
+            $box = $(document.createElement('div')).addClass('alert alert-danger');
+            fileGroup.append($box);
         }
         $box.text(message || '');
         $box.toggle(!!message);

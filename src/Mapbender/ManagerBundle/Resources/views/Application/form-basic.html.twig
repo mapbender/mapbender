@@ -1,3 +1,22 @@
+{%- form_theme form _self -%}
+{%- if false -%}
+{%- block _application_screenshotFile_row -%}
+    {{- form_label(form) -}}
+    <div class="screenshot_upload" title="{{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
+        <div class="upload">
+            <span class="button upload_button">
+                {{ 'mb.manager.admin.application.upload.button' | trans }}
+            </span>
+            <span class="upload_label">
+                {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
+            </span>
+            {{- block('form_widget_simple') -}}
+            {{- form_widget(form.parent.removeScreenShot) -}}
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{%- endblock %}
+{%- endif -%}
 <div class="col-xs-8">
     {%- if form.template is defined -%}
     <div class="form-group">
@@ -13,20 +32,7 @@
     </div>
 
     <div class="form-group">
-        {{ form_label(form.screenshotFile) }}
-
-        <div class="screenshot_upload" title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
-            <div class="upload">
-                <span class="label button upload_button">
-                    {{ 'mb.manager.admin.application.upload.button' | trans }}
-                </span>
-                <span class="upload_label">
-                    {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
-                </span>
-                {{ form_widget(form.screenshotFile) }}
-                {{ form_widget(form.removeScreenShot) }}
-            </div>
-        </div>
+        {{- form_row(form.screenshotFile) -}}
     </div>
     <div class="form-group">
         {{ form_row(form.description) }}
