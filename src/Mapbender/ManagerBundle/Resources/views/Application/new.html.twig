@@ -28,12 +28,12 @@
       </ul>
       <div class="tab-content">
            <div id="basedata" role="tabpanel" class="tab-pane active containerBaseData">
-            {{ form_row(form.template) }}
-            {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+               <div class="col-xs-12 col-12">
+                 <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
+               </div>
+               {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
-           {# <div class="col-xs-4">
-               <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-           </div> #}
+      </div>
 
       <div id="security" class="tab-pane containerSecurity" role="tabpanel">
         {% block securityTab %}

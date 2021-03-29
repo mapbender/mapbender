@@ -343,17 +343,17 @@ $(function() {
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
-        var $box = $('.validationMsgBox', fileGroup);
+        var $box = $('.alert-danger', fileGroup);
         if (!$box.length) {
-            $box = $('<span/>').addClass('validationMsgBox');
-            fileInput.after($box);
+            $box = $(document.createElement('div')).addClass('alert alert-danger');
+            fileGroup.append($box);
         }
         $box.text(message || '');
         $box.toggle(!!message);
     }
-    var maxFileSize = applicationForm.find('#application_maxFileSize').val();
-    var minWidth = applicationForm.find('#application_screenshotWidth').val();
-    var minHeight = applicationForm.find('#application_screenshotHeight').val();
+    var maxFileSize = fileInput.attr('data-max-size');
+    var minWidth = fileInput.attr('data-min-width');
+    var minHeight = fileInput.attr('data-min-height');
 
     fileInput.on('change', function(e) {
         setUploadFilename(e);

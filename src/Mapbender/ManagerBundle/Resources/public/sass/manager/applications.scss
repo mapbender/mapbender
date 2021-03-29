@@ -14,37 +14,20 @@
 
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
-  min-width: 300px;
   .upload {
     position: relative;
-    height: $inputHeight;
-    line-height: $inputHeight;
     .upload_label {
       max-width: 60%;
       text-overflow: ellipsis;
     }
   }
 
-  .inputWrapper {
+  input, .inputWrapper {
+    opacity: 0;
     position: absolute;
     left: 0;
     top: 0;
-    cursor: pointer;
     width: 100%;
-    input {
-        opacity: 0;
-    }
-    .validationMsgBox {
-        position: absolute;
-        max-width: 150px;
-        width: auto;
-        min-width: auto;
-        right: 0;
-        top: 0;
-    }
-  }
-  .upload_button {
-    font-weight: normal;
   }
   .upload:hover .upload_button {
     background-color: darken($buttonFirstColor, 5%);
@@ -149,12 +132,6 @@
          margin: 0 auto;
         }
       }
-  }
-
-  .alert-info, /** @deprecated: */.messageBox.hint {
-    // instruction box
-    margin-left: 1em;
-    margin-top: 21px;   // HACK: calculated root line-height (no variable)
   }
 }
 
