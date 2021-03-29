@@ -174,12 +174,6 @@
         }
       }
   }
-
-  .alert-info, /** @deprecated: */.messageBox.hint {
-    // instruction box
-    margin-left: 1em;
-    margin-top: 21px;   // HACK: calculated root line-height (no variable)
-  }
 }
 
 .containerExchange {
