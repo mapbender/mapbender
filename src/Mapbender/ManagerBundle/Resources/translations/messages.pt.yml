@@ -130,7 +130,6 @@ mb:
       username: 'Nome de usuário'
       password: Senha
       load: Carregar
-      cancel: Cancelar
     managerbundle:
       applications: Aplicações
       new_application: 'Criar aplicação'

@@ -132,7 +132,6 @@ mb:
       username: Benutzername
       password: Passwort
       load: Laden
-      cancel: Abbrechen
     managerbundle:
       applications: Anwendungen
       new_application: 'Neue Anwendung'

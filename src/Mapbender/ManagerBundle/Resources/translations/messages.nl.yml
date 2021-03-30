@@ -130,7 +130,6 @@ mb:
       username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
-      cancel: Annuleren
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'

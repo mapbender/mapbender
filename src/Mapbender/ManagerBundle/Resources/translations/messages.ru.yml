@@ -130,7 +130,6 @@ mb:
       username: 'Имя пользователя'
       password: Пароль
       load: Загрузить
-      cancel: Отменить
     managerbundle:
       applications: Приложения
       new_application: 'Новое приложение'

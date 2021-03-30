@@ -131,7 +131,6 @@ mb:
       username: 'Nom d''utilisateur'
       password: 'Mot de passe'
       load: Charger
-      cancel: Annuler
     managerbundle:
       applications: Applications
       new_application: 'Nouvelle application'

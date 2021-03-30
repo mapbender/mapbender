@@ -275,9 +275,11 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
+        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'sourceTypeLabel' => $source->getTypeLabel(),
+            'title' => $this->getTranslator()->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
+            'submit_text' => 'mb.manager.source.load',
+            'return_path' => 'mapbender_manager_repository_index',
         ));
     }
 
