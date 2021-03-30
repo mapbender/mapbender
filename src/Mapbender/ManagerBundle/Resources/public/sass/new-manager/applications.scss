@@ -8,6 +8,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
 
 @import "modules/base";
+@import "modules/layout";
+@import "modules/popup";
+@import "modules/input";
+@import "modules/dropdown";
 
 @import "bundles/mapbendermanager/sass/element/form.scss";
 @import "bundles/mapbendermanager/sass/element/layertree.scss";
