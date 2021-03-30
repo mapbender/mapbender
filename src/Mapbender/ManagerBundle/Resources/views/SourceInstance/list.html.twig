@@ -30,10 +30,8 @@
                   ><i class="fa fa-times"></i></a>
             {% endif %}
             </div>
-            {# @todo: link to instance editing #}
               <span class="h2">{{ item.title | default(item.source.title) }}</span>
               <div class="clear"></div>
-            {# <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a> #}
           </div>
           <div>{{ item.source.description }}</div>
           </div>
