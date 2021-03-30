@@ -20,6 +20,11 @@
 @import "bundles/mapbendermanager/sass/manager/services.scss";
 
 
+.input, .dropdown {
+  border-radius: 8px;
+  border-color: transparent;
+}
+
 h1 {
   font-size: 2.9rem;
 }
