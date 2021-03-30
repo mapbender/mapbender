@@ -10,7 +10,7 @@
 
 {% block manager_content %}
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
-    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
+    <div class="tabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
           {% if form.acl is defined %}
