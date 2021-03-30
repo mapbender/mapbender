@@ -113,14 +113,12 @@ mb:
           addSources: Risorse
           btn:
             export: Esporta
-            cancel: Cancella
         import:
           addApplications: Applicazioni
           addAcl: ACLs
           addSources: Risorsa
           btn:
             import: Importa
-            cancel: Cancella
         title: Titolo
         url:
           title: 'Titolo URL'
@@ -132,7 +130,6 @@ mb:
       username: Nome utente
       password: Password
       load: Carica
-      cancel: Cancella
     managerbundle:
       applications: Applicazioni
       new_application: 'Nuova applicazione'

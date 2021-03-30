@@ -51,5 +51,9 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
+        <service class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
+            <tag name="form.type" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+        </service>
     </services>
 </container>

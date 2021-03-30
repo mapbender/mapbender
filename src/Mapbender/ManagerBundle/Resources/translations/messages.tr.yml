@@ -113,14 +113,12 @@ mb:
           addSources: 'Kaynak'
           btn:
             export: 'Dışa aktar (Export)'
-            cancel: 'Vazgeç'
         import:
           addApplications: 'Uygulama oluştur'
           addAcl: 'Erisim kontrolü (ACLs)'
           addSources: 'Kaynaklar'
           btn:
             import: 'İçe aktar (Import)'
-            cancel: 'Vazgeç'
         title: 'Başlık'
         url:
           title: 'URL Başlık'

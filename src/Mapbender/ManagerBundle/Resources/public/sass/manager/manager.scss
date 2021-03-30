@@ -130,8 +130,12 @@ div.contentTitle {
   float: right;
 }
 .sitelinks {
+  &.list-inline li:not(:first-child):before {
+    content: "|";
+    margin-left: -5px;
+    margin-right: 5px;
+  }
   li {
-    display: inline-block;
     a, a:visited {
       color: inherit;
     }

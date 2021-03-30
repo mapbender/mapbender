@@ -132,6 +132,9 @@ class ApplicationController extends WelcomeController
         $job = new ExportJob();
         $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ExportJobType', $job, array(
             'application' => $this->getExportableApplications(),
+            'attr' => array(
+                'target' => '_blank',
+            ),
         ));
         $form->handleRequest($request);
 
@@ -155,8 +158,11 @@ class ApplicationController extends WelcomeController
             }
 
         } else {
-            return $this->render('@MapbenderManager/Application/export.html.twig', array(
+            return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
                 'form' => $form->createView(),
+                'submit_text' => 'mb.manager.admin.application.export.btn.export',
+                'title' => $this->getTranslator()->trans('mb.manager.managerbundle.export_application'),
+                'return_path' => 'mapbender_manager_application_index',
             ));
         }
     }
@@ -198,8 +204,11 @@ class ApplicationController extends WelcomeController
                 // fall through to re-rendering form
             }
         }
-        return $this->render('@MapbenderManager/Application/import.html.twig', array(
+        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
+            'submit_text' => 'mb.manager.admin.application.import.btn.import',
+            'title' => $this->getTranslator()->trans('mb.manager.managerbundle.import_application'),
+            'return_path' => 'mapbender_manager_application_index'
         ));
     }
 
