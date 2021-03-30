@@ -24,26 +24,28 @@
 {%- endblock -%}
 
 {% block tab_headers %}
-        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
-        <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
-        <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
-        <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
+    {{- tab_macros.tab_header('BaseData', 'mb.manager.admin.application.edit.base_data', 'active') -}}{#- #tabBaseData -#}
+    {{- tab_macros.tab_header('Layout', 'mb.manager.admin.application.layouts') -}}{#- #tabLayout -#}
+    {{- tab_macros.tab_header('Layers', 'mb.manager.admin.application.layersets') -}}{#- #tabLayers -#}
+    {{- tab_macros.tab_header('CustomCss', 'mb.manager.admin.application.custom_css') -}}{#- #tabCustomCss -#}
+    {{- tab_macros.tab_header('Security', 'mb.manager.admin.application.security.title') -}}{#- #tabSecurity -#}
 {% endblock %}
 {% block tab_containers %}
-      <div id="containerBaseData" class="container active containerBaseData row no-gutters">
+      <div{{ tab_macros.tab_content_attributes('BaseData', 'active containerBaseData row no-gutters') }}>{#- #containerBaseData -#}
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
-      <div id="containerLayout" class="container">
+      <div{{ tab_macros.tab_content_attributes('Layout') }}>{#- #containerLayout -#}
         {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
       </div>
-      <div id="containerLayers" class="container">
+      <div{{ tab_macros.tab_content_attributes('Layers') }}>{#- #containerLayers -#}
         {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
       </div>
-      <div id="containerCustomCss" class="container">
+      <div{{ tab_macros.tab_content_attributes('CustomCss') }}>{#- #containerCustomCss -#}
         {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
       </div>
-      <div id="containerSecurity" class="container">
-        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+      <div{{ tab_macros.tab_content_attributes('Security') }}>{#- #containerSecurity -#}
+        {% block securityTab %}
+          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% endblock %}
       </div>
 {% endblock %}
