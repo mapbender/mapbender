@@ -5,22 +5,18 @@
 {% block manager_content %}
 
 {{ form_start(form, { 'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
-    <div id="aclTabContainer" class="tabContainer aclTabContainer">
-        <ul class="tabs">
-            <li id="tabSecurity" class="tab active">{{"fom.user.acl.edit.security" | trans }}</li>
-        </ul>
-        <div id="containerSecurity" class="container containerSecurity active">
-            <a id="addPermission" href="{{path('fom_user_acl_overview')}}" class="iconAdd iconBig right" title="{{'fom.user.acl.edit.add_users_groups'|trans}}"></a>
-            {{ form_widget(form) }}
-        </div>
-
-        <div class="clearContainer"></div>
-        {{ form_row(form._token) }}
+    <div class="form-group text-right">
+        <a id="addPermission" href="{{path('fom_user_acl_overview')}}" title="{{'fom.user.acl.edit.add_users_groups' | trans}}" class="hover-highlight-effect"><i class="fa fas fa-2x fa-plus"></i></a>
     </div>
+
+    {{ form_row(form, {label: false}) }}
+
+    <div class="clearContainer"></div>
+    {{ form_row(form._token) }}
 
     <div class="right">
       <input type="submit" value="{{ 'fom.user.acl.edit.save' | trans }}" class="button"/>
       <a href="{{ path('fom_user_acl_index') }}" class="button critical">{{ 'fom.user.acl.edit.cancel' | trans}}</a>
     </div>
-{{ form_end(form, {'render_rest': false}) }}
+{{ form_end(form) }}
 {% endblock %}

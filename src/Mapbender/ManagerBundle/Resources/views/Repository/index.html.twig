@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
 {% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
@@ -11,12 +11,15 @@
 {% if create_permission %}
 <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
-{% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+    {%- set items = sources -%}
+    {%- set list_id = 'listFilterServices' -%}
+    {%- set list_class = 'listFilterServiceBoxes' -%}
+    {{ parent() }}
+{% endblock %}
 
-  <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
-    {% for source in sources %}
-      <li class="filterItem">
+{%- block boxlist_item_content -%}
+{%- set source = item -%}
+{# @todo: fold design logic shared / sharable with SourceInstance/list.html.twig into common base template #}
         <div class="col1">
           <span class="smallerText">{{ source.id }}</span><br>
           <span class="smallerText">{{ source.type }}</span><br>
@@ -37,12 +40,8 @@
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
           <div class="description">{{ source.description }}</div>
         </div>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-    <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
-{% endif %}
+{%- endblock -%}
 
-<div class="clearContainer"></div>
-{% endblock %}
+{%- block boxlist_placeholder_content -%}
+{{- 'mb.manager.admin.source.no_source' | trans -}}
+{%- endblock -%}
