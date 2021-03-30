@@ -9,7 +9,7 @@
   {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
   {% if is_granted('CREATE', oid) %}
     <div class="link-button-new">
-      <a class="iconAdd iconBig right" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
+      <a class="iconAdd iconBig" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
       <span>New User</span>
     </div>
   {% endif %}
