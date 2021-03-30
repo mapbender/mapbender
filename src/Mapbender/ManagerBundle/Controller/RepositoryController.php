@@ -78,38 +78,21 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/new", methods={"GET"})
-     * @ManagerRoute("/new/{sourceType}", methods={"POST"}, name="mapbender_manager_repository_new_submit")
+     * @ManagerRoute("/new", methods={"GET", "POST"})
      * @param Request $request
-     * @param string|null $sourceType
      * @return Response
      */
-    public function newAction(Request $request, $sourceType = null)
+    public function newAction(Request $request)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $sourceTypeLabels = $this->getTypeDirectory()->getTypeLabels();
-        /** @var FormInterface[] $forms */
-        $forms = array();
-        foreach ($sourceTypeLabels as $type => $sourceTypeLabel) {
-            $formAction = $this->generateUrl('mapbender_manager_repository_new_submit', array('sourceType' => $type), UrlGeneratorInterface::RELATIVE_PATH);
-            $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', new HttpOriginModel(), array(
-                'action' => $formAction,
-            ));
-            $forms[$type] = $form;
-        }
+        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType', new HttpOriginModel());
+        $form->handleRequest($request);
 
-        if ($sourceType) {
-            if (!array_key_exists($sourceType, $forms)) {
-                throw new BadRequestHttpException();
-            }
-            $form = $forms[$sourceType];
-            $form->handleRequest($request);
-        } else {
-            $form = null;
-        }
-        if ($form && $form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sourceType = $form->get('type')->getData();
+
             $directory = $this->getTypeDirectory();
             try {
                 $loader = $directory->getSourceLoaderByType($sourceType);
@@ -135,18 +118,11 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        $formViews = array();
-        foreach ($forms as $type => $form) {
-            if (!$sourceType) {
-                $sourceType = $type;
-            }
-            $formViews[$type] = $form->createView();
-        }
-
-        return $this->render('@MapbenderManager/Repository/new.html.twig', array(
-            'sourceTypes' => $sourceTypeLabels,
-            'forms' => $formViews,
-            'activetype' => $sourceType,
+        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
+            'form' => $form->createView(),
+            'title' => $this->getTranslator()->trans('mb.manager.admin.source.new.add'),
+            'submit_text' => 'mb.manager.source.load',
+            'return_path' => 'mapbender_manager_repository_index',
         ));
     }
 
@@ -299,9 +275,11 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        return $this->render('@MapbenderManager/Repository/updateform.html.twig', array(
+        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'sourceTypeLabel' => $source->getTypeLabel(),
+            'title' => $this->getTranslator()->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
+            'submit_text' => 'mb.manager.source.load',
+            'return_path' => 'mapbender_manager_repository_index',
         ));
     }
 

@@ -114,14 +114,12 @@ mb:
           addSources: Sources
           btn:
             export: Exporter
-            cancel: Annuler
         import:
           addApplications: Applications
           addAcl: ACLs
           addSources: Sources
           btn:
             import: Importer
-            cancel: Annuler
         title: Titre
         url:
           title: "Titre de l'URL"
@@ -133,7 +131,6 @@ mb:
       username: 'Nom d''utilisateur'
       password: 'Mot de passe'
       load: Charger
-      cancel: Annuler
     managerbundle:
       applications: Applications
       new_application: 'Nouvelle application'

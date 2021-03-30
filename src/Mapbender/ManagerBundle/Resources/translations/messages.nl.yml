@@ -113,14 +113,12 @@ mb:
           addSources: 'Bronnen'
           btn:
             export: 'Exporteer'
-            cancel: 'Annuleren'
         import:
           addApplications: 'Toepassingen'
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
             import: 'Importeer'
-            cancel: 'Annuleren'
         title: Titel
         url:
           title: 'URL Titel'
@@ -132,7 +130,6 @@ mb:
       username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
-      cancel: Annuleren
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'

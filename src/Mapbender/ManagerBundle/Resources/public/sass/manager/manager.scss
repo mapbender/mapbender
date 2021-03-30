@@ -130,8 +130,10 @@ div.contentTitle {
   float: right;
 }
 .sitelinks {
-  li {
-    display: inline-block;
+  &.list-inline li:not(:first-child):before {
+    content: "|";
+    margin-left: -5px;
+    margin-right: 5px;
   }
 }
 

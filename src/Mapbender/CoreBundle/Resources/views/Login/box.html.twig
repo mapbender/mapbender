@@ -22,9 +22,9 @@
     <div class="login-wrapper">
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
-      <ul class="sitelinks list-unstyled">
+      <ul class="sitelinks list-inline">
         {% for sitelink in sitelinks %}
-          <li>{{ loop.first ? '' : '| ' }}<a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+          <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
         {% endfor %}
       </ul>
       {% endif %}

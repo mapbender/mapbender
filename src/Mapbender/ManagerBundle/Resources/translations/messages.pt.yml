@@ -113,14 +113,12 @@ mb:
           addSources: Origem
           btn:
             export: Exportar
-            cancel: Cancelar
         import:
           addApplications: Aplicações
           addAcl: Acls
           addSources: Origens
           btn:
             import: Importar
-            cancel: Cancelar
         title: Title
         url:
           title: 'URL Title'
@@ -132,7 +130,6 @@ mb:
       username: 'Nome de usuário'
       password: Senha
       load: Carregar
-      cancel: Cancelar
     managerbundle:
       applications: Aplicações
       new_application: 'Criar aplicação'
