@@ -7,15 +7,16 @@
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
   {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterApplications"} only %}
-  {% if is_granted('CREATE', oid) %}
-    <div class="link-button-new">
-      <a href="{{ path('fom_user_user_create') }}">
-        <i class="fa fas fa-plus fa-lg"></i>
-        <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
-      </a>
-    </div>
-  {% endif %}
-
+{% endif %}
+{% if is_granted('CREATE', oid) %}
+  <div class="link-button-new">
+    <a href="{{ path('fom_user_user_create') }}">
+      <i class="fa fas fa-plus fa-lg"></i>
+      <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
+    </a>
+  </div>
+{% endif %}
+{% if users|length > 0 %}
   <table id="listFilterApplications" class="table container-table">
     <thead id="usersHead">
       <tr class="doNotFilter">

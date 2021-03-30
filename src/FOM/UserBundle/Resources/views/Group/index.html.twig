@@ -9,8 +9,8 @@
 
 {% if groups|length > 0 %}
   {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterGroups"} only %}
-
-  {% if create_permission %}
+{% endif %}
+{% if create_permission %}
     <div class="link-button-new">
       <a href="{{ path('fom_user_group_create') }}">
         <i class="fa fas fa-plus fa-lg"></i>
@@ -19,8 +19,7 @@
     </div>
 {% endif %}
 
-  
-  <div class="clearContainer"></div>
+{% if groups|length > 0 %}
   <table id="listFilterGroups" class="table container-table listFilterContainer">
     <thead id="groupsHead">
       <tr class="doNotFilter">
