@@ -143,14 +143,12 @@ mb:
           addSources: Quellen
           btn:
             export: Exportieren
-            cancel: Abbrechen
         import:
           addApplications: Anwendungen
           addAcl: Acls
           addSources: Quellen
           btn:
             import: Importieren
-            cancel: Abrechen
         title: Titel
         url:
           title: 'URL Titel'
@@ -165,7 +163,6 @@ mb:
       username: Benutzername
       password: Passwort
       load: Laden
-      cancel: Abbrechen
     managerbundle:
       applications: Anwendungen
       new_application: 'Neue Anwendung'
