@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
 {% block heading %}
     <div class="contentTitle">
         <h1><a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>{{ title }}<div class="clear"></div></h1>
@@ -13,13 +13,11 @@
     </div>
 {% endblock tab_container_contact %}
 
-{% block manager_content %}
+{%- block extra_action_buttons -%}
+<a class="button" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">{{ 'mb.actions.back' | trans }}</a>
+{%- endblock -%}
 
-<a class="button right" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">{{ 'mb.actions.back' | trans }}</a>
-
-<div class="tabContainer">
   {# @todo: commonly used labels should NOT be in WmsBundle and shoult NOT associate with 'wmsloader' #}
-  <ul class="tabs">
   {% block tab_headers %}
       <li id="tabMetaData" class="tab active">{{"mb.wms.wmsloader.repo.view.label.metadata" | trans }}</li>
       <li id="tabApplications" class="tab">{{ "mb.manager.managerbundle.applications" |trans }}</li>
@@ -29,7 +27,7 @@
       <li id="tabService" class="tab">{{"mb.wms.wmsloader.repo.view.label.details" | trans }}</li>
       <li id="tabLayers" class="tab">{{"mb.wms.wmsloader.repo.view.label.layers" | trans }}</li>
   {% endblock tab_headers %}
-  </ul>
+
     {% block tab_containers %}
         <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
             {% block metadata_content %}
@@ -57,5 +55,3 @@
             {% endblock layers_content %}
         </div>
     {% endblock tab_containers %}
-</div>
-{% endblock manager_content %}
