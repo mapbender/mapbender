@@ -10,8 +10,10 @@
 {% block manager_content %}
 {% if create_permission %}
     <div class="link-button-new">
-      <a class="iconAdd iconBig" href="{{ path("mapbender_manager_repository_new") }}"></a>
-      <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
+        <a href="{{ path('mapbender_manager_repository_new') }}">
+          <i class="fa fas fa-plus fa-lg"></i>
+          <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
+        </a>
     </div>
 {% endif %}
     {%- set items = sources -%}

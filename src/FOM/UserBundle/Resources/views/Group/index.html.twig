@@ -12,8 +12,10 @@
 
   {% if create_permission %}
     <div class="link-button-new">
-      <a class="iconAdd iconBig" href="{{path('fom_user_group_create')}}"></a>
-      <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
+      <a href="{{ path('fom_user_group_create') }}">
+        <i class="fa fas fa-plus fa-lg"></i>
+        <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
+      </a>
     </div>
 {% endif %}
 
