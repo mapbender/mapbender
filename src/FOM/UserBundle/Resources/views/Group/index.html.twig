@@ -8,14 +8,12 @@
 {% block manager_content %}
 
 {% if groups|length > 0 %}
-
-  
   {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterGroups"} only %}
 
   {% if create_permission %}
     <div class="link-button-new">
-      <a class="iconAdd iconBig" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
-      <span>New Group</span>
+      <a class="iconAdd iconBig" href="{{path('fom_user_group_create')}}"></a>
+      <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
     </div>
 {% endif %}
 
