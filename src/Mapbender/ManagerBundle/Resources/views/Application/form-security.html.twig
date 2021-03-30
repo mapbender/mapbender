@@ -1,9 +1,14 @@
-<div>
+<div class="row no-gutters">
+    <div class="col-xs-9 col-sm-9">
+        {{ form_row(form.published) }}
+    </div>
     {% if form.acl is defined %}
-    <div class="right -fn-add-permission" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.admin.application.security.add_users_groups'|trans}}"><span class="iconBig iconAdd"></span></div>
+    <div class="col-xs-3 col-sm-3 text-right">
+        <i class="-fn-add-permission fa fas fa-plus fa-fw fa-2x hover-highlight-effect"
+           data-url="{{path('fom_user_acl_overview')}}"
+           title="{{'mb.manager.admin.application.security.add_users_groups'|trans}}"></i>
+    </div>
     {% endif %}
-    {{ form_row(form.published) }}
-    <div class="clearContainer"></div>
 </div>
 {% if form.acl is defined %}
     {{ form_widget(form.acl) }}

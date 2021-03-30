@@ -1,7 +1,7 @@
 $(function() {
     $('.extendedGroup').on("click", '.on-off', function(e) {
-        var $target = $(e.target);
-        if ($target.hasClass('checkWrapper') || $target.is('input[type="checkbox"]')) {
+        var $skip = $('.form-group', this);
+        if ($skip.length && ($skip.is(e.target) || $skip.find(e.target).length)) {
             return;
         }
         var $this = $(this);

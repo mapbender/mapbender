@@ -1,5 +1,5 @@
 <div class="mb-element mb-element-searchrouter" id="{{ id }}" data-title="{{ title | trans }}">
-    {{ form_widget(route_select_form) }}
+    {{ form_row(route_select_form, {'label': false}) }}
 
     <div class="search-forms">
         {% for form in search_forms %}
