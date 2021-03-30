@@ -115,14 +115,12 @@ mb:
           addSources: Quellen
           btn:
             export: Exportieren
-            cancel: Abbrechen
         import:
           addApplications: Anwendungen
           addAcl: Acls
           addSources: Quellen
           btn:
             import: Importieren
-            cancel: Abrechen
         title: Titel
         url:
           title: 'URL Titel'

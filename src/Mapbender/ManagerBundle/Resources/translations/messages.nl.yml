@@ -113,14 +113,12 @@ mb:
           addSources: 'Bronnen'
           btn:
             export: 'Exporteer'
-            cancel: 'Annuleren'
         import:
           addApplications: 'Toepassingen'
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
             import: 'Importeer'
-            cancel: 'Annuleren'
         title: Titel
         url:
           title: 'URL Titel'

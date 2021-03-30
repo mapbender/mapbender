@@ -113,14 +113,12 @@ mb:
           addSources: Источники
           btn:
             export: Экспорт
-            cancel: Отменить
         import:
           addApplications: Приложения
           addAcl: ACLs
           addSources: Источники
           btn:
             import: Импорт
-            cancel: Отменить
         title: Название
         url:
           title: 'URL заголовок'
