@@ -35,7 +35,6 @@
   </div>
         <div class="contentPane">
           <div class="content">
-            <div class="innerContainer">
             {% block heading %}
                 <h1 class="contentTitle">{{ block('title') }}<div class="underlineTitle"></div></h1>
             {% endblock %}
@@ -47,7 +46,6 @@
             {% endfor %}
 
             {% block manager_content %}{% endblock %}
-            </div>
           </div>
         </div>
 {% endblock %}

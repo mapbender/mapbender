@@ -88,18 +88,13 @@ body {
 
 
 .content {
-  margin-bottom: 100px;
-  display: flex;
-  justify-content: center;
+  width: 70%;
+  margin: 0 auto 100px;
 
-  .innerContainer {
-    width: 70%;
-    @media (max-width: 1300px) {
-      & {
-        width: 90%;
-      }
+  @media (max-width: 1300px) {
+    & {
+      width: 90%;
     }
-    margin-bottom:10%;
   }
 
   .underlineTitle {
