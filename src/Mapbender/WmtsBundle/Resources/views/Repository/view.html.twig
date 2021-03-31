@@ -2,9 +2,9 @@
 
 {% block tab_headers %}
   {{ parent() }}
-  <li id="tabMatrixsets" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.matrixsets" | trans }}</li>
+  {{- tab_macros.tab_header('Matrixsets', 'mb.wmts.wmtsloader.repo.view.label.matrixsets') -}}{#- #tabMatrixsets -#}
   {% if source.themes | length %}
-    <li id="tabTheme" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.theme" | trans }}</li>
+    {{- tab_macros.tab_header('Theme', 'mb.wmts.wmtsloader.repo.view.label.theme') -}}{#- #tabTheme -#}
   {% endif %}
 {% endblock %}
 
@@ -22,13 +22,13 @@
 
 {% block tab_containers %}
   {{ parent() }}
-  <div id="containerMatrixsets" class="container serviceContainer serviceServiceContainer">
+  <div{{ tab_macros.tab_content_attributes('Matrixsets', 'serviceContainer serviceServiceContainer') }}>{#- #containerMatrixsets -#}
     {% for tilematrixset in source.tilematrixsets %}
       {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig" with {'tilematrixset': tilematrixset }%}
     {% endfor %}
   </div>
   {% if source.themes | length %}
-    <div id="containerTheme" class="container serviceContainer serviceServiceContainer">
+    <div{{ tab_macros.tab_content_attributes('Theme', 'serviceContainer serviceServiceContainer') }}>{#- #containerTheme -#}
       {% for theme in source.themes %}
         {% include "MapbenderWmtsBundle:Repository:theme.html.twig" with {'theme': theme, 'itemLevel': 1 }%}
       {% endfor %}
