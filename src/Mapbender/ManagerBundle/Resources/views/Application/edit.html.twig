@@ -20,7 +20,7 @@
 {% endblock %}
 
 {%- block extra_action_buttons -%}
-  <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"><i class="fa fas fa-lg fa-desktop"></i></a>
+  <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="hover-highlight-effect" title="{{ 'mb.manager.admin.application.view' | trans }}"><i class="fa fas fa-lg fa-desktop"></i></a>
 {%- endblock -%}
 
 {% block tab_headers %}
