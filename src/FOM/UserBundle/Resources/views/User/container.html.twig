@@ -23,7 +23,7 @@
     {% endif %}
   </div>
   {% if form.profile is defined %}
-  <div id="containerProfile" class="container containerProfile">
+  <div id="containerProfile" class="container">
       {% if profile_template %}
           {% include profile_template %}
       {% else %}
@@ -65,7 +65,7 @@
   {% endif %}
 
   {% if form.acl is defined %}
-  <div id="containerSecurity" class="container containerSecurity">
+  <div id="containerSecurity" class="container">
     <a id="addPermission" href="{{path('fom_user_acl_overview')}}" class="iconAdd iconBig right" title="{{'fom.user.user.container.add_users_groups'|trans}}"></a>
     <div class="clearContainer"></div>
     {{ form_widget(form.acl) }}

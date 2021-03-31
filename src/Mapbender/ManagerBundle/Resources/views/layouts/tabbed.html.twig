@@ -1,0 +1,29 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{%- macro tab_header_id(idSuffix) -%}
+{{- 'tab' ~ (idSuffix | first | upper) ~ (idSuffix | slice(1)) -}}
+{%- endmacro -%}
+{%- macro tab_container_id(idSuffix) -%}
+{{- 'container' ~ (idSuffix | first | upper) ~ (idSuffix | slice(1)) -}}
+{%- endmacro -%}
+{%- macro tab_header(idSuffix, text, class='') -%}
+    <li id="{{ _self.tab_header_id(idSuffix) }}" class="tab{{ (' ' ~ class) | trim(side='right') }}">{{ text | trans }}</li>
+{%- endmacro -%}
+{%- macro tab_content_attributes(idSuffix, class='') -%}
+{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="container{{ (' ' ~ class) | trim(side='right')}}"
+{%- endmacro -%}
+{%- import _self as tab_macros -%}
+
+{% block manager_content %}
+    <div class="text-right pull-right">{% block extra_action_buttons %}{% endblock %}</div>
+    {% block tabs_wrapper %}
+    <div class="tabContainer">
+        <ul class="tabs">
+        {% block tab_headers %}
+        {% endblock tab_headers %}
+        </ul>
+        {% block tab_containers %}
+        {% endblock tab_containers %}
+    </div>
+    {% endblock tabs_wrapper %}
+{% endblock %}

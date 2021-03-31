@@ -11,7 +11,7 @@
 {% block manager_content %}
   <div class="container" id="containerMainContent">
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
-    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
+    <div class="tabContainer">
       <ul class="nav nav-pills newAppTabs" role="tablist">
           <li role="presentation" class="tab active" id="tabBaseData">
             <a href="#basedata" aria-controls="basedata" role="tab" data-toggle="tab">
@@ -35,10 +35,8 @@
            </div>
       </div>
 
-      <div id="security" class="tab-pane containerSecurity" role="tabpanel">
-        {% block securityTab %}
-          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
-        {% endblock %}
+      <div id="security" class="tab-pane" role="tabpanel">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
       </div>
     </div>
 
