@@ -31,39 +31,31 @@
   {% endblock tab_headers %}
   </ul>
     {% block tab_containers %}
-        {% block tab_container_metadata %}
-            <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
-                {% block metadata_content %}
-                    {# @todo: absorb here #}
-                    {% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
-                {% endblock metadata_content %}
-            </div>
-        {% endblock tab_container_metadata %}
-        {% block tab_container_applications %}
-            <div id="containerApplications" class="container serviceContainer">
-                {% block applications_content %}
-                    {% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' %}
-                {% endblock applications_content %}
-            </div>
-        {% endblock tab_container_applications %}
+        <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
+            {% block metadata_content %}
+                {# @todo: absorb here #}
+                {% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
+            {% endblock metadata_content %}
+        </div>
+        <div id="containerApplications" class="container serviceContainer">
+            {% block applications_content %}
+                {% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' %}
+            {% endblock applications_content %}
+        </div>
         {%- if source.contact is not empty -%}
             {{- block('tab_container_contact') -}}
         {%- endif -%}
-        {% block tab_container_details %}
-            <div id="containerService" class="container serviceContainer serviceServiceContainer">
-                {% block details_content %}
-                    {# @todo: absorb here #}
-                    {% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
-                {% endblock details_content %}
-            </div>
-        {% endblock tab_container_details %}
-        {% block tab_container_layers %}
-            <div id="containerLayers" class="container serviceContainer serviceServiceContainer">
-                {% block layers_content %}
-                {# no default / common ground content #}
-                {% endblock layers_content %}
-            </div>
-        {% endblock tab_container_layers %}
+        <div id="containerService" class="container serviceContainer serviceServiceContainer">
+            {% block details_content %}
+                {# @todo: absorb here #}
+                {% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
+            {% endblock details_content %}
+        </div>
+        <div id="containerLayers" class="container serviceContainer serviceServiceContainer">
+            {% block layers_content %}
+            {# no default / common ground content #}
+            {% endblock layers_content %}
+        </div>
     {% endblock tab_containers %}
 </div>
 {% endblock manager_content %}
