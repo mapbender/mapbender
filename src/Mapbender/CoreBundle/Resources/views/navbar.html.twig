@@ -16,8 +16,7 @@
                     {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
                 </ul>
             {% endif %}
-            <div class="vertical-line visible-lg hidden-sm hidden-md"></div>
-            <ul id="accountMenu" class="nav navbar-nav accountMenu navbar-right">
+            <ul id="accountMenu" class="nav navbar-nav navbar-right">
                 {% if app.user != "" %}
                 <li class="navbar-text">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
                     {%- if app.user.password -%}

@@ -74,16 +74,6 @@ body {
   font-weight: 300;
 }
 
-.main-nav-container {
-  .accountMenu::before{
-    content: '';
-    width: 1px;
-    height: 100%;
-    background-color: #ddd;
-    position: absolute;
-  }
-}
-
 .navigationBar .nav > li > ul.nav {
   display: none;
   padding: 20px;
