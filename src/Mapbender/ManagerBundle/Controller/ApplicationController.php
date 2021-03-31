@@ -112,7 +112,7 @@ class ApplicationController extends WelcomeController
             ));
         }
 
-        return $this->render('@MapbenderManager/Application/new.html.twig', array(
+        return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
             'screenshot_filename' => null,
