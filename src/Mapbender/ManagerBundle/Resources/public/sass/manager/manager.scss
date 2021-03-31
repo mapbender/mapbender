@@ -25,10 +25,6 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
-.navigation {
-  color: $middleFontColor;
-}
-
 div.contentTitle {
   // remove h1 margin, put it on the containing div instead
   margin-bottom: 2rem;
@@ -72,38 +68,6 @@ div.contentTitle {
   z-index: 100000 !important;
 }
 
-
-// -------------------------------------------------------------------- PAGE TOP
-.head{
-  position: relative;
-  height:$bannerHeight;
-
-  // remove broken head background when the page is smaller than defined width
-  min-width:$pageWidth;
-  border-top:solid 5px darken($firstColor, 10%);
-  @include background(linear-gradient(rgba(255,255,255,.1),
-                                      rgba(255,255,255,0)),
-                      url($headPatternUrl));
-  .dekoSeperator {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 6px;
-    border:none;
-    outline:none;
-    border-bottom:solid 1px $firstColor;
-    background:url($imageBasePath + "/line.png");
-  }
-}
-
-// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
-.head + .page {
-  margin-top: -$bannerHeight;
-}
-
-.account-bar-wrap {
-  float: right;
-}
 .sitelinks {
   &.list-inline li:not(:first-child):before {
     content: "|";
