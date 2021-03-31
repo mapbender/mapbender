@@ -41,13 +41,11 @@ body {
   font-size: 1.25rem;
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
-  padding: 0.8em;
 
   .navbar-brand {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-left: 2.25em;
     // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
     // see https://stackoverflow.com/a/7310398
     &:before {
@@ -73,22 +71,16 @@ body {
   position: absolute;
   z-index: 5;
   top: 100%;
-  li {
-    // undo upstream .navbar-nav > li { float: left; } to allow li growth to full width
-    float: none;
-    font-weight: 300;
-  }
+  font-weight: 300;
 }
 
 .main-nav-container {
   .accountMenu::before{
     content: '';
     width: 1px;
-    height: 2em;
+    height: 100%;
     background-color: #ddd;
     position: absolute;
-    right: 20em;
-    top:1.5em;
   }
 }
 

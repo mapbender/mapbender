@@ -13,9 +13,10 @@
 {% endblock %}
 
 {% block content %}
-    <div id="wrapper">
-
+  <div class="head container-fluid">
+      <div class="row">
       {% include 'MapbenderCoreBundle::navbar.html.twig' %}
+      </div>
         <div class="row panel-body">
           <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
@@ -31,6 +32,7 @@
             v. {{ fom.server_version }}
           </div>
         </div>
+  </div>
         <div class="contentPane">
           <div class="content">
             <div class="innerContainer">
@@ -48,6 +50,4 @@
             </div>
           </div>
         </div>
-      </div>
-
 {% endblock %}
