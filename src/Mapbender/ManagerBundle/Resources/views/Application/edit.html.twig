@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
 
 {% block title %}{{ application.title }}{% endblock %}
 
@@ -19,17 +19,18 @@
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
-  <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"></a>
-    {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
-    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
-      <ul class="tabs">
+{%- block extra_action_buttons -%}
+  <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="hover-highlight-effect" title="{{ 'mb.manager.admin.application.view' | trans }}"><i class="fa fas fa-lg fa-desktop"></i></a>
+{%- endblock -%}
+
+{% block tab_headers %}
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
         <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
         <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
         <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
-      </ul>
+{% endblock %}
+{% block tab_containers %}
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
@@ -39,20 +40,10 @@
       <div id="containerLayers" class="container">
         {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
       </div>
-      <div id="containerCustomCss" class="container containerCustomCss">
+      <div id="containerCustomCss" class="container">
         {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
       </div>
-      <div id="containerSecurity" class="container containerSecurity">
-        {% block securityTab %}
-          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
-        {% endblock %}
+      <div id="containerSecurity" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
       </div>
-    </div>
-    <div class="clearContainer"></div>
-    <div class="button-group">
-        <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
-        <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
-    </div>
-    {{ form_row(form._token) }}
-    {{ form_end(form, {"render_rest": false}) }}
 {% endblock %}
