@@ -20,11 +20,6 @@
 @import url("components/bootstrap/css/bootstrap.min.css");
 
 
-$bannerHeight: 170px;
-$contentPaneWidth: 800px;
-$navWidth: 200px;
-$pageWidth: $contentPaneWidth + $navWidth;
-
 div.contentTitle {
   // remove h1 margin, put it on the containing div instead
   margin-bottom: 2rem;
@@ -42,11 +37,6 @@ div.contentTitle {
 }
 
 
-// ------------------------------------------------------------------------ PAGE
-.page{
-  margin: 0 auto;
-  width:$pageWidth;
-}
 .popupContainer,
 .page{
   position:relative;
