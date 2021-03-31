@@ -18,14 +18,16 @@ $(function() {
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
     var activeTab = (window.location.hash || '').substring(1);
-    $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
+    $(".tabContainer, .tabContainerAlt").on('click', '.tab, ul.nav>li[id]', function() {
         var tabId = $(this).attr('id');
         // rewrite url fragment without scrolling page
         // see https://stackoverflow.com/questions/3870057/how-can-i-update-window-location-hash-without-jumping-the-document
         window.history.replaceState(null, null, '#' + tabId);
     });
     if (activeTab) {
-        $('#' + activeTab, $('.tabContainer, .tabContainerAlt')).click();
+        var $activeTabHeader = $('#' + activeTab, $('.tabContainer, .tabContainerAlt'));
+        var $navLink = $('>a', $activeTabHeader);
+        ($navLink.length && $navLink || $activeTabHeader).click();
     }
 
     // List toggles used in source views (collapsible layer / matrix nodes)
