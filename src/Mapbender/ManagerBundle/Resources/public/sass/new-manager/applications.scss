@@ -38,6 +38,7 @@ body {
 
 
 .navigationBar {
+  font-size: 1.25rem;
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0px 1px 8px rgba(191, 191, 191, 0.5);
   padding: 0.8em;
@@ -80,10 +81,6 @@ body {
 }
 
 .main-nav-container {
-  > .nav > li {
-    font-size: 1.25rem;
-  }
-
   .accountMenu::before{
     content: '';
     width: 1px;
@@ -92,9 +89,7 @@ body {
     position: absolute;
     right: 20em;
     top:1.5em;
-
   }
-
 }
 
 .navigationBar .nav > li > ul.nav {
