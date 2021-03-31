@@ -29,31 +29,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
   color: $middleFontColor;
 }
 
-.navigation {
-  .navItem {
-    > a {
-      display: block;
-      @include transition(color 0.3s linear);
-      // separate text from built-in icon
-      &.iconLinkButton:before {
-        margin-right:5px;
-      }
-    }
-    &:hover, &:focus {
-      color: darken($middleFontColor, 12%);
-    }
-    &.activeItem {
-      > a:before {
-        color: $ciColor;
-      }
-      color: darken($middleFontColor, 24%);
-      &:hover, &:focus {
-        color: darken($middleFontColor, 36%);
-      }
-    }
-  }
-}
-
 div.contentTitle {
   // remove h1 margin, put it on the containing div instead
   margin-bottom: 2rem;
@@ -134,53 +109,6 @@ div.contentTitle {
     content: "|";
     margin-left: -5px;
     margin-right: 5px;
-  }
-}
-
-// ------------------------------------------------------------------- PAGE LEFT
-.leftPane{
-  width:$navWidth;
-
-  .navigation {
-    background-color: darken($contentColor, 1%);
-    box-shadow: -1em 0 2em inset darken($contentColor, 10%);
-    border-left:solid 1px $thirdColor;
-    border-bottom:solid 1px $thirdColor;
-    border-bottom-left-radius: $containerBorderRadius;
-    padding: 10px;
-    .navItem {
-      > a {
-        @include transition(color, background-color linear 0.3s);
-        padding: 2px 10px;
-        &:hover, &:focus {
-          background-color: #E0DDDD;
-        }
-      }
-    }
-    .navLevel2, .navLevel3{margin-left:$space/2;}
-  }
-  .logo {
-    max-width: 100%;
-    max-height:120px;
-  }
-  .logoContainer{
-    padding-top: $space;
-    height:$bannerHeight;
-  }
-  .logoContainer, >.navigation {
-    padding-left: $space / 2;
-  }
-}
-
-.leftPane, .rightPane {
-  display: inline-block;
-}
-.rightPane {
-  width: $contentPaneWidth;
-  position: absolute;
-  top: 0;
-  .top {
-    height: $space * 6;
   }
 }
 
