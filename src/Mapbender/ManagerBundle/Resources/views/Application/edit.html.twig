@@ -1,6 +1,6 @@
 {% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}{{ application.id ? application.title : ('mb.manager.admin.application.new.title' | trans) }}{% endblock %}
 
 {% block css %}
     {{parent()}}
