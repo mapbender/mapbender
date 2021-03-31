@@ -36,16 +36,18 @@
 <div class="instanceContainer">
   {{ form_start(form) }}
 
-    <div class="right">
-      <input class="button" type="submit" name="save" value="{{"mb.actions.save"|trans}}" />
-    {% if app.request.attributes.get('slug') %}
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
-    {% endif %}
+    <div class="form-group">
+        <div class="right">
+          <input class="button" type="submit" name="save" value="{{"mb.actions.save"|trans}}" />
+        {% if app.request.attributes.get('slug') %}
+          <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="button critical">{{"mb.actions.back"|trans}}</a>
+        {% endif %}
+        </div>
+        <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
+        <a class="smallText origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
+        <div class="clear"></div>
     </div>
 
-    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-    <a class="linkButton origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
-    <div class="clear"></div>
 
     <div class="row">
       {% block form_main %}
