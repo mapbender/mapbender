@@ -317,18 +317,25 @@ ul.dropdownList{
   font-weight: bold;
 }
 
-label[for^="inputFilter"] {
-  width: auto;
-  min-width: 80px;
-  margin: 0 1em 0 0;
-}
-
-.listFilterInput{
-  width: 200px;
-  max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
-  // HACK: The proper way to do this is to wrap label + input into a .form-group, or any other div really,
-  //       and put the margin onto the container. This would require changing FOM-generated markup though...
+.filter-group {
   margin-bottom: 1.5 * $space;
+  max-width: 80%; // HACK: Avoid blocking new application creation link in applications lsit
+  th & {
+    margin-bottom: 0;
+    max-width: initial;
+  }
+  label {
+    width: auto;
+    min-width: 80px;
+    margin: 0 1em 0 0;
+  }
+  .inputWrapper, >input {
+    width: 200px;
+    max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
+  }
+  .inputWrapper {
+    display: inline-block;
+  }
 }
 
 #listFilterPermission {

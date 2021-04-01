@@ -36,9 +36,7 @@
   <div id="containerGroups" class="container containerGroups">
     {% if form.groups|length > 0 %}
 
-      <label for="inputFilterUsers" class="labelInput">{{ 'mb.actions.filter' | trans }}</label>
-      <input id="inputFilterUsers" type="text" class="input listFilterInput"/>
-      <div class="clearContainer"></div>
+      {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
 
       <table id="listFilterUsers" class="listFilterContainer table table-striped">
         <thead>

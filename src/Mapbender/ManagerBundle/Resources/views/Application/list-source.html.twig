@@ -1,4 +1,5 @@
-<label for="inputFilterSources" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterSources" type="text" class="input listFilterInput">
+
+{% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterSources'} %}
 
 <ul id="listFilterSources" class="listFilterContainer">
   {% for instance in reusable_instances %}
