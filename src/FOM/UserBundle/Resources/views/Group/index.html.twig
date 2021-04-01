@@ -12,11 +12,9 @@
 {% endif %}
 
 {% if groups|length > 0 %}
-  <label for="inputFilterGroups" class="labelInput left">{{"fom.user.group.index.filter"|trans}}</label>
-  <input id="inputFilterGroups" type="text" class="input left listFilterInput"/>
+  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
 
-  <div class="clearContainer"></div>
-  <table id="listFilterGroups" class="table userControlTable listFilterContainer">
+  <table id="listFilterGroups" class="table">
     <thead id="groupsHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>

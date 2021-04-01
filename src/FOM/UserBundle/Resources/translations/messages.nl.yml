@@ -27,7 +27,6 @@ fom:
       index:
         groups: Groepen
         add_new_group: 'Voeg een groep toe'
-        filter: Filter
         title: Titel
         description: Omschrijving
         edit_group: 'Bewerk groep'
@@ -42,7 +41,6 @@ fom:
       container:
         base_data: 'Basis data'
         users: Gebruikers
-        filter: Filter
         users_of_selected: 'Gebruikers van %users_count% geselecteerd'
         no_user_exists: 'Gebruiker bestaat niet.'
     login:
@@ -70,7 +68,6 @@ fom:
       index:
         title: Gebruikers
         add_new_user: 'Voeg een nieuwe gebruiker toe'
-        filter: Filter
         name: Naam
         email: E-Mail
         groups: Groepen
@@ -92,7 +89,6 @@ fom:
         security: Beveiliging
         choose_password: 'Geef een wachtwoord op'
         confirm_password: 'Bevestig wachtwoord'
-        filter: Filter
         name: Naam
         users_of_selected: 'Gebruikers van %users_count% geselecteerd'
         no_groups_defined: Geen groepen gedefinieerd
@@ -114,7 +110,6 @@ fom:
         save: Bewaar
         cancel: Cancel
       groups_users:
-        filter: Filter
         name: Naam
         no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'
     password:

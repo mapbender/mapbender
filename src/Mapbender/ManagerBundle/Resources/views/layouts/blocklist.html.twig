@@ -2,10 +2,9 @@
 
 {% block manager_content %}
   {%- set list_id = list_id | default('listFilter0') -%}
-  {%- set filter_input_id = list_id | replace({'listFilter': 'inputFilter'}) %}
   {%- if items -%}
-  <label for="{{ filter_input_id }}" class="labelInput">{{ "mb.actions.filter" | trans}}</label><input id="{{ filter_input_id}}" type="text" class="input listFilterInput">
-  <ul id="{{ list_id }}" class="listFilterContainer clear listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
+  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: list_id} %}
+  <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
     <li class="filterItem">
       {% block boxlist_item_content %}{% endblock %}

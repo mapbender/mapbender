@@ -14,5 +14,4 @@ fom:
             cancel: Cancel
             ok: OK
     fields:
-      filter: Filter
       no_user_group_defined: 'No user or group defined.'

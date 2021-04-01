@@ -8,11 +8,8 @@
 
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  <label for="inputFilterUsers" class="labelInput left">{{"fom.user.user.index.filter"|trans}}</label>
-  <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
-
-  <div class="clearContainer"></div>
-  <table id="listFilterUsers" class="table userControlTable listFilterContainer">
+  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
+  <table id="listFilterUsers" class="table">
     <thead id="usersHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.user.index.name" | trans }}</th>

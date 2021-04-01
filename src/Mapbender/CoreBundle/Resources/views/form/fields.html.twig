@@ -229,12 +229,11 @@
   {% spaceless %}
 
     {% set prototype = form_widget(form.ace.vars.prototype) %}
-    <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidden{% endif %}">
+    <table id="listFilterPermission" class="permissionsTable tableCore {% if form.ace|length == 0 %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
-            <label for="inputFilterPermission" class="labelInput">{{"fom.core.fields.filter"|trans}}</label>
-            <input id="inputFilterPermission" type="text" class="input listFilterInput"/>
+            {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterPermission'} %}
           </th>
           {% for child in form.ace.vars.prototype %}
             {% if child.vars.attr.class is defined %}

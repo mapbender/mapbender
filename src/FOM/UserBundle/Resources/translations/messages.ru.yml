@@ -27,7 +27,6 @@ fom:
       index:
         groups: Группы
         add_new_group: 'Добавить новую группу'
-        filter: Фильтр
         title: Название
         description: Описание
         edit_group: 'Изменить группу'
@@ -42,7 +41,6 @@ fom:
       container:
         base_data: 'Базовые данные'
         users: Пользователи
-        filter: Фильтр
         users_of_selected: 'Пользователей выбрано: %users_count%'
         no_user_exists: 'Нет пользователя.'
     login:
@@ -70,7 +68,6 @@ fom:
       index:
         title: Пользователи
         add_new_user: 'Добавить нового пользователя'
-        filter: Фильтр
         name: Имя
         email: E-Mail
         groups: Группы
@@ -92,7 +89,6 @@ fom:
         security: Безопасность
         choose_password: 'Выберите пароль'
         confirm_password: 'Подтвердите пароль'
-        filter: Фильтр
         name: Имя
         users_of_selected: 'groups of %users_count% selected'
         no_groups_defined: Нет групп
@@ -114,7 +110,6 @@ fom:
         save: Сохранить
         cancel: Отменить
       groups_users:
-        filter: Фильтр
         name: Имя
         no_goups_users: 'Нет групп и пользователей.'
     password:

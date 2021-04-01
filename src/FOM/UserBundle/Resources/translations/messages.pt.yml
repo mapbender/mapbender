@@ -27,7 +27,6 @@ fom:
       index:
         groups: Grupos
         add_new_group: 'Adicionar um novo grupo'
-        filter: Filtro
         title: Título
         description: Descrição
         edit_group: 'Editar grupo'
@@ -42,7 +41,6 @@ fom:
       container:
         base_data: 'Dados básicos'
         users: Usuários
-        filter: Filtro
         users_of_selected: 'Usuários de %users_count% selecionado'
         no_user_exists: 'Não existe nenhum usuário'
     login:
@@ -70,7 +68,6 @@ fom:
       index:
         title: Usuários
         add_new_user: 'Adicionar novo usuário'
-        filter: Filtro
         name: Nome
         email: Email
         groups: Grupos
@@ -92,7 +89,6 @@ fom:
         security: Segurança
         choose_password: 'Escolher uma senha'
         confirm_password: 'Confirmar senha'
-        filter: Filtro
         name: Nome
         users_of_selected: 'grupos de %users_count% selecionados'
         no_groups_defined: Não definia grupos
@@ -114,7 +110,6 @@ fom:
         save: Guardar
         cancel: Cancelar
       groups_users:
-        filter: Filtro
         name: Nome
         no_goups_users: 'Não definia grupos e usuários'
     password:

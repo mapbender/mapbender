@@ -11,10 +11,9 @@
   <div id="containerUsers" class="container">
 
     {% if form.users|length > 0 %}
-      <label for="inputFilterUsers" class="labelInput left">{{"fom.user.group.container.filter"|trans}}</label>
-      <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
+      {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
 
-      <table id="listFilterUsers" class="listFilterContainer table table-striped">
+      <table id="listFilterUsers" class="table table-striped">
         <thead>
           <tr class="doNotFilter">
             <th>Name</th>
