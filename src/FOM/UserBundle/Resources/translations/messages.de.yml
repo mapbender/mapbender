@@ -105,8 +105,6 @@ fom:
         edit_class_acl: 'ACL-Klasse bearbeiten von %name%'
         security: Sicherheit
         add_users_groups: 'Benutzer/Gruppen hinzufügen'
-        save: Speichern
-        cancel: Abbrechen
       groups_users:
         name: Name
         no_goups_users: 'Keine Gruppen/Benutzer definiert.'

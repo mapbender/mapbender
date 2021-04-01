@@ -101,8 +101,6 @@ fom:
         edit_class_acl: 'Wijzig klasse toegangscontrole (ACL) voor %name%'
         security: Beveiliging
         add_users_groups: 'Voeg gebruikers en groepen toe'
-        save: Bewaar
-        cancel: Cancel
       groups_users:
         name: Naam
         no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'
