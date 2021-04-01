@@ -321,8 +321,6 @@ label[for^="inputFilter"] {
   width: auto;
   min-width: 80px;
   margin: 0 1em 0 0;
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
 }
 
 .listFilterInput{
@@ -331,8 +329,6 @@ label[for^="inputFilter"] {
   // HACK: The proper way to do this is to wrap label + input into a .form-group, or any other div really,
   //       and put the margin onto the container. This would require changing FOM-generated markup though...
   margin-bottom: 1.5 * $space;
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
 }
 
 #listFilterPermission {

@@ -8,8 +8,8 @@
 
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  <label for="inputFilterUsers" class="labelInput left">{{"fom.user.user.index.filter"|trans}}</label>
-  <input id="inputFilterUsers" type="text" class="input left listFilterInput"/>
+  <label for="inputFilterUsers" class="labelInput">{{"fom.user.user.index.filter"|trans}}</label>
+  <input id="inputFilterUsers" type="text" class="input listFilterInput"/>
 
   <div class="clearContainer"></div>
   <table id="listFilterUsers" class="table userControlTable listFilterContainer">
