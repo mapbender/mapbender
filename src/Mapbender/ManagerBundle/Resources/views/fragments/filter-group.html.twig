@@ -1,7 +1,6 @@
 <div class="form-group filter-group">
-{%- set inputId = filterTargetId ~ '-filter-input' %}
 {%- if show_label is not defined or show_label -%}
-    <label for="{{ inputId }}" class="labelInput">{{ 'mb.actions.filter' | trans }}</label>
+    <label for="list-filter" class="labelInput">{{ 'mb.actions.filter' | trans }}</label>
 {%- endif -%}
-<input id="{{ inputId }}" type="text" class="input listFilterInput" data-filter-target="{{ filterTargetId }}">
+<input id="list-filter" type="text" class="input listFilterInput" data-filter-target="{{ filterTargetId }}">
 </div>

@@ -42,18 +42,11 @@ $(function() {
     });
 
     // init filter inputs --------------------------------------------------------------------
-    $(document).on("keyup", ".listFilterInput", function(){
+    $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
-        if (!filterTargetId) {
-            filterTargetId = $this.attr('id').replace("input", "list");
-        }
         var filterScope = filterTargetId && $('#' + filterTargetId);
-        if (!filterTargetId || !filterScope.length) {
-            console.error("Could not find target for list filter", this, filterTargetId);
-            return;
-        }
         var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
