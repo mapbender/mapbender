@@ -4,7 +4,7 @@
   {%- set list_id = list_id | default('listFilter0') -%}
   {%- if items -%}
   {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: list_id} %}
-  <ul id="{{ list_id }}" class="listFilterContainer clear listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
+  <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
     <li class="filterItem">
       {% block boxlist_item_content %}{% endblock %}

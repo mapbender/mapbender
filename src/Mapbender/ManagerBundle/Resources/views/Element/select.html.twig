@@ -1,6 +1,6 @@
 {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterElements'} %}
 
-    <ul id="listFilterElements" class="listFilterContainer">
+    <ul id="listFilterElements">
     {% for class, meta in elements %}
         <li class="filterItem">
             <a class="checkContainer chooseElement" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}" data-element-title="{{ meta.title }}">

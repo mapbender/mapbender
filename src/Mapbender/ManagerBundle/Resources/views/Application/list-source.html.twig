@@ -1,7 +1,7 @@
 
 {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterSources'} %}
 
-<ul id="listFilterSources" class="listFilterContainer">
+<ul id="listFilterSources">
   {% for instance in reusable_instances %}
   <li class="filterItem">
     <a class="checkContainer" href="{{ path('mapbender_manager_application_attachreusableinstance', {'layerset': layerset, 'instance': instance}) }}">

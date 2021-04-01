@@ -9,7 +9,7 @@
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
   {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
-  <table id="listFilterUsers" class="table userControlTable listFilterContainer">
+  <table id="listFilterUsers" class="table">
     <thead id="usersHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.user.index.name" | trans }}</th>

@@ -1,7 +1,7 @@
 <a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="iconAdd right addLayerset iconBig" title="{{ 'mb.manager.admin.layerset.add' | trans}}"></a>
 {% if application.layersets|length > 0 %}
   {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
-  <ul class="listFilterContainer" id="all-instances">
+  <ul id="all-instances">
     {% for layerset in application.layersets %}
       <li class="filterItem">
         <table class="application-component-table smallText layersetTable" data-id="{{ layerset.id }}">
