@@ -160,25 +160,23 @@
   because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
  */
 .application-component-table {
-  line-height: 1.5;   // @todo: fix global fixed-pixel line-height!
+  line-height: 1.5rem;   // @todo: fix global fixed-pixel line-height!
+  font-size: 0.85rem;
   width: 100%;
   margin:$space 0;
   thead {
     border-bottom: solid 5px darken($contentColor, 15%);
+    th, td {
+      font-size: 130%;
+      font-weight: normal;
+    }
   }
-  td, th {
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-  thead th, thead td {
-    font-size: 130%;
+  thead>tr>th:first-child {
+    padding-left: 0;
   }
   .description {
     // @todo: remove built-in font size from .description
     font-size: inherit;
-  }
-  th {
-    font-weight:normal;
   }
   tr.ui-sortable-handle {
     cursor: move;
@@ -193,14 +191,6 @@
   .iconColumn, thead th.iconColumn, thead th.regionProperties {
     // Keep horizontal alignment of icons thead vs tbody, despite different default font sizes
     font-size: 118%;
-  }
-  tbody .iconColumn {
-    // hit the same calculated line-height as regular text, despite bigger font (1.5 / 1.118 ~= 1.271)
-    line-height: 1.271;
-  }
-  thead .iconColumn {
-    // hit the same calculated line-height as regular text, despite smaller font (1.5 / (1.18 / 1.3) ~= 1.653)
-    line-height: 1.653;
   }
   // Element region / Layerset titles use embedded h3 tags
   thead h3 {
@@ -227,26 +217,7 @@
     tr {
       border-top: solid 1px darken($contentColor, 10%);
       vertical-align: top;
-
-      >td:first-child {
-        // indent body row a bit vs first thead > th
-        padding-left: $space/2;
-      }
-      td {
-        // enforce a bit of space between cells, INCLUDING the very last
-        // cell (to mirror the "indent inwards" style of the first cell)
-        padding-right: $space/2;
-      }
     }
-  }
-  tr {
-    height:30px;
-  }
-  td:last-child, th:last-child {
-    // indent inwards even in thead, to line up with tbody > tr > td.iconColumn
-    padding-right: $space / 2;
-    // neat alignment for "Layouts" table (differing number of icons in cells)
-    text-align: right;
   }
   .iconColumn {
     // .iconColumn contents mix div / a / span elements, but they should all
