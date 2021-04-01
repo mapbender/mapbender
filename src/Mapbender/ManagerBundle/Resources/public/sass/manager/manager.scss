@@ -133,6 +133,14 @@ ul.dropdownList{
       margin: $space 0;
     }
   }
+  .form-container {
+    border: 1px solid #c0c0c0;
+    background-color: #f9f9f9;
+    padding: 20px;
+    .button-group:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .secureElement.has:before {

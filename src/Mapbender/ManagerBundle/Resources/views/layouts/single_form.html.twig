@@ -1,7 +1,7 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
 {% block manager_content %}
-<div class="containerExchange">
+<div class="form-container">
   {{- form_start(form, {"attr": {"novalidate": "novalidate"}}) -}}
     {{- form_errors(form) -}}
     {% block form_fields %}

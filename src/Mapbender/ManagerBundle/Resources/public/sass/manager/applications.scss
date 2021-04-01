@@ -132,12 +132,6 @@
   }
 }
 
-.containerExchange {
-  border: 1px solid #c0c0c0;
-  background-color: #f9f9f9;
-  padding: 20px;
-}
-
 /**
   Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
   because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
