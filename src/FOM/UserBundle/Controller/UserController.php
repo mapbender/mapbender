@@ -159,7 +159,6 @@ class UserController extends UserControllerBase
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user'             => $user,
             'form'             => $form->createView(),
-            'edit' => !$isNew,
             'profile_template' => $this->getProfileTemplate(),
             'title' => $this->translate($isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user'),
         ));

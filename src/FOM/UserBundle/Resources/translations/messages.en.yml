@@ -39,9 +39,6 @@ fom:
       form:
         edit_group: 'Edit Group'
         new_group: 'New Group'
-        save: Save
-        create: Create
-        cancel: Cancel
       container:
         base_data: 'Base data'
         users: Users
@@ -83,9 +80,6 @@ fom:
       form:
         edit_user: 'Edit User'
         new_user: 'New User'
-        save: Save
-        create: Create
-        cancel: Cancel
       container:
         base_data: 'Base data'
         profile: Profile

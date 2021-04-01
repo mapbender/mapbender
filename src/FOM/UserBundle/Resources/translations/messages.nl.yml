@@ -35,9 +35,6 @@ fom:
       form:
         edit_group: 'Wijzig groep'
         new_group: 'Nieuwe groep'
-        save: Bewaar
-        create: 'Maak aan'
-        cancel: Cancel
       container:
         base_data: 'Basis data'
         users: Gebruikers
@@ -79,9 +76,6 @@ fom:
       form:
         edit_user: 'Wijzig gebruiker'
         new_user: 'Nieuwe gebruiker'
-        save: Bewaar
-        create: 'Maak aan'
-        cancel: Cancel
       container:
         base_data: 'Basis data'
         profile: Profiel

@@ -1,23 +1,42 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{%- set return_path = 'fom_user_group_index' -%}
 
 {% block js %}
   {{parent()}}
   <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
-    {{ form_start(form, {'attr': { novalidate: 'novalidate', autocomplete: 'off'}}) }}
-
-    {% if form_errors(form) %}
-        <div>{{ form_errors(form) }}</div>
-    {% endif %}
-
-    {% include 'FOMUserBundle:Group:container.html.twig' %}
-    {{ form_row(form._token) }}
-    <div class="right">
-      <input class="button" type="submit" value="{% if edit %}{{ 'fom.user.group.form.save' | trans }}{% else %}{{ 'fom.user.group.form.create' | trans }}{% endif %}"/>
-      <a class="button critical" href="{{ path('fom_user_group_index') }}">{{ 'fom.user.group.form.cancel' | trans}}</a>
+{% block tab_headers %}
+    {{- tab_macros.tab_header('BaseData', 'fom.user.group.container.base_data', 'active') -}}{#- #tabBaseData -#}
+    {{- tab_macros.tab_header('Users', 'fom.user.group.container.users') -}}{#- #tabUsers -#}
+{% endblock %}
+{% block tab_containers %}
+    <div{{ tab_macros.tab_content_attributes('BaseData', 'active') }}>{#- #containerBaseData -#}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
     </div>
-    {{ form_end(form) }}
-    <div class="clearContainer"></div>
+    <div{{ tab_macros.tab_content_attributes('Users') }}>{#- #containerUsers -#}
+        {% if form.users|length %}
+          {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
+          <table id="listFilterUsers" class="table table-striped">
+            <thead>
+              <tr class="doNotFilter">
+                <th>Name</th>
+                <th class="description text-right"><span id="selectedUsersGroups">{{group.users | length}}</span> {{ 'fom.user.group.container.users_of_selected' | trans ({'%users_count%': form.users|length }) }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in form.users %}
+                <tr class="filterItem">
+                  <td colspan="2">
+                      {{ form_row(user) }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="description">{{"fom.user.group.container.no_user_exists"|trans}}</p>
+        {% endif %}
+    </div>
 {% endblock %}
