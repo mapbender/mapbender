@@ -31,7 +31,6 @@ fom:
       index:
         groups: Gruppen
         add_new_group: 'Neue Gruppe hinzufügen'
-        filter: Filter
         title: Titel
         description: Beschreibung
         edit_group: 'Gruppe bearbeiten'
@@ -46,7 +45,6 @@ fom:
       container:
         base_data: Basisdaten
         users: Benutzer
-        filter: Filter
         users_of_selected: 'Benutzer von %users_count% selektiert'
         no_user_exists: 'Benutzer existiert nicht'
     login:
@@ -74,7 +72,6 @@ fom:
       index:
         title: Benutzer
         add_new_user: 'Neuen Benutzer hinzufügen'
-        filter: Filter
         name: Name
         email: E-Mail
         groups: Gruppen
@@ -96,7 +93,6 @@ fom:
         security: Sicherheit
         choose_password: 'Passwort auswählen'
         confirm_password: 'Passwort bestätigen'
-        filter: Filter
         name: Name
         users_of_selected: 'Gruppen von %users_count% selektiert'
         no_groups_defined: Keine Gruppen definiert
@@ -118,7 +114,6 @@ fom:
         save: Speichern
         cancel: Abbrechen
       groups_users:
-        filter: Filter
         name: Name
         no_goups_users: 'Keine Gruppen/Benutzer definiert.'
     password:

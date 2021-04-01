@@ -8,7 +8,7 @@
 
 {% if users|length > 0 %}
   {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  <label for="inputFilterUsers" class="labelInput">{{"fom.user.user.index.filter"|trans}}</label>
+  <label for="inputFilterUsers" class="labelInput">{{ 'mb.actions.filter' | trans }}</label>
   <input id="inputFilterUsers" type="text" class="input listFilterInput"/>
 
   <div class="clearContainer"></div>

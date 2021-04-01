@@ -14,5 +14,4 @@ fom:
             cancel: Отменить
             ok: Ок
     fields:
-      filter: Фильтр
       no_user_group_defined: 'Группа пользователя не установлена'

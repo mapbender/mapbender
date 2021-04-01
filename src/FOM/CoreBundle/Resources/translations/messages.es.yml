@@ -14,5 +14,4 @@ fom:
             cancel: Cancelar
             ok: Acpetar
     fields:
-      filter: Filtro
       no_user_group_defined: 'No definido grupo de usuario.'
