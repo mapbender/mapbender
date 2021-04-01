@@ -273,7 +273,7 @@ ul.dropdownList{
     padding: $space;
     background-color: lighten($contentColor, 2%);
     border-radius: $containerBorderRadius;
-    .tabContainer, .containerExchange {
+    .tabContainer {
       margin-bottom: $space;
     }
 
@@ -296,6 +296,14 @@ ul.dropdownList{
       left: solid 1px $thirdColor;
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
+    }
+  }
+  .form-container {
+    border: 1px solid #c0c0c0;
+    background-color: #f9f9f9;
+    padding: 20px;
+    .button-group:last-child {
+      margin-bottom: 0;
     }
   }
   .mapbenderVersion{
