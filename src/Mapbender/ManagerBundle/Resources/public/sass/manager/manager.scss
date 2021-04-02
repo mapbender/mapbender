@@ -360,9 +360,6 @@ ul.dropdownList{
       background-color: #f0ffed;
     }
   }
-  .listFilterInput{
-    margin-bottom: 0;
-  }
   .tagbox {
     font-size: 85%;
     cursor: pointer;
@@ -370,7 +367,6 @@ ul.dropdownList{
     text-align: center;
     padding: 3px .5em;
     margin: 0 .25em;
-    display: inline-block;  // match .checkWrapper in body; @todo: fix markup in FOM
     @include noUserSelect;
     @include border-radius($radius);
     &.multi {

@@ -86,7 +86,6 @@ fom:
         name: Nome
         users_of_selected: 'gruppi di %users_count% selected'
         no_groups_defined: Nessun gruppo definito
-        add_users_groups: 'Aggiungi utenti e gruppi'
         username: Nome utente
         description: Descrizione
         activated: attivato
@@ -100,7 +99,6 @@ fom:
       edit:
         edit_class_acl: 'Modifica classe ACL per %name%'
         security: Sicurezza
-        add_users_groups: 'Aggiungi utenti e gruppi'
       groups_users:
         name: Name
         no_goups_users: 'Nessun gruppo e utente definito.'

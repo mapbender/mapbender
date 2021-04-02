@@ -87,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Безопасность
-          add_users_groups: 'Добавить пользователей и группы'
           public: публичный доступ
         save: Сохранить
         cancel: Отменить

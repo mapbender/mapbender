@@ -86,7 +86,6 @@ fom:
         name: Naam
         users_of_selected: 'Gebruikers van %users_count% geselecteerd'
         no_groups_defined: Geen groepen gedefinieerd
-        add_users_groups: 'Voeg gebruikers en groepen toe'
         username: Gebruikersnaam
         description: Beschrijving
         activated: geactiveerd
@@ -100,7 +99,6 @@ fom:
       edit:
         edit_class_acl: 'Wijzig klasse toegangscontrole (ACL) voor %name%'
         security: Beveiliging
-        add_users_groups: 'Voeg gebruikers en groepen toe'
       groups_users:
         name: Naam
         no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'

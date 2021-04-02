@@ -4,9 +4,3 @@
 {% block form_fields %}
     {{- form_row(form) -}}
 {% endblock %}
-{% block manager_content %}
-    <div class="form-group text-right">
-        <a id="addPermission" href="{{path('fom_user_acl_overview')}}" title="{{'fom.user.acl.edit.add_users_groups' | trans}}" class="hover-highlight-effect"><i class="fa fas fa-2x fa-plus"></i></a>
-    </div>
-    {{ parent() }}
-{% endblock %}

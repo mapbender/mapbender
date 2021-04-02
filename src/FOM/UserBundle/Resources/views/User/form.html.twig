@@ -64,11 +64,6 @@
     {%- endif -%}
     {%- if form.acl is defined -%}
         <div{{ tab_macros.tab_content_attributes('Security') }}>{#- #containerSecurity -#}
-            <div class="form-group text-right">
-                <a id="addPermission" href="{{path('fom_user_acl_overview')}}" class="hover-highlight-effect" title="{{'fom.user.user.container.add_users_groups'|trans}}">
-                    <i class="fa fas fa-2x fa-plus"></i>
-                </a>
-            </div>
             {{ form_widget(form.acl) }}
         </div>
     {%- endif -%}

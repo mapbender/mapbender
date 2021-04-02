@@ -2,11 +2,6 @@ fom:
   core:
     components:
       popup:
-        add_user_group:
-          title: 'Agregar usuarios y grupos'
-          btn:
-            cancel: Cancelar
-            add: Agregar
         delete_user_group:
           title: 'Confirmar eliminar'
           content: 'Realmente eliminar %userGroup%?'

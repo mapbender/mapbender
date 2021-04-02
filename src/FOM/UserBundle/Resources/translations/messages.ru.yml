@@ -86,7 +86,6 @@ fom:
         name: Имя
         users_of_selected: 'groups of %users_count% selected'
         no_groups_defined: Нет групп
-        add_users_groups: 'Добавление пользователей и группы'
         username: 'Имя пользователя'
         description: Описание
         activated: активирован
@@ -100,7 +99,6 @@ fom:
       edit:
         edit_class_acl: 'Редактировать класса ACL для %name%'
         security: Безопасность
-        add_users_groups: 'Добавление пользователей и группы'
       groups_users:
         name: Имя
         no_goups_users: 'Нет групп и пользователей.'
