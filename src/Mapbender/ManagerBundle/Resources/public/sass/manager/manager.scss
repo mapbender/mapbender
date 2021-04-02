@@ -148,19 +148,25 @@ ul.dropdownList{
   font-weight: bold;
 }
 
-label[for^="inputFilter"] {
-  &.labelInput {
+.filter-group {
+  margin-bottom: 1.5 * $space;
+  max-width: 80%; // HACK: Avoid blocking new application creation link in applications lsit
+  th & {
+    margin-bottom: 0;
+    max-width: initial;
+  }
+  label {
+    width: auto;
+    min-width: 80px;
     margin: 0 1em 0 0;
   }
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  &.left {
-    float: none;
+  .inputWrapper, >input {
+    width: 200px;
+    max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
   }
-}
-
-.listFilterInput.left {
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
+  .inputWrapper {
+    display: inline-block;
+  }
 }
 
 #listFilterPermission {
@@ -192,7 +198,6 @@ label[for^="inputFilter"] {
     text-align: center;
     padding: 3px .5em;
     margin: 0 .25em;
-    display: inline-block;  // match .checkWrapper in body; @todo: fix markup in FOM
     @include noUserSelect;
     @include border-radius($radius);
     &.multi {

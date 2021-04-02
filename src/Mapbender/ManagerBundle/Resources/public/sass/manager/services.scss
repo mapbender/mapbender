@@ -135,7 +135,6 @@
 
 .instanceTable{
   margin-top:$space;
-  margin-bottom:$space;
   .checkboxColumn{
     text-align:center;
   }
@@ -146,28 +145,17 @@
     tbody tr td {
       line-height: $inputHeight;
     }
-    > tbody > tr > td, > thead > tr > th {
-      padding-left: 0;
-      padding-right: 8px;
-      &.checkboxColumn {
-        width: 1%;
-        padding-left: 4px;
-        padding-right: 4px;
-      }
-    }
     .titleColumn {
       width: 260px;
     }
-    .itemType {
-      cursor:ns-resize;
-    }
   }
-
-  .level0 .itemType{margin-left:4px;}
-  .level1 .itemType{margin-left:10px;}
-  .level2 .itemType{margin-left:16px;}
-  .level3 .itemType{margin-left:22px;}
-  .level4 .itemType{margin-left:28px;}
+  td.itemType {
+    cursor:ns-resize;
+  }
+  .level1 .itemType{margin-left: 0.4em;}
+  .level2 .itemType{margin-left: 0.8em;}
+  .level3 .itemType{margin-left: 1.2em;}
+  .level4 .itemType{margin-left: 1.6em;}
   .dummy{display:none;}
 }
 .infoMsgBox {

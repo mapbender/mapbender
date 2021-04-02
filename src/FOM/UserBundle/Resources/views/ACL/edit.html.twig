@@ -1,22 +1,6 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/single_form.html.twig" %}
+{%- set return_path = 'fom_user_acl_index' -%}
 
-{% block title %}{{ "fom.user.acl.edit.edit_class_acl" | trans({'%name%': class_name}) }}{% endblock %}
-
-{% block manager_content %}
-
-{{ form_start(form, { 'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
-    <div class="form-group text-right">
-        <a id="addPermission" href="{{path('fom_user_acl_overview')}}" title="{{'fom.user.acl.edit.add_users_groups' | trans}}" class="hover-highlight-effect"><i class="fa fas fa-2x fa-plus"></i></a>
-    </div>
-
-    {{ form_row(form, {label: false}) }}
-
-    <div class="clearContainer"></div>
-    {{ form_row(form._token) }}
-
-    <div class="right">
-      <input type="submit" value="{{ 'fom.user.acl.edit.save' | trans }}" class="button"/>
-      <a href="{{ path('fom_user_acl_index') }}" class="button critical">{{ 'fom.user.acl.edit.cancel' | trans}}</a>
-    </div>
-{{ form_end(form) }}
+{% block form_fields %}
+    {{- form_row(form) -}}
 {% endblock %}

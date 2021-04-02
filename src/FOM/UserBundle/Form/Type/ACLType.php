@@ -4,6 +4,8 @@ namespace FOM\UserBundle\Form\Type;
 use FOM\UserBundle\Form\DataTransformer\ACEDataTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -69,6 +71,7 @@ class ACLType extends AbstractType
             'create_standard_permissions' => true,
             'standard_anon_access' => null,
             'aces' => null,
+            'allow_add' => true,
         ));
         $resolver->setAllowedValues('mapped', array(false));
     }
@@ -183,5 +186,10 @@ class ACLType extends AbstractType
         } else {
             throw new \InvalidArgumentException("Unsupported 'permissions' option " . print_r($options['permissions'], true));
         }
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['allow_add'] = $options['allow_add'];
     }
 }

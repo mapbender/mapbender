@@ -27,15 +27,15 @@
   {% endblock %}
   {%- endif -%}
 
-  {% for region in regions %}
-    <div class="{{region}} region">
-      <table class="application-component-table smallText elementsTable" data-region="{{ region }}">
+{% for region in regions %}
+  <div class="{{region}} region">
+      <table class="application-component-table table-condensed elementsTable" data-region="{{ region }}">
         <thead>
           <tr>
             <th colspan="1">
               <h3 class="subTitle">{{ region | capitalize }}</h3>
             </th>
-            <th colspan="2" class="regionProperties"  data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
+            <th colspan="2" class="text-right regionProperties" data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
               {% if form.regionProperties[region] is defined %}
                 {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
@@ -44,7 +44,7 @@
           <tr>
             <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
-            <th class="iconColumn">
+            <th class="iconColumn text-right">
               <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
             </th>
           </tr>
@@ -56,7 +56,7 @@
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
                 <td class="titleColumn description">{{ element_title(element) | trans }}</td>
                 <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
-                <td class="iconColumn">
+                <td class="iconColumn text-right">
                   <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">

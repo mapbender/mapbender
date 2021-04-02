@@ -44,18 +44,11 @@ $(function() {
     });
 
     // init filter inputs --------------------------------------------------------------------
-    $(document).on("keyup", ".listFilterInput", function(){
+    $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
-        if (!filterTargetId) {
-            filterTargetId = $this.attr('id').replace("input", "list");
-        }
         var filterScope = filterTargetId && $('#' + filterTargetId);
-        if (!filterTargetId || !filterScope.length) {
-            console.error("Could not find target for list filter", this, filterTargetId);
-            return;
-        }
         var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
@@ -136,7 +129,7 @@ $(function() {
         });
         // if table was previously empty, reveal it and hide placeholder text
         $permissionsTable.removeClass('hidden');
-        $('#permissionsDescription', $permissionsTable.parent()).addClass('hidden');
+        $('#permissionsDescription', $permissionsTable.closest('.ace-collection')).addClass('hidden');
     }
     function filterSidContent(response, $permissionsTable) {
         var $content = $(response);
@@ -174,17 +167,10 @@ $(function() {
     };
     $(document).on("click", ".permissionsTable .checkWrapper", togglePermission);
 
-    // add user or groups
-    // Remaining FOM markup uses an anchor with a href, which allows undesirable "open in new tab" interactions and
-    // also causes some CSS quirks
-    // Modern markup uses a div with a data-href attribute
-    // @todo: scoping; unscoped, there can only be one user list in the markup at any given time
-    $(".-fn-add-permission, #addPermission").bind("click", function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+    $(document).on('click', '.ace-collection .-fn-add-permission[data-url]', function(event) {
         var $this = $(this);
-        var url = $this.attr('data-url') || $this.attr("href");
-        var $targetTable = $('.permissionsTable', $this.closest('.tabContainer,.container,.popup'));
+        var url = $this.attr('data-url');
+        var $targetTable = $('table', $this.closest('.ace-collection'));
 
         if (url.length > 0) {
             $.ajax({

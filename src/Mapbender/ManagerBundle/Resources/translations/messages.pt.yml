@@ -87,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Segurança
-          add_users_groups: 'Adicionar usuários e grupos'
           public: acesso público
         save: Guardar
         cancel: Cancelar

@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ACLController extends Controller
 {
@@ -47,6 +48,7 @@ class ACLController extends Controller
 
         $form = $this->createForm('FOM\ManagerBundle\Form\Type\ClassAclType', array(), array(
             'class' => $class,
+            'label' => false,
         ));
 
         $form->handleRequest($request);
@@ -63,8 +65,10 @@ class ACLController extends Controller
 
         return $this->render('@FOMUser/ACL/edit.html.twig', array(
             'class' => $class,
-            'class_name' => $acl_classes[$class],
             'form' => $form->createView(),
+            'title' => $this->getTranslator()->trans('fom.user.acl.edit.edit_class_acl', array(
+                '%name%' => $acl_classes[$class],
+            ))
         ));
     }
 
@@ -98,4 +102,15 @@ class ACLController extends Controller
         }
         return $acl_classes;
     }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        /** @var TranslatorInterface $translator */
+        $translator = $this->get('translator');
+        return $translator;
+    }
+
 }

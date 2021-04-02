@@ -27,7 +27,6 @@ fom:
       index:
         groups: Группы
         add_new_group: 'Добавить новую группу'
-        filter: Фильтр
         title: Название
         description: Описание
         edit_group: 'Изменить группу'
@@ -36,13 +35,9 @@ fom:
       form:
         edit_group: 'Изменить группу'
         new_group: 'Новая группа'
-        save: Сохранить
-        create: Создать
-        cancel: Отменить
       container:
         base_data: 'Базовые данные'
         users: Пользователи
-        filter: Фильтр
         users_of_selected: 'Пользователей выбрано: %users_count%'
         no_user_exists: 'Нет пользователя.'
     login:
@@ -70,7 +65,6 @@ fom:
       index:
         title: Пользователи
         add_new_user: 'Добавить нового пользователя'
-        filter: Фильтр
         name: Имя
         email: E-Mail
         groups: Группы
@@ -82,9 +76,6 @@ fom:
       form:
         edit_user: 'Редактировать пользователя'
         new_user: 'Новый Пользователь'
-        save: Сохранить
-        create: Создать
-        cancel: Отменить
       container:
         base_data: 'Базовые данные'
         profile: Профиль
@@ -92,11 +83,9 @@ fom:
         security: Безопасность
         choose_password: 'Выберите пароль'
         confirm_password: 'Подтвердите пароль'
-        filter: Фильтр
         name: Имя
         users_of_selected: 'groups of %users_count% selected'
         no_groups_defined: Нет групп
-        add_users_groups: 'Добавление пользователей и группы'
         username: 'Имя пользователя'
         description: Описание
         activated: активирован
@@ -110,11 +99,7 @@ fom:
       edit:
         edit_class_acl: 'Редактировать класса ACL для %name%'
         security: Безопасность
-        add_users_groups: 'Добавление пользователей и группы'
-        save: Сохранить
-        cancel: Отменить
       groups_users:
-        filter: Фильтр
         name: Имя
         no_goups_users: 'Нет групп и пользователей.'
     password:

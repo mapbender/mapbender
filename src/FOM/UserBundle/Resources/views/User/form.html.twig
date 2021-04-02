@@ -1,21 +1,70 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{%- set return_path = 'fom_user_user_index' %}
 
 {% block js %}
   {{parent()}}
   <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
-    {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
-
-    {% include 'FOMUserBundle:User:container.html.twig' %}
-
-    {{ form_row(form._token) }}
-
-    <div class="right">
-      <input class="button" type="submit" value="{% if edit %}{{ 'fom.user.user.form.save' | trans }}{% else %}{{ 'fom.user.user.form.create' | trans }}{% endif %}"/>
-      <a class="button critical" href="{{ path('fom_user_user_index') }}">{{ 'fom.user.user.form.cancel' | trans}}</a>
+{% block tab_headers %}
+    {{- tab_macros.tab_header('BaseData', 'fom.user.group.container.base_data', 'active') -}}{#- #tabBaseData -#}
+    {%- if form.profile is defined -%}
+    {{- tab_macros.tab_header('Profile', form.profile.vars.label) -}}{#- #tabProfile -#}
+    {%- endif -%}
+    {%- if form.groups is defined -%}
+    {{- tab_macros.tab_header('Groups', form.groups.vars.label) -}}{#- #tabGroups -#}
+    {%- endif -%}
+    {%- if form.acl is defined -%}
+    {{- tab_macros.tab_header('Security', 'fom.user.user.container.security') -}}{#- #tabSecurity -#}
+    {%- endif -%}
+{% endblock %}
+{% block tab_containers %}
+    <div{{ tab_macros.tab_content_attributes('BaseData', 'active') }}>{#- #containerBaseData -#}
+      {{ form_row(form.username) }}
+      {{ form_row(form.email) }}
+      {{ form_row(form.password) }}
+      {% if form.activated is defined %}
+        {{ form_row(form.activated) }}
+      {% endif %}
     </div>
-    {{ form_end(form) }}
-<div class="clearContainer"></div>
+    {%- if form.profile is defined -%}
+    <div{{ tab_macros.tab_content_attributes('Profile') }}>{#- #containerProfile -#}
+        {%- if profile_template -%}
+            {%- include profile_template -%}
+        {%- else -%}
+            {{- form_widget(form.profile) -}}
+        {%- endif -%}
+    </div>
+    {%- endif -%}
+    {%- if form.groups is defined -%}
+    <div{{ tab_macros.tab_content_attributes('Groups') }}>{#- #containerGroups -#}
+        {%- if form.groups|length -%}
+            {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
+            <table id="listFilterGroups" class="table table-striped">
+              <thead>
+                <tr class="doNotFilter">
+                  <th>{{"fom.user.user.container.name"|trans}}</th>
+                  <th class="description text-right"><span id="selectedUsersGroups">{{user.groups | length}}</span> {{ 'fom.user.user.container.users_of_selected' | trans ({'%users_count%': form.groups|length }) }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for group in form.groups %}
+                  <tr class="filterItem">
+                    <td colspan="2">
+                        {{ form_widget(group) }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+      {%- else -%}
+            <p class="description">{{"fom.user.user.container.no_groups_defined"|trans}}</p>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+    {%- if form.acl is defined -%}
+        <div{{ tab_macros.tab_content_attributes('Security') }}>{#- #containerSecurity -#}
+            {{ form_widget(form.acl) }}
+        </div>
+    {%- endif -%}
 {% endblock %}

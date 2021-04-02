@@ -2,11 +2,6 @@ fom:
   core:
     components:
       popup:
-        add_user_group:
-          title: 'Add users and groups'
-          btn:
-            cancel: Cancel
-            add: Add
         delete_user_group:
           title: 'Confirm delete'
           content: 'Really delete %userGroup%?'
@@ -14,5 +9,4 @@ fom:
             cancel: Cancel
             ok: OK
     fields:
-      filter: Filter
       no_user_group_defined: 'No user or group defined.'
