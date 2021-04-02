@@ -87,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title:  Beveiliging
-          add_users_groups: 'Voeg gebruikers en groepen toe'
           public: Publieke toegang
         save: Bewaar
         cancel: Annuleren

@@ -117,7 +117,6 @@ mb:
         custom_css: CSS
         security:
           title: Sicherheit
-          add_users_groups: 'Benutzer/Gruppen hinzufügen'
           public: öffentlicher Zugriff
         save: Speichern
         cancel: Abbrechen
@@ -188,8 +187,6 @@ mb:
           title: 'Datenquelle auswählen'
         delete_instance:
           title: 'Instanz löschen'
-        add_user_group:
-          title: 'Benutzer/Gruppe hinzufügen.'
         delete_user_group:
           title: 'Entfernen bestätigen'
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'

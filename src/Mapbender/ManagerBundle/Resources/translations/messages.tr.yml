@@ -87,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: 'Güvenlik'
-          add_users_groups: 'Kullanıcı ve Grup ekle'
           public: Kamu erişim
         save: 'Kaydet'
         cancel: 'Vazgeç'

@@ -35,9 +35,6 @@ fom:
       form:
         edit_group: 'Edita il gruppo'
         new_group: 'Nuovo gruppo'
-        save: Salva
-        create: Crea
-        cancel: Cancella
       container:
         base_data: 'Dati di base'
         users: Utenti
@@ -79,9 +76,6 @@ fom:
       form:
         edit_user: 'Modifica utente'
         new_user: 'Aggiungi utente'
-        save: Salva
-        create: Crea
-        cancel: Cancella
       container:
         base_data: 'Dati di base'
         profile: Profilo
@@ -92,7 +86,6 @@ fom:
         name: Nome
         users_of_selected: 'gruppi di %users_count% selected'
         no_groups_defined: Nessun gruppo definito
-        add_users_groups: 'Aggiungi utenti e gruppi'
         username: Nome utente
         description: Descrizione
         activated: attivato
@@ -106,9 +99,6 @@ fom:
       edit:
         edit_class_acl: 'Modifica classe ACL per %name%'
         security: Sicurezza
-        add_users_groups: 'Aggiungi utenti e gruppi'
-        save: Salva
-        cancel: Cancella
       groups_users:
         name: Name
         no_goups_users: 'Nessun gruppo e utente definito.'
