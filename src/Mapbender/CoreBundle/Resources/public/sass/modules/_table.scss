@@ -7,9 +7,6 @@
       &:hover{background-color:darken($contentColor, 3%);}
     }
   }
-  .iconColumn {
-    text-align: right;
-  }
 }
 .table-bordered {
   border-top: solid 3px $firstColor;
@@ -43,13 +40,11 @@
     border-bottom-width: 5px;
   }
 }
-table {
-  td, th {
-    &.iconColumn {
-      // Poor .iconColumn catches some undesirable rules from the [class^="icon"] rule
-      // in libs/_icons.scss. Defeat those
-      display: table-cell !important;
-      vertical-align: inherit;
-    }
+td, th {
+  &.iconColumn {
+    // Undo display: inline-block from the [class^="icon"] rule in libs/_icons.scss
+    display: table-cell !important;
+    white-space: nowrap;
+    text-align: right;
   }
 }
