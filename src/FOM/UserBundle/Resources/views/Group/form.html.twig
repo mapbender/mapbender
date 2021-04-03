@@ -18,7 +18,7 @@
     <div{{ tab_macros.tab_content_attributes('Users') }}>{#- #containerUsers -#}
         {% if form.users|length %}
           {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
-          <table id="listFilterUsers" class="table table-striped">
+          <table id="listFilterUsers" class="table">
             <thead>
               <tr class="doNotFilter">
                 <th>Name</th>

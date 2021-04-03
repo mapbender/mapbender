@@ -5,15 +5,12 @@
   }
 }
 .tableCore, .table {
-  thead{border-bottom: solid 5px darken($contentColor, 15%);}
   th {
     font-weight:normal;
   }
   tbody{
     tr{
-      border-top: solid 1px darken($contentColor, 10%);
       vertical-align: top;
-
       &:hover{background-color:darken($contentColor, 3%);}
     }
   }
@@ -21,17 +18,43 @@
     text-align: right;
   }
 }
-.table{
-  border:{
-    top:solid 3px $firstColor;
-    left:solid 1px $thirdColor;
-    right:solid 1px $thirdColor;
-    bottom:solid 1px $thirdColor;
+.table-bordered {
+  border-top: solid 3px $firstColor;
+  left:solid 1px $thirdColor;
+  right:solid 1px $thirdColor;
+  bottom:solid 1px $thirdColor;
+  // Undo Bootstrap left / right borders on cells
+  >tbody,>thead,>tfoot {
+    >tr {
+      >td:not(:first-child),>th:not(:first-child) {
+        border-left: none;
+      }
+      >td:not(:last-child),>th:not(:last-child) {
+        border-right: none;
+      }
+    }
   }
-  // bootstrap introduces a border-bottom on .table>thead>tr>th. We don't do that (border is on thead itself),
-  // so revert it
+}
+.table-bordered, .table {
+  // Undo Bootstrap top/bottom borders between consecutive thead rows
   >thead>tr>th {
+    border-top: none;
+  }
+  >thead>tr:not(:last-child)>th {
     border-bottom: none;
+  }
+}
+.tableCore, .table {
+  // Increase size of border between thead and tbody from Bootstrap default 2px => 5px
+  >thead>tr:last-child>th {
+    border-bottom-width: 5px;
+  }
+}
+// Add missing border-bottom style to .tableCore
+.tableCore {
+  >thead>tr:last-child>th {
+    border-bottom-style: solid;
+    border-bottom-color: #d3d3d3; // Same as Bootstrap .table border colors
   }
 }
 

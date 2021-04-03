@@ -1,7 +1,7 @@
 {% if (users|length > 0) or (groups|length > 0) %}
   {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroupsAndUsers'} %}
 
-  <table id="listFilterGroupsAndUsers" class="table">
+  <table id="listFilterGroupsAndUsers" class="table table-bordered">
     <thead>
       <tr class="doNotFilter">
         <th>{{ "fom.user.acl.groups_users.name"|trans }} </th>
