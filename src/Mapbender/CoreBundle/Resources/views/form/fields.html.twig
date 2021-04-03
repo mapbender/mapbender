@@ -227,7 +227,7 @@
     </div>
     {%- endif -%}
     {% set prototype = form_widget(form.ace.vars.prototype) %}
-    <table id="listFilterPermission" class="permissionsTable tableCore table-bordered {% if form.ace|length == 0 %}hidden{% endif %}">
+    <table id="listFilterPermission" class="permissionsTable table table-bordered {% if form.ace|length == 0 %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>

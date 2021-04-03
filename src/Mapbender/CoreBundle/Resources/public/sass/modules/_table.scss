@@ -1,10 +1,4 @@
-.tableCore {
-  width: 100%;
-  td, th {
-    padding: 8px; // NOTE: 8px (all directions) is Bootstrap default on .table
-  }
-}
-.tableCore, .table {
+.table {
   th {
     font-weight:normal;
   }
@@ -44,20 +38,12 @@
     border-bottom: none;
   }
 }
-.tableCore, .table {
+.table {
   // Increase size of border between thead and tbody from Bootstrap default 2px => 5px
   >thead>tr:last-child>th {
     border-bottom-width: 5px;
   }
 }
-// Add missing border-bottom style to .tableCore
-.tableCore {
-  >thead>tr:last-child>th {
-    border-bottom-style: solid;
-    border-bottom-color: #d3d3d3; // Same as Bootstrap .table border colors
-  }
-}
-
 table {
   td, th {
     &.iconColumn {
