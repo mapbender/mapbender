@@ -1,8 +1,5 @@
-.tableCore, .table {
-  width: 100%;
-  background-color:$contentColor;
-}
 .tableCore {
+  width: 100%;
   td, th {
     padding: 8px; // NOTE: 8px (all directions) is Bootstrap default on .table
   }
