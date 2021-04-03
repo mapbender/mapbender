@@ -156,19 +156,13 @@
 }
 
 /**
-  Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
-  because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
+  Used for both elements and layersets.
  */
 .application-component-table {
-  line-height: 1.5rem;   // @todo: fix global fixed-pixel line-height!
   font-size: 0.85rem;
-  width: 100%;
-  margin:$space 0;
   thead {
-    border-bottom: solid 5px darken($contentColor, 15%);
     th, td {
       font-size: 130%;
-      font-weight: normal;
     }
   }
   thead>tr>th:first-child {
@@ -210,13 +204,6 @@
     }
     .inputWrapper, .dropdown {
       width: 50%;
-    }
-  }
-
-  tbody {
-    tr {
-      border-top: solid 1px darken($contentColor, 10%);
-      vertical-align: top;
     }
   }
   .iconColumn {

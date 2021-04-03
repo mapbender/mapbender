@@ -4,7 +4,6 @@
   }
   tbody{
     tr{
-      vertical-align: top;
       &:hover{background-color:darken($contentColor, 3%);}
     }
   }
