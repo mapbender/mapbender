@@ -50,8 +50,7 @@ mb:
         type: Tipo
         add: 'Adicionar elemento'
         show_hide: Ativo/Inativo
-        no_element_added:
-          '': 'Nenhum elemento existe'
+        no_element_added: Nenhum elemento existe
       zoombar:
         draggable: Deslocar
       overview:

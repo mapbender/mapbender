@@ -50,8 +50,7 @@ mb:
         type: Tipo
         add: 'Añadir un nuevo elemento a'
         show_hide: 'Cambiar mostrar/ocultar el elemento'
-        no_element_added:
-          '': 'No añadido elemento'
+        no_element_added: No añadido elemento
       zoombar:
         draggable: Mobible
       overview:

@@ -168,10 +168,6 @@
   thead>tr>th:first-child {
     padding-left: 0;
   }
-  .description {
-    // @todo: remove built-in font size from .description
-    font-size: inherit;
-  }
   tr.ui-sortable-handle {
     cursor: move;
     &:hover{
@@ -213,9 +209,6 @@
       display: inline-block;
       min-width: 1.2em;
     }
-  }
-  .idColumn {
-    white-space: nowrap;
   }
 }
 

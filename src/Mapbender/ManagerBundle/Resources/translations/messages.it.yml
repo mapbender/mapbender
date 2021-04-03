@@ -50,8 +50,7 @@ mb:
         type: Tipo
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
-        no_element_added:
-          '': 'Nessun elemento aggiunto'
+        no_element_added: Nessun elemento aggiunto
       zoombar:
         draggable: Trascinabile
       overview:

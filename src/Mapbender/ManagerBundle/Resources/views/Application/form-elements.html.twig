@@ -54,8 +54,8 @@
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn description">{{ element_title(element) | trans }}</td>
-                <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
+                <td class="titleColumn">{{ element_title(element) | trans }}</td>
+                <td class="typeColumn">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
                   <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
@@ -91,9 +91,7 @@
               </tr>
         {% else %}
             <tr class="dummy">
-              <td class="description">{{"mb.manager.admin.element.no_element_added."|trans}}</td>
-              <td></td>
-              <td></td>
+              <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
             </tr>
         {% endfor %}
         </tbody>

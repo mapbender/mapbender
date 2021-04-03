@@ -47,9 +47,9 @@
                   : path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': assignment.instance.id})
             } -%}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}">
-                <td class="idColumn description" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
-                <td class="titleColumn description">{{ instance.title }} ({{ instance.source.title }})</td>
-                <td class="typeColumn description text-nowrap"
+                <td class="text-nowrap" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
+                <td class="titleColumn">{{ instance.title }} ({{ instance.source.title }})</td>
+                <td class="typeColumn text-nowrap"
                   {%- if _is_reusable %}
                     title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fa fas fa-wifi" ></i>
                   {%- else -%}
@@ -72,7 +72,7 @@
             {%- endwith -%}{%- endwith -%}
             {% else %}
               <tr class="dummy">
-                <td colspan="4" class="description">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
+                <td colspan="4">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
               </tr>
             {% endfor %}
           </tbody>

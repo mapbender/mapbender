@@ -80,8 +80,7 @@ mb:
         type: Typ
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
-        no_element_added:
-          '': 'Kein Element vorhanden'
+        no_element_added: Kein Element vorhanden
       zoombar:
         draggable: Verschiebbar
       overview:
