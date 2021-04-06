@@ -11,7 +11,14 @@
   {%- set items = applications -%}
   {%- set list_id = 'listFilterApplications' -%}
   {%- set list_class = 'listFilterApplicationBoxes' -%}
-  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+  {%- if create_permission is defined and create_permission -%}
+    <div class="link-button-new">
+        <a href="{{ path('mapbender_manager_application_new') }}" title="{{ 'mb.manager.admin.application.new.title' | trans }}">
+            <i class="fa fas fa-lg fa-plus"></i>
+            <span>{{ 'mb.manager.admin.application.new.title' | trans }}</span>
+        </a>
+    </div>
+  {%- endif -%}
   {{ parent() }}
 {% endblock %}
 

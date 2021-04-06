@@ -70,24 +70,26 @@
                     <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-fw fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
                     <i data-screentype="desktop" class="screentype-icon fa fa-fw fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
                   </span>
-                {% endif %}
-                <span class="iconEdit editElement hover-highlight-effect"
-                      title="{{ 'mb.actions.edit' | trans }}"
-                      data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
-                {% set _aces = mapbender_manager_object_aces(element) %}
-                <span class="iconKey secureElement {% if _aces | length %}has {% endif %}hover-highlight-effect"
-                      title="{{ "mb.manager.managerbundle.acl_element"|trans }} {% if _aces | length %}
-                      {% for ace in _aces %}
-                        {{ace.type}}: {{ ace.name }}
-                      {% endfor %}{% endif %}"
-                      data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}"></span>
-                <span class="iconRemove removeElement hover-highlight-effect"
-                      title="{{ 'mb.actions.delete' | trans }}"
-                      data-slug="{{ application.slug }}"
-                      data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
-              </td>
-            </tr>
-          {% else %}
+                  {% endif %}
+                  <span class="iconEdit editElement hover-highlight-effect"
+                        title="{{ 'mb.actions.edit' | trans }}"
+                        data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
+                  {% set _aces = mapbender_manager_object_aces(element) %}
+                  <span class="secureElement {% if _aces %}text-danger {% endif %}hover-highlight-effect"
+                        title="{{ "mb.manager.managerbundle.acl_element" | trans ~ "\n" -}}
+{% for ace in _aces %}
+{{ace.type}}: {{ ace.name }}
+{% endfor %}"
+                        data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
+                      <i class="fa fas fa-key"></i>
+                  </span>
+                  <span class="iconRemove removeElement hover-highlight-effect"
+                        title="{{ 'mb.actions.delete' | trans }}"
+                        data-slug="{{ application.slug }}"
+                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
+                </td>
+              </tr>
+        {% else %}
             <tr class="dummy">
               <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
             </tr>

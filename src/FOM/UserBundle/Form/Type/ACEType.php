@@ -19,11 +19,6 @@ class ACEType extends AbstractType
         $this->modelTransformer = $modelTransformer;
     }
 
-    public function getName()
-    {
-        return 'ace';
-    }
-
     public function getBlockPrefix()
     {
         return 'ace';

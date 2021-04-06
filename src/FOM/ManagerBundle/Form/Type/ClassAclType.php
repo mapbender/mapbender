@@ -15,12 +15,6 @@ use Symfony\Component\Security\Acl\Model\EntryInterface;
  */
 class ClassAclType extends ACLType
 {
-    public function getName()
-    {
-        // No alias (legacy). Ignore parent value and use FQCN (like AbstractType)
-        return get_class($this);
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
