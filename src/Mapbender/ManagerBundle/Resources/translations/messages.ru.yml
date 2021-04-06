@@ -50,8 +50,7 @@ mb:
         type: Тип
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
-        no_element_added:
-          '': 'Элемент не добавлен'
+        no_element_added: Элемент не добавлен
       zoombar:
         draggable: Перетаскиваемый
       overview:

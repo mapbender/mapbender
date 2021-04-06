@@ -29,7 +29,7 @@
 
 {% for region in regions %}
   <div class="{{region}} region">
-      <table class="application-component-table table-condensed elementsTable" data-region="{{ region }}">
+      <table class="application-component-table table table-condensed elementsTable" data-region="{{ region }}">
         <thead>
           <tr>
             <th colspan="1">
@@ -44,7 +44,7 @@
           <tr>
             <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
-            <th class="iconColumn text-right">
+            <th class="iconColumn">
               <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
             </th>
           </tr>
@@ -54,9 +54,9 @@
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn description">{{ element_title(element) | trans }}</td>
-                <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
-                <td class="iconColumn text-right">
+                <td class="titleColumn">{{ element_title(element) | trans }}</td>
+                <td class="typeColumn">{{ element_class_title(element) | trans }}</td>
+                <td class="iconColumn">
                   <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
@@ -89,9 +89,7 @@
             </tr>
           {% else %}
             <tr class="dummy">
-              <td class="description">{{"mb.manager.admin.element.no_element_added."|trans}}</td>
-              <td></td>
-              <td></td>
+              <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
             </tr>
           {% endfor %}
         </tbody>
