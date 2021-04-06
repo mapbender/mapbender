@@ -1,18 +1,8 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
 
 {% block manager_content %}
   {%- set list_id = list_id | default('listFilter0') -%}
-  <div class="row">
-    <div class="col-xs-6 col-6">
-      {%- if items -%}
-      {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: list_id} %}
-      {%- endif -%}
-    </div>
-    <div class="col-xs-6 col-6 text-right">
-      {%- block list_actions -%}{%- endblock -%}
-    </div>
-  </div>
-
+  {{- parent() -}}
   {%- if items -%}
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}

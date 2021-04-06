@@ -1,14 +1,19 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{%- set list_id = 'listFilterUsers' -%}
+{%- set _group_view_grant = is_granted('VIEW', group_oid) -%}
+
+{% block list_actions %}
+  {% if create_permission %}
+    <a class="hover-highlight-effect" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
+    </a>
+  {% endif %}
+{% endblock %}
 
 {% block manager_content %}
-
-{% if is_granted('CREATE', oid) %}
-<a class="iconAdd iconBig right" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}"></a>
-{% endif %}
-
-{% if users|length > 0 %}
-  {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
+  {%- set items = users -%}
+  {{- parent() -}}
+{% if users %}
   <table id="listFilterUsers" class="table table-bordered">
     <thead id="usersHead">
       <tr class="doNotFilter">
