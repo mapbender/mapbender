@@ -306,11 +306,6 @@ ul.dropdownList{
   }
 }
 
-.secureElement.has:before {
-  color: $buttonCriticalSecondColor;
-  font-weight: bold;
-}
-
 .filter-group {
   th & {
     margin-bottom: 0;
@@ -353,6 +348,7 @@ ul.dropdownList{
     }
   }
   .tagbox {
+    display: inline-block;
     font-size: 85%;
     cursor: pointer;
     width: auto;
@@ -361,6 +357,9 @@ ul.dropdownList{
     margin: 0 .25em;
     @include noUserSelect;
     @include border-radius($radius);
+    input {
+      display: none;
+    }
     &.multi {
       background-color:#c1c1c1;
     }

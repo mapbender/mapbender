@@ -109,7 +109,6 @@ class ApplicationType extends AbstractType
         if ($options['include_acl']) {
             $builder
                 ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'mapped' => false,
                     'data' => $options['data'],
                     'create_standard_permissions' => true,
                     'permissions' => 'standard::object',
