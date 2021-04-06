@@ -14,7 +14,7 @@
 {% if groups|length > 0 %}
   {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
 
-  <table id="listFilterGroups" class="table">
+  <table id="listFilterGroups" class="table table-bordered">
     <thead id="groupsHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>

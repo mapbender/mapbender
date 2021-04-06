@@ -50,8 +50,7 @@ mb:
         type: 'Öğe tipi'
         add: 'Yeni bir öğe oluştur'
         show_hide: 'Geçiş gösterme/gizleme öğesi'
-        no_element_added:
-          '': 'Öğe eklenmedi'
+        no_element_added: Öğe eklenmedi
       zoombar:
         draggable: 'Sürüklenebilir'
       overview:

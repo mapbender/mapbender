@@ -156,7 +156,6 @@
   .odd{background-color:darken($contentColor, 6%);}
 
   &.table {
-    background-color: lighten($contentColor, 2%);
     tbody tr td {
       line-height: $inputHeight;
     }

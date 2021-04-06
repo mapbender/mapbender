@@ -250,15 +250,15 @@ $(function() {
     });
 
     // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset(e) {
-        var self = $(this);
-        var isEdit = self.hasClass("editLayerset");
+    $(document).on('click', '.-fn-add-layerset, .-fn-edit-layerset', function() {
+        var $this = $(this);
+        var isEdit = !$this.hasClass("-fn-add-layerset");
         var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
                                 : "mb.manager.components.popup.add_edit_layerset.title_add";
         var confirmText = isEdit ? 'mb.actions.save'
                                  : 'mb.actions.add';
-        e.preventDefault();
-        _formJax({url: self.attr("href")}).then(function(nodes) {
+        var url = $this.attr('data-url');
+        _formJax({url: url}).then(function(nodes) {
             if (!nodes || !nodes.length) {
                 return;
             }
@@ -280,33 +280,26 @@ $(function() {
                 ]
             });
         });
-        return false;
-    }
+    });
 
-    // Add layerset action
-    $(".addLayerset").bind("click", addOrEditLayerset);
-    // Edit layerset action
-    $(".editLayerset").bind("click", addOrEditLayerset);
     // Delete layerset Action
-    $(".removeLayerset").bind("click", function() {
+    $(document).on('click', '.-fn-delete-layerset', function() {
         var strings = {
             title: 'mb.manager.components.popup.delete_layerset.title',
             confirm: 'mb.actions.delete',
             cancel: 'mb.actions.cancel'
         };
         var $el = $(this);
-        var actionUrl = $el.attr('href');
+        var actionUrl = $el.attr('data-url');
         $.ajax({url: actionUrl}).then(function(content) {
             Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
         });
-        return false;
     });
     // Add Instance Action
-    $(".addInstance").on("click", function(e) {
-        e.preventDefault();
+    $(document).on('click', '.-fn-add-instance', function(e) {
         var $target = $(this);
-        var layersetTitle = $target.attr('data-layerset-title');
-        $.ajax({url: $target.attr("href")}).then(function(response) {
+        var layersetTitle = $target.closest('table').attr('data-layerset-title');
+        $.ajax({url: $target.attr("data-url")}).then(function(response) {
             if (_handleLoginRedirect(response)) {
                 return;
             }

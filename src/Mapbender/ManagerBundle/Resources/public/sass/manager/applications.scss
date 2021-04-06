@@ -156,27 +156,17 @@
 }
 
 /**
-  Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
-  because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
+  Used for both elements and layersets.
  */
 .application-component-table {
-  line-height: 1.5rem;   // @todo: fix global fixed-pixel line-height!
   font-size: 0.85rem;
-  width: 100%;
-  margin:$space 0;
   thead {
-    border-bottom: solid 5px darken($contentColor, 15%);
     th, td {
       font-size: 130%;
-      font-weight: normal;
     }
   }
   thead>tr>th:first-child {
     padding-left: 0;
-  }
-  .description {
-    // @todo: remove built-in font size from .description
-    font-size: inherit;
   }
   tr.ui-sortable-handle {
     cursor: move;
@@ -212,13 +202,6 @@
       width: 50%;
     }
   }
-
-  tbody {
-    tr {
-      border-top: solid 1px darken($contentColor, 10%);
-      vertical-align: top;
-    }
-  }
   .iconColumn {
     // .iconColumn contents mix div / a / span elements, but they should all
     // size and align the same way
@@ -226,9 +209,6 @@
       display: inline-block;
       min-width: 1.2em;
     }
-  }
-  .iconColumn, .idColumn {
-    white-space: nowrap;
   }
 }
 

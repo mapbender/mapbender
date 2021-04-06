@@ -79,12 +79,6 @@ div.contentTitle {
 .popupContainer,
 .page{
   position:relative;
-
-  // Overrule Bootstrap (very specific selectors) on padding top / bottom
-  // Keep left / right padding (8px from Bootstrap .table rules)
-  .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-    border-top: none;
-  }
 }
 .iconBig, .iconSmall {
   // Add highlights for legacy markup (.iconSmall = no other rules, FOM only)
@@ -318,8 +312,6 @@ ul.dropdownList{
 }
 
 .filter-group {
-  margin-bottom: 1.5 * $space;
-  max-width: 80%; // HACK: Avoid blocking new application creation link in applications lsit
   th & {
     margin-bottom: 0;
     max-width: initial;
@@ -390,4 +382,7 @@ ul.dropdownList{
 
 .popover {
   font-size: inherit;
+}
+.popup .table {
+  background-color: white;
 }

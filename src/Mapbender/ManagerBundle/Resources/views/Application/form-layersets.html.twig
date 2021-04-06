@@ -1,10 +1,20 @@
-<a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="iconAdd right addLayerset iconBig" title="{{ 'mb.manager.admin.layerset.add' | trans}}"></a>
+<div class="row">
+  <div class="col-xs-6 col-6">
+    {%- if application.layersets -%}
+      {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
+    {%- endif -%}
+  </div>
+  <div class="col-xs-6 col-6 text-right">
+    <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_application_newlayerset", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
+      <i class="fa fas fa-2x fa-plus"></i>
+    </span>
+  </div>
+</div>
 {% if application.layersets|length > 0 %}
-  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
   <ul id="all-instances">
     {% for layerset in application.layersets %}
       <li class="filterItem">
-        <table class="application-component-table table-condensed layersetTable" data-id="{{ layerset.id }}">
+        <table class="application-component-table table table-condensed layersetTable" data-id="{{ layerset.id }}" data-layerset-title="{{ layerset.title }}">
           <thead>
             <tr class='doNotFilter'>
               <th colspan="4">
@@ -15,12 +25,12 @@
               <th title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ 'mb.manager.admin.layerset.id' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.title' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.type' | trans }}</th>
-              <th class="iconColumn text-right">
-                <a class="iconAdd hover-highlight-effect addInstance" title="{{"mb.manager.admin.instance.add"|trans}}" href="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}" data-layerset-title="{{ layerset.title }}"></a>
+              <th class="iconColumn">
+                <i class="-fn-add-instance fa fas fa-plus hover-highlight-effect" title="{{"mb.manager.admin.instance.add"|trans}}" data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <a class="iconEdit hover-highlight-effect editLayerset" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+                <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <a class="iconRemove hover-highlight-effect removeLayerset" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+                <i class="-fn-delete-layerset fa fas fa-times hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_confirmdeletelayerset", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
               </th>
             </tr>
           </thead>
@@ -47,16 +57,16 @@
                   : path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': assignment.instance.id})
             } -%}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}">
-                <td class="idColumn description" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
-                <td class="titleColumn description">{{ instance.title }} ({{ instance.source.title }})</td>
-                <td class="typeColumn description text-nowrap"
+                <td class="text-nowrap" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
+                <td class="titleColumn">{{ instance.title }} ({{ instance.source.title }})</td>
+                <td class="typeColumn text-nowrap"
                   {%- if _is_reusable %}
                     title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fa fas fa-wifi" ></i>
                   {%- else -%}
                      title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fa fas fa-anchor"></i>
                   {%- endif -%}
                   &nbsp;{{ instance.source.type }}</td>
-                <td class="iconColumn text-right">
+                <td class="iconColumn">
                   <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-icon-off="iconPublish" data-icon-on="iconPublishActive">
@@ -72,7 +82,7 @@
             {%- endwith -%}{%- endwith -%}
             {% else %}
               <tr class="dummy">
-                <td colspan="4" class="description">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
+                <td colspan="4">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -81,5 +91,5 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p class="description">{{ 'mb.manager.admin.instance.no_layer_added' | trans }}</p>
+  <p class="alert alert-info">{{ 'mb.manager.admin.instance.no_layer_added' | trans }}</p>
 {% endif %}

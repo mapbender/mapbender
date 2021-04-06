@@ -50,8 +50,7 @@ mb:
         type: Type
         add: 'Voeg een nieuw element toe'
         show_hide: 'Wissel toon/verberg element'
-        no_element_added:
-          '': 'Geen element toegevoegd'
+        no_element_added: Geen element toegevoegd
       zoombar:
         draggable: Versleepbaar
       overview:

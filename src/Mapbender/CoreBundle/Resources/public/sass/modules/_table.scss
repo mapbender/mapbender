@@ -1,50 +1,50 @@
-.tableCore, .table {
-  width: 100%;
-  background-color:$contentColor;
-}
-.tableCore {
-  td, th {
-    padding: 8px; // NOTE: 8px (all directions) is Bootstrap default on .table
-  }
-}
-.tableCore, .table {
-  thead{border-bottom: solid 5px darken($contentColor, 15%);}
+.table {
   th {
     font-weight:normal;
   }
   tbody{
     tr{
-      border-top: solid 1px darken($contentColor, 10%);
-      vertical-align: top;
-
       &:hover{background-color:darken($contentColor, 3%);}
     }
   }
-  .iconColumn {
-    text-align: right;
+}
+.table-bordered {
+  border-top: solid 3px $firstColor;
+  left:solid 1px $thirdColor;
+  right:solid 1px $thirdColor;
+  bottom:solid 1px $thirdColor;
+  // Undo Bootstrap left / right borders on cells
+  >tbody,>thead,>tfoot {
+    >tr {
+      >td:not(:first-child),>th:not(:first-child) {
+        border-left: none;
+      }
+      >td:not(:last-child),>th:not(:last-child) {
+        border-right: none;
+      }
+    }
   }
 }
-.table{
-  border:{
-    top:solid 3px $firstColor;
-    left:solid 1px $thirdColor;
-    right:solid 1px $thirdColor;
-    bottom:solid 1px $thirdColor;
-  }
-  // bootstrap introduces a border-bottom on .table>thead>tr>th. We don't do that (border is on thead itself),
-  // so revert it
+.table-bordered, .table {
+  // Undo Bootstrap top/bottom borders between consecutive thead rows
   >thead>tr>th {
+    border-top: none;
+  }
+  >thead>tr:not(:last-child)>th {
     border-bottom: none;
   }
 }
-
-table {
-  td, th {
-    &.iconColumn {
-      // Poor .iconColumn catches some undesirable rules from the [class^="icon"] rule
-      // in libs/_icons.scss. Defeat those
-      display: table-cell !important;
-      vertical-align: inherit;
-    }
+.table {
+  // Increase size of border between thead and tbody from Bootstrap default 2px => 5px
+  >thead>tr:last-child>th {
+    border-bottom-width: 5px;
+  }
+}
+td, th {
+  &.iconColumn {
+    // Undo display: inline-block from the [class^="icon"] rule in libs/_icons.scss
+    display: table-cell !important;
+    white-space: nowrap;
+    text-align: right;
   }
 }
