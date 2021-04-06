@@ -1,9 +1,9 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
 
 {% block manager_content %}
   {%- set list_id = list_id | default('listFilter0') -%}
+  {{- parent() -}}
   {%- if items -%}
-  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
     <li class="filterItem">

@@ -1,23 +1,21 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{%- set list_id = 'listFilterUsers' -%}
+{%- set _group_view_grant = is_granted('VIEW', group_oid) -%}
 
-{% block manager_content %}
-
-
-
-{% if users|length > 0 %}
-  {% set _group_view_grant = is_granted('VIEW', group_oid) %}
-  {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: "listFilterUsers"} only %}
-{% endif %}
-{% if is_granted('CREATE', oid) %}
-  <div class="link-button-new">
-    <a href="{{ path('fom_user_user_create') }}">
-      <i class="fa fas fa-plus fa-lg"></i>
+{% block list_actions %}
+  {% if create_permission %}
+    <a class="hover-highlight-effect" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
       <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
     </a>
-  </div>
-{% endif %}
-{% if users|length > 0 %}
-  <table id="listFilterUsers" class="table container-table">
+  {% endif %}
+{% endblock %}
+
+{% block manager_content %}
+  {%- set items = users -%}
+  {{- parent() -}}
+{% if users %}
+    <table id="listFilterUsers" class="table container-table">
     <thead id="usersHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.user.index.name" | trans }}</th>
