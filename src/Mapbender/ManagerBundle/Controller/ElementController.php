@@ -180,7 +180,6 @@ class ElementController extends ApplicationControllerBase
 
         $application = $this->requireApplication($slug);
         $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
-            'mapped' => false,
             'create_standard_permissions' => false,
             'permissions' => array(
                 1 => 'View',

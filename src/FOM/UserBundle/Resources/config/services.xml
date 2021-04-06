@@ -49,12 +49,12 @@
         <service id="form.fom.acl" class="FOM\UserBundle\Form\Type\ACLType">
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.acl.provider" />
-            <tag name="form.type" alias="acl" />
+            <tag name="form.type" />
         </service>
 
         <service id="form.fom.ace" class="FOM\UserBundle\Form\Type\ACEType">
             <argument type="service" id="form.ace.model_transformer" />
-            <tag name="form.type" alias="ace" />
+            <tag name="form.type" />
         </service>
         <service id="form.ace.model_transformer" class="%form.ace.model_transformer.class%">
             <argument type="service" id="fom.ldap_user_identities_provider" />
