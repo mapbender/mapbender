@@ -1,10 +1,20 @@
-<a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="iconAdd right addLayerset iconBig" title="{{ 'mb.manager.admin.layerset.add' | trans}}"></a>
+<div class="row">
+  <div class="col-xs-6 col-6">
+    {%- if application.layersets -%}
+      {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
+    {%- endif -%}
+  </div>
+  <div class="col-xs-6 col-6 text-right">
+    <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_application_newlayerset", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
+      <i class="fa fas fa-2x fa-plus"></i>
+    </span>
+  </div>
+</div>
 {% if application.layersets|length > 0 %}
-  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
   <ul id="all-instances">
     {% for layerset in application.layersets %}
       <li class="filterItem">
-        <table class="application-component-table table table-condensed layersetTable" data-id="{{ layerset.id }}">
+        <table class="application-component-table table table-condensed layersetTable" data-id="{{ layerset.id }}" data-layerset-title="{{ layerset.title }}">
           <thead>
             <tr class='doNotFilter'>
               <th colspan="4">
@@ -16,11 +26,11 @@
               <th>{{ 'mb.manager.admin.layerset.title' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.type' | trans }}</th>
               <th class="iconColumn">
-                <a class="iconAdd hover-highlight-effect addInstance" title="{{"mb.manager.admin.instance.add"|trans}}" href="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}" data-layerset-title="{{ layerset.title }}"></a>
+                <i class="-fn-add-instance fa fas fa-plus hover-highlight-effect" title="{{"mb.manager.admin.instance.add"|trans}}" data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <a class="iconEdit hover-highlight-effect editLayerset" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+                <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <a class="iconRemove hover-highlight-effect removeLayerset" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+                <i class="-fn-delete-layerset fa fas fa-times hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_confirmdeletelayerset", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
               </th>
             </tr>
           </thead>
@@ -81,5 +91,5 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p class="description">{{ 'mb.manager.admin.instance.no_layer_added' | trans }}</p>
+  <p class="alert alert-info">{{ 'mb.manager.admin.instance.no_layer_added' | trans }}</p>
 {% endif %}

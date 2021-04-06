@@ -312,8 +312,6 @@ ul.dropdownList{
 }
 
 .filter-group {
-  margin-bottom: 1.5 * $space;
-  max-width: 80%; // HACK: Avoid blocking new application creation link in applications lsit
   th & {
     margin-bottom: 0;
     max-width: initial;
