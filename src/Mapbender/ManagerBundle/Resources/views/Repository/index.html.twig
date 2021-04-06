@@ -7,10 +7,15 @@
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
+{% block list_actions %}
 {% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+<a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}">
+    <i class="fa fas fa-lg fa-plus"></i>
+</a>
 {% endif %}
+{% endblock %}
+
+{% block manager_content %}
     {%- set items = sources -%}
     {%- set list_id = 'listFilterServices' -%}
     {%- set list_class = 'listFilterServiceBoxes' -%}

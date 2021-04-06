@@ -7,18 +7,19 @@
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
 {% endblock %}
 
+{% block list_actions %}
+{%- if create_permission -%}
+  <a href="{{ path('mapbender_manager_application_new') }}" title="{{ 'mb.manager.admin.application.new.title' | trans }}"
+     class="hover-highlight-effect">
+      <i class="fa fas fa-lg fa-plus"></i>
+  </a>
+{%- endif -%}
+{% endblock %}
+
 {% block manager_content %}
   {%- set items = applications -%}
   {%- set list_id = 'listFilterApplications' -%}
   {%- set list_class = 'listFilterApplicationBoxes' -%}
-  {%- if create_permission is defined and create_permission -%}
-    <div class="form-group text-right">
-        <a href="{{ path('mapbender_manager_application_new') }}" title="{{ 'mb.manager.admin.application.new.title' | trans }}"
-           class="hover-highlight-effect">
-            <i class="fa fas fa-2x fa-plus"></i>
-        </a>
-    </div>
-  {%- endif -%}
   {{ parent() }}
 {% endblock %}
 

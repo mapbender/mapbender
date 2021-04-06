@@ -1,28 +1,31 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
-
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{%- set list_id = 'listFilterGroups' -%}
 {% block js %}
   {{parent()}}
   <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
 {% endblock %}
 
+{% block list_actions %}
+  {% if create_permission %}
+    <a class="hover-highlight-effect" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
+    </a>
+  {% endif %}
+{% endblock %}
+
 {% block manager_content %}
-
-{% if create_permission %}
-<a class="iconAdd iconBig right" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}"></a>
-{% endif %}
-
-{% if groups|length > 0 %}
-  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
-
+  {%- set items = groups -%}
+  {{- parent() -}}
+{% if groups %}
   <table id="listFilterGroups" class="table table-bordered">
-    <thead id="groupsHead">
+    <thead>
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>
         <th>{{ "fom.user.group.index.description" | trans }}</th>
         <th></th>
       </tr>
     </thead>
-    <tbody id="groupsBody">
+    <tbody>
       {% for group in groups %}
       <tr class="filterItem">
         <td>
