@@ -25,7 +25,7 @@
           {% if configuration.menu is defined and configuration.menu %}
           <span class="layer-menu-btn"><i class="fa fas fa-bars"></i></span>
             <div class="layer-menu hidden">
-              <div>
+              <div class="text-right">
                 <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
               </div>
               {% if 'opacity' in configuration.menu %}
@@ -37,17 +37,17 @@
               {% endif %}
               {% if 'dimension' in configuration.menu %}
                   <div class="layer-control-dimensions layer-control-root-only">
-                      <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
-                        <input type="checkbox" class="checkbox"/>
+                      <div class="layer-dimension-checkbox checkWrapper conCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
+                        <input type="checkbox" />
                       </div>
-                      <span class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+                      <span class="layer-dimension-title" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
                       <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
                         <div class="layer-dimension-handle layer-slider-handle"></div>
                       </div>
                       <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
                   </div>
               {% endif %}
-              <div>
+              <div class="text-right">
                 {% if 'zoomtolayer' in configuration.menu %}
                 <span class="layer-zoom iconSearch hover-highlight-effect" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
                 {% endif %}
