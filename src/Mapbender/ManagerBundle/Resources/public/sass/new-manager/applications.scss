@@ -48,24 +48,6 @@ body {
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
 }
 
-.filter-input-container {
-  display: inline-block;
-  padding: 1rem;
-  border-radius: 15px;
-  label {
-    margin-right: 1rem;
-    font-size: 1.4rem;
-  }
-}
-
-.listFilterInput {
-  border: none;
-  border-radius: 0;
-  border-bottom: 1px solid rgba(0,0,0,0.5);
-  width: 15em;
-  background-color: transparent;
-}
-
 .blueTabUnderline {
   width: 67px;
   height: 3px;
