@@ -18,6 +18,52 @@
 @import url("components/bootstrap/css/bootstrap.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,700;1,500#standard-styles");
 
+
+.navigationBar {
+  font-size: 1.25rem;
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
+
+  .navbar-brand {
+    // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
+    padding-top: 5px;
+    padding-bottom: 5px;
+    // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
+    // see https://stackoverflow.com/a/7310398
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+    }
+  }
+  .logo {
+    max-width: 120px;
+    max-height: 100%;
+  }
+  .navbar-brand>img.logo {
+    display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
+  }
+}
+
+.navigationBar .navbar-nav ul.nav {
+  width: 15em;
+  background-color: #efefef;
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  font-weight: 300;
+}
+
+.navigationBar .nav > li > ul.nav {
+  display: none;
+  padding: 20px;
+}
+
+.navigationBar .nav > li:hover > ul.nav {
+  display: block;
+}
+
 div.contentTitle {
   // remove h1 margin, put it on the containing div instead
   margin-bottom: 2rem;
@@ -28,7 +74,18 @@ div.contentTitle {
   > p {
     margin: 0.5em 0;
   }
+  > p {
+    font-size: 1.5rem;
+  }
+  .badge {
+    padding: 1em 0.8750em;
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: 400;
+    background-color:#EBE8E8;
+  }
 }
+
 :not(.popup) .contentTitle {
   // Undo dashed border (rule is for frontend and for popups only)
   border-bottom: none;
@@ -103,10 +160,6 @@ ul.dropdownList{
 .contentPane {
   > .content {
     min-height: 600px;
-    position: relative;
-    padding: $space;
-    background-color: lighten($contentColor, 2%);
-    border-radius: $containerBorderRadius;
     .tabContainer {
       margin-bottom: $space;
     }
