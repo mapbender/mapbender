@@ -2,6 +2,40 @@
 .listFilterBoxes{
   li {
     margin-bottom: $space;
+    padding: 20px;
+    .preview-box {
+      width: 140px;
+      min-height: 140px;
+      background-color: #EAEAEA;
+      img {
+        width: 100%;
+      }
+    }
+    .preview-box, .preview-box img {
+      border-radius: 15px;
+    }
+    .placeholder-text {
+      padding: 15px;
+    }
+    .placeholder-text p {
+      margin: 10px auto;
+    }
+    .placeholder-icon {
+      font-size: 60px;
+      padding-top: 40%;
+    }
+    h2, p {
+      margin-bottom: 0.75rem;
+    }
+  }
+  .btn {
+    border-radius: 10px;
+    padding: 5px 20px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  .btn-toolbar .btn+.btn {
+    margin-left: 10px;
   }
 }
 .messageBox{
