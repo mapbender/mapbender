@@ -24,7 +24,7 @@
       {{ form_widget(form) }}
 
       <button class="button right">{{ 'fom.user.password.form.require_password' | trans}}</button>
-      <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.password.form.back_to_login"|trans}}</a>
+      <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.password.form.back_to_login"|trans}}</a>
       {{ form_end(form) }}
     <div class="clearContainer"></div>
   </div>

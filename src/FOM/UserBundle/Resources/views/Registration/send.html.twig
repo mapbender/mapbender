@@ -6,6 +6,6 @@
     <div class="loginBox">
         <h2 class="contentTitle">{{ 'fom.user.registration.send.caption' | trans}}</h2>
         <p>{{ 'fom.user.registration.send.account_created' | trans }}</p>
-        <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.registration.send.back_to_login"|trans}}</a>
+        <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.registration.send.back_to_login"|trans}}</a>
     </div>
 {% endblock %}
