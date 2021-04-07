@@ -9,10 +9,8 @@
 @import "modules/container";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
-@import "modules/radiobutton";
 @import "modules/dropdown";
 @import "modules/table";
-@import "modules/popup_dialog";
 @import "element/mbslider";
 
 
@@ -38,16 +36,12 @@ body {
     > a {
       display: block;
       @include transition(color 0.3s linear);
-      // separate text from built-in icon
-      &.iconLinkButton:before {
-        margin-right:5px;
-      }
     }
     &:hover, &:focus {
       color: darken($middleFontColor, 12%);
     }
     &.activeItem {
-      > a:before {
+      > a i {
         color: $ciColor;
       }
       color: darken($middleFontColor, 24%);

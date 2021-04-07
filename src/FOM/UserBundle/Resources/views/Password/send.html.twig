@@ -4,11 +4,7 @@
 {% block box_content %}
     <div class="loginBox">
         <h2 class="contentTitle">{{ 'fom.user.password.send.caption' | trans}}</h2>
-        <p class="description">{{ 'fom.user.password.send.email_been_sent' | trans }}</p>
-        <a class="iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.password.send.back_to_login"|trans}}</a>
+        <p>{{ 'fom.user.password.send.email_been_sent' | trans }}</p>
+        <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.password.send.back_to_login"|trans}}</a>
     </div>
- <script type="text/javascript">
-    var Mapbender = Mapbender || {};
-    Mapbender.configuration = {elements:{}};
-  </script> 
 {% endblock %}
