@@ -14,29 +14,6 @@ body {
   background-color: #f8f8f8;
 }
 
-.head {
-  margin-bottom: 100px;
-}
-
-.content {
-  width: 70%;
-  margin: 0 auto 100px;
-
-  @media (max-width: 1300px) {
-    & {
-      width: 90%;
-    }
-  }
-
-  .underlineTitle {
-    margin-top: 10px;
-    max-width: 65px;
-    height: 5px;
-    background-color: #079ee0;
-  }
-}
-
-
 .container-filter {
   margin-bottom: 2rem;
   text-align: right;
@@ -66,27 +43,18 @@ body {
   justify-content: center;
   align-items: center;
   transform: translateX(3em);
-  
+
   .placeholder-text {
     padding: 15px;
     text-align: center;
 
     h4 {
-    margin-bottom: 20px;
-    font-size: 1.5em;
+      margin-bottom: 20px;
+      font-size: 1.5em;
     }
   }
 }
 
-
-.list-head {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-  span {
-    margin-left: 0.25em;
-    font-weight: 300;
-  }
-}
 
 .instanceContainer, .container-table, .listFilterBoxes {
   margin-top: 10%;

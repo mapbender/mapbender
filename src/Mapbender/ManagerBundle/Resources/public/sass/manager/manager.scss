@@ -84,9 +84,11 @@ div.contentTitle {
   }
 }
 
-:not(.popup) .contentTitle {
-  // Undo dashed border (rule is for frontend and for popups only)
-  border-bottom: none;
+.underlineTitle {
+  margin-top: 10px;
+  max-width: 65px;
+  height: 5px;
+  background-color: #079ee0;
 }
 
 
@@ -105,11 +107,25 @@ div.contentTitle {
   z-index: 100000 !important;
 }
 
+// -------------------------------------------------------------------- PAGE TOP
+.head {
+  margin-bottom: 100px;
+}
+
 .sitelinks {
   &.list-inline li:not(:first-child):before {
     content: "|";
     margin-left: -5px;
     margin-right: 5px;
+  }
+}
+
+.list-head {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  span {
+    margin-left: 0.25em;
+    font-weight: 300;
   }
 }
 
@@ -156,8 +172,14 @@ ul.dropdownList{
 }
 
 .contentPane {
+  width: 70%;
+  @media (max-width: 1300px) {
+    & {
+      width: 90%;
+    }
+  }
+  margin: 0 auto 100px;
   > .content {
-    min-height: 600px;
     .tabContainer {
       margin-bottom: $space;
     }
