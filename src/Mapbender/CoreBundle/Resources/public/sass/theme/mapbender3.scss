@@ -18,6 +18,23 @@
   display: none;
 }
 
+.contentTitle{
+  padding-bottom: 0.375em;
+  border-bottom:dashed 1px darken(#fff, 30%);
+}
+
+.title {
+  font-size: 1.35rem;
+}
+.labelInput, .inputWrapper, .dropdown {
+  font-size: 0.85rem;
+}
+
+.labelInput, .labelCheck {
+  color: $middleFontColor;
+}
+
+
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBarColors, .toolBar {
   background-color: $toolBarBackgroundColor;

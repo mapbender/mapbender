@@ -21,26 +21,11 @@ h4, .h4, .bigText {
   font-size: .7rem;
 }
 
-.contentTitle{
-  padding-bottom: 0.375em;
-  border-bottom:dashed 1px darken(#fff, 30%);
-}
-
-.title{
-  @extend .bigText;
-}
 .subTitle{
   font-size: 1rem;
 }
 .labelInput, .labelText, .labelCheck {
   user-select: none;
-}
-.labelInput, .inputWrapper, .dropdown {
-  font-size: 0.85rem;
-}
-
-.labelInput, .labelCheck {
-  color:$middleFontColor;
 }
 .labelInput {
   line-height: 2;

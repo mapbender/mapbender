@@ -22,7 +22,7 @@
             </div>
           </div>
           <div class="col-md-9 col-xs-12">
-            <p class="title">{{ item.title | default(item.source.title) }}</p>
+            <h2>{{ item.title | default(item.source.title) }}</h2>
             <p>{{ item.source.description }}</p>
             <div class="btn-toolbar">
               <a class="btn btn-default hover-highlight-effect" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
