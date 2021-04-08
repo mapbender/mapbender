@@ -227,7 +227,7 @@
 
 {% block acl_widget %}
   {% spaceless %}
-  <div class="ace-collection">
+  <div class="ace-collection" {{ block('widget_container_attributes') }}>
     {%- if form.vars.allow_add -%}
     <div class="form-group text-right">
         <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">

@@ -30,6 +30,10 @@
   }
 }
 
+.labelInput, .labelCheck, .checkWrapper {
+  font-size: 0.85rem;
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;
@@ -53,8 +57,6 @@
     .labelInput {
       vertical-align: top;  // for vertical alignment when followed by empty .dropdown
       display: inline-block;  // required when using <span> tag instead of <label>
-    }
-    span.labelInput {
     }
     .labelInput + .dropdown {
       display: inline-block;
