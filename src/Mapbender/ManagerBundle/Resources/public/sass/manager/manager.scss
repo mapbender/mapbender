@@ -132,6 +132,9 @@ a.button, button, div.dropdown {
 textarea, input[type=text], input[type=submit], input[type=number], input[type=password] {
   border-radius: 8px;
 }
+.input, .dropdown {
+  border-color: transparent;
+}
 
 a.button{
   color: $firstColor;
