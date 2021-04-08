@@ -39,13 +39,10 @@ body {
   border-radius: 15px;
   background-color: #EAEAEA;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  transform: translateX(3em);
 
   .placeholder-text {
-    padding: 15px;
     text-align: center;
 
     h4 {
