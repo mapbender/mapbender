@@ -4,21 +4,19 @@
   {% if layer.identifier|length > 0 %}
     <li>
       <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.identifier" | trans }}</span>
-      <span class="metaText">{{ layer.identifier }}</span>
+      {{ layer.identifier }}
     </li>
   {% endif %}
 
   <li>
       <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}</span>
-      <span class="metaText">
-        {{  layer.getUniqueTileFormats() | join(', ') }}
-      </span>
+      {{ layer.getUniqueTileFormats() | join(', ') }}
   </li>
 
   {% if layer.title|length > 0 %}
   <li>
     <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.title" | trans }}:</span>
-    <span class="metaText">{{ layer.title }}</span>
+    {{ layer.title }}
   </li>
   {% endif %}
 
@@ -32,18 +30,18 @@
   {% if layer.latlonBounds != null %}
     <li>
       <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.latlonbounds" | trans }}:</span>
-      <span class="metaText">{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</span>
+      {{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}
     </li>
   {% endif %}
   {% if layer.tilematrixSetlinks != null %}
     <li>
       <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.tilematrixsetlinks" | trans }}:</span>
-      <ul class="left">
+      <div class="left">
       {% for tmsLink in layer.tilematrixSetlinks %}
-        <li>
-          <span class="metaText">{{ tmsLink.tileMatrixSet }} - {{ tmsLink.tileMatrixSetLimits }}</span>
-        </li>
+        <div>{{ tmsLink.tileMatrixSet }} - {{ tmsLink.tileMatrixSetLimits }}</div>
       {% endfor %}
-      </ul></li>
+      </div>
+      <div class="clearContainer"></div>
+    </li>
   {% endif %}
 </ul>

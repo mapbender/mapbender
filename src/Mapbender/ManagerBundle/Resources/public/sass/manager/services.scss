@@ -1,41 +1,32 @@
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
   .labelText{float:left;}
-  .metaText{@extend .smallText;}
-  margin-bottom:$space;
 }
 .serviceMetaContainer {
-  $padding: 5px;
   .labelText {
     float: none;
   }
   .metaText {
-    line-height: 16px;
-    margin-bottom: 5px;
-    text-align: justify;
-    padding-bottom: $padding;
-  }
-
-  .metaUrl {
-    word-wrap: break-word;
-
+    margin-bottom: $space;
   }
 }
 
-.serviceContactContainer{
-  $labelWidth:90px;
-
-  .labelText{width:$labelWidth; }
-  .metaText{margin-left:$labelWidth + $space/2; }
+.serviceContactContainer, .serviceServiceContainer {
+  .labelText {
+    width: 90px;
+    margin-right:$space/2;
+  }
+  .metaText {
+    margin-left: 90px;
+  }
 }
+
 .serviceServiceContainer {
-  $labeText:85px;
 
   .list, li{clear:both;}
   .list{
-    border-left:dashed 1px darken(#fff, 20%);
     margin-bottom:$space/2;
-    li{margin-left:$space;}
+    margin-left: 1.5em;
 
     // no margin for labeltext lists ...
     ul.left li{
@@ -49,23 +40,17 @@
       display: none;
     }
   }
-  .labelText{
-    width:$labeText;
-    margin-right:$space/2;
-  }
   li.openCloseTitle {
     cursor:pointer;
-    margin-left: -5px;  // push ~halfway on top of the border-left
+    margin-left: -1.5em;
     &:before {
+      display: inline-block;
+      width: 1em;
       margin-right: .5em;
-    }
-    &~li {
-      margin-left: 1em;
     }
   }
   .metaText{
     display: block;
-    margin-left:$labeText + $space/2;
     word-wrap: break-word;
   }
 }

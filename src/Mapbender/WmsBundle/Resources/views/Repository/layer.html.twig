@@ -54,22 +54,18 @@
     <span class="metaText">{{ layer.fixedHeight }}</span>
   </li>
   {% endif %}
-  {% if layer.latlonBounds != null %}
-    <li>
-      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.latlonbounds" | trans }}:</span>
-      <span class="metaText">{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</span>
-    </li>
-  {% endif %}
-  {% if layer.boundingBoxes|length > 0 %}
+  {% if layer.latlonBounds or layer.boundingBoxes %}
     <li>
       <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.boundingbox" | trans }}:</span>
-      <ul class="left">
-        {% for bbox in layer.boundingBoxes %}
-          <li>
-            <span class="metaText">{{ bbox.srs }} {{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</span>
-          </li>
-        {% endfor %}
-      </ul>
+      <div class="left">
+        {%- if layer.latlonBounds -%}
+        <div>{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</div>
+        {%- endif -%}
+        {%- for bbox in layer.boundingBoxes -%}
+            <div>{{ bbox.srs }} {{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</div>
+        {%- endfor -%}
+      </div>
+      <div class="clearContainer"></div>
     </li>
   {% endif %}
   {% if layer.srs|length > 0 %}

@@ -10,11 +10,6 @@
   height: auto;
 }
 
-a.iconLinkButton {
-  &:before {
-    margin-right: 0.4rem;
-  }
-}
 a[class^="icon"], a[class*=" icon"] {
   text-decoration: none;
 }
@@ -57,7 +52,6 @@ span.iconBig {
 .iconRadioActive:before{content:"\f192"; font-family: FontAwesome;}
 .iconView:before{content:"\f108"; font-family: FontAwesome;}
 .iconHelp:before{content:"\f059"; font-family: FontAwesome;}
-.iconLinkButton:before{content:"\f0da"; font-family: FontAwesome;}
 .iconDown:before{content:"\f078"; font-family: FontAwesome;}
 .iconRight:before{content:"\f054"; font-family: FontAwesome;}
 .iconLeft:before{content:"\f053"; font-family: FontAwesome;}

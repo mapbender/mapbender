@@ -4,7 +4,6 @@
 
 {% block box_content %}
         <h2 class="contentTitle">{{ 'fom.user.registration.done.congratulations' | trans}}</h2>
-        <p class="description">{{ 'fom.user.registration.done.account_activated' | trans }}</p>
-        <a class="left iconLinkButton linkButton" href="{{ path('mapbender_core_login_login') }}">{{ "fom.user.registration.done.back_to_login"|trans}}</a>
-        <div class="clearContainer"></div>
+        <p>{{ 'fom.user.registration.done.account_activated' | trans }}</p>
+        <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.registration.done.back_to_login"|trans}}</a>
 {% endblock %}

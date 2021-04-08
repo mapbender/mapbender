@@ -29,16 +29,16 @@
     <tbody id="usersBody">
       {% for user in users %}
         <tr id="app-{{ user.id }}" class="filterItem">
-          <td class="smallText">
+          <td>
             {% if is_granted('EDIT', user) %}
             <a class="labelText" href="{{ path('fom_user_user_edit', {'id': user.id}) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}">{{ user.username }}</a>
             {% else %}
             <span class="labelText">{{ user.username }}</span>
             {% endif %}
           </td>
-          <td class="smallText"><a href="mailto:{{ user.email }}" title="{{ 'fom.user.user.index.contact_user' | trans }}">{{ user.email }}</a></td>
+          <td><a href="mailto:{{ user.email }}" title="{{ 'fom.user.user.index.contact_user' | trans }}">{{ user.email }}</a></td>
           {% if _group_view_grant %}
-          <td class="smallText">
+          <td>
             <ul class="list-unstyled">
               {% for group in user.groups %}
               <li class='doNotFilter'>

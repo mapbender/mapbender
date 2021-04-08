@@ -10,10 +10,10 @@
     </div>
 
       {% if selfregister == true %}
-      <a class="linkButton iconLinkButton" href="{{ path('fom_user_registration_form') }}">{{ 'fom.user.login.login.register' | trans}}</a>
+      <a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans}}</a>
       {% endif %}
       {% if reset_password == true %}
-      <a class="linkButton iconLinkButton" href="{{ path('fom_user_password_form') }}">{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
+      <a class="linkButton" href="{{ path('fom_user_password_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
       {% endif %}
       <div class="text-center">
         <input type="submit" class="btn btn-primary btn-lg login-button" value="{{ 'fom.user.login.login.login' | trans}}" />
