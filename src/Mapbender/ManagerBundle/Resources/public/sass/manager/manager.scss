@@ -214,12 +214,11 @@ ul.dropdownList{
 .container-filter {
   margin-bottom: 2rem;
   text-align: right;
+  .content-box {
+    display: inline-block;
+  }
 }
 
-.filter-input-container {
-  display: inline-block;
-  padding: 1rem;
-}
 #listFilterPermission {
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
@@ -282,4 +281,16 @@ ul.dropdownList{
   input {
     display: none;
   }
+}
+
+.content-box {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+}
+.content-box-lg {
+  padding: 20px;
+}
+.content-box-md {
+  padding: 15px;
 }

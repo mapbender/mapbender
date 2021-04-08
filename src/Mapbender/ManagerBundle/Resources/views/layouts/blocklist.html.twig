@@ -6,7 +6,7 @@
   {%- if items -%}
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
-    <li class="filterItem">
+    <li class="filterItem content-box content-box-lg">
       {% block boxlist_item_content %}{% endblock %}
     </li>
     {%- endfor -%}
