@@ -14,14 +14,16 @@
       border-radius: 15px;
     }
     .placeholder-text {
-      padding: 15px;
-    }
-    .placeholder-text p {
-      margin: 10px auto;
+      h4 {
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+      p {
+        margin: 10px auto;
+      }
     }
     .placeholder-icon {
       font-size: 60px;
-      padding-top: 40%;
     }
     h2, p {
       margin-bottom: 0.75rem;
@@ -35,6 +37,12 @@
   }
   .btn-toolbar .btn+.btn {
     margin-left: 10px;
+  }
+  .preview-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
   }
 }
 .messageBox{

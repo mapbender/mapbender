@@ -22,25 +22,6 @@ body {
   position: relative;
   bottom: 13px;
 }
-.preview-info {
-  width: 140px;
-  height: 140px;
-  border-radius: 15px;
-  background-color: #EAEAEA;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  .placeholder-text {
-    text-align: center;
-
-    h4 {
-      margin-bottom: 20px;
-      font-size: 1.5em;
-    }
-  }
-}
-
 
 .instanceContainer, .container-table {
   margin-top: 10%;
