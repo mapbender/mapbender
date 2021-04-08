@@ -62,19 +62,19 @@
 {% block manager_content %}
 <div class="instanceContainer">
   {{ form_start(form) }}
-
-    <div class="form-group">
-        <div class="right">
+    <div class="row form-group">
+      <div class="col-xs-9 col-9 text-nowrap clip-text">
+        <label class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}:</label>
+        <a href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
+      </div>
+      <div class="col-xs-3 col-3 text-right">
           <input type="submit" name="save" class="btn btn-sm btn-success" value="{{"mb.actions.save"|trans}}" />
         {% if app.request.attributes.get('slug') %}
           <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% elseif layerset is defined and layerset %}
             <a href="{{ path('mapbender_manager_application_edit', {'slug': layerset.application.slug}) }}#tabLayers" class="btn btn-sm btn-warning">{{"mb.actions.back"|trans}}</a>
         {% endif %}
-        </div>
-        <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-        <a class="smallText origin-url" href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
-        <div class="clear"></div>
+      </div>
     </div>
 
 

@@ -371,3 +371,7 @@ ul.dropdownList{
 .popup .table {
   background-color: white;
 }
+.clip-text {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
