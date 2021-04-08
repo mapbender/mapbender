@@ -13,7 +13,7 @@
     </li>
 {%- endmacro -%}
 {%- macro tab_content_attributes(idSuffix, class='') -%}
-{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
+{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane content-box content-box-lg{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
 {%- endmacro -%}
 {%- import _self as tab_macros -%}
 
