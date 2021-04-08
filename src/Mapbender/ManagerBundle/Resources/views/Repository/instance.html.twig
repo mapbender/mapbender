@@ -38,7 +38,7 @@
           <p>
             {{- (_h1_subtext | trim) ~ ' ' -}}
             (
-            {{- not _is_reusable_instance ? ('mb.terms.sourceinstance.reusable.singular' | trans) : ('mb.terms.sourceinstance.bound.singular' | trans) -}}
+            {{- _is_reusable_instance ? ('mb.terms.sourceinstance.reusable.singular' | trans) : ('mb.terms.sourceinstance.bound.singular' | trans) -}}
             )
           </p>
         </div>
