@@ -145,29 +145,8 @@ ul.dropdownList{
 }
 
 .tabContainer {
-  .tabs {
-    > .tab {
-      background-color: #ECECEC;
-      &:first-child {
-        border-top-left-radius: $containerBorderRadius;
-      }
-      &:last-child {
-        border-top-right-radius: $containerBorderRadius;
-      }
-      &:hover, &:focus, &.active {
-        background-color: #f9f9f9;
-      }
-      &:hover, &:focus {
-        outline: none;
-        box-shadow: 0px -1px 1px #000;
-      }
-    }
-  }
-
-  > .container {
-    border-bottom-left-radius: $containerBorderRadius;
-    border-bottom-right-radius: $containerBorderRadius;
-    border-top-right-radius: $containerBorderRadius;
+  > ul {
+    margin-bottom: 2rem;
   }
 }
 
