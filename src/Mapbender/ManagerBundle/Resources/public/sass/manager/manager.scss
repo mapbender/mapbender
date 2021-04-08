@@ -151,12 +151,9 @@ ul.dropdownList{
 }
 
 .contentPane {
-  width: 70%;
-  @media (max-width: 1300px) {
-    & {
-      width: 90%;
-    }
-  }
+  width: 90%;
+  max-width: 80rem;
+
   margin: 0 auto 100px;
   > .content {
     .tabContainer {
