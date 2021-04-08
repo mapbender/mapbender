@@ -90,6 +90,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                     'instance' => $instance,
                     'by_reference' => false,
                 ),
+                'label' => false,
             ))
             ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
