@@ -196,24 +196,30 @@ ul.dropdownList{
   .inputWrapper {
     display: inline-block;
   }
+  .container-filter & {
+    label {
+      min-width: initial;
+    }
+    .inputWrapper, >input {
+      width: 15em;
+      max-width: initial;
+      border: none;
+      border-radius: 0;
+      border-bottom: 1px solid rgba(0,0,0,0.5);
+      background-color: transparent;
+    }
+  }
+}
+
+.container-filter {
+  margin-bottom: 2rem;
+  text-align: right;
 }
 
 .filter-input-container {
   display: inline-block;
   padding: 1rem;
-  label {
-    margin-right: 1rem;
-    font-size: 1.4rem;
-  }
-  .listFilterInput {
-    border: none;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(0,0,0,0.5);
-    width: 15em;
-    background-color: transparent;
-  }
 }
-
 #listFilterPermission {
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
