@@ -69,7 +69,7 @@ div.contentTitle {
     margin: 0;
   }
   // @todo: allow regular paragraph text flow ... everywhere?
-  > p {
+  p {
     margin: 0.5em 0;
   }
   > p {
@@ -290,4 +290,8 @@ ul.dropdownList{
 }
 .content-box-md {
   padding: 15px;
+}
+.clip-text {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }

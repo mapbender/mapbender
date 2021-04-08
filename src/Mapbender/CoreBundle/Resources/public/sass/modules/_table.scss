@@ -14,9 +14,6 @@
 }
 .table-bordered {
   border-top: solid 3px $firstColor;
-  left:solid 1px $thirdColor;
-  right:solid 1px $thirdColor;
-  bottom:solid 1px $thirdColor;
   // Undo Bootstrap left / right borders on cells
   >tbody,>thead,>tfoot {
     >tr {
