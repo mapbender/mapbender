@@ -53,10 +53,10 @@
           {% endif %}
           <td class="iconColumn">
             {% if is_granted('EDIT', user) %}
-              <a class="iconEdit iconBig list-icon-position" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"></a>
+              <a class="iconEdit iconBig" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"></a>
             {% endif %}
             {% if user.id != 1 and is_granted('DELETE', user) %}
-              <span class="iconRemove iconBig list-icon-position"
+              <span class="iconRemove iconBig"
                 title="{{"fom.user.user.index.delete_user" | trans}}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"

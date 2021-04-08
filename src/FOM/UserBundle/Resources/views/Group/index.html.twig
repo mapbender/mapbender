@@ -35,10 +35,10 @@
         <td>{{ group.description }}</td>
         <td class="iconColumn">
             {% if is_granted('EDIT', group) %}
-            <a class="iconEdit iconBig list-icon-position" href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"></a>
+            <a class="iconEdit iconBig" href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"></a>
             {% endif %}
             {% if is_granted('DELETE', group) %}
-            <span class="iconRemove iconBig list-icon-position"
+            <span class="iconRemove iconBig"
               title="{{"fom.user.group.index.delete_group"|trans}} {{ group.title }}"
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
