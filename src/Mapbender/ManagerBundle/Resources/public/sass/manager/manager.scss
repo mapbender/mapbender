@@ -267,9 +267,6 @@ ul.dropdownList{
     margin: 0 .25em;
     @include noUserSelect;
     @include border-radius($radius);
-    input {
-      display: none;
-    }
     &.multi {
       background-color:#c1c1c1;
     }
@@ -294,4 +291,10 @@ ul.dropdownList{
 }
 .popup .table {
   background-color: white;
+}
+
+.tagbox, .checkWrapper {
+  input {
+    display: none;
+  }
 }
