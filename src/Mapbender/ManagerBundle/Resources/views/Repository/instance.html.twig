@@ -30,19 +30,32 @@
 
 {% block heading %}
     <div class="contentTitle">
-        <h1><a class="btn btn-default pull-right" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>{{ _h1_text | default(title) }}<div class="clear"></div></h1>
-        <p class="clear">{% if _is_reusable_instance %}<span class="badge badge-info badge pull-right">{{ 'mb.terms.sourceinstance.reusable.singular' | trans }}</span>{% endif %}{{ _h1_subtext }}<span class="clear"></span></p>
-        <div class="clear">
-            <div class="pull-right">
-                {%- if _is_reusable_instance and layerset is defined and layerset -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_bound' | trans }}</a>
-                {%- endif -%}
-                {%- if not _is_reusable_instance -%}
-                <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_reusable' | trans }}</a>
-                {%- endif -%}
-            </div>
-            <div class="clearContainer"></div>
+      <div class="row">
+        <div class="col-xs-8 col-8">
+          <h1>
+            {{- _h1_text | default(title) -}}
+          </h1>
+          <p>
+            {{- (_h1_subtext | trim) ~ ' ' -}}
+            (
+            {{- not _is_reusable_instance ? ('mb.terms.sourceinstance.reusable.singular' | trans) : ('mb.terms.sourceinstance.bound.singular' | trans) -}}
+            )
+          </p>
         </div>
+        <div class="col-xs-4 col-4 text-right">
+          <p>
+            <a class="btn btn-default" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>
+          </p>
+          <p>
+            {%- if _is_reusable_instance and layerset is defined and layerset -%}
+            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fa fas fa-anchor"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_bound' | trans }}</a>
+            {%- endif -%}
+            {%- if not _is_reusable_instance -%}
+            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fa fas fa-wifi"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_reusable' | trans }}</a>
+            {%- endif -%}
+          <p>
+        </div>
+      </div>
     </div>
 {% endblock heading %}
 
