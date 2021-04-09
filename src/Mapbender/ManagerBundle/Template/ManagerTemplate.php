@@ -12,7 +12,6 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
             case 'css':
                 return array(
                     '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
-                    '@MapbenderManagerBundle/Resources/public/sass/new-manager/applications.scss',
                 );
             case 'js':
                 return array(
