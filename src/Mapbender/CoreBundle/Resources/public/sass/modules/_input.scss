@@ -1,4 +1,4 @@
-.input, .dropdown {
+.input, .dropdown:not(.bs-dropdown) {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
   background-color: $inputBackgroundColor;
