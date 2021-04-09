@@ -3,7 +3,7 @@
 {% block title %} {{ 'fom.user.registration.form.title' | trans}} {% endblock %}
 
 {% block box_content %}
-  <div class="loginBox register">
+  <div class="loginBox">
     <h2 class="contentTitle">{{ 'fom.user.registration.form.caption' | trans}}</h2>
       {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
       {{ form_widget(form) }}

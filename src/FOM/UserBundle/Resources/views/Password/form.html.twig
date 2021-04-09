@@ -2,30 +2,17 @@
 
 {% block title %} {{ 'fom.user.password.form.title' | trans}} {% endblock %}
 
-{% form_theme form _self %}
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="messageBox error">
-            <ul>
-            {% for error in errors %}
-                <li>{{ error.message }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock -%}
-
 {% block box_content %}
-  <div class="loginBox forgot">
+  <div class="loginBox">
     <h2 class="contentTitle">{{ 'fom.user.password.form.caption' | trans}}</h2>
-
+    <p>{{ 'fom.user.password.form.message' | trans }}</p>
       {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
-        <p class='labelText'>{{ 'fom.user.password.form.message' | trans }}</p>
+
       {{ form_widget(form) }}
 
       <button class="button right">{{ 'fom.user.password.form.require_password' | trans}}</button>
       <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.password.form.back_to_login"|trans}}</a>
+      <div class="clearContainer"></div>
       {{ form_end(form) }}
-    <div class="clearContainer"></div>
   </div>
 {% endblock %}

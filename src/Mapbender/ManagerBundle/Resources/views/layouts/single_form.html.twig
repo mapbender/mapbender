@@ -1,4 +1,14 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% block form_buttons %}
+    {%- set _return_url = return_url | default(path( return_path | default('mapbender_manager_application_index'))) -%}
+    {%- if return_url is defined and return_url is same as (false) -%}
+        {%- set _return_url = false -%}
+    {%- endif -%}
+    <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="btn btn-sm btn-success"/>
+    {% if _return_url %}
+        <a href="{{ _return_url }}" class="btn btn-sm btn-warning">{{ (return_text | default('mb.actions.cancel')) | trans}}</a>
+    {%- endif -%}
+{% endblock %}
 
 {% block manager_content %}
 <div class="form-container">
@@ -8,10 +18,7 @@
     {{ form_rest(form) }}
     {% endblock %}
     <div class="button-group">
-    {% block form_buttons %}
-        <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="button"/>
-        <a href="{{ path( return_path | default('mapbender_manager_application_index')) }}" class="button critical">{{ 'mb.actions.cancel' | trans}}</a>
-    {% endblock %}
+        {{- block('form_buttons') -}}
     </div>
   {{- form_end(form) -}}
 </div>
