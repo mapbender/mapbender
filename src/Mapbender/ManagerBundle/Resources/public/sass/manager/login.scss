@@ -11,7 +11,7 @@
     height: 300px;
   }
   /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
-  .login-wrapper, .logoContainer {
+  .login-wrapper {
     position: relative; // solve z-index clash vs .head
     width: 90%;
     max-width: 340px;
@@ -43,9 +43,7 @@
       max-height: 120px;
       max-width: 100%;
     }
-  }
-  .loginBox {
-    margin-top: 15px;
+    margin-bottom: 15px;
   }
   .input {
     margin-bottom: $space/2;
