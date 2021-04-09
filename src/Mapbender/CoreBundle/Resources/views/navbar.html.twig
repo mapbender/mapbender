@@ -1,4 +1,5 @@
 <nav class="navbar navbar-default navigationBar">
+    <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation-main" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
@@ -10,15 +11,15 @@
                 <img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}"/>
             </a>
         </div>
-        <div class="collapse navbar-collapse main-nav-container" id="navigation-main">
+        <div class="collapse navbar-collapse" id="navigation-main">
             {% if app.user != "" %}
-                <ul class="nav navbar-nav navbar-container" id="navigationListContainer">
+                <ul class="nav navbar-nav">
                     {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
                 </ul>
             {% endif %}
-            <ul id="accountMenu" class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right">
                 {% if app.user != "" %}
-                <li class="navbar-text">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                <li><a href="#">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}</a>
                     {%- if app.user.password -%}
                     <ul class="nav navbar-nav">
                       <li>
@@ -34,13 +35,14 @@
                   </ul>
                 {%- endif -%}
                 </li>
-          {% else %}
-            <li>
-              <a href="{{ path('mapbender_core_login_login') }}">
-                <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
+              {% else %}
+                <li>
+                  <a href="{{ path('mapbender_core_login_login') }}">
+                    <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
         </div>
+    </div>
 </nav>

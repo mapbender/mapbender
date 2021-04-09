@@ -13,17 +13,16 @@
 {% endblock %}
 
 {% block content %}
-  <div class="head container-fluid">
-      <div class="row">
+  <div class="head">
       {% include 'MapbenderCoreBundle::navbar.html.twig' %}
-      </div>
       {% for key, flash in app.session.bag('flashes').all() %}
         <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
           {{ flash | first }}
         </div>
       {% endfor %}
 
-        <div>
+      <div class="container-fluid">
+        <div class="row">
           <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
               {% if sitelinks %}
@@ -38,6 +37,7 @@
             v. {{ fom.server_version }}
           </div>
         </div>
+      </div>
   </div>
         <div class="contentPane">
           <div class="content">
