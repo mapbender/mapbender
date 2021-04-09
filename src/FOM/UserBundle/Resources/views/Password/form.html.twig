@@ -2,19 +2,6 @@
 
 {% block title %} {{ 'fom.user.password.form.title' | trans}} {% endblock %}
 
-{% form_theme form _self %}
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="messageBox error">
-            <ul>
-            {% for error in errors %}
-                <li>{{ error.message }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock -%}
-
 {% block box_content %}
   <div class="loginBox forgot">
     <h2 class="contentTitle">{{ 'fom.user.password.form.caption' | trans}}</h2>

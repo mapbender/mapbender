@@ -33,23 +33,6 @@
     border-top:dashed 1px darken(#fff, 30%);
   }
 }
-.messageBox{
-  /** @deprecated; use bootstrap alert.alert-info or alert.alert-danger as appropriate */
-  /** @todo: remove, mark custom template BC break */
-  padding:$space/2;
-  margin-bottom:$space;
-
-  &.error{
-    color:$errorColor;
-    background-color: lighten($errorColor, 50%);
-    border:solid 1px lighten($errorColor, 40%);
-  }
-  &.hint{
-    color:$hintColor;
-    background-color: lighten($hintColor, 50%);
-    border:solid 1px lighten($hintColor, 40%);
-  }
-}
 .flashBox{
   $width:280px;
 
