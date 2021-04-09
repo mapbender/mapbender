@@ -5,6 +5,9 @@
       {{ item.title|trans }}
     </a>
     <ul class="dropdown-menu">
+      <li>
+        <a href="{{ path(item.route) }}">{{ item.title | trans }}</a>
+      </li>
       {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {'items': item.subroutes} %}
     </ul>
   </li>
