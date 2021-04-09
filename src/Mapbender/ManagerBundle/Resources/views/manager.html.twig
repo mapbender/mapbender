@@ -26,6 +26,11 @@
       </div>
 
       <div class="rightPane">
+          {% for key, flash in app.session.bag('flashes').all() %}
+            <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
+              {{ flash | first }}
+            </div>
+          {% endfor %}
           <div class="top">
               <div class="account-bar-wrap">
                   <div class="accountBar">
@@ -50,13 +55,6 @@
                 {% endfor %}
               </ul>
               {% endif %}
-
-            {% for key, flash in app.session.bag('flashes').all() %}
-              <div class="flashBox {{ key }}">
-                {{ flash | first }}
-              </div>
-            {% endfor %}
-
           </div>
         <div class="contentPane">
           <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
