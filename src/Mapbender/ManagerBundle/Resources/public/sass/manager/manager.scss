@@ -129,13 +129,13 @@ div.contentTitle {
   margin-bottom: 10%;
 }
 
-a.button, button, div.dropdown {
+a.button, button, div.dropdown:not(.bs-dropdown) {
   border-radius: $elementBorderRadius;
 }
 textarea, input[type=text], input[type=submit], input[type=number], input[type=password] {
   border-radius: 8px;
 }
-.input, .dropdown {
+.input, .dropdown:not(.bs-dropdown) {
   border-color: transparent;
 }
 
