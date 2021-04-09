@@ -29,8 +29,6 @@ h2 {
 }
 
 .navigationBar {
-  font-size: 1.25rem;
-  font-weight: 300;
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
 
@@ -53,23 +51,6 @@ h2 {
   }
   .navbar-brand>img.logo {
     display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
-  }
-  .navbar-nav ul.nav {
-    white-space: nowrap;
-    background-color: #efefef;
-    position: absolute;
-    z-index: 5;
-  }
-  .nav {
-    > li > ul.nav {
-      display: none;
-      li {
-        float: none;
-      }
-    }
-    li:hover > ul.nav {
-      display: block;
-    }
   }
 }
 
