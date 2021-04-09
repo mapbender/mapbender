@@ -30,7 +30,7 @@ h2 {
 
 .content, .loginBox {
   font-weight: 300;
-  label {
+  label, th {
     font-weight: 500; // Down from Bootstrap default 700
   }
 }
