@@ -28,6 +28,13 @@ h2 {
   font-size: 2rem;
 }
 
+.content, .loginBox {
+  font-weight: 300;
+  label {
+    font-weight: 500; // Down from Bootstrap default 700
+  }
+}
+
 .navigationBar {
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
