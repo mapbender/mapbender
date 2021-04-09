@@ -3,7 +3,7 @@
 {% block title %} {{ 'fom.user.login.error_notocken.password_reset' | trans}} {% endblock %}
 
 {% block box_content %}
-        <h2 class="contentTitle">{{ 'fom.user.login.error_notocken.sorry' | trans}}</h2>
+        <h1 class="contentTitle">{{ 'fom.user.login.error_notocken.sorry' | trans}}</h1>
         <p>{{ 'fom.user.login.error_notocken.no_such_tocken' | trans }}</p>
         {% if site_email is defined %}
         <a class="linkButton right" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
