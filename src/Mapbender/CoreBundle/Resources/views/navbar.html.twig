@@ -18,10 +18,16 @@
                 </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
-                {% if app.user != "" %}
-                <li><a href="#">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}</a>
-                    {%- if app.user.password -%}
-                    <ul class="nav navbar-nav">
+                {% if app.user != '' and not app.user.password %}
+                  <li>
+                    <a href="#">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}</a>
+                  </li>
+                {% elseif app.user != '' %}
+                  <li class="dropdown bs-dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                    </a>
+                    <ul class="dropdown-menu">
                       <li>
                           <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
                               <i class="fa fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
@@ -32,8 +38,7 @@
                               <i class="fa far fa-sign-out"></i>&nbsp;{{ 'fom.core.manager.btn.logout' | trans }}
                           </a>
                       </li>
-                  </ul>
-                {%- endif -%}
+                    </ul>
                 </li>
               {% else %}
                 <li>
