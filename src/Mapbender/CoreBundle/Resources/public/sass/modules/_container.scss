@@ -45,50 +45,18 @@
     text-align: center;
   }
 }
-.messageBox{
-  /** @deprecated; use bootstrap alert.alert-info or alert.alert-danger as appropriate */
-  /** @todo: remove, mark custom template BC break */
-  padding:$space/2;
-  margin-bottom:$space;
-
-  &.error{
-    color:$errorColor;
-    background-color: lighten($errorColor, 50%);
-    border:solid 1px lighten($errorColor, 40%);
-  }
-  &.hint{
-    color:$hintColor;
-    background-color: lighten($hintColor, 50%);
-    border:solid 1px lighten($hintColor, 40%);
-  }
-}
 .flashBox{
   $width:280px;
 
   padding:($space/4) ($space/2);
-  background-color:$contentColor;
   text-align: center;
   width: $width;
   margin-left:-$width/2;
-  @include absolute(0 '' '' 50%);
+  position: absolute;
+  top: 0;
+  left: 50%;
   @include transition(all 1s ease-in-out);
   opacity: 1;
-
-  &.success{
-    @extend .iconThumbsUp;
-    color:darken($noticeColor, 10%);
-    background-color: lighten($noticeColor, 50%);
-  }
-  &.error{
-    @extend .iconThumbsDown;
-    color:darken($errorColor, 10%);
-    background-color: lighten($errorColor, 50%);
-  }
-  &.warning{
-    @extend .iconThumbsUp;
-    color:darken($warningColor, 10%);
-    background-color: lighten($warningColor, 50%);
-  }
   &.kill{
     top:-100px;
     opacity: 0;

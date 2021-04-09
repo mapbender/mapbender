@@ -17,6 +17,12 @@
       <div class="row">
       {% include 'MapbenderCoreBundle::navbar.html.twig' %}
       </div>
+      {% for key, flash in app.session.bag('flashes').all() %}
+        <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
+          {{ flash | first }}
+        </div>
+      {% endfor %}
+
         <div>
           <div class="col-xs-6">
               {% set sitelinks = get_sitelinks() %}
@@ -38,12 +44,6 @@
             {% block heading %}
                 <h1 class="contentTitle">{{ block('title') }}<div class="underlineTitle"></div></h1>
             {% endblock %}
-
-            {% for key, flash in app.session.bag('flashes').all() %}
-              <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
-                {{ flash | first }}
-              </div>
-            {% endfor %}
 
             {% block manager_content %}{% endblock %}
           </div>

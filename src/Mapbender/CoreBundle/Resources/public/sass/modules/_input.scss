@@ -35,13 +35,9 @@ textarea.input {
 }
 
 .inputWrapper, .dropdown {
+  display: inline-block;
+  width: 100%;
   position: relative;
-  .form-horizontal &, .form-horizontal .labelInput + & {
-    display: inline-block;
-  }
-  .form-horizontal [class*="col-"] > & {
-    display: block;
-  }
 }
 textarea.input {
    min-height: 150px;
@@ -62,37 +58,15 @@ table .checkbox {
   margin-top: 0;
   margin-bottom: 0;
 }
-
-
-  .validationMsgBox {
-    position: absolute;
+.validationMsgBox {
+  position: absolute;
+}
+.validationMsgBox {
     z-index: 9999;
+    margin-left: 1em;
     min-width: 260px;
-    margin-left: -$space/2;
     color:$errorColor;
     padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
-
-    // small arrow left
-    &:after, &:before {
-      border: solid transparent;
-      content: "";
-      height: 0;
-      width: 0;
-      position: absolute;
-      right: 100%;
-    }
-    &:after{
-      border-right-color: lighten($errorColor, 50%);
-      border-width: 3px;
-      top: $space - 6px;
-      margin-top: -3px;
-    }
-    &:before{
-      border-right-color: lighten($errorColor, 40%);
-      border-width: 5px;
-      top: $space - 6px;
-      margin-top: -5px;
-    }
-  }
+}

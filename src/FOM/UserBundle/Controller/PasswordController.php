@@ -132,9 +132,9 @@ class PasswordController extends UserControllerBase
     }
 
     /**
-     * Password reset step 4: Show password reset form
+     * Password reset steps 4 + 5: Show password reset form
      *
-     * @Route("/user/reset", methods={"GET"})
+     * @Route("/user/reset", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
@@ -168,18 +168,6 @@ class PasswordController extends UserControllerBase
             'user' => $user,
             'form' => $form->createView(),
         ));
-    }
-
-    /**
-     * Password reset step 5: reset password
-     *
-     * @Route("/user/reset", methods={"POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function passwordAction(Request $request)
-    {
-        return $this->resetAction($request);
     }
 
     /**
