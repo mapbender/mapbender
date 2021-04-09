@@ -3,9 +3,7 @@
 {% block title %} {{ 'fom.user.registration.done.title' | trans}} {% endblock %}
 
 {% block box_content %}
-    <div class="loginBox">
         <h2 class="contentTitle">{{ 'fom.user.registration.done.congratulations' | trans}}</h2>
         <p>{{ 'fom.user.registration.done.account_activated' | trans }}</p>
         <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.registration.done.back_to_login"|trans}}</a>
-    </div>
 {% endblock %}

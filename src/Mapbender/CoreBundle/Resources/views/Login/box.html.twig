@@ -23,10 +23,12 @@
     </div>
     <div class="login-wrapper">
       <div class="logoContainer">
-        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender"
                                                                  src="{{ asset(fom.server_logo) }}"/></a>
       </div>
+      <div class="loginBox">
       {% block box_content %}{% endblock %}
+      </div>
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
       <ul class="sitelinks list-inline text-right">
