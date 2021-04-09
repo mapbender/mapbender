@@ -54,9 +54,11 @@ h2 {
   }
 }
 
+.content-head {
+  margin-bottom: 4rem;
+}
+
 div.contentTitle {
-  // remove h1 margin, put it on the containing div instead
-  margin-bottom: 2rem;
   > h1 {
     margin: 0;
   }
