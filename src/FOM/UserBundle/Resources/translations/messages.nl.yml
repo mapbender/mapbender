@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Terug naar inlog'
       form:
         title: Registratie
-        caption: Registratie
         username: Gebruikersnaam
         choose_password: 'Geef een wachtwoord'
         confirm_password: 'Bevestig wachtwoord'
@@ -19,7 +18,6 @@ fom:
       email_subject: 'Uw registratie'
       send:
         title: Registratie
-        caption: Registratie
         account_created: 'Uw gebruikersnaam is aangemaakt. Een email met uw activatiecode wordt naar uw opgegeven email gestuurd met de activatie link.'
         back_to_login: 'Terug naar inlog'
       email_body_text: 'Hallo %user_username%, u bent recentelijk geregistreerd. Om uw registratie definitief te maken dient u %url% te activeren en te bevestigen'
@@ -49,7 +47,6 @@ fom:
         back_to_login: 'Terug naar inlog'
       login:
         title: Login
-        caption: Login
         username: Gebruikersnaam
         password: Wachtwoord
         register: Registreer
@@ -112,19 +109,16 @@ fom:
         back_to_login: 'Terug naar login'
       reset:
         title: 'Reset wachtwoord'
-        caption: 'Reset wachtwoord'
         btn: 'Reset wachtwoord'
       form:
         message: 'To reset your password please provide your username or your e-mail address.'
         title: 'Wachtwoord vergeten'
-        caption: 'Wachtwoord vergeten'
         username_email: 'Gebruikersnaam of email adres'
         back_to_login: 'Terug naar login'
         require_password: 'Wachtwoord benodigd'
       email_subject: 'Wachtwoord vergeten'
       send:
         title: 'Reset wachtwoord'
-        caption: 'Reset wachtwoord'
         email_been_sent: 'Een email met de reset code is naar uw email adres gestuurd.'
         back_to_login: 'Terug naar login'
       request:

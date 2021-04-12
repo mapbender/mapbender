@@ -13,7 +13,6 @@ fom:
         back_to_login: 'Zurück zum Login'
       form:
         title: Registrierung
-        caption: Registrierung
         username: Benutzernamename
         choose_password: 'Passwort auswählen'
         confirm_password: 'Passwort bestätigen'
@@ -23,7 +22,6 @@ fom:
       email_subject: 'Ihre Registrierung'
       send:
         title: Registrierung
-        caption: Registrierung
         account_created: 'Ihr Account wurde erstellt. Eine E-Mail mit Ihrem Freischaltungs-Code und -Link ist Ihnen mit Ihrer bereitgestellten Adresse gesendet worden.'
         back_to_login: 'Zurück zum Login'
       email_body_text: 'Hallo %user_username%, Sie haben sich kürzlich registriert. Um die Registrierung abzuschließen, rufen Sie bitte folgenden Link in Ihrem Browser auf %url%.'
@@ -53,7 +51,6 @@ fom:
         back_to_login: 'Zurück zur Anmeldung'
       login:
         title: Anmeldung
-        caption: Anmeldung
         username: Benutzer
         password: Passwort
         register: Register
@@ -116,19 +113,16 @@ fom:
         back_to_login: 'Zurück zur Anmeldung'
       reset:
         title: 'Passwort zurücksetzen'
-        caption: 'Passwort zurücksetzen'
         btn: 'Passwort zurücksetzen'
       form:
         message: 'Zum Zurücksetzen des Passworts geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail Adresse an.'
         title: 'Passwort vergessen'
-        caption: 'Passwort vergessen'
         username_email: 'Benutzername oder E-Mail'
         back_to_login: 'Zurück zum Login'
         require_password: 'Passwort anfordern'
       email_subject: 'Passwort vergessen'
       send:
         title: 'Passwort zurücksetzen'
-        caption: 'Passwort zurücksetzen'
         email_been_sent: 'Eine E-Mail mit Ihrem zurückgesetzten Code und Link ist Ihnen zu Ihrer bereitgestellten Adresse gesendet worden.'
         back_to_login: 'Zurück zur Anmeldung'
       request:
