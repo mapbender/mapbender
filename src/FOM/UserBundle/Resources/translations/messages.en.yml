@@ -13,7 +13,6 @@ fom:
         back_to_login: 'Back to login'
       form:
         title: Registration
-        caption: Registration
         username: Username
         choose_password: 'Choose password'
         confirm_password: 'Confirm password'
@@ -23,7 +22,6 @@ fom:
       email_subject: 'Your registration'
       send:
         title: Registration
-        caption: Registration
         account_created: "Your account has been created. An email with your activation code\n            and link has been sent to the address you provided."
         back_to_login: 'Back to login'
       email_body_text: 'Hello %user_username%, You have just recently registered to the Mapbender3 instance. To conclude your registration, please, call in your browser the link %url%.'
@@ -53,7 +51,6 @@ fom:
         back_to_login: 'Back to login'
       login:
         title: Login
-        caption: Login
         username: Username
         password: Password
         register: Register
@@ -116,19 +113,16 @@ fom:
         back_to_login: 'Back to login'
       reset:
         title: 'Reset password'
-        caption: 'Reset password'
         btn: 'Reset password'
       form:
         message: 'To reset your password please provide your username or your e-mail address.'
         title: 'Forgot password'
-        caption: 'Forgot password'
         username_email: 'Username or Email'
         back_to_login: 'Back to login'
         require_password: 'Require password'
       email_subject: 'Forgot password'
       send:
         title: 'Password Reset'
-        caption: 'Password Reset'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Back to login'
       request:

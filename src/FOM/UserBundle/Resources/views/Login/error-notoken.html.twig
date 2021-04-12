@@ -1,13 +1,14 @@
-{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+{%- set title = 'fom.user.login.error_notocken.sorry' -%}
+{%- set pagetitle = 'fom.user.login.error_notocken.password_reset' | trans -%}
 
-{% block title %} {{ 'fom.user.login.error_notocken.password_reset' | trans}} {% endblock %}
-
-{% block box_content %}
-        <h2 class="contentTitle">{{ 'fom.user.login.error_notocken.sorry' | trans}}</h2>
-        <p>{{ 'fom.user.login.error_notocken.no_such_tocken' | trans }}</p>
-        {% if site_email is defined %}
-        <a class="linkButton right" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
-        {% endif %}
-        <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.login.error_notocken.back_to_login"|trans}}</a>
-        <div class="clearContainer"></div>
+{% block extra_links %}
+    {{ parent() }}
+    {% if site_email is defined %}
+    <a class="linkButton right" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
+    {% endif %}
+{% endblock %}
+{% block box_content_main %}
+    <p>{{ 'fom.user.login.error_notocken.no_such_tocken' | trans }}</p>
+    {{ parent() }}
 {% endblock %}

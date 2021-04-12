@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Retour à la connexion'
       form:
         title: Inscription
-        caption: Inscription
         username: Nom d'utilisateur
         choose_password: 'Mot de passe'
         confirm_password: 'Confirmation du mot de passe'
@@ -19,7 +18,6 @@ fom:
       email_subject: 'Votre inscription'
       send:
         title: Enregistrement
-        caption: Enregistrement
         account_created: "Votre compte a été créé. Un courriel contenant votre code d''activation et un lien."
         back_to_login: 'Retour à la connexion'
       email_body_text: 'Bonjour %user_username%, Vous vous êtes récemment inscrit à une instance de Mapbender3. Pour confirmer votre enregistrement, cliquez sur le lien suivant: %url%.'
@@ -49,7 +47,6 @@ fom:
         back_to_login: 'Retour à la connexion'
       login:
         title: Connexion
-        caption: Connexion
         username: Nom d'utilisateur
         password: Mot de passe
         register: Register
@@ -112,19 +109,16 @@ fom:
         back_to_login: 'Retour à la connexion'
       reset:
         title: 'Réinitialiser le mot de passe'
-        caption: 'Réinitialiser le mot de passe'
         btn: 'Réinitialiser le mot de passe'
       form:
         message: 'Pour réinitialiser votre mot de passe, fournissez votre nom d''utilisateur ou courriel.'
         title: 'Mot de passe oublié'
-        caption: 'Mot de passe oublié'
         username_email: 'Nom d''utilisateur ou courriel'
         back_to_login: 'Retour à la connexion'
         require_password: 'Require password'
       email_subject: 'Mot de passe oublié'
       send:
         title: 'Réinitialiser le mot de passe'
-        caption: 'Réinitialiser le mot de passe'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Retour à la connexion'
       request:

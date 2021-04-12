@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Torna alla login'
       form:
         title: Registrazione
-        caption: Registrazione
         username: Nome utente
         choose_password: 'Scegli la password'
         confirm_password: 'Conferma la password'
@@ -19,7 +18,6 @@ fom:
       email_subject: 'Tua registrazione'
       send:
         title: Registrazione
-        caption: Registrazione
         account_created: "Il tuo account è stato creato. Un''email con il tuo codice di attivazione \n e il link sono stati inviati all''indirizzo che hai fornito."
         back_to_login: 'Torna alla login'
       email_body_text: 'Ciao %user_username%, Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, si prega di chiamare nel browser il link %url%.'
@@ -49,7 +47,6 @@ fom:
         back_to_login: 'Torna al login'
       login:
         title: Login
-        caption: Login
         username: Nome utente
         password: Password
         register: Registrati
@@ -112,19 +109,16 @@ fom:
         back_to_login: 'Torna alla login'
       reset:
         title: 'Reimpostazione della password'
-        caption: 'Reimpostazione della password'
         btn: 'Reimpostazione della password'
       form:
         message: 'Per ripristinare la password, fornire il proprio nome utente o il proprio indirizzo e-mail.'
         title: 'Ha dimenticato la password'
-        caption: 'Ha dimenticato la password'
         username_email: 'Nome utente o email'
         back_to_login: 'Torna alla login'
         require_password: 'Richiedi password'
       email_subject: 'Ha dimenticato la password'
       send:
         title: 'Reimpostazione della password'
-        caption: 'Reimpostazione della password'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Torna alla login'
       request:

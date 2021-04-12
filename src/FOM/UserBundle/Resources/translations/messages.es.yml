@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Regresar al login'
       form:
         title: Registro
-        caption: Registro
         username: Usuario
         choose_password: 'Escoger clave'
         confirm_password: 'Confirmar clave'
@@ -19,7 +18,6 @@ fom:
       email_subject: 'Tu registro'
       send:
         title: Registro
-        caption: Registro
         account_created: "Tu cuenta ha sido creada. Un email con tu codigo de activación\n            y enlace ha sido enviado a la dirección proveída."
         back_to_login: 'Regresar al login'
       email_body_text: 'Hola %user_username%, Acabas de registrarte. Para concluir con el registro, favor, llama en tu navegador el enlace %url%.'
@@ -49,7 +47,6 @@ fom:
         back_to_login: 'Regresar al login'
       login:
         title: Login
-        caption: Login
         username: Usuario
         password: Clave
         register: Registrar
@@ -112,19 +109,16 @@ fom:
         back_to_login: 'Regresar al login'
       reset:
         title: 'Reiniciar clave'
-        caption: 'Reiniciar clave'
         btn: 'Reiniciar clave'
       form:
         message: 'To reset your password please provide your username or your e-mail address.'
         title: 'Clave olvidada'
-        caption: 'Clave olvidada'
         username_email: 'Usuario o Email'
         back_to_login: 'Regresar al login'
         require_password: 'Clave requerida'
       email_subject: 'Clave olvidada'
       send:
         title: 'Reiniciar Clave'
-        caption: 'Reiniciar Clave'
         email_been_sent: 'Un email con su codigo de reinicio y enlace ha sido enviado a la dirección proveída.'
         back_to_login: 'Regresar al login'
       request:
