@@ -36,6 +36,9 @@
 .linkButton, .button, .buttonCore {
   font-size: 0.85rem;
 }
+.linkButton {
+  &:hover, &:active{color:$ciColor;};
+}
 
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBarColors, .toolBar {

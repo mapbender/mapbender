@@ -5,7 +5,7 @@
 {% block extra_links %}
     {{ parent() }}
     {% if site_email is defined %}
-    <a class="linkButton right" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
+    <a class="linkButton" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
     {% endif %}
 {% endblock %}
 {% block box_content_main %}
