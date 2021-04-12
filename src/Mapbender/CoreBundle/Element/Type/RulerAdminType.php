@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -30,18 +31,44 @@ class RulerAdminType extends AbstractType
             ))
             ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
-                'required' => true,
-                'choices' => array(
-                    "line" => "line",
-                    "area" => "area",
-                ),
-                'choices_as_values' => true,
-            ))
+                    'required' => true,
+                    'choices' => array(
+                        "line" => "line",
+                        "area" => "area",
+                    ),
+                    'choices_as_values' => true,
+                ))
             ->add('immediate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'Immediate',
             ))
-        ;
+            ->add('strokeWidth', 'Symfony\Component\Form\Extension\Core\Type\IntegerType',
+                array('required' => false,
+                    'label' => 'Str. Width',
+                    'attr' => array(
+                        'min' => 1,
+                        'max' => 8
+                    )))
+            ->add('strokeOpacity', 'Symfony\Component\Form\Extension\Core\Type\RangeType',
+                array('required' => false, 'label' => 'Str. Opacity',
+                    'attr' => array(
+                        'min' => 0,
+                        'max' => 10
+                    )))
+            ->add('strokeColor', 'Symfony\Component\Form\Extension\Core\Type\TextType',
+                array('required' => false, 'label' => 'Stroke Color', ))
+            ->add('fillOpacity', 'Symfony\Component\Form\Extension\Core\Type\RangeType',
+                array('required' => false, 'label' => 'Fill Opacity',
+                    'attr' => array(
+                        'min' => 0,
+                        'max' => 10
+                    )))
+            ->add('fillColor', 'Symfony\Component\Form\Extension\Core\Type\TextType',
+                array(
+                    'required' => false,
+                    'label' => 'Fill Color'
+                    ));
     }
+
 
 }

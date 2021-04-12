@@ -42,11 +42,32 @@
                 }
             }
 
+            var sketchSymbolizer = {};
+            var scheme = this.options.type === "line" ? "Line" : "Polygon";
+            sketchSymbolizer[scheme] = {
+                strokeWidth: this.options.strokeWidth || 1,
+                strokeOpacity: (this.options.strokeOpacity / 10) || 1,
+                strokeColor: this.options.strokeColor  || '#ee9900',
+                fillOpacity: (this.options.fillOpacity / 10) || 0.4,
+                fillColor: this.options.fillColor || '#ee9900'
+            };
+
+            var style = new OpenLayers.Style();
+            style.addRules([
+                new OpenLayers.Rule({symbolizer: sketchSymbolizer})
+            ]);
+            var styleMap = new OpenLayers.StyleMap({"default": style});
+
             var control = new OpenLayers.Control.Measure(handlerClass, {
                 persist: true,
                 immediate: !!this.options.immediate,
                 displaySystemUnits: {
                     metric: ['m']
+                },
+                handlerOptions: {
+                    layerOptions: {
+                        styleMap: styleMap
+                    }
                 },
                 geodesic: true
             });
@@ -83,7 +104,7 @@
             this.segments = $('<ul/>').appendTo(this.container);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
-            
+
             this._trigger('ready');
         },
         /**

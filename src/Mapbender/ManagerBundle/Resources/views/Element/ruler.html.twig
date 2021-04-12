@@ -2,3 +2,16 @@
     {{ form_row(form.title) }}
     {{ form_rest(form.configuration) }}
 </div>
+
+<script type="text/javascript" src="{{ asset('components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}" />
+<style type="text/css">
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('input[name="form[configuration][strokeColor]"]').colorpicker();
+        $('input[name="form[configuration][fillColor]"]').colorpicker();
+    });
+</script>
