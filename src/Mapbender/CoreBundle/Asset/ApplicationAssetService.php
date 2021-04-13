@@ -113,7 +113,11 @@ class ApplicationAssetService
             $this->getBaseAssetReferences($type),
         );
         if ($type === 'js') {
-            $referenceLists[] = array('@MapbenderCoreBundle/Resources/public/init/frontend.js');
+            $referenceLists[] = array(
+                '@MapbenderCoreBundle/Resources/public/init/frontend.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            );
         }
         $referenceLists = array_merge($referenceLists, array(
             $this->getMapEngineAssetReferences($application, $type),
@@ -261,12 +265,10 @@ class ApplicationAssetService
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
                     // form-theme specific widget auto-initialization
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
             case 'trans':
