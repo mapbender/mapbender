@@ -65,6 +65,9 @@ window.Mapbender.bootstrapModal = (function($) {
             $('.modal-footer', $element).append($b);
         }
         $element.modal();
+        $element.one('hidden.bs.modal', function() {
+            $element.remove();
+        });
         return $element;
     }
 
