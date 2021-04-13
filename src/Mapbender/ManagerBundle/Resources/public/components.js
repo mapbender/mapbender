@@ -190,7 +190,7 @@ $(function() {
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'button',
+                            cssClass: 'btn btn-success btn-sm',
                             callback: function() {
                                 appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
                                 this.close();
@@ -198,7 +198,7 @@ $(function() {
                         },
                         {
                             label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'button buttonCancel critical popupClose'
+                            cssClass: 'btn btn-warning btn-sm popupClose'
                         }
                     ]
                 });
@@ -246,7 +246,7 @@ $(function() {
                 {
                     // @todo: provide distinct label
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'button buttonReset hidden left',
+                    cssClass: 'btn btn-warning btn-sm buttonReset hidden left',
                     callback: function() {
                         // reload entire popup
                         initElementSecurity(response, url);
@@ -254,7 +254,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'button buttonBack hidden left',
+                    cssClass: 'btn btn-warning btn-sm buttonBack hidden left',
                     callback: function() {
                         $('.contentItem', popup.$element).not($initialView).remove();
                         $initialView.removeClass('hidden');
@@ -266,7 +266,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.remove'),
-                    cssClass: 'button buttonRemove hidden',
+                    cssClass: 'btn btn-danger btn-sm buttonRemove hidden',
                     callback: function(evt) {
                         var $button = $(evt.currentTarget);
                         $('.contentItem', popup.$element).not($initialView).remove();
@@ -281,7 +281,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.add'),
-                    cssClass: 'button buttonAdd hidden',
+                    cssClass: 'btn btn-success btn-sm buttonAdd hidden',
                     callback: function() {
                         $(".contentItem:first", popup.$element).removeClass('hidden');
                         if ($(".contentItem", popup.$element).length > 1) {
@@ -295,14 +295,14 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.save'),
-                    cssClass: 'button buttonOk',
+                    cssClass: 'btn btn-success btn-sm buttonOk',
                     callback: function() {
                         $("form", popup.$element).submit();
                     }
                 },
                 {
                     label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical popupClose'
+                    cssClass: 'btn btn-danger btn-sm buttonCancel popupClose'
                 }
             ]
         };
