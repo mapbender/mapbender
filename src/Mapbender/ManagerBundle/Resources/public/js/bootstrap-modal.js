@@ -23,7 +23,7 @@ window.Mapbender.bootstrapModal = (function($) {
         try {
             $content = $(content);
         } catch (Error) {
-            $content = $(document.createElement('p')).text(content);
+            $content = $(document.createElement('p')).append(content);
         }
         var $element = $wrapper.clone();
         $('.modal-dialog', $element).addClass(options.cssClass || '');
