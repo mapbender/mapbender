@@ -35,7 +35,7 @@
             <th colspan="1">
               <h3 class="subTitle">{{ region | capitalize }}</h3>
             </th>
-            <th colspan="2" class="text-right regionProperties" data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
+            <th colspan="2" class="iconColumn regionProperties" data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
               {% if form.regionProperties[region] is defined %}
                 {{ form_widget(form.regionProperties[region]) }}
               {% endif %}

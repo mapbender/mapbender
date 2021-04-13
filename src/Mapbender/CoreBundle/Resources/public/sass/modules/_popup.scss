@@ -13,8 +13,8 @@
   padding: $space 0 $space/2 0;
 }
 .popup .popupButtons {
-  .button{
-    margin-left:3px;
+  .button, .btn {
+    margin-left: 0.5em;
   }
 }
 .fom-popup {

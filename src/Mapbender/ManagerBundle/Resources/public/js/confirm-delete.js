@@ -11,11 +11,11 @@
             buttons: [
                 {
                     label: Mapbender.trans(strings.confirm),
-                    cssClass: 'button -js-confirm'
+                    cssClass: 'btn btn-danger btn-sm -js-confirm'
                 },
                 {
                     label: Mapbender.trans(strings.cancel),
-                    cssClass: 'button popupClose critical'
+                    cssClass: 'btn btn-info btn-sm popupClose'
                 }
             ]
         };

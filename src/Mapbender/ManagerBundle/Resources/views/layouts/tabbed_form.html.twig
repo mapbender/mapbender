@@ -7,8 +7,8 @@
     {{- parent() -}}
     <div class="button-group">
         {% block form_buttons %}
-        <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="btn btn-success"/>
-        <a href="{{ path( return_path | default('mapbender_manager_application_index')) }}" class="btn btn-danger">{{ 'mb.actions.cancel' | trans}}</a>
+        <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="btn btn-success btn-sm"/>
+        <a href="{{ path( return_path | default('mapbender_manager_application_index')) }}" class="btn btn-warning btn-sm">{{ 'mb.actions.cancel' | trans}}</a>
         {% endblock %}
     </div>
     {{- form_end(form) -}}
