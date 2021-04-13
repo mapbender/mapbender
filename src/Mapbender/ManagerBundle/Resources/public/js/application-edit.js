@@ -156,12 +156,9 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            var popup = new popupCls({
+            var $modal = Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans(title),
-                subTitle: ' - ' + regionName,
-                modal: true,
-                content: response,
-                cssClass: "elementPopup",
+                subTitle: regionName,
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
@@ -169,7 +166,7 @@ $(function() {
                     }
                 ]
             });
-            popup.$element.on('click', '.chooseElement', function(e) {
+            $modal.on('click', '.chooseElement', function(e) {
                 e.preventDefault();
                 var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
@@ -178,6 +175,7 @@ $(function() {
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
+                $modal.modal('hide');
 
                 startEditElement($(this).attr('href'), editStrings, [
                     {
