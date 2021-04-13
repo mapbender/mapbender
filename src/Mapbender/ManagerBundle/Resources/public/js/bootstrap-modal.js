@@ -19,26 +19,32 @@ window.Mapbender.bootstrapModal = (function($) {
     function bootstrapModal(content, options) {
         $wrapper = $wrapper || $($.parseHTML(wrapperTemplate));
         $mContent = $mContent || $($.parseHTML(contentTemplate));
+        var $content;
+        try {
+            $content = $(content);
+        } catch (Error) {
+            $content = $(document.createElement('p')).text(content);
+        }
         var $element = $wrapper.clone();
         var $contentStructure = $mContent.clone();
         var $modalContent;
 
-        if ($(content).is('form')) {
-            var $formContent = $(content).children().remove();
+        if ($content.is('form')) {
+            var $formContent = $content.children().remove();
             var $header = $('.modal-header', $contentStructure).remove();
-            $(content).first()
+            $content.first()
                 .addClass('modal-content')
                 .prepend($header)
                 .append($contentStructure)
             ;
-            $modalContent = $(content);
+            $modalContent = $content;
             $('.modal-body', $modalContent).append($formContent);
         } else {
             $modalContent = $(document.createElement('div'))
                 .addClass('modal-content')
                 .append($contentStructure)
             ;
-            $('.modal-body', $modalContent).append(content);
+            $('.modal-body', $modalContent).append($content);
         }
         $('.modal-dialog', $element).append($modalContent);
         $('.modal-title', $element).text(options.title).after(options.subtitle || '');
