@@ -179,6 +179,7 @@ $(function() {
                         cssClass: 'button buttonBack',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
+                                $(this).closest('.modal').modal('hide');
                                 startElementChooser(regionName, listUrl);
                             }
                         }
