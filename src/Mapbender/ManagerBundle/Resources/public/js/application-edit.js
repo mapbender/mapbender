@@ -167,7 +167,7 @@ $(function() {
                 var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
                     title: title,
-                    subTitle: ' - ' + regionName + ' - ' + elementTitle,
+                    subTitle: regionName + ' - ' + elementTitle,
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
