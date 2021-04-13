@@ -448,8 +448,10 @@ $(function() {
         });
 
         $('#tabCustomCss').on('click', function() {
-            codeMirror.refresh();
-            codeMirror.focus();
+            window.setTimeout(function() {
+                codeMirror.focus();
+                codeMirror.refresh();
+            });
         });
     })(jQuery);
     $('.regionProperties [data-toggle-target]').on('click', function() {
