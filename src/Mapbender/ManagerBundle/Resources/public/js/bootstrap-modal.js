@@ -54,7 +54,7 @@ window.Mapbender.bootstrapModal = (function($) {
         for (var b = 0; b < buttons_.length; ++b) {
             var buttonOptions = buttons_[b];
             var $b = $(document.createElement('button'))
-                .attr({type: 'button', 'class': buttonOptions.cssClass})
+                .attr({type: buttonOptions.type || 'button', 'class': buttonOptions.cssClass})
                 .text(buttonOptions.label)
             ;
             if (/popupClose/.test(buttonOptions.cssClass)) {

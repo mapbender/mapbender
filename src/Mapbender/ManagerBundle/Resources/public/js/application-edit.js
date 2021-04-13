@@ -262,16 +262,13 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            new popupCls({
+            Mapbender.bootstrapModal(nodes, {
                 title: Mapbender.trans(popupTitle),
-                content: [nodes],
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
                         cssClass: 'button',
-                        callback: function() {
-                            $('form', this.$element).submit();
-                        }
+                        type: 'submit'
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
