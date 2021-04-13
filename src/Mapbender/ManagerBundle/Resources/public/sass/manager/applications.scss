@@ -39,11 +39,6 @@
   width: max($popupModalWidth, $elementPopupWidth);
 }
 .popup.elementPopup {
-  width: $elementPopupWidth;
-  min-width: $popupModalWidth;
-  .popupContent {
-    min-width: $elementPopupBodyWidth;
-  }
   /*
     Temporary hack for FOM's legacy form field theme:
     Ensure enough vertical space that certain element popups ending with a dropdown

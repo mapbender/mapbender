@@ -34,7 +34,7 @@ $(function() {
         });
     }
     function confirmDiscard(e) {
-        var $form = $('form', $(this).closest('.popup'));
+        var $form = $('form', $(this).closest('.popup, .modal-dialog'));
         if ($form.data('dirty') && !$form.data('discard')) {
             // @todo: translate
             if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
@@ -110,12 +110,10 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            var popup = new popupCls({
+            var $form = $(nodes);
+            var $modal = window.Mapbender.bootstrapModal($form, {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
-                modal: true,
-                cssClass: "elementPopup",
-                content: [nodes],
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
@@ -134,15 +132,13 @@ $(function() {
                     }
                 ])
             });
-
-            popup.$element.on('change', function() {
-                var $form = $('form', popup.$element);
+            $form.on('change', function() {
                 $form.data('dirty', true);
                 $form.data('discard', false);
             });
-            popup.$element.on('close', function(event, token) {
-                if (!confirmDiscard.call(this, event)) {
-                    token.cancel = true;
+            $modal.on('hide.bs.modal', function(event) {
+                if (!confirmDiscard.call($form, event)) {
+                    event.preventDefault();
                 }
             });
         });
