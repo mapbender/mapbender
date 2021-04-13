@@ -176,16 +176,15 @@ $(function() {
             $.ajax({
                 url: url
             }).then(function(response) {
-                var popup = new Mapbender.Popup({
+                var $modal = Mapbender.bootstrapModal(filterSidContent(response, $targetTable), {
                     title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
-                    content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'btn btn-success btn-sm',
                             callback: function() {
-                                appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
-                                this.close();
+                                appendAces($targetTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
+                                $modal.modal('hide');
                             }
                         },
                         {
