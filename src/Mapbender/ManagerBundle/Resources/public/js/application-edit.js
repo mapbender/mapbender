@@ -109,10 +109,14 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
+            // Support hack for Digitizer / DataManager using complex Yaml
+            // configuration
+            var useWideModal = !!$('.elementFormDataManager', nodes).length;
             var $form = $(nodes);
             var $modal = window.Mapbender.bootstrapModal($form, {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
+                cssClass: useWideModal && 'modal-lg',
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
@@ -138,6 +142,16 @@ $(function() {
             $modal.on('hide.bs.modal', function(event) {
                 if (!confirmDiscard.call($form, event)) {
                     event.preventDefault();
+                }
+            });
+            // Fix CodeMirror textareas not rendering properly before first
+            // focus / scroll
+            $('.CodeMirror-wrap', $modal).each(function() {
+                var cm = this.CodeMirror;
+                if (cm) {
+                    window.setTimeout(function() {
+                        cm.refresh();
+                    });
                 }
             });
         });
