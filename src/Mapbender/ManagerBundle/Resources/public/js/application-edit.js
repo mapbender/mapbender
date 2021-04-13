@@ -1,5 +1,4 @@
 $(function() {
-    var popupCls = Mapbender.Popup;
     function _handleLoginRedirect(html) {
         if (/^<(!DOCTYPE|html)/i.test(html)) {
             // Redirected to login

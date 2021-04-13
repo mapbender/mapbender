@@ -34,10 +34,6 @@
   }
 }
 
-.mapbender-popup {
-  // modal mapbender popups only appear in the backend, aka manager application
-  width: max($popupModalWidth, $elementPopupWidth);
-}
 .popup.elementPopup {
   /*
     Temporary hack for FOM's legacy form field theme:
