@@ -26,6 +26,7 @@ window.Mapbender.bootstrapModal = (function($) {
             $content = $(document.createElement('p')).text(content);
         }
         var $element = $wrapper.clone();
+        $('.modal-dialog', $element).addClass(options.cssClass || '');
         var $contentStructure = $mContent.clone();
         var $modalContent;
 
@@ -47,7 +48,7 @@ window.Mapbender.bootstrapModal = (function($) {
             $('.modal-body', $modalContent).append($content);
         }
         $('.modal-dialog', $element).append($modalContent);
-        $('.modal-title', $element).text(options.title).after(options.subtitle || '');
+        $('.modal-title', $element).text(options.title).after(options.subTitle || '');
 
         var buttons_ = options.buttons || [];
         for (var b = 0; b < buttons_.length; ++b) {

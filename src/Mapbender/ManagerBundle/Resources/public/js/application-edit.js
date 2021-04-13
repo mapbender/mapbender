@@ -303,17 +303,16 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            new popupCls({
+            Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-                subTitle: " - " + layersetTitle,
-                cssClass: 'new-instance-select',
-                content: response,
-                buttons: {
-                    'cancel': {
+                subTitle: layersetTitle,
+                cssClass: 'modal-lg',
+                buttons: [
+                    {
                         label: Mapbender.trans('mb.actions.cancel'),
                         cssClass: 'button buttonCancel critical popupClose'
                     }
-                }
+                ]
             });
         });
         return false;
