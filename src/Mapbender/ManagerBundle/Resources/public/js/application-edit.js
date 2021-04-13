@@ -119,7 +119,7 @@ $(function() {
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-success btn-sm',
                         callback: function() {
                             elementFormSubmit(this.$element, formUrl).then(function(success) {
                                 if (success) {
@@ -130,7 +130,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ])
             });
@@ -165,7 +165,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ]
             });
@@ -182,7 +182,7 @@ $(function() {
                 startEditElement($(this).attr('href'), editStrings, [
                     {
                         label: Mapbender.trans('mb.actions.back'),
-                        cssClass: 'button buttonBack',
+                        cssClass: 'btn btn-warning btn-sm',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
                                 startElementChooser(regionName, listUrl);
@@ -268,14 +268,14 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-success btn-sm',
                         callback: function() {
                             $('form', this.$element).submit();
                         }
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ]
             });
@@ -311,7 +311,7 @@ $(function() {
                 buttons: {
                     'cancel': {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 }
             });
