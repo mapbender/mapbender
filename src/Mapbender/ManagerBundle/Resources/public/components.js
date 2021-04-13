@@ -299,6 +299,8 @@ $(function() {
             ]
         };
         popup = new Mapbender.Popup(popupOptions);
+        // HACK
+        var addContent = popup.addContent.bind(popup);
         $initialView = $(".contentItem:first", popup.$element);
         $permissionsTable = $('.permissionsTable', $initialView);
         $permissionsTable.each(initPermissionRoot);
@@ -314,7 +316,7 @@ $(function() {
                 success: function(data) {
                     $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
                     $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
-                    popup.addContent(filterSidContent(data, $permissionsTable));
+                    addContent(filterSidContent(data, $permissionsTable));
                 }
             });
             return false;
@@ -322,7 +324,7 @@ $(function() {
         $permissionsTable.on("click", 'tbody .iconRemove', function() {
             var $row = $(this).closest('tr');
             var sidLabel = $row.attr('data-sid-label');
-            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+            addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));
             $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
