@@ -1,22 +1,12 @@
-{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+{% extends "MapbenderCoreBundle:Login:form_box.html.twig" %}
+{%- set title = 'fom.user.login.login.title' | trans -%}
+{%- set submit_text = 'fom.user.login.login.login' -%}
 
-{% block title %}{{ 'fom.user.login.login.title' | trans}}{% endblock %}
-
-{% block box_content %}
-  <div class="loginBox login">
-    <h1 class="contentTitle">{{ 'fom.user.login.login.caption' | trans }}</h1>
-      {{ form_start(form) }}
-      {{ form_widget(form) }}
-
-      {% if selfregister == true %}
-      <a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans}}</a>
-      {% endif %}
-      {% if reset_password == true %}
-      <a class="linkButton" href="{{ path('fom_user_password_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
-      {% endif %}
-
-      <input type="submit" class="right button" value="{{ 'fom.user.login.login.login' | trans}}" />
-      <div class="clearContainer"></div>
-    {{ form_end(form) }}
-  </div>
+{% block extra_links %}
+{% if selfregister == true %}
+<a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans}}</a>
+{% endif %}
+{% if reset_password == true %}
+<a class="linkButton" href="{{ path('fom_user_password_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
+{% endif %}
 {% endblock %}

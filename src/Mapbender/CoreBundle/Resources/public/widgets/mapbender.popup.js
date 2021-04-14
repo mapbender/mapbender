@@ -316,8 +316,7 @@
 
                 if(conf.callback) {
                     button.on('click', function(event) {
-                        conf.callback.call(self, event);
-                        return false;
+                        return conf.callback.call(self, event);
                     });
                 }
                 buttonset.append(button);

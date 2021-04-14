@@ -31,9 +31,9 @@
         </div>
         <div class="col2 box">
             <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+              <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
               {% if source.id in reloadableIds %}
-              <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+              <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
               {% endif %}
               {% if is_granted('DELETE', oid) %}
                  <a href="#" class="-fn-delete hover-highlight-effect"

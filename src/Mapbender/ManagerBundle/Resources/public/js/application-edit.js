@@ -119,7 +119,7 @@ $(function() {
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-success btn-sm',
                         callback: function() {
                             elementFormSubmit(this.$element, formUrl).then(function(success) {
                                 if (success) {
@@ -130,7 +130,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ])
             });
@@ -165,7 +165,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ]
             });
@@ -182,7 +182,7 @@ $(function() {
                 startEditElement($(this).attr('href'), editStrings, [
                     {
                         label: Mapbender.trans('mb.actions.back'),
-                        cssClass: 'button buttonBack',
+                        cssClass: 'btn btn-warning btn-sm',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
                                 startElementChooser(regionName, listUrl);
@@ -238,17 +238,6 @@ $(function() {
         );
     }
 
-    // Delete element
-    $('.removeElement').bind("click", function() {
-        var $el = $(this);
-        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
-            title: 'mb.manager.components.popup.delete_element.title',
-            confirm: "mb.actions.delete",
-            cancel: "mb.actions.cancel"
-        });
-        return false;
-    });
-
     // Layers --------------------------------------------------------------------------------------
     $(document).on('click', '.-fn-add-layerset, .-fn-edit-layerset', function() {
         var $this = $(this);
@@ -268,14 +257,14 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-success btn-sm',
                         callback: function() {
                             $('form', this.$element).submit();
                         }
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 ]
             });
@@ -311,20 +300,29 @@ $(function() {
                 buttons: {
                     'cancel': {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-danger btn-sm popupClose'
                     }
                 }
             });
         });
         return false;
     });
-    // Delete instance
-    $('.removeInstance').bind("click", function() {
+    // Element / instance deletion after confirmation
+    $('.layersetTable').on('click', '.-fn-delete[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_instance.title',
             confirm: 'mb.actions.delete',
             cancel: 'mb.actions.cancel'
+        });
+        return false;
+    });
+    $('.elementsTable').on('click', '.-fn-delete[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            title: 'mb.manager.components.popup.delete_element.title',
+            confirm: "mb.actions.delete",
+            cancel: "mb.actions.cancel"
         });
         return false;
     });

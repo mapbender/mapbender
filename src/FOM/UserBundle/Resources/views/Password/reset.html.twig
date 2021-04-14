@@ -1,15 +1,3 @@
-{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
-
-{% block title %} {{ 'fom.user.password.reset.title' | trans}} {% endblock %}
-
-{% block box_content %}
-    <div class="loginBox">
-        <h2 class="contentTitle">{{ 'fom.user.password.reset.caption' | trans }}</h2>
-
-        {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
-        {{ form_widget(form) }}
-            <input type="submit" class="right button" value="{{ 'fom.user.password.reset.btn' | trans }}" />
-            <div class="clearContainer"></div>
-        {{ form_end(form) }}
-    </div>
-{% endblock %}
+{% extends "MapbenderCoreBundle:Login:form_box.html.twig" %}
+{%- set title = 'fom.user.password.reset.title' | trans -%}
+{%- set submit_text = 'fom.user.password.reset.btn' -%}

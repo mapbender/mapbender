@@ -1,11 +1,7 @@
-{% extends "MapbenderCoreBundle:Login:box.html.twig" %}
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+{%- set title = 'fom.user.registration.send.title' | trans -%}
 
-{% block title %} {{ 'fom.user.registration.send.title' | trans}} {% endblock %}
-
-{% block box_content %}
-    <div class="loginBox">
-        <h2 class="contentTitle">{{ 'fom.user.registration.send.caption' | trans}}</h2>
-        <p>{{ 'fom.user.registration.send.account_created' | trans }}</p>
-        <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.registration.send.back_to_login"|trans}}</a>
-    </div>
+{% block box_content_main %}
+    <p>{{ 'fom.user.registration.send.account_created' | trans }}</p>
+    {{ parent() }}
 {% endblock %}

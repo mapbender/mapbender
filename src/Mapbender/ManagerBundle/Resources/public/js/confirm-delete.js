@@ -14,7 +14,7 @@
             buttons: [
                 {
                     label: Mapbender.trans(strings.confirm),
-                    cssClass: 'button',
+                    cssClass: 'btn btn-danger btn-sm',
                     callback: function() {
                         if (deleteUrl_) {
                             var popup = this;
@@ -36,9 +36,8 @@
                 },
                 {
                     label: Mapbender.trans(strings.cancel),
-                    cssClass: 'button buttonCancel critical',
+                    cssClass: 'btn btn-info btn-sm popupClose',
                     callback: function() {
-                        this.close();
                         deferred.reject();
                     }
                 }

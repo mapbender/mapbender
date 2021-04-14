@@ -41,12 +41,26 @@ $(function() {
         }
     });
 
+    $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            // @todo: bring your own translation string
+            title: "mb.manager.components.popup.delete_element.title",
+            confirm: "mb.actions.delete",
+            cancel: "mb.actions.cancel"
+        });
+        return false;
+    });
+
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
-        var filterScope = filterTargetId && $('#' + filterTargetId);
+        var filterScope = filterTargetId && $this.closest('#' + filterTargetId);
+        if (filterTargetId && !filterScope.length) {
+            filterScope = $(document.getElementById(filterTargetId));
+        }
         var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
@@ -119,7 +133,7 @@ $(function() {
             var sidType = (sid.split(':')[0]).toUpperCase();
             var text = $checkbox.attr('data-label');
             var newEl = $(proto.replace(/__name__/g, count++));
-            newEl.addClass('new');
+            newEl.addClass('bg-success');
             newEl.attr('data-sid', sid);
             newEl.attr('data-sid-label', text);
             var $sidInput = $('input[type="hidden"]', newEl).first();
@@ -190,7 +204,7 @@ $(function() {
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'button',
+                            cssClass: 'btn btn-success btn-sm',
                             callback: function() {
                                 appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
                                 this.close();
@@ -198,7 +212,7 @@ $(function() {
                         },
                         {
                             label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'button buttonCancel critical popupClose'
+                            cssClass: 'btn btn-warning btn-sm popupClose'
                         }
                     ]
                 });
@@ -207,7 +221,7 @@ $(function() {
 
         return false;
     });
-    $(".permissionsTable").on("click", '.iconRemove', function() {
+    $(".permissionsTable").on("click", '.-fn-delete', function() {
         var $row = $(this).closest('tr');
         var sidLabel = $row.attr('data-sid-label');
         var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
@@ -246,7 +260,7 @@ $(function() {
                 {
                     // @todo: provide distinct label
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'button buttonReset hidden left',
+                    cssClass: 'btn btn-warning btn-sm buttonReset hidden left',
                     callback: function() {
                         // reload entire popup
                         initElementSecurity(response, url);
@@ -254,7 +268,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'button buttonBack hidden left',
+                    cssClass: 'btn btn-warning btn-sm buttonBack hidden left',
                     callback: function() {
                         $('.contentItem', popup.$element).not($initialView).remove();
                         $initialView.removeClass('hidden');
@@ -266,7 +280,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.remove'),
-                    cssClass: 'button buttonRemove hidden',
+                    cssClass: 'btn btn-danger btn-sm buttonRemove hidden',
                     callback: function(evt) {
                         var $button = $(evt.currentTarget);
                         $('.contentItem', popup.$element).not($initialView).remove();
@@ -276,12 +290,12 @@ $(function() {
                         isModified = true;
 
                         $(".buttonAdd,.buttonRemove,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
+                        $(".buttonOk,.buttonReset,.buttonCancel", popup.$element).removeClass('hidden');
                     }
                 },
                 {
                     label: Mapbender.trans('mb.actions.add'),
-                    cssClass: 'button buttonAdd hidden',
+                    cssClass: 'btn btn-success btn-sm buttonAdd hidden',
                     callback: function() {
                         $(".contentItem:first", popup.$element).removeClass('hidden');
                         if ($(".contentItem", popup.$element).length > 1) {
@@ -295,14 +309,14 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.save'),
-                    cssClass: 'button buttonOk',
+                    cssClass: 'btn btn-success btn-sm buttonOk',
                     callback: function() {
                         $("form", popup.$element).submit();
                     }
                 },
                 {
                     label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical popupClose'
+                    cssClass: 'btn btn-danger btn-sm buttonCancel popupClose'
                 }
             ]
         };
@@ -311,11 +325,8 @@ $(function() {
         $permissionsTable = $('.permissionsTable', $initialView);
         $permissionsTable.each(initPermissionRoot);
 
-        $('#addElmPermission', popup.$element).on('click', function(e) {
-            var $anchor = $(this);
-            var url = $anchor.attr('data-href') || $anchor.attr('href');
-            e.preventDefault();
-            e.stopPropagation();
+        $('.-fn-add-permission', popup.$element).on('click', function(e) {
+            var url = $(this).attr('data-url');
             $.ajax({
                 url: url,
                 type: "GET",
@@ -325,15 +336,16 @@ $(function() {
                     popup.addContent(filterSidContent(data, $permissionsTable));
                 }
             });
+            // Suppress call to global handler
             return false;
         });
-        $permissionsTable.on("click", 'tbody .iconRemove', function() {
+        $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
             var sidLabel = $row.attr('data-sid-label');
             popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));
-            $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
+            $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", popup.$element).addClass('hidden');
             $('.buttonRemove', popup.$element).data('target-row', $row);
             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
         });

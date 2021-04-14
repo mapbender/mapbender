@@ -228,7 +228,9 @@ body.mobile-template {
     margin-left: 0.5em;
   }
 
-  .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
+  .iconRemove, .iconFolder, .featureInfoWrapper {
+    display:none;
+  }
   .serviceContainer, .groupContainer{
     .layers{display:none;}
   }

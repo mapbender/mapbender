@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Voltar à página de login'
       form:
         title: Registo
-        caption: Registo
         username: Usuário
         choose_password: 'Escolha uma senha'
         confirm_password: 'Confirmar senha'
@@ -19,7 +18,6 @@ fom:
       email_subject: 'Seu registo'
       send:
         title: Registo
-        caption: Registo
         account_created: 'A sua conta foi criada. Um e-mail de activação foi enviado para o seu email.'
         back_to_login: 'Voltar à página de login'
       email_body_text: 'Olá %user_username%. Você recentemente criou uma conta. Para completar o seu registo, por favor clique no link ao seu browser %url%.'
@@ -49,7 +47,6 @@ fom:
         back_to_login: 'Voltar à página de login'
       login:
         title: Login
-        caption: Login
         username: Usuário
         password: Senha
         register: Registar
@@ -112,19 +109,16 @@ fom:
         back_to_login: 'Voltar à login'
       reset:
         title: 'Nova senha'
-        caption: 'Nova senha'
         btn: 'Nova senha'
       form:
         message: 'Para redefinir a sua senha, por favor introduza o seu nome de usuário e o seu email.'
         title: 'Esqueceu a senha'
-        caption: 'Esqueceu a senha'
         username_email: 'Usuário o email'
         back_to_login: 'Voltar à login'
         require_password: 'Exigir uma senha'
       email_subject: 'Esqueceu a senha'
       send:
         title: 'Nova senha'
-        caption: 'Nova senha'
         email_been_sent: 'O link para redefinir a sua password foi enviado para o endereço de e-mail desta conta.'
         back_to_login: 'Voltar à login'
       request:
