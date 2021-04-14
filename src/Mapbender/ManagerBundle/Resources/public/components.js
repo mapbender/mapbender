@@ -47,6 +47,9 @@ $(function() {
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
         var filterScope = filterTargetId && $('#' + filterTargetId);
+        if (filterTargetId && !filterScope.length) {
+            filterScope = $(document.getElementById(filterTargetId));
+        }
         var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
