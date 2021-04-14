@@ -356,6 +356,16 @@ ul.dropdownList{
     }
   }
 }
+.iconColumn {
+  // .iconColumn contents mix div / a / span elements, but they should all
+  // size and align the same way
+  > * {
+    display: inline-block;
+  }
+  > * + *, .screentypes i:not(:first-child) {
+    margin-left: 0.5em;
+  }
+}
 
 .popover {
   font-size: inherit;

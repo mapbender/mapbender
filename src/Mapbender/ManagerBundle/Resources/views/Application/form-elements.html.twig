@@ -67,8 +67,8 @@
                   {% if allow_screentypes %}
                   <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
                     {%- set _element_screentype = element.getScreenType() -%}
-                    <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-fw fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
-                    <i data-screentype="desktop" class="screentype-icon fa fa-fw fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
+                    <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
+                    <i data-screentype="desktop" class="screentype-icon fa fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
                   </span>
                   {% endif %}
                   <span class="iconEdit editElement hover-highlight-effect"
