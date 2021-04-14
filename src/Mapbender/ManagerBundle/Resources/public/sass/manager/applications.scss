@@ -152,15 +152,6 @@
     }
   }
 }
-.iconColumn {
-  // .iconColumn contents mix div / a / span elements, but they should all
-  // size and align the same way
-  > * {
-    display: inline-block;
-    margin: 0 0.5em;
-  }
-}
-
 // To prevent horizontal collapsse in drag-and-drop transit, .layersetTable and .elementsTable both need certain
 // cells to have forced expansion
 .elementsTable {
