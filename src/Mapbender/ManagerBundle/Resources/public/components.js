@@ -314,11 +314,8 @@ $(function() {
         $permissionsTable = $('.permissionsTable', $initialView);
         $permissionsTable.each(initPermissionRoot);
 
-        $('#addElmPermission', popup.$element).on('click', function(e) {
-            var $anchor = $(this);
-            var url = $anchor.attr('data-href') || $anchor.attr('href');
-            e.preventDefault();
-            e.stopPropagation();
+        $('.-fn-add-permission', popup.$element).on('click', function(e) {
+            var url = $(this).attr('data-url');
             $.ajax({
                 url: url,
                 type: "GET",
@@ -328,6 +325,7 @@ $(function() {
                     popup.addContent(filterSidContent(data, $permissionsTable));
                 }
             });
+            // Suppress call to global handler
             return false;
         });
         $permissionsTable.on("click", 'tbody .iconRemove', function() {
