@@ -48,7 +48,10 @@ $(function() {
         var $this = $(this);
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
-        var filterScope = filterTargetId && $('#' + filterTargetId);
+        var filterScope = filterTargetId && $this.closest('#' + filterTargetId);
+        if (filterTargetId && !filterScope.length) {
+            filterScope = $(document.getElementById(filterTargetId));
+        }
         var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
@@ -308,11 +311,8 @@ $(function() {
         $permissionsTable = $('.permissionsTable', $initialView);
         $permissionsTable.each(initPermissionRoot);
 
-        $('#addElmPermission', $initialView).on('click', function(e) {
-            var $anchor = $(this);
-            var url = $anchor.attr('data-href') || $anchor.attr('href');
-            e.preventDefault();
-            e.stopPropagation();
+        $('.-fn-add-permission', $initialView).on('click', function(e) {
+            var url = $(this).attr('data-url');
             $.ajax({
                 url: url,
                 type: "GET",
@@ -322,6 +322,7 @@ $(function() {
                     addContent(filterSidContent(data, $permissionsTable));
                 }
             });
+            // Suppress call to global handler
             return false;
         });
         $permissionsTable.on("click", 'tbody .iconRemove', function() {

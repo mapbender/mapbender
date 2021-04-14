@@ -184,7 +184,6 @@ class ElementController extends ApplicationControllerBase
             'permissions' => array(
                 1 => 'View',
             ),
-            'allow_add' => false,   // Suppress collection manipulation (custom implementation)
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
