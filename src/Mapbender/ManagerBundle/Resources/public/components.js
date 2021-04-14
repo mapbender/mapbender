@@ -210,7 +210,7 @@ $(function() {
 
         return false;
     });
-    $(".permissionsTable").on("click", '.iconRemove', function() {
+    $(".permissionsTable").on("click", '.-fn-delete', function() {
         var $row = $(this).closest('tr');
         var sidLabel = $row.attr('data-sid-label');
         var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
@@ -328,7 +328,7 @@ $(function() {
             // Suppress call to global handler
             return false;
         });
-        $permissionsTable.on("click", 'tbody .iconRemove', function() {
+        $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
             var sidLabel = $row.attr('data-sid-label');
             popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
