@@ -49,7 +49,10 @@ $(function() {
         if (!filterTargetId) {
             filterTargetId = $this.attr('id').replace("input", "list");
         }
-        var filterScope = filterTargetId && $('#' + filterTargetId);
+        var filterScope = filterTargetId && $this.closest('#' + filterTargetId);
+        if (filterTargetId && !filterScope.length) {
+            filterScope = $(document.getElementById(filterTargetId));
+        }
         if (!filterTargetId || !filterScope.length) {
             console.error("Could not find target for list filter", this, filterTargetId);
             return;
