@@ -46,7 +46,7 @@ $(function() {
         var $this = $(this);
         var val = $.trim($this.val());
         var filterTargetId = $this.attr('data-filter-target');
-        var filterScope = filterTargetId && $('#' + filterTargetId);
+        var filterScope = filterTargetId && $this.closest('#' + filterTargetId);
         if (filterTargetId && !filterScope.length) {
             filterScope = $(document.getElementById(filterTargetId));
         }
