@@ -19,7 +19,7 @@
         </td>
         <td>{{ class }}</td>
         <td class="iconColumn">
-          <a class="iconEdit iconSmall" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"></a>
+          <a class="hover-highlight-effect" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"><i class="fa fas fa-cog"></i></a>
         </td>
       </tr>
     {% endfor %}

@@ -74,8 +74,8 @@ div.contentTitle {
 .page{
   position:relative;
 }
-.iconBig, .iconSmall {
-  // Add highlights for legacy markup (.iconSmall = no other rules, FOM only)
+.iconBig {
+  // Add highlights for legacy markup
   &:before {
     @extend .hover-highlight-effect;
   }
