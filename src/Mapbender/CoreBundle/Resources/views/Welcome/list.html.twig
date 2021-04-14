@@ -55,11 +55,11 @@
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-                <span class="iconRemove hover-highlight-effect"
+                <span class="-fn-delete hover-highlight-effect"
                       title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-slug="{{ application.slug }}"
-                ></span>
+                ><i class="fa fas fa-times"></i></span>
               {% endif %}
             </div>
             <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
