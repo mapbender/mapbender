@@ -122,7 +122,7 @@ $(function() {
             var sidType = (sid.split(':')[0]).toUpperCase();
             var text = $checkbox.attr('data-label');
             var newEl = $(proto.replace(/__name__/g, count++));
-            newEl.addClass('new');
+            newEl.addClass('bg-success');
             newEl.attr('data-sid', sid);
             newEl.attr('data-sid-label', text);
             var $sidInput = $('input[type="hidden"]', newEl).first();
@@ -279,7 +279,7 @@ $(function() {
                         isModified = true;
 
                         $(".buttonAdd,.buttonRemove,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
+                        $(".buttonOk,.buttonReset,.buttonCancel", popup.$element).removeClass('hidden');
                     }
                 },
                 {
@@ -334,7 +334,7 @@ $(function() {
             popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));
-            $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
+            $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", popup.$element).addClass('hidden');
             $('.buttonRemove', popup.$element).data('target-row', $row);
             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
         });

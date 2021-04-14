@@ -325,14 +325,6 @@ ul.dropdownList{
 }
 
 .permissionsTable{
-  tr{
-    &.new{
-      td:first-child {
-        color: green;
-      }
-      background-color: #f0ffed;
-    }
-  }
   .tagbox {
     display: inline-block;
     font-size: 85%;
