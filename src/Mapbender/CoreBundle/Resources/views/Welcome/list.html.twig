@@ -38,15 +38,15 @@
           </a>
           <div class="col2 box">
             <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
+              <a class="hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"><i class="fa fas fa-desktop"></i></a>
 
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
               {%- if is_granted('CLONE', application) -%}
-                <a class="iconCopy hover-highlight-effect" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"></a>
+                <a class="hover-highlight-effect" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"><i class="fa far fa-copy"></i></a>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a class="iconEdit hover-highlight-effect" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit.title' | trans }} {{ application.title }}"></a>
+                <a class="hover-highlight-effect" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit.title' | trans }} {{ application.title }}"><i class="fa fas fa-cog"></i></a>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}

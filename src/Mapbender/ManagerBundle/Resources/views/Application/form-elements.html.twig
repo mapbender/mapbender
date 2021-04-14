@@ -45,7 +45,7 @@
             <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
-              <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
+              <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"><i class="fa fas fa-plus"></i></a>
             </th>
           </tr>
         </thead>
@@ -83,10 +83,11 @@
                         data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
                       <i class="fa fas fa-key"></i>
                   </span>
-                  <span class="iconRemove removeElement hover-highlight-effect"
+                  <span class="-fn-delete hover-highlight-effect"
                         title="{{ 'mb.actions.delete' | trans }}"
                         data-slug="{{ application.slug }}"
-                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
+                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
+                        ><i class="fa fas fa-times"></i></span>
                 </td>
               </tr>
         {% else %}
