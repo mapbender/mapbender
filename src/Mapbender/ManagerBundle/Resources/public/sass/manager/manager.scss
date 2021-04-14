@@ -89,8 +89,8 @@ div.contentTitle {
 .page{
   position:relative;
 }
-.iconBig, .iconSmall {
-  // Add highlights for legacy markup (.iconSmall = no other rules, FOM only)
+.iconBig {
+  // Add highlights for legacy markup
   &:before {
     @extend .hover-highlight-effect;
   }
@@ -231,14 +231,6 @@ ul.dropdownList{
 }
 
 .permissionsTable{
-  tr{
-    &.new{
-      td:first-child {
-        color: green;
-      }
-      background-color: #f0ffed;
-    }
-  }
   .tagbox {
     display: inline-block;
     font-size: 85%;

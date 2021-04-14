@@ -53,14 +53,14 @@
           {% endif %}
           <td class="iconColumn">
             {% if is_granted('EDIT', user) %}
-              <a class="iconEdit iconSmall" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"></a>
+              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fa fas fa-cog"></i></a>
             {% endif %}
             {% if user.id != 1 and is_granted('DELETE', user) %}
-              <span class="iconRemove iconSmall"
+              <span class="-fn-delete hover-highlight-effect"
                 title="{{"fom.user.user.index.delete_user" | trans}}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"
-              ></span>
+              ><i class="fa fas fa-times"></i></span>
             {% endif %}
           </td>
         </tr>

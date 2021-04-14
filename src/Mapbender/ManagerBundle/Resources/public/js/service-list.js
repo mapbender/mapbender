@@ -1,5 +1,5 @@
 $(function() {
-    $('#listFilterServices, .-fn-instance-list').on('click', '.iconRemove[data-url], .-fn-delete[data-url]', function(e) {
+    $('#listFilterServices, .-fn-instance-list').on('click', '.-fn-delete[data-url]', function(e) {
         e.preventDefault();
         var $el = $(this);
         var url = $el.attr('data-url');

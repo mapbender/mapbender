@@ -114,7 +114,7 @@ $(function() {
             var sidType = (sid.split(':')[0]).toUpperCase();
             var text = $checkbox.attr('data-label');
             var newEl = $(proto.replace(/__name__/g, count++));
-            newEl.addClass('new');
+            newEl.addClass('bg-success');
             newEl.attr('data-sid', sid);
             newEl.attr('data-sid-label', text);
             var $sidInput = $('input[type="hidden"]', newEl).first();
@@ -201,7 +201,7 @@ $(function() {
 
         return false;
     });
-    $(".permissionsTable").on("click", '.iconRemove', function() {
+    $(".permissionsTable").on("click", '.-fn-delete', function() {
         var $row = $(this).closest('tr');
         var sidLabel = $row.attr('data-sid-label');
         var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
@@ -271,7 +271,7 @@ $(function() {
                         isModified = true;
 
                         $(".buttonAdd,.buttonRemove,.buttonBack", $modal).addClass('hidden');
-                        $(".buttonOk,.buttonReset", $modal).removeClass('hidden');
+                        $(".buttonOk,.buttonReset,.buttonCancel", $modal).removeClass('hidden');
                     }
                 },
                 {
@@ -325,13 +325,13 @@ $(function() {
             // Suppress call to global handler
             return false;
         });
-        $permissionsTable.on("click", 'tbody .iconRemove', function() {
+        $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
             var sidLabel = $row.attr('data-sid-label');
             addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));
-            $(".contentItem:first,.buttonOk,.buttonReset", $modal).addClass('hidden');
+            $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", $modal).addClass('hidden');
             $('.buttonRemove', $modal).data('target-row', $row);
             $(".buttonRemove,.buttonBack", $modal).removeClass('hidden');
         });
