@@ -202,13 +202,13 @@
       width: 50%;
     }
   }
-  .iconColumn {
-    // .iconColumn contents mix div / a / span elements, but they should all
-    // size and align the same way
-    > * {
-      display: inline-block;
-      min-width: 1.2em;
-    }
+}
+.iconColumn {
+  // .iconColumn contents mix div / a / span elements, but they should all
+  // size and align the same way
+  > * {
+    display: inline-block;
+    min-width: 1.2em;
   }
 }
 
