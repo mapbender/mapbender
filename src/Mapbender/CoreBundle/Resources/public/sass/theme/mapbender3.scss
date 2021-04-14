@@ -34,6 +34,17 @@
   font-size: 0.85rem;
 }
 
+.iconBig {
+  font-size: 160%;
+  vertical-align: middle;   // for proper vertical align of following inline element, if any
+  &:before {
+    display: inline-block;
+  }
+}
+span.iconBig {
+  display: inline-block;
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;
