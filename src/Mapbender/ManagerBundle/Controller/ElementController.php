@@ -15,6 +15,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Class ElementController
@@ -181,8 +182,8 @@ class ElementController extends ApplicationControllerBase
         $application = $this->requireApplication($slug);
         $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
             'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View',
+            'entry_options' => array(
+                'mask' => MaskBuilder::MASK_VIEW,
             ),
         ));
         $form->handleRequest($request);
