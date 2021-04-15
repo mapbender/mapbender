@@ -26,7 +26,7 @@
 
     $.ajax({
         url: configUrl,
-        contentType: 'json'
+        contentType: 'application/json'
     }).done(function (data, textStatus, jqXHR) {
         Mapbender.configuration = data;
         $(Mapbender.setup);
