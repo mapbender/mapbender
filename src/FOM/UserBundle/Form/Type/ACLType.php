@@ -62,7 +62,6 @@ class ACLType extends AbstractType
             'mapped' => false,
             'create_standard_permissions' => true,
             'standard_anon_access' => null,
-            'aces' => null,
             'allow_add' => true,
         ));
         $resolver->setAllowedValues('mapped', array(false));
@@ -125,14 +124,10 @@ class ACLType extends AbstractType
      */
     protected function getAces(array $options)
     {
-        if (is_array($options['aces'])) {
-            return $options['aces'];
-        } else {
-            try {
-                return $this->loadAces($options);
-            } catch (\Symfony\Component\Security\Acl\Exception\Exception $e) {
-                return $this->buildAces($options);
-            }
+        try {
+            return $this->loadAces($options);
+        } catch (\Symfony\Component\Security\Acl\Exception\Exception $e) {
+            return $this->buildAces($options);
         }
     }
 

@@ -30,7 +30,6 @@ class ClassAclType extends ACLType
         ));
         $resolver->setAllowedValues('create_standard_permissions', array(false));
         $resolver->setAllowedValues('standard_anon_access', array(false));
-        $resolver->setAllowedValues('aces', array(null));
         $resolver->setAllowedValues('permissions', array(false));
     }
 
