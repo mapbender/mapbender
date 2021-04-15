@@ -57,13 +57,12 @@
                 <td class="titleColumn">{{ element_title(element) | trans }}</td>
                 <td class="typeColumn">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{ element.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
-                       title="{{ 'mb.manager.admin.element.show_hide' | trans }}"
-                       data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input
-                           data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
-                           data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
-                  </div>
+                  <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
+                      data-toggle-flag-icons="fa-eye-slash:fa-eye"
+                      data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
+                      title="{{ 'mb.manager.admin.element.show_hide' | trans }}">
+                    <i class="fa fas {{ element.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                  </span>
                   {% if allow_screentypes %}
                   <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
                     {%- set _element_screentype = element.getScreenType() -%}

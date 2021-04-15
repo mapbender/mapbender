@@ -323,16 +323,10 @@ class ElementController extends ApplicationControllerBase
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
 
-        $enabled = $request->get("enabled");
         if (!$element) {
-            return new JsonResponse(array(
-                /** @todo: use http status codes to communicate error conditions */
-                'error' => 'An element with the id "' . $id . '" does not exist.',
-            ));
-
+            throw $this->createNotFoundException();
         } else {
-            $enabled_before = $element->getEnabled();
-            $enabled = $enabled === "true" ? true : false;
+            $enabled = $request->request->get("enabled") === "true";
             $element->setEnabled($enabled);
             $em = $this->getEntityManager();
             $application = $element->getApplication();
@@ -340,16 +334,7 @@ class ElementController extends ApplicationControllerBase
             $em->persist($application);
             $em->persist($element);
             $em->flush();
-            return new JsonResponse(array(
-                'success' => array(         // why?
-                    "id" => $element->getId(),
-                    "type" => "element",
-                    "enabled" => array(
-                        'before' => $enabled_before,
-                        'after' => $enabled,
-                    ),
-                ),
-            ));
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
     }
 

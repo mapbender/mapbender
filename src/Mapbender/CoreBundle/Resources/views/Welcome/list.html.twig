@@ -2,11 +2,6 @@
 
 {% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
 
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
-{% endblock %}
-
 {% block list_actions %}
 {%- if create_permission -%}
   <a href="{{ path('mapbender_manager_application_new') }}" title="{{ 'mb.manager.admin.application.new.title' | trans }}"
@@ -50,8 +45,11 @@
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a href="#" class="{{ application.published ? 'iconPublishActive' : 'iconPublish disabled' }} hover-highlight-effect" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}"
-                   data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"></a>
+                <span class="-fn-toggle-flag {{ application.published ? '-js-on' : '-js-off' }} hover-highlight-effect" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}"
+                    data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
+                    data-toggle-flag-icons="fa-eye-slash:fa-eye">
+                    <i class="fa fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                </span>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}

@@ -417,23 +417,6 @@ $(function() {
 
     deleteScreenShotButtonInit();
 
-    $(document).ready(function() {
-        $('.application-component-table tbody .iconColumn input[type="checkbox"][data-url]').each(function() {
-            var self = this;
-            initCheckbox.call(this);
-            $(self).on("change", function() {
-                $.ajax({
-                    url: $(self).attr('data-url'),
-                    type: 'POST',
-                    data: {
-                        'id': $(self).attr('data-id'),
-                        'enabled': $(self).is(":checked")
-                    }
-                });
-            });
-        });
-    });
-
     // Custom CSS editor
     (function($) {
         var textarea = $('#application_custom_css');

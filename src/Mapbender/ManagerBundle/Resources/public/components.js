@@ -380,4 +380,25 @@ $(function() {
             $target.toggleClass('disabled');
         });
     });
+
+    $(document).on('click', '.-fn-toggle-flag[data-url]', function() {
+        var $this = $(this);
+        $this.toggleClass('-js-on -js-off');
+        var iconSet = $this.attr('data-toggle-flag-icons').split(':');
+        var $icon = $('>i', this);
+        var enabled = !!$this.hasClass('-js-on');
+        $.ajax($this.attr('data-url'), {
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                // Send string "true" or string "false"
+                enabled: "" + enabled
+            }
+        }).then(function() {
+            $icon
+                .toggleClass(iconSet[1], enabled)
+                .toggleClass(iconSet[0], !enabled)
+            ;
+        });
+    });
 });

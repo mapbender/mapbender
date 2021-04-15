@@ -481,7 +481,7 @@ class RepositoryController extends ApplicationControllerBase
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
         $em = $this->getEntityManager();
-        $newEnabled = $request->get('enabled') === 'true';
+        $newEnabled = $request->request->get('enabled') === 'true';
         $assignment->setEnabled($newEnabled);
         $application->setUpdated(new \DateTime('now'));
         $em->persist($application);
