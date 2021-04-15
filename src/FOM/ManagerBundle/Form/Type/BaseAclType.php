@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Acl\Model\AclProviderInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class BaseAclType extends AbstractType
@@ -17,16 +17,16 @@ abstract class BaseAclType extends AbstractType
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
-    /** @var AclProviderInterface */
+    /** @var MutableAclProviderInterface */
     protected $aclProvider;
 
     /**
      * @param TokenStorageInterface $tokenStorage
-     * @param AclProviderInterface $aclProvider
+     * @param MutableAclProviderInterface $aclProvider
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        AclProviderInterface $aclProvider)
+        MutableAclProviderInterface $aclProvider)
     {
         $this->tokenStorage = $tokenStorage;
         $this->aclProvider = $aclProvider;
