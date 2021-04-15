@@ -21,8 +21,6 @@
     }
     .sortableItem {
       cursor: move;
-      padding-left: 5px;
-      padding-right: 5px;
       label {
         cursor: inherit;
       }
@@ -30,10 +28,6 @@
         background-color: darken($inputBackgroundColor, 10%);
       }
     }
-  }
-  // add margin between consecutive "inline" checkboxes with .left
-  .left .labelCheck {
-    margin-right: $space;
   }
   .left .checkbox {
     display: inline-block;
