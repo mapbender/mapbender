@@ -1,4 +1,4 @@
-## dev-master @ 73868bbe6
+## dev-master @ 3c7250ccf
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
@@ -12,9 +12,12 @@
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
+* [Forms] Update form theme to emit Bootstrap checkboxes and (margin-providing) form-group containers (see [PR#1343](https://github.com/mapbender/mapbender/pull/1343))
 * [Backend] Fix new application form sometimes missing the security tab header
 * [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 * [Backend] Fix filter input in Element security dialog not working
+* Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
+* Misc cleanups of Fontawesome 5+ incompatibilities in backend
 * Misc legacy CSS cleanups
 
 ## v3.2.4

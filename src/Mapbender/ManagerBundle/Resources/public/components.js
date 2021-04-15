@@ -43,6 +43,17 @@ $(function() {
         }
     });
 
+    $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            // @todo: bring your own translation string
+            title: "mb.manager.components.popup.delete_element.title",
+            confirm: "mb.actions.delete",
+            cancel: "mb.actions.cancel"
+        });
+        return false;
+    });
+
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);

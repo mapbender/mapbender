@@ -94,7 +94,7 @@
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right iconCancel iconBig"></span>',
+                '      <span class="popupClose right"><i class="fa fas fa-times fa-2x"></i></span>',
                 '    </div>',
                 '    <div class="popupScroll">',
                 '      <div class="clear popupContent"></div>',

@@ -29,27 +29,17 @@
 {%- endif -%}
 
 <div class="elementForm elementFormLayerTree">
-    <div>
-        <div class="left">
-            {{ form_row(form.configuration.showBaseSource) }}
-        </div>
-        <div class="left">
-            {{ form_row(form.configuration.autoOpen) }}
-        </div>
-        <div class="clearContainer"></div>
+    <div class="form-group no-gutters">
+        {{ form_widget(form.configuration.showBaseSource, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.autoOpen, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.target) }}
     {{ form_row(form.configuration.type) }}
     {{ form_row(form.configuration.menu) }}
-    <div>
-        <div class="left">
-            {{ form_row(form.configuration.hideSelect) }}
-        </div>
-        <div class="left">
-            {{ form_row(form.configuration.hideInfo) }}
-        </div>
-        <div class="clearContainer"></div>
+    <div class="form-group no-gutters">
+        {{ form_widget(form.configuration.hideSelect, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.hideInfo, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.configuration.useTheme) }}
     {% if form.configuration.themes is defined %}

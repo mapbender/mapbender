@@ -246,17 +246,6 @@ $(function() {
         );
     }
 
-    // Delete element
-    $('.removeElement').bind("click", function() {
-        var $el = $(this);
-        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
-            title: 'mb.manager.components.popup.delete_element.title',
-            confirm: "mb.actions.delete",
-            cancel: "mb.actions.cancel"
-        });
-        return false;
-    });
-
     // Layers --------------------------------------------------------------------------------------
     $(document).on('click', '.-fn-add-layerset, .-fn-edit-layerset', function() {
         var $this = $(this);
@@ -322,13 +311,22 @@ $(function() {
         });
         return false;
     });
-    // Delete instance
-    $('.removeInstance').bind("click", function() {
+    // Element / instance deletion after confirmation
+    $('.layersetTable').on('click', '.-fn-delete[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_instance.title',
             confirm: 'mb.actions.delete',
             cancel: 'mb.actions.cancel'
+        });
+        return false;
+    });
+    $('.elementsTable').on('click', '.-fn-delete[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            title: 'mb.manager.components.popup.delete_element.title',
+            confirm: "mb.actions.delete",
+            cancel: "mb.actions.cancel"
         });
         return false;
     });

@@ -73,9 +73,9 @@
                     <input data-url="{{ _toggle_url }}" type="checkbox" {% if assignment.enabled %} checked="checked" {% endif %}>
                   </div>
                   {#- this comment eats whitespace -#}
-                  <a href="{{ _edit_url  }}" class="iconEdit hover-highlight-effect editInstance" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"></a>
+                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
                   {%- if _delete_url -%}
-                  <span data-url="{{ _delete_url }}" class="iconRemove hover-highlight-effect removeInstance" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"></span>
+                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fas fa-times"></i></span>
                   {%- endif -%}
                 </td>
               </tr>

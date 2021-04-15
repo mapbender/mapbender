@@ -150,24 +150,6 @@
 {%- endif -%}
 {%- endblock choice_widget_collapsed -%}
 
-{# @todo: remove legacy checkbox after fixing all layouting issues #}
-{% block checkbox_widget_LEGACY %}
-  {% spaceless %}
-    {# @todo: remove .left (float) if rendered via form_row, keep it if rendered otherwise...? #}
-    {% set _wrapperClass = 'checkWrapper iconCheckbox left' %}
-    {% if checked %}
-      {% set _wrapperClass = _wrapperClass~' iconCheckboxActive' %}
-    {% endif %}
-    {% if disabled %}
-      {% set _wrapperClass = _wrapperClass~' checkboxDisabled' %}
-    {% endif %}
-    <div class="{{ _wrapperClass }}" data-icon="iconCheckbox">
-      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    </div>
-  {% endspaceless %}
-{% endblock %}
-
-
 {%- block hidden_widget -%}
   <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 {%- endblock hidden_widget -%}

@@ -89,12 +89,6 @@ div.contentTitle {
 .page{
   position:relative;
 }
-.iconBig {
-  // Add highlights for legacy markup
-  &:before {
-    @extend .hover-highlight-effect;
-  }
-}
 
 .notifyjs-corner {
   z-index: 100000 !important;
