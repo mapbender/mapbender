@@ -19,25 +19,18 @@
       // @todo: .input should not have any height rule
       height: auto;
     }
-    .checkWrapper.left {
-      // undo redundant floats
-      // @todo: unfloat checkboxes globally
-      float: none;
-    }
     .sortableItem {
       cursor: move;
       label {
         cursor: inherit;
-        max-width: 90%; // Prevent breaking to new line if content is very long
-        margin-bottom: 0;
       }
       &:hover {
         background-color: darken($inputBackgroundColor, 10%);
       }
     }
   }
-  // add margin between consecutive "inline" checkboxes with .left
-  .left .labelCheck {
+  .left .checkbox {
+    display: inline-block;
     margin-right: $space;
   }
 }

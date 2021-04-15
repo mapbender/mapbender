@@ -1,18 +1,9 @@
 <div class="extraWideLabelForm">
-    <div>
-        <div class="left">
-            {{ form_row(form.configuration.autoActivate) }}
-        </div>
-        <div class="left">
-            {{ form_row(form.configuration.deactivateOnClose) }}
-        </div>
-        <div class="left">
-            {{ form_row(form.configuration.printResult) }}
-        </div>
-        <div class="left">
-            {{ form_row(form.configuration.onlyValid) }}
-        </div>
-        <div class="clearContainer"></div>
+    <div class="form-group no-gutters">
+        {{ form_widget(form.configuration.autoActivate, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.deactivateOnClose, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.printResult, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.onlyValid, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.target) }}

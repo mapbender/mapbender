@@ -6,6 +6,7 @@
 
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
+{% use "bootstrap_3_layout.html.twig" with checkbox_widget as bs3_checkbox_widget, checkbox_label as bs3_checkbox_label %}
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
@@ -149,41 +150,31 @@
 {%- endif -%}
 {%- endblock choice_widget_collapsed -%}
 
-{% block checkbox_widget %}
-  {% spaceless %}
-    {# @todo: remove .left (float) if rendered via form_row, keep it if rendered otherwise...? #}
-    {% set _wrapperClass = 'checkWrapper iconCheckbox left' %}
-    {% if checked %}
-      {% set _wrapperClass = _wrapperClass~' iconCheckboxActive' %}
-    {% endif %}
-    {% if disabled %}
-      {% set _wrapperClass = _wrapperClass~' checkboxDisabled' %}
-    {% endif %}
-    <div class="{{ _wrapperClass }}" data-icon="iconCheckbox">
-      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    </div>
-  {% endspaceless %}
-{% endblock checkbox_widget %}
-
-
 {%- block hidden_widget -%}
   <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 {%- endblock hidden_widget -%}
 
-{% block form_label %}
+{%- block form_label -%}
   {%- if 'checkbox' in form.vars.block_prefixes -%}
-    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelCheck') | trim}) -%}
+    {{- block('bs3_checkbox_label') -}}
   {%- else -%}
     {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
+    {{- block('div_form_label') -}}
   {%- endif -%}
-  {{- block('div_form_label') -}}
 {% endblock form_label %}
 
+{%- block checkbox_widget -%}
+  {{- block('bs3_checkbox_widget') -}}
+{%- endblock -%}
+{%- block checkbox_label -%}
+  {{- block('bs3_checkbox_label') -}}
+{%- endblock -%}
+
 {% block checkbox_row %}
-<div>
-  {{- form_widget(form) -}}
-  {{- form_label(form) -}}
-</div>
+  <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
+    {{- block('checkbox_widget') -}}
+    {{- block('form_errors_inline') -}}
+  </div>
 {% endblock checkbox_row %}
 
 {% block form_row %}
@@ -196,7 +187,7 @@
       {{ form_widget(form) }}
     </div>
   {%- else -%}
-    <div>
+    <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}
       {{- form_widget(form) -}}
       {{- block('form_errors_inline') -}}

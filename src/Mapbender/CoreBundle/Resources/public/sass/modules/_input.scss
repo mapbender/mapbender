@@ -47,6 +47,16 @@ textarea.input {
   .input, select {
       width: 100%;
   }
+  .form-horizontal & .checkbox {
+    // Undo default padding-top: 7px and min-height: 27px
+    padding-top: 0;
+    min-height: initial;
+  }
+}
+
+table .checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .validationMsgBox {
   position: absolute;
@@ -59,5 +69,4 @@ textarea.input {
     padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
-
 }

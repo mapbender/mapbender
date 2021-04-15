@@ -1,9 +1,9 @@
 {%- form_theme form _self -%}
 {%- if false -%}
 {%- block _application_screenshotFile_row -%}
-    {{- form_label(form) -}}
-    <div class="screenshot_upload" title="{{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
-        <div class="upload">
+    <div class="form-group no-gutters screenshot_upload">
+        {{- form_label(form) -}}
+        <div class="upload" title="{{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
             <span class="button upload_button">
                 {{ 'mb.manager.admin.application.upload.button' | trans }}
             </span>
@@ -19,27 +19,14 @@
 {%- endif -%}
 <div class="col-xs-8">
     {%- if form.template is defined -%}
-    <div class="form-group">
-        {{ form_row(form.template) }}
-    </div>
+    {{ form_row(form.template) }}
     {%- endif -%}
 
-    <div class="form-group">
-        {{ form_row(form.title) }}
-    </div>
-    <div class="form-group">
-        {{ form_row(form.slug) }}
-    </div>
-
-    <div class="form-group">
-        {{- form_row(form.screenshotFile) -}}
-    </div>
-    <div class="form-group">
-        {{ form_row(form.map_engine_code) }}
-    </div>
-    <div class="form-group">
-        {{ form_row(form.description) }}
-    </div>
+    {{ form_row(form.title) }}
+    {{ form_row(form.slug) }}
+    {{- form_row(form.screenshotFile) -}}
+    {{ form_row(form.map_engine_code) }}
+    {{ form_row(form.description) }}
     {{ form_row(form.persistentView) }}
 </div>
 <div class="col-xs-4">
