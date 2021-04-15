@@ -353,22 +353,11 @@ class ApplicationController extends WelcomeController
 
         $em = $this->getEntityManager();
 
-        $requestedState = $request->request->get('state');
-        $oldState = $application->isPublished();
+        $requestedState = $request->request->get("enabled") === "true";
+        $application->setPublished($requestedState);
+        $em->flush();
 
-        switch ($requestedState) {
-            case 'enabled':
-            case 'disabled':
-                $newState = $requestedState === 'enabled' ? true : false;
-                $application->setPublished($newState);
-                $em->flush();
-                return new JsonResponse(array(
-                    'oldState' => ($oldState ? 'enabled' : 'disabled'),
-                    'newState' => ($newState ? 'enabled' : 'disabled'),
-                ));
-            default:
-                throw new BadRequestHttpException();
-        }
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

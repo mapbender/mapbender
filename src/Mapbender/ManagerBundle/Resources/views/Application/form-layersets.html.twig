@@ -67,11 +67,12 @@
                   {%- endif -%}
                   &nbsp;{{ instance.source.type }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper hover-highlight-effect {{  instance.enabled ? 'iconPublishActive' : 'iconPublish' }} -ft-toggle-active"
+                  <span class="-fn-toggle-flag {{ instance.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
-                       data-icon-off="iconPublish" data-icon-on="iconPublishActive">
-                    <input data-url="{{ _toggle_url }}" type="checkbox" {% if assignment.enabled %} checked="checked" {% endif %}>
-                  </div>
+                       data-toggle-flag-icons="fa-eye-slash:fa-eye"
+                       data-url="{{ _toggle_url }}">
+                    <i class="fa fas {{ instance.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                  </span>
                   {#- this comment eats whitespace -#}
                   <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
                   {%- if _delete_url -%}
