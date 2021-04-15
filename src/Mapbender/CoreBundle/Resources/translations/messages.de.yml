@@ -364,7 +364,7 @@ mb:
           remove: 'Entfernen der Geometrie'
           edit: 'Editieren der Geometrie'
           zoom: 'Zoom auf die Geometrie'
-          stop_drawing: Zeichnen beenden
+          stop_drawing: Zeichnen unterbrechen
       class:
         title: Skizzen
         description: Zeichenwerkzeug
