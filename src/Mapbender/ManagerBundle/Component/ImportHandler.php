@@ -90,10 +90,11 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * @param Application $app
+     * @param string|null $preferredSlug
      * @return Application
      * @throws ImportException
      */
-    public function duplicateApplication(Application $app)
+    public function duplicateApplication(Application $app, $preferredSlug = null)
     {
         $originalSlug = $app->getSlug();
         $importPool = new EntityPool();
@@ -109,6 +110,9 @@ class ImportHandler extends ExchangeHandler
             // database table, but it doesn't account for Yaml-defined
             // applications!
             $app->setSlug($app->getSlug() . '_db');
+        }
+        if ($preferredSlug) {
+            $app->setSlug($preferredSlug);
         }
 
         $exportData = $this->exportHandler->exportApplication($app);
