@@ -13,7 +13,6 @@ fom:
         back_to_login: 'Back to login'
       form:
         title: Registration
-        username: Username
         choose_password: 'Choose password'
         confirm_password: 'Confirm password'
         email: Email
@@ -51,7 +50,7 @@ fom:
         back_to_login: 'Back to login'
       login:
         title: Login
-        username: Username
+        username: User name
         password: Password
         register: Register
         forgot_password: 'Forgot password'
@@ -87,7 +86,7 @@ fom:
         name: Name
         users_of_selected: 'groups of %users_count% selected'
         no_groups_defined: No groups defined
-        username: Username
+        username: User name
         description: Description
         activated: activated
     acl:
@@ -117,7 +116,7 @@ fom:
       form:
         message: 'To reset your password please provide your username or your e-mail address.'
         title: 'Forgot password'
-        username_email: 'Username or Email'
+        username_email: User name or Email
         back_to_login: 'Back to login'
         require_password: 'Require password'
       email_subject: 'Forgot password'

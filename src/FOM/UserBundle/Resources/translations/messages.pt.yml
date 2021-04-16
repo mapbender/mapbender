@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Voltar à página de login'
       form:
         title: Registo
-        username: Usuário
         choose_password: 'Escolha uma senha'
         confirm_password: 'Confirmar senha'
         email: Email
@@ -83,7 +82,7 @@ fom:
         name: Nome
         users_of_selected: 'grupos de %users_count% selecionados'
         no_groups_defined: Não definia grupos
-        username: Username
+        username: Usuário
         description: Description
         activated: activated
     acl:

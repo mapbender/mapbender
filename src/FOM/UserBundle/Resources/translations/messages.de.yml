@@ -13,7 +13,6 @@ fom:
         back_to_login: 'Zurück zum Login'
       form:
         title: Registrierung
-        username: Benutzernamename
         choose_password: 'Passwort auswählen'
         confirm_password: 'Passwort bestätigen'
         email: E-Mail
