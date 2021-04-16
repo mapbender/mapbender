@@ -5,7 +5,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints;
 
 
@@ -18,7 +17,6 @@ class ApplicationType extends AbstractType
             'maxFileSize' => 2097152,
             'screenshotHeight' => 200,
             'screenshotWidth' => 200,
-            'include_acl' => true,
         ));
     }
 
@@ -106,19 +104,5 @@ class ApplicationType extends AbstractType
         $builder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
             'application' => $application,
         ));
-
-        if ($options['include_acl']) {
-            if ($application->getId()) {
-                $objectIdentity = ObjectIdentity::fromDomainObject($application);
-            } else {
-                $objectIdentity = null;
-            }
-            $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'object_identity' => $objectIdentity,
-                    'create_standard_permissions' => true,
-                ))
-            ;
-        }
     }
 }

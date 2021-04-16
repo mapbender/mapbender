@@ -10,6 +10,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserType extends AbstractType
@@ -76,16 +78,20 @@ class UserType extends AbstractType
         if ($options['acl_permission']) {
             /** @var User $user */
             $user = $options['data'];
+            $aclOptions = array();
             if ($user->getId()) {
-                $objectIdentity = ObjectIdentity::fromDomainObject($user);
+                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
             } else {
-                $objectIdentity = null;
+                $aclOptions['data'] = array(
+                    array(
+                        'sid' => UserSecurityIdentity::fromToken($this->tokenStorage->getToken()),
+                        'mask' => MaskBuilder::MASK_OWNER,
+                    ),
+                );
             }
 
             $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'object_identity' => $objectIdentity,
-                ))
+                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions)
             ;
         }
         if ($this->profileType) {

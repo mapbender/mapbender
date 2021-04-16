@@ -25,7 +25,6 @@ class ACLType extends BaseAclType
         parent::configureOptions($resolver);
         $resolver->setDefaults(array(
             'object_identity' => null,
-            'create_standard_permissions' => true,
             'entry_options' => array(
                 'mask' => array_sum(array(
                     // Same as ACEType default, minus MASK_CREATE
@@ -51,35 +50,6 @@ class ACLType extends BaseAclType
     }
 
     /**
-     * Creates some default ACEs for a newly created ACL.
-     *
-     * @param $options
-     * @return array[]
-     */
-    protected function buildAces($options)
-    {
-        $aces = array();
-        if ($options['create_standard_permissions']) {
-            // for unsaved entities, fake three standard permissions:
-            // - Owner access for current user
-            // - View access for anonymous users
-            // - View access for logged in users
-            $aces = array();
-
-            $token = $this->tokenStorage->getToken();
-            if ($token) {
-                $ownerAccess = array(
-                    'sid' => UserSecurityIdentity::fromToken($token),
-                    'mask' => MaskBuilder::MASK_OWNER,
-                );
-                $aces[] = $ownerAccess;
-            }
-        }
-
-        return $aces;
-    }
-
-    /**
      * @param array $options
      * @return EntryInterface[]|array[] for array type, each entry has keys 'mask' (integer bit mask) and 'sid' (SecurityIdentityInterface)
      * @todo: fix inconsistent value types. These are currently fixed at the ACE level
@@ -94,6 +64,6 @@ class ACLType extends BaseAclType
                 // fall through
             }
         }
-        return $this->buildAces($options);
+        return array();
     }
 }

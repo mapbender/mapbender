@@ -185,7 +185,6 @@ class ElementController extends ApplicationControllerBase
             'label' => false,
         ));
         $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-            'create_standard_permissions' => false,
             'object_identity' => ObjectIdentity::fromDomainObject($element),
             'entry_options' => array(
                 'mask' => MaskBuilder::MASK_VIEW,
