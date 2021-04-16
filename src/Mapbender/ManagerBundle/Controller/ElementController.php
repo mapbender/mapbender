@@ -207,6 +207,7 @@ class ElementController extends ApplicationControllerBase
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
+                '_fragment' => 'tabLayout',
             ));
         }
         return $this->render('@MapbenderManager/Element/security.html.twig', array(
