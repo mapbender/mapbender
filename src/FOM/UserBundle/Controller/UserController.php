@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * User management controller
@@ -107,15 +110,29 @@ class UserController extends UserControllerBase
         }
 
         $oid = new ObjectIdentity('class', get_class($user));
+        $ownerGranted = $this->isGranted('OWNER', $isNew ? $oid : $user);
         $groupPermission =
             $this->isGranted('EDIT', new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group'))
-            || $this->isGranted('OWNER', $isNew ? $oid : $user);
+            || $ownerGranted;
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
             'group_permission' => $groupPermission,
-            // @todo: disallow user without global grants from editing other users' privileges
-            'acl_permission'   => $this->isGranted('OWNER', $user),
         ));
+        if ($ownerGranted) {
+            $aclOptions = array();
+            if ($user->getId()) {
+                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
+            } else {
+                $aclOptions['data'] = array(
+                    array(
+                        'sid' => UserSecurityIdentity::fromToken($this->getUserToken()),
+                        'mask' => MaskBuilder::MASK_OWNER,
+                    ),
+                );
+            }
+
+            $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
+        }
 
         $form->handleRequest($request);
 
@@ -245,5 +262,15 @@ class UserController extends UserControllerBase
             $em->persist($profile);
         }
         $em->persist($user);
+    }
+
+    /**
+     * @return TokenInterface|null
+     */
+    protected function getUserToken()
+    {
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->get('security.token_storage');
+        return $tokenStorage->getToken();
     }
 }

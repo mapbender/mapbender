@@ -2,16 +2,12 @@
 
 namespace FOM\UserBundle\Form\Type;
 
-use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Form\EventListener\UserSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserType extends AbstractType
@@ -75,25 +71,6 @@ class UserType extends AbstractType
                 ));
         }
 
-        if ($options['acl_permission']) {
-            /** @var User $user */
-            $user = $options['data'];
-            $aclOptions = array();
-            if ($user->getId()) {
-                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
-            } else {
-                $aclOptions['data'] = array(
-                    array(
-                        'sid' => UserSecurityIdentity::fromToken($this->tokenStorage->getToken()),
-                        'mask' => MaskBuilder::MASK_OWNER,
-                    ),
-                );
-            }
-
-            $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions)
-            ;
-        }
         if ($this->profileType) {
             $builder->add('profile', $this->profileType, array(
                 'label' => 'fom.user.user.container.profile',
@@ -105,7 +82,6 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults(array(
             'group_permission' => false,
-            'acl_permission' => false,
             'allow_name_editing' => function (Options $options) {
                 if ($options['group_permission']) {
                     return true;
