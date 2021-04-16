@@ -71,15 +71,6 @@ class UserType extends AbstractType
                 ));
         }
 
-        if ($options['acl_permission']) {
-            $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'data' => $options['data'],
-                    'permissions' => 'standard::object',
-                    'standard_anon_access' => false,
-                ))
-            ;
-        }
         if ($this->profileType) {
             $builder->add('profile', $this->profileType, array(
                 'label' => 'fom.user.user.container.profile',
@@ -91,7 +82,6 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults(array(
             'group_permission' => false,
-            'acl_permission' => false,
             'allow_name_editing' => function (Options $options) {
                 if ($options['group_permission']) {
                     return true;

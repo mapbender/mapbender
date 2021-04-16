@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
@@ -33,6 +32,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -426,11 +426,10 @@ class ApplicationController extends WelcomeController
                 // @todo: use form error translations directly; also support message for empty title
                 $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
             }
-            // NOTE: Symfony 2.8 router does not support "_fragment" magic parameter
-            $redirectUrl = $this->generateUrl('mapbender_manager_application_edit', array(
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
+                '_fragment' => 'tabLayers',
             ));
-            return $this->redirect($redirectUrl . '#tabLayers');
         }
 
         return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
@@ -775,9 +774,22 @@ class ApplicationController extends WelcomeController
      */
     private function createApplicationForm(Application $application)
     {
-        return $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application, array(
-            'include_acl' => $this->allowAclEditing($application),
-        ));
+        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application);
+        if ($this->allowAclEditing($application)) {
+            $aclOptions = array();
+            if ($application->getId()) {
+                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($application);
+            } else {
+                $aclOptions['data'] = array(
+                    array(
+                        'sid' => UserSecurityIdentity::fromToken($this->getUserToken()),
+                        'mask' => MaskBuilder::MASK_OWNER,
+                    ),
+                );
+            }
+            $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
+        }
+        return $form;
     }
 
     /**

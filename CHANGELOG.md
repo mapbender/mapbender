@@ -1,5 +1,7 @@
-## dev-master @ 3c7250ccf
+## dev-master @ b71ad1481
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
+* Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
+* Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
 * Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
 * Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320]((https://github.com/mapbender/mapbender/issues/1320))
@@ -16,6 +18,7 @@
 * [Backend] Fix new application form sometimes missing the security tab header
 * [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 * [Backend] Fix filter input in Element security dialog not working
+* [Backend] Fix missing redirect to "Layouts" tab after saving Element security
 * Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
 * Misc cleanups of Fontawesome 5+ incompatibilities in backend
 * Misc legacy CSS cleanups
@@ -232,11 +235,12 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 54bcf8d7c
+## dev-release/3.0.7 @ e10d2995e
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
 - Fix duplicated owner of cloned application
+- Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 - Fix backend element list interaction tooltips on Yaml applications copied into db
 - Fix frontend sidepane accordion header text alignment
 - Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))

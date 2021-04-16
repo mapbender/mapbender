@@ -19,7 +19,6 @@
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
-        <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
@@ -192,9 +191,6 @@
             <argument type="service" id="filesystem" />
             <argument>%kernel.root_dir%/../web</argument>
             <argument>%mapbender.uploads_dir%</argument>
-        </service>
-        <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
-            <argument type="service" id="security.acl.provider" />
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />

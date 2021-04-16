@@ -17,7 +17,6 @@ class ApplicationType extends AbstractType
             'maxFileSize' => 2097152,
             'screenshotHeight' => 200,
             'screenshotWidth' => 200,
-            'include_acl' => true,
         ));
     }
 
@@ -105,15 +104,5 @@ class ApplicationType extends AbstractType
         $builder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
             'application' => $application,
         ));
-
-        if ($options['include_acl']) {
-            $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'data' => $options['data'],
-                    'create_standard_permissions' => true,
-                    'permissions' => 'standard::object',
-                ))
-            ;
-        }
     }
 }
