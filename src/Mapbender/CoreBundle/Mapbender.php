@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\UploadsManager;
-use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -213,11 +212,6 @@ class Mapbender
             $element->setConfiguration($config);
             $this->manager->persist($element);
         }
-
-
-        /** @var YamlApplicationImporter $importerService */
-        $importerService = $this->container->get('mapbender.yaml_application_importer.service');
-        $importerService->addViewPermissions($application);
 
         $this->manager->flush();
         $this->manager->commit();

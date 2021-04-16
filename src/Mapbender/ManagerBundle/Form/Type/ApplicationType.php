@@ -98,6 +98,7 @@ class ApplicationType extends AbstractType
                     'mapped' => false,
                     'data' => $options['data'],
                     'create_standard_permissions' => true,
+                    'standard_anon_access' => false,
                     'permissions' => 'standard::object',
                 ))
             ;
