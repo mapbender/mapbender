@@ -120,5 +120,8 @@ class Mapbender
         $clonedApp = $this->importer->duplicateApplication($application, $newSlug);
         $clonedApp->setTitle($newTitle);
         $this->manager->commit();
+        if (\php_sapi_name() === 'cli') {
+            echo "Created database application {$clonedApp->getSlug()}\n";
+        }
     }
 }
