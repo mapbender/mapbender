@@ -5,10 +5,8 @@ use FOM\ManagerBundle\Form\Type\BaseAclType;
 use FOM\UserBundle\Form\DataTransformer\ACEDataTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 
 /**
@@ -26,6 +24,7 @@ class ACLType extends BaseAclType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults(array(
+            'object_identity' => null,
             'create_standard_permissions' => true,
             'entry_options' => array(
                 'mask' => array_sum(array(
@@ -39,12 +38,15 @@ class ACLType extends BaseAclType
                 )),
             ),
         ));
+        $resolver->setAllowedTypes('object_identity', array(
+            'null',
+            'Symfony\Component\Security\Acl\Model\ObjectIdentityInterface',
+        ));
     }
 
     protected function loadAces($options)
     {
-        $oid = ObjectIdentity::fromDomainObject($options['data']);
-        $acl = $this->aclProvider->findAcl($oid);
+        $acl = $this->aclProvider->findAcl($options['object_identity']);
         return $acl->getObjectAces();
     }
 
@@ -85,10 +87,13 @@ class ACLType extends BaseAclType
      */
     protected function getAces(array $options)
     {
-        try {
-            return $this->loadAces($options);
-        } catch (\Symfony\Component\Security\Acl\Exception\Exception $e) {
-            return $this->buildAces($options);
+        if (!empty($options['object_identity'])) {
+            try {
+                return $this->loadAces($options);
+            } catch (\Symfony\Component\Security\Acl\Exception\Exception $e) {
+                // fall through
+            }
         }
+        return $this->buildAces($options);
     }
 }

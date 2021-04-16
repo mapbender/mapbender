@@ -2,12 +2,14 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Form\EventListener\UserSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserType extends AbstractType
@@ -72,9 +74,17 @@ class UserType extends AbstractType
         }
 
         if ($options['acl_permission']) {
+            /** @var User $user */
+            $user = $options['data'];
+            if ($user->getId()) {
+                $objectIdentity = ObjectIdentity::fromDomainObject($user);
+            } else {
+                $objectIdentity = null;
+            }
+
             $builder
                 ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'data' => $options['data'],
+                    'object_identity' => $objectIdentity,
                 ))
             ;
         }

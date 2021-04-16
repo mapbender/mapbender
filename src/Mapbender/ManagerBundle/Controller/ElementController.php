@@ -15,6 +15,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
@@ -180,8 +181,9 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
+        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', null, array(
             'create_standard_permissions' => false,
+            'object_identity' => ObjectIdentity::fromDomainObject($element),
             'entry_options' => array(
                 'mask' => MaskBuilder::MASK_VIEW,
             ),
