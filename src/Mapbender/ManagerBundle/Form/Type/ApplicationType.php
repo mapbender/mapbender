@@ -111,7 +111,6 @@ class ApplicationType extends AbstractType
                 ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
                     'data' => $options['data'],
                     'create_standard_permissions' => true,
-                    'standard_anon_access' => false,
                 ))
             ;
         }
