@@ -69,6 +69,15 @@ a {
   }
 }
 
+// Backport of .table-bordered to Bootstrap 3, see https://getbootstrap.com/docs/4.6/content/tables/#borderless-table
+.table-borderless {
+  >thead, >tbody {
+    >tr>td, >tr>th {
+      border: none;
+    }
+  }
+}
+
 .flex-fill {
   flex-grow: 1;
 }
