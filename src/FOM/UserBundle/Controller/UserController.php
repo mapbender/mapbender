@@ -136,7 +136,7 @@ class UserController extends UserControllerBase
                         // (persistUser already flushed once in this case)
                         $em->flush();
                     }
-                    $aces = $form->get('acl')->get('ace')->getData();
+                    $aces = $form->get('acl')->getData();
                     $this->getAclManager()->setObjectACEs($user, $aces);
                 }
 

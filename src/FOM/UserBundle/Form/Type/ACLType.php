@@ -85,7 +85,7 @@ class ACLType extends BaseAclType
      * @todo: fix inconsistent value types. These are currently fixed at the ACE level
      * @see ACEDataTransformer
      */
-    protected function getAces(array $options)
+    protected function getAces($options)
     {
         if (!empty($options['object_identity'])) {
             try {

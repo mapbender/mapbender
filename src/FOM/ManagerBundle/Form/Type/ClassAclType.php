@@ -27,7 +27,7 @@ class ClassAclType extends BaseAclType
      * @param array $options
      * @return EntryInterface[]
      */
-    protected function getAces(array $options)
+    protected function getAces($options)
     {
         $oid = new ObjectIdentity('class', $options['class']);
 

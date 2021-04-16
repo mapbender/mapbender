@@ -5,9 +5,7 @@ namespace FOM\ManagerBundle\Form\Type;
 
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -37,6 +35,13 @@ abstract class BaseAclType extends AbstractType
         return 'acl';
     }
 
+    public function getParent()
+    {
+        return 'Symfony\Component\Form\Extension\Core\Type\CollectionType';
+    }
+
+    abstract protected function getAces($options);
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -48,31 +53,17 @@ abstract class BaseAclType extends AbstractType
             'entry_options' => array(),
         ));
         $resolver->setAllowedValues('mapped', array(false));
-    }
-
-    abstract protected function getAces(array $options);
-
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $aceOptions = array(
+        $type = $this;
+        $resolver->setDefaults(array(
             'entry_type' => 'FOM\UserBundle\Form\Type\ACEType',
             'label' => false,
             'allow_add' => true,
             'allow_delete' => true,
             'prototype' => true,
-            'entry_options' => $options['entry_options'],
             'mapped' => false,
-            'data' => $this->getAces($options),
-        );
-
-        $builder->add('ace', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', $aceOptions);
-    }
-
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['allow_add'] = $options['allow_add'];
+            'data' => function (Options $options) use ($type) {
+                return $type->getAces($options);
+            },
+        ));
     }
 }

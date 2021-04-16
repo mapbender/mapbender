@@ -181,7 +181,10 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', null, array(
+        $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+            'label' => false,
+        ));
+        $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
             'create_standard_permissions' => false,
             'object_identity' => ObjectIdentity::fromDomainObject($element),
             'entry_options' => array(
@@ -194,7 +197,7 @@ class ElementController extends ApplicationControllerBase
             try {
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $this->getAclManager()->setObjectACEs($element, $form->get('ace')->getData());
+                $this->getAclManager()->setObjectACEs($element, $form->get('acl')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");

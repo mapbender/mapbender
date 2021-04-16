@@ -45,8 +45,11 @@ class ACLController extends Controller
         if(!array_key_exists($class, $acl_classes)) {
             throw $this->createNotFoundException('No manageable class given.');
         }
+        $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+            'label' => false,
+        ));
 
-        $form = $this->createForm('FOM\ManagerBundle\Form\Type\ClassAclType', array(), array(
+        $form->add('acl', 'FOM\ManagerBundle\Form\Type\ClassAclType', array(
             'class' => $class,
             'label' => false,
         ));
@@ -56,7 +59,7 @@ class ACLController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var AclManager $aclManager */
             $aclManager = $this->get('fom.acl.manager');
-            $aclManager->setClassACEs($class, $form->get('ace')->getData());
+            $aclManager->setClassACEs($class, $form->get('acl')->getData());
 
             return $this->redirectToRoute('fom_user_acl_index');
         } elseif ($form->isSubmitted()) {
