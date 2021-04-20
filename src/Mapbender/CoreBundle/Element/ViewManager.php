@@ -72,7 +72,7 @@ class ViewManager extends Element
 
         return array(
             'showSaving' => $grants['savePublic'] || $grants['savePrivate'],
-            'showListSelector' => !empty($config['publicEntries']) && $config['privateEntries'],
+            'showListSelector' => !empty($config['publicEntries']) && $config['publicEntries'] !== self::ACCESS_READONLY && $config['privateEntries'],
         );
     }
 
