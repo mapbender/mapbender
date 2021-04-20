@@ -291,6 +291,10 @@ mb:
         description: Saves map states for later restoration
       saveAsPublic: Save as public
       confirmDelete: Confirm deletion
+      no_data: No data
+      title: Title
+      date: Date
+      enter_title: Enter title
       admin:
         access.none: Do not show
         access.ro: Read only

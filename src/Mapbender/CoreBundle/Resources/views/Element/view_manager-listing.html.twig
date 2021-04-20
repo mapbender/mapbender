@@ -1,8 +1,8 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>{# @todo: translate #}Titel</th>
-            <th>{# @todo: translate #}Datum</th>
+            <th>{{ 'mb.core.viewManager.title' | trans }}</th>
+            <th>{{ 'mb.core.viewManager.date' | trans }}</th>
             <th></th>
         </tr>
     </thead>
@@ -11,9 +11,7 @@
             {% include 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig' with {'record': record} %}
         {%- endfor -%}
         <tr class="placeholder-row">
-            <td colspan="3" class="text-center">
-                {#@todo: translate #}&ndash; keine Daten &ndash;
-            </td>
+            <td colspan="3" class="text-center">&ndash; {{ 'mb.core.viewManager.no_data' | trans }} &ndash;</td>
         </tr>
     </tbody>
 </table>

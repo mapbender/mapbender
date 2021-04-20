@@ -292,6 +292,10 @@ mb:
         description: Speichert Kartenzustände zum späteren Abruf
       saveAsPublic: Als öffentlichen Eintrag speichern
       confirmDelete: Eintrag wirklich löschen?
+      no_data: Keine Daten
+      title: Titel
+      date: Datum
+      enter_title: Titel eingeben
       admin:
         access.none: Nicht anzeigen
         access.ro: Nur lesen
