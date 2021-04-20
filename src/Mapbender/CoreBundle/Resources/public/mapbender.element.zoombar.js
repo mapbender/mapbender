@@ -3,11 +3,13 @@
 $.widget("mapbender.mbZoomBar", {
     options: {
         target: null,
-        draggable: true
+        draggable: true,
+        zoomHomeRestoresLayers: false
     },
 
     zoomslider: null,
     mbMap: null,
+    configuredMapSettings: null,
 
     _create: function() {
         if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
@@ -22,6 +24,8 @@ $.widget("mapbender.mbZoomBar", {
 
     _setup: function() {
         var self = this;
+        this.configuredMapSettings = this.mbMap.getModel().getConfiguredSettings();
+
         this._setupSlider();
         this._setupZoomButtons();
         $(document).on('mbmapzoomchanged', function(e, data) {
@@ -94,7 +98,11 @@ $.widget("mapbender.mbZoomBar", {
         });
         this.element.on('click', '.-fn-zoom-home', function() {
             var m = self.mbMap.getModel();
-            m.applyViewParams(m.getConfiguredSettings().viewParams);
+            if (self.options.zoomHomeRestoresLayers) {
+                m.applySettings(self.configuredMapSettings);
+            } else {
+                m.applyViewParams(self.configuredMapSettings.viewParams);
+            }
         });
     },
     /**
