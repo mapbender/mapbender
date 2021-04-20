@@ -192,6 +192,7 @@ mb:
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
       zoom_home: Zurück zum Anfang
+      zoomHomeRestoresLayers: '"Zurück zum Anfang" setzt Dienstezustände zurück'
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:
