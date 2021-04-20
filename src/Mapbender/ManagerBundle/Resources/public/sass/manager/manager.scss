@@ -189,6 +189,7 @@ ul.dropdownList{
     display: inline-block;
   }
   .container-filter & {
+    white-space: nowrap;
     label {
       min-width: initial;
     }

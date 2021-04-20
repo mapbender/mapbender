@@ -3,9 +3,15 @@
 {% block manager_content %}
     {%- set list_id = list_id | default('listFilter0') -%}
     <div class="list-head">
-        {%- if items -%}
-            {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
-        {%- endif -%}
-        {%- block list_actions -%}{%- endblock -%}
+        <div class="row">
+            <p class="col-sm-5 col-xs-12 col-12">
+                {%- block list_actions -%}{%- endblock -%}
+            </p>
+            {%- if items -%}
+                <div class="col-sm-7 col-xs-12 col-12">
+                {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
+                </div>
+            {%- endif -%}
+        </div>
     </div>
 {% endblock %}
