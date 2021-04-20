@@ -101,6 +101,10 @@ class ViewManagerHttpHandler
             }
         }
 
+        $criteria->orderBy(array(
+            'applicationSlug' => Criteria::ASC,
+            'userId' => Criteria::ASC,
+        ));
         $records = $this->getRepository()->matching($criteria);
 
         $vars = $this->getGrantsVariables($config) + array(
