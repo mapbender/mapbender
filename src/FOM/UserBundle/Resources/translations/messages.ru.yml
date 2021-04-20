@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Вернуться на страницу входа'
       form:
         title: Регистрация
-        username: 'Имя пользователя'
         choose_password: 'Выберите пароль'
         confirm_password: 'Подтвердите Пароль'
         email: E-mail

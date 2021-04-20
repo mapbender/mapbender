@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Regresar al login'
       form:
         title: Registro
-        username: Usuario
         choose_password: 'Escoger clave'
         confirm_password: 'Confirmar clave'
         email: Email
@@ -83,7 +82,7 @@ fom:
         name: Nombre
         users_of_selected: 'grupos de %users_count% seleccionados'
         no_groups_defined: No hay grupos definidos
-        username: Username
+        username: Usuario
         description: Description
         activated: activated
     acl:

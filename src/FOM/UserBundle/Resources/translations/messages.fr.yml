@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Retour à la connexion'
       form:
         title: Inscription
-        username: Nom d'utilisateur
         choose_password: 'Mot de passe'
         confirm_password: 'Confirmation du mot de passe'
         email: Courriel

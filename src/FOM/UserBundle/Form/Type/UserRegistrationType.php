@@ -21,7 +21,7 @@ class UserRegistrationType extends AbstractType
     {
         $builder->add("username", 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
             'required' => true,
-            'label' => 'fom.user.registration.form.username',
+            'label' => 'fom.user.user.container.username',
             'attr' => array(
                 'autofocus' => 'on',
             ),

@@ -101,6 +101,9 @@
 .popupContainer.ui-draggable, .popup.ui-draggable {
   .popupHead {
     cursor:move;
+    .popupClose {
+      cursor: pointer;
+    }
   }
   &.ui-draggable-dragging {
     opacity: 0.6;

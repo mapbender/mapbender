@@ -9,7 +9,6 @@ fom:
         back_to_login: 'Terug naar inlog'
       form:
         title: Registratie
-        username: Gebruikersnaam
         choose_password: 'Geef een wachtwoord'
         confirm_password: 'Bevestig wachtwoord'
         email: Email

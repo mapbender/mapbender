@@ -89,7 +89,7 @@ class ApplicationController extends WelcomeController
             $em->persist($application);
             $em->flush();
             if ($form->has('acl')) {
-                $this->getAclManager()->setObjectACEs($application, $form->get('acl')->get('ace')->getData());
+                $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
             }
             $scFile = $form->get('screenshotFile')->getData();
 
@@ -295,7 +295,7 @@ class ApplicationController extends WelcomeController
                 $em->persist($application);
                 $em->flush();
                 if ($form->has('acl')) {
-                    $this->getAclManager()->setObjectACEs($application, $form->get('acl')->get('ace')->getData());
+                    $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
                 }
                 $em->commit();
                 $this->addFlash('success', $this->translate('mb.application.save.success'));
