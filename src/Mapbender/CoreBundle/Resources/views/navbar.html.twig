@@ -15,6 +15,9 @@
             {% if app.user != "" %}
                 <ul class="nav navbar-nav">
                     {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
+                    {% for sitelink in get_sitelinks() %}
+                    <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+                    {% endfor %}
                 </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
