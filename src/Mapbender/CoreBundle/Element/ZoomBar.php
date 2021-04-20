@@ -63,6 +63,7 @@ class ZoomBar extends Element
             ),
             'anchor' => 'left-top',
             'draggable' => true,
+            'zoomHomeRestoresLayers' => false,
         );
     }
 

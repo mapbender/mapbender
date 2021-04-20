@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ApplicationChoiceType extends AbstractType
 {
@@ -18,11 +19,16 @@ class ApplicationChoiceType extends AbstractType
     protected $dbRepository;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
-    public function __construct(EntityManagerInterface $em, ApplicationYAMLMapper $yamlRepository)
+    public function __construct(EntityManagerInterface $em,
+                                ApplicationYAMLMapper $yamlRepository,
+                                AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
         $this->yamlRepository = $yamlRepository;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getParent()
@@ -35,8 +41,9 @@ class ApplicationChoiceType extends AbstractType
         $type = $this;
         $resolver->setDefaults(array(
             'choices' => function (Options $options) use ($type) {
-                return $type->loadChoices();
+                return $type->loadChoices($options['required_grant']);
             },
+            'required_grant' => null,
         ));
         if (Kernel::MAJOR_VERSION < 3) {
             $resolver->setDefault('choices_as_values', true);
@@ -44,9 +51,10 @@ class ApplicationChoiceType extends AbstractType
     }
 
     /**
+     * @param string|null $requiredGrant
      * @return string[]
      */
-    protected function loadChoices()
+    protected function loadChoices($requiredGrant)
     {
         $apps = $this->yamlRepository->getApplications();
         $apps = array_merge($apps, $this->dbRepository->findBy(array(), array(
@@ -55,7 +63,9 @@ class ApplicationChoiceType extends AbstractType
         $choices = array();
         /** @var Application[] $applications */
         foreach ($apps as $application) {
-            $choices[$application->getTitle()] = $application->getSlug();
+            if (!$requiredGrant || $this->authorizationChecker->isGranted($requiredGrant, $application)) {
+                $choices[$application->getTitle()] = $application->getSlug();
+            }
         }
         return $choices;
     }

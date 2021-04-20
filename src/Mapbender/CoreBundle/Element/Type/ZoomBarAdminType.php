@@ -24,6 +24,11 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder
+            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'required' => false,
+            ))
             ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,
@@ -39,10 +44,9 @@ class ZoomBarAdminType extends AbstractType
                     'size' => 6,
                 ),
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
+            ->add('zoomHomeRestoresLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.core.zoombar.zoomHomeRestoresLayers',
             ))
             ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
