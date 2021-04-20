@@ -24,7 +24,7 @@
           <div class="col-md-9 col-xs-12">
             <h2>{{ item.title | default(item.source.title) }}</h2>
             <p>{{ item.source.description }}</p>
-            <div class="btn-toolbar">
+            <div class="btn-toolbar pull-right">
               <a class="btn btn-default hover-highlight-effect" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                 ><i class="fa fa-cog"></i></a>
               <a class="btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
