@@ -71,7 +71,10 @@ class ViewManagerHttpHandler
         $isAnon = $this->isCurrentUserAnonymous();
 
         if ($showPublic && !$showPrivate) {
-            $criteria->andWhere(Criteria::expr()->eq('userId', null));
+            $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_AND, array(
+                Criteria::expr()->eq('isAnon', 0),
+                Criteria::expr()->eq('userId', null),
+            )));
         } else {
             if ($isAnon) {
                 $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
@@ -79,14 +82,21 @@ class ViewManagerHttpHandler
                     Criteria::expr()->eq('userId', null),
                 ));
             } else {
-                $privateExpression = Criteria::expr()->eq('userId', $this->getUserId());
+                $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
+                    Criteria::expr()->eq('isAnon', 0),
+                    Criteria::expr()->eq('userId', $this->getUserId()),
+                ));
             }
             if ($showPrivate && !$showPublic) {
                 $criteria->andWhere($privateExpression);
             } else {
+                assert($showPrivate && $showPublic);
                 $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, array(
                     $privateExpression,
-                    Criteria::expr()->eq('userId', null),
+                    new CompositeExpression(CompositeExpression::TYPE_AND, array(
+                        Criteria::expr()->eq('userId', null),
+                        Criteria::expr()->eq('isAnon', 0),
+                    )),
                 )));
             }
         }
