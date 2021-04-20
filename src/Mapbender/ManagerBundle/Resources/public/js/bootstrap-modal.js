@@ -28,6 +28,9 @@ window.Mapbender.bootstrapModal = (function($) {
         var $element = $wrapper.clone();
         $('.modal-dialog', $element).addClass(options.cssClass || '');
         var $contentStructure = $mContent.clone();
+        if (!options.closeButton) {
+            $('.close', $contentStructure).remove();
+        }
         var $modalContent;
 
         if ($content.is('form')) {
