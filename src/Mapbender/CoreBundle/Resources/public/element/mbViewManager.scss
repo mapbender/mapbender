@@ -1,9 +1,4 @@
 .mb-element-viewmanager {
-  p {
-    // Restore standard paragraph margins (10px = Bootstrap default)
-    // @todo: remove global Mapbender margin: 0 on p
-    margin-bottom: 10px;
-  }
   .static-popover-wrap {
     position: relative; // for anchoring of absolute-positioned .popover
     .popover {
