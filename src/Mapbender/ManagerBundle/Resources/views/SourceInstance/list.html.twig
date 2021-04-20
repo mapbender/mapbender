@@ -13,7 +13,7 @@
 {%- block boxlist_item_content -%}
 {# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
         <div class="row">
-          <div class="col-xs-3">
+          <div class="col-md-2 col-xs-12 col-12">
             <div class="preview-box preview-info">
               <div class="placeholder-text">
                 <h4>{{ item.id }}</h4>
@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-9 col-xs-12">
+          <div class="col-md-10 col-xs-12 col-12">
             <h2>{{ item.title | default(item.source.title) }}</h2>
             <p>{{ item.source.description }}</p>
             <div class="btn-toolbar pull-right">

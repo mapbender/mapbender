@@ -27,7 +27,7 @@
 {%- set source = item -%}
 {# @todo: fold design logic shared / sharable with SourceInstance/list.html.twig into common base template #}
           <div class="row">
-            <div class="col-md-3 col-xs-3">
+            <div class="col-md-2 col-xs-12 col-12">
               <div class="preview-box preview-info">
                 <div class="placeholder-text">
                   <h4>{{ source.id }}</h4>
@@ -35,7 +35,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-8 col-xs-12">
+            <div class="col-md-10 col-xs-12 col-12">
               <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}">
                   <h2>{{ source.title }}<span class="smallerText">{{ (' ' ~ source.alias) | trim(side='right') }}</span></h2>
               </a>
