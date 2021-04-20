@@ -50,6 +50,7 @@
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
         <service class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
             <tag name="form.type" />

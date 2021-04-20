@@ -19,6 +19,7 @@ class ApplicationSwitcherAdminType extends AbstractType
                 'attr' => array(
                     'size' => 20,
                 ),
+                'required_grant' => 'VIEW',
             ))
             ->add('open_in_new_tab', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
