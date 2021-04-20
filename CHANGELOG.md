@@ -1,10 +1,11 @@
-## dev-master @ b71ad1481
+## dev-master @ 59744c626
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
 * Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
-* Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320]((https://github.com/mapbender/mapbender/issues/1320))
+* Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320](https://github.com/mapbender/mapbender/issues/1320))
+* Filter ApplicationSwitcher backend application selection down to editing user's granted applications ([#1321](https://github.com/mapbender/mapbender/issues/1320))
 * Fix invalid table markup and unencoded headers in SearchRouter frontend
 * Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
 * Fix same Wms dimension appearing multiple times in new Wms instance if endorsed by multiple layers
@@ -269,7 +270,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix PrintClient frontend settings form bypassing / conflicting with form theme
 - Fix Layertree backend form bypassing / conflicting with form theme
 - Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
-- Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311]((https://github.com/mapbender/mapbender/issues/1311))
+- Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 - Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
