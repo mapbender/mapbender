@@ -11,13 +11,18 @@
         referenceSettings: null,
         defaultSavePublic: false,
         deleteConfirmationContent: null,
+        mapPromise: null,
+        baseUrl: null,
 
         _create: function() {
             var self = this;
+            this.baseUrl = window.location.href.replace(/[?#].*$/, '');
             this._toggleEnabled(false);
             this.elementUrl = [Mapbender.configuration.application.urls.element, this.element.attr('id')].join('/');
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            this.mapPromise = Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.referenceSettings = mbMap.getModel().getConfiguredSettings();
                 self._setup(mbMap);
+                return mbMap;
             });
             this.defaultSavePublic = (this.options.publicEntries === 'rw');
             this.deleteConfirmationContent = $('.-js-delete-confirmation-content', this.element)
@@ -27,7 +32,6 @@
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
-            this.referenceSettings = mbMap.getModel().getConfiguredSettings();
             this._initEvents();
             this._toggleEnabled(true);
         },
@@ -42,7 +46,8 @@
                     self._updatePlaceholder();
                 });
             });
-            this.element.on('click', '.-fn-apply', function() {
+            this.element.on('click', '.-fn-apply', function(evt) {
+                evt.preventDefault();
                 self._apply(self._decodeDiff(this));
             });
             this.element.on('click', '.-fn-delete[data-id]', function() {
@@ -66,15 +71,26 @@
         _load: function() {
             var $loadingPlaceholder = $('.-fn-loading-placeholder', this.element)
             var self = this;
-            $.ajax([this.elementUrl, 'listing'].join('/'))
+            var listingPromise = $.ajax([this.elementUrl, 'listing'].join('/'));
+            $.when(listingPromise, this.mapPromise)
                 .then(function(response) {
-                    var $content = $(response);
+                    var $content = $(response[0]);
+                    $('a.-fn-apply', $content).each(function() {
+                        self._updateLinkUrl(this);
+                    });
                     $loadingPlaceholder.replaceWith($content);
                     self._updatePlaceholder();
                 }, function() {
                     $loadingPlaceholder.hide()
                 })
             ;
+        },
+        _updateLinkUrl: function(link) {
+            var settings = this._decodeDiff(link)
+            var params = this.mbMap.getModel().encodeSettingsDiff(settings);
+            var hash = this.mbMap.getModel().encodeViewParams(settings.viewParams);
+            var url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, ''), hash].join('#');
+            $(link).attr('href', url);
         },
         _replace: function($row, id) {
             var title = $('input[name="title"]', this.element).val() || $row.attr('data-title');
@@ -90,6 +106,9 @@
                 data: data
             }).then(function(response) {
                 var newRow = $.parseHTML(response);
+                $('a.-fn-apply', $(newRow)).each(function() {
+                    self._updateLinkUrl(this);
+                });
                 $row.replaceWith(newRow);
                 self._flash($(newRow), '#88ff88');
             });
@@ -115,6 +134,9 @@
                 data: data
             }).then(function(response) {
                 var newRow = $.parseHTML(response);
+                $('a.-fn-apply', $(newRow)).each(function() {
+                    self._updateLinkUrl(this);
+                });
                 $('table tbody', self.element).prepend(newRow);
                 self._flash($(newRow), '#88ff88');
             });
