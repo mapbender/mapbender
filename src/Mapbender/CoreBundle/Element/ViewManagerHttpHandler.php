@@ -169,7 +169,13 @@ class ViewManagerHttpHandler
 
     protected function updateRecord(MapviewDiff $record, Request $request)
     {
-        $record->setUserId($request->request->get('savePublic') ? null : $this->getUserId());
+        if ($request->request->get('savePublic')) {
+            $record->setUserId(null);
+            $record->setIsPublic(true);
+        } else {
+            $record->setUserId($this->getUserId());
+            $record->setIsPublic(false);
+        }
         $record->setIsAnon($this->isCurrentUserAnonymous());
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
