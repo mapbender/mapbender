@@ -295,6 +295,8 @@ mb:
       title: Title
       date: Date
       enter_title: Enter title
+      apply: Apply
+      replace: Replace
       admin:
         access.none: Do not show
         access.ro: Read only

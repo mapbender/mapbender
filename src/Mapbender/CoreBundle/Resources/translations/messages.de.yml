@@ -296,6 +296,8 @@ mb:
       title: Titel
       date: Datum
       enter_title: Titel eingeben
+      apply: Abrufen
+      replace: Überschreiben
       admin:
         access.none: Nicht anzeigen
         access.ro: Nur lesen
