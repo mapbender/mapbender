@@ -302,7 +302,7 @@ mb:
         access.rwd: Allow saving and deletion
         publicEntries: Public list
         privateEntries: Show private list
-        adminDeleteHint: "Note: the administrator can always delete entries"
+        adminDeleteHint: "Note: the administrator can always delete public entries"
         allowAnonymousSave: Allow saving to anonymous users
     admin:
       poi:

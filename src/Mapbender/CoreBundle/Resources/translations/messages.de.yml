@@ -303,7 +303,7 @@ mb:
         access.rwd: Speichern und löschen erlauben
         publicEntries: Öffentliche Liste
         privateEntries: Private Liste anzeigen
-        adminDeleteHint: "Hinweis: Administratoren dürfen immer löschen"
+        adminDeleteHint: "Hinweis: Administratoren dürfen öffentliche Einträge immer löschen"
         allowAnonymousSave: Anonyme Besucher dürfen speichern
     admin:
       poi:

@@ -1,5 +1,6 @@
 <div class="extraWideLabelForm">
+    {{ form_row(form.title) }}
+    {{ form_row(form.configuration.publicEntries) }}
+    <div class="alert alert-info">{{ 'mb.core.viewManager.admin.adminDeleteHint' | trans }}.</div>
     {{ form_rest(form) }}
-    <div class="alert alert-info">{{ 'mb.core.viewManager.admin.adminDeleteHint' | trans }}</div>
 </div>
-
