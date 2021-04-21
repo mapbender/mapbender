@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="mb_core_map_view_diff", indexes={@ORM\Index(columns={"slug", "user_id"})})
+ * @ORM\Table(name="mb_core_viewmanager_state", indexes={@ORM\Index(columns={"slug", "user_id"})})
  */
-class MapViewDiff
+class ViewManagerState
 {
     /**
      * @var integer

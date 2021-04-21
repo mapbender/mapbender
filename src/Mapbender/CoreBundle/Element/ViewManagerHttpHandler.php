@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Entity;
-use Mapbender\CoreBundle\Entity\MapViewDiff;
+use Mapbender\CoreBundle\Entity\ViewManagerState;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -126,7 +126,7 @@ class ViewManagerHttpHandler
                 $record->setTitle($newTitle);
             }
         } else {
-            $record = new MapViewDiff();
+            $record = new ViewManagerState();
             $record->setApplicationSlug($element->getApplication()->getSlug());
             $record->setTitle($request->request->get('title'));
         }
@@ -149,7 +149,7 @@ class ViewManagerHttpHandler
         if (!$id) {
             throw new BadRequestHttpException("Missing id");
         }
-        /** @var MapViewDiff|null $record */
+        /** @var ViewManagerState|null $record */
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
             $isPrivate = $record->getUserId() || $record->getIsAnon() && $this->isCurrentUserAnonymous();
@@ -167,7 +167,7 @@ class ViewManagerHttpHandler
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 
-    protected function updateRecord(MapviewDiff $record, Request $request)
+    protected function updateRecord(ViewManagerState $record, Request $request)
     {
         if ($request->request->get('savePublic')) {
             $record->setUserId(null);
@@ -199,7 +199,7 @@ class ViewManagerHttpHandler
     protected function getRepository()
     {
         /** @var EntityRepository */
-        $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\MapViewDiff');
+        $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\ViewManagerState');
         return $repository;
     }
 
