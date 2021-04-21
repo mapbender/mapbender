@@ -38,12 +38,6 @@ class ViewManagerState
 
     /**
      * @var bool
-     * @ORM\Column(type="integer", name="is_anon", nullable=false, options={"default"="0"})
-     */
-    protected $isAnon = 0;
-
-    /**
-     * @var bool
      * @ORM\Column(type="integer", name="is_public", nullable=false, options={"default"="0"})
      */
     protected $isPublic = 0;
@@ -128,22 +122,6 @@ class ViewManagerState
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * @param bool $value
-     */
-    public function setIsAnon($value)
-    {
-        $this->isAnon = $value ? 1 : 0;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsAnon()
-    {
-        return !!$this->isAnon;
     }
 
     /**

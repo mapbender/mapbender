@@ -68,42 +68,28 @@ class ViewManagerHttpHandler
         $showPublic = !!$config['publicEntries'];
         $showPrivate = !!$config['privateEntries'];
         $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $element->getApplication()->getSlug()));
-        $isAnon = $this->isCurrentUserAnonymous();
 
         if ($showPublic && !$showPrivate) {
-            $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_AND, array(
-                Criteria::expr()->eq('isAnon', 0),
-                Criteria::expr()->eq('userId', null),
-            )));
+            $criteria->andWhere(Criteria::expr()->gt('isPublic', 0));
         } else {
-            if ($isAnon) {
-                $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
-                    Criteria::expr()->gt('isAnon', 0),
-                    Criteria::expr()->eq('userId', null),
-                ));
-            } else {
-                $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
-                    Criteria::expr()->eq('isAnon', 0),
-                    Criteria::expr()->eq('userId', $this->getUserId()),
-                ));
-            }
+            $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
+                Criteria::expr()->eq('isPublic', 0),
+                Criteria::expr()->eq('userId', $this->getUserId()),
+            ));
             if ($showPrivate && !$showPublic) {
                 $criteria->andWhere($privateExpression);
             } else {
                 assert($showPrivate && $showPublic);
                 $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, array(
-                    $privateExpression,
-                    new CompositeExpression(CompositeExpression::TYPE_AND, array(
-                        Criteria::expr()->eq('userId', null),
-                        Criteria::expr()->eq('isAnon', 0),
-                    )),
+                    Criteria::expr()->gt('isPublic', 0),
+                    Criteria::expr()->eq('userId', $this->getUserId()),
                 )));
             }
         }
 
         $criteria->orderBy(array(
             'applicationSlug' => Criteria::ASC,
-            'userId' => Criteria::ASC,
+            'isPublic' => Criteria::DESC,
         ));
         $records = $this->getRepository()->matching($criteria);
 
@@ -152,12 +138,9 @@ class ViewManagerHttpHandler
         /** @var ViewManagerState|null $record */
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
-            $isPrivate = $record->getUserId() || $record->getIsAnon() && $this->isCurrentUserAnonymous();
-            if (!$isPrivate) {
-                if (!$this->isAdmin()) {
-                    if (($record->getUserId() !== $this->getUserId() || !$this->checkGrant($element, 'delete'))) {
-                        throw new AccessDeniedHttpException();
-                    }
+            if ($record->getIsPublic() && !$this->isAdmin()) {
+                if (($record->getUserId() !== $this->getUserId() || !$this->checkGrant($element, 'delete'))) {
+                    throw new AccessDeniedHttpException();
                 }
             }
 
@@ -176,7 +159,6 @@ class ViewManagerHttpHandler
             $record->setUserId($this->getUserId());
             $record->setIsPublic(false);
         }
-        $record->setIsAnon($this->isCurrentUserAnonymous());
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
         $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
