@@ -9,8 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ViewManager extends Element
 {
-    const ACCESS_READWRITE = 'rw';
     const ACCESS_READONLY = 'ro';
+    const ACCESS_READWRITE = 'rw';
+    const ACCESS_READWRITEDELETE = 'rwd';
 
     public static function getClassTitle()
     {
@@ -61,7 +62,6 @@ class ViewManager extends Element
             'publicEntries' => self::ACCESS_READONLY,
             'privateEntries' => true,
             'allowAnonymousSave' => false,
-            'allowNonAdminDelete' => false,
         );
     }
 

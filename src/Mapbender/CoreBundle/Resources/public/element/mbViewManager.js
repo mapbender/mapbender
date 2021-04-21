@@ -24,7 +24,7 @@
                 self._setup(mbMap);
                 return mbMap;
             });
-            this.defaultSavePublic = (this.options.publicEntries === 'rw');
+            this.defaultSavePublic = (this.options.publicEntries === 'rw') || (this.options.publicEntries === 'rwd');
             this.deleteConfirmationContent = $('.-js-delete-confirmation-content', this.element)
                 .remove().removeClass('hidden').html()
             ;

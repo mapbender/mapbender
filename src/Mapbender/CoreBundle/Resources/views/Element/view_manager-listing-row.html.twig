@@ -5,7 +5,7 @@
     <td class="text-nowrap text-right">
         {%- if (savePrivate and _is_private) or (savePublic and not _is_private) -%}
         <i class="-fn-update fa fas fa-save clickable hover-highlight-effect" title="{# @todo: translate #}Überschreiben" data-id="{{ record.id }}"></i>
-        {%- if _is_private or allowDelete -%}
+        {%- if _is_private or allowPublicDelete -%}
         <span class="static-popover-wrap -js-confirmation-anchor-delete">
             <i class="-fn-delete fa fas fa-times clickable hover-highlight-effect" title="{# @todo: translate #}Löschen" data-id="{{ record.id }}"></i>
         </span>

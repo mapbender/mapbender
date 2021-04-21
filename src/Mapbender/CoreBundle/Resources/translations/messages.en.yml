@@ -299,10 +299,10 @@ mb:
         access.none: Do not show
         access.ro: Read only
         access.rw: Allow saving
+        access.rwd: Allow saving and deletion
         publicEntries: Public list
         privateEntries: Show private list
         adminDeleteHint: "Note: the administrator can always delete entries"
-        allowNonAdminDelete: Allow deletion of public entries
         allowAnonymousSave: Allow saving to anonymous users
     admin:
       poi:
