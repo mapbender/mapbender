@@ -65,9 +65,24 @@ class ViewManagerHttpHandler
     protected function getListingResponse(Entity\Element $element, Request $request)
     {
         $config = $element->getConfiguration();
+        $vars = $this->getGrantsVariables($config) + array(
+            'records' => $this->loadListing($element->getApplication(), $config),
+            'dateFormat' => $this->getDateFormat($request),
+        );
+        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
+        return new Response($content);
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param array $config
+     * @return ViewManagerState[]
+     */
+    protected function loadListing(Entity\Application $application, array $config)
+    {
         $showPublic = !!$config['publicEntries'];
         $showPrivate = !!$config['privateEntries'];
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $element->getApplication()->getSlug()));
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $application->getSlug()));
 
         if ($showPublic && !$showPrivate) {
             $criteria->andWhere(Criteria::expr()->gt('isPublic', 0));
@@ -91,14 +106,7 @@ class ViewManagerHttpHandler
             'applicationSlug' => Criteria::ASC,
             'isPublic' => Criteria::DESC,
         ));
-        $records = $this->getRepository()->matching($criteria);
-
-        $vars = $this->getGrantsVariables($config) + array(
-            'records' => $records,
-            'dateFormat' => $this->getDateFormat($request),
-        );
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
-        return new Response($content);
+        return $this->getRepository()->matching($criteria);
     }
 
     protected function getSaveResponse(Entity\Element $element, Request $request)
