@@ -190,6 +190,16 @@
                 $popover.remove();
                 deferred.reject();
             });
+            $popover.data('deferred', deferred);
+            // Close / reject other pending popovers
+            $('table .popover', this.element).each(function() {
+                var $other = $(this);
+                var otherPromise = $other.data('deferred');
+                if (otherPromise) {
+                    otherPromise.reject();
+                }
+                $other.remove();
+            });
             $('.-js-confirmation-anchor-delete', $row).append($popover);
 
             return deferred.promise();
