@@ -24,11 +24,6 @@ class ViewManagerAdminType extends AbstractType
             'mb.core.viewManager.admin.access.rwd' => ViewManager::ACCESS_READWRITEDELETE,
         );
         $builder
-           ->add('publicEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
-               'choices' => $accessChoices,
-               'required' => false,
-               'label' => 'mb.core.viewManager.admin.publicEntries',
-           ))
             ->add('privateEntries', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.privateEntries',
@@ -37,6 +32,11 @@ class ViewManagerAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.allowAnonymousSave',
             ))
+           ->add('publicEntries', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions + array(
+               'choices' => $accessChoices,
+               'required' => false,
+               'label' => 'mb.core.viewManager.admin.publicEntries',
+           ))
         ;
     }
 }
