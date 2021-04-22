@@ -233,7 +233,7 @@ class ViewManagerHttpHandler
                 ViewManager::ACCESS_READWRITEDELETE,
             )))),
             'savePrivate' => !$isAnon && $config['privateEntries'],
-            'deletePublic' => $isAdmin || ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
+            'deletePublic' => $isAdmin || !$isAnon && ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
         );
     }
 
