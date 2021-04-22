@@ -65,9 +65,10 @@ class ViewManagerHttpHandler
     protected function getListingResponse(Entity\Element $element, Request $request)
     {
         $config = $element->getConfiguration();
-        $vars = $this->getGrantsVariables($config) + array(
+        $vars = array(
             'records' => $this->loadListing($element->getApplication(), $config),
             'dateFormat' => $this->getDateFormat($request),
+            'grants' => $this->getGrantsVariables($config),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
         return new Response($content);
@@ -129,9 +130,10 @@ class ViewManagerHttpHandler
         $this->em->persist($record);
         $this->em->flush();
 
-        $vars = $this->getGrantsVariables($element->getConfiguration()) + array(
+        $vars = array(
             'record' => $record,
             'dateFormat' => $this->getDateFormat($request),
+            'grants' => $this->getGrantsVariables($element->getConfiguration()),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', $vars);
         return new Response($content);
@@ -230,7 +232,7 @@ class ViewManagerHttpHandler
                 ViewManager::ACCESS_READWRITEDELETE,
             ))),
             'savePrivate' => $isAdmin || ($saveDefault && $config['privateEntries']),
-            'allowPublicDelete' => $isAdmin || $config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE,
+            'deletePublic' => $isAdmin || $config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE,
         );
     }
 
@@ -241,7 +243,7 @@ class ViewManagerHttpHandler
             default:
                 false;
             case 'delete':
-                return $grantsVariables['allowPublicDelete'];
+                return $grantsVariables['deletePublic'];
             case 'savePublic':
                 return $grantsVariables['savePublic'];
             case 'savePrivate':

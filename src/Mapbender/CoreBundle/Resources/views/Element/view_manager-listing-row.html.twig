@@ -3,9 +3,9 @@
     <td>{{ record.title }}</td>
     <td>{{ record.mtime | date(dateFormat) }}</td>
     <td class="text-nowrap text-right">
-        {%- if (savePrivate and _is_private) or (savePublic and not _is_private) -%}
+        {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
         <i class="-fn-update fa fas fa-save clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.replace' | trans }}" data-id="{{ record.id }}"></i>
-        {%- if _is_private or allowPublicDelete -%}
+        {%- if _is_private or grants.deletePublic -%}
         <span class="static-popover-wrap -js-confirmation-anchor-delete">
             <i class="-fn-delete fa fas fa-times clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}" data-id="{{ record.id }}"></i>
         </span>
