@@ -232,7 +232,7 @@ class ViewManagerHttpHandler
                 ViewManager::ACCESS_READWRITEDELETE,
             ))),
             'savePrivate' => $isAdmin || ($saveDefault && $config['privateEntries']),
-            'deletePublic' => $isAdmin || $config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE,
+            'deletePublic' => $isAdmin || ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
         );
     }
 
