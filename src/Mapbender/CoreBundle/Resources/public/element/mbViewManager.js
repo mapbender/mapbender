@@ -140,7 +140,7 @@
                 });
                 var insertAfter = !data.savePublic && $('tr[data-visibility-group="public"]', $tbody).get(-1);
                 if (insertAfter) {
-                    $(insertAfter).before(newRow);
+                    $(insertAfter).after(newRow);
                 } else {
                     $tbody.prepend(newRow);
                 }
