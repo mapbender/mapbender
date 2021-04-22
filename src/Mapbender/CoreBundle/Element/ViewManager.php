@@ -71,8 +71,7 @@ class ViewManager extends Element
         $grants = $this->getHttpHandler()->getGrantsVariables($config);
 
         return array(
-            'showSaving' => $grants['savePublic'] || $grants['savePrivate'],
-            'showListSelector' => $config['privateEntries'] && $config['publicEntries'] && $config['publicEntries'] !== self::ACCESS_READONLY,
+            'grants' => $grants,
         );
     }
 
