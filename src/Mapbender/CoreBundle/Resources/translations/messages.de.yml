@@ -307,6 +307,7 @@ mb:
         privateEntries: Private Liste anzeigen
         adminDeleteHint: "Hinweis: Administratoren dürfen öffentliche Einträge immer löschen"
         allowAnonymousSave: Anonyme Besucher dürfen speichern
+        showDate: Datum anzeigen
     admin:
       poi:
         label:

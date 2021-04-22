@@ -28,6 +28,10 @@ class ViewManagerAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.privateEntries',
             ))
+            ->add('showDate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.viewManager.admin.showDate',
+            ))
             ->add('allowAnonymousSave', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.viewManager.admin.allowAnonymousSave',

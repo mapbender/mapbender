@@ -2,7 +2,9 @@
     <thead>
         <tr>
             <th>{{ 'mb.core.viewManager.title' | trans }}</th>
+            {%- if showDate -%}
             <th>{{ 'mb.core.viewManager.date' | trans }}</th>
+            {%- endif -%}
             <th></th>
         </tr>
     </thead>

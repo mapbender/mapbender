@@ -67,7 +67,8 @@ class ViewManagerHttpHandler
         $config = $element->getConfiguration();
         $vars = array(
             'records' => $this->loadListing($element->getApplication(), $config),
-            'dateFormat' => $this->getDateFormat($request),
+            'showDate' => $config['showDate'],
+            'dateFormat' => $config['showDate'] ? $this->getDateFormat($request) : false,
             'grants' => $this->getGrantsVariables($config),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
@@ -129,9 +130,10 @@ class ViewManagerHttpHandler
         $this->em->persist($record);
         $this->em->flush();
 
+        $config = $element->getConfiguration();
         $vars = array(
             'record' => $record,
-            'dateFormat' => $this->getDateFormat($request),
+            'dateFormat' => $config['showDate'] ? $this->getDateFormat($request) : false,
             'grants' => $this->getGrantsVariables($element->getConfiguration()),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', $vars);
