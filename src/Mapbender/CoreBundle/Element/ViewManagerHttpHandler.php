@@ -113,6 +113,7 @@ class ViewManagerHttpHandler
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
         if ($id = $request->query->get('id')) {
+            /** @var ViewManagerState|null $record */
             $record = $this->getRepository()->find($id);
             if (!$record) {
                 throw new NotFoundHttpException();
@@ -120,6 +121,7 @@ class ViewManagerHttpHandler
             if ($newTitle = $request->request->get('title')) {
                 $record->setTitle($newTitle);
             }
+            $record->setMtime(new \DateTime());
         } else {
             $record = new ViewManagerState();
             $record->setApplicationSlug($element->getApplication()->getSlug());
