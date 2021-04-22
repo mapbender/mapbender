@@ -1,4 +1,4 @@
-## dev-master @ 7fd3115f1
+## dev-master @ 93de6620c
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
@@ -14,6 +14,7 @@
 * [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* Add new "View manager" Element (see [PR#1351](https://github.com/mapbender/mapbender/pull/1351))
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
 * Support resetting source layer settings when using ZoomBar component "zoom_home" (see [PR#1348](https://github.com/mapbender/mapbender/pull/1348))
 * [Forms] Update form theme to emit Bootstrap checkboxes and (margin-providing) form-group containers (see [PR#1343](https://github.com/mapbender/mapbender/pull/1343))
