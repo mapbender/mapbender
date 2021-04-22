@@ -82,14 +82,13 @@ class ViewManagerHttpHandler
     protected function loadListing(Entity\Application $application, array $config)
     {
         $showPublic = !!$config['publicEntries'];
-        $showPrivate = !!$config['privateEntries'];
+        $showPrivate = !!$config['privateEntries'] && !$this->isCurrentUserAnonymous();
         $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $application->getSlug()));
 
         if ($showPublic && !$showPrivate) {
-            $criteria->andWhere(Criteria::expr()->gt('isPublic', 0));
+            $criteria->andWhere(Criteria::expr()->isNull('userId'));
         } else {
             $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
-                Criteria::expr()->eq('isPublic', 0),
                 Criteria::expr()->eq('userId', $this->getUserId()),
             ));
             if ($showPrivate && !$showPublic) {
@@ -97,7 +96,7 @@ class ViewManagerHttpHandler
             } else {
                 assert($showPrivate && $showPublic);
                 $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, array(
-                    Criteria::expr()->gt('isPublic', 0),
+                    Criteria::expr()->isNull('userId'),
                     Criteria::expr()->eq('userId', $this->getUserId()),
                 )));
             }
@@ -105,7 +104,7 @@ class ViewManagerHttpHandler
 
         $criteria->orderBy(array(
             'applicationSlug' => Criteria::ASC,
-            'isPublic' => Criteria::DESC,
+            'userId' => Criteria::ASC,
         ));
         return $this->getRepository()->matching($criteria);
     }
@@ -148,8 +147,11 @@ class ViewManagerHttpHandler
         /** @var ViewManagerState|null $record */
         $record = $records = $this->getRepository()->find($id);
         if ($record) {
-            if ($record->getIsPublic() && !$this->isAdmin()) {
-                if (($record->getUserId() !== $this->getUserId() || !$this->checkGrant($element, 'delete'))) {
+            if (!$this->isAdmin()) {
+                if (!$record->getUserId() && !$this->checkGrant($element, 'deletePublic')) {
+                    throw new AccessDeniedHttpException();
+                }
+                if ($record->getUserId() !== $this->getUserId()) {
                     throw new AccessDeniedHttpException();
                 }
             }
@@ -164,10 +166,8 @@ class ViewManagerHttpHandler
     {
         if ($request->request->get('savePublic')) {
             $record->setUserId(null);
-            $record->setIsPublic(true);
         } else {
             $record->setUserId($this->getUserId());
-            $record->setIsPublic(false);
         }
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
@@ -225,13 +225,14 @@ class ViewManagerHttpHandler
     public function getGrantsVariables($config)
     {
         $isAdmin = $this->isAdmin();
-        $saveDefault = $this->isCurrentUserAnonymous() ? $config['allowAnonymousSave'] : true;
+        $isAnon = !$isAdmin && $this->isCurrentUserAnonymous();
+        $saveDefault = $isAnon ? $config['allowAnonymousSave'] : true;
         return array(
             'savePublic' => $isAdmin || ($saveDefault && \in_array($config['publicEntries'], array(
                 ViewManager::ACCESS_READWRITE,
                 ViewManager::ACCESS_READWRITEDELETE,
             ))),
-            'savePrivate' => $isAdmin || ($saveDefault && $config['privateEntries']),
+            'savePrivate' => $isAdmin || (!$isAnon && $config['privateEntries']),
             'deletePublic' => $isAdmin || ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
         );
     }
@@ -242,7 +243,7 @@ class ViewManagerHttpHandler
         switch ($operation) {
             default:
                 false;
-            case 'delete':
+            case 'deletePublic':
                 return $grantsVariables['deletePublic'];
             case 'savePublic':
                 return $grantsVariables['savePublic'];

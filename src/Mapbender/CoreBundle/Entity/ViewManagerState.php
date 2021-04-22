@@ -37,12 +37,6 @@ class ViewManagerState
     protected $userId;
 
     /**
-     * @var bool
-     * @ORM\Column(type="integer", name="is_public", nullable=false, options={"default"="0"})
-     */
-    protected $isPublic = 0;
-
-    /**
      * Date and time of last modification
      *
      * @var \DateTime|null
@@ -122,22 +116,6 @@ class ViewManagerState
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * @param bool $value
-     */
-    public function setIsPublic($value)
-    {
-        $this->isPublic = $value ? 1 : 0;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsPublic()
-    {
-        return !!$this->isPublic;
     }
 
     /**
