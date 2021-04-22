@@ -228,11 +228,11 @@ class ViewManagerHttpHandler
         $isAnon = !$isAdmin && $this->isCurrentUserAnonymous();
         $saveDefault = $isAnon ? $config['allowAnonymousSave'] : true;
         return array(
-            'savePublic' => $isAdmin || ($saveDefault && \in_array($config['publicEntries'], array(
+            'savePublic' => $config['publicEntries'] && ($isAdmin || ($saveDefault && \in_array($config['publicEntries'], array(
                 ViewManager::ACCESS_READWRITE,
                 ViewManager::ACCESS_READWRITEDELETE,
-            ))),
-            'savePrivate' => $isAdmin || (!$isAnon && $config['privateEntries']),
+            )))),
+            'savePrivate' => !$isAnon && $config['privateEntries'],
             'deletePublic' => $isAdmin || ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
         );
     }
