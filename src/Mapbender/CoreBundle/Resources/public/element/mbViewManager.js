@@ -129,6 +129,7 @@
             });
 
             var self = this;
+            var $tbody = $('table tbody', this.element);
             return $.ajax([this.elementUrl, 'save'].join('/'), {
                 method: 'POST',
                 data: data
@@ -137,7 +138,12 @@
                 $('a.-fn-apply', $(newRow)).each(function() {
                     self._updateLinkUrl(this);
                 });
-                $('table tbody', self.element).prepend(newRow);
+                var insertAfter = !data.savePublic && $('tr[data-visibility-group="public"]', $tbody).get(-1);
+                if (insertAfter) {
+                    $(insertAfter).before(newRow);
+                } else {
+                    $tbody.prepend(newRow);
+                }
                 self._flash($(newRow), '#88ff88');
             });
         },
