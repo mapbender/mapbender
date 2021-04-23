@@ -12,6 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Controller to deliver assets from various vendor paths from /components/ urls.
+ * Only answers if file does not actually exist in web/components (see example rewrite configuration in .htaccess).
+ * Having this Controller allows installing and requesting /components/ packages even without having
+ * a "component installer" package, such as robloach/component-installer (abandoned) or
+ * mnsami/composer-custom-directory-installer on the system.
+ */
 class ComponentsController extends Controller
 {
     /**
@@ -53,6 +60,10 @@ class ComponentsController extends Controller
         return null;
     }
 
+    /**
+     * @param string $packageName
+     * @return string|null
+     */
     protected function getPackagePath($packageName)
     {
         switch ($packageName) {
@@ -76,11 +87,18 @@ class ComponentsController extends Controller
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getVendorPath()
     {
         return realpath($this->getParameter('kernel.root_dir') . '/../vendor');
     }
 
+    /**
+     * @param string $path
+     * @return bool
+     */
     protected function matchHidden($path)
     {
         $patterns = array(
