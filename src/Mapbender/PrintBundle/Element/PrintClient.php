@@ -229,7 +229,7 @@ class PrintClient extends Element implements ConfigMigrationInterface
         $options = array(
             'templates' => ArrayUtil::getDefault($config, 'templates', array()),
             'required_fields_first' => ArrayUtil::getDefault($config, 'required_fields_first', false),
-            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', array()),
+            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', array()) ?: array(),
             'quality_levels' => ArrayUtil::getDefault($config, 'quality_levels', array()),
             'scales' => ArrayUtil::getDefault($config, 'scales', array()),
             'show_rotation' => ArrayUtil::getDefault($config, 'rotatable', true),
