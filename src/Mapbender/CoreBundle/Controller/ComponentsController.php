@@ -61,6 +61,9 @@ class ComponentsController extends Controller
             case 'bootstrap-colorpicker':
                 $path = $this->getVendorPath() . "/debugteam/{$packageName}";
                 break;
+            case 'mapbender-icons':
+                $path = $this->getVendorPath() . "/mapbender/{$packageName}";
+                break;
         }
         if (\is_dir($path) && \is_readable($path)) {
             return $path;
