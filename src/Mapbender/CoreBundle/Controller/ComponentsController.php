@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Mapbender\Component\AutoMimeResponseFile;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +46,7 @@ class ComponentsController extends Controller
             $fullPath = "{$packagePath}/{$filePath}";
 
             if (\is_readable($fullPath) && !\is_dir($fullPath)) {
-                return new \SplFileInfo($fullPath);
+                return new AutoMimeResponseFile($fullPath);
             }
         }
         return null;
