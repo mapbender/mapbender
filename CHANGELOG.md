@@ -238,7 +238,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ e10d2995e
+## dev-release/3.0.7 @ 13acb0a05
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -257,6 +257,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 - Fix SimpleSearch errors when receiving invalid headers ([#1303](https://github.com/mapbender/mapbender/issues/1303))
 - Fix broken PrintClient settings layout with option `legend` disabled
+- Fix Print errors / poor resolution on incomplete "quality_levels" configuration ([#1341](https://github.com/mapbender/mapbender/issues/1341))
+- Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 - Fix Wms dimension range editing rounding errors in instance backend

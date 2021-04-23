@@ -37,7 +37,9 @@ class PrintClientSettingsType extends AbstractType
         }
         $qualityChoices = array();
         foreach ($options['quality_levels'] as $qualityOption) {
-            $qualityChoices[$qualityOption['label']] = $qualityOption['dpi'];
+            if (!empty($qualityOption['dpi'])) {
+                $qualityChoices[$qualityOption['label']] = $qualityOption['dpi'];
+            }
         }
         $scaleChoices = array();
         foreach ($options['scales'] as $scale) {
@@ -59,10 +61,19 @@ class PrintClientSettingsType extends AbstractType
                 'choices' => $templateChoices,
                 'label' => 'mb.core.printclient.label.template',
             ))
-            ->add('quality', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
+        ;
+        if (count($qualityChoices) > 1) {
+            $builder->add('quality', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
                 'choices' => $qualityChoices,
                 'label' => 'mb.core.printclient.label.quality',
-            ))
+            ));
+        } else {
+            $dpis = array_values($qualityChoices);
+            $builder->add('quality', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+                'data' => $dpis ? $dpis[0] : '72',
+            ));
+        }
+        $builder
             ->add('scale_select', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
                 'choices' => $scaleChoices,
                 'label' => 'mb.core.printclient.label.scale',
