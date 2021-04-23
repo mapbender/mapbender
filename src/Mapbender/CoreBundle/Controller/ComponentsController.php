@@ -30,8 +30,9 @@ class ComponentsController extends Controller
         if (!$fileInfo) {
             throw new NotFoundHttpException();
         }
-
-        return new BinaryFileResponse($fileInfo);
+        $response = new BinaryFileResponse($fileInfo);
+        $response->isNotModified($request);
+        return $response;
     }
 
     /**
