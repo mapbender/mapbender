@@ -64,6 +64,9 @@ class ComponentsController extends Controller
             case 'mapbender-icons':
                 $path = $this->getVendorPath() . "/mapbender/{$packageName}";
                 break;
+            case 'open-sans':
+                $path = $this->getVendorPath() . "/wheregroup/{$packageName}";
+                break;
         }
         if (\is_dir($path) && \is_readable($path)) {
             return $path;
