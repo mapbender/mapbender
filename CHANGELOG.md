@@ -241,7 +241,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ f3faf0ba6
+## dev-release/3.0.7 @ d5b068170
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -306,6 +306,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
 - [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
 - [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
+- [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
 - Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
 - Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
 - Resolved misc Bootstrap CSS conflicts
