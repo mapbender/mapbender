@@ -100,7 +100,6 @@ mb:
         no_application: 'Geen applicatie beschikbaar'
         new:
           title: 'Nieuwe Applicatie'
-          base_data: 'Basis data'
         create_use: "Maak nieuwe applicatie aan met algemene informatie, \n          en gebruik vervolgens de bewerk-modus om elementen en lagen toe te voegen."
         btn:
           create: 'Aanmaken'

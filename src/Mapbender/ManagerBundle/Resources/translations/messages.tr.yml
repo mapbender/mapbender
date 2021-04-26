@@ -100,7 +100,6 @@ mb:
         no_application: 'Uygulama bulunamadı'
         new:
           title: 'Uygulama oluştur'
-          base_data: 'Temel veriler'
         create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."
         btn:
           create: 'Oluştur'

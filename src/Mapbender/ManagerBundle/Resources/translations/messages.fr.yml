@@ -100,8 +100,6 @@ mb:
         no_application: 'Aucune application n''est disponible'
         new:
           title: 'Nouvelle application'
-          base_data: 'Données de base'
-
         create_use: "Créez une nouvelle application en fournissant de l'information de base et ensuite entrez en mode édition pour ajouter des éléments et des couches"
         btn:
           create: Créer

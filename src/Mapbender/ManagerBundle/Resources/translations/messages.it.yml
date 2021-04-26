@@ -100,7 +100,6 @@ mb:
         no_application: 'Nessuna applicazione disponibile'
         new:
           title: 'Nuova Applicazione'
-          base_data: 'Dati di base'
         create_use: 'Crea una nuova applicazione fornendo informazioni di base e poi usa la modalità di modifica per aggiungere elementi e layers.'
         btn:
           create: Crea

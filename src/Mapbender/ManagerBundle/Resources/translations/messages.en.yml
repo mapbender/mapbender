@@ -102,7 +102,6 @@ mb:
         no_application: 'No application available'
         new:
           title: 'New Application'
-          base_data: 'Base data'
         create_use: "Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
         btn:
           create: Create

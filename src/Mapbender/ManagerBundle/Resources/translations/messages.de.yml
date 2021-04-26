@@ -102,7 +102,6 @@ mb:
         no_application: 'Keine Anwendung vorhanden'
         new:
           title: 'Anwendung anlegen'
-          base_data: Basisdaten
         create_use: 'Erstellen Sie zunächst eine neue Anwendung mit Basisinformationen. Danach können Sie die Anwendung bearbeiten und Elemente sowie Layersets einzufügen.'
         btn:
           create: Speichern

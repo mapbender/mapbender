@@ -100,7 +100,6 @@ mb:
         no_application: 'Aplicação não existe'
         new:
           title: 'Criar aplicação'
-          base_data: 'Dados de fundo'
         create_use: 'Primeiro crie uma aplicação nova. Em seguida você pode editar a aplicação e adicionar elementos e conjuntos de camadas.'
         btn:
           create: Guardar
