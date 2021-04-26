@@ -1,4 +1,3 @@
-@import url("components/font-awesome/css/font-awesome.min.css");
 [class^="icon"],
 [class*=" icon"],
 .icon {
@@ -137,11 +136,6 @@ span.iconBig {
 .iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
 .iconTab:before{content:"\f114"; font-family: FontAwesome;}
 .iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
-
-@import url("components/mapbender-icons/style.css");
-[class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: 'mapbender-icons';
-}
 
 .hover-highlight-effect {
   opacity: 0.6;

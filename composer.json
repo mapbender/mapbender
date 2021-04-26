@@ -16,7 +16,7 @@
         "setasign/fpdi-fpdf": "1.6.*",
 
         "wheregroup/compass-mixins": "0.x",
-        "mapbender/mapbender-icons": "1.x",
+        "mapbender/mapbender-icons": "^1.3",
 
         "mapbender/vis-ui.js": "~0.0",
         "wheregroup/codemirror": "5.x",
