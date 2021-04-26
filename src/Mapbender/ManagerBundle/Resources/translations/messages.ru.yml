@@ -105,7 +105,7 @@ mb:
           create: Создать
           cancel: Отменить
         upload:
-          button: 'Выбрать файл:'
+          button: 'Выбрать файл'
           label: 'Файл не выбран'
           tooltip: 'Нажмите, чтобы загрузить скриншот'
         export:

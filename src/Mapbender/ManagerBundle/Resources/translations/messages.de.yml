@@ -107,7 +107,7 @@ mb:
           create: Speichern
           cancel: Abbrechen
         upload:
-          button: 'Datei auswählen:'
+          button: 'Datei auswählen'
           label: 'Keine Datei ausgewählt...'
           tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
         export:

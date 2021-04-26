@@ -105,7 +105,7 @@ mb:
           create: Créer
           cancel: Annuler
         upload:
-          button: 'Choisir un fichier:'
+          button: 'Choisir un fichier'
           label: 'Aucun fichier sélectionné'
           tooltip: 'Cliquez pour charger une capture d''écran'
         export:
