@@ -81,6 +81,7 @@ mb:
         edit:
           title: 'Uygulamayı düzenle'
           base_data: 'Temel veriler'
+        screenshot: Ekran görüntüsü
         layouts: 'Düzenler'
         layersets: 'Katmanlar'
         custom_css: CSS
@@ -97,7 +98,6 @@ mb:
         no_application: 'Uygulama bulunamadı'
         new:
           title: 'Uygulama oluştur'
-          base_data: 'Temel veriler'
         create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."
         btn:
           create: 'Oluştur'
@@ -105,7 +105,6 @@ mb:
         upload:
           button: 'Veri seç'
           label: 'Veri seçilmedi'
-          tooltip: 'Ekran görüntüsü yüklemek için tıklayın'
         export:
           addAcl: 'Erisim kontrolü (ACLs)'
           addSources: 'Kaynak'

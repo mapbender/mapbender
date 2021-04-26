@@ -81,8 +81,9 @@ mb:
         edit:
           title: 'Modifica applicazione'
           base_data: 'Dati di base'
-        layouts: Layouts
-        layersets: Layersets
+        screenshot: ~
+        layouts: ~
+        layersets: ~
         custom_css: CSS
         security:
           title: Sicurezza
@@ -97,15 +98,13 @@ mb:
         no_application: 'Nessuna applicazione disponibile'
         new:
           title: 'Nuova Applicazione'
-          base_data: 'Dati di base'
         create_use: 'Crea una nuova applicazione fornendo informazioni di base e poi usa la modalità di modifica per aggiungere elementi e layers.'
         btn:
           create: Crea
           cancel: Cancella
         upload:
-          button: 'Selezione file:'
+          button: 'Selezione file'
           label: 'Nessun file selezionato'
-          tooltip: 'Fai clic per caricare uno screenshot'
         export:
           addAcl: ACLs
           addSources: Risorse

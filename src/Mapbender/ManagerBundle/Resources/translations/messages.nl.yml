@@ -81,6 +81,7 @@ mb:
         edit:
           title: 'Wijzig applicatie'
           base_data: 'Basis data'
+        screenshot: Schermafbeelding
         layouts: Layouts
         layersets: Lagensets
         custom_css: CSS
@@ -97,7 +98,6 @@ mb:
         no_application: 'Geen applicatie beschikbaar'
         new:
           title: 'Nieuwe Applicatie'
-          base_data: 'Basis data'
         create_use: "Maak nieuwe applicatie aan met algemene informatie, \n          en gebruik vervolgens de bewerk-modus om elementen en lagen toe te voegen."
         btn:
           create: 'Aanmaken'
@@ -105,7 +105,6 @@ mb:
         upload:
           button: 'Selecteer bestand'
           label: 'Geen bestand geselecteerd'
-          tooltip: 'Klik om een schermafbeelding te laden'
         export:
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
