@@ -82,6 +82,7 @@ mb:
         edit:
           title: 'Editar aplicación'
           base_data: 'Dato Base'
+        screenshot: Captura de pantalla
         layouts: Diseños
         layersets: 'Conjunto de capas'
         custom_css: CSS

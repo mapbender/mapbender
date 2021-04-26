@@ -82,6 +82,7 @@ mb:
         edit:
           title: 'Editar aplicação'
           base_data: 'Dados de fundo'
+        screenshot: ~
         layouts: Layout
         layersets: 'Conjunto de camadas'
         custom_css: CSS

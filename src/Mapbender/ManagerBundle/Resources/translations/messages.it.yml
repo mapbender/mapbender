@@ -82,8 +82,9 @@ mb:
         edit:
           title: 'Modifica applicazione'
           base_data: 'Dati di base'
-        layouts: Layouts
-        layersets: Layersets
+        screenshot: ~
+        layouts: ~
+        layersets: ~
         custom_css: CSS
         security:
           title: Sicurezza

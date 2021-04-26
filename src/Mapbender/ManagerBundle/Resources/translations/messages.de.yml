@@ -84,6 +84,7 @@ mb:
         edit:
           title: 'Anwendung bearbeiten'
           base_data: 'Basisdaten'
+        screenshot: Vorschaubild
         layouts: Layouts
         layersets: Layerset
         custom_css: CSS

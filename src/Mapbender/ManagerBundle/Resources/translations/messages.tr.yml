@@ -82,6 +82,7 @@ mb:
         edit:
           title: 'Uygulamayı düzenle'
           base_data: 'Temel veriler'
+        screenshot: Ekran görüntüsü
         layouts: 'Düzenler'
         layersets: 'Katmanlar'
         custom_css: CSS

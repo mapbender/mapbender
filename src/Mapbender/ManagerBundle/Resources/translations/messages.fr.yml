@@ -82,6 +82,7 @@ mb:
         edit:
           title: 'Modifier l''application'
           base_data: 'Données de base'
+        screenshot: "Capture d'écran"
         layouts: Éléments et disposition
         layersets: Ensembles de couches
         custom_css: CSS
