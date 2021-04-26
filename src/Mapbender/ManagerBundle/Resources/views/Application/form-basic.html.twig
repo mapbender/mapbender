@@ -1,20 +1,16 @@
 {%- form_theme form _self -%}
 {%- if false -%}
-{%- block _application_screenshotFile_row -%}
-    <div class="form-group no-gutters screenshot_upload">
-        {{- form_label(form) -}}
-        <div class="upload">
-            <span class="button upload_button">
-                {{ 'mb.manager.admin.application.upload.button' | trans }}
-            </span>
-            <span class="upload_label">
-                {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
-            </span>
-            {{- block('form_widget_simple') -}}
-            {{- form_widget(form.parent.removeScreenShot) -}}
-            {{- form_errors(form) -}}
-        </div>
-    </div>
+{%- block _application_screenshotFile_widget -%}
+    {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
+      <div class="inputWrapper upload">
+        <input type="file" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+          <span class="btn btn-default btn-sm">
+              {{ 'mb.manager.admin.application.upload.button' | trans }}
+          </span>
+          <span class="upload_label">
+              {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
+          </span>
+      </div>
 {%- endblock %}
 {%- endif -%}
 <div class="col-xs-8">
@@ -28,6 +24,7 @@
     {{ form_row(form.map_engine_code) }}
     {{ form_row(form.description) }}
     {{ form_row(form.persistentView) }}
+    {{ form_row(form.removeScreenShot) }}
 </div>
 <div class="col-xs-4">
     {%- set _screenshot_src = screenshot | default('') %}
