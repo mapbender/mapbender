@@ -107,7 +107,6 @@ mb:
         upload:
           button: 'Choisir un fichier'
           label: 'Aucun fichier sélectionné'
-          tooltip: 'Cliquez pour charger une capture d''écran'
         export:
           addAcl: ACLs
           addSources: Sources

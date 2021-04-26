@@ -109,7 +109,6 @@ mb:
         upload:
           button: 'Datei auswählen'
           label: 'Keine Datei ausgewählt...'
-          tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
         export:
           addAcl: Acls
           addSources: Quellen

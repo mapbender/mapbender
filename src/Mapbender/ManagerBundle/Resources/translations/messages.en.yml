@@ -109,7 +109,6 @@ mb:
         upload:
           button: 'Select file'
           label: 'No file selected'
-          tooltip: 'Please click to upload a screenshot'
         export:
           addAcl: ACLs
           addSources: Sources

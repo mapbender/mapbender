@@ -107,7 +107,6 @@ mb:
         upload:
           button: 'Escolher ficheiro'
           label: 'Nenhum ficheiro escolhido'
-          tooltip: 'Please click to upload a screenshot'
         export:
           addAcl: Acls
           addSources: Origem

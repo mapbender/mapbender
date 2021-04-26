@@ -107,7 +107,6 @@ mb:
         upload:
           button: 'Выбрать файл'
           label: 'Файл не выбран'
-          tooltip: 'Нажмите, чтобы загрузить скриншот'
         export:
           addAcl: ACLs
           addSources: Источники

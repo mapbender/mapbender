@@ -107,7 +107,6 @@ mb:
         upload:
           button: 'Veri seç'
           label: 'Veri seçilmedi'
-          tooltip: 'Ekran görüntüsü yüklemek için tıklayın'
         export:
           addAcl: 'Erisim kontrolü (ACLs)'
           addSources: 'Kaynak'

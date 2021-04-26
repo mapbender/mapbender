@@ -107,7 +107,6 @@ mb:
         upload:
           button: 'Selecteer bestand'
           label: 'Geen bestand geselecteerd'
-          tooltip: 'Klik om een schermafbeelding te laden'
         export:
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
