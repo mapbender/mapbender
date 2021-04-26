@@ -1,0 +1,29 @@
+<div id="{{ id }}" class="mb-element mb-element-viewmanager">
+    {%- if grants.savePublic or grants.savePrivate -%}
+    <div>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" name="title" class="form-control" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
+                <span class="input-group-addon btn -fn-save-new" title="{{ 'mb.actions.save' | trans }}">
+                    <i class="fa fas fa-save"></i>
+                </span>
+            </div>
+        </div>
+        {%- if grants.savePublic and grants.savePrivate -%}
+        <div class="form-group checkbox">
+            <label><input name="save-as-public" type="checkbox">{{ 'mb.core.viewManager.saveAsPublic' | trans }}</label>
+        </div>
+        {%- endif -%}
+    </div>
+    {%- endif -%}
+    <div class="ui-helper-clearfix -fn-loading-placeholder">
+        <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
+    </div>
+    <div class="hidden -js-delete-confirmation-content">
+        <p>{{ 'mb.core.viewManager.confirmDelete' | trans }}</p>
+        <div class="text-nowrap">
+            <button type="button" class="btn btn-sm btn-danger -fn-confirm">{{ 'mb.actions.delete' | trans }}</button>
+            <button type="button" class="btn btn-sm btn-info -fn-cancel">{{ 'mb.actions.cancel' | trans }}</button>
+        </div>
+    </div>
+</div>

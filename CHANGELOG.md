@@ -1,4 +1,4 @@
-## dev-master @ 7fd3115f1
+## dev-master @ 4f003e508
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
@@ -11,9 +11,12 @@
 * Fix same Wms dimension appearing multiple times in new Wms instance if endorsed by multiple layers
 * Fix invalid empty initial value in (required) export application choice
 * Fix HTML paragraph text flow
+* Fix Print errors / poor resolution on incomplete "quality_levels" configuration ([#1341](https://github.com/mapbender/mapbender/issues/1341))
+* Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
 * [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* Add new "View manager" Element (see [PR#1351](https://github.com/mapbender/mapbender/pull/1351))
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
 * Support resetting source layer settings when using ZoomBar component "zoom_home" (see [PR#1348](https://github.com/mapbender/mapbender/pull/1348))
 * [Forms] Update form theme to emit Bootstrap checkboxes and (margin-providing) form-group containers (see [PR#1343](https://github.com/mapbender/mapbender/pull/1343))
@@ -21,6 +24,8 @@
 * [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 * [Backend] Fix filter input in Element security dialog not working
 * [Backend] Fix missing redirect to "Layouts" tab after saving Element security
+* [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
+* [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
 * Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
 * Misc cleanups of Fontawesome 5+ incompatibilities in backend
 * Misc legacy CSS cleanups
@@ -237,7 +242,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ e10d2995e
+## dev-release/3.0.7 @ d5b068170
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -256,6 +261,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
 - Fix SimpleSearch errors when receiving invalid headers ([#1303](https://github.com/mapbender/mapbender/issues/1303))
 - Fix broken PrintClient settings layout with option `legend` disabled
+- Fix Print errors / poor resolution on incomplete "quality_levels" configuration ([#1341](https://github.com/mapbender/mapbender/issues/1341))
+- Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
 - Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
 - Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
 - Fix Wms dimension range editing rounding errors in instance backend
@@ -299,6 +306,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix vis-ui.js usages depending on (abandoned) robloach/component-installer ([PR#1306](https://github.com/mapbender/mapbender/pull/1306))
 - [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
 - [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
+- [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
+- [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
 - Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
 - Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
 - Resolved misc Bootstrap CSS conflicts

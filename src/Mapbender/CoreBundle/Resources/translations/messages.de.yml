@@ -286,6 +286,28 @@ mb:
         title: URL teilen
         description: Teilt die aktuelle Kartenansicht über eine URL
       copied_to_clipboard: URL in Zwischenablage kopiert
+    viewManager:
+      class:
+        title: Ansichtsverwaltung
+        description: Speichert Kartenzustände zum späteren Abruf
+      saveAsPublic: Als öffentlichen Eintrag speichern
+      confirmDelete: Eintrag wirklich löschen?
+      no_data: Keine Daten
+      title: Titel
+      date: Datum
+      enter_title: Titel eingeben
+      apply: Abrufen
+      replace: Überschreiben
+      admin:
+        access.none: Nicht anzeigen
+        access.ro: Nur lesen
+        access.rw: Speichern erlauben
+        access.rwd: Speichern und löschen erlauben
+        publicEntries: Öffentliche Liste
+        privateEntries: Private Liste anzeigen
+        adminDeleteHint: "Hinweis: Administratoren dürfen öffentliche Einträge immer löschen"
+        allowAnonymousSave: Anonyme Besucher dürfen speichern
+        showDate: Datum anzeigen
     admin:
       poi:
         label:

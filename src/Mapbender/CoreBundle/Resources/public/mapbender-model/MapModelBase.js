@@ -1163,7 +1163,33 @@ window.Mapbender.MapModelBase = (function() {
             return diff;
         },
         /**
+         * @param {mmMapSettings} base
+         * @param {mmMapSettingsDiff} diff
+         * @return {mmMapSettings}
+         */
+        mergeSettings: function(base, diff) {
+            var settings = Object.assign({}, base, {
+                viewParams: diff.viewParams,
+                sources: base.sources.map(/** @param {SourceSettings} baseSettings */ function(baseSettings) {
+                    var diffMatches = diff.sources.filter(function(diffEntry) {
+                        return ('' + diffEntry.id) === ('' + baseSettings.id);
+                    });
+                    if (diffMatches.length) {
+                        return Mapbender.Source.prototype.mergeSettings.call(null, baseSettings, diffMatches[0]);
+                    } else {
+                        return baseSettings;
+                    }
+                }),
+                // @todo: merge layersets settings
+                layersets: base.layersets.slice()
+            });
+
+            return settings;
+        },
+        /**
          * @param {mmMapSettings} settings
+         * @return {Array<Mapbender.Source>}
+         * @todo: fold with applySourceSettingsDiff
          */
         applySourceSettings: function(settings) {
             // @todo: defensive checks if source was actually changed to reduce reloads...?

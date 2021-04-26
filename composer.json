@@ -20,7 +20,7 @@
         "setasign/fpdi": "^2",
 
         "wheregroup/compass-mixins": "0.x",
-        "mapbender/mapbender-icons": "1.x",
+        "mapbender/mapbender-icons": "^1.3",
 
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",

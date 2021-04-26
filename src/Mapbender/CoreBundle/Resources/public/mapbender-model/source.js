@@ -218,6 +218,22 @@ window.Mapbender.Source = (function() {
             // null if completely empty
             return Object.keys(diff).length && diff || null;
         },
+        /**
+         * @param {SourceSettings} base
+         * @param {SourceSettingsDiff} diff
+         * @return {SourceSettings}
+         */
+        mergeSettings: function(base, diff) {
+            var settings = Object.assign({}, base);
+            if (typeof (diff.opacity) !== 'undefined') {
+                settings.opacity = diff.opacity;
+            }
+            settings.selectedIds = settings.selectedIds.filter(function(id) {
+                return -1 === ((diff || {}).deactivate || []).indexOf(id);
+            });
+            settings.selectedIds = settings.selectedIds.concat((diff || {}).activate || []);
+            return settings;
+        },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;
         },

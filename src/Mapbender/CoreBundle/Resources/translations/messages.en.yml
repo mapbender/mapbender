@@ -285,6 +285,28 @@ mb:
         title: Share URL
         description: Share current map view via url
       copied_to_clipboard: URL copied to clipboard
+    viewManager:
+      class:
+        title: View manager
+        description: Saves map states for later restoration
+      saveAsPublic: Save as public
+      confirmDelete: Confirm deletion
+      no_data: No data
+      title: Title
+      date: Date
+      enter_title: Enter title
+      apply: Apply
+      replace: Replace
+      admin:
+        access.none: Do not show
+        access.ro: Read only
+        access.rw: Allow saving
+        access.rwd: Allow saving and deletion
+        publicEntries: Public list
+        privateEntries: Show private list
+        adminDeleteHint: "Note: the administrator can always delete public entries"
+        allowAnonymousSave: Allow saving to anonymous users
+        showDate: Show date
     admin:
       poi:
         label:

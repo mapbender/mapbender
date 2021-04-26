@@ -55,6 +55,7 @@
         <parameter key="assetic.filter.sass.timeout">null</parameter>
         <!-- Element related -->
         <parameter key="mb.element.application_switcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
+        <parameter key="mb.element.view_manager.http_handler.class">Mapbender\CoreBundle\Element\ViewManagerHttpHandler</parameter>
     </parameters>
 
     <services>
@@ -267,6 +268,11 @@
         </service>
 
         <!-- Element related -->
+        <service id="mb.element.view_manager.http_handler" class="%mb.element.view_manager.http_handler.class%">
+            <argument type="service" id="templating" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="security.token_storage" />
+        </service>
         <service id="mb.element.application_switcher.http_handler" class="%mb.element.application_switcher.http_handler.class%">
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
