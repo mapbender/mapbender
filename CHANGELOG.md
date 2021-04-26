@@ -1,4 +1,4 @@
-## dev-master @ c605a05b9
+## dev-master @ 4f003e508
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
@@ -25,6 +25,7 @@
 * [Backend] Fix filter input in Element security dialog not working
 * [Backend] Fix missing redirect to "Layouts" tab after saving Element security
 * [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
+* [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
 * Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
 * Misc cleanups of Fontawesome 5+ incompatibilities in backend
 * Misc legacy CSS cleanups
