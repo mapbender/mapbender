@@ -16,6 +16,7 @@
 {% block manager_content %}
   {%- set items = users -%}
   {{- parent() -}}
+<div class="content-box content-box-lg">
 {% if users %}
     <table id="listFilterUsers" class="table">
     <thead id="usersHead">
@@ -70,10 +71,9 @@
     </tbody>
   </table>
 {% else %}
-  <div class="clearContainer"></div>
   <p class="description">{{"fom.user.user.index.no_users_available"|trans}}</p>
 {% endif %}
-<div class="clearContainer"></div>
+</div>
 {% endblock %}
 
 {% block js %}

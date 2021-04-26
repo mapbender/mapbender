@@ -19,6 +19,7 @@
 {% block manager_content %}
   {%- set items = groups -%}
   {{- parent() -}}
+<div class="content-box content-box-lg">
 {% if groups %}
   <table id="listFilterGroups" class="table">
     <thead>
@@ -52,7 +53,7 @@
     </tbody>
   </table>
 {% else %}
-  <div class="clearContainer"></div>
   <p class="description">{{"fom.user.group.index.no_groups_available"|trans}}</p>
 {% endif %}
+</div>
 {% endblock %}
