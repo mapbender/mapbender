@@ -4,10 +4,12 @@
 
 {% block list_actions %}
 {%- if create_permission -%}
+<div class="content-box content-box-md">
   <a href="{{ path('mapbender_manager_application_new') }}">
       <i class="fa fas fa-lg fa-plus"></i>
       <span>{{ 'mb.manager.admin.application.new.title' | trans }}</span>
   </a>
+</div>
 {%- endif -%}
 {% endblock %}
 

@@ -108,6 +108,9 @@ div.contentTitle {
 .list-head {
   font-size: 1.3rem;
   margin-bottom: 10%;
+  .content-box {
+    display: inline-block;
+  }
 }
 
 a.button, button, div.dropdown:not(.bs-dropdown) {
@@ -203,11 +206,7 @@ ul.dropdownList{
 }
 
 .container-filter {
-  margin-bottom: 2rem;
   text-align: right;
-  .content-box {
-    display: inline-block;
-  }
 }
 
 #listFilterPermission {
