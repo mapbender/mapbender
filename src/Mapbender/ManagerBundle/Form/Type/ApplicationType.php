@@ -55,7 +55,7 @@ class ApplicationType extends AbstractType
             ))
 
             ->add('screenshotFile', 'Symfony\Component\Form\Extension\Core\Type\FileType', array(
-                'label' => 'Screenshot',
+                'label' => 'mb.manager.admin.application.screenshot',
                 'mapped' => false,
                 'required' => false,
                 'attr' => array(

@@ -13,24 +13,24 @@
 @import "bundles/mapbendermanager/sass/manager/services.scss";
 
 // ------------------------------------------------------- APPLICATIONS
-.screenshot_upload {
-  .upload {
+.inputWrapper.upload {
+  position: relative;
+  .btn {
+    // Increase z to enable cursor / color change on hoversm
     position: relative;
-    .upload_label {
-      max-width: 60%;
-      text-overflow: ellipsis;
-    }
+    z-index: 1;
+  }
+  .upload_label {
+    max-width: 60%;
+    text-overflow: ellipsis;
   }
 
-  input, .inputWrapper {
+  input {
     opacity: 0;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-  }
-  .upload:hover .upload_button {
-    background-color: darken($buttonFirstColor, 5%);
   }
 }
 

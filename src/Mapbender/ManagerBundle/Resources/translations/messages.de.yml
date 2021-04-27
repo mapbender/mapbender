@@ -111,6 +111,7 @@ mb:
         edit:
           title: 'Anwendung bearbeiten'
           base_data: 'Basisdaten'
+        screenshot: Vorschaubild
         layouts: Layouts
         layersets: Layerset
         custom_css: CSS
@@ -127,15 +128,13 @@ mb:
         no_application: 'Keine Anwendung vorhanden'
         new:
           title: 'Anwendung anlegen'
-          base_data: Basisdaten
         create_use: 'Erstellen Sie zunächst eine neue Anwendung mit Basisinformationen. Danach können Sie die Anwendung bearbeiten und Elemente sowie Layersets einzufügen.'
         btn:
           create: Speichern
           cancel: Abbrechen
         upload:
-          button: 'Datei auswählen:'
+          button: 'Datei auswählen'
           label: 'Keine Datei ausgewählt...'
-          tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
         export:
           addAcl: Acls
           addSources: Quellen

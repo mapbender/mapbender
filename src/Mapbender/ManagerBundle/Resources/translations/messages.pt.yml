@@ -81,6 +81,7 @@ mb:
         edit:
           title: 'Editar aplicação'
           base_data: 'Dados de fundo'
+        screenshot: ~
         layouts: Layout
         layersets: 'Conjunto de camadas'
         custom_css: CSS
@@ -97,7 +98,6 @@ mb:
         no_application: 'Aplicação não existe'
         new:
           title: 'Criar aplicação'
-          base_data: 'Dados de fundo'
         create_use: 'Primeiro crie uma aplicação nova. Em seguida você pode editar a aplicação e adicionar elementos e conjuntos de camadas.'
         btn:
           create: Guardar
@@ -105,7 +105,6 @@ mb:
         upload:
           button: 'Escolher ficheiro'
           label: 'Nenhum ficheiro escolhido'
-          tooltip: 'Please click to upload a screenshot'
         export:
           addAcl: Acls
           addSources: Origem

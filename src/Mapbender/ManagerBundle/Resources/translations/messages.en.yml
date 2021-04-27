@@ -111,6 +111,7 @@ mb:
         edit:
           title: 'Edit application'
           base_data: 'Base data'
+        screenshot: Thumbnail
         layouts: Layouts
         layersets: Layersets
         custom_css: CSS
@@ -127,15 +128,13 @@ mb:
         no_application: 'No application available'
         new:
           title: 'New Application'
-          base_data: 'Base data'
         create_use: "Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
         btn:
           create: Create
           cancel: Cancel
         upload:
-          button: 'Select file:'
+          button: 'Select file'
           label: 'No file selected'
-          tooltip: 'Please click to upload a screenshot'
         export:
           addAcl: ACLs
           addSources: Sources

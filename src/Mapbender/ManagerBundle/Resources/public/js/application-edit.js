@@ -350,6 +350,10 @@ $(function() {
     var minWidth = fileInput.attr('data-min-width');
     var minHeight = fileInput.attr('data-min-height');
 
+    $(document).on('click', '.inputWrapper.upload .btn', function() {
+        $('input[type="file"]', $(this).closest('.form-group')).click();
+    });
+
     fileInput.on('change', function(e) {
         setUploadFilename(e);
 

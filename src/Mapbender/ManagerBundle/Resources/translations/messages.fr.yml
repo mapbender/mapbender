@@ -81,6 +81,7 @@ mb:
         edit:
           title: 'Modifier l''application'
           base_data: 'Données de base'
+        screenshot: "Capture d'écran"
         layouts: Éléments et disposition
         layersets: Ensembles de couches
         custom_css: CSS
@@ -97,16 +98,13 @@ mb:
         no_application: 'Aucune application n''est disponible'
         new:
           title: 'Nouvelle application'
-          base_data: 'Données de base'
-
         create_use: "Créez une nouvelle application en fournissant de l'information de base et ensuite entrez en mode édition pour ajouter des éléments et des couches"
         btn:
           create: Créer
           cancel: Annuler
         upload:
-          button: 'Choisir un fichier:'
+          button: 'Choisir un fichier'
           label: 'Aucun fichier sélectionné'
-          tooltip: 'Cliquez pour charger une capture d''écran'
         export:
           addAcl: ACLs
           addSources: Sources
