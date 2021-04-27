@@ -11,10 +11,8 @@
     </li>
     {%- endfor -%}
   </ul>
-  <div class="clearContainer"></div>
   {%- endif -%}
   <p class="description{{ items ? ' hidden' : ''}}">
     {% block boxlist_placeholder_content %}{% endblock %}
   </p>
-  <div class="clearContainer"></div>
 {% endblock %}
