@@ -32,7 +32,11 @@
             </div>
           </a>
           <div class="col2 box">
-            <div class="buttonGroup text-nowrap pull-right">
+              {{ parent() }}
+          </div>
+{%- endblock -%}
+
+{%- block item_iteractions -%}
               <a class="hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"><i class="fa fas fa-desktop"></i></a>
 
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
@@ -59,13 +63,18 @@
                       data-slug="{{ application.slug }}"
                 ><i class="fa fas fa-times"></i></span>
               {% endif %}
-            </div>
+{%- endblock -%}
+
+{%- block item_title -%}
             <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
               {{ application.title }}
             </a>
             <span class="smallerText">{{ application.slug }}</span>
-            <div class="description">{{ application.description }}</div>
-          </div>
+{%- endblock -%}
+
+
+{%- block item_content_main -%}
+{{ item.description }}
 {%- endblock -%}
 
 {%- block boxlist_placeholder_content -%}

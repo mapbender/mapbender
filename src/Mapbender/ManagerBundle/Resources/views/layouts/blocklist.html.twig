@@ -7,7 +7,22 @@
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
     <li class="filterItem">
-      {% block boxlist_item_content %}{% endblock %}
+      {% block boxlist_item_content -%}
+      <div class="contentTitle">
+        <div class="buttonGroup button-toolbar pull-right">
+          {%- block item_interactions -%}
+          {%- endblock -%}
+        </div>
+        <span class="h2">
+          {%- block item_title -%}
+          {%- endblock -%}
+        </span>
+        <div>
+        {%- block item_content_main -%}
+        {%- endblock -%}
+        </div>
+      </div>
+      {%- endblock -%}
     </li>
     {%- endfor -%}
   </ul>

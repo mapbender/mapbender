@@ -11,9 +11,11 @@
           <div class="smallerText">{{ source.type }}</div>
         </div>
         <div class="col2 box">
-          <div class="contentTitle">
-            <div class="buttonGroup button-toolbar pull-right">
-            {%- block item_interactions -%}
+          {{ parent() }}
+        </div>
+{%- endblock -%}
+
+{%- block item_interactions -%}
               <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
               {% if source.id in reloadableIds %}
               <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
@@ -24,17 +26,14 @@
                   data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                   data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
               {% endif %}
-            {%- endblock -%}
-            </div>
-        <span class="h2 title">
-        {%- block item_title -%}
+{%- endblock -%}
+
+{%- block item_title -%}
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}</a> <sup>{{ source.alias }}</sup>
-        {%- endblock -%}
-        </span>
-            <div class="clear"></div>
-          </div>
-          <div>{{ source.description }}</div>
-        </div>
+{%- endblock -%}
+
+{%- block item_content_main -%}
+{{ source.description }}
 {%- endblock -%}
 
 {%- block boxlist_placeholder_content -%}
