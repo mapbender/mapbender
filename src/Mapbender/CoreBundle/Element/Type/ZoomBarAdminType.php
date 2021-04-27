@@ -41,7 +41,7 @@ class ZoomBarAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
                 'attr' => array(
-                    'size' => 6,
+                    'size' => 5,
                 ),
             ))
             ->add('zoomHomeRestoresLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
