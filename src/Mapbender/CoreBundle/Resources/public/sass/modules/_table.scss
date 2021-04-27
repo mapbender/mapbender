@@ -1,11 +1,4 @@
 /** Backend only */
-.table {
-  tbody{
-    tr{
-      &:hover{background-color:darken($contentColor, 3%);}
-    }
-  }
-}
 .table-bordered {
   border-top: solid 3px $firstColor;
   // Undo Bootstrap left / right borders on cells
