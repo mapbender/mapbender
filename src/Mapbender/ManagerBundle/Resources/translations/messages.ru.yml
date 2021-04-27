@@ -167,8 +167,6 @@ mb:
           label: Вкладки
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Скриншот удален'
     import:
       application:
         failed: 'Приложение не может быть импортировано.'

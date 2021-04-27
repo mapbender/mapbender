@@ -167,8 +167,6 @@ mb:
           label: Separador
         accordion:
           label: Acordeão
-    upload:
-      label_delete: 'Imagem removida'
     import:
       application:
         failed: 'Não pode importar aplicação'

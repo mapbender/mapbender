@@ -167,8 +167,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Schermafdruk verwijderd'
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'

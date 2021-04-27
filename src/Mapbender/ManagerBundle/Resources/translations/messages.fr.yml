@@ -167,8 +167,6 @@ mb:
           label: Onglets
         accordion:
           label: Accordéon
-    upload:
-      label_delete: 'Capture d''écran supprimée'
     import:
       application:
         failed: 'Impossible d''importer l''application.'

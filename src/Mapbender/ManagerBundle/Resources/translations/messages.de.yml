@@ -171,8 +171,6 @@ mb:
           label: Buttons
         accordion:
           label: Akkordeon
-    upload:
-      label_delete: 'Bild entfernt.'
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'

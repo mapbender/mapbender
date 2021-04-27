@@ -8,7 +8,7 @@
                 {{ 'mb.manager.admin.application.upload.button' | trans }}
             </span>
             <span class="upload_label">
-                {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
+                {{ form.parent.vars.data.screenshot | default('mb.manager.admin.application.upload.label' | trans) }}
             </span>
             {{- block('form_widget_simple') -}}
             {{- form_widget(form.parent.removeScreenShot) -}}

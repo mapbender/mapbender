@@ -167,8 +167,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Captura de Pantalla removida'
     import:
       application:
         failed: 'La aplicación no puede ser importada.'

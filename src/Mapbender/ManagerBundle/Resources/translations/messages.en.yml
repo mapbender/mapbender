@@ -169,8 +169,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Screenshot removed'
     import:
       application:
         failed: 'Application cannot be imported.'

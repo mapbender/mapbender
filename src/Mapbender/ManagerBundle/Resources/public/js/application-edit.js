@@ -423,7 +423,7 @@ $(function() {
         deleteButton.on('click', function() {
             screenShot.addClass('default');
             screenShotImg.attr('src',"");
-            applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
+            applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
             applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
             deleteButton.addClass('hidden');
         });

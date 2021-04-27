@@ -159,8 +159,6 @@ mb:
           label: 'Sekmeler'
         accordion:
           label: 'Akordiyon'
-    upload:
-      label_delete: 'Ekran görüntüsü kaldırıldı (Screenshot).'
     import:
       application:
         failed: 'Uygulama içeri aktarıllamıyor (Import).'
