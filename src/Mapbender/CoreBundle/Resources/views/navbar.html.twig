@@ -28,7 +28,8 @@
                 {% elseif app.user != '' %}
                   <li class="dropdown bs-dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        {{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                        <i class="fa fas fa-user"></i>&nbsp;{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                        <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                       <li>
