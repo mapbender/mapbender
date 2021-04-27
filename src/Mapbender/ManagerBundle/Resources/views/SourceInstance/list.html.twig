@@ -1,43 +1,11 @@
-{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
-
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
-{% endblock %}
+{% extends "MapbenderManagerBundle:Repository:index.html.twig" %}
 
 {% block manager_content %}
     {%- set list_class = '-fn-instance-list' %}
     {{ parent() }}
 {% endblock %}
 
-{%- block boxlist_item_content -%}
-{# @todo: fold design logic shared / sharable with Repository/index.html.twig into common base template #}
-        <div class="row">
-          <div class="col-md-2 col-xs-12 col-12">
-            <div class="preview-box preview-info">
-              <div class="placeholder-text">
-                <h4>{{ item.id }}</h4>
-                <p>{{ item.source.type }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-10 col-xs-12 col-12">
-            <h2>{{ item.title | default(item.source.title) }}</h2>
-            <table class="table table-borderless table-condensed">
-                <tbody>
-                  <tr>
-                      <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-                      <td>{{ item.source.type }} {{ item.source.version }}</td>
-                  </tr>
-                  {%- if item.source.description -%}
-                  <tr>
-                      <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
-                      <td>{{ item.source.description }}</td>
-                  </tr>
-                  {%- endif -%}
-              </tbody>
-            </table>
-            <div class="btn-toolbar pull-right">
+{%- block item_interactions -%}
               <a class="btn btn-default" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                 ><i class="fa fa-cog"></i></a>
               <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
@@ -48,11 +16,13 @@
                   title="{{"mb.actions.delete"|trans}}"
                   ><i class="fa fa-times"></i></a>
             {% endif %}
-            </div>
-          </div>
-        </div>
 {%- endblock -%}
 
-{%- block boxlist_placeholder_content -%}
-{{- 'mb.manager.admin.source.no_source' | trans -}}
+{%- block boxlist_item_content -%}
+    {%- set source = item.source -%}
+    {{ parent() }}
+{%- endblock -%}
+
+{%- block item_title -%}
+  {{ item.title | default(item.source.title) }}
 {%- endblock -%}
