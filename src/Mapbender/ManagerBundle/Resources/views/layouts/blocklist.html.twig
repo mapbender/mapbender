@@ -8,7 +8,6 @@
     {%- for item in items -%}
       <li class="filterItem content-box content-box-lg">
       {% block boxlist_item_content -%}
-      <div class="contentTitle">
         <h2 class="contentTitle">
           {%- block item_title -%}
           {%- endblock -%}
@@ -22,7 +21,6 @@
           {%- endblock -%}
         </div>
         <div class="clearfix"></div>
-      </div>
       {%- endblock -%}
     </li>
     {%- endfor -%}
