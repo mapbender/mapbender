@@ -16,10 +16,11 @@
               </div>
             </div>
             <div class="col-md-10 col-xs-12 col-12">
-              <h2>
-                  <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}">
-                  {{ source.title }}</a> <sup>{{ source.alias}}</sup>
-              </h2>
+                {{ parent() }}
+            </div>
+{%- endblock -%}
+
+{%- block item_content_main -%}
               <table class="table table-borderless table-condensed">
                   <tbody>
                     <tr>
@@ -34,8 +35,9 @@
                     {%- endif -%}
                 </tbody>
               </table>
-              <div class="btn-toolbar pull-right">
-              {%- block item_interactions -%}
+{%- endblock -%}
+
+{%- block item_interactions -%}
                 <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
                 {% if source.id in reloadableIds %}
                   <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
@@ -46,10 +48,10 @@
                               data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                               data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
                 {% endif %}
-              {%- endblock -%}
-              </div>
-            </div>
-          </div>
+{%- endblock -%}
+
+{%- block item_title -%}
+          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}</a> <sup>{{ source.alias }}</sup>
 {%- endblock -%}
 
 {%- block boxlist_placeholder_content -%}

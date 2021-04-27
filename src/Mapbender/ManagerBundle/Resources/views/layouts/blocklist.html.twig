@@ -6,15 +6,29 @@
   {%- if items -%}
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
-    <li class="filterItem content-box content-box-lg">
-      {% block boxlist_item_content %}{% endblock %}
+      <li class="filterItem content-box content-box-lg">
+      {% block boxlist_item_content -%}
+      <div class="contentTitle">
+        <h2 class="contentTitle">
+          {%- block item_title -%}
+          {%- endblock -%}
+        </h2>
+        <div>
+          {%- block item_content_main -%}
+          {%- endblock -%}
+        </div>
+        <div class="btn-toolbar pull-right">
+          {%- block item_interactions -%}
+          {%- endblock -%}
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      {%- endblock -%}
     </li>
     {%- endfor -%}
   </ul>
-  <div class="clearContainer"></div>
   {%- endif -%}
   <p class="description{{ items ? ' hidden' : ''}}">
     {% block boxlist_placeholder_content %}{% endblock %}
   </p>
-  <div class="clearContainer"></div>
 {% endblock %}
