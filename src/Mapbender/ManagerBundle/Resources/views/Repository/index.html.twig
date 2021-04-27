@@ -5,21 +5,6 @@
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
 {% endblock %}
 
-{%- block boxlist_item_content -%}
-          <div class="row">
-            <div class="col-md-2 col-xs-12 col-12">
-              <div class="preview-box preview-info">
-                <div class="placeholder-text">
-                  <h4>{{ item.id }}</h4>
-                  <p>{{ source.type }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-10 col-xs-12 col-12">
-                {{ parent() }}
-            </div>
-{%- endblock -%}
-
 {%- block item_content_main -%}
               <table class="table table-borderless table-condensed">
                   <tbody>
