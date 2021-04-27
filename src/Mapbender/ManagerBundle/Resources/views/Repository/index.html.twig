@@ -41,8 +41,20 @@
               <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}">
                   <h2>{{ source.title }}<span class="smallerText">{{ (' ' ~ source.alias) | trim(side='right') }}</span></h2>
               </a>
-
-              <p>{{ source.description }}</p>
+              <table class="table table-borderless table-condensed">
+                  <tbody>
+                    <tr>
+                        <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
+                        <td>{{ source.type }} {{ source.version }}</td>
+                    </tr>
+                    {%- if source.description -%}
+                    <tr>
+                        <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
+                        <td>{{ source.description }}</td>
+                    </tr>
+                    {%- endif -%}
+                </tbody>
+              </table>
               <div class="btn-toolbar pull-right">
                 <a class="btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
                 {% if source.id in reloadableIds %}

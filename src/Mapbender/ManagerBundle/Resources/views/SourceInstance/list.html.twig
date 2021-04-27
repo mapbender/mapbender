@@ -23,7 +23,20 @@
           </div>
           <div class="col-md-10 col-xs-12 col-12">
             <h2>{{ item.title | default(item.source.title) }}</h2>
-            <p>{{ item.source.description }}</p>
+            <table class="table table-borderless table-condensed">
+                <tbody>
+                  <tr>
+                      <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
+                      <td>{{ item.source.type }} {{ item.source.version }}</td>
+                  </tr>
+                  {%- if item.source.description -%}
+                  <tr>
+                      <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
+                      <td>{{ item.source.description }}</td>
+                  </tr>
+                  {%- endif -%}
+              </tbody>
+            </table>
             <div class="btn-toolbar pull-right">
               <a class="btn btn-default hover-highlight-effect" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                 ><i class="fa fa-cog"></i></a>
