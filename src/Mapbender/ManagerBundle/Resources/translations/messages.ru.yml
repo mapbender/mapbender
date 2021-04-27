@@ -155,8 +155,6 @@ mb:
         delete_user_group:
           title: 'Подтвердите удаление'
           content: 'Действительно удалить%userGroup%?'
-    upload:
-      label_delete: 'Скриншот удален'
     import:
       application:
         failed: 'Приложение не может быть импортировано.'

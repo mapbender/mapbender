@@ -155,8 +155,6 @@ mb:
         delete_user_group:
           title: 'Conferma cancellazione'
           content: 'Cancellare davvero %userGroup%?'
-    upload:
-      label_delete: 'Screenshot rimosso'
     import:
       application:
         failed: 'L''applicazione non può essere importata.'

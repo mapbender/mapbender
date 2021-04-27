@@ -155,8 +155,6 @@ mb:
         delete_user_group:
           title: 'Bevestig verwijderen'
           content: '%userGroup% echt verwijderen?'
-    upload:
-      label_delete: 'Schermafdruk verwijderd'
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
