@@ -57,12 +57,12 @@
                 </tbody>
               </table>
               <div class="btn-toolbar pull-right">
-                <a class="btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
+                <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
                 {% if source.id in reloadableIds %}
-                  <a class="btn btn-default hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
+                  <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
                 {% endif %}
                 {% if is_granted('DELETE', oid) %}
-                  <a href="#" class="btn btn-default -fn-delete hover-highlight-effect"
+                  <a href="#" class="btn btn-default -fn-delete"
                               title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                               data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                               data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
