@@ -95,6 +95,9 @@ div.contentTitle {
 // -------------------------------------------------------------------- PAGE TOP
 .head {
   margin-bottom: 100px;
+  // Add padding to compensate for absolute-positioned navbar-fixed-top
+  // See https://getbootstrap.com/docs/3.4/components/#navbar-fixed-top
+  padding-top: 60px;
 }
 
 .sitelinks {
