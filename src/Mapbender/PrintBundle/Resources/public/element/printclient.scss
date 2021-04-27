@@ -7,11 +7,6 @@
   .button.active {
     background-color: #538e24;
   }
-  .checkWrapper.left {
-    // @todo: undo checkbox float globally
-    float: none;
-  }
-
   .job-list {
     @extend .mapbender-element-result-table;
     max-height: 400px;
