@@ -38,9 +38,10 @@
               </div>
             </div>
             <div class="col-md-10 col-xs-12 col-12">
-              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}">
-                  <h2>{{ source.title }}<span class="smallerText">{{ (' ' ~ source.alias) | trim(side='right') }}</span></h2>
-              </a>
+              <h2>
+                  <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}">
+                  {{ source.title }}</a> <sup>{{ source.alias}}</sup>
+              </h2>
               <table class="table table-borderless table-condensed">
                   <tbody>
                     <tr>
