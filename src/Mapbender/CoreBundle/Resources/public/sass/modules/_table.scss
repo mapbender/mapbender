@@ -3,11 +3,6 @@
   th {
     font-weight:normal;
   }
-  tbody{
-    tr{
-      &:hover{background-color:darken($contentColor, 3%);}
-    }
-  }
 }
 .table-bordered {
   border-top: solid 3px $firstColor;
