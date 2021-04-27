@@ -142,7 +142,6 @@ ul.dropdownList{
   > ul {
     margin-bottom: 2rem;
   }
-  margin-bottom: $space;
 }
 // WIP: alternative design for tabContainer, using active item underline instead of .nav-pills
 .blueTabUnderline {
@@ -156,7 +155,7 @@ ul.dropdownList{
   width: 90%;
   max-width: 80rem;
 
-  margin: 0 auto 100px;
+  margin: 0 auto;
   > .content {
 
     form {
@@ -282,6 +281,9 @@ ul.dropdownList{
   background: white;
   border-radius: 15px;
   box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+  .content & {
+    margin-bottom: 2.5rem;
+  }
 }
 .content-box-lg {
   padding: 20px;
