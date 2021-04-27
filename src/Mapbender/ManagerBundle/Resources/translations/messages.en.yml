@@ -188,8 +188,6 @@ mb:
         delete_user_group:
           title: 'Confirm delete'
           content: 'Really delete %userGroup%?'
-    upload:
-      label_delete: 'Screenshot removed'
     import:
       application:
         failed: 'Application cannot be imported.'

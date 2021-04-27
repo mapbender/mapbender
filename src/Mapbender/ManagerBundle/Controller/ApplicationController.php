@@ -115,7 +115,6 @@ class ApplicationController extends WelcomeController
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
-            'screenshot_filename' => null,
         ));
     }
 
@@ -332,7 +331,6 @@ class ApplicationController extends WelcomeController
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
             'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $screenShot,
             // Allow screenType filtering only on current map engine
             'allow_screentypes' => $allowScreenTypesGlobal && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
         ));

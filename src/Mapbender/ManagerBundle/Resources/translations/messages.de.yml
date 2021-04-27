@@ -188,8 +188,6 @@ mb:
         delete_user_group:
           title: 'Entfernen bestätigen'
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
-    upload:
-      label_delete: 'Bild entfernt.'
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'

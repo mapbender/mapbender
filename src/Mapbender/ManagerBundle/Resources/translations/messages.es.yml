@@ -155,8 +155,6 @@ mb:
         delete_user_group:
           title: 'Confirmar eliminar'
           content: 'Realmente eliminar %userGroup%?'
-    upload:
-      label_delete: 'Captura de Pantalla removida'
     import:
       application:
         failed: 'La aplicación no puede ser importada.'

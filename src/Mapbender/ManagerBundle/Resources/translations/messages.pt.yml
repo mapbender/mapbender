@@ -155,8 +155,6 @@ mb:
         delete_user_group:
           title: 'Confirme apagar'
           content: 'Realmente eliminar %userGroup%?'
-    upload:
-      label_delete: 'Imagem removida'
     import:
       application:
         failed: 'Não pode importar aplicação'

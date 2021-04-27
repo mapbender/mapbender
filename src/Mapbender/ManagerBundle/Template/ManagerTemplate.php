@@ -28,7 +28,6 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     'mb.actions.*',
                     'mb.manager.components.popup.*',
                     'mb.manager.managerbundle.add_user_group',
-                    'mb.manager.upload.label_delete',
                     'mb.manager.admin.application.upload.label',
                     'mb.core.entity.app.screenshotfile.*',
                     'mb.application.save.failure.general',
