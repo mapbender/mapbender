@@ -1,0 +1,20 @@
+{% extends "MapbenderManagerBundle:Repository:index.html.twig" %}
+
+{% block list_actions %}
+{% if create_permission %}
+<a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}">
+    <i class="fa fas fa-2x fa-plus"></i>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block manager_content %}
+    {%- set list_id = 'listFilterServices' -%}
+    {%- set list_class = 'listFilterServiceBoxes' -%}
+    {{ parent() }}
+{% endblock %}
+
+{%- block boxlist_item_content -%}
+{%- set source = item -%}
+    {{ parent() }}
+{%- endblock %}

@@ -68,9 +68,9 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        return $this->render('@MapbenderManager/Repository/index.html.twig', array(
-            'title' => 'Repository',
-            'sources' => $sources,
+        return $this->render('@MapbenderManager/Repository/source/list.html.twig', array(
+            'title' => $this->getTranslator()->trans('mb.manager.admin.sources'),
+            'items' => $sources,
             'reloadableIds' => $reloadableIds,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
