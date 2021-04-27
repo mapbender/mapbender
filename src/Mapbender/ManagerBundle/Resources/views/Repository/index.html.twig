@@ -42,7 +42,7 @@
                   data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
               {% endif %}
             </div>
-          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
+          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}</a> <sup>{{ source.alias }}</sup>
           <div class="description">{{ source.description }}</div>
         </div>
 {%- endblock -%}
