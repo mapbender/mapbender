@@ -28,6 +28,9 @@
     h2, p {
       margin-bottom: 0.75rem;
     }
+    table th:first-child {
+      width: 1%;
+    }
   }
   .btn {
     border-radius: 10px;
