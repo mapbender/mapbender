@@ -36,7 +36,7 @@
           </div>
 {%- endblock -%}
 
-{%- block item_iteractions -%}
+{%- block item_interactions -%}
               <a class="hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"><i class="fa fas fa-desktop"></i></a>
 
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
