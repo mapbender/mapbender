@@ -1,6 +1,6 @@
 {% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
-{% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
+{%- set title = 'mb.terms.application.plural' | trans -%}
 
 {% block list_actions %}
 {%- if create_permission -%}

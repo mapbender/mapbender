@@ -20,7 +20,7 @@
   {# @todo: commonly used labels should NOT be in WmsBundle and shoult NOT associate with 'wmsloader' #}
   {% block tab_headers %}
       {{- tab_macros.tab_header('MetaData', 'mb.wms.wmsloader.repo.view.label.metadata', 'active') -}}{#- #tabMetaData -#}
-      {{- tab_macros.tab_header('Applications', 'mb.manager.managerbundle.applications') -}}{#- #tabApplications -#}
+      {{- tab_macros.tab_header('Applications', 'mb.terms.application.plural') -}}{#- #tabApplications -#}
       {%- if source.contact is defined and source.contact -%}
       {{- tab_macros.tab_header('Contact', 'mb.wms.wmsloader.repo.view.label.contact') -}}{#- #tabContact -#}
       {%- endif -%}

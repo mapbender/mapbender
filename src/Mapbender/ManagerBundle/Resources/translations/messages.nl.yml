@@ -111,7 +111,6 @@ mb:
           btn:
             export: 'Exporteer'
         import:
-          addApplications: 'Toepassingen'
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
@@ -121,14 +120,12 @@ mb:
           title: 'URL Titel'
         description: Beschrijving
         template: Sjabloon
-      applications: Applicaties
     source:
       serviceurl: 'Service URL'
       username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
     managerbundle:
-      applications: Applicaties
       new_application: 'Nieuwe applicatie'
       add_source: 'Voeg bron toe'
       add_user_group: 'Voeg gebruikers en groepen toe'

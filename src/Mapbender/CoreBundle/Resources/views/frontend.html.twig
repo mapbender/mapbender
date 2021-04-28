@@ -1,6 +1,6 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
-{% block title %}{{ fom.server_name }} - {{ application.title }}{% endblock %}
+{%- set pagetitle = fom.server_name  ~ ' - ' ~ application.title -%}
 
 {% block css %}
     {{ parent() }}

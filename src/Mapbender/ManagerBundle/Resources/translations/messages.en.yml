@@ -141,7 +141,6 @@ mb:
           btn:
             export: Export
         import:
-          addApplications: Applications
           addAcl: ACLs
           addSources: Sources
           btn:
@@ -154,14 +153,12 @@ mb:
         map_engine_code: Map engine
         map_engine_code.ol2: OpenLayers 2 (legacy)
         map_engine_code.current: OpenLayers 6
-      applications: Applications
     source:
       serviceurl: 'Service URL'
       username: Username
       password: Password
       load: Load
     managerbundle:
-      applications: Applications
       new_application: 'New application'
       add_source: 'Add source'
       add_user_group: 'Add users and groups'
