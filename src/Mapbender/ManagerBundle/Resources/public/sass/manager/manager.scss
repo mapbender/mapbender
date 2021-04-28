@@ -88,14 +88,6 @@ div.contentTitle {
   border-bottom: solid #079ee0 5px;
 }
 
-.underlineTitle {
-  margin-top: 10px;
-  max-width: 3.5em;
-  height: 5px;
-  background-color: #079ee0;
-}
-
-
 .page{
   position:relative;
 }
@@ -153,8 +145,25 @@ ul.dropdownList{
   > ul {
     margin-bottom: 2rem;
   }
+  // Use Layout rules from .nav-pills without using .nav-pills buttonish styling
+  // See https://github.com/twbs/bootstrap/blob/v3.4.1/less/navs.less#L117
+  // Mark active link with an underline instead
+  .nav > li {
+    float: left;
+    + li {
+      margin-left: 2px;
+    }
+    > a {
+      padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
+    }
+    &.active > a {
+      // Trade bottom-padding for border to maintain height
+      padding-bottom: 7px;
+      border-bottom: solid #079ee0 3px;
+    }
+  }
 }
-// WIP: alternative design for tabContainer, using active item underline instead of .nav-pills
+
 .blueTabUnderline {
   max-width: 67px;
   height: 3px;
