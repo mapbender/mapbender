@@ -3,7 +3,7 @@
 {%- block _application_screenshotFile_widget -%}
     {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
       <div class="inputWrapper upload">
-        <input type="file" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+          {{- block('form_widget_simple') -}}
           <span class="btn btn-default btn-sm">
               {{ 'mb.manager.admin.application.upload.button' | trans }}
           </span>

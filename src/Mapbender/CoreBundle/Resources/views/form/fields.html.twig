@@ -4,9 +4,9 @@
  See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
 #}
 
+{% use "bootstrap_3_layout.html.twig" with checkbox_widget as bs3_checkbox_widget, checkbox_label as bs3_checkbox_label %}
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
-{% use "bootstrap_3_layout.html.twig" with checkbox_widget as bs3_checkbox_widget, checkbox_label as bs3_checkbox_label %}
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
@@ -31,13 +31,14 @@
 {%- endblock form_errors_inline %}
 
 {%- block form_widget_simple -%}
-  {% spaceless %}
-    {%- set type = type|default('text') -%}
+  {%- if type is not defined or type not in ['file', 'hidden'] -%}
     {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
-      <div class="inputWrapper">
-        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-      </div>
-  {% endspaceless %}
+    <div class="inputWrapper">
+      {{- parent() -}}
+    </div>
+  {%- else -%}
+    {{- parent() -}}
+  {%- endif -%}
 {%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
@@ -149,10 +150,6 @@
     </div>
 {%- endif -%}
 {%- endblock choice_widget_collapsed -%}
-
-{%- block hidden_widget -%}
-  <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-{%- endblock hidden_widget -%}
 
 {%- block form_label -%}
   {%- if 'checkbox' in form.vars.block_prefixes -%}
