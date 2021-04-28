@@ -82,6 +82,12 @@ div.contentTitle {
   }
 }
 
+.underlined {
+  display: inline-block;
+  padding-bottom: 10px;
+  border-bottom: solid #079ee0 5px;
+}
+
 .underlineTitle {
   margin-top: 10px;
   max-width: 3.5em;
