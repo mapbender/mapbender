@@ -111,7 +111,6 @@ mb:
           btn:
             export: 'Dışa aktar (Export)'
         import:
-          addApplications: 'Uygulama oluştur'
           addAcl: 'Erisim kontrolü (ACLs)'
           addSources: 'Kaynaklar'
           btn:
@@ -121,9 +120,7 @@ mb:
           title: 'URL Başlık'
         description: 'Açıklama'
         template: 'Şablon(Kalıp)'
-      applications: 'Uygulamalar'
     managerbundle:
-      applications: 'Uygulamalar'
       new_application: 'Uygulama oluştur'
       add_source: 'Kaynak ekle'
       add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle'

@@ -111,7 +111,6 @@ mb:
           btn:
             export: Exportar
         import:
-          addApplications: Aplicações
           addAcl: Acls
           addSources: Origens
           btn:
@@ -121,14 +120,12 @@ mb:
           title: 'URL Title'
         description: Description
         template: Template
-      applications: Aplicações
     source:
       serviceurl: 'URL de serviço'
       username: 'Nome de usuário'
       password: Senha
       load: Carregar
     managerbundle:
-      applications: Aplicações
       new_application: 'Criar aplicação'
       add_source: 'Adiciona origem de dados'
       add_user_group: 'Adicionar usuários e grupos'

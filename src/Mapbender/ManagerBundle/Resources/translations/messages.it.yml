@@ -111,7 +111,6 @@ mb:
           btn:
             export: Esporta
         import:
-          addApplications: Applicazioni
           addAcl: ACLs
           addSources: Risorsa
           btn:
@@ -121,14 +120,12 @@ mb:
           title: 'Titolo URL'
         description: Descrizione
         template: Template
-      applications: Applicazioni
     source:
       serviceurl: 'URL del Servizio'
       username: Nome utente
       password: Password
       load: Carica
     managerbundle:
-      applications: Applicazioni
       new_application: 'Nuova applicazione'
       add_source: 'Aggiungi fonte'
       add_user_group: 'Aggiungi utenti e gruppi'

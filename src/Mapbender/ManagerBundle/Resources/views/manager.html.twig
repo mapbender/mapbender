@@ -24,7 +24,7 @@
         <div class="contentPane">
           <div class="content-head">
             {% block heading %}
-                <h1 class="contentTitle">{{ block('title') }}<div class="underlineTitle"></div></h1>
+                <h1 class="contentTitle">{{ title | default(pagetitle | default(fom.server_name)) }}<div class="underlineTitle"></div></h1>
             {% endblock %}
           </div>
           <div class="content">
