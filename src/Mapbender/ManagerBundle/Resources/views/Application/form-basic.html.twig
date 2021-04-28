@@ -1,7 +1,6 @@
 {%- form_theme form _self -%}
 {%- if false -%}
-{%- block _application_screenshotFile_row -%}
-    {{- form_label(form) -}}
+{%- block _application_screenshotFile_widget -%}
     <div class="screenshot_upload">
         <div class="upload">
             <span class="button upload_button">
@@ -11,7 +10,6 @@
                 {{ form.parent.vars.data.screenshot | default('mb.manager.admin.application.upload.label' | trans) }}
             </span>
             {{- block('form_widget_simple') -}}
-            {{- form_widget(form.parent.removeScreenShot) -}}
             {{- form_errors(form) -}}
         </div>
     </div>
@@ -37,6 +35,7 @@
     <div class="form-group">
         {{ form_row(form.description) }}
     </div>
+    {{- form_row(form.removeScreenShot) -}}
 </div>
 <div class="col-xs-4">
     {%- set _screenshot_src = screenshot | default('') %}
