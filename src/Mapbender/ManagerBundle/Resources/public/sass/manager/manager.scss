@@ -66,6 +66,9 @@ h2 {
 
 .content-head {
   margin-bottom: 4rem;
+  > h1:last-child {
+    margin: 0;
+  }
 }
 
 div.contentTitle {
