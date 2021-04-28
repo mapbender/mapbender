@@ -315,6 +315,24 @@ ul.dropdownList{
   text-overflow: ellipsis;
 }
 
+.flashBox{
+  $width:280px;
+
+  padding:($space/4) ($space/2);
+  text-align: center;
+  width: $width;
+  margin-left:-$width/2;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  @include transition(all 1s ease-in-out);
+  opacity: 1;
+  &.kill{
+    top:-100px;
+    opacity: 0;
+  }
+}
+
 footer {
   padding-bottom: 20rem;
 }
