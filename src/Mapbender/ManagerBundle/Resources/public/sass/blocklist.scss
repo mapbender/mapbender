@@ -39,3 +39,15 @@
     text-align: center;
   }
 }
+
+.checkContainer {
+  display: block;
+  margin-bottom: $space/2;
+  background-color: $contentColor;
+  padding: 10px;
+
+  &:hover {
+    background-color: white;
+    text-decoration: none;
+  }
+}

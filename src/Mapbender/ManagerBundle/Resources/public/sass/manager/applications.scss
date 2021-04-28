@@ -170,22 +170,6 @@
   }
 }
 
-
-// ------------------------------------------------------------- LAYOUT
-.checkContainer{
-  display: block;
-  margin-bottom: $space/2;
-  background-color: $contentColor;
-  padding:5px $space/2 5px $space/2;
-  border:solid 1px white;
-  @include border-radius($radius);
-
-  &:hover{
-    background-color: white;
-    border:solid 1px darken(white, 15%);
-  }
-}
-
 .static-popover-wrap {
   position: relative; // for anchoring of absolute-positioned .popover
   .popover {
