@@ -35,29 +35,6 @@
   }
 }
 
-.listFilterApplicationBoxes{
-  $col1Width: 120px;
-  $height:120px;
-
-  .col1{
-    width:$col1Width;
-    line-height: $height;
-    max-height: $height;
-    text-align: center;
-    font-size: 70px;
-    color: lighten($darkFontColor, 10%);
-
-    div.cell {
-      max-height: inherit;
-    }
-    img {
-      max-height: inherit;
-      max-width: 100%;
-      display: block;
-      margin: 0 auto;
-    }
-  }
-}
 .mapbender-popup {
   // modal mapbender popups only appear in the backend, aka manager application
   width: max($popupModalWidth, $elementPopupWidth);
@@ -218,22 +195,6 @@
 .layersetTable{
   .titleColumn {
     width: 99%;
-  }
-}
-
-
-// ------------------------------------------------------------- LAYOUT
-.checkContainer{
-  display: block;
-  margin-bottom: $space/2;
-  background-color: $contentColor;
-  padding:5px $space/2 5px $space/2;
-  border:solid 1px white;
-  @include border-radius($radius);
-
-  &:hover{
-    background-color: white;
-    border:solid 1px darken(white, 15%);
   }
 }
 

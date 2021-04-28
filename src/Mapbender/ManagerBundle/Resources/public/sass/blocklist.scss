@@ -29,3 +29,45 @@
     margin-bottom:$space/2;
   }
 }
+
+.listFilterApplicationBoxes{
+  .col1 {
+    width: 120px;
+    line-height: 120px;
+    max-height: 120px;
+    text-align: center;
+    font-size: 70px;
+    color: lighten($darkFontColor, 10%);
+
+    div.cell {
+      max-height: inherit;
+    }
+    img {
+      max-height: inherit;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+}
+
+.listFilterServiceBoxes {
+  $col1Width: 60px;
+
+  .col1 {
+    width: 60px;
+    padding: $space/4;
+  }
+}
+
+.checkContainer {
+  display: block;
+  margin-bottom: $space/2;
+  background-color: $contentColor;
+  padding: 10px;
+
+  &:hover {
+    background-color: white;
+    text-decoration: none;
+  }
+}
