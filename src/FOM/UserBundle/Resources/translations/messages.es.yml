@@ -94,7 +94,6 @@ fom:
       required: 'Campos requeridos son marcados con etiquetas oscuras, mientras que campos opcionales tienen etiquetas claras.'
       edit:
         edit_class_acl: 'Editar Class ACL para %name%'
-        security: Securidad
       groups_users:
         name: Nombre
         no_goups_users: 'No están definidos grupos y usuarios.'
