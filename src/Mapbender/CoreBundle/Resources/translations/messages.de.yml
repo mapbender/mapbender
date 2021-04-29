@@ -34,6 +34,7 @@ mb:
       bound:
         singular: Private Instanz
         plural: Private Instanzen
+    security: Sicherheit
   states:
     active: aktiv
     inactive: inaktiv

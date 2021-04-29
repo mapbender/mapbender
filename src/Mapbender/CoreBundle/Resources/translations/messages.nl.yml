@@ -28,6 +28,7 @@ mb:
       plural: Instanties
       typed:
         singular: '%type% instantie'
+    security: Beveiliging
   states:
     active: actief
     inactive: inactief

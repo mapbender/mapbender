@@ -28,6 +28,7 @@ mb:
       plural: Istanze
       typed:
         singular: 'Istanza %type%'
+    security: Sicurezza
   states:
     active: attivo     # m.; f.: attiva
     inactive: inattivo # m.; f.: inatttiva

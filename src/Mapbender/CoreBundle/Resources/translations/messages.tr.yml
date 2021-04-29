@@ -28,6 +28,7 @@ mb:
       plural: ~ # @todo
       typed:
         singular: ~ # @todo (embed %type% placeholder)
+    security: Güvenlik
   states:
     active: aktif
     inactive: etkisiz

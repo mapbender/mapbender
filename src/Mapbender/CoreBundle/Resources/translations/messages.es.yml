@@ -28,6 +28,7 @@ mb:
       plural: Instancias
       typed:
         singular: '%type% instancia'
+    security: Seguridad
   states:
     active: activo # m.; f.: activa
     inactive: inactivo # m.; f.: inactiva

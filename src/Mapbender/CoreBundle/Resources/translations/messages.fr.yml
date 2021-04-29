@@ -28,6 +28,7 @@ mb:
       plural: Instances
       typed:
         singular: 'Instance du %type%'
+    security: Securité
   states:
     active: actif      # m.; f.: active
     inactive: inactif   # m.; f.: inactive
