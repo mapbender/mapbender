@@ -42,15 +42,6 @@ class FOMUserBundle extends ManagerBundle
                     ->requireEntityGrant('Symfony\Component\Security\Acl\Domain\Acl', 'EDIT'),
             ))
         ;
-        $groupItem = MenuItem::create('fom.user.userbundle.groups', 'fom_user_group_index')
-            ->setWeight(110)
-            ->addChildren(array(
-            ))
-        ;
-        $aclItem = MenuItem::create('fom.user.userbundle.acls', 'fom_user_acl_index')
-            ->setWeight(120)
-            ->requireEntityGrant('Symfony\Component\Security\Acl\Domain\Acl', 'EDIT')
-        ;
         $container->addCompilerPass(new RegisterMenuRoutesPass($securityItem));
     }
 
