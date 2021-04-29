@@ -11,6 +11,7 @@ mb:
     print: Printen
     refresh: Bijwerken
     remove: Verwijderen
+    reset: Wissen
     save: Bewaar
     search: Zoek
   terms:

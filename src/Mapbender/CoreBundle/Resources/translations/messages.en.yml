@@ -11,6 +11,7 @@ mb:
     print: Print
     refresh: Refresh
     remove: Remove
+    reset: Reset
     save: Save
     search: Search
   terms:

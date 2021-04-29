@@ -11,6 +11,7 @@ mb:
     print: Yazdır
     refresh: Güncelle
     remove: Kaldır
+    reset: Sıfırla
     save: Kaydet
     search: Ara
   terms:

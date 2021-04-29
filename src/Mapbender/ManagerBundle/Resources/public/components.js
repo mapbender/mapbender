@@ -258,8 +258,7 @@ $(function() {
             content: [$content],
             buttons: [
                 {
-                    // @todo: provide distinct label
-                    label: Mapbender.trans('mb.actions.back'),
+                    label: Mapbender.trans('mb.actions.reset'),
                     cssClass: 'btn btn-warning btn-sm buttonReset hidden pull-left',
                     callback: function() {
                         // reload entire popup

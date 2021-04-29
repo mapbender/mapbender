@@ -11,6 +11,7 @@ mb:
     print: Печать
     refresh: Обновить
     remove: Удалить
+    reset: Сброс
     save: Сохранить
     search: Поиск
   terms:

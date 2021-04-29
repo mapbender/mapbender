@@ -11,6 +11,7 @@ mb:
     print: Imprimir
     refresh: Atualizar
     remove: Remover
+    reset: Postergar
     save: Guardar
     search: Procurar
   terms:

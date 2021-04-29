@@ -11,6 +11,7 @@ mb:
     print: Stampa
     refresh: Aggiorna
     remove: Elimina
+    reset: Resetta
     save: Salva
     search: Cerca
   terms:

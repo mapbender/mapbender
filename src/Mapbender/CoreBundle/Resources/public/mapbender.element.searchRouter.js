@@ -103,17 +103,17 @@
                         height: this.options.height ? this.options.height : 500,
                         buttons: {
                             'cancel': {
-                                label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),
+                                label: Mapbender.trans('mb.actions.cancel'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: $.proxy(this.close, this)
                             },
                             'reset': {
-                                label: Mapbender.trans('mb.core.searchrouter.popup.btn.reset'),
+                                label: Mapbender.trans('mb.actions.reset'),
                                 cssClass: 'button right',
                                 callback: $.proxy(this._reset, this)
                             },
                             'ok': {
-                                label: Mapbender.trans("mb.core.searchrouter.popup.btn.ok"),
+                                label: Mapbender.trans("mb.actions.search"),
                                 cssClass: 'button right',
                                 callback: $.proxy(this._search, this)
                             }
