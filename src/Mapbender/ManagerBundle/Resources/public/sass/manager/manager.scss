@@ -358,6 +358,9 @@ ul.dropdownList{
 
 .popover {
   font-size: inherit;
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
 }
 .popup .table {
   background-color: white;
