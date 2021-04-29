@@ -124,8 +124,8 @@
       {{- block('symfony_choice_widget_collapsed') -}}
     </div>
   {%- else -%}
-    <div class="dropdown">
-    {%- set attr = attr|merge({'class': 'hiddenDropdown'~((attr.class is defined and attr.class) ? (' '~attr.class) : '')}) %}
+    <div class="dropdown"{%- if attr.title is defined -%} title="{{ attr.title }}"{%- endif -%}>
+    {%- set attr = attr | merge({'class': ('hiddenDropdown ' ~ (attr.class | default (''))) | trim}) -%}
     {{- block('symfony_choice_widget_collapsed') -}}
     <div class="dropdownValue iconDown">
       {%- if placeholder is not none and value == '' -%}
