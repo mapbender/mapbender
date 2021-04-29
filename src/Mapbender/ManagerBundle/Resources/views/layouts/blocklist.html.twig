@@ -27,7 +27,7 @@
     {%- endfor -%}
   </ul>
   {%- endif -%}
-  <p class="description{{ items ? ' hidden' : ''}}">
+  <p class="{{ items ? ' hidden' : ''}}">
     {% block boxlist_placeholder_content %}{% endblock %}
   </p>
 {% endblock %}
