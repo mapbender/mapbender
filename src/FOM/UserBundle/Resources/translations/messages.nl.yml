@@ -94,7 +94,6 @@ fom:
       required: 'Verplichte velden zijn donker gekleurd en optionele velden zijn licht gekleurd.'
       edit:
         edit_class_acl: 'Wijzig klasse toegangscontrole (ACL) voor %name%'
-        security: Beveiliging
       groups_users:
         name: Naam
         no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'

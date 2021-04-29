@@ -11,6 +11,7 @@ mb:
     print: Drucken
     refresh: Aktualisieren
     remove: Entfernen
+    reset: Zurücksetzen
     save: Speichern
     search: Suchen
   terms:
@@ -34,6 +35,7 @@ mb:
       bound:
         singular: Private Instanz
         plural: Private Instanzen
+    security: Sicherheit
   states:
     active: aktiv
     inactive: inaktiv

@@ -138,7 +138,6 @@ class SearchRouter extends Element
             'trans' => array(
                 'mb.core.searchrouter.result_counter',
                 'mb.core.searchrouter.no_results',
-                'mb.core.searchrouter.popup.*', // @todo: use standard action labels for popup buttons
             ),
         );
     }

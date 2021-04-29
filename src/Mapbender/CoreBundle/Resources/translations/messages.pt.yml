@@ -11,6 +11,7 @@ mb:
     print: Imprimir
     refresh: Atualizar
     remove: Remover
+    reset: Postergar
     save: Guardar
     search: Procurar
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instâncias
       typed:
         singular: '%type% instância'
+    security: Segurança
   states:
     active: ativa # m.; f.: ativo
     inactive: inativa # m.; f.: inativo

@@ -11,6 +11,7 @@ mb:
     print: Imprimer
     refresh: Mettre à jour
     remove: Supprimer
+    reset: Réinitialiser
     save: Sauvegarder
     search: Rechercher
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instances
       typed:
         singular: 'Instance du %type%'
+    security: Securité
   states:
     active: actif      # m.; f.: active
     inactive: inactif   # m.; f.: inactive

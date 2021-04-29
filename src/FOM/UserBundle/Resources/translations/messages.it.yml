@@ -94,7 +94,6 @@ fom:
       required: 'I campi obbligatori sono contrassegnati con etichette scure, mentre i campi facoltativi hanno etichette più chiare.'
       edit:
         edit_class_acl: 'Modifica classe ACL per %name%'
-        security: Sicurezza
       groups_users:
         name: Name
         no_goups_users: 'Nessun gruppo e utente definito.'

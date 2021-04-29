@@ -11,6 +11,7 @@ mb:
     print: Printen
     refresh: Bijwerken
     remove: Verwijderen
+    reset: Wissen
     save: Bewaar
     search: Zoek
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instanties
       typed:
         singular: '%type% instantie'
+    security: Beveiliging
   states:
     active: actief
     inactive: inactief

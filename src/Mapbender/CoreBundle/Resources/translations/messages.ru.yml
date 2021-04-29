@@ -11,6 +11,7 @@ mb:
     print: Печать
     refresh: Обновить
     remove: Удалить
+    reset: Сброс
     save: Сохранить
     search: Поиск
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Экземпля́ры
       typed:
         singular: '%type% экземпляр'
+    security: Безопасность
   states:
     active: активный
     inactive: неактивный

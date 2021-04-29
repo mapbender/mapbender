@@ -98,7 +98,6 @@ fom:
       required: 'Die erforderlichen Felder sind mit dunkler Beschriftung markiert, optionale Felder haben eine hellere Beschriftung.'
       edit:
         edit_class_acl: 'ACL-Klasse bearbeiten von %name%'
-        security: Sicherheit
       groups_users:
         name: Name
         no_goups_users: 'Keine Gruppen/Benutzer definiert.'

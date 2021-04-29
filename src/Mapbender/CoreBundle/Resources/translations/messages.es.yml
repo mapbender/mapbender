@@ -11,6 +11,7 @@ mb:
     print: Imprimir
     refresh: Actualizar
     remove: Remover
+    reset: Reiniciar
     save: Guardar
     search: Buscar
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instancias
       typed:
         singular: '%type% instancia'
+    security: Seguridad
   states:
     active: activo # m.; f.: activa
     inactive: inactivo # m.; f.: inactiva
@@ -63,11 +65,6 @@ mb:
         geometry:
           missing: ~
     searchrouter:
-      popup:
-        btn:
-          ok: Buscar
-          cancel: Cerrar
-          reset: Reiniciar
       no_results: 'No results'
       result_counter: 'Results: %count%'
       class:
