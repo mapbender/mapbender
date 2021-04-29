@@ -33,6 +33,7 @@ h2 {
 }
 
 .navigationBar {
+  font-weight: bold;
   .navbar-nav>li>a {
     color: #555;
     &:hover {
@@ -146,6 +147,7 @@ ul.dropdownList{
 .tabContainer {
   > ul {
     margin-bottom: 2rem;
+    font-size: 1.5rem;
   }
   // Use Layout rules from .nav-pills without using .nav-pills buttonish styling
   // See https://github.com/twbs/bootstrap/blob/v3.4.1/less/navs.less#L117
@@ -157,6 +159,11 @@ ul.dropdownList{
     }
     > a {
       padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
+    }
+
+    &.active {
+      font-weight: bold;
+      color: #000;
     }
     &.active > a {
       // Trade bottom-padding for border to maintain height
