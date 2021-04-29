@@ -8,7 +8,7 @@
 {% block list_actions %}
 {% if create_permission %}
   <div class="content-box content-box-md">
-    <a class="hover-highlight-effect" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}">
+    <a href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}">
       <i class="fa fas fa-lg fa-plus"></i>
       <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
     </a>
