@@ -212,7 +212,7 @@ $(function() {
                         },
                         {
                             label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'btn btn-warning btn-sm popupClose'
+                            cssClass: 'btn btn-default btn-sm popupClose'
                         }
                     ]
                 });
@@ -260,7 +260,7 @@ $(function() {
                 {
                     // @todo: provide distinct label
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'btn btn-warning btn-sm buttonReset hidden left',
+                    cssClass: 'btn btn-warning btn-sm buttonReset hidden pull-left',
                     callback: function() {
                         // reload entire popup
                         initElementSecurity(response, url);
@@ -268,7 +268,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'btn btn-warning btn-sm buttonBack hidden left',
+                    cssClass: 'btn btn-default btn-sm buttonBack hidden pull-left',
                     callback: function() {
                         $('.contentItem', popup.$element).not($initialView).remove();
                         $initialView.removeClass('hidden');
@@ -316,7 +316,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'btn btn-danger btn-sm buttonCancel popupClose'
+                    cssClass: 'btn btn-default btn-sm buttonCancel popupClose'
                 }
             ]
         };

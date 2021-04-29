@@ -36,7 +36,7 @@
                 },
                 {
                     label: Mapbender.trans(strings.cancel),
-                    cssClass: 'btn btn-info btn-sm popupClose',
+                    cssClass: 'btn btn-default btn-sm popupClose',
                     callback: function() {
                         deferred.reject();
                     }
