@@ -15,7 +15,7 @@
     {% for class, name in classes|sort %}
       <tr id="app-{{ class|lower }}">
         <td>
-          <a class="labelText" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name }}</a>
+          <a href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name }}</a>
         </td>
         <td>{{ class }}</td>
         <td class="iconColumn">

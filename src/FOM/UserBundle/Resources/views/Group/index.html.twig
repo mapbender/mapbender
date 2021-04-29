@@ -33,7 +33,7 @@
       {% for group in groups %}
       <tr class="filterItem">
         <td>
-          <a class="labelText" href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
+          <a href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
         </td>
         <td>{{ group.description }}</td>
         <td class="iconColumn">
