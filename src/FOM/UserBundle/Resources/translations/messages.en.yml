@@ -132,7 +132,6 @@ fom:
       new_user: 'New user'
       groups: Groups
       new_group: 'New group'
-      acls: ACLs
       classes:
         acls: ACLs
         users: Users

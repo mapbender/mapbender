@@ -38,7 +38,7 @@ class FOMUserBundle extends ManagerBundle
                     ->requireEntityGrant('FOM\UserBundle\Entity\Group', 'VIEW'),
                 MenuItem::create('fom.user.userbundle.new_group', 'fom_user_group_create')
                     ->requireEntityGrant('FOM\UserBundle\Entity\Group', 'CREATE'),
-                MenuItem::create('fom.user.userbundle.acls', 'fom_user_acl_index')
+                MenuItem::create('fom.user.acl.index.access_control_lists', 'fom_user_acl_index')
                     ->requireEntityGrant('Symfony\Component\Security\Acl\Domain\Acl', 'EDIT'),
             ))
         ;
