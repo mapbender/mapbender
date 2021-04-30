@@ -4,7 +4,7 @@
     {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
     {{ form_widget(form) }}
     {{ parent() }}
-    <input type="submit" class="right button" value="{{ (submit_text | default('mb.actions.save')) | trans }}" />
+    <input type="submit" class="btn btn-xs btn-success pull-right" value="{{ (submit_text | default('mb.actions.save')) | trans }}" />
     <div class="clearContainer"></div>
 {% endblock %}
 
