@@ -3,6 +3,9 @@
   &.closed >.content-toggle-target {
     display: none;
   }
+  >.content-toggle i {
+    line-height: inherit;
+  }
 }
 .serviceContainer{
   tbody th {
@@ -39,53 +42,27 @@
 
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
+  // Supported extended nesting on .panel-heading for WMS dimensions
+  .panel-default .panel-heading {
+    background-color: #efefef;
+  }
+  .panel-default>.panel-heading {
+    background-color: #f5f5f5;    // = .panel-default
+  }
   .extendedGroup {
-    .on-off{
-      border: solid 1px darken($contentColor,55%);
-      background-color:darken($contentColor,25%);
-      &.active {
-        background-color:darken($contentColor,35%);
-      }
-      &:hover {
-        background-color:darken($contentColor,20%);
-        &.active {
-          background-color:darken($contentColor,30%);
-        }
-      }
+    .labelInput {width:90px;}
+    .inputWrapper, div.dropdown {
+      width:200px;
     }
-    .blockgroup {
-      .labelInput{width:80px;}
-      .inputWrapper, div.dropdown {
-        width:200px;
-      }
-      .collectionItem .collectionRemove {
-        left: #{80px + $space + 200px};
-      }
-    }
-    .on-off-content{
-      background-color: darken($contentColor, 9%);
-      .collectionItem:last-child {
-        margin-bottom: 0;
-      }
-    }
-    .form-horizontal {
-      padding: $space/2 $space/2 $space/2 $space/2;
-    }
-    .on-off-title {
-      padding: 0 $space/2 0 $space/2;
-      .form-group {
-        margin-bottom: 0;
-      }
-      .checkbox {
-        margin: 0;
-      }
-    }
-    .blockgroup {
-      margin-bottom: 1em;
+    .collectionItem .collectionRemove {
+      left: #{90px + $space + 200px};
     }
     .mb-slider{margin-top: $space/2;}
+    .form-group .checkbox {
+      margin-top: 0;
+    }
   }
-  .extendedGroup, .popover {
+  .extendedGroup .panel-body, .popover {
     .form-group {
       margin-bottom: 0.35em;
     }
