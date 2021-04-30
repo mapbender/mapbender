@@ -1,7 +1,9 @@
-<ul class="list">
-  <li class="openCloseTitle iconExpand">{{ layer.title }}</li>
-  <li>
-    <table>
+<div class="content-toggle-container">
+  <div class="h4 clearfix content-toggle clickable">
+    <i class="pull-right fa fas fa-minus"></i>
+    {{ layer.title }}
+  </div>
+  <table class="content-toggle-target">
       <tbody>
         <tr>
           <th>{{"mb.wmts.wmtsloader.repo.layer.label.title" | trans }}:</th>
@@ -39,5 +41,4 @@
         {%- endif -%}
       </tbody>
     </table>
-  </li>
-</ul>
+</div>

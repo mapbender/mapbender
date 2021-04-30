@@ -28,17 +28,14 @@ $(function() {
         $('#' + activeTab, $('.tabContainer, .tabContainerAlt')).click();
     }
 
-    // List toggles used in source views (collapsible layer / matrix nodes)
-    $(".openCloseTitle").on("click", function() {
-        var $title = $(this);
-        var $list = $title.parent();
-        if ($list.hasClass("closed")) {
-            $title.removeClass("iconExpandClosed").addClass("iconExpand");
-            $list.removeClass("closed");
-        }else{
-            $title.addClass("iconExpandClosed").removeClass("iconExpand");
-            $list.addClass("closed");
-        }
+    $(document).on('click', '.content-toggle-container > .content-toggle', function(){
+        var $cnt = $(this).parent();
+        $cnt.toggleClass('closed');
+        var state = !$cnt.hasClass('closed');
+        $('>.content-toggle i', $cnt)
+            .toggleClass('fa-plus', !state)
+            .toggleClass('fa-minus', state)
+        ;
     });
 
     $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {

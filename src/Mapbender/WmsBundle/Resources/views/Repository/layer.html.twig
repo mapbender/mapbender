@@ -4,7 +4,7 @@
 {%- endif -%}
 <tr>
   <td colspan="2">
-    <table class="indent">
+    <table class="indent lighter-headings">
       <tbody>
 {%- endmacro -%}
 {%- macro end_subsection() -%}
@@ -15,11 +15,14 @@
 {%- endmacro -%}
 {%- import _self as macros -%}
 
-<ul class="list {% if itemLevel > 1 %}closed{% endif %}">
-  <li class="openCloseTitle{% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
-  <li>
-    <table>
-      <tbody>
+<div class="content-toggle-container{% if itemLevel > 1 %} closed{% endif %}">
+  <div class="h4 clearfix content-toggle clickable">
+    <i class="pull-right fa fas {{ itemLevel > 1 ? 'fa-plus' : 'fa-minus'}}"></i>
+    {{ layer.title }}
+  </div>
+  <div class="content-toggle-target">
+  <table>
+    <tbody>
       {%- if layer.name -%}
         <tr><th>{{"mb.wms.wmsloader.repo.layer.label.name" | trans }}:</th><td>{{ layer.name }}</td></tr>
       {%- endif -%}
@@ -154,12 +157,12 @@
         {%- endfor -%}
         {{- macros.end_subsection() -}}
       {%- endif -%}
-      </tbody>
-    </table>
-  {% if layer.sublayer|length > 0 %}
+    </tbody>
+  </table>
+  <div class="indent">
     {% for sublayer in layer.sublayer %}
         {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': sublayer, 'itemLevel': itemLevel + 1 }%}
     {% endfor %}
-  {% endif %}
-  </li>
-</ul>
+  </div>
+  </div>
+</div>
