@@ -363,8 +363,6 @@ $(function() {
             if (img.width >= minWidth && img.height >= minHeight) {
                 setFileError(null);
                 screenShotImg.attr('src', src);
-                screenShotImg.before('<div class="delete button critical hidden">X</div>');
-                deleteScreenShotButtonInit();
                 screenShot.removeClass('default');
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
             } else {
@@ -400,26 +398,12 @@ $(function() {
         $('.upload_label').text(displayFilename);
     };
 
-    var deleteScreenShotButtonInit = function() {
-
-        var deleteButton = screenShot.find('.delete');
-        screenShot.hover(function() {
-            deleteButton.toggleClass('hidden', $(this).hasClass('default'));
-        }, function() {
-            deleteButton.addClass('hidden');
-        });
-
-        deleteButton.on('click', function() {
-            screenShot.addClass('default');
-            screenShotImg.attr('src',"");
-            applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
-            applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
-            deleteButton.addClass('hidden');
-        });
-        return deleteButton;
-    };
-
-    deleteScreenShotButtonInit();
+    $('.delete', screenShot).on('click', function() {
+        screenShot.addClass('default');
+        screenShotImg.attr('src',"");
+        applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
+        applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
+    });
 
     // Custom CSS editor
     (function($) {
