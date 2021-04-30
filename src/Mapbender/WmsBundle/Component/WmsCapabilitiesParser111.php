@@ -389,21 +389,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                     $style->setLegendUrl($legendUrl);
                 }
 
-                $styleUrlEl = $this->getValue("./StyleURL", $item);
-                if ($styleUrlEl !== null) {
-                    $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat($this->getValue("./Format/text()", $styleUrlEl));
-                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $styleUrlEl));
-                    $style->setStyleUlr($onlineResource);
-                }
-
-                $stylesheetUrlEl = $this->getValue("./StyleSheetURL", $item);
-                if ($stylesheetUrlEl !== null) {
-                    $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat($this->getValue("./Format/text()", $stylesheetUrlEl));
-                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $stylesheetUrlEl));
-                    $style->setStyleSheetUrl($onlineResource);
-                }
                 $wmslayer->addStyle($style);
             }
         }
