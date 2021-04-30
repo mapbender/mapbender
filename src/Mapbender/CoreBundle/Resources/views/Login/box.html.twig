@@ -31,7 +31,8 @@
       <div class="loginBox">
       <div class="logoContainer">
         <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
-                                                                 src="/bundles/mapbendercore/image/logo_mb3.png"></a>
+                                                                 src="{{ asset(fom.server_logo) }}"></a>
+        <div class="h2 project-name">{{ fom.server_name }}</div>
       </div>
       {% block box_content %}{% endblock %}
       </div>

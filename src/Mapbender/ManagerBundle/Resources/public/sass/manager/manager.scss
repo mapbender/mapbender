@@ -34,7 +34,7 @@ h2 {
 
 .navigationBar {
   font-weight: bold;
-  .navbar-nav>li>a {
+  .navbar-nav>li>a, &.navbar-default .navbar-brand {
     color: #555;
     &:hover {
       color: #121212;
@@ -60,8 +60,11 @@ h2 {
     max-width: 120px;
     max-height: 100%;
   }
-  .navbar-brand>img.logo {
+  .navbar-brand>img.logo, .navbar-brand-name {
     display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
+  }
+  .navbar-brand-name {
+    vertical-align: middle;
   }
 }
 

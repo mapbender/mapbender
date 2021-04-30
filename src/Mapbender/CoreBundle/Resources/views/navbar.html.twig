@@ -8,7 +8,8 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand " href="{{ path('mapbender_core_welcome_list') }}">
-                <img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}"/>
+                <img class="logo" alt="{{ fom.server_name }} {{ fom.server_version}}" src="{{ asset(fom.server_logo)}}"/>
+                <span class="navbar-brand-name">{{ fom.server_name }}</span>
             </a>
         </div>
         <div class="collapse navbar-collapse" id="navigation-main">
