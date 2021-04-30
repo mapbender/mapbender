@@ -1,26 +1,18 @@
-<ul class="itemLevel1 list">  
+<ul class="list">
   <li class="openCloseTitle{% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ theme.title }}</li>
   <li>
-    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.theme.label.identifier" | trans }}:</span>
-    <span class="metaText">{{ theme.identifier }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.theme.label.title" | trans }}:</span>
-    <span class="metaText">{{ theme.title }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.theme.label.abstract" | trans }}:</span>
-    <span class="metaText">{{ theme.abstract }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.theme.label.layerrefs" | trans }}:</span>
-    <span class="metaText">
-    {% for layerref in theme.layerrefs %}{% if not loop.first %}, {% endif %}{{ layerref }}{% endfor %}
-    </span>
+    <table>
+      <tbody>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.theme.label.identifier" | trans }}:</th><td>{{ theme.identifier }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.theme.label.title" | trans }}:</th><td>{{ theme.title }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.theme.label.abstract" | trans }}:</th><td>{{ theme.abstract }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.theme.label.layerrefs" | trans }}:</th><td>{{ theme.layerrefs | join(', ') }}</td></tr>
+      </tbody>
+    </table>
   </li>
   {% for subtheme in theme.themes %}
   <li>
-    <ul class="itemLevel2 list">
+    <ul class="list">
     {% include "MapbenderWmtsBundle:Repository:theme.html.twig"  with {'theme': subtheme, 'itemLevel': itemLevel + 1 }%}
     </ul>
   </li>

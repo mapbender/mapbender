@@ -89,8 +89,6 @@ mb:
             srs: SRS
             styles: Stijlen
             legendurl: 'Legenda URL'
-            stylesheeturl: 'Stylesheet URL'
-            styleurl: 'Stijl URL'
             scale: Schaal
             min: Min
             max: Max

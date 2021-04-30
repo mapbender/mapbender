@@ -1,5 +1,30 @@
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
+  tbody th {
+    font-weight: bold;
+    vertical-align: top;
+    &:first-child {
+      width: 1%;
+      white-space: nowrap;
+      padding-right: 0.5em;
+    }
+  }
+  td {
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+  tbody th:first-child {
+  }
+  table {
+    margin-bottom: 1em;
+  }
+  .indent {
+    margin-left: 1em;
+    margin-bottom: 0.5em;
+    tbody th {
+      font-weight: 600;
+    }
+  }
   .labelText{float:left;}
 }
 .serviceMetaContainer {

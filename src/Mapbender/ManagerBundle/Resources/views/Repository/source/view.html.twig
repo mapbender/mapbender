@@ -31,7 +31,6 @@
     {% block tab_containers %}
         <div{{ tab_macros.tab_content_attributes('MetaData', 'active serviceContainer serviceMetaContainer') }}>{#- #containerMetaData -#}
             {% block metadata_content %}
-                {# @todo: absorb here #}
                 {% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
             {% endblock metadata_content %}
         </div>
@@ -45,7 +44,6 @@
         {%- endif -%}
         <div{{ tab_macros.tab_content_attributes('Service', 'serviceContainer serviceServiceContainer') }}>{#- #containerService -#}
             {% block details_content %}
-                {# @todo: absorb here #}
                 {% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
             {% endblock details_content %}
         </div>

@@ -90,8 +90,6 @@ mb:
             srs: SRS
             styles: Styles
             legendurl: 'Легенда URL'
-            stylesheeturl: 'Stylesheet URL'
-            styleurl: 'Style URL'
             scale: Шкала
             min: Минимальный
             max: максимальная
