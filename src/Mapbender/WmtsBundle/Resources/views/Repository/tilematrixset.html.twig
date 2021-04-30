@@ -1,27 +1,21 @@
-<ul class="itemLevel1 list">  
+<ul class="list">
   <li class="openCloseTitle iconExpand">{{ tilematrixset.identifier }}</li>
   <li>
-    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.identifier }}</span>
-  </li>
-  <li>
-    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.supportedcrs" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.supportedCrs }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrixset.label.title" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.title }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.abstract }}</span>
-  </li>
-  <li>
-    <ul class="itemLevel2 list closed">
+    <table>
+      <tbody>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</th><td>{{ tilematrixset.identifier }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.supportedcrs" | trans }}:</th><td>{{ tilematrixset.supportedCrs }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.title" | trans }}:</th><td>{{ tilematrixset.title }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</th><td>{{ tilematrixset.abstract }}</td></tr>
+      </tbody>
+    </table>
+    <ul class="list closed">
       <li class="openCloseTitle iconExpandClosed">{{ "mb.wmts.wmtsloader.repo.tilematrixset.matrixes" | trans }}</li>
-      {% for tilematrix in tilematrixset.tilematrices %}
-        {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
-      {% endfor %}
+      <li class="smallText">
+        {% for tilematrix in tilematrixset.tilematrices %}
+          {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
+        {% endfor %}
+      </li>
     </ul>
   </li>
 </ul>

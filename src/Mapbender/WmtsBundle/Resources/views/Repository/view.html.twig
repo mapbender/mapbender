@@ -22,13 +22,13 @@
 
 {% block tab_containers %}
   {{ parent() }}
-  <div{{ tab_macros.tab_content_attributes('Matrixsets', 'serviceContainer serviceServiceContainer') }}>{#- #containerMatrixsets -#}
+  <div{{ tab_macros.tab_content_attributes('Matrixsets', 'serviceContainer') }}>{#- #containerMatrixsets -#}
     {% for tilematrixset in source.tilematrixsets %}
       {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig" with {'tilematrixset': tilematrixset }%}
     {% endfor %}
   </div>
   {% if source.themes | length %}
-    <div{{ tab_macros.tab_content_attributes('Theme', 'serviceContainer serviceServiceContainer') }}>{#- #containerTheme -#}
+    <div{{ tab_macros.tab_content_attributes('Theme', 'serviceContainer') }}>{#- #containerTheme -#}
       {% for theme in source.themes %}
         {% include "MapbenderWmtsBundle:Repository:theme.html.twig" with {'theme': theme, 'itemLevel': 1 }%}
       {% endfor %}

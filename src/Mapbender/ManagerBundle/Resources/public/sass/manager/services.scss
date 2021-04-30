@@ -1,39 +1,32 @@
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
-  .labelText{float:left;}
-}
-.serviceMetaContainer {
-  .labelText {
-    float: none;
-  }
-  .metaText {
-    margin-bottom: $space;
-  }
-}
-
-.serviceContactContainer, .serviceServiceContainer {
-  .labelText {
-    width: 90px;
-    margin-right:$space/2;
-  }
-  .metaText {
-    margin-left: 90px;
-  }
-}
-
-.serviceServiceContainer {
-
-  .list, li{clear:both;}
-  .list{
-    margin-bottom:$space/2;
-    margin-left: 1.5em;
-
-    // no margin for labeltext lists ...
-    ul.left li{
-      margin-left:0;
-      // ... and metatext below lists
-      .metaText{margin-left:0;}
+  tbody th {
+    font-weight: bold;
+    vertical-align: top;
+    &:first-child {
+      width: 1%;
+      white-space: nowrap;
+      padding-right: 0.5em;
     }
+  }
+  td {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  table {
+    margin-bottom: 1em;
+  }
+  .indent {
+    margin-left: 1em;
+    tbody th {
+      font-weight: 600;
+    }
+  }
+  .list {
+    margin-left: 1.5em;
+  }
+  .list, .list table, .indent table {
+    margin-bottom: 0.5em;
   }
   .list.closed {
     li.openCloseTitle~li {
@@ -49,11 +42,8 @@
       margin-right: .5em;
     }
   }
-  .metaText{
-    display: block;
-    word-wrap: break-word;
-  }
 }
+
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
   .extendedGroup {

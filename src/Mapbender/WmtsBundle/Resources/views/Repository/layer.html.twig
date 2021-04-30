@@ -1,47 +1,43 @@
-<ul class="itemLevel1 list">
+<ul class="list">
   <li class="openCloseTitle iconExpand">{{ layer.title }}</li>
-
-  {% if layer.identifier|length > 0 %}
-    <li>
-      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.identifier" | trans }}</span>
-      {{ layer.identifier }}
-    </li>
-  {% endif %}
-
   <li>
-      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}</span>
-      {{ layer.getUniqueTileFormats() | join(', ') }}
+    <table>
+      <tbody>
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.title" | trans }}:</th>
+          <td>{{ layer.title }}</td>
+        </tr>
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.identifier" | trans }}:</th>
+          <td>{{ layer.identifier }}</td>
+        </tr>
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}:</th>
+          <td>{{ layer.getUniqueTileFormats() | join(', ') }}</td>
+        </tr>
+        {%- if layer.abstract -%}
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.abstract" | trans }}:</th>
+          <td>{{ layer.abstract }}</td>
+        </tr>
+        {%- endif -%}
+        {%- if layer.latlonBounds -%}
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.latlonbounds" | trans }}:</th>
+          <td>{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</td>
+        </tr>
+        {%- endif -%}
+        {%- if layer.tilematrixSetlinks -%}
+        <tr>
+          <th>{{"mb.wmts.wmtsloader.repo.layer.label.tilematrixsetlinks" | trans }}:</th>
+          <td>
+            {%- for tmsLink in layer.tilematrixSetlinks -%}
+              <div>{{ tmsLink.tileMatrixSet }} - {{ tmsLink.tileMatrixSetLimits }}</div>
+            {%- endfor -%}
+          </td>
+        </tr>
+        {%- endif -%}
+      </tbody>
+    </table>
   </li>
-
-  {% if layer.title|length > 0 %}
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.title" | trans }}:</span>
-    {{ layer.title }}
-  </li>
-  {% endif %}
-
-  {% if layer.abstract|length > 0 %}
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.abstract" | trans }}:</span>
-    <span class="metaText">{{ layer.abstract }}</span>
-  </li>
-  {% endif %}
-  
-  {% if layer.latlonBounds != null %}
-    <li>
-      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.latlonbounds" | trans }}:</span>
-      {{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}
-    </li>
-  {% endif %}
-  {% if layer.tilematrixSetlinks != null %}
-    <li>
-      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.tilematrixsetlinks" | trans }}:</span>
-      <div class="left">
-      {% for tmsLink in layer.tilematrixSetlinks %}
-        <div>{{ tmsLink.tileMatrixSet }} - {{ tmsLink.tileMatrixSetLimits }}</div>
-      {% endfor %}
-      </div>
-      <div class="clearContainer"></div>
-    </li>
-  {% endif %}
 </ul>

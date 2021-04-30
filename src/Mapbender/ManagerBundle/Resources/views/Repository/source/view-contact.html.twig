@@ -1,48 +1,16 @@
-{# @todo: get rid of floats and clears #}
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.person" | trans }}:</div>
-<div class="metaText">{{ contact.person }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.organization" | trans }}:</div>
-<div class="metaText">{{ contact.organization }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</div>
-<div class="metaText">{{ contact.position }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</div>
-<div class="metaText">{{ contact.voiceTelephone }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</div>
-<div class="metaText">{{ contact.facsimileTelephone }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</div>
-<div class="metaText">{{ contact.electronicMailAddress }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</div>
-<div class="metaText">{{ contact.address }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</div>
-<div class="metaText">{{ contact.addressType }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</div>
-<div class="metaText">{{ contact.addressCity }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.state" | trans }}:</div>
-<div class="metaText">{{ contact.addressStateOrProvince }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.postcode" | trans }}:</div>
-<div class="metaText">{{ contact.addressPostcode }}</div>
-<div class="clearContainer"></div>
-
-<div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.country" | trans }}:</div>
-<div class="metaText">{{ contact.addressCountry }}</div>
-<div class="clearContainer"></div>
+<table>
+  <tbody>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.person" | trans }}:</th><td>{{ contact.person }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.organization" | trans }}:</th><td>{{ contact.organization }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</th><td>{{ contact.position }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</th><td>{{ contact.voiceTelephone }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</th><td>{{ contact.facsimileTelephone }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</th><td>{{ contact.electronicMailAddress }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</th><td>{{ contact.address }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</th><td>{{ contact.addressType }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</th><td>{{ contact.addressCity }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.state" | trans }}:</th><td>{{ contact.addressStateOrProvince }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.postcode" | trans }}:</th><td>{{ contact.addressPostcode }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.country" | trans }}:</th><td>{{ contact.addressCountry }}</td></tr>
+  </tbody>
+</table>

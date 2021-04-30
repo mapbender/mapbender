@@ -1,6 +1,7 @@
-{# @todo: transient restructuring template; should later be baked into an extended 'details_content' block in a WMS source view extending from a proper base template #}
-{% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
+{% extends 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
 {% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation %}
+{%- block source_details_rows -%}
+  {{- parent() -}}
 {% if source.getCapabilities is not empty %}
 {{ requestinformation(source.getCapabilities, "GetCapabilities") }}
 {% endif %}
@@ -22,3 +23,4 @@
 {% if source.putStyles is not empty %}
 {{ requestinformation(source.putStyles, "PutStyles") }}
 {% endif %}
+{%- endblock -%}

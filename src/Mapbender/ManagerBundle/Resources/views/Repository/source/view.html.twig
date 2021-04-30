@@ -6,7 +6,7 @@
 {% endblock heading %}
 
 {% block tab_container_contact %}
-    <div{{ tab_macros.tab_content_attributes('Contact', 'serviceContainer serviceContactContainer') }}>{#- #containerContact -#}
+    <div{{ tab_macros.tab_content_attributes('Contact', 'serviceContainer') }}>{#- #containerContact -#}
         {% block contact_content %}
         {% include 'MapbenderManagerBundle:Repository:source/view-contact.html.twig' with {'contact' : source.contact} %}
         {% endblock contact_content %}
@@ -29,9 +29,8 @@
   {% endblock tab_headers %}
 
     {% block tab_containers %}
-        <div{{ tab_macros.tab_content_attributes('MetaData', 'active serviceContainer serviceMetaContainer') }}>{#- #containerMetaData -#}
+        <div{{ tab_macros.tab_content_attributes('MetaData', 'active serviceContainer') }}>{#- #containerMetaData -#}
             {% block metadata_content %}
-                {# @todo: absorb here #}
                 {% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
             {% endblock metadata_content %}
         </div>
@@ -43,13 +42,12 @@
         {%- if source.contact is defined and source.contact -%}
             {{- block('tab_container_contact') -}}
         {%- endif -%}
-        <div{{ tab_macros.tab_content_attributes('Service', 'serviceContainer serviceServiceContainer') }}>{#- #containerService -#}
+        <div{{ tab_macros.tab_content_attributes('Service', 'serviceContainer') }}>{#- #containerService -#}
             {% block details_content %}
-                {# @todo: absorb here #}
                 {% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
             {% endblock details_content %}
         </div>
-        <div{{ tab_macros.tab_content_attributes('Layers', 'serviceContainer serviceServiceContainer') }}>{#- #containerLayers -#}
+        <div{{ tab_macros.tab_content_attributes('Layers', 'serviceContainer') }}>{#- #containerLayers -#}
             {% block layers_content %}
             {# no default / common ground content #}
             {% endblock layers_content %}
