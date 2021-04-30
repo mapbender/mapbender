@@ -1,6 +1,9 @@
-<ul class="list">
-  <li class="openCloseTitle iconExpand">{{ tilematrixset.identifier }}</li>
-  <li>
+<div class="content-toggle-container">
+  <div class="h4 clearfix content-toggle clickable">
+    <i class="pull-right fa fas fa-minus"></i>
+    {{ tilematrixset.identifier }}
+  </div>
+  <div class="content-toggle-target">
     <table>
       <tbody>
         <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</th><td>{{ tilematrixset.identifier }}</td></tr>
@@ -9,13 +12,16 @@
         <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</th><td>{{ tilematrixset.abstract }}</td></tr>
       </tbody>
     </table>
-    <ul class="list closed">
-      <li class="openCloseTitle iconExpandClosed">{{ "mb.wmts.wmtsloader.repo.tilematrixset.matrixes" | trans }}</li>
-      <li class="smallText">
-        {% for tilematrix in tilematrixset.tilematrices %}
-          {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
-        {% endfor %}
-      </li>
-    </ul>
-  </li>
-</ul>
+    <div class="content-toggle-container indent closed">
+      <div class="h4 clearfix content-toggle clickable">
+        <i class="pull-right fa fas fa-plus"></i>
+        {{ 'mb.wmts.wmtsloader.repo.tilematrixset.matrixes' | trans }}
+      </div>
+      <div class="content-toggle-target smallText lighter-headings">
+      {% for tilematrix in tilematrixset.tilematrices %}
+        {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
