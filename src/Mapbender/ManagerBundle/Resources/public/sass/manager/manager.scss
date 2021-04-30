@@ -298,10 +298,13 @@ ul.dropdownList{
 
 .popover {
   font-size: inherit;
-  .form-group:last-child {
+}
+.popover, .panel-body {
+  .form-group:last-child, .collectionItem:last-child {
     margin-bottom: 0;
   }
 }
+
 .popup .table {
   background-color: white;
 }
