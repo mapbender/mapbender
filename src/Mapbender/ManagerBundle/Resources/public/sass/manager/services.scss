@@ -3,6 +3,10 @@
   &.closed >.content-toggle-target {
     display: none;
   }
+  .content-toggle {
+    // Prevent undesired double-click => select all behaviour on quick toggles
+    user-select: none;
+  }
   >.content-toggle i {
     line-height: inherit;
   }
