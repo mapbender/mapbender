@@ -307,16 +307,6 @@ class ApplicationController extends WelcomeController
         }
 
         $templateClass = $application->getTemplate();
-        $screenShot = $application->getScreenshot();
-        if ($screenShot) {
-            $baseUrl = $this->getUploadsBaseUrl($request);
-            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
-            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
-                't' => date('d.m.Y-H:i:s'),
-            ));
-        } else {
-            $screenShotUrl = null;
-        }
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
@@ -325,7 +315,6 @@ class ApplicationController extends WelcomeController
             'regions'             => $templateClass::getRegions(),
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenShotUrl,
         ));
     }
 

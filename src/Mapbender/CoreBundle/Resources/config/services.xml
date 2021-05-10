@@ -62,6 +62,11 @@
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
+        <service id="mapbender.twig.application" class="Mapbender\CoreBundle\Extension\ApplicationExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="mapbender.uploads_manager.service" />
+            <argument type="service" id="assets._default_package" />
+        </service>
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.element_inventory.service" />

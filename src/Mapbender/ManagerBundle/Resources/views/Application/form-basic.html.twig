@@ -38,7 +38,7 @@
     {{- form_row(form.removeScreenShot) -}}
 </div>
 <div class="col-xs-4">
-    {%- set _screenshot_src = screenshot | default('') %}
+    {%- set _screenshot_src = application_screenshot_path(application) -%}
     <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
         <div class="cell_edit">
             <div class="delete button critical hidden">X</div>
