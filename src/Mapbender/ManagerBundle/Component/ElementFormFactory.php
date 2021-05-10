@@ -65,14 +65,16 @@ class ElementFormFactory extends BaseElementFactory
 
     /**
      * @param Element $element
-     * @param mixed[] $options forwarded to form builder
      * @return array
      */
-    public function getConfigurationForm($element, $options = array())
+    public function getConfigurationForm($element)
     {
         // Add class and element id data attributes for functional test support
-        $options += array('attr' => array());
-        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form form-horizontal');
+        $options = array(
+            'attr' => array(
+                'class' => '-ft-element-form form-horizontal',
+            ),
+        );
         if ($element->getId()) {
             $options['attr']['data-ft-element-id'] = $element->getId();
         }
