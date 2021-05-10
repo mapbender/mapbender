@@ -13,7 +13,7 @@
             {% if theme is defined and theme != '' %}
                 {% include(theme) %}
             {% else %}
-                <div class="elementForm wideLabelForm">
+                <div class="elementForm">
                     {{ form_row(form.title) }}
                     {{ form_rest(form.configuration) }}
                 </div>

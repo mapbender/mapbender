@@ -1,5 +1,5 @@
 .elementForm {
-  $labelWidth: 70px;
+  $labelWidth: 100px;
   .labelInput {
     width: $labelWidth;
   }
@@ -38,16 +38,6 @@
   // add margin between consecutive "inline" checkboxes with .left
   .left .labelCheck {
     margin-right: $space;
-  }
-}
-
-.wideLabelForm {
-  $label: 100px;
-  .labelInput {
-    width: $label;
-  }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$label + $space});
   }
 }
 
