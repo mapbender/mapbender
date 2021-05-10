@@ -12,9 +12,7 @@ class OnlineResourceType extends AbstractType
     {
         $resolver->setDefaults(array(
             'compound' => true,
-            'label_attr' => array(
-                'class' => 'hidden',
-            ),
+            'label' => false,
         ));
     }
 

@@ -4,11 +4,8 @@
         {{ form_row(form.state) }}
         {{ form_row(form.abstract) }}
         {{ form_row(form.keywords) }}
-        {{ form_label(form.descriptionurl) }}
-        <div class="clearContainer"></div>
-        {{ form_widget(form.descriptionurl) }}
+        {{ form_row(form.descriptionurl) }}
         {{ form_label(form.logourl) }} ({{ 'mb.wmc.wmceditor.screenshot'|trans }})
-        <div class="clearContainer"></div>
         {{ form_widget(form.logourl) }}
         {{ form_row(form.screenshot) }}
         {{ form_rest(form) }}

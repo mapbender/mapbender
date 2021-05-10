@@ -1,4 +1,8 @@
 .elementForm {
+  /** @todo: remove float from checkbox_widget block globally */
+  .checkWrapper.left {
+    float: none;
+  }
   $labelWidth: 100px;
   .labelInput {
     width: $labelWidth;
@@ -17,11 +21,6 @@
       // undo fixed pixel height on .input
       // @todo: .input should not have any height rule
       height: auto;
-    }
-    .checkWrapper.left {
-      // undo redundant floats
-      // @todo: unfloat checkboxes globally
-      float: none;
     }
     .sortableItem {
       cursor: move;
