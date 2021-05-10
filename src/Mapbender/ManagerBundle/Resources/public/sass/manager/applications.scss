@@ -108,15 +108,12 @@
     img {
       display: block;
     }
-    .iconAppDefault {
+    &:not(.default) .placeholder-icon {
       display: none;
     }
     &.default {
       img {
         display: none;
-      }
-      .iconAppDefault {
-        display: inline-block;
       }
     }
     &.default{
@@ -124,8 +121,7 @@
       background-color:#404040;
     }
 
-    .iconAppDefault{
-      font-style: normal;
+    .placeholder-icon {
       font-size: 60px;
       color:lighten($darkFontColor, 10%);
     }
