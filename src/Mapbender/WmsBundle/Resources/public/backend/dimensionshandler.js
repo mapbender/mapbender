@@ -2,14 +2,12 @@ $(function () {
     var collectionSelector = '#form_configuration_dimensionsets .collectionItem';
     var selectSelector = 'select[data-name="group"]';
     var dimHandler = {
-        update: function($item, dimension, minStep, maxStep, store) {
+        update: function($item, dimension, minStep, maxStep) {
             var $storeInput = $('input[name*="[extent]"]', $item);
             var min = dimension.valueFromStep(minStep);
             var max = dimension.valueFromStep(maxStep);
             var defaultValue = dimension.getInRange(min, max, dimension.getMax());
-            if (store) {
-                $storeInput.val([min, max, dimension.getResolutionText()].join('/'));
-            }
+            $storeInput.val([min, max, dimension.getResolutionText()].join('/'));
             var displayText = [[min, max, dimension.getResolutionText()].join('/'), defaultValue].join(' - ');
             $('input[data-name="extentDisplay"]', $item).val(displayText);
         },
@@ -48,17 +46,17 @@ $(function () {
                     Math.min(sliderRange[1], dimension.getStep(currentSettings.max))
                 ];
                 sliderValues = sliderValues || sliderRange.slice();
-                this.update($item, dimension, sliderValues[0], sliderValues[1], false);
                 $slider.slider({
                     range: true,
                     min: sliderRange[0],
                     max: sliderRange[1],
                     values: sliderValues,
                     slide: function (event, ui) {
-                        self.update($item, dimension, ui.values[0], ui.values[1], true);
+                        self.update($item, dimension, ui.values[0], ui.values[1]);
                     }
                 });
                 $slider.addClass('-created');
+                this.update($item, dimension, sliderValues[0], sliderValues[1]);
             } else {
                 if ($slider.hasClass('-created')) {
                     $slider.slider("destroy");
