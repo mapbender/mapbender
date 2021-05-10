@@ -30,10 +30,6 @@
     }
   }
 
-  a {
-    text-decoration: none;
-  }
-
   .logoContainer {
     text-align: center;
     display: block;
@@ -48,6 +44,7 @@
 
   .linkButton {
     margin-right: $space/2;
+    font-size: 0.85rem;
   }
 
   .sitelinks {
