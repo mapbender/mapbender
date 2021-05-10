@@ -57,6 +57,9 @@ class ElementController extends ApplicationControllerBase
 
         /** @var MinimalInterface|string $elementClassName */
         foreach ($classNames as $elementClassName) {
+            if (!$this->checkRegionCompatibility($elementClassName, $region)) {
+                continue;
+            }
             $title = $trans->trans($elementClassName::getClassTitle());
             $elements[$title] = array(
                 'class' => $elementClassName,
@@ -70,6 +73,19 @@ class ElementController extends ApplicationControllerBase
             'elements' => $elements,
             'region' => $region,
         ));
+    }
+
+    /**
+     * @param string $className
+     * @param string $regionName
+     * @return bool
+     */
+    private function checkRegionCompatibility($className, $regionName)
+    {
+        if (false === strpos($regionName, 'content')) {
+            return !\is_a($className, 'Mapbender\CoreBundle\Component\ElementBase\FloatingElement', true);
+        }
+        return true;
     }
 
     /**
