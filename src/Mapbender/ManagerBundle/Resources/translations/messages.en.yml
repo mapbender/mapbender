@@ -54,6 +54,12 @@ mb:
         show_hide: 'Toggle show/hide element'
         no_element_added:
           '': 'No element added'
+        anchor:
+          label: Position
+          left-top: Top left
+          left-bottom: Bottom left
+          right-top: Top right
+          right-bottom: Bottom right
       zoombar:
         draggable: Draggable
       overview:

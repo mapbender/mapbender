@@ -19,11 +19,12 @@ class FloatingAnchorType extends AbstractType
     {
         $resolver->setDefaults(array(
             'choices' => array(
-                'left-top'     => 'left-top',
-                'left-bottom'  => 'left-bottom',
-                'right-top'    => 'right-top',
-                'right-bottom' => 'right-bottom',
+                'mb.manager.admin.element.anchor.left-top' => 'left-top',
+                'mb.manager.admin.element.anchor.left-bottom' => 'left-bottom',
+                'mb.manager.admin.element.anchor.right-top' => 'right-top',
+                'mb.manager.admin.element.anchor.right-bottom' => 'right-bottom',
             ),
+            'label' => 'mb.manager.admin.element.anchor.label',
         ));
         if (Kernel::MAJOR_VERSION < 3) {
             $resolver->setDefault('choices_as_values', true);
