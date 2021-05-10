@@ -112,8 +112,13 @@ class ElementFormFactory extends BaseElementFactory
 
         $formType->add('configuration', $configurationType, $options);
         $componentClassName = $this->getComponentClass($element);
+        $regionName = $element->getRegion();
         if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
-            $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
+            if (!$regionName || false !== strpos($regionName, 'content')) {
+                $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
+            } else {
+                $formType->get('configuration')->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+            }
         }
 
         return array(
