@@ -33,7 +33,6 @@ class ScaleDisplayAdminType extends AbstractType
                 'trim' => false,
             ))
             ->add('unitPrefix', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
-            ->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType')
         ;
     }
 

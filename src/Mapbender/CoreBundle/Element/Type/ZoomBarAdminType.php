@@ -53,7 +53,6 @@ class ZoomBarAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType')
             ->add('draggable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.zoombar.draggable',

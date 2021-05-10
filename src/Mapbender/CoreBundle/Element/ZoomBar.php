@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity;
 
 /**
@@ -14,7 +15,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element implements ConfigMigrationInterface
+class ZoomBar extends Element implements ConfigMigrationInterface, FloatableElement
 {
 
     /**

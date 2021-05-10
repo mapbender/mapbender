@@ -31,7 +31,6 @@ class ScaleBarAdminType extends AbstractType
             ))
             // @todo: should be an optional positive integer
             ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-            ->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType')
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,

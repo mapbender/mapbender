@@ -109,6 +109,10 @@ class ElementFormFactory extends BaseElementFactory
         }
 
         $formType->add('configuration', $configurationType, $options);
+        $componentClassName = $this->getComponentClass($element);
+        if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+            $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
+        }
 
         return array(
             'form' => $formType->getForm(),

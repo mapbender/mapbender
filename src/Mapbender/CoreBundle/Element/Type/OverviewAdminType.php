@@ -34,7 +34,6 @@ class OverviewAdminType extends AbstractType
                 'application'   => $options['application'],
                 'required' => false,
             ))
-            ->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType')
             ->add('maximized', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.overview.maximize',

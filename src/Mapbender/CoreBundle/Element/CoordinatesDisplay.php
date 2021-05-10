@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 
 /**
  * Coordinates display
@@ -11,7 +12,7 @@ use Mapbender\CoreBundle\Component\Element;
  * @author Paul Schmidt
  * @author Christian Wygoda
  */
-class CoordinatesDisplay extends Element
+class CoordinatesDisplay extends Element implements FloatableElement
 {
 
     /**

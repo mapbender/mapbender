@@ -23,7 +23,6 @@ class CoordinatesDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('anchor','Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType')
             ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))
