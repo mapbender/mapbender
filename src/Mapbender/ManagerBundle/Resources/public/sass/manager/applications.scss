@@ -24,6 +24,7 @@
   .upload_label {
     max-width: 60%;
     text-overflow: ellipsis;
+    margin-left: 0.5em;
   }
 
   input {
@@ -42,14 +43,11 @@
 
   // screen shot holder
   .screenshot_img{
-    width:200px;
-    height:200px;
-    margin: 29px 29px; // HACK: same as line-height of first label in application base data...
+    margin-top: 29px; // HACK: same as line-height of first label in application base data...
     position: relative;  // for absolute .delete button
 
-    box-sizing: content-box;
     border: 1px solid #c0c0c0;
-    background-color: #f9f9f9;
+    border-radius: 3px; // match .btn.delete
     display: table;
 
     overflow: hidden;
@@ -57,24 +55,25 @@
     img {
       display: block;
     }
-    .iconAppDefault {
-      display: none;
-    }
     &.default {
+      background-color:#404040;
       img {
         display: none;
       }
-      .iconAppDefault {
-        display: inline-block;
+    }
+    &:not(.default) {
+      &:hover .delete {
+        display: initial;
+      }
+      .placeholder-icon {
+        display: none;
       }
     }
-    &.default{
-      border: 1px solid #a2a2a2;
-      background-color:#404040;
+    .delete {
+      display: none;
     }
 
-    .iconAppDefault{
-      font-style: normal;
+    .placeholder-icon {
       font-size: 60px;
       color:lighten($darkFontColor, 10%);
     }
@@ -83,8 +82,9 @@
       position: relative;
       .delete{
         position: absolute;
-        right: 0;
-        top: 0;
+        // Overlap 1px border
+        right: -1px;
+        top: -1px;
       }
         display: table-cell;
         vertical-align:middle;

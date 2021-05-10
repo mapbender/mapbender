@@ -27,12 +27,12 @@
     {{ form_row(form.removeScreenShot) }}
 </div>
 <div class="col-xs-4">
-    {%- set _screenshot_src = screenshot | default('') %}
+    {%- set _screenshot_src = application_screenshot_path(application) -%}
     <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
         <div class="cell_edit">
-            <div class="delete button critical hidden">X</div>
+            <div class="delete btn btn-sm btn-danger"><i class="fa fas fa-times"></i></div>
             <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
-            <i class="iconAppDefault"></i>
+            <i class="fa fas fa-image placeholder-icon"></i>
         </div>
     </div>
 </div>

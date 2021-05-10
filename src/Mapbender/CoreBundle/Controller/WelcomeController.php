@@ -47,8 +47,6 @@ class WelcomeController extends ApplicationControllerBase
 
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
-            'uploads_web_url' => $this->getUploadsBaseUrl($request),
-            'time'              => new \DateTime(),
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
         ));

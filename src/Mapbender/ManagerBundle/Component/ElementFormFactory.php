@@ -64,14 +64,16 @@ class ElementFormFactory extends BaseElementFactory
 
     /**
      * @param Element $element
-     * @param mixed[] $options forwarded to form builder
      * @return array
      */
-    public function getConfigurationForm($element, $options = array())
+    public function getConfigurationForm($element)
     {
         // Add class and element id data attributes for functional test support
-        $options += array('attr' => array());
-        $options['attr']['class'] = trim(ArrayUtil::getDefault($options['attr'], 'class', '') . ' -ft-element-form form-horizontal');
+        $options = array(
+            'attr' => array(
+                'class' => '-ft-element-form form-horizontal',
+            ),
+        );
         if ($element->getId()) {
             $options['attr']['data-ft-element-id'] = $element->getId();
         }
@@ -102,6 +104,15 @@ class ElementFormFactory extends BaseElementFactory
         }
 
         $formType->add('configuration', $configurationType, $options);
+        $componentClassName = $this->getComponentClass($element);
+        $regionName = $element->getRegion();
+        if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+            if (!$regionName || false !== strpos($regionName, 'content')) {
+                $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
+            } else {
+                $formType->get('configuration')->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+            }
+        }
 
         return array(
             'form' => $formType->getForm(),

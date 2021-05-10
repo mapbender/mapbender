@@ -35,13 +35,13 @@
     {{- tab_macros.tab_header('Security', 'mb.manager.admin.application.security.title') -}}{#- #tabSecurity -#}
 {% endblock %}
 {% block tab_containers %}
-      <div{{ tab_macros.tab_content_attributes('BaseData', 'active containerBaseData row no-gutters') }}>{#- #containerBaseData -#}
+      <div{{ tab_macros.tab_content_attributes('BaseData', 'active containerBaseData') }}>{#- #containerBaseData -#}
           {%- if not application.id -%}
-          <div class="col-xs-12 col-12">
             <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-          </div>
           {%- endif -%}
+        <div class="row">
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+        </div>
       </div>
     {%- if application.id -%}
       <div{{ tab_macros.tab_content_attributes('Layout') }}>{#- #containerLayout -#}

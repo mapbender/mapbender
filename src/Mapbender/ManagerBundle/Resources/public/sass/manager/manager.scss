@@ -5,7 +5,6 @@
 @import "modules/layout";
 @import "modules/popup";
 @import "modules/input";
-@import "modules/button";
 @import "modules/dropdown";
 @import "modules/table";
 @import "element/mbslider";
@@ -262,11 +261,13 @@ ul.dropdownList{
     font-size: 85%;
     cursor: pointer;
     width: auto;
-    text-align: center;
     padding: 3px .5em;
     margin: 0 .25em;
-    @include noUserSelect;
-    @include border-radius($radius);
+    user-select: none;
+    border-radius: $radius;
+    input {
+      display: none;
+    }
     &.multi {
       background-color:#c1c1c1;
     }

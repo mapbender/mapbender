@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -9,7 +10,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class Overview extends Element
+class Overview extends Element implements FloatingElement
 {
 
     /**
