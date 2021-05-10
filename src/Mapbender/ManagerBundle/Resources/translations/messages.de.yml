@@ -81,6 +81,12 @@ mb:
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
         no_element_added: Kein Element vorhanden
+        anchor:
+          label: Position
+          left-top: Oben links
+          left-bottom: Unten links
+          right-top: Oben rechts
+          right-bottom: Unten rechts
       zoombar:
         draggable: Verschiebbar
       overview:

@@ -1,6 +1,10 @@
 .elementForm {
+  /** @todo: remove float from checkbox_widget block globally */
+  .checkWrapper.left {
+    float: none;
+  }
   font-size: 0.85rem;
-  $labelWidth: 70px;
+  $labelWidth: 100px;
   .labelInput {
     width: $labelWidth;
   }
@@ -32,16 +36,6 @@
   .left .checkbox {
     display: inline-block;
     margin-right: $space;
-  }
-}
-
-.wideLabelForm {
-  $label: 100px;
-  .labelInput {
-    width: $label;
-  }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$label + $space});
   }
 }
 

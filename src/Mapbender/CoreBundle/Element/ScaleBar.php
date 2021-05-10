@@ -4,11 +4,12 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 
 /**
  * @author Paul Schmidt
  */
-class ScaleBar extends Element implements ConfigMigrationInterface
+class ScaleBar extends Element implements ConfigMigrationInterface, FloatableElement
 {
 
     /**

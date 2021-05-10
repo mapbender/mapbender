@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity;
 
 /**
@@ -13,7 +14,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element
+class ZoomBar extends Element implements FloatingElement
 {
 
     /**
