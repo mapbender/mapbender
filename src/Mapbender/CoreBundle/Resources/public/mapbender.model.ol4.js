@@ -618,12 +618,15 @@ window.Mapbender.MapModelOl4 = (function() {
             var style = {};
             var stroke = olTextStyle.getStroke();
             Object.assign(style,
-                this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity'),
-                this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity')
             );
-            style['labelOutlineWidth'] = stroke.getWidth();
-
-            style['labelAlign'] = [olTextStyle.getTextAlign().slice(0, 1), olTextStyle.getTextBaseline().slice(0, 1)].join('');
+            if (stroke) {
+                this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                style['labelOutlineWidth'] = stroke.getWidth();
+            }
+            var align = (olTextStyle.getTextAlign() || '')[0] || 'c';
+            var baseline = (olTextStyle.getTextBaseline() || '')[0] || 'm';
+            style['labelAlign'] = [align, baseline].join('');
             style['labelXOffset'] = olTextStyle.getOffsetX();
             style['labelYOffset'] = olTextStyle.getOffsetY();
             return style;
