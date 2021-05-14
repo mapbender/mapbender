@@ -121,12 +121,18 @@
         },
         _onSubmit: function(evt) {
             // add job data to hidden form fields
-            var jobData = this._collectJobData();
-            if (!jobData.layers.length) {
-                Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
-                return false;
+            var jobData;
+            try {
+                jobData = this._collectJobData();
+                if (!jobData.layers.length) {
+                    Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
+                    return false;
+                }
+                this._injectJobData(jobData);
+            } catch (e) {
+                evt.preventDefault();
+                throw e;
             }
-            this._injectJobData(jobData);
             return true;    // let the browser do the rest
         },
         _injectJobData: function(jobData) {
