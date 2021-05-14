@@ -540,6 +540,7 @@ window.Mapbender.MapModelOl4 = (function() {
                     label: label
                 });
             }
+            Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleOptions);
             return styleOptions;
         },
         /**
@@ -605,6 +606,7 @@ window.Mapbender.MapModelOl4 = (function() {
                         graphicWidth: size[0] * scale,
                         graphicHeight: size[1]* scale
                     });
+                    Mapbender.StyleUtil.fixSvgStyleAssetUrls(style);
                 }
             }
             return style;

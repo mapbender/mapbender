@@ -1,6 +1,8 @@
 window.Mapbender = Mapbender || {};
 window.Mapbender.StyleUtil = (function() {
     var _svgStyleDefaults, cssKeywordColors, _svgCallbackDefaultProps;
+    var stripAssetUrlRxp = /^.*?(\/)(bundles\/.*)/;
+
     var methods = {
         /**
          * @param {Object} style
@@ -66,6 +68,20 @@ window.Mapbender.StyleUtil = (function() {
                 }
             });
             return withDefaults;
+        },
+        fixSvgStyleAssetUrls: function(style) {
+            if (style && style.externalGraphic) {
+                style.externalGraphic = this._fixAssetPath(style.externalGraphic);
+            }
+        },
+        _fixAssetPath: function(url) {
+            var urlOut = url.replace(stripAssetUrlRxp, '$2');
+            if (urlOut === url) {
+                console.warn("Asset path could not be resolved to local bundles reference", url);
+                return false;
+            } else {
+                return urlOut;
+            }
         },
         /**
          * @param {Array<Number>} components

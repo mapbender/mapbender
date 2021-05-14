@@ -588,12 +588,15 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @return {Object}
      */
     extractSvgFeatureStyle: function(olLayer, feature) {
+        var styleRules;
         if (feature.style) {
             // stringify => decode: makes a deep copy of the style at the moment of capture
-            return JSON.parse(JSON.stringify(feature.style));
+            styleRules = JSON.parse(JSON.stringify(feature.style));
         } else {
-            return olLayer.styleMap.createSymbolizer(feature, feature.renderIntent);
+            styleRules = olLayer.styleMap.createSymbolizer(feature, feature.renderIntent);
         }
+        Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleRules);
+        return styleRules;
     },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;
