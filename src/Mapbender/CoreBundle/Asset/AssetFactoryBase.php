@@ -114,9 +114,13 @@ class AssetFactoryBase
     protected function rewriteReference($normalizedReference, $migratedRefMapping, &$debugOutput)
     {
         $refsOut = array();
-        if (!empty($migratedRefMapping[$normalizedReference])) {
+        if (isset($migratedRefMapping[$normalizedReference])) {
             $replacements = (array)$migratedRefMapping[$normalizedReference];
-            $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
+            if (!$replacements) {
+                $debugOutput[] = "/** !!! Emitting no content for {$normalizedReference} */";
+            } else {
+                $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
+            }
             foreach ($replacements as $replacement) {
                 if ($replacement === $normalizedReference) {
                     $refsOut[] = $replacement;
