@@ -784,21 +784,6 @@
             }
             this.open();
         },
-
-        _getDigitizerTemplates: function(schemaName) {
-            var self = this;
-
-            var url =  this.elementUrl + 'getDigitizerTemplates';
-            return $.ajax({
-                url: url,
-                type: 'GET',
-                data: {schemaName: schemaName},
-                success: function(data) {
-                    self._overwriteTemplateSelect(data);
-                }
-            });
-        },
-
         _overwriteTemplateSelect: function(templates) {
             var templateSelect = $('select[name=template]', this.element);
             var templateList = templateSelect.siblings(".dropdownList");
