@@ -3,11 +3,6 @@
 
 namespace Mapbender\PrintBundle\Component\Plugin;
 
-use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 /**
  * Extends Print to inject Digitizer feature data into print template text fields
  *
@@ -16,21 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class DigitizerPrintPlugin implements TextFieldPluginInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-    /** @var string */
-    protected $featureTypeParamName;
-
-    /**
-     * @param ContainerInterface $container
-     * @param $featureTypeParamName
-     */
-    public function __construct(ContainerInterface $container, $featureTypeParamName)
-    {
-        $this->container = $container;
-        $this->featureTypeParamName = $featureTypeParamName;
-    }
-
     public function getDomainKey()
     {
         return 'digitizer';
