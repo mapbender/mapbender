@@ -605,9 +605,6 @@
          * @private
          */
         _filterFeature: function(feature) {
-            if (!this._super(feature)) {
-                return false;
-            }
             if (!feature.geometry.intersects(this.feature.geometry)) {
                 return false;
             }
