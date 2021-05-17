@@ -32,7 +32,9 @@ h2 {
 }
 
 .navigationBar {
-  font-weight: bold;
+  .nav {
+    font-weight: bold;
+  }
   .navbar-nav>li>a, &.navbar-default .navbar-brand {
     color: #555;
     &:hover {
@@ -63,7 +65,9 @@ h2 {
     display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
   }
   .navbar-brand-name {
+    font-weight: 400;
     vertical-align: middle;
+    margin-left: 0.25em;
   }
 }
 
