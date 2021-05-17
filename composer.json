@@ -43,6 +43,7 @@
         "mapbender/fom": "3.3"
     },
     "replace": {
+        "debugteam/bootstrap-colorpicker": "1.*",
         "mapbender/fom": "*"
     },
     "autoload": {
