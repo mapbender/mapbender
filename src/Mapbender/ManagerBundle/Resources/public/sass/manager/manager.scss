@@ -17,11 +17,17 @@ body {
   background-color: #eee;
 }
 
-h1 {
-  font-size: 2.9rem;
+h1, .h1 {
+  font-size: 2.675rem;
 }
-h2 {
+h2, .h2 {
   font-size: 2rem;
+}
+h3, .h3 {
+  font-size: 1.72rem;
+}
+h4, .h4, .tabContainer > ul {
+  font-size: 1.35rem;
 }
 
 .content, .loginBox {
@@ -156,7 +162,6 @@ ul.dropdownList{
 .tabContainer {
   > ul {
     margin-bottom: 2rem;
-    font-size: 1.5rem;
   }
   // Use Layout rules from .nav-pills without using .nav-pills buttonish styling
   // See https://github.com/twbs/bootstrap/blob/v3.4.1/less/navs.less#L117
