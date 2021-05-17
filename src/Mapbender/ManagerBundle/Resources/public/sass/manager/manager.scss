@@ -35,7 +35,7 @@ h2 {
   .nav {
     font-weight: bold;
   }
-  .navbar-nav>li>a, &.navbar-default .navbar-brand {
+  .navbar-nav>li>a {
     color: #555;
     &:hover {
       color: #121212;
@@ -44,6 +44,9 @@ h2 {
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
 
+  .navbar-brand, &.navbar-default .navbar-brand {
+    color: inherit;
+  }
   .navbar-brand {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
     padding-top: 5px;
