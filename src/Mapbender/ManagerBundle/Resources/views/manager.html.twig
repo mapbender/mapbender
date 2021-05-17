@@ -14,7 +14,7 @@
 
 {% block content %}
   <div class="head">
-      {% include 'MapbenderCoreBundle::navbar.html.twig' %}
+      {% include 'MapbenderManagerBundle:Index:menu.html.twig' %}
       {% for key, flash in app.session.bag('flashes').all() %}
         <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
           {{ flash | first }}
