@@ -72,6 +72,8 @@ class JsCompiler extends AssetFactoryBase
                 '/../vendor/mapbender/vis-ui.js/src/js/elements/tab.navigator.js',
                 '/../vendor/mapbender/vis-ui.js/src/js/jquery.form.generator.js',
             ),
+            // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
+            '/components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' => array(),
         );
     }
 }

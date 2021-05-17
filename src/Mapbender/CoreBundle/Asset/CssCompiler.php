@@ -101,6 +101,8 @@ class CssCompiler extends AssetFactoryBase
             // updates for reliance on robloach/component-installer
             // select2 CSS works fine standalone (no url references) and can be sourced directly from vendor
             '/components/select2/select2-built.css' => '/../vendor/select2/select2/dist/css/select2.css',
+            // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
+            '/components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' => array(),
         );
     }
 }
