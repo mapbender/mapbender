@@ -48,9 +48,17 @@ h4, .h4, .tabContainer > ul {
       color: inherit;
     }
   }
-  background-color: rgba(255, 255, 255, 1);
-  border-bottom-color: #e7e7e7;
+  &, & .dropdown-menu {
+    background-color: rgba(255, 255, 255, 1);
+    border-color: #e7e7e7;
+  }
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
+  .navbar-nav>li>a:hover, .dropdown-menu>.active>a {
+    background-color: #eee;
+  }
+  .dropdown-menu>li>a, .dropdown-menu>.active>a {
+    color: inherit;
+  }
 
   .navbar-brand {
     // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
