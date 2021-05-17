@@ -236,6 +236,18 @@
             }
             return false;
         },
+        _dumpFeatureGeometries: function(layer, features, resolution) {
+            return this.map.model.dumpGeoJsonFeatures(features, layer, resolution, true)
+                .map(function(gjFeature) {
+                    // Legacy data format quirks (not actually GeoJson):
+                    // 1) Strip "type: 'Feature'" outer container object
+                    // 2) move style into geometry object
+                    return Object.assign({}, gjFeature.geometry, {
+                        style: gjFeature.style
+                    });
+                })
+            ;
+        },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
          * to have passsed through the _filterGeometryLayer check positively.
@@ -245,15 +257,13 @@
          * @private
          */
         _extractGeometryLayerData: function(layer) {
-            var geometries = layer.features
-                .filter(this._filterFeature.bind(this))
-                .map(this._extractFeatureGeometry.bind(this, layer))
-                .filter(this._filterFeatureGeometry.bind(this))
-            ;
+            var postFilter = this._filterFeatureGeometry.bind(this);
+            var features = layer.features.filter(this._filterFeature.bind(this))
+            var geometries = this._dumpFeatureGeometries(layer, features);
             return {
                 type: 'GeoJSON+Style',
                 opacity: 1,
-                geometries: geometries
+                geometries: geometries.filter(postFilter)
             };
         },
         _collectGeometryLayers4: function() {
@@ -268,16 +278,18 @@
             for (var li = 0; li < vectorLayers.length; ++li) {
                 var layer = vectorLayers[li];
                 var features = layer.getSource().getFeatures();
-                var layerFeatureData = [];
-                for (var fi = 0; fi < features.length; ++fi) {
-                    var feature = features[fi];
-                    // printclient support HACK
-                    // @todo: implement filterFeature properly for dual-engine support
-                    if (this.feature && this.feature === feature) {
-                        continue;
-                    }
-                    layerFeatureData.push(this._extractFeatureGeometry(layer, feature));
+                if (!features.length) {
+                    continue;
                 }
+                // printclient support HACK
+                // @todo: implement filterFeature properly for dual-engine support
+                if (this.feature) {
+                    var skipFeature = this.feature;
+                    features = features.filter(function(f) {
+                        return f !== skipFeature;
+                    });
+                }
+                var layerFeatureData = this._dumpFeatureGeometries(layer, features);
                 dataOut.push({
                     "type": "GeoJSON+Style",
                     "opacity": layer.getOpacity(),

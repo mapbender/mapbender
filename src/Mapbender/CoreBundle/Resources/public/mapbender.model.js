@@ -564,6 +564,17 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var gj = this._geoJsonReader.extract.feature.call(this._geoJsonReader, feature);
         return gj.geometry;
     },
+    dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
+        var self = this;
+        var extract = this._geoJsonReader.extract.feature.bind(this._geoJsonReader);
+        return features.map(function(feature) {
+            var gj = extract(feature);
+            if (includeStyle) {
+                gj.style = self.extractSvgFeatureStyle(layer, feature);
+            }
+            return gj;
+        });
+    },
     /**
      * Centered feature rotation (counter-clockwise)
      *

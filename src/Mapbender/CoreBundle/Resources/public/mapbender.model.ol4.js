@@ -385,6 +385,70 @@ window.Mapbender.MapModelOl4 = (function() {
     featureToGeoJsonGeometry: function(feature) {
         return this._geojsonFormat.writeFeatureObject(feature).geometry;
     },
+    dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
+        var self = this;
+        var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
+        var dumpGeometry = this._geojsonFormat.writeGeometryObject.bind(this._geojsonFormat);
+        var layerStyleFn = layer.getStyleFunction();
+        var featuresDump = [];
+        for (var i = 0; i < features.length; ++i) {
+            /** @type {ol.Feature} */
+            var feature = features[i];
+            var styles = (feature.getStyleFunction() || layerStyleFn)(feature, resolution);
+            if (!Array.isArray(styles)) {
+                styles = [styles];
+            }
+            var baseGeometry = feature.getGeometry();
+            var baseFeatureDump = dumpFeature(feature);
+            var components = styles.map(function(style) {
+                var featureDump = Object.assign({}, baseFeatureDump);
+                var geom = (style.getGeometryFunction())(feature);
+                if (geom !== baseGeometry) {
+                    featureDump.geometry = dumpGeometry(geom);
+                }
+                if (includeStyle) {
+                    featureDump.style = self._dumpSvgStyle(style);
+                }
+                return featureDump;
+            }).filter(function(dump) {
+                return (!includeStyle) || !!dump.style;
+            });
+            if (components.length) {
+                Array.prototype.push.apply(featuresDump, components);
+            }
+        }
+        return featuresDump;
+    },
+    /**
+     * @param {ol.style.Style} style
+     * @return {Object|null}
+     * @private
+     */
+    _dumpSvgStyle: function(style) {
+        var styleRules = this._extractSvgGeometryStyle(style);
+        var text = style.getText();
+        var label = text && text.getText();
+        if (label) {
+            Object.assign(styleRules, this._extractSvgLabelStyle(text), {
+                label: label
+            });
+        }
+        if (!style.getFill()) {
+            styleRules['fillColor'] = '#000000';
+            styleRules['fillOpacity'] = 0;
+        }
+        if (!style.getStroke()) {
+            styleRules['strokeColor'] = '#000000';
+            styleRules['strokeOpacity'] = 0;
+        }
+
+        if (style.getFill() || style.getStroke() || style.getImage() || label) {
+            Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleRules);
+            return styleRules;
+        } else {
+            return null;
+        }
+    },
     /**
      * Centered feature rotation (counter-clockwise)
      *
