@@ -1,8 +1,8 @@
-## dev-master @ 4f003e508
+## dev-master @ 9011c5c9c
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
-* Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
+* Fix PostgreSQL errors saving WMTS source with very long "fees" texts ([#1311](https://github.com/mapbender/mapbender/issues/1311), [PR#1353](https://github.com/mapbender/mapbender/pull/1353))
 * Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
 * Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320](https://github.com/mapbender/mapbender/issues/1320))
 * Filter ApplicationSwitcher backend application selection down to editing user's granted applications ([#1321](https://github.com/mapbender/mapbender/issues/1320))
@@ -13,21 +13,29 @@
 * Fix HTML paragraph text flow
 * Fix Print errors / poor resolution on incomplete "quality_levels" configuration ([#1341](https://github.com/mapbender/mapbender/issues/1341))
 * Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
+* Fix broken images in application list if screenshot files are missing
 * [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * Add new "View manager" Element (see [PR#1351](https://github.com/mapbender/mapbender/pull/1351))
 * Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
 * Support resetting source layer settings when using ZoomBar component "zoom_home" (see [PR#1348](https://github.com/mapbender/mapbender/pull/1348))
+* Prevent adding float-only Elements (ZoomBar, Overview) to incompatible regions
+* Suppress "anchor" element configuration field for floatable elements outside of the "content" region
+* [Forms] Fix file type inputs generated via form theme
+* [Forms] Fix custom dropdown select widget not emitting tooltip properly
 * [Forms] Update form theme to emit Bootstrap checkboxes and (margin-providing) form-group containers (see [PR#1343](https://github.com/mapbender/mapbender/pull/1343))
 * [Backend] Fix new application form sometimes missing the security tab header
 * [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 * [Backend] Fix filter input in Element security dialog not working
 * [Backend] Fix missing redirect to "Layouts" tab after saving Element security
+* [Backend] Redesign source view display
+* [Backend] Redesign vendorspecifics / dimension boxes in WMS instance editing
 * [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
 * [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
 * Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
 * Misc cleanups of Fontawesome 5+ incompatibilities in backend
+* Misc translation fixes
 * Misc legacy CSS cleanups
 
 ## v3.2.4
@@ -242,7 +250,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ d5b068170
+## dev-release/3.0.7 @ cfd82121a
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -280,6 +288,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
 - Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 - Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
+- Fix PostgreSQL errors saving WMTS source with very long "fees" texts ([#1311](https://github.com/mapbender/mapbender/issues/1311), [PR#1353](https://github.com/mapbender/mapbender/pull/1353))
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
 - Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
@@ -287,6 +296,8 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Element titles are now optional in both Yaml applications and DB-/backend-maintained applications; effective default titles are shown in title field placeholder
 - Give reasonable (target dependent) titles to ControlButton Elements with empty / omitted titles (see [PR#1316](https://github.com/mapbender/mapbender/pull/1316))
 - Allow suppressing entire types of Element via configuration (see [PR#1317](https://github.com/mapbender/mapbender/pull/1317))
+- Prevent adding float-only Elements (ZoomBar, Overview) to incompatible regions
+- Suppress "anchor" element configuration field for floatable elements outside of the "content" region
 - [Backend] Fix account menu and sitelinks alignment vs top of page
 - [Backend] Fix new application form sometimes missing the security tab header
 - [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
@@ -294,7 +305,9 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+- [Framework] Fix file type inputs generated via form theme
 - [Framework] Fix misc form control font color inconsistencies
+- [Framework] Fix custom dropdown select widget not emitting tooltip properly
 - [Framework] Fix TargetElementType offering all elements if all elements are not targettable
 - [Framework] Fix errors if Element configuration form type does not accept / declare an `application` option, even if it isn't used by the form type
 - [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
@@ -311,6 +324,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
 - Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
 - Resolved misc Bootstrap CSS conflicts
+- Misc translation fixes
 - Misc functional testing support
 
 ## v3.0.8.6

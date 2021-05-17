@@ -564,6 +564,17 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var gj = this._geoJsonReader.extract.feature.call(this._geoJsonReader, feature);
         return gj.geometry;
     },
+    dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
+        var self = this;
+        var extract = this._geoJsonReader.extract.feature.bind(this._geoJsonReader);
+        return features.map(function(feature) {
+            var gj = extract(feature);
+            if (includeStyle) {
+                gj.style = self.extractSvgFeatureStyle(layer, feature);
+            }
+            return gj;
+        });
+    },
     /**
      * Centered feature rotation (counter-clockwise)
      *
@@ -588,12 +599,15 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @return {Object}
      */
     extractSvgFeatureStyle: function(olLayer, feature) {
+        var styleRules;
         if (feature.style) {
             // stringify => decode: makes a deep copy of the style at the moment of capture
-            return JSON.parse(JSON.stringify(feature.style));
+            styleRules = JSON.parse(JSON.stringify(feature.style));
         } else {
-            return olLayer.styleMap.createSymbolizer(feature, feature.renderIntent);
+            styleRules = olLayer.styleMap.createSymbolizer(feature, feature.renderIntent);
         }
+        Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleRules);
+        return styleRules;
     },
     _initLayerEvents: function(olLayer, source, sourceLayerIndex) {
         var mbMap = this.mbMap;

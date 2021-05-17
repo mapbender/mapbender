@@ -605,9 +605,6 @@
          * @private
          */
         _filterFeature: function(feature) {
-            if (!this._super(feature)) {
-                return false;
-            }
             if (!feature.geometry.intersects(this.feature.geometry)) {
                 return false;
             }
@@ -757,8 +754,9 @@
         /**
          * @param {OpenLayers.Feature.Vector|Object} attributesOrFeature
          * @param {String} [schemaName]
+         * @param {Array<Object>} [templates]
          */
-        printDigitizerFeature: function(attributesOrFeature, schemaName) {
+        printDigitizerFeature: function(attributesOrFeature, schemaName, templates) {
             // Sonderlocke Digitizer
             if (typeof attributesOrFeature !== 'object') {
                 var msg = "Unsupported mbPrintClient.printDigitizerFeature invocation. Must pass in printable attributes object (preferred) or OpenLayers feature to extract them from. Update your mapbender/digitizer to >=1.1.68";
@@ -780,30 +778,12 @@
                 digitizer_feature: JSON.parse(JSON.stringify(attributes))
             };
 
-            if (schemaName) {
-                var self = this;
-                this._getDigitizerTemplates(schemaName).then(function() {
-                    self.open()
-                });
-            } else {
-                this.open();
+            if (templates && templates.length) {
+                this._overwriteTemplateSelect(templates);
+                this.overwriteTemplates = true;
             }
+            this.open();
         },
-
-        _getDigitizerTemplates: function(schemaName) {
-            var self = this;
-
-            var url =  this.elementUrl + 'getDigitizerTemplates';
-            return $.ajax({
-                url: url,
-                type: 'GET',
-                data: {schemaName: schemaName},
-                success: function(data) {
-                    self._overwriteTemplateSelect(data);
-                }
-            });
-        },
-
         _overwriteTemplateSelect: function(templates) {
             var templateSelect = $('select[name=template]', this.element);
             var templateList = templateSelect.siblings(".dropdownList");

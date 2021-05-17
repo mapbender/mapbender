@@ -385,6 +385,70 @@ window.Mapbender.MapModelOl4 = (function() {
     featureToGeoJsonGeometry: function(feature) {
         return this._geojsonFormat.writeFeatureObject(feature).geometry;
     },
+    dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
+        var self = this;
+        var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
+        var dumpGeometry = this._geojsonFormat.writeGeometryObject.bind(this._geojsonFormat);
+        var layerStyleFn = layer.getStyleFunction();
+        var featuresDump = [];
+        for (var i = 0; i < features.length; ++i) {
+            /** @type {ol.Feature} */
+            var feature = features[i];
+            var styles = (feature.getStyleFunction() || layerStyleFn)(feature, resolution);
+            if (!Array.isArray(styles)) {
+                styles = [styles];
+            }
+            var baseGeometry = feature.getGeometry();
+            var baseFeatureDump = dumpFeature(feature);
+            var components = styles.map(function(style) {
+                var featureDump = Object.assign({}, baseFeatureDump);
+                var geom = (style.getGeometryFunction())(feature);
+                if (geom !== baseGeometry) {
+                    featureDump.geometry = dumpGeometry(geom);
+                }
+                if (includeStyle) {
+                    featureDump.style = self._dumpSvgStyle(style);
+                }
+                return featureDump;
+            }).filter(function(dump) {
+                return (!includeStyle) || !!dump.style;
+            });
+            if (components.length) {
+                Array.prototype.push.apply(featuresDump, components);
+            }
+        }
+        return featuresDump;
+    },
+    /**
+     * @param {ol.style.Style} style
+     * @return {Object|null}
+     * @private
+     */
+    _dumpSvgStyle: function(style) {
+        var styleRules = this._extractSvgGeometryStyle(style);
+        var text = style.getText();
+        var label = text && text.getText();
+        if (label) {
+            Object.assign(styleRules, this._extractSvgLabelStyle(text), {
+                label: label
+            });
+        }
+        if (!style.getFill()) {
+            styleRules['fillColor'] = '#000000';
+            styleRules['fillOpacity'] = 0;
+        }
+        if (!style.getStroke()) {
+            styleRules['strokeColor'] = '#000000';
+            styleRules['strokeOpacity'] = 0;
+        }
+
+        if (style.getFill() || style.getStroke() || style.getImage() || label) {
+            Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleRules);
+            return styleRules;
+        } else {
+            return null;
+        }
+    },
     /**
      * Centered feature rotation (counter-clockwise)
      *
@@ -540,6 +604,7 @@ window.Mapbender.MapModelOl4 = (function() {
                     label: label
                 });
             }
+            Mapbender.StyleUtil.fixSvgStyleAssetUrls(styleOptions);
             return styleOptions;
         },
         /**
@@ -582,7 +647,12 @@ window.Mapbender.MapModelOl4 = (function() {
             if (stroke) {
                 Object.assign(style, this._extractColor(stroke.getColor(), 'strokeColor', 'strokeOpacity'));
                 style['strokeWidth'] = stroke.getWidth();
-                style['strokeDashstyle'] = stroke.getLineDash() ||  'solid';
+                var lineDash = stroke.getLineDash() || 'solid';
+                if (Array.isArray(lineDash)) {
+                    // HACK: drop array-style dash to avoid errors in backend rendering.
+                    lineDash = 'solid'
+                }
+                style['strokeDashstyle'] = lineDash;
             }
             if (image && (image instanceof ol.style.RegularShape)) {
                 style['pointRadius'] = image.getRadius() || 6;
@@ -600,6 +670,7 @@ window.Mapbender.MapModelOl4 = (function() {
                         graphicWidth: size[0] * scale,
                         graphicHeight: size[1]* scale
                     });
+                    Mapbender.StyleUtil.fixSvgStyleAssetUrls(style);
                 }
             }
             return style;
@@ -613,12 +684,15 @@ window.Mapbender.MapModelOl4 = (function() {
             var style = {};
             var stroke = olTextStyle.getStroke();
             Object.assign(style,
-                this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity'),
-                this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity')
             );
-            style['labelOutlineWidth'] = stroke.getWidth();
-
-            style['labelAlign'] = [olTextStyle.getTextAlign().slice(0, 1), olTextStyle.getTextBaseline().slice(0, 1)].join('');
+            if (stroke) {
+                this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
+                style['labelOutlineWidth'] = stroke.getWidth();
+            }
+            var align = (olTextStyle.getTextAlign() || '')[0] || 'c';
+            var baseline = (olTextStyle.getTextBaseline() || '')[0] || 'm';
+            style['labelAlign'] = [align, baseline].join('');
             style['labelXOffset'] = olTextStyle.getOffsetX();
             style['labelYOffset'] = olTextStyle.getOffsetY();
             return style;

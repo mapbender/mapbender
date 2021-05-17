@@ -26,14 +26,9 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
         // Only add the digitizer plugin if its 'featureTypesParamName' references a parameter present in the container
         // and non-empty (i.e. null / empty array is treated the same as no parameter definition at all)
         $digitizerPluginId = 'mapbender.print.plugin.digitizer';
-        $digitizerPluginDefinition = $container->getDefinition($digitizerPluginId);
-        $arguments = array_values($digitizerPluginDefinition->getArguments());
-        $ftParamName = $this->resolveParameterReference($container, $arguments[1]);
-        if ($container->hasParameter($ftParamName) && $container->getParameter($ftParamName)) {
-            $hostDefinition->addMethodCall('registerPlugin', array(
-                new Reference($digitizerPluginId),
-            ));
-        }
+        $hostDefinition->addMethodCall('registerPlugin', array(
+            new Reference($digitizerPluginId),
+        ));
     }
 
     /**
