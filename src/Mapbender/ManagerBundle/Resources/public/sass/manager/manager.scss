@@ -217,7 +217,7 @@ ul.dropdownList{
   label {
     width: auto;
     min-width: 80px;
-    margin: 0 1em 0 0;
+    margin: 0 0.5em 0 0;
   }
   .inputWrapper, >input {
     width: 200px;
@@ -229,10 +229,14 @@ ul.dropdownList{
   .container-filter & {
     white-space: nowrap;
     label {
+      font-weight: inherit;
       min-width: initial;
     }
     .inputWrapper, >input {
-      width: 15em;
+      box-sizing: content-box;
+      padding: 0;
+      height: auto;
+      width: 12em;
       max-width: initial;
       border: none;
       border-radius: 0;
