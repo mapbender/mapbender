@@ -36,9 +36,9 @@ h2 {
     font-weight: bold;
   }
   .navbar-nav>li>a {
-    color: #555;
+    color: lighten($darkFontColor, 30%);;
     &:hover {
-      color: #121212;
+      color: inherit;
     }
   }
   background-color: rgba(255, 255, 255, 1);
@@ -170,9 +170,11 @@ ul.dropdownList{
       padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
     }
 
+    font-weight: bold;
+    color: lighten($darkFontColor, 30%);
+
     &.active {
-      font-weight: bold;
-      color: #000;
+      color: $darkFontColor;
     }
     &.active > a {
       // Trade bottom-padding for border to maintain height
