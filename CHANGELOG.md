@@ -1,4 +1,4 @@
-## dev-master @ 9011c5c9c
+## dev-master @ 394e2fb2d
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
@@ -15,6 +15,9 @@
 * Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
 * Fix broken images in application list if screenshot files are missing
 * [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
+* Fix ImageExport / Print handling of multi-component Openlayers 6 styles (Digitizer labels etc)
+* Fix ImageExport / Print form submit continuing on scripting errors
+* Fix Print not including feature geometries if selection rectangle is (partially) outside the current map viewport
 * Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
 * Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * Add new "View manager" Element (see [PR#1351](https://github.com/mapbender/mapbender/pull/1351))
@@ -33,6 +36,7 @@
 * [Backend] Redesign vendorspecifics / dimension boxes in WMS instance editing
 * [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
 * [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
+* [Framework] Integrate bootstrap-colorpicker (reduce component installer reliance); pre-provide assets in all templates
 * Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
 * Misc cleanups of Fontawesome 5+ incompatibilities in backend
 * Misc translation fixes
