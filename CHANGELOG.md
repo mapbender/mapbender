@@ -1,4 +1,5 @@
-## dev-master @ 394e2fb2d
+## dev-master @ 13908d763
+* Completely redesigned backend and login areas
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
 * Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 * Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
