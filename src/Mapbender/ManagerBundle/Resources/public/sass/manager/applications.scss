@@ -109,12 +109,6 @@
   Used for both elements and layersets.
  */
 .application-component-table {
-  font-size: 0.85rem;
-  thead {
-    th, td {
-      font-size: 130%;
-    }
-  }
   thead>tr>th:first-child {
     padding-left: 0;
   }
@@ -127,20 +121,15 @@
       background-color:darken($contentColor, 4.8%);
     }
   }
-  // Icon resizing hacks. Icons appear too small on inherited font size :\
-  .iconColumn, thead th.iconColumn, thead th.regionProperties {
-    // Keep horizontal alignment of icons thead vs tbody, despite different default font sizes
-    font-size: 118%;
-  }
   // Element region / Layerset titles use embedded h3 tags
   thead h3 {
     font-size: 140%;
   }
   thead .regionProperties {
-    .static-popover-wrap {
+    .popover {
       width: 22em;
       min-width: 22em;
-      margin-left: auto;
+      left: auto;
     }
   }
   .regionProperties .form-horizontal {
