@@ -4,28 +4,28 @@
 </div>
 
 {% form_theme form _self %}
-{# Define block without immediate output #}
-{%- if false -%}
+  {# Define block without immediate output #}
+  {%- if false -%}
 
-{% block region_settings_widget %}
+  {% block region_settings_widget %}
     <div {{ block('widget_container_attributes') }}>
-        {%- if not form.rendered and form.children | length -%}
-          {%- set _popover_id = 'popover_' ~ form.vars.id -%}
-          <div class="static-popover-wrap">
-            <span data-toggle-target="#{{ _popover_id }}">
-                <i class="fa fa-cog"></i></span>
-            {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
-              <div class="popover left hidden" id="{{ _popover_id }}">
-                  <div class="arrow"></div>
-                  <div class="popover-content form-horizontal">
-                      {{ form_rest(form) }}
-                  </div>
-              </div>
+      {%- if not form.rendered and form.children | length -%}
+      {%- set _popover_id = 'popover_' ~ form.vars.id -%}
+      <div class="static-popover-wrap">
+        <span data-toggle-target="#{{ _popover_id }}">
+          <i class="fa fa-cog"></i></span>
+        {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
+        <div class="popover left hidden" id="{{ _popover_id }}">
+          <div class="arrow"></div>
+          <div class="popover-content form-horizontal">
+            {{ form_rest(form) }}
           </div>
-        {%- endif -%}
+        </div>
+      </div>
+      {%- endif -%}
     </div>
-{% endblock %}
-{%- endif -%}
+  {% endblock %}
+  {%- endif -%}
 
 {% for region in regions %}
   <div class="{{region}} region">
@@ -37,7 +37,7 @@
             </th>
             <th colspan="2" class="iconColumn regionProperties" data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
               {% if form.regionProperties[region] is defined %}
-                  {{ form_widget(form.regionProperties[region]) }}
+                {{ form_widget(form.regionProperties[region]) }}
               {% endif %}
             </th>
           </tr>
@@ -93,8 +93,8 @@
             <tr class="dummy">
               <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
             </tr>
-        {% endfor %}
+          {% endfor %}
         </tbody>
       </table>
-  </div>
-{% endfor %}
+    </div>
+  {% endfor %}

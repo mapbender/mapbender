@@ -5,35 +5,38 @@
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
 {% endblock %}
 
-{%- block boxlist_item_content -%}
-        <div class="col1">
-          <div class="smallerText">{{ item.id }}</div>
-          <div class="smallerText">{{ source.type }}</div>
-        </div>
-        <div class="col2 box">
-          {{ parent() }}
-        </div>
+{%- block item_content_main -%}
+              <table class="table table-borderless table-condensed">
+                  <tbody>
+                    <tr>
+                        <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
+                        <td>{{ source.type }} {{ source.version }}</td>
+                    </tr>
+                    {%- if source.description -%}
+                    <tr>
+                        <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
+                        <td>{{ source.description }}</td>
+                    </tr>
+                    {%- endif -%}
+                </tbody>
+              </table>
 {%- endblock -%}
 
 {%- block item_interactions -%}
-              <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
-              {% if source.id in reloadableIds %}
-              <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
-              {% endif %}
-              {% if is_granted('DELETE', oid) %}
-                 <a href="#" class="-fn-delete hover-highlight-effect"
-                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
-              {% endif %}
+                <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
+                {% if source.id in reloadableIds %}
+                  <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
+                {% endif %}
+                {% if is_granted('DELETE', oid) %}
+                  <a href="#" class="btn btn-default -fn-delete"
+                              title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
+                              data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
+                              data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
+                {% endif %}
 {%- endblock -%}
 
 {%- block item_title -%}
           <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}</a> <sup>{{ source.alias }}</sup>
-{%- endblock -%}
-
-{%- block item_content_main -%}
-{{ source.description }}
 {%- endblock -%}
 
 {%- block boxlist_placeholder_content -%}

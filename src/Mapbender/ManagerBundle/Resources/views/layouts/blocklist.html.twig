@@ -6,22 +6,21 @@
   {%- if items -%}
   <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
     {%- for item in items -%}
-    <li class="filterItem">
+      <li class="filterItem content-box content-box-lg">
       {% block boxlist_item_content -%}
-      <div class="contentTitle">
-        <div class="buttonGroup button-toolbar pull-right">
+        <h2 class="contentTitle">
+          {%- block item_title -%}
+          {%- endblock -%}
+        </h2>
+        <div>
+          {%- block item_content_main -%}
+          {%- endblock -%}
+        </div>
+        <div class="btn-toolbar pull-right">
           {%- block item_interactions -%}
           {%- endblock -%}
         </div>
-        <span class="h2">
-          {%- block item_title -%}
-          {%- endblock -%}
-        </span>
-      </div>
-      <div>
-      {%- block item_content_main -%}
-      {%- endblock -%}
-      </div>
+        <div class="clearfix"></div>
       {%- endblock -%}
     </li>
     {%- endfor -%}

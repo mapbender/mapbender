@@ -1,5 +1,4 @@
 $(function() {
-    var popupCls = Mapbender.Popup;
     function _handleLoginRedirect(html) {
         if (/^<(!DOCTYPE|html)/i.test(html)) {
             // Redirected to login
@@ -34,7 +33,7 @@ $(function() {
         });
     }
     function confirmDiscard(e) {
-        var $form = $('form', $(this).closest('.popup'));
+        var $form = $('form', $(this).closest('.popup, .modal-dialog'));
         if ($form.data('dirty') && !$form.data('discard')) {
             // @todo: translate
             if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
@@ -110,12 +109,14 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            var popup = new popupCls({
+            // Support hack for Digitizer / DataManager using complex Yaml
+            // configuration
+            var useWideModal = !!$('.elementFormDataManager', nodes).length;
+            var $form = $(nodes);
+            var $modal = window.Mapbender.bootstrapModal($form, {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
-                modal: true,
-                cssClass: "elementPopup",
-                content: [nodes],
+                cssClass: useWideModal && 'modal-lg',
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
@@ -134,15 +135,23 @@ $(function() {
                     }
                 ])
             });
-
-            popup.$element.on('change', function() {
-                var $form = $('form', popup.$element);
+            $form.on('change', function() {
                 $form.data('dirty', true);
                 $form.data('discard', false);
             });
-            popup.$element.on('close', function(event, token) {
-                if (!confirmDiscard.call(this, event)) {
-                    token.cancel = true;
+            $modal.on('hide.bs.modal', function(event) {
+                if (!confirmDiscard.call($form, event)) {
+                    event.preventDefault();
+                }
+            });
+            // Fix CodeMirror textareas not rendering properly before first
+            // focus / scroll
+            $('.CodeMirror-wrap', $modal).each(function() {
+                var cm = this.CodeMirror;
+                if (cm) {
+                    window.setTimeout(function() {
+                        cm.refresh();
+                    });
                 }
             });
         });
@@ -156,12 +165,9 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            var popup = new popupCls({
+            var $modal = Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans(title),
-                subTitle: ' - ' + regionName,
-                modal: true,
-                content: response,
-                cssClass: "elementPopup",
+                subTitle: regionName,
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
@@ -169,15 +175,16 @@ $(function() {
                     }
                 ]
             });
-            popup.$element.on('click', '.chooseElement', function(e) {
+            $modal.on('click', '.chooseElement', function(e) {
                 e.preventDefault();
                 var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
                     title: title,
-                    subTitle: ' - ' + regionName + ' - ' + elementTitle,
+                    subTitle: regionName + ' - ' + elementTitle,
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
+                $modal.modal('hide');
 
                 startEditElement($(this).attr('href'), editStrings, [
                     {
@@ -185,6 +192,7 @@ $(function() {
                         cssClass: 'btn btn-warning btn-sm pull-left',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
+                                $(this).closest('.modal').modal('hide');
                                 startElementChooser(regionName, listUrl);
                             }
                         }
@@ -251,16 +259,13 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            new popupCls({
+            Mapbender.bootstrapModal(nodes, {
                 title: Mapbender.trans(popupTitle),
-                content: [nodes],
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
                         cssClass: 'btn btn-success btn-sm',
-                        callback: function() {
-                            $('form', this.$element).submit();
-                        }
+                        type: 'submit'
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
@@ -292,17 +297,16 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            new popupCls({
+            Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-                subTitle: " - " + layersetTitle,
-                cssClass: 'new-instance-select',
-                content: response,
-                buttons: {
-                    'cancel': {
+                subTitle: layersetTitle,
+                cssClass: 'modal-lg',
+                buttons: [
+                    {
                         label: Mapbender.trans('mb.actions.cancel'),
                         cssClass: 'btn btn-default btn-sm popupClose'
                     }
-                }
+                ]
             });
         });
         return false;
@@ -427,8 +431,10 @@ $(function() {
         });
 
         $('#tabCustomCss').on('click', function() {
-            codeMirror.refresh();
-            codeMirror.focus();
+            window.setTimeout(function() {
+                codeMirror.focus();
+                codeMirror.refresh();
+            });
         });
     })(jQuery);
     $('.regionProperties [data-toggle-target]').on('click', function() {

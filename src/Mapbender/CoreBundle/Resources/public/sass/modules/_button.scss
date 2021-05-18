@@ -1,6 +1,5 @@
 /** Frontend only */
 .buttonCore{
-  @extend .smallText;
   user-select: none;
 
   // Workaround for vintage Firefox <=29 (circa 2014) line-height mishandling on form buttons
@@ -52,7 +51,5 @@
 }
 
 .linkButton {
-  @extend .smallText;
   user-select: none;
-  &:hover, &:active{color:$ciColor;};
 }

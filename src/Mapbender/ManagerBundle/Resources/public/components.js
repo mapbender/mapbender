@@ -18,14 +18,16 @@ $(function() {
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
     var activeTab = (window.location.hash || '').substring(1);
-    $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
+    $(".tabContainer, .tabContainerAlt").on('click', '.tab, ul.nav>li[id]', function() {
         var tabId = $(this).attr('id');
         // rewrite url fragment without scrolling page
         // see https://stackoverflow.com/questions/3870057/how-can-i-update-window-location-hash-without-jumping-the-document
         window.history.replaceState(null, null, '#' + tabId);
     });
     if (activeTab) {
-        $('#' + activeTab, $('.tabContainer, .tabContainerAlt')).click();
+        var $activeTabHeader = $('#' + activeTab, $('.tabContainer, .tabContainerAlt'));
+        var $navLink = $('>a', $activeTabHeader);
+        ($navLink.length && $navLink || $activeTabHeader).click();
     }
 
     $(document).on('click', '.content-toggle-container > .content-toggle', function(){
@@ -83,16 +85,6 @@ $(function() {
                 $(flashboxes.get(idx + 1)).removeClass("kill");
             }
         }, (idx + 1) * 2000);
-    });
-
-    // init user box -------------------------------------------------------------------------
-    $("#accountOpen").bind("click", function(){
-        var menu = $("#accountMenu");
-        if(menu.hasClass("opened")){
-            menu.removeClass("opened");
-        }else{
-            menu.addClass("opened");
-        }
     });
 
     // init permissions table ----------------------------------------------------------------
@@ -195,16 +187,15 @@ $(function() {
             $.ajax({
                 url: url
             }).then(function(response) {
-                var popup = new Mapbender.Popup({
+                var $modal = Mapbender.bootstrapModal(filterSidContent(response, $targetTable), {
                     title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
-                    content: filterSidContent(response, $targetTable), //response,
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'btn btn-success btn-sm',
                             callback: function() {
-                                appendAces($targetTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
-                                this.close();
+                                appendAces($targetTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
+                                $modal.modal('hide');
                             }
                         },
                         {
@@ -246,19 +237,20 @@ $(function() {
         var $content = $(response);
         // submit back to same url (would be automatic outside of popup scope)
         $content.filter('form').attr('action', url);
+        var $initialView = $(document.createElement('div')).addClass('contentItem').append($content);
 
-        var popup;
-        var $initialView, $permissionsTable;
+        var $modal;
+        var $permissionsTable;
         var isModified = false;
         var popupOptions = {
             title: "Secure element",
-            content: [$content],
             buttons: [
                 {
                     label: Mapbender.trans('mb.actions.reset'),
                     cssClass: 'btn btn-warning btn-sm buttonReset hidden pull-left',
                     callback: function() {
                         // reload entire popup
+                        $modal.modal('hide');
                         initElementSecurity(response, url);
                     }
                 },
@@ -266,12 +258,12 @@ $(function() {
                     label: Mapbender.trans('mb.actions.back'),
                     cssClass: 'btn btn-default btn-sm buttonBack hidden pull-left',
                     callback: function() {
-                        $('.contentItem', popup.$element).not($initialView).remove();
+                        $('.contentItem', $modal).not($initialView).remove();
                         $initialView.removeClass('hidden');
 
-                        $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
-                        $(".buttonOk", popup.$element).removeClass('hidden');
-                        $('.buttonReset', popup.$element).toggleClass('hidden', !isModified);
+                        $(".buttonAdd,.buttonBack,.buttonRemove", $modal).addClass('hidden');
+                        $(".buttonOk", $modal).removeClass('hidden');
+                        $('.buttonReset', $modal).toggleClass('hidden', !isModified);
                     }
                 },
                 {
@@ -279,35 +271,35 @@ $(function() {
                     cssClass: 'btn btn-danger btn-sm buttonRemove hidden',
                     callback: function(evt) {
                         var $button = $(evt.currentTarget);
-                        $('.contentItem', popup.$element).not($initialView).remove();
+                        $('.contentItem', $modal).not($initialView).remove();
                         $initialView.removeClass('hidden');
                         $button.data('target-row').remove();
                         $button.data('target-row', null);
                         isModified = true;
 
-                        $(".buttonAdd,.buttonRemove,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset,.buttonCancel", popup.$element).removeClass('hidden');
+                        $(".buttonAdd,.buttonRemove,.buttonBack", $modal).addClass('hidden');
+                        $(".buttonOk,.buttonReset,.buttonCancel", $modal).removeClass('hidden');
                     }
                 },
                 {
                     label: Mapbender.trans('mb.actions.add'),
                     cssClass: 'btn btn-success btn-sm buttonAdd hidden',
                     callback: function() {
-                        $(".contentItem:first", popup.$element).removeClass('hidden');
-                        if ($(".contentItem", popup.$element).length > 1) {
-                            appendAces($permissionsTable, $('#listFilterGroupsAndUsers', popup.$element), ['view']);
-                            $(".contentItem:not(.contentItem:first)", popup.$element).remove();
+                        $(".contentItem:first", $modal).removeClass('hidden');
+                        if ($(".contentItem", $modal).length > 1) {
+                            appendAces($permissionsTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
+                            $(".contentItem:not(.contentItem:first)", $modal).remove();
                         }
                         isModified = true;
-                        $(".buttonAdd,.buttonBack", popup.$element).addClass('hidden');
-                        $(".buttonOk,.buttonReset", popup.$element).removeClass('hidden');
+                        $(".buttonAdd,.buttonBack", $modal).addClass('hidden');
+                        $(".buttonOk,.buttonReset", $modal).removeClass('hidden');
                     }
                 },
                 {
                     label: Mapbender.trans('mb.actions.save'),
                     cssClass: 'btn btn-success btn-sm buttonOk',
                     callback: function() {
-                        $("form", popup.$element).submit();
+                        $("form", $modal).submit();
                     }
                 },
                 {
@@ -316,20 +308,25 @@ $(function() {
                 }
             ]
         };
-        popup = new Mapbender.Popup(popupOptions);
-        $initialView = $(".contentItem:first", popup.$element);
+        $modal = Mapbender.bootstrapModal($initialView, popupOptions);
+        // HACK
+        var addContent = function(content) {
+            var $wrapper = $(document.createElement('div')).addClass('contentItem');
+            $wrapper.append(content);
+            $('.modal-body', $modal).append($wrapper);
+        };
         $permissionsTable = $('.permissionsTable', $initialView);
         $permissionsTable.each(initPermissionRoot);
 
-        $('.-fn-add-permission', popup.$element).on('click', function(e) {
+        $('.-fn-add-permission', $initialView).on('click', function(e) {
             var url = $(this).attr('data-url');
             $.ajax({
                 url: url,
                 type: "GET",
                 success: function(data) {
-                    $(".contentItem:first,.buttonOk,.buttonReset", popup.$element).addClass('hidden');
-                    $(".buttonAdd,.buttonBack", popup.$element).removeClass('hidden');
-                    popup.addContent(filterSidContent(data, $permissionsTable));
+                    $(".contentItem:first,.buttonOk,.buttonReset", $modal).addClass('hidden');
+                    $(".buttonAdd,.buttonBack", $modal).removeClass('hidden');
+                    addContent(filterSidContent(data, $permissionsTable));
                 }
             });
             // Suppress call to global handler
@@ -338,12 +335,12 @@ $(function() {
         $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
             var sidLabel = $row.attr('data-sid-label');
-            popup.addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
+            addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));
-            $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", popup.$element).addClass('hidden');
-            $('.buttonRemove', popup.$element).data('target-row', $row);
-            $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
+            $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", $modal).addClass('hidden');
+            $('.buttonRemove', $modal).data('target-row', $row);
+            $(".buttonRemove,.buttonBack", $modal).removeClass('hidden');
         });
     }
 

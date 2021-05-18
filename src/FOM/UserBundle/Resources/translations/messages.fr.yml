@@ -128,7 +128,6 @@ fom:
       new_user: 'Nouvel utilisateur'
       groups: Groupes
       new_group: 'Nouveau groupe'
-      acls: ACLs
       classes:
         acls: ACLs
         users: Utilisateurs

@@ -2,14 +2,16 @@
 
 {% block manager_content %}
     {%- set list_id = list_id | default('listFilter0') -%}
-    <div class="row list-head">
-      <div class="col-xs-6 col-6">
-        {%- if items -%}
-        {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: list_id} %}
-        {%- endif -%}
-      </div>
-      <div class="col-xs-6 col-6 text-right">
-        {%- block list_actions -%}{%- endblock -%}
-      </div>
+    <div class="list-head">
+        <div class="row">
+            <div class="col-sm-5 col-xs-12 col-12">
+                {%- block list_actions -%}{%- endblock -%}
+            </div>
+            {%- if items -%}
+                <div class="col-sm-7 col-xs-12 col-12">
+                {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
+                </div>
+            {%- endif -%}
+        </div>
     </div>
 {% endblock %}

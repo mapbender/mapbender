@@ -1,8 +1,58 @@
-{#
-  Copied into Mapbender from FOM v3.0.6.3
-  see https://github.com/mapbender/fom/blob/v3.0.6.3/src/FOM/ManagerBundle/Resources/views/Manager/menu.html.twig
-#}
-<ul class="navLevel1 navigation">
-    {%- set items = menu -%}
-    {{ include('MapbenderManagerBundle:Index:menu-items.html.twig') }}
-</ul>
+<nav class="navbar navbar-fixed-top navigationBar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation-main" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand " href="{{ path('mapbender_core_welcome_list') }}">
+                <img class="logo" alt="{{ fom.server_name }} {{ fom.server_version}}" src="{{ asset(fom.server_logo)}}"/>
+                <span class="navbar-brand-name">{{ fom.server_name }}</span>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navigation-main">
+            {% if app.user != "" %}
+                <ul class="nav navbar-nav">
+                    {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
+                    {% for sitelink in get_sitelinks() %}
+                    <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
+                {% if app.user != '' and not app.user.password %}
+                  <li>
+                    <a href="#">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}</a>
+                  </li>
+                {% elseif app.user != '' %}
+                  <li class="dropdown bs-dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fas fa-user"></i>&nbsp;{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                          <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
+                              <i class="fa fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
+                          </a>
+                      </li>
+                      <li>
+                          <a href="{{ path('mapbender_core_login_logout') }}">
+                              <i class="fa far fa-sign-out"></i>&nbsp;{{ 'fom.core.manager.btn.logout' | trans }}
+                          </a>
+                      </li>
+                    </ul>
+                </li>
+              {% else %}
+                <li>
+                  <a href="{{ path('mapbender_core_login_login') }}">
+                    <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

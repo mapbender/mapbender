@@ -1,9 +1,4 @@
 /** Backend only */
-.table {
-  th {
-    font-weight:normal;
-  }
-}
 .table-bordered {
   border-top: solid 3px $firstColor;
   // Undo Bootstrap left / right borders on cells

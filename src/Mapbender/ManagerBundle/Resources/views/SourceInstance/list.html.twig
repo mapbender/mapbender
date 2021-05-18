@@ -1,17 +1,17 @@
 {% extends "MapbenderManagerBundle:Repository:index.html.twig" %}
 
 {% block manager_content %}
-  {%- set list_class = 'listFilterServiceBoxes -fn-instance-list' %}
-  {{ parent() }}
+    {%- set list_class = '-fn-instance-list' %}
+    {{ parent() }}
 {% endblock %}
 
 {%- block item_interactions -%}
-              <a class="hover-highlight-effect" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
+              <a class="btn btn-default" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                 ><i class="fa fa-cog"></i></a>
-              <a class="hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
+              <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                 ><i class="fa fa-desktop"></i></a>
             {% if is_granted('DELETE', oid) %}
-              <a class="-fn-delete hover-highlight-effect" href="#"
+              <a class="btn btn-default -fn-delete" href="#"
                   data-url="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
                   title="{{"mb.actions.delete"|trans}}"
                   ><i class="fa fa-times"></i></a>

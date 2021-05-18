@@ -17,6 +17,29 @@
   display: none;
 }
 
+.contentTitle{
+  padding-bottom: 0.375em;
+  border-bottom:dashed 1px darken(#fff, 30%);
+}
+
+.title {
+  font-size: 1.35rem;
+}
+.labelInput, .inputWrapper, .dropdown:not(.bs-dropdown) {
+  font-size: 0.85rem;
+}
+
+.labelInput, .labelCheck {
+  color: $middleFontColor;
+}
+
+.linkButton, .button, .buttonCore {
+  font-size: 0.85rem;
+}
+.linkButton {
+  &:hover, &:active{color:$ciColor;};
+}
+
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBarColors, .toolBar {
   background-color: $toolBarBackgroundColor;

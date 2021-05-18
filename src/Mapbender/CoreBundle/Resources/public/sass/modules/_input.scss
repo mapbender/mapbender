@@ -1,4 +1,4 @@
-.input, .dropdown {
+.input, .dropdown:not(.bs-dropdown) {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
   background-color: $inputBackgroundColor;
@@ -8,10 +8,10 @@
   padding-right: 5px;
 }
 
-.input:not(textarea), .dropdown {
+.input:not(textarea), .dropdown:not(.bs-dropdown) {
   height: $inputHeight;
 }
-.dropdown {
+.dropdown:not(.bs-dropdown) {
   line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
 }
 .input {
@@ -34,7 +34,7 @@ textarea.input {
   }
 }
 
-.inputWrapper, .dropdown {
+.inputWrapper, .dropdown:not(.bs-dropdown) {
   display: inline-block;
   width: 100%;
   position: relative;

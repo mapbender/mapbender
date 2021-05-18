@@ -1,8 +1,8 @@
 {% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
 {% block heading %}
-    <div class="contentTitle">
-        <h1><a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>{{ title }}<div class="clear"></div></h1>
-    </div>
+    <a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>
+    {{ parent() }}
+    <div class="clear"></div>
 {% endblock heading %}
 
 {% block tab_container_contact %}
@@ -14,7 +14,7 @@
 {% endblock tab_container_contact %}
 
 {%- block extra_action_buttons -%}
-<a class="btn btn-sm btn-default" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">{{ 'mb.actions.back' | trans }}</a>
+<a class="btn btn-default" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">{{ 'mb.actions.back' | trans }}</a>
 {%- endblock -%}
 
   {# @todo: commonly used labels should NOT be in WmsBundle and shoult NOT associate with 'wmsloader' #}

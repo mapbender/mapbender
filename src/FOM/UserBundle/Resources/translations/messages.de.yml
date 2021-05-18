@@ -132,7 +132,6 @@ fom:
       new_user: 'Neuer Benutzer'
       groups: Gruppen
       new_group: 'Neue Gruppe'
-      acls: 'Berechtigungen ACLs'
       classes:
         acls: 'Berechtigungen ACLs'
         users: Benutzer

@@ -6,18 +6,22 @@
 {% endblock %}
 
 {% block list_actions %}
-  {% if create_permission %}
-    <a class="hover-highlight-effect" href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}">
-      <i class="fa fas fa-2x fa-plus"></i>
+{% if create_permission %}
+  <div class="content-box content-box-md">
+    <a href="{{path('fom_user_group_create')}}" title="{{"fom.user.group.index.add_new_group"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
+      <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
     </a>
-  {% endif %}
+  </div>
+{% endif %}
 {% endblock %}
 
 {% block manager_content %}
   {%- set items = groups -%}
   {{- parent() -}}
+<div class="content-box content-box-lg">
 {% if groups %}
-  <table id="listFilterGroups" class="table table-bordered">
+  <table id="listFilterGroups" class="table">
     <thead>
       <tr class="doNotFilter">
         <th>{{ "fom.user.group.index.title" | trans }}</th>
@@ -29,7 +33,7 @@
       {% for group in groups %}
       <tr class="filterItem">
         <td>
-          <a class="labelText" href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
+          <a href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
         </td>
         <td>{{ group.description }}</td>
         <td class="iconColumn">
@@ -51,4 +55,5 @@
 {% else %}
   <p>{{"fom.user.group.index.no_groups_available"|trans}}</p>
 {% endif %}
+</div>
 {% endblock %}

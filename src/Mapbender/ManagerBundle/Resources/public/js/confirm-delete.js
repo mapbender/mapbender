@@ -8,42 +8,39 @@
         var popupOptions = {
             title: Mapbender.trans(strings.title),
             subTitle: strings.subTitle && (' - ' + Mapbender.trans(strings.subTitle)),
-            modal: true,
-            destroyOnClose: true,
-            content: popupContent || defaultContent,
             buttons: [
                 {
                     label: Mapbender.trans(strings.confirm),
-                    cssClass: 'btn btn-danger btn-sm',
-                    callback: function() {
-                        if (deleteUrl_) {
-                            var popup = this;
-                            $.ajax({
-                                url: deleteUrl_,
-                                type: 'POST'
-                            }).then(function() {
-                                deferred.resolve(arguments);
-                                window.location.reload();
-                            }, function() {
-                                popup.close();
-                                deferred.resolve(arguments);
-                            });
-                        } else {
-                            this.close();
-                            deferred.resolve();
-                        }
-                    }
+                    cssClass: 'btn btn-danger btn-sm -js-confirm'
                 },
                 {
                     label: Mapbender.trans(strings.cancel),
-                    cssClass: 'btn btn-default btn-sm popupClose',
-                    callback: function() {
-                        deferred.reject();
-                    }
+                    cssClass: 'btn btn-default btn-sm popupClose'
                 }
             ]
         };
-        (new Mapbender.Popup(popupOptions));
+        var $modal = Mapbender.bootstrapModal(popupContent || defaultContent, popupOptions);
+        $modal.on('click', '.-js-confirm', function() {
+            if (deleteUrl_) {
+                $.ajax({
+                    url: deleteUrl_,
+                    type: 'POST'
+                }).then(function() {
+                    deferred.resolve(arguments);
+                    window.location.reload();
+                }, function() {
+                    $modal.modal('hide');
+                    deferred.resolve(arguments);
+                });
+            } else {
+                $modal.modal('hide');
+                deferred.resolve();
+            }
+        });
+        $modal.on('click', '.popupClose', function() {
+            $modal.modal('hide');
+            deferred.reject();
+        });
         return deferred.promise();
     };
 })(jQuery));

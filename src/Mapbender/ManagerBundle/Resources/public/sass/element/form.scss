@@ -1,4 +1,7 @@
 .elementForm {
+  // HACK to prevent trailing dropdowns expanding modal enough so that it starts to scroll
+  // See WmsLoader / ScaleSelector / ImageExport forms
+  min-height: 520px;
   font-size: 0.85rem;
   $labelWidth: 100px;
   .labelInput {

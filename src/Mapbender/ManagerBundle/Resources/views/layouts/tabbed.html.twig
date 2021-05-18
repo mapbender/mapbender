@@ -7,10 +7,13 @@
 {{- 'container' ~ (idSuffix | first | upper) ~ (idSuffix | slice(1)) -}}
 {%- endmacro -%}
 {%- macro tab_header(idSuffix, text, class='') -%}
-    <li id="{{ _self.tab_header_id(idSuffix) }}" class="tab{{ (' ' ~ class) | trim(side='right') }}">{{ text | trans }}</li>
+    {%- set _target_id = _self.tab_container_id(idSuffix) -%}
+    <li id="{{ _self.tab_header_id(idSuffix) }}" class="{{ (' ' ~ class) | trim(side='right') }}" role="presentation" >
+        <a href="#{{ _target_id }}" aria-controls="{{ _target_id }}" role="tab" data-toggle="tab">{{ text | trans }}</a>
+    </li>
 {%- endmacro -%}
 {%- macro tab_content_attributes(idSuffix, class='') -%}
-{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="container{{ (' ' ~ class) | trim(side='right')}}"
+{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane content-box content-box-lg{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
 {%- endmacro -%}
 {%- import _self as tab_macros -%}
 
@@ -18,12 +21,14 @@
     <div class="text-right pull-right">{% block extra_action_buttons %}{% endblock %}</div>
     {% block tabs_wrapper %}
     <div class="tabContainer">
-        <ul class="tabs">
+        <ul class="nav" role="tablist">
         {% block tab_headers %}
         {% endblock tab_headers %}
         </ul>
+        <div class="tab-content">
         {% block tab_containers %}
         {% endblock tab_containers %}
+        </div>
     </div>
     {% endblock tabs_wrapper %}
 {% endblock %}

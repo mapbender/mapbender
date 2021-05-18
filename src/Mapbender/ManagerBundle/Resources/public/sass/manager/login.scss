@@ -1,68 +1,81 @@
 @import "libs/variables";
+@import "bundles/mapbendermanager/sass/manager/variables.scss";
 @import "libs/mixins";
 @import "libs/icons";
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
+
 .authWrapper {
-  margin-top: 15vh;
-  .head {
-    position: absolute;
-    width: 100%;
-    height: 300px;
-  }
-  /** Apply .login-wrapper also to .logoContainer for FOM 3.1 reset password page markup */
   .login-wrapper {
-    position: relative; // solve z-index clash vs .head
-    width: 90%;
-    max-width: 340px;
-    margin: 0 auto;
+    padding: $space;
+    background-color: lighten($contentColor, 2%);
+    position: absolute;
+    right: 0;
+    width: 50vw;
+    min-width: 40rem;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .container-login-img {
+    background-image: url("/bundles/mapbendercore/image/login-backdrop.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    width: 50vw;
+    height: 100vh;
   }
 
   .loginBox {
-    padding: $space;
-    background-color: lighten($contentColor, 2%);
-    border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
-      radius: $containerBorderRadius;
-    }
+    font-size: 1.2rem;
+     width: 70%;
+     margin-left: auto;
+     margin-right: auto;
+
+     .login-button {
+       border-radius: 10px;
+       min-width: 50%;
+     }
   }
 
   .logoContainer {
-    text-align: center;
     display: block;
-    height: auto;
-    padding-top: 15px;
+    margin: 0 auto 10%;
+    text-align: center;
     .logo {
       max-height: 120px;
       max-width: 100%;
     }
-    margin-bottom: 15px;
   }
 
+  .input {
+    border: none;
+  }
+  p, .linkButton {
+    margin-bottom: 1em;
+  }
+  .form-wrapper {
+    margin-bottom: 1.5em;
+  }
   .linkButton {
-    margin-right: $space/2;
-    font-size: 0.85rem;
+    display: block;
   }
-
   .sitelinks {
-    li {
-      a, a:visited {
-        color: inherit;
-      }
-    }
+    // HACK: position absolute to get around flex + justify-content
+    position: absolute;
+    top: $space;
+    right: $space;
   }
 }
 
 // Mobile resonsive
 @media only screen and (max-width: 1024px) {
   .authWrapper {
-    margin-top: 0;
-    .head {}
 
-    > .logoContainer {
+    .logoContainer {
       .logo {
         max-height: 10vh;
       }

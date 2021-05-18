@@ -1,62 +1,41 @@
-.box{
-  border: solid 1px $thirdColor;
-  background-color: $contentColor;
-}
-.listFilterBoxes{
+/** Backend only */
+.listFilterBoxes {
   li {
-    margin-bottom: $space;
+    .preview-box {
+      width: 140px;
+      min-height: 140px;
+      background-color: #EAEAEA;
+      img {
+        width: 100%;
+      }
+    }
+    .preview-box, .preview-box img {
+      border-radius: 15px;
+    }
+    .placeholder-icon {
+      font-size: 60px;
+    }
+    h2 {
+      margin-bottom: 0.75rem;
+    }
+    table th:first-child {
+      width: 1%;
+    }
+  }
+  .btn {
+    border-radius: 10px;
+    padding: 5px 20px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  .btn-toolbar .btn+.btn {
+    margin-left: 1.5em;
+  }
+  .preview-info {
     display: flex;
-    flex-direction: row;
-  }
-  .col1 {
-    flex: 0 0 auto;  // no growth
-    text-align:center;
-    color:$lightFontColor;
-    background-color:$firstColor;
-  }
-  .col2 {
-    padding:$space/2;
-    flex: 1 1 auto;  // fit available space
-  }
-  .buttonGroup {
-    font-size: 20px;
-    line-height: 1;
-    > * + * {
-      margin-left: .2em;
-    }
-  }
-  .contentTitle {
-    margin-bottom:$space/2;
-  }
-}
-
-.listFilterApplicationBoxes{
-  .col1 {
-    width: 120px;
-    line-height: 120px;
-    max-height: 120px;
+    flex-direction: column;
+    justify-content: center;
     text-align: center;
-    font-size: 70px;
-    color: lighten($darkFontColor, 10%);
-
-    div.cell {
-      max-height: inherit;
-    }
-    img {
-      max-height: inherit;
-      max-width: 100%;
-      display: block;
-      margin: 0 auto;
-    }
-  }
-}
-
-.listFilterServiceBoxes {
-  $col1Width: 60px;
-
-  .col1 {
-    width: 60px;
-    padding: $space/4;
   }
 }
 

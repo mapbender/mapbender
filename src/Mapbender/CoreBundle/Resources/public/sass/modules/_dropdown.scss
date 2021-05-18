@@ -7,7 +7,7 @@ select.numeric {
   }
 }
 
-.dropdown{
+.dropdown:not(.bs-dropdown) {
   cursor:pointer;
   position: relative;
   padding-right: $space + $space/2;

@@ -3,18 +3,22 @@
 {%- set _group_view_grant = is_granted('VIEW', group_oid) -%}
 
 {% block list_actions %}
-  {% if create_permission %}
-    <a class="hover-highlight-effect" href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
-      <i class="fa fas fa-2x fa-plus"></i>
+{% if create_permission %}
+  <div class="content-box content-box-md">
+    <a href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
+      <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
     </a>
-  {% endif %}
+  </div>
+{% endif %}
 {% endblock %}
 
 {% block manager_content %}
   {%- set items = users -%}
   {{- parent() -}}
+<div class="content-box content-box-lg">
 {% if users %}
-  <table id="listFilterUsers" class="table table-bordered">
+    <table id="listFilterUsers" class="table">
     <thead id="usersHead">
       <tr class="doNotFilter">
         <th>{{ "fom.user.user.index.name" | trans }}</th>
@@ -30,9 +34,9 @@
         <tr id="app-{{ user.id }}" class="filterItem">
           <td>
             {% if is_granted('EDIT', user) %}
-            <a class="labelText" href="{{ path('fom_user_user_edit', {'id': user.id}) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}">{{ user.username }}</a>
+            <a href="{{ path('fom_user_user_edit', {'id': user.id}) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}">{{ user.username }}</a>
             {% else %}
-            <span class="labelText">{{ user.username }}</span>
+            {{ user.username }}
             {% endif %}
           </td>
           <td><a href="mailto:{{ user.email }}" title="{{ 'fom.user.user.index.contact_user' | trans }}">{{ user.email }}</a></td>
@@ -69,6 +73,7 @@
 {% else %}
   <p>{{"fom.user.user.index.no_users_available"|trans}}</p>
 {% endif %}
+</div>
 {% endblock %}
 
 {% block js %}
