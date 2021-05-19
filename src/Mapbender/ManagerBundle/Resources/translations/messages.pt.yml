@@ -77,7 +77,7 @@ mb:
         no_layer_added: 'Não adicionou camada'
       template: Padrão
       application:
-        view: 'Mostrar aplicação'
+        view: 'Mostrar'
         edit:
           title: 'Editar aplicação'
           base_data: 'Dados de fundo'

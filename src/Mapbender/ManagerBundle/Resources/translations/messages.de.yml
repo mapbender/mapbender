@@ -113,7 +113,7 @@ mb:
         no_layer_added: 'Keine Ebene hinzugefügt'
       template: Vorlage
       application:
-        view: 'Anwendung anzeigen'
+        view: Anzeigen
         edit:
           title: 'Anwendung bearbeiten'
           base_data: 'Basisdaten'
