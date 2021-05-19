@@ -23,6 +23,9 @@
   {%- if application.id -%}
   <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="hover-highlight-effect" title="{{ 'mb.manager.admin.application.view' | trans }}"><i class="fa fas fa-2x fa-desktop"></i></a>
   {%- endif -%}
+  {%- if not application.id -%}
+    <a href="{{ path('mapbender_manager_application_import') }}" title="{{ 'mb.manager.managerbundle.import_application' | trans }}" class="hover-highlight-effect"><i class="fa fas fa-2x fa-upload"></i></a>
+  {%- endif -%}
 {%- endblock -%}
 
 {% block tab_headers %}
