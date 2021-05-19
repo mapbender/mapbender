@@ -85,7 +85,9 @@ class GroupController extends UserControllerBase
 
             $this->addFlash('success', 'The group has been saved.');
 
-            return $this->redirectToRoute('fom_user_group_index');
+            return $this->redirectToRoute('fom_user_security_index', array(
+                '_fragment' => 'tabGroups',
+            ));
         }
 
         return $this->render('@FOMUser/Group/form.html.twig', array(
@@ -128,7 +130,9 @@ class GroupController extends UserControllerBase
             $em->flush();
 
             $this->addFlash('success', 'The group has been updated.');
-            return $this->redirectToRoute('fom_user_group_index');
+            return $this->redirectToRoute('fom_user_security_index', array(
+                '_fragment' => 'tabGroups',
+            ));
         }
 
         return $this->render('@FOMUser/Group/form.html.twig', array(

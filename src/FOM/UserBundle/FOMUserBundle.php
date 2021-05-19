@@ -28,15 +28,8 @@ class FOMUserBundle extends ManagerBundle
 
     protected function addMenu(ContainerBuilder $container)
     {
-        $securityItem = MenuItem::create('mb.terms.security', false)
+        $securityItem = MenuItem::create('mb.terms.security', 'fom_user_security_index')
             ->setWeight(100)
-            ->addChildren(array(
-                MenuItem::create('fom.user.userbundle.users', 'fom_user_user_index'),
-                MenuItem::create('fom.user.userbundle.groups', 'fom_user_group_index')
-                    ->requireEntityGrant('FOM\UserBundle\Entity\Group', 'VIEW'),
-                MenuItem::create('fom.user.acl.index.access_control_lists', 'fom_user_acl_index')
-                    ->requireEntityGrant('Symfony\Component\Security\Acl\Domain\Acl', 'EDIT'),
-            ))
         ;
         $container->addCompilerPass(new RegisterMenuRoutesPass($securityItem));
     }
