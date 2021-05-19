@@ -12,8 +12,8 @@
         <a href="#{{ _target_id }}" aria-controls="{{ _target_id }}" role="tab" data-toggle="tab">{{ text | trans }}</a>
     </li>
 {%- endmacro -%}
-{%- macro tab_content_attributes(idSuffix, class='') -%}
-{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane content-box content-box-lg{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
+{%- macro tab_content_attributes(idSuffix, class='', box=true) -%}
+{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane{{ box ? ' content-box content-box-lg' : ''}}{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
 {%- endmacro -%}
 {%- import _self as tab_macros -%}
 
