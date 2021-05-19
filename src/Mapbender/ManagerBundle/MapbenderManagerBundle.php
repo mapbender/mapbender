@@ -30,8 +30,6 @@ class MapbenderManagerBundle extends ManagerBundle
             ->addChildren(array(
                 MenuItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new')
                     ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
-                MenuItem::create('mb.manager.managerbundle.export_application', 'mapbender_manager_application_export')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
                 MenuItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import')
                     ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
             ))
