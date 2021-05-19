@@ -21,10 +21,19 @@
 
 {%- block extra_action_buttons -%}
   {%- if application.id -%}
-  <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="hover-highlight-effect" title="{{ 'mb.manager.admin.application.view' | trans }}"><i class="fa fas fa-2x fa-desktop"></i></a>
+    <a class="btn btn-default action-button"
+       target="_blank"
+       href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}">
+        <i class="fa fas fa-lg fa-desktop"></i>
+        <span>{{ 'mb.manager.admin.application.view' | trans }}</span>
+    </a>
   {%- endif -%}
   {%- if not application.id -%}
-    <a href="{{ path('mapbender_manager_application_import') }}" title="{{ 'mb.manager.managerbundle.import_application' | trans }}" class="hover-highlight-effect"><i class="fa fas fa-2x fa-upload"></i></a>
+    <a class="btn btn-default action-button"
+       href="{{ path('mapbender_manager_application_import') }}">
+        <i class="fa fas fa-lg fa-upload"></i>
+        <span>{{ 'mb.manager.managerbundle.import_application' | trans }}</span>
+    </a>
   {%- endif -%}
 {%- endblock -%}
 
