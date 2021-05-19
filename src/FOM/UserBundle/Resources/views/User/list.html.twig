@@ -4,7 +4,7 @@
       <tr>
         <th>{{ "fom.user.user.index.name" | trans }}</th>
         <th>{{ "fom.user.user.index.email" | trans }}</th>
-        {% if _group_view_grant %}
+        {% if show_groups %}
         <th>{{ "fom.user.user.index.groups" | trans }}</th>
         {% endif %}
         <th></th>
@@ -21,7 +21,7 @@
             {% endif %}
           </td>
           <td><a href="mailto:{{ user.email }}" title="{{ 'fom.user.user.index.contact_user' | trans }}">{{ user.email }}</a></td>
-          {% if _group_view_grant %}
+          {% if show_groups %}
           <td>
             <ul class="list-unstyled">
               {% for group in user.groups %}
