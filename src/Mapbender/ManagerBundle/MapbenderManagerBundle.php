@@ -27,10 +27,6 @@ class MapbenderManagerBundle extends ManagerBundle
     {
         $appMenu = MenuItem::create("mb.terms.application.plural", 'mapbender_manager_application_index')
             ->setWeight(10)
-            ->addChildren(array(
-                MenuItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
-            ))
         ;
         $sourceMenu = MenuItem::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
             ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
