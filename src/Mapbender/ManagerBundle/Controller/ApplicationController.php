@@ -119,6 +119,25 @@ class ApplicationController extends WelcomeController
     }
 
     /**
+     * Export application as json (direct link)
+     * @ManagerRoute("/application/{slug}/export", methods={"GET"})
+     * @param Request $request
+     * @param string $slug
+     * @return Response
+     */
+    public function exportdirectAction(Request $request, $slug)
+    {
+        $application = $this->requireApplication($slug, false);
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $data = $this->getApplicationExporter()->exportApplication($application);
+        $fileName = "{$application->getSlug()}.json";
+        return new JsonResponse($data, 200, array(
+            'Content-disposition' => "attachment; filename={$fileName}",
+        ));
+    }
+
+
+    /**
      * Returns serialized application.
      *
      * @ManagerRoute("/application/export", methods={"GET", "POST"})

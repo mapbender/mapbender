@@ -56,7 +56,12 @@
                 </a>
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="btn btn-default" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit.title' | trans }} {{ application.title }}">
+                <a class="btn btn-default" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }} {{ application.title }}">
+                  <i class="fa fas fa-download"></i>
+                </a>
+              {% endif %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+              <a class="btn btn-default" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit.title' | trans }}">
                 <i class="fa fas fa-cog"></i>
               </a>
               {% endif %}
