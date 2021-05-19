@@ -43,11 +43,10 @@ class FOMUserBundle extends ManagerBundle
 
     public function getACLClasses()
     {
-        $trans = $this->container->get('translator');
         return array(
-            'Symfony\Component\Security\Acl\Domain\Acl' => $trans->trans("fom.user.userbundle.classes.acls"),
-            'FOM\UserBundle\Entity\User' => $trans->trans("fom.user.userbundle.classes.users"),
-            'FOM\UserBundle\Entity\Group' => $trans->trans("fom.user.userbundle.classes.groups"),
+            'Symfony\Component\Security\Acl\Domain\Acl' => 'fom.user.userbundle.classes.acls',
+            'FOM\UserBundle\Entity\User' => 'fom.user.userbundle.classes.users',
+            'FOM\UserBundle\Entity\Group' => 'fom.user.userbundle.classes.groups',
         );
     }
 }

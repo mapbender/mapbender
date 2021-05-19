@@ -94,7 +94,8 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getACLClasses()
     {
         return array(
-            'Mapbender\CoreBundle\Entity\Application' => 'Application',
-            'Mapbender\CoreBundle\Entity\Source' => 'Service Source');
+            'Mapbender\CoreBundle\Entity\Application' => 'mb.terms.application.plural',
+            'Mapbender\CoreBundle\Entity\Source' => 'mb.terms.source.plural',
+        );
     }
 }

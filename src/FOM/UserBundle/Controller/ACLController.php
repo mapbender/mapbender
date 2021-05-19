@@ -4,15 +4,13 @@ namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
-use Mapbender\ManagerBundle\Component\ManagerBundle;
 use FOM\ManagerBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ACLController extends Controller
+class ACLController extends UserControllerBase
 {
     /**
      * @Route("/acl")
@@ -90,20 +88,6 @@ class ACLController extends Controller
             'groups' => $groups,
             'users' => $users,
         ));
-    }
-
-    protected function getACLClasses()
-    {
-        $acl_classes = array();
-        foreach($this->get('kernel')->getBundles() as $bundle) {
-            if ($bundle instanceof ManagerBundle) {
-                $classes = $bundle->getACLClasses();
-                if($classes) {
-                    $acl_classes = array_merge($acl_classes, $classes);
-                }
-            }
-        }
-        return $acl_classes;
     }
 
     /**

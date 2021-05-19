@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -132,5 +133,19 @@ abstract class UserControllerBase extends Controller
             'user' => $user,
             'form' => $form->createView(),
         ));
+    }
+
+    protected function getACLClasses()
+    {
+        $acl_classes = array();
+        foreach($this->get('kernel')->getBundles() as $bundle) {
+            if ($bundle instanceof ManagerBundle) {
+                $classes = $bundle->getACLClasses();
+                if($classes) {
+                    $acl_classes = array_merge($acl_classes, $classes);
+                }
+            }
+        }
+        return $acl_classes;
     }
 }
