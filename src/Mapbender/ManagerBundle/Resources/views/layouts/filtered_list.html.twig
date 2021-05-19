@@ -9,7 +9,7 @@
             </div>
             {%- if items -%}
                 <div class="col-sm-7 col-xs-12 col-12">
-                {% include "MapbenderManagerBundle:Element:filter-container.html.twig" with {filterTargetId: list_id} only %}
+                {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
                 </div>
             {%- endif -%}
         </div>
