@@ -44,18 +44,16 @@ h4, .h4, .tabContainer > ul {
   .navbar-nav>li>a {
     color: lighten($darkFontColor, 30%);
     background-color: transparent;
-    &:hover {
-      color: inherit;
-    }
+  }
+  .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
+    color: inherit;
+    background-color: #eee;
   }
   &, & .dropdown-menu {
     background-color: rgba(255, 255, 255, 1);
     border-color: #e7e7e7;
   }
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
-  .navbar-nav>li>a:hover, .dropdown-menu>.active>a {
-    background-color: #eee;
-  }
   .dropdown-menu>li>a, .dropdown-menu>.active>a {
     color: inherit;
   }
