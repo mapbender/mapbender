@@ -15,7 +15,6 @@ mb:
             formats: Formate
         view:
           label:
-            backtoservicelist: Zurück zu Datenquellen
             metadata: Metadaten
             contact: Kontakt
             details: Details

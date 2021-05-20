@@ -15,7 +15,6 @@ mb:
             formats: Formats
         view:
           label:
-            backtoservicelist: 'Back to Service List'
             metadata: Metadata
             contact: Contact
             details: Details

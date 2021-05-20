@@ -15,7 +15,6 @@ mb:
             formats: Formaten
         view:
           label:
-            backtoservicelist: 'Terug naar Service List'
             metadata: Metadata
             contact: Contact
             details: Details
