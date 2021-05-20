@@ -72,7 +72,7 @@ class RepositoryController extends ApplicationControllerBase
             'id' => 'ASC',
         ));
 
-        return $this->render('@MapbenderManager/Repository/index_tabbed.html.twig', array(
+        return $this->render('@MapbenderManager/Repository/index.html.twig', array(
             'title' => $this->getTranslator()->trans('mb.manager.admin.sources'),
             'sources' => $sources,
             'reloadableIds' => $reloadableIds,
