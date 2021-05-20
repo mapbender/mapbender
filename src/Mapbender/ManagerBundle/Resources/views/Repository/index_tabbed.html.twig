@@ -17,6 +17,10 @@
           <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
           <td>{{ source.type }} {{ source.version }}</td>
       </tr>
+      <tr>
+          <th>URL:</th>
+          <td>{{ source.getOriginUrl() }}</td>
+      </tr>
       {%- if source.description -%}
       <tr>
           <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
