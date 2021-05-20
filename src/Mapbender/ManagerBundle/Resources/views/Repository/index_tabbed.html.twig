@@ -10,7 +10,7 @@
   {{- tab_macros.tab_header('SharedInstances', 'mb.terms.sourceinstance.reusable.plural') -}}
 {% endblock tab_headers %}
 
-{%- block _item_content_main -%}
+{%- macro source_meta(source) -%}
 <table class="table table-borderless table-condensed">
     <tbody>
       <tr>
@@ -25,7 +25,8 @@
       {%- endif -%}
   </tbody>
 </table>
-{%- endblock -%}
+{%- endmacro -%}
+{%- import _self as source_macros -%}
 
 {% block tab_containers %}
     <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
@@ -58,20 +59,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
-                <table class="table table-borderless table-condensed">
-                    <tbody>
-                      <tr>
-                          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-                          <td>{{ source.type }} {{ source.version }}</td>
-                      </tr>
-                      {%- if source.description -%}
-                      <tr>
-                          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
-                          <td>{{ source.description }}</td>
-                      </tr>
-                      {%- endif -%}
-                  </tbody>
-                </table>
+                {{- source_macros.source_meta(item) -}}
             {%- endblock -%}
 
             {%- block item_interactions -%}
@@ -133,20 +121,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
-                <table class="table table-borderless table-condensed">
-                    <tbody>
-                      <tr>
-                          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-                          <td>{{ source.type }} {{ source.version }}</td>
-                      </tr>
-                      {%- if source.description -%}
-                      <tr>
-                          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
-                          <td>{{ source.description }}</td>
-                      </tr>
-                      {%- endif -%}
-                  </tbody>
-                </table>
+                {{- source_macros.source_meta(item.source) -}}
             {%- endblock -%}
 
             {%- block item_title -%}
