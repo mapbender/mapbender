@@ -35,7 +35,7 @@
 {% block tab_containers %}
     <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
         {%- set items = sources -%}
-        {%- set list_id = list_id | default('listFilterSources') -%}
+        {%- set list_id = list_id | default('listFilterServices') -%}
         <div class="list-head">
             <div class="row">
                 <div class="col-sm-5 col-xs-12 col-12">
