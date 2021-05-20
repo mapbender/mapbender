@@ -31,32 +31,6 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/list/reusable", methods={"GET"})
-     * @param Request $request
-     * @return Response
-     */
-    public function listreusableAction(Request $request)
-    {
-        /** @todo: specify / implement grants */
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
-
-        // NOTE: ACL system cannot infer from assignable privilege on abstract Source to privilege
-        //       on concrete WmsSource / WmtsSource. DO NOT check grants on concrete source objects.
-        $items = $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
-            'title' => 'ASC',
-            'id' => 'ASC',
-        ));
-
-        return $this->render('@MapbenderManager/SourceInstance/list.html.twig', array(
-            'title' => $this->getTranslator()->trans('mb.terms.sourceinstance.reusable.plural'),
-            'items' => $items,
-            // used for DELETE grants check
-            'oid' => $oid,
-        ));
-    }
-
-    /**
      * @Route("/instance/{instance}/delete", methods={"GET", "POST"})
      * @param Request $request
      * @param SourceInstance $instance
@@ -74,7 +48,9 @@ class SourceInstanceController extends ApplicationControllerBase
             if ($returnUrl = $request->query->get('return')) {
                 return $this->redirect($returnUrl);
             } else {
-                return $this->redirectToRoute('mapbender_manager_sourceinstance_listreusable');
+                return $this->redirectToRoute('mapbender_manager_repository_index', array(
+                    '_framgent' => 'tabSharedInstances',
+                ));
             }
         } else {
             return $this->viewAction($request, $instance);
