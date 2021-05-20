@@ -31,13 +31,6 @@ class MapbenderManagerBundle extends ManagerBundle
         $sourceMenu = MenuItem::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
             ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
             ->setWeight(20)
-            ->addChildren(array(
-                MenuItem::create('mb.manager.managerbundle.add_source', 'mapbender_manager_repository_new')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'CREATE'),
-                MenuItem::create('mb.terms.sourceinstance.reusable.plural', 'mapbender_manager_sourceinstance_listreusable')
-                    /** @todo: more specific grants requirements? */
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
-            ))
         ;
 
         $container->addCompilerPass(new RegisterMenuRoutesPass($appMenu));
