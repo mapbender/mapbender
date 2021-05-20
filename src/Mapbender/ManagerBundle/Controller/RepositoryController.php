@@ -67,11 +67,16 @@ class RepositoryController extends ApplicationControllerBase
                 }
             }
         }
+        $sharedInstances = $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+            'title' => 'ASC',
+            'id' => 'ASC',
+        ));
 
-        return $this->render('@MapbenderManager/Repository/source/list.html.twig', array(
+        return $this->render('@MapbenderManager/Repository/index_tabbed.html.twig', array(
             'title' => $this->getTranslator()->trans('mb.manager.admin.sources'),
-            'items' => $sources,
+            'sources' => $sources,
             'reloadableIds' => $reloadableIds,
+            'shared_instances' => $sharedInstances,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
         ));
