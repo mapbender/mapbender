@@ -8,7 +8,7 @@
         {%- endif -%}
         {%- if _is_private or grants.deletePublic -%}
         <span class="static-popover-wrap -js-confirmation-anchor-delete">
-            <i class="-fn-delete fa fas fa-times clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}" data-id="{{ record.id }}"></i>
+            <i class="-fn-delete fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}" data-id="{{ record.id }}"></i>
         </span>
         {%- endif -%}
         <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}" data-diff="{{ record.encode() | json_encode }}">
