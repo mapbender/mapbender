@@ -24,10 +24,14 @@
             simple: "simple"
         },
         _mobilePane: null,
+        isTouch_: false,
+
         _create: function() {
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
+            // see https://stackoverflow.com/a/4819886
+            this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
@@ -75,7 +79,8 @@
             this._reset();
         },
         _reset: function() {
-            if (this.options.allowReorder) {
+            // Prevent initializing sortable on touch devices, as it breaks touch clicks on folder toggle
+            if (this.options.allowReorder && !this.isTouch_) {
                 this._createSortable();
             }
             $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
