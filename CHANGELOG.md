@@ -1,3 +1,16 @@
+## v3.2.5-RC2
+* Restructure backend main menu
+  * Avoid sub-menus, use tabbed pages instead
+  * Supply application export interaction as a button in the application instead of standalone page
+  * Supply appliction import link in new application form instead of main menu entry
+  * Remove main menu entries for "New User" / "New Group" (actions available in new main "Security" page in the appropriate tab)
+  * Remove main menu entry for "New Source" (action available in sources listing)
+  * Remove main menu entry for "New Application" (action available in application listing)
+* Replace hardcoded  "Service Source" and "Application" in global ACL control page with appropriate translation
+* Use trashcan icon instead of cross icon for delete interactions in backend, in form theme and in a few frontend areas
+* Brighten up login area backdrop image
+* Fix broken Layertree folder toggling on touch devices ([#1349](https://github.com/mapbender/mapbender/issues/1349)
+
 ## v3.2.5-RC1
 * Completely redesigned backend and login areas
 * [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
