@@ -30,7 +30,7 @@
                 {#- this comment eats whitespace -#}
                 <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <i class="-fn-delete-layerset fa fas fa-times hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_confirmdeletelayerset", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
+                <i class="-fn-delete-layerset fa fa-trash-o far fa-trash-alt hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_confirmdeletelayerset", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
               </th>
             </tr>
           </thead>
@@ -76,7 +76,7 @@
                   {#- this comment eats whitespace -#}
                   <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
                   {%- if _delete_url -%}
-                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fas fa-times"></i></span>
+                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
                   {%- endif -%}
                 </td>
               </tr>

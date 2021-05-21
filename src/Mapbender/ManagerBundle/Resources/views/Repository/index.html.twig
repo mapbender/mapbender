@@ -75,7 +75,7 @@
                               <a href="#" class="btn btn-default -fn-delete"
                                           title="{{"mb.manager.admin.source.delete"|trans}} {{ item.title }}"
                                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":item.id}) }}"
-                                          data-id="{{ item.id }}"><i class="fa fas fa-times"></i></a>
+                                          data-id="{{ item.id }}"><i class="fa fa-trash-o far fa-trash-alt"></i></a>
                             {% endif %}
             {%- endblock -%}
 
@@ -116,7 +116,7 @@
                           <a class="btn btn-default -fn-delete" href="#"
                               data-url="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
                               title="{{"mb.actions.delete"|trans}}"
-                              ><i class="fa fa-times"></i></a>
+                              ><i class="fa fa-trash-o far fa-trash-alt"></i></a>
                         {% endif %}
             {%- endblock -%}
 
