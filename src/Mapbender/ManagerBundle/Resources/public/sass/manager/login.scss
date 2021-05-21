@@ -20,9 +20,14 @@
   }
 
   .container-login-img {
-    background-image: url("/bundles/mapbendercore/image/login-backdrop.jpg");
+    @media (max-width: 1920px) {
+      background-image: url("/bundles/mapbendercore/image/login-backdrop.jpg");
+    }
+    @media (min-width: 1921px) {
+      background-image: url("/bundles/mapbendercore/image/login-backdrop-4k.jpg");
+    }
     background-repeat: no-repeat;
-    background-position: left;
+    background-position: center;
     background-size: cover;
     position: absolute;
     width: 50vw;
