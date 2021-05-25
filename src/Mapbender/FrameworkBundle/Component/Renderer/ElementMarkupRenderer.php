@@ -92,7 +92,7 @@ class ElementMarkupRenderer
      * @param Element $element
      * @return string|null
      */
-    protected function getElementVisibilityClass(Element $element)
+    public function getElementVisibilityClass(Element $element)
     {
         // Allow screenType filtering only on current map engine
         if (!$this->allowResponsiveElements || $element->getApplication()->getMapEngineCode() === Application::MAP_ENGINE_OL2) {
