@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
-use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Twig\Extension\AbstractExtension;
@@ -53,14 +52,7 @@ class ElementExtension extends AbstractExtension
      */
     public function element_class_title($element)
     {
-        $initialClass = $element->getClass();
-        $adjustedClass = $this->inventoryService->getAdjustedElementClassName($initialClass);
-        if (ClassUtil::exists($adjustedClass)) {
-            /** @var string|\Mapbender\CoreBundle\Component\Element $adjustedClass */
-            return $adjustedClass::getClassTitle();
-        } else {
-            return null;
-        }
+        return $this->inventoryService->getClassTitle($element->getClass());
     }
 
     /**
@@ -82,13 +74,7 @@ class ElementExtension extends AbstractExtension
      */
     public function element_default_title($element)
     {
-        if ($element->getClass() && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target && $target !== $element) {
-                return $this->element_title($target);
-            }
-        }
-        return $this->element_class_title($element);
+        return $this->inventoryService->getDefaultTitle($element);
     }
 
     public function is_typeof_element_disabled(Element $element)
