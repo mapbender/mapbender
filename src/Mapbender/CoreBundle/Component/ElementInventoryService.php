@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity;
@@ -33,6 +34,9 @@ class ElementInventoryService
     protected $noCreationClassNames = array();
     /** @var string[] */
     protected $disabledClassesFromConfig = array();
+    /** @todo: prefer an interface type */
+    /** @var AbstractElementService[] */
+    protected $serviceElements = array();
 
     public function __construct($disabledClasses)
     {
@@ -50,6 +54,21 @@ class ElementInventoryService
             return $classNameOut;
         } else {
             return $classNameIn;
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return AbstractElementService|null
+     * @todo: prefer interface type hinting
+     */
+    public function getHandlerService(Element $element)
+    {
+        $className = $element->getClass();
+        if (!empty($this->serviceElements[$className])) {
+            return $this->serviceElements[$className];
+        } else {
+            return null;
         }
     }
 
@@ -96,6 +115,24 @@ class ElementInventoryService
     {
         // map value:value to ease array_intersect_key in getActiveInventory
         $this->fullInventory = array_combine($classNames, $classNames);
+    }
+
+    /**
+     * @todo: prefer an interface type
+     * @param AbstractElementService $instance
+     * @param string[] $handledClassNames
+     */
+    public function registerService(AbstractElementService $instance, $handledClassNames)
+    {
+
+        $serviceClass = \get_class($instance);
+        $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
+        foreach (array_unique($handledClassNames) as $handledClassName) {
+            $this->serviceElements[$handledClassName] = $instance;
+            if ($handledClassName !== $serviceClass) {
+                $this->replaceElement($handledClassName, $serviceClass);
+            }
+        }
     }
 
     /**
