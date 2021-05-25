@@ -3,8 +3,11 @@
 
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -85,12 +88,39 @@ class ElementMarkupRenderer
 
     protected function renderContent(Element $element)
     {
-        if (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {
-            return $this->elementFactory->componentFromEntity($element, true)->render();
+        $handlerService = $this->elementFactory->getInventory()->getHandlerService($element);
+        if ($handlerService) {
+            return $this->renderServiceElement($handlerService, $element);
+        } elseif (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {
+            return $this->renderLegacyElement($element);
         } else {
-            /** @todo: implement Element services with visitor-style rendering */
-            throw new \Exception("Not implemented");
+            throw new ElementErrorException("Don't know how to render {$element->getClass()}");
         }
+    }
+
+    /**
+     * @todo: prefer interface type, add signature type hint
+     * @param AbstractElementService $handlerService
+     * @param Element $element
+     * @return string
+     */
+    protected function renderServiceElement($handlerService, Element $element)
+    {
+        $view = $handlerService->getView($element);
+        if ($view && ($view instanceof TemplateView)) {
+            return $this->templatingEngine->render($view->getTemplate(), $view->variables);
+        } else {
+            throw new ElementErrorException("Don't know how to render " . get_class($view));
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return string
+     */
+    protected function renderLegacyElement(Element $element)
+    {
+        return $this->elementFactory->componentFromEntity($element, true)->render();
     }
 
     /**

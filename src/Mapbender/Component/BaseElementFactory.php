@@ -19,6 +19,14 @@ class BaseElementFactory
     }
 
     /**
+     * @return ElementInventoryService
+     */
+    public function getInventory()
+    {
+        return $this->inventoryService;
+    }
+
+    /**
      * Updates legacy 'class' property values for migrated / moved Element classes.
      *
      * @param Element $element
