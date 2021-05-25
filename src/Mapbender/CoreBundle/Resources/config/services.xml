@@ -83,10 +83,9 @@
         </service>
         <service id="mapbender.twig.element_markup" class="Mapbender\CoreBundle\Extension\ElementMarkupExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.presenter.application.service" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="mapbender.renderer.element_markup" />
+            <argument type="service" id="mapbender.renderer.application_markup" />
             <argument>%mapbender.responsive.elements%</argument>
-            <argument>%mapbender.responsive.containers%</argument>
             <argument>%kernel.debug%</argument>
         </service>
 
