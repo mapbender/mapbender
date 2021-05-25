@@ -64,8 +64,9 @@ class ElementFactory extends BaseElementFactory
     public function newEntity($componentClass, $region, Entity\Application $application = null)
     {
         $entity = new Entity\Element();
-        $component = $this->getComponentDummy($componentClass);
-        $configuration = $component->getDefaultConfiguration();
+        /** @var string|Component\ElementBase\MinimalInterface $componentClass */
+        $componentClass = $this->inventoryService->getAdjustedElementClassName($componentClass);
+        $configuration = $componentClass::getDefaultConfiguration();
         $entity
             ->setClass($componentClass)
             ->setRegion($region)
@@ -78,7 +79,7 @@ class ElementFactory extends BaseElementFactory
             $entity->setTitle('');
         } else {
             // @todo: reevaluate translation; translation should be done on presentation, not persisted
-            $entity->setTitle($this->translator->trans($component->getClassTitle()));
+            $entity->setTitle($this->translator->trans($this->getDefaultTitle($entity)));
         }
         if ($application) {
             $entity->setApplication($application);
@@ -95,10 +96,12 @@ class ElementFactory extends BaseElementFactory
     public function configureElement(Entity\Element $element, $configuration)
     {
         $element->setConfiguration($configuration);
-        $elComp = $this->componentFromEntity($element);
+        /** @var string|Component\ElementBase\MinimalInterface $componentClass */
+        $componentClass = $this->inventoryService->getAdjustedElementClassName($element->getClass());
+
         // Do not use original $configuration array. Configuration may already have been modified once implicitly.
         /** @see ConfigMigrationInterface */
-        $defaults = $elComp->getDefaultConfiguration();
+        $defaults = $componentClass::getDefaultConfiguration();
         $configInitial = $element->getConfiguration();
         $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
             return $v !== null;
