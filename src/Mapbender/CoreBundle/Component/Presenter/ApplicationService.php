@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\UploadsManager;
-use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -32,20 +31,6 @@ class ApplicationService
         $this->elementFactory = $elementFactory;
         $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
-    }
-
-    /**
-     * Returns the list of Elements from the given Application that are enabled and (optionally) granted for
-     * the current user.
-     *
-     * @param Entity\Application $entity
-     * @param bool $requireGrant return only VIEW-granted entries (default true)
-     * @return Component\Element[]
-     */
-    public function getActiveElements(Entity\Application $entity, $requireGrant = true)
-    {
-        $activeEntities = $this->prepareElements($entity, $requireGrant);
-        return $this->getDisplayableElementComponents($activeEntities);
     }
 
     /**
@@ -91,24 +76,6 @@ class ApplicationService
     public function getUploadsManager()
     {
         return $this->uploadsManager;
-    }
-
-    /**
-     * @param Entity\Element[] $entities
-     * @return Component\Element[]
-     */
-    protected function getDisplayableElementComponents($entities)
-    {
-        $components = array();
-        foreach ($entities as $entity) {
-            try {
-                $components[] = $this->elementFactory->componentFromEntity($entity, true);
-            } catch (ElementErrorException $e) {
-                // for frontend presentation, incomplete / invalid elements are silently suppressed
-                // => do nothing
-            }
-        }
-        return $components;
     }
 
     /**
