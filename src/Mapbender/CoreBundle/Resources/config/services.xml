@@ -181,6 +181,7 @@
             <argument type="service" id="mapbender.presenter.application.cache" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.source.url_processor.service" />
+            <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="router" />
             <argument type="service" id="logger" />
             <argument type="service" id="assets._default_package" />

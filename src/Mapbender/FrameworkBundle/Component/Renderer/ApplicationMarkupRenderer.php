@@ -123,6 +123,7 @@ class ApplicationMarkupRenderer
     /**
      * @param Application $application
      * @return Element[]
+     * @todo: resolve copy&paste ApplicationService vs ApplicationMarkupRenderer
      */
     protected function prepareDisplayableElements(Application $application)
     {

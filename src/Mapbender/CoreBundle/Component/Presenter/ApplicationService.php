@@ -44,8 +44,28 @@ class ApplicationService
      */
     public function getActiveElements(Entity\Application $entity, $requireGrant = true)
     {
-        $activeEntities = $this->filterDisplayableElements($entity->getElements(), $requireGrant);
+        $activeEntities = $this->prepareElements($entity, $requireGrant);
         return $this->getDisplayableElementComponents($activeEntities);
+    }
+
+    /**
+     * Returns the list of Elements from the given Application that are enabled and (optionally) granted for
+     * the current user.
+     *
+     * @param Entity\Application $application
+     * @param bool $requireGrant return only VIEW-granted entries (default true)
+     * @return Entity\Element[]
+     * @todo: resolve copy&paste ApplicationService vs ApplicationMarkupRenderer
+     */
+    public function prepareElements(Entity\Application $application, $requireGrant = true)
+    {
+        $elements = $this->filterDisplayableElements($application->getElements(), $requireGrant);
+        foreach ($elements as $element) {
+            if (!$element->getTitle()) {
+                $element->setTitle($this->elementFactory->getDefaultTitle($element));
+            }
+        }
+        return $elements;
     }
 
     /**
@@ -83,9 +103,6 @@ class ApplicationService
         foreach ($entities as $entity) {
             try {
                 $components[] = $this->elementFactory->componentFromEntity($entity, true);
-                if (!$entity->getTitle()) {
-                    $entity->setTitle($this->elementFactory->getDefaultTitle($entity));
-                }
             } catch (ElementErrorException $e) {
                 // for frontend presentation, incomplete / invalid elements are silently suppressed
                 // => do nothing

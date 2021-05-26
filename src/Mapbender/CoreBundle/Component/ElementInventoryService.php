@@ -59,12 +59,16 @@ class ElementInventoryService
 
     /**
      * @param Element $element
+     * @param bool $adjustClass
      * @return AbstractElementService|null
      * @todo: prefer interface type hinting
      */
-    public function getHandlerService(Element $element)
+    public function getHandlerService(Element $element, $adjustClass = false)
     {
         $className = $element->getClass();
+        if ($adjustClass) {
+            $className = $this->getAdjustedElementClassName($className);
+        }
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
         } else {
