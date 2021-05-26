@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\StringAsset;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
@@ -297,9 +298,24 @@ class ApplicationAssetService
         // Skip grants checks here to avoid issues with application asset caching.
         // Non-granted Elements will skip HTML rendering and config and will not be initialized.
         // Emitting the base js / css / translation assets OTOH is always safe to do
-        foreach ($this->applicationService->getActiveElements($application, false) as $element) {
-            $elementRefs = ArrayUtil::getDefault($element->getAssets() ?: array(), $type, array());
-            $qualifiedRefs = $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
+        /** @todo: do not need full-blown prepare (default titles irrelevant for assets) */
+        foreach ($this->applicationService->prepareElements($application, false) as $element) {
+            if ($handler = $this->elementFactory->getInventory()->getHandlerService($element)) {
+                $fullElementRefs = $handler->getRequiredAssets($element);
+                // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)
+                $qualifiedRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
+            } else {
+                try {
+                    $component = $this->elementFactory->componentFromEntity($element, true);
+                } catch (ElementErrorException $e) {
+                    // for frontend presentation, incomplete / invalid elements are silently suppressed
+                    // => do nothing
+                    continue;
+                }
+                $fullElementRefs = $component->getAssets();
+                $elementRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
+                $qualifiedRefs = $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
+            }
             $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
         }
         return $combinedRefs;
