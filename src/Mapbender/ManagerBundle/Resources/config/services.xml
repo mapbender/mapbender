@@ -24,6 +24,7 @@
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
             <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
