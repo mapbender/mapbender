@@ -26,6 +26,9 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
+        $now = new \DateTime('now');
+        $container->setParameter("mapbender.cache_creation", $now->format('c'));
+
         $this->loadConfigs($container);
 
         $container->addCompilerPass(new MapbenderYamlCompilerPass());
