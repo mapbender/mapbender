@@ -13,6 +13,8 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Asset\PackageInterface;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
@@ -36,13 +38,33 @@ class ConfigService
     /** @var UrlProcessor */
     protected $urlProcessor;
 
-    public function __construct(ContainerInterface $container)
+    /** @var UrlGeneratorInterface */
+    protected $router;
+    /** @var LoggerInterface */
+    protected $logger;
+    /** @var string */
+    protected $environment;
+    /** @var string */
+    protected $assetBaseUrl;
+
+
+    public function __construct(ApplicationService $basePresenter,
+                                ApplicationDataService $cacheService,
+                                TypeDirectoryService $sourceTypeDirectory,
+                                UrlProcessor $urlProcessor,
+                                UrlGeneratorInterface $router,
+                                LoggerInterface $logger,
+                                PackageInterface $baseUrlPackage,
+                                $environment)
     {
-        $this->container = $container;
-        $this->basePresenter = $container->get('mapbender.presenter.application.service');
-        $this->cacheService = $container->get('mapbender.presenter.application.cache');
-        $this->sourceTypeDirectory = $container->get('mapbender.source.typedirectory.service');
-        $this->urlProcessor = $container->get('mapbender.source.url_processor.service');
+        $this->basePresenter = $basePresenter;
+        $this->cacheService = $cacheService;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->urlProcessor = $urlProcessor;
+        $this->router = $router;
+        $this->logger = $logger;
+        $this->assetBaseUrl = $baseUrlPackage->getUrl(null);
+        $this->environment = $environment;
     }
 
     /**
@@ -78,7 +100,7 @@ class ConfigService
             'urls'          => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
-            'debug' => ($this->container->getParameter('kernel.debug')),
+            'debug' => ($this->environment !== 'prod'),
             'mapEngineCode' => $entity->getMapEngineCode(),
             'persistentView' => $entity->getPersistentView(),
         );
@@ -93,14 +115,13 @@ class ConfigService
     public function getUrls(Application $entity)
     {
         $config        = array('slug' => $entity->getSlug());
-        $router        = $this->getRouter();
 
         $urls = array(
-            'base' => $router->getContext()->getBaseUrl(),
-            'asset'    => $this->container->get('assets.packages')->getUrl(null),
-            'element'  => $router->generate('mapbender_core_application_element', $config),
-            'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
-            'config'   => $router->generate('mapbender_core_application_configuration', $config),
+            'base' => $this->router->getContext()->getBaseUrl(),
+            'asset' => $this->assetBaseUrl,
+            'element' => $this->router->generate('mapbender_core_application_element', $config),
+            'proxy' => $this->urlProcessor->getProxyBaseUrl(),
+            'config' => $this->router->generate('mapbender_core_application_configuration', $config),
         );
 
         return $urls;
@@ -181,16 +202,6 @@ class ConfigService
     }
 
     /**
-     * @return UrlGeneratorInterface
-     */
-    protected function getRouter()
-    {
-        /** @var UrlGeneratorInterface $router */
-        $router = $this->container->get('router');
-        return $router;
-    }
-
-    /**
      * Extracts active source instances from given Layerset entity.
      *
      * @param Layerset $entity
@@ -209,22 +220,10 @@ class ConfigService
     }
 
     /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-        return $logger;
-    }
-
-    /**
      * @return ApplicationDataService
      */
     public function getCacheService()
     {
-        /** @var ApplicationDataService $cacheService */
-        $cacheService = $this->container->get('mapbender.presenter.application.cache');
-        return $cacheService;
+        return $this->cacheService;
     }
 }
