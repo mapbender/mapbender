@@ -55,9 +55,13 @@ class MenuItem implements \Serializable
         if ($this->requiredGrants) {
             $data['grants'] = array();
             foreach ($this->requiredGrants as $grantInfo) {
-                /** @var ObjectIdentity $oid */
-                $oid = $grantInfo['oid'];
-                $data['grants'][] = $oid->getType() . ':' . implode(',', $grantInfo['attributes']);
+                if (\is_array($grantInfo)) {
+                    /** @var ObjectIdentity $oid */
+                    $oid = $grantInfo['oid'];
+                    $data['grants'][] = $oid->getType() . ':' . implode(',', $grantInfo['attributes']);
+                } else {
+                    $data['grants'][] = $grantInfo;
+                }
             }
         }
         return \serialize($data);
@@ -79,8 +83,12 @@ class MenuItem implements \Serializable
         if (isset($data['grants'])) {
             foreach ($data['grants'] as $grantSpec) {
                 $parts = explode(':', $grantSpec);
-                $attributes = explode(',', $parts[1]);
-                $this->requireEntityGrant($parts[0], $attributes);
+                if (1 === count($parts)) {
+                    $this->requireNamedGrant($parts[0]);
+                } else {
+                    $attributes = explode(',', $parts[1]);
+                    $this->requireEntityGrant($parts[0], $attributes);
+                }
             }
         }
     }
@@ -122,8 +130,14 @@ class MenuItem implements \Serializable
     public function enabled(AuthorizationCheckerInterface $authorizationChecker)
     {
         foreach ($this->requiredGrants as $requiredGrant) {
-            if (!$authorizationChecker->isGranted($requiredGrant['attributes'], $requiredGrant['oid'])) {
-                return false;
+            if (\is_array($requiredGrant)) {
+                if (!$authorizationChecker->isGranted($requiredGrant['attributes'], $requiredGrant['oid'])) {
+                    return false;
+                }
+            } else {
+                if (!$authorizationChecker->isGranted($requiredGrant)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -140,6 +154,16 @@ class MenuItem implements \Serializable
             'oid' => new ObjectIdentity('class', $className),
             'attributes' => (array)$attributes,
         );
+        return $this;
+    }
+
+    /**
+     * @param string $name (e.g. 'ROLE_USER')
+     * @return $this
+     */
+    public function requireNamedGrant($name)
+    {
+        $this->requiredGrants[] = $name;
         return $this;
     }
 

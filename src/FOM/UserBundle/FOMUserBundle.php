@@ -29,6 +29,7 @@ class FOMUserBundle extends ManagerBundle
     protected function addMenu(ContainerBuilder $container)
     {
         $securityItem = MenuItem::create('mb.terms.security', 'fom_user_security_index')
+            ->requireNamedGrant('ROLE_USER')
             ->setWeight(100)
         ;
         $container->addCompilerPass(new RegisterMenuRoutesPass($securityItem));
