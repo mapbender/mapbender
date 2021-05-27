@@ -2,7 +2,6 @@
   <thead>
     <tr>
       <th>{{ "fom.user.acl.index.name" | trans }}</th>
-      <th>{{ "fom.user.acl.index.class" | trans }}</th>
       <th></th>
     </tr>
   </thead>
@@ -12,7 +11,6 @@
         <td>
           <a href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name | trans }}</a>
         </td>
-        <td>{{ class }}</td>
         <td class="iconColumn">
           <a class="hover-highlight-effect" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"><i class="fa fas fa-cog"></i></a>
         </td>
