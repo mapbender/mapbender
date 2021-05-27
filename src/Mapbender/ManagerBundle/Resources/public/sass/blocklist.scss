@@ -22,9 +22,25 @@
       width: 1%;
     }
   }
-  .btn-toolbar .btn+.btn {
-    margin-left: 1.5em;
+  // Increase button margin (Bootstrap 3 default: 5px)
+  .btn-toolbar {
+    margin-left: -1.5em;
+    .btn {
+      margin-left: 1.5em;
+    }
   }
+  @media screen and (max-width: 767px) {
+    // Reduce button spacing to prevent overflow
+    .btn-toolbar {
+      margin-left: -10px;
+      .btn {
+        margin-left: 10px;
+        // Add some vertical margin to prevent buttons sticking on top of each other in case of overflow
+        margin-top: 0.5em;
+      }
+    }
+  }
+
   .preview-info {
     display: flex;
     flex-direction: column;
