@@ -45,6 +45,12 @@ h4, .h4, .tabContainer > ul {
     color: lighten($darkFontColor, 30%);
     background-color: transparent;
   }
+  .navbar-toggle {
+    border-color: lighten($darkFontColor, 30%);
+    .icon-bar {
+      background-color: lighten($darkFontColor, 30%);
+    }
+  }
   .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
     color: inherit;
     background-color: #eee;
