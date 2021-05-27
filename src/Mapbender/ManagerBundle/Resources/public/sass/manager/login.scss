@@ -13,6 +13,10 @@
     right: 0;
     width: 50vw;
     min-width: 40rem;
+    @media screen and (max-width: #{40 * $fontSize}) {
+      min-width: 100vw;
+    }
+    max-width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -36,9 +40,11 @@
 
   .loginBox {
     font-size: 1.2rem;
-     width: 70%;
-     margin-left: auto;
-     margin-right: auto;
+    width: calc(130% - 30vw);
+    min-width: 30%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 
      .login-button {
        border-radius: 10px;
@@ -48,8 +54,9 @@
 
   .logoContainer {
     display: block;
-    margin: 0 auto 10%;
+    margin: 0 auto 1rem;
     text-align: center;
+    width: 70%;
     .logo {
       max-height: 120px;
       max-width: 100%;
