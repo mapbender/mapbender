@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Christian Wygoda
  */
-class Map extends Element implements ConfigMigrationInterface
+class Map extends Element implements MainMapElementInterface, ConfigMigrationInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;

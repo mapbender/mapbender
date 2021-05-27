@@ -3,10 +3,10 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Element\Map;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
@@ -27,7 +27,7 @@ class ElementMarkupExtension extends AbstractExtension
     protected $debug;
     /** @var string */
     protected $bufferedHash;
-    /** @var Map */
+    /** @var MainMapElementInterface|Component\Element */
     protected $mapElement;
     /** @var Component\Element[][] */
     protected $anchoredContentElements;
@@ -319,7 +319,7 @@ class ElementMarkupExtension extends AbstractExtension
         foreach ($granted as $elementComponent) {
             $elementEntity = $elementComponent->getEntity();
             $region = $elementEntity->getRegion();
-            if ($elementComponent instanceof Map) {
+            if ($elementEntity->getClass() && \is_a($elementEntity->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true)) {
                 if ($this->mapElement) {
                     throw new MultipleMapElementsException("Invalid application: multiple map elements");
                 }

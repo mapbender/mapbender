@@ -150,7 +150,7 @@ class TargetElementType extends AbstractType
     {
         $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
-        if (!empty($options['element_class']) && is_a('Mapbender\CoreBundle\Element\Map', $options['element_class'], true)) {
+        if (!empty($options['element_class']) && is_a($options['element_class'], 'Mapbender\Component\Element\MainMapElementInterface', true)) {
             $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
             $builder->addEventSubscriber($elementSubscriber);
         }

@@ -32,7 +32,7 @@ class ElementExtension extends AbstractExtension
     {
         try {
             // @todo: Map class should be final
-            return \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\Map', true);
+            return \is_a($element->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true);
         } catch (\ErrorException $e) {
             // thrown by debug mode class loader on Symfony 3.4+
             return false;
