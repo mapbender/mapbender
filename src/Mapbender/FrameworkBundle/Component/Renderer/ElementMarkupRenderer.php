@@ -102,19 +102,40 @@ class ElementMarkupRenderer
      * @param AbstractElementService $handlerService
      * @param Element $element
      * @param string $wrapperTag
-     * @param string $attributes
+     * @param string[] $baseAttributes
      * @return string
      */
-    protected function renderServiceElement($handlerService, Element $element, $wrapperTag, $attributes)
+    protected function renderServiceElement($handlerService, Element $element, $wrapperTag, $baseAttributes)
     {
         $view = $handlerService->getView($element);
-        if ($view && ($view instanceof TemplateView)) {
-            // @todo: unify wrapper + inherent element attributes
-            $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
-            return $this->wrapTag($content, $wrapperTag, $attributes);
+        if ($view) {
+            $attributes = $this->prepareAttributes($view->attributes, $baseAttributes) + array(
+                'id' => $element->getId(),
+            );
+            if ($view instanceof TemplateView) {
+                $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
+            } else {
+                throw new \Exception("FIXME: Don't know how to render " . get_class($view));
+            }
+            return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
         } else {
-            throw new ElementErrorException("Don't know how to render " . get_class($view));
+            return '';
         }
+    }
+
+    protected function prepareAttributes($viewAttributes, $baseAttributes)
+    {
+        $classes = array('mb-element');
+        if (!empty($viewAttributes['class'])) {
+            $classes[] = $viewAttributes['class'];
+        }
+        if (!empty($baseAttributes['class'])) {
+            $classes[] = $baseAttributes['class'];
+        }
+        $attributes = array_replace($viewAttributes + $baseAttributes, array(
+            'class' => implode(' ', array_filter($classes)),
+        ));
+        return $attributes;
     }
 
     /**
