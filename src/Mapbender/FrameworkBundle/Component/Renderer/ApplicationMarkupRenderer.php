@@ -66,10 +66,7 @@ class ApplicationMarkupRenderer
     {
         $elements = $this->getElementDistribution($application)->getFloatingElements($anchorValue);
         if ($elements) {
-            return $this->elementRenderer->renderElements($elements, array(
-                'tagName' => 'div',
-                'class' => 'element-wrapper',
-            ));
+            return $this->elementRenderer->renderFloatingElements($elements);
         } else {
             return '';
         }
@@ -85,8 +82,7 @@ class ApplicationMarkupRenderer
         $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
         $elements = $elementBucket ? $elementBucket->getElements() : array();
         if ($elements) {
-            $glue = $this->getRegionGlue($regionName);
-            return $this->elementRenderer->renderElements($elements, $glue);
+            return $this->elementRenderer->renderElements($elements);
         } else {
             return '';
         }
@@ -208,50 +204,5 @@ class ApplicationMarkupRenderer
             }
         }
         return array();
-    }
-
-    /**
-     * Detect appropriate Element markup wrapping tag for a named region.
-     *
-     * @param string $regionName
-     * @return string[]|null
-     */
-    protected static function getRegionGlue($regionName)
-    {
-        switch (static::normalizeRegionName($regionName)) {
-            case 'footer':
-            case 'toolbar':
-                return array(
-                    'tagName' => 'li',
-                    'class' => 'toolBarItem',
-                );
-            case 'sidepane':
-                // @todo: unify this
-                return null;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * @param string $regionName
-     * @return string
-     */
-    protected static function normalizeRegionName($regionName)
-    {
-        // Legacy lenience in patterns: allow postfixes / prefixes around region names, e.g.
-        // "some-custom-project-footer"
-        if (false !== strpos($regionName, 'footer')) {
-            return 'footer';
-        } elseif (false !== strpos($regionName, 'toolbar')) {
-            return 'toolbar';
-        } elseif (false !== strpos($regionName, 'sidepane')) {
-            return 'sidepane';
-        } elseif (false !== strpos($regionName, 'content')) {
-            return 'content';
-        } else {
-            // fingers crossed
-            return $regionName;
-        }
     }
 }

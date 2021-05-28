@@ -35,18 +35,21 @@ class ElementMarkupRenderer
 
     /**
      * @param Element[] $elements
-     * @param string[]|null $wrapper if not empty, must have entries "tagName" (string), "class" (string)
      * @return string
      */
-    public function renderElements($elements, $wrapper = null)
+    public function renderElements($elements)
     {
-        $wrappers = array_filter(array($wrapper));
-        $defaultWrapperMarkup = $this->renderWrappers($wrappers);
+        $wrappers = array();
         $markupFragments = array();
         foreach ($elements as $element) {
             if (!$element instanceof Element) {
                 throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
             }
+            $regionName = $element->getRegion();
+            if (!array_key_exists($regionName, $wrappers)) {
+                $wrappers[$regionName] = $this->getRegionGlue($regionName);
+            }
+            $defaultWrapperMarkup = $this->renderWrappers(array_filter(array($wrappers[$regionName])));
 
             $elementWrapper = $this->getElementWrapper($element);
             if ($elementWrapper) {
@@ -59,6 +62,25 @@ class ElementMarkupRenderer
             $markupFragments[] = $elementWrapMarkup['close'];
         }
         return implode('', $markupFragments);
+    }
+
+    /**
+     * @param Element[] $elements
+     * @return string
+     */
+    public function renderFloatingElements($elements)
+    {
+        $markup = '';
+        foreach ($elements as $element) {
+            if (!$element instanceof Element) {
+                throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
+            }
+            $markup .= '<div class="' . rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)) . '">'
+                     . $this->renderContent($element)
+                     . '</div>'
+            ;
+        }
+        return $markup;
     }
 
     protected function renderContent(Element $element)
@@ -136,6 +158,26 @@ class ElementMarkupRenderer
                 'open' => '<' . $tagName . ' class="' . implode(' ', $classes) . '">',
                 'close' => "</{$tagName}>",
             );
+        }
+    }
+
+    /**
+     * Detect appropriate Element markup wrapping tag for a named region.
+     *
+     * @param string $regionName
+     * @return string[]|null
+     */
+    protected static function getRegionGlue($regionName)
+    {
+        // Legacy lenience in patterns: allow postfixes / prefixes around region names, e.g.
+        // "some-custom-project-footer"
+        if (false !== strpos($regionName, 'footer') || false !== strpos($regionName, 'toolbar')) {
+            return array(
+                'tagName' => 'li',
+                'class' => 'toolBarItem',
+            );
+        } else {
+            return null;
         }
     }
 }
