@@ -25,7 +25,7 @@ class MapbenderManagerBundle extends ManagerBundle
 
     protected function addMenu(ContainerBuilder $container)
     {
-        $appMenu = MenuItem::create("mb.terms.application.plural", 'mapbender_manager_application_index')
+        $appMenu = MenuItem::create("mb.terms.application.plural", 'mapbender_core_welcome_list')
             ->setWeight(10)
         ;
         $sourceMenu = MenuItem::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
