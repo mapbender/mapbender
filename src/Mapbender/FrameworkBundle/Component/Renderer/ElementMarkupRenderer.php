@@ -52,17 +52,17 @@ class ElementMarkupRenderer
             if (!array_key_exists($regionName, $wrappers)) {
                 $wrappers[$regionName] = $this->getRegionGlue($regionName);
             }
-            $defaultWrapperMarkup = $this->renderWrappers(array_filter(array($wrappers[$regionName])));
-
-            $elementWrapper = $this->getElementWrapper($element);
-            if ($elementWrapper) {
-                $elementWrapMarkup = $this->renderWrappers(array_merge($wrappers, array($elementWrapper)));
-            } else {
-                $elementWrapMarkup = $defaultWrapperMarkup;
+            $wrapper = $wrappers[$regionName];
+            if ($visibilityClass = $this->getElementVisibilityClass($element)) {
+                $wrapper['class'] = ltrim($wrapper['class'] . ' ' . $visibilityClass);
+                if (!$wrapper['tagName']) {
+                    $wrapper['tagName'] = 'div';
+                }
             }
-            $markupFragments[] = $elementWrapMarkup['open'];
-            $markupFragments[] = $this->renderContent($element);
-            $markupFragments[] = $elementWrapMarkup['close'];
+
+            $markupFragments[] = $this->renderContent($element, $wrapper['tagName'], array_filter(array(
+                'class' => $wrapper['class'],
+            )));
         }
         return implode('', $markupFragments);
     }
@@ -78,21 +78,20 @@ class ElementMarkupRenderer
             if (!$element instanceof Element) {
                 throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
             }
-            $markup .= '<div class="' . rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)) . '">'
-                     . $this->renderContent($element)
-                     . '</div>'
-            ;
+            $markup .= $this->renderContent($element, 'div', array(
+                'class' => rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)),
+            ));
         }
         return $markup;
     }
 
-    protected function renderContent(Element $element)
+    protected function renderContent(Element $element, $wrapperTag, $attributes)
     {
         $handlerService = $this->elementFactory->getInventory()->getHandlerService($element);
         if ($handlerService) {
-            return $this->renderServiceElement($handlerService, $element);
+            return $this->renderServiceElement($handlerService, $element, $wrapperTag, $attributes);
         } elseif (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {
-            return $this->renderLegacyElement($element);
+            return $this->wrapTag($this->renderLegacyElement($element), $wrapperTag, $attributes);
         } else {
             throw new ElementErrorException("Don't know how to render {$element->getClass()}");
         }
@@ -102,13 +101,17 @@ class ElementMarkupRenderer
      * @todo: prefer interface type, add signature type hint
      * @param AbstractElementService $handlerService
      * @param Element $element
+     * @param string $wrapperTag
+     * @param string $attributes
      * @return string
      */
-    protected function renderServiceElement($handlerService, Element $element)
+    protected function renderServiceElement($handlerService, Element $element, $wrapperTag, $attributes)
     {
         $view = $handlerService->getView($element);
         if ($view && ($view instanceof TemplateView)) {
-            return $this->templatingEngine->render($view->getTemplate(), $view->variables);
+            // @todo: unify wrapper + inherent element attributes
+            $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
+            return $this->wrapTag($content, $wrapperTag, $attributes);
         } else {
             throw new ElementErrorException("Don't know how to render " . get_class($view));
         }
@@ -161,33 +164,26 @@ class ElementMarkupRenderer
         }
     }
 
-
     /**
-     * @param (string[]|null)[] $wrappers
-     * @return string[] with entries 'open', 'close'
+     * @param string $content
+     * @param string $tagName return $content unchanged if $tagName empty
+     * @param string[] $attributes
+     * @return string
      */
-    protected function renderWrappers($wrappers)
+    protected function wrapTag($content, $tagName, $attributes)
     {
-        $tagName = null;
-        $classes = array();
-        foreach ($wrappers ?: array() as $wrapper) {
-            // use tag name from first wrapper entry
-            if ($tagName === null) {
-                $tagName = $wrapper['tagName'];
+        if ($tagName) {
+            $renderedAttributes = array();
+            foreach ($attributes as $name => $value) {
+                $renderedAttributes[] = $name . '="' . \htmlspecialchars($value) . '"';
             }
-            // concatenate all classes
-            $classes[] = $wrapper['class'];
-        }
-        if (!$tagName) {
-            return array(
-                'open' => '',
-                'close' => '',
-            );
+            return
+                "<$tagName" . \rtrim(' ' . implode(' ', $renderedAttributes)) . '>'
+                . $content
+                . "</$tagName>"
+            ;
         } else {
-            return array(
-                'open' => '<' . $tagName . ' class="' . implode(' ', $classes) . '">',
-                'close' => "</{$tagName}>",
-            );
+            return $content;
         }
     }
 
@@ -207,7 +203,10 @@ class ElementMarkupRenderer
                 'class' => 'toolBarItem',
             );
         } else {
-            return null;
+            return array(
+                'tagName' => null,
+                'class' => '',
+            );
         }
     }
 }
