@@ -1,3 +1,12 @@
+## dev-master @ eceb9cacd
+* Fix invisible collapsed backed main menu button on small screens
+* Fix site links (imprint etc) not showing in main menu for anonymous users
+* Fix main menu "Applications" link not showing for anonymous users
+* Fix ACL class list overflowing on very small screens
+* Fix broken layout of Application list interaction buttons on very small screens
+* Increase form field contrast in backend
+* Add login backdrop image customizability via `branding.login_backdrop` parameter (see [PR#1360](https://github.com/mapbender/mapbender/pull/1360))
+
 ## v3.2.5-RC2
 * Restructure backend main menu
   * Avoid sub-menus, use tabbed pages instead
