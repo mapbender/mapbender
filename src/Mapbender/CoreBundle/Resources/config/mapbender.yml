@@ -12,6 +12,9 @@ parameters:
     branding.project_version: ~
     branding.logo: ~                # web-relative path
 
+    branding.login_backdrop: ~
+    branding.login_backdrop_hq: ~
+
     # Sitelinks displayed below login box and backend content
     # Should be a list of items each with keys 'link' and 'text'
     mapbender.sitelinks: []
