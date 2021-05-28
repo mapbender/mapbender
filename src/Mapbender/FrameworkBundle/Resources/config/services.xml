@@ -6,6 +6,7 @@
     <services>
         <service id="mapbender.renderer.element_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer">
             <argument type="service" id="templating" />
+            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.element_factory.service" />
             <argument>%mapbender.responsive.elements%</argument>
         </service>

@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -22,16 +23,20 @@ class ElementMarkupRenderer
 {
     /** @var EngineInterface */
     protected $templatingEngine;
+    /** @var TranslatorInterface */
+    protected $translator;
     /** @var bool */
     protected $allowResponsiveElements;
     /** @var ElementFactory */
     protected $elementFactory;
 
     public function __construct(EngineInterface $templatingEngine,
+                                TranslatorInterface $translator,
                                 ElementFactory $elementFactory,
                                 $allowResponsiveElements)
     {
         $this->templatingEngine = $templatingEngine;
+        $this->translator = $translator;
         $this->elementFactory = $elementFactory;
         $this->allowResponsiveElements = $allowResponsiveElements;
     }
@@ -135,6 +140,15 @@ class ElementMarkupRenderer
         $attributes = array_replace($viewAttributes + $baseAttributes, array(
             'class' => implode(' ', array_filter($classes)),
         ));
+        $translatable = array(
+            'title',
+            'data-title',
+        );
+        foreach ($translatable as $attribute) {
+            if (!empty($attributes[$attribute])) {
+                $attributes[$attribute] = $this->translator->trans($attributes[$attribute]);
+            }
+        }
         return $attributes;
     }
 
