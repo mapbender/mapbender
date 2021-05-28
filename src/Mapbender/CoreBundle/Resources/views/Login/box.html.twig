@@ -20,7 +20,23 @@
   {% endblock %}
 {% block content %}
   <div class="authWrapper">
-    <div class="container-login-img"></div>
+    {%- set backdrop = asset(login_backdrop_asset()) -%}
+    {%- set hq_backdrop = login_backdrop_asset_hq() ? asset(login_backdrop_asset_hq()) : null -%}
+    <div class="container-login-img">
+    </div>
+    <style>
+      .container-login-img {
+        background-image: url("{{ asset(login_backdrop_asset())}}");
+      }
+      {%- if login_backdrop_asset_hq() -%}
+        @media screen and (min-width: 1921px) {
+          .container-login-img {
+            background-image: url("{{ asset(login_backdrop_asset_hq()) }}");
+          }
+        }
+      {%- endif -%}
+    </style>
+
     <div class="login-wrapper">
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
