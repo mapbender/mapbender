@@ -41,51 +41,35 @@
   $height: 200px;
   $width: 200px;
 
+  .screenshot-wrapper {
+    margin-top: 29px; // HACK: same as line-height of first label in application base data...
+    .btn {
+      vertical-align: top;
+      margin-left: 0.5em;
+    }
+  }
   // screen shot holder
   .screenshot_img{
-    margin-top: 29px; // HACK: same as line-height of first label in application base data...
-    position: relative;  // for absolute .delete button
+    border-radius: 15px; // match .listFilterBoxes .preview-box
+    display: inline-block;
 
-    border: 1px solid #c0c0c0;
-    border-radius: 3px; // match .btn.delete
-    display: table;
-
-    overflow: hidden;
-
-    img {
-      display: block;
-    }
     &.default {
-      background-color:#404040;
+      background-color: #EAEAEA;  // Same background as .listFilterBoxes li .preview-box
       img {
         display: none;
       }
     }
     &:not(.default) {
-      &:hover .delete {
-        display: initial;
-      }
       .placeholder-icon {
         display: none;
       }
     }
-    .delete {
-      display: none;
-    }
 
     .placeholder-icon {
       font-size: 60px;
-      color:lighten($darkFontColor, 10%);
     }
 
     div.cell_edit{
-      position: relative;
-      .delete{
-        position: absolute;
-        // Overlap 1px border
-        right: -1px;
-        top: -1px;
-      }
         display: table-cell;
         vertical-align:middle;
         text-align: center;

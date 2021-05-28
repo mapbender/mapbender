@@ -28,11 +28,13 @@
 </div>
 <div class="col-xs-4">
     {%- set _screenshot_src = application_screenshot_path(application) -%}
-    <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
-        <div class="cell_edit">
-            <div class="delete btn btn-sm btn-danger" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></div>
-            <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
-            <i class="fa fas fa-image placeholder-icon"></i>
+    <div class="screenshot-wrapper">
+        <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
+            <div class="cell_edit">
+                <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
+                <i class="fa fas fa-image placeholder-icon"></i>
+            </div>
         </div>
+        <button {{ _screenshot_src ? '' : 'disabled="disabled" ' }}class="-fn-delete btn btn-danger" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></button>
     </div>
 </div>

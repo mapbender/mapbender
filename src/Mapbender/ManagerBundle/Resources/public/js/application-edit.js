@@ -333,8 +333,8 @@ $(function() {
 
     var applicationForm = $('form[name=application]');
     var screenShot = applicationForm.find('.screenshot_img');
-    var screenShotCell = applicationForm.find('div.cell_edit');
-    var screenShotImg = screenShotCell.find('img');
+    var screenShotImg = $('.screenshot-wrapper img');
+    var screenShotDelete = $('.screenshot-wrapper .-fn-delete');
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
@@ -368,6 +368,7 @@ $(function() {
                 setFileError(null);
                 screenShotImg.attr('src', src);
                 screenShot.removeClass('default');
+                screenShotDelete.prop('disabled', false);
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
             } else {
                 validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
@@ -402,9 +403,10 @@ $(function() {
         $('.upload_label').text(displayFilename);
     };
 
-    $('.delete', screenShot).on('click', function() {
+    screenShotDelete.on('click', function() {
         screenShot.addClass('default');
         screenShotImg.attr('src',"");
+        screenShotDelete.prop('disabled', true);
         applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
         applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
     });
