@@ -60,3 +60,10 @@
     text-decoration: none;
   }
 }
+
+// Ensure vertical margin between screenshot and application title below col-md breakpoint width
+@media screen and (max-width: 991px) {
+  .listFilterApplicationBoxes li .col-md-10 {
+    margin-top: 1rem;
+  }
+}
