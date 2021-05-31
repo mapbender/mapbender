@@ -12,8 +12,6 @@ use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Produces merged application assets.
@@ -27,8 +25,6 @@ class ApplicationAssetService
     protected $sourceTypeDirectory;
     /** @var ElementFactory */
     protected $elementFactory;
-    /** @var ContainerInterface */
-    protected $dummyContainer;
     /** @var CssCompiler */
     protected $cssCompiler;
     /** @var JsCompiler */
@@ -57,8 +53,6 @@ class ApplicationAssetService
         $this->elementFactory = $elementFactory;
         $this->debug = $debug;
         $this->strict = $strict;
-        $this->dummyContainer = new Container();
-        $this->dummyContainer->set('templating', new \stdClass());
     }
 
     /**
