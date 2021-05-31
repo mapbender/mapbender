@@ -2,17 +2,19 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
+use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
@@ -117,9 +119,20 @@ class ApplicationController extends ApplicationControllerBase
     public function elementAction(Request $request, $slug, $id, $action)
     {
         $application = $this->getApplicationEntity($slug);
-        /** @var ApplicationService $appService */
-        $appService = $this->get('mapbender.presenter.application.service');
-        $elementComponent = $appService->getSingleElementComponent($application, $id);
+        $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
+        if (!$element) {
+            throw new NotFoundHttpException();
+        }
+        /** @todo Sf4: use DI for service access */
+        /** @var ElementFilter $filter */
+        $filter = $this->get('mapbender.element_filter');
+        if (!$filter->prepareFrontend(array($element), true)) {
+            throw new NotFoundHttpException();
+        }
+        /** @todo Sf4: replace (transient) ElementFactory usage with something compatible with service-type Elements */
+        /** @var ElementFactory $factory */
+        $factory = $this->get('mapbender.element_factory.service');
+        $elementComponent = $factory->componentFromEntity($element, true);
         if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
             throw new NotFoundHttpException();
         }

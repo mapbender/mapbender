@@ -8,7 +8,6 @@
         <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
-        <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
         <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
@@ -171,11 +170,6 @@
             <argument type="service" id="logger" />
         </service>
 
-        <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
-            <argument type="service" id="mapbender.element_factory.service" />
-            <argument type="service" id="mapbender.uploads_manager.service" />
-            <argument type="service" id="security.authorization_checker" />
-        </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.presenter.application.cache" />
