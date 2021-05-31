@@ -94,7 +94,7 @@ class ElementFormFactory extends BaseElementFactory
         }
 
         $formType->add('configuration', $configurationType, $options);
-        $componentClassName = $this->getComponentClass($element);
+
         $regionName = $element->getRegion();
         if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
             if (!$regionName || false !== strpos($regionName, 'content')) {
