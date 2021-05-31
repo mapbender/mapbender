@@ -1,9 +1,13 @@
-## dev-master @ 26333b572
+## dev-master @ 704f7b9ac
+* Fix broken alignment / overflowing content of dropdown-style Elements (SrsSelector, ScaleSelector, ApplicationSwitcher) when displaying labels
 * Fix invisible collapsed backed main menu button on small screens
 * Fix site links (imprint etc) not showing in main menu for anonymous users
 * Fix main menu "Applications" link not showing for anonymous users
 * Fix ACL class list overflowing on very small screens
 * Fix broken layout of Application list interaction buttons on very small screens
+* Fix Application list main title spacing / block sizing on very small screens
+* Fix inconsistent font weight (higher than other content) in backend dialogs
+* Fix availability of Ubuntu font in isolated networks (font now bundled)
 * Update screenshot preview / placeholder styling in Application form to match Application list
 * Increase form field contrast in backend
 * Add login backdrop image customizability via `branding.login_backdrop` parameter (see [PR#1360](https://github.com/mapbender/mapbender/pull/1360))
