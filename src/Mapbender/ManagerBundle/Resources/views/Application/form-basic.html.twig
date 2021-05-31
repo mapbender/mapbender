@@ -28,7 +28,7 @@
 </div>
 <div class="col-xs-4">
     {%- set _screenshot_src = application_screenshot_path(application) -%}
-    <div class="screenshot-wrapper">
+    <div class="screenshot-wrapper text-nowrap">
         <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
             <div class="cell_edit">
                 <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
