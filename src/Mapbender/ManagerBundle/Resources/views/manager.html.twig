@@ -1,6 +1,7 @@
 {% extends "MapbenderCoreBundle::index.html.twig" %}
 
 {% block css %}
+  <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/fonts/ubuntu/ubuntu.css') }}" />
   <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
   <link rel="stylesheet" href="{{ asset('/bundles/mapbendercore/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}" />
 {% endblock %}
