@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\Component\BaseElementFactory;
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Exception\InvalidElementClassException;
@@ -61,9 +62,13 @@ class ElementFactory extends BaseElementFactory
      */
     public function newEntity($componentClass, $region, Entity\Application $application = null)
     {
-        $entity = new Entity\Element();
         /** @var string|Component\ElementBase\MinimalInterface $componentClass */
         $componentClass = $this->inventoryService->getAdjustedElementClassName($componentClass);
+        if (!$componentClass || !ClassUtil::exists($componentClass)) {
+            throw new Component\Exception\UndefinedElementClassException($componentClass);
+        }
+
+        $entity = new Entity\Element();
         $configuration = $componentClass::getDefaultConfiguration();
         $entity
             ->setClass($componentClass)
