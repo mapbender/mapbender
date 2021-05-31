@@ -4,7 +4,10 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
+use Mapbender\Component\ClassUtil;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -43,6 +46,7 @@ class ElementFilter
             if (!$element->getTitle()) {
                 $element->setTitle($this->inventory->getDefaultTitle($element));
             }
+            $this->prepareCommon($element);
         }
         return $elements;
     }
@@ -62,5 +66,28 @@ class ElementFilter
             }
         }
         return $elementsOut;
+    }
+
+    protected function prepareCommon(Element $element)
+    {
+        $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
+        if (!ClassUtil::exists($handlingClass)) {
+            throw new UndefinedElementClassException($handlingClass);
+        }
+        while (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+            // Update config
+            $classBefore = $handlingClass;
+            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $handlingClass */
+            $handlingClass::updateEntityConfig($element);
+            $handlingClass = $element->getClass();
+            if ($handlingClass === $classBefore) {
+                break;
+            }
+        }
+        // Add config defaults
+        /** @var string|MinimalInterface $handlingClass */
+        $element->setConfiguration($element->getConfiguration() + $handlingClass::getDefaultConfiguration());
+        // Replace class @todo: safe? necessary? Will shred db contents if existing Element is edited
+        $element->setClass($handlingClass);
     }
 }

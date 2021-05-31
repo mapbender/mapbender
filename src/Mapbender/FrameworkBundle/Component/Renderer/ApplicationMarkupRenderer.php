@@ -6,7 +6,6 @@ namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 use Mapbender\Component\Application\ElementDistribution;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -20,9 +19,6 @@ class ApplicationMarkupRenderer
     protected $elementFilter;
     /** @var ElementMarkupRenderer */
     protected $elementRenderer;
-    /** @todo Sf4: eleminate factory */
-    /** @var ElementFactory */
-    protected $elementFactory;
     /** @var EngineInterface */
     protected $templatingEngine;
     /** @var bool */
@@ -33,13 +29,11 @@ class ApplicationMarkupRenderer
 
     public function __construct(ElementFilter $elementFilter,
                                 ElementMarkupRenderer $elementRenderer,
-                                ElementFactory $elementFactory,
                                 EngineInterface $templatingEngine,
                                 $allowResponsiveContainers)
     {
         $this->elementFilter = $elementFilter;
         $this->elementRenderer = $elementRenderer;
-        $this->elementFactory = $elementFactory;
         $this->templatingEngine = $templatingEngine;
         $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
@@ -118,26 +112,8 @@ class ApplicationMarkupRenderer
      */
     public function createElementDistribution(Application $application)
     {
-        return new ElementDistribution($this->prepareDisplayableElements($application));
-    }
-
-    /**
-     * @param Application $application
-     * @return Element[]
-     * @todo: resolve copy&paste ApplicationService vs ApplicationMarkupRenderer
-     */
-    protected function prepareDisplayableElements(Application $application)
-    {
         $elements = $this->elementFilter->prepareFrontend($application->getElements(), true);
-        $elementsOut = array();
-        foreach ($elements as $element) {
-            /** @todo: roll adapted class disabled check into ElementFilter base logic */
-            $this->elementFactory->migrateElementConfiguration($element, true);
-            if (!$this->elementFactory->isTypeOfElementDisabled($element)) {
-                $elementsOut[] = $element;
-            }
-        }
-        return $elementsOut;
+        return new ElementDistribution($elements);
     }
 
     /**

@@ -13,7 +13,6 @@
         <service id="mapbender.renderer.application_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer">
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
-            <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="templating" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
