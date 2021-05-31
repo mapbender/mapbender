@@ -15,8 +15,9 @@
     </parameters>
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
-            <argument type="service" id="form.factory" />
             <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="form.factory" />
             <argument type="service" id="form.registry" />
             <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>

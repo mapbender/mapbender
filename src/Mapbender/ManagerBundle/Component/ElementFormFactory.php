@@ -8,6 +8,7 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 
@@ -18,6 +19,8 @@ use Symfony\Component\Form\FormRegistryInterface;
  */
 class ElementFormFactory extends BaseElementFactory
 {
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var FormFactoryInterface */
     protected $formFactory;
     /** @var bool */
@@ -28,19 +31,22 @@ class ElementFormFactory extends BaseElementFactory
     protected $elementExtension;
 
     /**
-     * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
+     * @param ElementFilter $elementFilter
+     * @param FormFactoryInterface $formFactory
      * @param FormRegistryInterface $formRegistry
      * @param ElementExtension $elementExtension
      * @param bool $strict
      */
-    public function __construct(FormFactoryInterface $formFactory,
-                                ElementInventoryService $inventoryService,
+    public function __construct(ElementInventoryService $inventoryService,
+                                ElementFilter $elementFilter,
+                                FormFactoryInterface $formFactory,
                                 FormRegistryInterface $formRegistry,
                                 ElementExtension $elementExtension,
                                 $strict = false)
     {
         parent::__construct($inventoryService);
+        $this->elementFilter = $elementFilter;
         $this->formFactory = $formFactory;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
@@ -68,9 +74,11 @@ class ElementFormFactory extends BaseElementFactory
             $options['attr']['data-ft-element-id'] = $element->getId();
         }
 
-        $this->addConfigurationDefaults($element);
-        $this->migrateElementConfiguration($element);
-        $this->addConfigurationDefaults($element);
+        if (!$element->getClass()) {
+            throw new \LogicException("Empty component class name on element");
+        }
+
+        $this->elementFilter->prepareForForm($element);
 
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
@@ -136,14 +144,5 @@ class ElementFormFactory extends BaseElementFactory
             return $typeName;
         }
         return null;
-    }
-
-    public function migrateElementConfiguration(Element $element, $migrateClass = true)
-    {
-        parent::migrateElementConfiguration($element, $migrateClass);
-        $defaultTitle = $this->elementExtension->element_default_title($element);
-        if ($element->getTitle() === $defaultTitle) {
-            $element->setTitle('');    // @todo: allow null (requires schema update)
-        }
     }
 }

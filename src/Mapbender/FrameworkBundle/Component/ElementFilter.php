@@ -34,6 +34,11 @@ class ElementFilter
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    public function prepareForForm(Element $element)
+    {
+        $this->prepareCommon($element);
+    }
+
     /**
      * @param Element[] $elements
      * @param bool $requireGrant
