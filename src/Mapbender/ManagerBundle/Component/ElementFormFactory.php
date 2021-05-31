@@ -8,13 +8,8 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Extension\ElementExtension;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Service for element configuration and acl forms.
@@ -25,8 +20,6 @@ class ElementFormFactory extends BaseElementFactory
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
-    /** @var ContainerInterface */
-    protected $container;
     /** @var bool */
     protected $strict;
     /** @var FormRegistryInterface */
@@ -37,21 +30,18 @@ class ElementFormFactory extends BaseElementFactory
     /**
      * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
-     * @param ContainerInterface $container
      * @param FormRegistryInterface $formRegistry
      * @param ElementExtension $elementExtension
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
                                 ElementInventoryService $inventoryService,
-                                ContainerInterface $container,
                                 FormRegistryInterface $formRegistry,
                                 ElementExtension $elementExtension,
                                 $strict = false)
     {
         parent::__construct($inventoryService);
         $this->formFactory = $formFactory;
-        $this->container = $container;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
         $this->elementExtension = $elementExtension;
