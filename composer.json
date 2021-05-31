@@ -24,7 +24,6 @@
 
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
-        "wheregroup/open-sans": "1.x",
         "wheregroup/doctrine-dbal-shims": "^1",
         "wheregroup/assetic-filter-sassc": "^0.0.1",
         "wheregroup/sassc-binaries": "^0.0.1",

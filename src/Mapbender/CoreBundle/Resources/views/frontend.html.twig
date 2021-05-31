@@ -4,6 +4,7 @@
 
 {% block css %}
     {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/fonts/open-sans/open-sans.css') }}" />
     <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}"/>
     <link rel="stylesheet" href="{{ asset('/bundles/mapbendercore/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"/>
 {% endblock %}
