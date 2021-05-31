@@ -13,10 +13,10 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -26,8 +26,8 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  */
 class ConfigService
 {
-    /** @var ApplicationService */
-    protected $basePresenter;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ApplicationDataService */
     protected $cacheService;
     /** @var TypeDirectoryService */
@@ -47,7 +47,7 @@ class ConfigService
     protected $assetBaseUrl;
 
 
-    public function __construct(ApplicationService $basePresenter,
+    public function __construct(ElementFilter $elementFilter,
                                 ApplicationDataService $cacheService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 UrlProcessor $urlProcessor,
@@ -57,7 +57,7 @@ class ConfigService
                                 PackageInterface $baseUrlPackage,
                                 $debug)
     {
-        $this->basePresenter = $basePresenter;
+        $this->elementFilter = $elementFilter;
         $this->cacheService = $cacheService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
@@ -74,7 +74,8 @@ class ConfigService
      */
     public function getConfiguration(Application $entity)
     {
-        $activeElements = $this->basePresenter->prepareElements($entity);
+        /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
+        $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true);
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),

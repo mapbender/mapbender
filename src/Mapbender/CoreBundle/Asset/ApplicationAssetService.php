@@ -8,11 +8,11 @@ use Assetic\Asset\StringAsset;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 
 /**
  * Produces merged application assets.
@@ -20,10 +20,11 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
  */
 class ApplicationAssetService
 {
-    /** @var ApplicationService */
-    protected $applicationService;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
+    /** @todo Sf4: eliminate factory */
     /** @var ElementFactory */
     protected $elementFactory;
     /** @var CssCompiler */
@@ -40,18 +41,18 @@ class ApplicationAssetService
     public function __construct(CssCompiler $cssCompiler,
                                 JsCompiler $jsCompiler,
                                 TranslationCompiler $translationCompiler,
-                                ApplicationService $applicationService,
-                                TypeDirectoryService $sourceTypeDirectory,
+                                ElementFilter $elementFilter,
                                 ElementFactory $elementFactory,
+                                TypeDirectoryService $sourceTypeDirectory,
                                 $debug=false,
                                 $strict=false)
     {
         $this->cssCompiler = $cssCompiler;
         $this->jsCompiler = $jsCompiler;
         $this->translationCompiler = $translationCompiler;
-        $this->applicationService = $applicationService;
-        $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->elementFilter = $elementFilter;
         $this->elementFactory = $elementFactory;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->debug = $debug;
         $this->strict = $strict;
     }
@@ -298,8 +299,7 @@ class ApplicationAssetService
         // Skip grants checks here to avoid issues with application asset caching.
         // Non-granted Elements will skip HTML rendering and config and will not be initialized.
         // Emitting the base js / css / translation assets OTOH is always safe to do
-        /** @todo: do not need full-blown prepare (default titles irrelevant for assets) */
-        foreach ($this->applicationService->prepareElements($application, false) as $element) {
+        foreach ($this->elementFilter->filterFrontend($application->getElements(), false) as $element) {
             if ($handler = $this->elementFactory->getInventory()->getHandlerService($element)) {
                 $fullElementRefs = $handler->getRequiredAssets($element);
                 // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)

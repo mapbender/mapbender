@@ -11,17 +11,18 @@ use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ApplicationMarkupRenderer
 {
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ElementMarkupRenderer */
     protected $elementRenderer;
+    /** @todo Sf4: eleminate factory */
     /** @var ElementFactory */
     protected $elementFactory;
-    /** @var AuthorizationCheckerInterface  */
-    protected $authorizationChecker;
     /** @var EngineInterface */
     protected $templatingEngine;
     /** @var bool */
@@ -30,16 +31,16 @@ class ApplicationMarkupRenderer
     /** @var ElementDistribution[] */
     protected $distributions = array();
 
-    public function __construct(ElementMarkupRenderer $elementRenderer,
+    public function __construct(ElementFilter $elementFilter,
+                                ElementMarkupRenderer $elementRenderer,
                                 ElementFactory $elementFactory,
                                 EngineInterface $templatingEngine,
-                                AuthorizationCheckerInterface $authorizationChecker,
                                 $allowResponsiveContainers)
     {
+        $this->elementFilter = $elementFilter;
         $this->elementRenderer = $elementRenderer;
         $this->elementFactory = $elementFactory;
         $this->templatingEngine = $templatingEngine;
-        $this->authorizationChecker = $authorizationChecker;
         $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
@@ -127,18 +128,16 @@ class ApplicationMarkupRenderer
      */
     protected function prepareDisplayableElements(Application $application)
     {
-        $entitiesOut = array();
-        foreach ($application->getElements() as $element) {
+        $elements = $this->elementFilter->prepareFrontend($application->getElements(), true);
+        $elementsOut = array();
+        foreach ($elements as $element) {
+            /** @todo: roll adapted class disabled check into ElementFilter base logic */
             $this->elementFactory->migrateElementConfiguration($element, true);
-            $enabled = !$this->elementFactory->isTypeOfElementDisabled($element) && $element->getEnabled();
-            if ($enabled && $this->authorizationChecker->isGranted('VIEW', $element)) {
-                if (!$element->getTitle()) {
-                    $element->setTitle($this->elementFactory->getDefaultTitle($element));
-                }
-                $entitiesOut[] = $element;
+            if (!$this->elementFactory->isTypeOfElementDisabled($element)) {
+                $elementsOut[] = $element;
             }
         }
-        return $entitiesOut;
+        return $elementsOut;
     }
 
     /**

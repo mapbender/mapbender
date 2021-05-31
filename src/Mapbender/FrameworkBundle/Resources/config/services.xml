@@ -11,11 +11,15 @@
             <argument>%mapbender.responsive.elements%</argument>
         </service>
         <service id="mapbender.renderer.application_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer">
+            <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="templating" />
-            <argument type="service" id="security.authorization_checker" />
             <argument>%mapbender.responsive.containers%</argument>
+        </service>
+        <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">
+            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
     </services>
 </container>
