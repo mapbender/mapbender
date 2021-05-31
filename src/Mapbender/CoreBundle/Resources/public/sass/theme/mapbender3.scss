@@ -82,21 +82,10 @@ span.iconBig {
     }
     white-space: nowrap;
     vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-    // Workaround for dropdown-style Element markup where an (optional) label is rendered OUTSIDE of the
-    // .mb-element node
-    > .labelInput + .mb-element {
+    .mb-element {
+      vertical-align: inherit;
       display: inline-block;
-      margin-left: 0.5em;
     }
-    .labelInput {
-      vertical-align: top;  // for vertical alignment when followed by empty .dropdown
-      display: inline-block;  // required when using <span> tag instead of <label>
-    }
-    .labelInput + .dropdown {
-      display: inline-block;
-      margin-left: 0.5em;
-    }
-    //
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
     [class^="icon"], [class*=" icon"] {
@@ -152,6 +141,20 @@ span.iconBig {
   }
   a.mb-button:hover {
     text-decoration: none;
+  }
+}
+
+// Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
+.toolBarItem {
+  label, .labelInput {
+    display: inline-block;
+    margin-right: 0.5em;
+    vertical-align: inherit;
+    line-height: $inputHeight;
+  }
+  .dropdown:not(.bs-dropdown) {
+    width: auto;
+    vertical-align: inherit;
   }
 }
 
