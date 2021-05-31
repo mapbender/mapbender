@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class ViewManagerHttpHandler
+class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 {
     /** @var EngineInterface */
     protected $templating;
@@ -43,7 +44,7 @@ class ViewManagerHttpHandler
      * @return Response
      * @throws HttpException
      */
-    public function handleHttpRequest(Entity\Element $element, Request $request)
+    public function handleRequest(Entity\Element $element, Request $request)
     {
         switch ($request->attributes->get('action')) {
             default:

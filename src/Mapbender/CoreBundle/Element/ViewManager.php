@@ -82,7 +82,7 @@ class ViewManager extends Element
     {
         // Extend with defaults
         $this->entity->setConfiguration($this->entity->getConfiguration() + $this->getDefaultConfiguration());
-        return $this->getHttpHandler()->handleHttpRequest($this->entity, $request);
+        return $this->getHttpHandler()->handleRequest($this->entity, $request);
     }
 
     /**

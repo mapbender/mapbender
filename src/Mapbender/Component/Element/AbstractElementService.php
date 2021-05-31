@@ -51,4 +51,12 @@ abstract class AbstractElementService implements MinimalInterface, EditableInter
     {
         return array();
     }
+
+    /**
+     * @return ElementHttpHandlerInterface|null
+     */
+    public function getHttpHandler()
+    {
+        return null;
+    }
 }
