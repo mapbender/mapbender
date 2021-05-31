@@ -36,7 +36,8 @@ class ElementFilter
 
     public function prepareForForm(Element $element)
     {
-        $this->prepareCommon($element);
+        // @todo: prevent replacement of persisted class (shreds db content permanently)
+        $this->migrateConfig($element);
     }
 
     /**
@@ -51,7 +52,7 @@ class ElementFilter
             if (!$element->getTitle()) {
                 $element->setTitle($this->inventory->getDefaultTitle($element));
             }
-            $this->prepareCommon($element);
+            $this->migrateConfig($element);
         }
         return $elements;
     }
@@ -73,7 +74,13 @@ class ElementFilter
         return $elementsOut;
     }
 
-    protected function prepareCommon(Element $element)
+    /**
+     * Performs Element class replacements and updates configuration structure to current standards.
+     *
+     * @param Element $element
+     * @throws UndefinedElementClassException
+     */
+    public function migrateConfig(Element $element)
     {
         $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
         if (!ClassUtil::exists($handlingClass)) {

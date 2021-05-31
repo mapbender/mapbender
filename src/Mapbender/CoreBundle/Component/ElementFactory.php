@@ -8,6 +8,7 @@ use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Exception\InvalidElementClassException;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -17,6 +18,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ElementFactory extends BaseElementFactory
 {
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ContainerInterface */
     protected $container;
     /** @var TranslatorInterface */
@@ -26,14 +29,17 @@ class ElementFactory extends BaseElementFactory
 
     /**
      * @param ElementInventoryService $inventoryService
+     * @param ElementFilter $elementFilter
      * @param TranslatorInterface $translator
      * @param ContainerInterface $container only used for passing on to Element/Application component constructors
      */
     public function __construct(ElementInventoryService $inventoryService,
+                                ElementFilter $elementFilter,
                                 TranslatorInterface $translator,
                                 ContainerInterface $container)
     {
         parent::__construct($inventoryService);
+        $this->elementFilter = $elementFilter;
         $this->translator = $translator;
         $this->container = $container;
     }
@@ -82,7 +88,7 @@ class ElementFactory extends BaseElementFactory
             $entity->setTitle('');
         } else {
             // @todo: reevaluate translation; translation should be done on presentation, not persisted
-            $entity->setTitle($this->translator->trans($this->getDefaultTitle($entity)));
+            $entity->setTitle($this->translator->trans($this->inventoryService->getDefaultTitle($entity)));
         }
         if ($application) {
             $entity->setApplication($application);
@@ -126,7 +132,7 @@ class ElementFactory extends BaseElementFactory
      */
     protected function instantiateComponent(Entity\Element $entity)
     {
-        $this->migrateElementConfiguration($entity);
+        $this->elementFilter->migrateConfig($entity);
         $componentClassName = $entity->getClass();
         $instance = new $componentClassName($this->container, $entity);
         if (!$instance instanceof Component\Element) {
