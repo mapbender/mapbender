@@ -71,7 +71,7 @@
         </service>
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
         <service id="mapbender.twig.form" class="Mapbender\CoreBundle\Extension\FormExtension">
             <tag name="twig.extension"/>
@@ -99,7 +99,7 @@
             <tag name="form.type" />
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
 
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">

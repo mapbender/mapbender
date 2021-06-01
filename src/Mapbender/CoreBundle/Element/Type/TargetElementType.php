@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,16 +37,16 @@ class TargetElementType extends AbstractType
     protected $repository;
     /** @var TranslatorInterface */
     protected $translator;
-    /** @var ElementInventoryService */
-    protected $inventoryService;
+    /** @var ElementFilter */
+    protected $elementFilter;
 
     public function __construct(TranslatorInterface $translator,
                                 EntityManagerInterface $entityManager,
-                                ElementInventoryService $inventoryService)
+                                ElementFilter $elementFilter)
     {
         $this->translator = $translator;
         $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
-        $this->inventoryService = $inventoryService;
+        $this->elementFilter = $elementFilter;
     }
 
     /**
@@ -66,13 +66,13 @@ class TargetElementType extends AbstractType
             'class' => 'Mapbender\CoreBundle\Entity\Element',
         );
         $type = $this;
-        $inventory = $this->inventoryService;
+        $elementFilter = $this->elementFilter;
         $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
             'class' => 'Mapbender\CoreBundle\Entity\Element',
-            'choice_label' => function($element) use ($inventory) {
-                return $element->getTitle() ?: $inventory->getDefaultTitle($element);
+            'choice_label' => function($element) use ($elementFilter) {
+                return $element->getTitle() ?: $elementFilter->getDefaultTitle($element);
             },
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',

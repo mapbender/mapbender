@@ -77,42 +77,6 @@ class ElementInventoryService
     }
 
     /**
-     * @param string|MinimalInterface $className
-     * @return string|null
-     */
-    public function getClassTitle($className)
-    {
-        $adjustedClass = $this->getAdjustedElementClassName($className);
-        if (ClassUtil::exists($adjustedClass)) {
-            /** @var string|MinimalInterface $adjustedClass */
-            return $adjustedClass::getClassTitle();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param Element $element
-     * @return string|null
-     */
-    public function getDefaultTitle(Element $element)
-    {
-        /** @var null|string|MinimalInterface $className */
-        $className = $this->getAdjustedElementClassName($element->getClass());
-        if ($className && \is_a($className, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target && $target !== $element) {
-                return $target->getTitle() ?: $this->getDefaultTitle($target);
-            }
-        }
-        if ($className && ClassUtil::exists($className)) {
-            return $className::getClassTitle();
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param string[] $classNames
      */
     public function setInventory($classNames)
@@ -213,15 +177,6 @@ class ElementInventoryService
     public function isClassDisabled($className)
     {
         return \in_array($className, $this->getDisabledClasses());
-    }
-
-    public function isTypeOfElementDisabled(Entity\Element $element)
-    {
-        $disabled = $this->isClassDisabled($element->getClass());
-        if (!$disabled && ($target = $element->getTargetElement())) {
-            $disabled = $this->isClassDisabled($target->getClass());
-        }
-        return $disabled;
     }
 
     protected function getInternallyDisabledClasses()

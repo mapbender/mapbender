@@ -34,6 +34,42 @@ class ElementFilter
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    /**
+     * @param string|MinimalInterface $className
+     * @return string|null
+     */
+    public function getClassTitle($className)
+    {
+        $adjustedClass = $this->inventory->getAdjustedElementClassName($className);
+        if (ClassUtil::exists($adjustedClass)) {
+            /** @var string|MinimalInterface $adjustedClass */
+            return $adjustedClass::getClassTitle();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return string|null
+     */
+    public function getDefaultTitle(Element $element)
+    {
+        /** @var null|string|MinimalInterface $className */
+        $className = $this->inventory->getAdjustedElementClassName($element->getClass());
+        if ($className && \is_a($className, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+            $target = $element->getTargetElement();
+            if ($target && $target !== $element) {
+                return $target->getTitle() ?: $this->getDefaultTitle($target);
+            }
+        }
+        if ($className && ClassUtil::exists($className)) {
+            return $className::getClassTitle();
+        } else {
+            return null;
+        }
+    }
+
     public function prepareForForm(Element $element)
     {
         // @todo: prevent replacement of persisted class (shreds db content permanently)
@@ -50,7 +86,7 @@ class ElementFilter
         $elements = $this->filterFrontend($elements, $requireGrant);
         foreach ($elements as $element) {
             if (!$element->getTitle()) {
-                $element->setTitle($this->inventory->getDefaultTitle($element));
+                $element->setTitle($this->getDefaultTitle($element));
             }
             $this->migrateConfig($element);
         }
@@ -66,7 +102,7 @@ class ElementFilter
     {
         $elementsOut = array();
         foreach ($elements as $element) {
-            $enabled = $element->getEnabled() && !$this->inventory->isTypeOfElementDisabled($element);
+            $enabled = $element->getEnabled() && !$this->isDisabledType($element);
             if ($enabled && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
                 $elementsOut[] = $element;
             }
@@ -101,5 +137,14 @@ class ElementFilter
         $element->setConfiguration($element->getConfiguration() + $handlingClass::getDefaultConfiguration());
         // Replace class @todo: safe? necessary? Will shred db contents if existing Element is edited
         $element->setClass($handlingClass);
+    }
+
+    public function isDisabledType(Element $element)
+    {
+        $disabled = $this->inventory->isClassDisabled($element->getClass());
+        if (!$disabled && ($target = $element->getTargetElement())) {
+            $disabled = $this->inventory->isClassDisabled($target->getClass());
+        }
+        return $disabled;
     }
 }

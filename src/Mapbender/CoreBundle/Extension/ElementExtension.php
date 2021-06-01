@@ -2,8 +2,8 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
-use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -13,15 +13,15 @@ use Twig\TwigFunction;
 class ElementExtension extends AbstractExtension
 {
 
-    /** @var ElementInventoryService */
-    protected $inventoryService;
+    /** @var ElementFilter */
+    protected $elementFilter;
 
     /**
-     * @param ElementInventoryService $inventoryService
+     * @param ElementFilter $elementFilter
      */
-    public function __construct(ElementInventoryService $inventoryService)
+    public function __construct(ElementFilter $elementFilter)
     {
-        $this->inventoryService = $inventoryService;
+        $this->elementFilter = $elementFilter;
     }
 
     /**
@@ -52,7 +52,7 @@ class ElementExtension extends AbstractExtension
      */
     public function element_class_title($element)
     {
-        return $this->inventoryService->getClassTitle($element->getClass());
+        return $this->elementFilter->getClassTitle($element->getClass());
     }
 
     /**
@@ -74,11 +74,11 @@ class ElementExtension extends AbstractExtension
      */
     public function element_default_title($element)
     {
-        return $this->inventoryService->getDefaultTitle($element);
+        return $this->elementFilter->getDefaultTitle($element);
     }
 
     public function is_typeof_element_disabled(Element $element)
     {
-        return $this->inventoryService->isTypeOfElementDisabled($element);
+        return $this->elementFilter->isDisabledType($element);
     }
 }

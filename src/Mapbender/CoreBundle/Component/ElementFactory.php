@@ -88,7 +88,7 @@ class ElementFactory extends BaseElementFactory
             $entity->setTitle('');
         } else {
             // @todo: reevaluate translation; translation should be done on presentation, not persisted
-            $entity->setTitle($this->translator->trans($this->inventoryService->getDefaultTitle($entity)));
+            $entity->setTitle($this->translator->trans($this->elementFilter->getDefaultTitle($entity)));
         }
         if ($application) {
             $entity->setApplication($application);
