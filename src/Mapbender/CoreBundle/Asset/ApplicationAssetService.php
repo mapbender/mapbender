@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
+use Mapbender\Component\InaccessibleContainer;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
@@ -39,7 +40,7 @@ class ApplicationAssetService
     /** @var bool */
     protected $strict;
     /** @var Container */
-    protected $emptyContainer;
+    protected $inaccessibleContainer;
 
     public function __construct(CssCompiler $cssCompiler,
                                 JsCompiler $jsCompiler,
@@ -58,7 +59,7 @@ class ApplicationAssetService
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->debug = $debug;
         $this->strict = $strict;
-        $this->emptyContainer = new Container();
+        $this->inaccessibleContainer = new InaccessibleContainer();
     }
 
     /**
@@ -328,7 +329,7 @@ class ApplicationAssetService
             }
             assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
             /** @var \Mapbender\CoreBundle\Component\Element $dummyComponent */
-            $dummyComponent = new $handlingClass($this->emptyContainer, $element);
+            $dummyComponent = new $handlingClass($this->inaccessibleContainer, $element);
             @trigger_error("DEPRECATED: Legacy Element class {$handlingClass} is incompatible with Symfony 4+. Support will be removed in Mapbender 3.3. Inherit from AbstractElementService instead.", E_USER_DEPRECATED);
             $fullElementRefs = $dummyComponent->getAssets();
             $elementRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
