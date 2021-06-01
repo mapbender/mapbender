@@ -20,9 +20,9 @@ abstract class MinimalBound implements BoundEntityInterface
     }
 
     /**
-     * Must return getEntity()->getId()
-     * May be invoked magically from certain element twig templates.
+     * Returns $this->entity->getId()
      * @return string
+     * @deprecated
      */
     final public function getId()
     {
@@ -30,11 +30,11 @@ abstract class MinimalBound implements BoundEntityInterface
     }
 
     /**
-     * Override hook. Default implementation is ->getEntity()->getTitle()
-     * May be invoked magically from certain element twig templates.
+     * Returns $this->entity->getTitle()
      * @return string
+     * @deprecated
      */
-    public function getTitle()
+    final public function getTitle()
     {
         return $this->entity->getTitle();
     }

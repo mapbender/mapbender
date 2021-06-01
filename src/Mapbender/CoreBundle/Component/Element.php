@@ -107,8 +107,8 @@ abstract class Element extends MinimalBound
     public function render()
     {
         $defaultTemplateVars = array(
-            'id'            => $this->getId(),
-            'title'         => $this->getTitle(),
+            'id'            => $this->entity->getId(),
+            'title'         => $this->entity->getTitle(),
         );
         $templateVars = array_replace($defaultTemplateVars, $this->getFrontendTemplateVars());
         $templatePath = $this->getFrontendTemplatePath();
