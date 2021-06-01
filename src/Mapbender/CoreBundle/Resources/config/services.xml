@@ -243,7 +243,7 @@
             <argument type="service" id="mapbender.asset_compiler.js" />
             <argument type="service" id="mapbender.asset_compiler.translations" />
             <argument type="service" id="mapbender.element_filter" />
-            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>

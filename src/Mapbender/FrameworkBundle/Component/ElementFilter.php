@@ -130,6 +130,8 @@ class ElementFilter
             $handlingClass = $element->getClass();
             if ($handlingClass === $classBefore) {
                 break;
+            } elseif (!ClassUtil::exists($handlingClass)) {
+                throw new UndefinedElementClassException($handlingClass);
             }
         }
         // Add config defaults
