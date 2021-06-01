@@ -390,19 +390,11 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @return string
-     */
-    protected function getKernelEnvironment()
-    {
-        return $this->container->get('kernel')->getEnvironment();
-    }
-
-    /**
      * @return bool
      */
     protected function isProduction()
     {
-        return $this->getKernelEnvironment() == "prod";
+        return !$this->getParameter('kernel.debug');
     }
 
     /**

@@ -94,7 +94,6 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         $configuration = $this->getConfiguration();
         $q             = $request->get('term', '');
         $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
-        $kernel        = $this->container->get('kernel');
 
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {
@@ -129,7 +128,7 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         }
 
         // In dev environment, add query URL as response header for easier debugging
-        if ($kernel->isDebug()) {
+        if ($this->container->getParameter('kernel.debug')) {
             $response->headers->set('X-Mapbender-SimpleSearch-URL', $url);
         }
 

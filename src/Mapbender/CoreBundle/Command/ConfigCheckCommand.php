@@ -136,7 +136,7 @@ class ConfigCheckCommand extends ContainerAwareCommand
         $rows=[];
         $success = true;
         $folders= array('app/logs/','app/cache/','web/uploads/','web/xmlschemas/','web/');
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
         foreach ($folders as $folder){
             $filename = $rootDir.'/../'.$folder;
             $permission= substr(sprintf('%o',fileperms($filename)), -4);
@@ -159,7 +159,7 @@ class ConfigCheckCommand extends ContainerAwareCommand
         $rows=[];
         $success = true;
         $ignoreFolders= array('.','..','.gitignore','.gitkeep');
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
         $webDirs=scandir($rootDir.'/../web/bundles');
         foreach ($webDirs as $webDir){
             if(!in_array($webDir,$ignoreFolders)){

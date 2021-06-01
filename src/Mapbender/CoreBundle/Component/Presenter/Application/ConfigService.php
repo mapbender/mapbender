@@ -78,7 +78,7 @@ class ConfigService
             'urls'          => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
-            'debug'         => ($this->container->get('kernel')->getEnvironment() !== 'prod'),
+            'debug' => ($this->container->getParameter('kernel.debug')),
             'mapEngineCode' => $entity->getMapEngineCode(),
             'persistentView' => $entity->getPersistentView(),
         );
