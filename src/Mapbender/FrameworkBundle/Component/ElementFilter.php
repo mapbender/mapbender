@@ -141,6 +141,10 @@ class ElementFilter
         $element->setClass($handlingClass);
     }
 
+    /**
+     * @param Element $element
+     * @return bool
+     */
     public function isDisabledType(Element $element)
     {
         $disabled = $this->inventory->isClassDisabled($element->getClass());

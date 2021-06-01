@@ -5,9 +5,6 @@ namespace Mapbender\CoreBundle\Component;
 
 
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\ClassUtil;
-use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
-use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Element;
 
 /**
