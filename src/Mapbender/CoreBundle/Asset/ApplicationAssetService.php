@@ -197,17 +197,17 @@ class ApplicationAssetService
                 // Currently known missing:
                 // * ol.proj.getTransformFromProjections
                 // * ol.style.Style.defaultFunction
-                if (false && !$this->debug) {
-                    $ol4 = '/components/openlayers/ol.js';
+                // @todo performance: minified version seems to work with the Webpack-based Openlayers 6 build but needs verification
+                if (false || !$this->debug) {
+                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
                 } else {
-                    $ol4 = '/components/openlayers/ol-debug.js';
+                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js';
                     $proj4js = '/components/proj4js/dist/proj4-src.js';
                 }
 
-                $modelJsBase = "@MapbenderCoreBundle/Resources/public/mapbender-model";
                 $commonAssets = array(
-                    '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js',
+                    $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
@@ -224,7 +224,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
-                    // "$modelJsBase/mapbender.model.mappopup.js",
                 );
                 break;
             case 'ol4-css':
