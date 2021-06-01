@@ -19,11 +19,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SourceInstanceSelectorType extends RelatedObjectChoiceType implements DataTransformerInterface
 {
-    public function getName()
-    {
-        return 'application_source_instance_selector';
-    }
-
     /**
      * @inheritdoc
      */
