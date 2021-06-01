@@ -13,10 +13,8 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
-use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -144,17 +142,6 @@ abstract class ApplicationControllerBase extends Controller
     {
         /** @var TranslatorInterface $service */
         $service = $this->get('translator');
-        return $service;
-    }
-
-    /**
-     * Get Mapbender core service
-     * @return Mapbender
-     */
-    protected function getMapbender()
-    {
-        /** @var Mapbender $service */
-        $service = $this->get('mapbender');
         return $service;
     }
 
