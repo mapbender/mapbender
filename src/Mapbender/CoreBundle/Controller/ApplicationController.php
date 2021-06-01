@@ -373,15 +373,20 @@ class ApplicationController extends ApplicationControllerBase
      * Get mime type
      *
      * @param string $type
-     * @return array
+     * @return string
      */
     protected function getMimeType($type)
     {
-        static $types = array(
-            'css'   => 'text/css',
-            'js'    => 'application/javascript',
-            'trans' => 'application/javascript');
-        return $types[$type];
+        switch ($type) {
+            case 'js':
+            case 'trans':
+                return 'application/javascript';
+            case 'css':
+                return 'text/css';
+            default:
+                // Uh-oh
+                return null;
+        }
     }
 
     /**
