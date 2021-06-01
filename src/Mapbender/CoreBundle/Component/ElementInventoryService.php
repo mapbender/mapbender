@@ -122,13 +122,14 @@ class ElementInventoryService
     }
 
     /**
-     * @todo: prefer an interface type
      * @param AbstractElementService $instance
      * @param string[] $handledClassNames
+     * @todo: prefer an interface type
+     * @noinspection PhpUnused
+     * @see \Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass::process()
      */
     public function registerService(AbstractElementService $instance, $handledClassNames)
     {
-
         $serviceClass = \get_class($instance);
         $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
         foreach (array_unique($handledClassNames) as $handledClassName) {

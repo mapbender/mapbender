@@ -163,23 +163,6 @@ class ElementMarkupRenderer
 
     /**
      * @param Element $element
-     * @return string[]|null
-     */
-    protected function getElementWrapper(Element $element)
-    {
-        $visibilityClass = $this->getElementVisibilityClass($element);
-        if ($visibilityClass) {
-            return array(
-                'tagName' => 'div',
-                'class' => $visibilityClass,
-            );
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param Element $element
      * @return string|null
      */
     public function getElementVisibilityClass(Element $element)
