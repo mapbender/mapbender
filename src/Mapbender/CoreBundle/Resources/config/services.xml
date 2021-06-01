@@ -191,7 +191,7 @@
             <argument type="service" id="router" />
             <argument type="service" id="logger" />
             <argument type="service" id="assets._default_package" />
-            <argument>%kernel.environment%</argument>
+            <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
         </service>
