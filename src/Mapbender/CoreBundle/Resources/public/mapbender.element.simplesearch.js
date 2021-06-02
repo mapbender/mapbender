@@ -90,10 +90,30 @@ $.widget('mapbender.mbSimpleSearch', {
         // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
         return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
     },
+    /**
+     * @param {Object} obj
+     * @param {String} path
+     * @return {string|null}
+     */
+    _extractAttribute: function(obj, path) {
+        var props = obj;
+        var parts = path.split('.');
+        var last = parts.pop();
+        for (var i = 0; i < parts.length; ++i) {
+            props = props && props[parts[i]];
+            if (!props) {
+                break;
+            }
+        }
+        if (props && (props[last] || (typeof props[last] === 'number'))) {
+            return [props[last]].join('');  // force to string
+        } else {
+            return null;
+        }
+    },
     _formatLabel: function(doc) {
-        // @todo: nested sub-attribute support
         // @todo: string template syntax support
-        return doc[this.options.label_attribute];
+        return this._extractAttribute(doc, this.options.label_attribute);
     },
     _onAutocompleteSelected: function(evt, evtData) {
         var format = new OpenLayers.Format[this.options.geom_format]();
