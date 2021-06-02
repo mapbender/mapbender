@@ -112,8 +112,27 @@ $.widget('mapbender.mbSimpleSearch', {
         }
     },
     _formatLabel: function(doc) {
-        // @todo: string template syntax support
-        return this._extractAttribute(doc, this.options.label_attribute);
+        // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
+        var templateParts = this.options.label_attribute.split(/\${([^}]+)}/g);
+        if (templateParts.length > 1) {
+            var parts = [];
+            for (var i = 0; i < templateParts.length; i += 2) {
+                var fixedText = templateParts[i];
+                // NOTE: attributePath is undefined (index >= length of list) if label_attribute defines static text after last placeholder
+                var attributePath = templateParts[i + 1];
+                var attributeValue = attributePath && this._extractAttribute(doc, attributePath);
+                if (attributeValue) {
+                    parts.push(fixedText);
+                    parts.push(this._extractAttribute(doc, attributePath));
+                } else {
+                    // @todo: filter separator texts between empty attribute lookups
+                    parts.push(fixedText);
+                }
+            }
+            return parts.join('');
+        } else {
+            return this._extractAttribute(doc, this.options.label_attribute);
+        }
     },
     _onAutocompleteSelected: function(evt, evtData) {
         var format = new OpenLayers.Format[this.options.geom_format]();
