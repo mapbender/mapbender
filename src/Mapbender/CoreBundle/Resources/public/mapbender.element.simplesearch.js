@@ -55,6 +55,8 @@ $.widget('mapbender.mbSimpleSearch', {
                             return Object.assign(item, {
                                 label: item[self.options.label_attribute]
                             });
+                        }).filter(function(item) {
+                            return item.label;
                         });
                         responseCallback(formatted);
 
