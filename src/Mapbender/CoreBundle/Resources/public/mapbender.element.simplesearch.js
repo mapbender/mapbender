@@ -53,7 +53,7 @@ $.widget('mapbender.mbSimpleSearch', {
                     .then(function(response) {
                         var formatted =  (response || []).map(function(item) {
                             return Object.assign(item, {
-                                label: item[self.options.label_attribute]
+                                label: self._formatLabel(item)
                             });
                         }).filter(function(item) {
                             var geomEmpty = !item[self.options.geom_attribute];
@@ -89,6 +89,11 @@ $.widget('mapbender.mbSimpleSearch', {
     _getMbMap: function() {
         // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
         return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
+    },
+    _formatLabel: function(doc) {
+        // @todo: nested sub-attribute support
+        // @todo: string template syntax support
+        return doc[this.options.label_attribute];
     },
     _onAutocompleteSelected: function(evt, evtData) {
         var format = new OpenLayers.Format[this.options.geom_format]();
