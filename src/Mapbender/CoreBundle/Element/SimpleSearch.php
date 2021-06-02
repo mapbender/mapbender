@@ -74,7 +74,6 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
     {
         return array(
             'js'    => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/autocomplete.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
             ),
             'css'   => array(

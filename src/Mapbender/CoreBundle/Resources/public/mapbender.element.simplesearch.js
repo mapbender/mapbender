@@ -35,31 +35,46 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+        // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
+        var minLength = 2;
 
+        searchInput.autocomplete({
+            appendTo: searchInput.parent().get(0),
+            delay: self.options.delay,
+            minLength: minLength,
+            /** @see https://api.jqueryui.com/autocomplete/#option-source */
+            source: function(request, responseCallback) {
+                var term = self._tokenize(request.term);
+                if (!term || term.length < minLength) {
+                    responseCallback([]);
+                    return;
+                }
+                $.getJSON(url, {term: term})
+                    .then(function(response) {
+                        var formatted =  (response || []).map(function(item) {
+                            return Object.assign(item, {
+                                label: item[self.options.label_attribute]
+                            });
+                        });
+                        responseCallback(formatted);
 
-        // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
-        // same options object
-        // @todo: drop the FOM Autocomplete widget usage entirely (SimpleSearch is the only user)
-        var acOptions = Object.assign({}, Mapbender.Autocomplete.prototype.options, {
-                url: url,
-                delay: this.options.delay,
-                dataTitle: this.options.label_attribute,
-                dataIdx: null,
-                preProcessor: $.proxy(this._tokenize, this)
+                    }, function() {
+                        responseCallback([]);
+                    })
+                ;
+            },
+            select: function(event, ui) {
+                // Adapt data format
+                self._onAutocompleteSelected(event, {data: ui.item});
+            },
+            classes: {
+                'ui-autocomplete': 'ui-autocomplete autocompleteList'
+            }
         });
-        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
-            url: acOptions.url,
-            delay: acOptions.delay
-        });
-        this.autocomplete.options = acOptions;
-
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
-            var searchTerm = searchInput.val();
-            if(searchTerm.length >= self.autocomplete.options.minLength) {
-                self.autocomplete.find(searchTerm);
-            }
             evt.preventDefault();
+            searchInput.autocomplete("search");
         });
 
         // On item selection in autocomplete, parse data and set map bbox
