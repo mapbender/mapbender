@@ -56,7 +56,11 @@ $.widget('mapbender.mbSimpleSearch', {
                                 label: item[self.options.label_attribute]
                             });
                         }).filter(function(item) {
-                            return item.label;
+                            var geomEmpty = !item[self.options.geom_attribute];
+                            if (geomEmpty) {
+                                console.warn("Missing geometry in SimpleSearch item", item);
+                            }
+                            return item.label && !geomEmpty;
                         });
                         responseCallback(formatted);
 
@@ -88,11 +92,6 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _onAutocompleteSelected: function(evt, evtData) {
         var format = new OpenLayers.Format[this.options.geom_format]();
-        if(!evtData.data[this.options.geom_attribute]) {
-            $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
-            return;
-        }
-
         var feature = format.read(evtData.data[this.options.geom_attribute]);
         // Unpack GeoJSON parsing result list => single feature
         while (feature && Array.isArray(feature)) { feature = feature[0]; }
