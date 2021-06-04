@@ -22,9 +22,14 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     mbMap: null,
     iconUrl_: null,
+    acPosition_: undefined,
 
     _create: function() {
         this.iconUrl_ = this.options.result_icon_url || null;
+        if (this.element.closest('.toolBar.bottom').length) {
+            /** @see https://api.jqueryui.com/autocomplete/#option-position */
+            this.acPosition_ = {my: 'left bottom', at: 'left top', collision: 'none'};
+        }
         if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
             // Local, asset-relative
             var parts = [
@@ -51,30 +56,53 @@ $.widget('mapbender.mbSimpleSearch', {
             this.layer.addCustomIconMarkerStyle('simplesearch', this.iconUrl_, offset[0], offset[1]);
         }
 
+        // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
+        var minLength = 2;
 
-        // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
-        // same options object
-        // @todo: drop the FOM Autocomplete widget usage entirely (SimpleSearch is the only user)
-        var acOptions = Object.assign({}, Mapbender.Autocomplete.prototype.options, {
-                url: url,
-                delay: this.options.delay,
-                dataTitle: this.options.label_attribute,
-                dataIdx: null,
-                preProcessor: $.proxy(this._tokenize, this)
-        });
-        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
-            url: acOptions.url,
-            delay: acOptions.delay
-        });
-        this.autocomplete.options = acOptions;
+        searchInput.autocomplete({
+            appendTo: searchInput.parent().get(0),
+            delay: self.options.delay,
+            minLength: minLength,
+            /** @see https://api.jqueryui.com/autocomplete/#option-source */
+            source: function(request, responseCallback) {
+                var term = self._tokenize(request.term);
+                if (!term || term.length < minLength) {
+                    responseCallback([]);
+                    return;
+                }
+                $.getJSON(url, {term: term})
+                    .then(function(response) {
+                        var formatted =  (response || []).map(function(item) {
+                            return Object.assign(item, {
+                                label: self._formatLabel(item)
+                            });
+                        }).filter(function(item) {
+                            var geomEmpty = !item[self.options.geom_attribute];
+                            if (geomEmpty) {
+                                console.warn("Missing geometry in SimpleSearch item", item);
+                            }
+                            return item.label && !geomEmpty;
+                        });
+                        responseCallback(formatted);
 
+                    }, function() {
+                        responseCallback([]);
+                    })
+                ;
+            },
+            position: this.acPosition_,
+            select: function(event, ui) {
+                // Adapt data format
+                self._onAutocompleteSelected(event, {data: ui.item});
+            },
+            classes: {
+                'ui-autocomplete': 'ui-autocomplete autocompleteList'
+            }
+        });
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
-            var searchTerm = searchInput.val();
-            if(searchTerm.length >= self.autocomplete.options.minLength) {
-                self.autocomplete.find(searchTerm);
-            }
             evt.preventDefault();
+            searchInput.autocomplete("search");
         });
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
@@ -93,11 +121,53 @@ $.widget('mapbender.mbSimpleSearch', {
                 throw new Error("Invalid geom_format " + this.options.geom_format);
         }
     },
-    _onAutocompleteSelected: function(evt, evtData) {
-        if(!evtData.data[this.options.geom_attribute]) {
-            $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
-            return;
+    /**
+     * @param {Object} obj
+     * @param {String} path
+     * @return {string|null}
+     */
+    _extractAttribute: function(obj, path) {
+        var props = obj;
+        var parts = path.split('.');
+        var last = parts.pop();
+        for (var i = 0; i < parts.length; ++i) {
+            props = props && props[parts[i]];
+            if (!props) {
+                break;
+            }
         }
+        if (props && (props[last] || (typeof props[last] === 'number'))) {
+            return [props[last]].join('');  // force to string
+        } else {
+            return null;
+        }
+    },
+    _formatLabel: function(doc) {
+        // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
+        var templateParts = this.options.label_attribute.split(/\${([^}]+)}/g);
+        if (templateParts.length > 1) {
+            var parts = [];
+            for (var i = 0; i < templateParts.length; i += 2) {
+                var fixedText = templateParts[i];
+                // NOTE: attributePath is undefined (index >= length of list) if label_attribute defines static text after last placeholder
+                var attributePath = templateParts[i + 1];
+                var attributeValue = attributePath && this._extractAttribute(doc, attributePath);
+                if (attributeValue) {
+                    parts.push(fixedText);
+                    parts.push(attributeValue);
+                } else {
+                    // Show text before label component only if attribute data was non-empty
+                    if (!attributePath) {
+                        parts.push(fixedText);
+                    }
+                }
+            }
+            return parts.join('').replace(/(^[\s.,:]+)|([\s.,:]+$)/g, '');
+        } else {
+            return this._extractAttribute(doc, this.options.label_attribute);
+        }
+    },
+    _onAutocompleteSelected: function(evt, evtData) {
         var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
 
         var zoomToFeatureOptions = {

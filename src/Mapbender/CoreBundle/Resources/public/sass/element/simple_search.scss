@@ -13,7 +13,6 @@
       position: absolute; // do not expand DOM size when showing items
       display: none;  // suppress border; will be shown via script when populated
       border: solid 1px #c8c8c8;
-      margin-top: -1px; // Overlap borders
       z-index: 20000;
       min-width: 100%;
       width: auto;
@@ -33,20 +32,18 @@
   }
 }
 
-.toolBar {
-  .mb-element-simplesearch {
-    .autocompleteList {
-      max-height: 250px;
-      li {
-        text-align: left;
-      }
-    }
+.sidePane .mb-element-simplesearch {
+  .autocompleteList {
+    max-width: 100%;
   }
-  &.bottom .mb-element-simplesearch {
-    .autocompleteList {
-      // "drop up"
-      bottom: 0;
-      margin-bottom: $inputHeight;
+}
+
+.toolBar .mb-element-simplesearch {
+  .autocompleteList {
+    max-height: 250px;
+    overflow-y: hidden;
+    li {
+      text-align: left;
     }
   }
 }
