@@ -77,6 +77,8 @@ $.widget('mapbender.mbSimpleSearch', {
         }
 
         var feature = format.read(evtData.data[this.options.geom_attribute]);
+        // Unpack GeoJSON parsing result list => single feature
+        while (feature && Array.isArray(feature)) { feature = feature[0]; }
         var mbMap = this._getMbMap();
 
         var zoomToFeatureOptions = {
