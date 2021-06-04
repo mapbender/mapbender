@@ -21,9 +21,14 @@ $.widget('mapbender.mbSimpleSearch', {
     marker: null,
     layer: null,
     iconUrl_: null,
+    acPosition_: undefined,
 
     _create: function() {
         this.iconUrl_ = this.options.result_icon_url || null;
+        if (this.element.closest('.toolBar.bottom').length) {
+            /** @see https://api.jqueryui.com/autocomplete/#option-position */
+            this.acPosition_ = {my: 'left bottom', at: 'left top', collision: 'none'};
+        }
         if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
             // Local, asset-relative
             var parts = [
@@ -69,6 +74,7 @@ $.widget('mapbender.mbSimpleSearch', {
                     })
                 ;
             },
+            position: this.acPosition_,
             select: function(event, ui) {
                 // Adapt data format
                 self._onAutocompleteSelected(event, {data: ui.item});
