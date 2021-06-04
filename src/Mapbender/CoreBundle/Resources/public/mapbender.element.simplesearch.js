@@ -129,13 +129,15 @@ $.widget('mapbender.mbSimpleSearch', {
                 var attributeValue = attributePath && this._extractAttribute(doc, attributePath);
                 if (attributeValue) {
                     parts.push(fixedText);
-                    parts.push(this._extractAttribute(doc, attributePath));
+                    parts.push(attributeValue);
                 } else {
-                    // @todo: filter separator texts between empty attribute lookups
-                    parts.push(fixedText);
+                    // Show text before label component only if attribute data was non-empty
+                    if (!attributePath) {
+                        parts.push(fixedText);
+                    }
                 }
             }
-            return parts.join('');
+            return parts.join('').replace(/(^[\s.,:]+)|([\s.,:]+$)/g, '');
         } else {
             return this._extractAttribute(doc, this.options.label_attribute);
         }
