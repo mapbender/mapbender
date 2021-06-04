@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ cfd82121a
+## dev-release/3.0.7 @ 616a1259e
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -39,6 +39,9 @@
 - Fix PostgreSQL errors saving WMTS source with very long "fees" texts ([#1311](https://github.com/mapbender/mapbender/issues/1311), [PR#1353](https://github.com/mapbender/mapbender/pull/1353))
 - [SearchRouter]: Replace manual `type` configuration with auto-detection
 - [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
+- [SimpleSearch]: Fix error parsing GeoJSON geometry
+- [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
+- [SimpleSearch]: Fix inaccessible search results when placed in bottom toolbar
 - Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
 - Fix locale-locking of Yaml applications on import to database ([#931](https://github.com/mapbender/mapbender/issues/931))
 - Element titles are now optional in both Yaml applications and DB-/backend-maintained applications; effective default titles are shown in title field placeholder
