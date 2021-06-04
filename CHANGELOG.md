@@ -1,4 +1,6 @@
-## dev-master @ 704f7b9ac
+## dev-master @ 456ed8d26
+* Fix WMS min / max scale not applying correctly with fractional zoom
+* [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
 * Fix broken alignment / overflowing content of dropdown-style Elements (SrsSelector, ScaleSelector, ApplicationSwitcher) when displaying labels
 * Fix invisible collapsed backed main menu button on small screens
 * Fix site links (imprint etc) not showing in main menu for anonymous users
