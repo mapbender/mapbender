@@ -1,43 +1,32 @@
 .mb-element-simplesearch {
+  .autocompleteWrapper, .autocompleteList {
+    background-color: #FFF;
+    color: #858585;
+  }
   .autocompleteWrapper {
     position: relative;
-    .autocompleteList {
-      display: none;  // suppress border; will be shown via script when populated
-      z-index: 20000;
-      background-color: #FFF;
-      color: #858585;
-      cursor: pointer;
-      width: 100%;
-      overflow: auto;
-      overflow-x: hidden;
-      border: solid 1px #c8c8c8;
-      border-top: none;
-      // Make it look like a .dropdown without really being a dropdown
-      line-height: $inputHeight;
-      @extend .smallText;
-      li {
-        display: block;
-        padding-left: 5px;
-        width: 100%;
-        text-align: left;
-        &:hover {
-          background-color: darken(#FFF, 10%);
-        }
-      }
+    input {
+      background-color: inherit;
     }
-  }
-}
+    /* position: relative; */
+    .autocompleteList {
+      position: absolute; // do not expand DOM size when showing items
+      display: none;  // suppress border; will be shown via script when populated
+      border: solid 1px #c8c8c8;
+      margin-top: -1px; // Overlap borders
+      z-index: 20000;
+      min-width: 100%;
+      width: auto;
 
-.sidePane {
-  .mb-element-simplesearch {
-    .autocompleteWrapper {
-      width: 100%;
-      .autocompleteList {
-        max-width: 100%;
-        li {
-          &:hover {
-            color: #5b932a;
-          }
+      li {
+        cursor: pointer;
+        padding-left: 5px;
+        padding-right: 5px;
+        line-height: $inputHeight;
+        display: block;
+
+        &:hover {
+          background-color: #f9f9f9;
         }
       }
     }
@@ -46,17 +35,19 @@
 
 .toolBar {
   .mb-element-simplesearch {
-    .autocompleteWrapper {
-      .autocompleteList {
-        position: absolute;
-        max-height: 250px;
+    .autocompleteList {
+      max-height: 250px;
+      li {
+        text-align: left;
       }
     }
   }
-  &.bottom .autocompleteList {
-    // "drop up"
-    bottom: 0;
-    margin-bottom: $inputHeight;
+  &.bottom .mb-element-simplesearch {
+    .autocompleteList {
+      // "drop up"
+      bottom: 0;
+      margin-bottom: $inputHeight;
+    }
   }
 }
 
