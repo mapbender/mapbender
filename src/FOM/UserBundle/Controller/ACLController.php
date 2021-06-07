@@ -64,11 +64,12 @@ class ACLController extends UserControllerBase
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
 
+        $translator = $this->getTranslator();
         return $this->render('@FOMUser/ACL/edit.html.twig', array(
             'class' => $class,
             'form' => $form->createView(),
-            'title' => $this->getTranslator()->trans('fom.user.acl.edit.edit_class_acl', array(
-                '%name%' => $acl_classes[$class],
+            'title' => $translator->trans('fom.user.acl.edit.edit_class_acl', array(
+                '%name%' => $translator->trans($acl_classes[$class]),
             ))
         ));
     }
