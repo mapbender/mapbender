@@ -20,6 +20,7 @@ use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -312,7 +313,12 @@ class ImportHandler extends ExchangeHandler
      */
     protected function copyAcls(Application $target, Application $source)
     {
-        $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
+        try {
+            $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
+        } catch (AclNotFoundException $e) {
+            // Nothing to copy
+            return;
+        }
         $targetOid = ObjectIdentity::fromDomainObject($target);
         try {
             $targetAcl = $this->aclProvider->createAcl($targetOid);
