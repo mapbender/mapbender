@@ -128,6 +128,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'security.xml',
             'services.xml',
+            'commands.xml',
             'mapbender.yml',
             'constraints.yml',
             'formTypes.yml',
