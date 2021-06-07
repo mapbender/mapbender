@@ -48,20 +48,9 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         } else {
             if (@\file_exists($inputArg)) {
                 if (\is_dir($inputArg)) {
-                    $inputPaths = array();
-                    foreach (\scandir($inputArg) as $file) {
-                        if (preg_match('#\.(yml|yaml)$#', $file)) {
-                            $inputPaths[] = realpath($inputArg) . '/' . $file;
-                        }
-                    }
-                    if (!$inputPaths) {
-                        $output->warning("Input directory {$inputArg} is empty");
-                    }
+                    $this->processDirectory($inputArg, $input, $output);
                 } else {
-                    $inputPaths = array($inputArg);
-                }
-                foreach ($inputPaths as $path) {
-                    $this->processFile($path, $input, $output);
+                    $this->processFile($inputArg, $input, $output);
                 }
             } else {
                 throw new \InvalidArgumentException("Input path {$inputArg} does not exist");
@@ -79,6 +68,23 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
             $this->processYamlDefinitions($appConfigs, $path, $input, $output);
         } else {
             $this->processExportData($fileData, $input, $output);
+        }
+    }
+
+    public function processDirectory($path, InputInterface $input, OutputStyle $output)
+    {
+        $inputPaths = array();
+        foreach (\scandir($path) as $file) {
+            if (preg_match('#\.(yml|yaml)$#', $file)) {
+                $inputPaths[] = realpath($path) . '/' . $file;
+            }
+        }
+        if ($inputPaths) {
+            foreach ($inputPaths as $inputPath) {
+                $this->processFile($inputPath, $input, $output);
+            }
+        } else {
+            $output->warning("Input directory {$path} is empty");
         }
     }
 

@@ -4,11 +4,10 @@ namespace Mapbender\CoreBundle\DataFixtures\ORM\Application;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Utils\EntityUtil;
-use Mapbender\ManagerBundle\Component\ImportHandler;
+use Mapbender\CoreBundle\Command\ApplicationImportCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,22 +16,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Paul Schmidt
  *
- * @todo Sf4: figure out if Fixtures can use service DI
+ * @deprecated for incompatibility with Symfony 4; misuse of fixtures for non-test-related usages
+ * Replace with app/console mapbender:application:import <directoryname>
  */
 class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 {
-    /** @var ApplicationYAMLMapper */
-    protected $repository;
-    /** @var ImportHandler */
-    protected $importer;
+    /** @var ApplicationImportCommand */
+    protected $importCommand;
+    /** @var string[] */
+    protected $sourcePaths;
 
     /**
      * @param ContainerInterface|null $container
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->repository = $container->get('mapbender.application.yaml_entity_repository');
-        $this->importer = $container->get('mapbender.application_importer.service');
+        $this->sourcePaths = $container->getParameter('mapbender.yaml_application_dirs');
+        $this->importCommand = $container->get('mapbender.command.application_import');
     }
 
     /**
@@ -40,23 +40,11 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
      */
     public function load(ObjectManager $manager = null)
     {
-        foreach ($this->repository->getApplications() as $application) {
-            if ($application->isPublished()) {
-                $this->importOne($manager, $application);
-            }
-        }
-    }
-
-    protected function importOne(EntityManagerInterface $em, Application $application)
-    {
-        $newSlug = EntityUtil::getUniqueValue($em, get_class($application), 'slug', $application->getSlug() . '_yml', '');
-        $newTitle = EntityUtil::getUniqueValue($em, get_class($application), 'title', $application->getTitle(), ' ');
-        $em->beginTransaction();
-        $clonedApp = $this->importer->duplicateApplication($application, $newSlug);
-        $clonedApp->setTitle($newTitle);
-        $em->commit();
-        if (\php_sapi_name() === 'cli') {
-            echo "Created database application {$clonedApp->getSlug()}\n";
+        $fakeInput = new ArrayInput(array());
+        $output = new SymfonyStyle($fakeInput, new ConsoleOutput());
+        $output->warning('DEPRECATED: importing applications via fixture is deprecated and will be removed in Mapbender v3.3. Use the mapbender:application:import console command instead, using a directory name as an argument.');
+        foreach ($this->sourcePaths as $sourcePath) {
+            $this->importCommand->processDirectory($sourcePath, $fakeInput, $output);
         }
     }
 }

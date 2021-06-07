@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <!-- see https://symfony.com/doc/4.4/console/commands_as_services.html -->
-        <service class="Mapbender\CoreBundle\Command\ApplicationImportCommand">
+        <service id="mapbender.command.application_import" class="Mapbender\CoreBundle\Command\ApplicationImportCommand">
             <tag name="console.command" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application_importer.service" />
