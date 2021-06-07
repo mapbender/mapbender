@@ -60,7 +60,7 @@ $(function() {
         if (filterTargetId && !filterScope.length) {
             filterScope = $(document.getElementById(filterTargetId));
         }
-        var items = $("li, tr", filterScope).not('.doNotFilter');
+        var items = $(">li, >tr, >tbody>tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
             $.each(items, function() {
