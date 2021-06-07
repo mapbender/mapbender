@@ -29,6 +29,7 @@ class FOMUserBundle extends ManagerBundle
         $xmlLoader = new XmlFileLoader($container, $configLocator);
         $xmlLoader->load('security.xml');
         $xmlLoader->load('services.xml');
+        $xmlLoader->load('commands.xml');
 
         $this->addMenu($container);
         $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', 'FOM\UserBundle\Entity\User'));

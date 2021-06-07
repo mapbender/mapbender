@@ -2,16 +2,16 @@
 
 namespace FOM\UserBundle\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Question\Question;
 
 
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @author Christian Wygoda
  */
-class ResetRootAccountCommand extends ContainerAwareCommand
+class ResetRootAccountCommand extends Command
 {
     /** @var UserHelperService */
     protected $userHelper;
@@ -30,6 +30,17 @@ class ResetRootAccountCommand extends ContainerAwareCommand
     protected $userRepository;
     /** @var string */
     protected $userEntityClass;
+
+    public function __construct(RegistryInterface $managerRegistry,
+                                UserHelperService $userHelper,
+                                $userEntityClass)
+    {
+        parent::__construct('fom:user:resetroot');
+        $this->userRepository = $managerRegistry->getRepository($userEntityClass);
+        $this->entityManager = $managerRegistry->getEntityManagerForClass($userEntityClass);
+        $this->userHelper = $userHelper;
+        $this->userEntityClass = $userEntityClass;
+    }
 
     protected function configure()
     {
@@ -52,12 +63,6 @@ EOT
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
-        $this->userHelper = $this->getContainer()->get('fom.user_helper.service');
-        /** @var Registry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
-        $this->userEntityClass = $this->getContainer()->getParameter('fom.user_entity');
-        $this->userRepository = $doctrine->getRepository($this->userEntityClass);
-        $this->entityManager = $doctrine->getManagerForClass($this->userEntityClass);
 
         if ($input->getOption('silent')) {
             $input->setInteractive(false);

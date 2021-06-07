@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- see https://symfony.com/doc/4.4/console/commands_as_services.html -->
+        <service class="FOM\UserBundle\Command\ResetRootAccountCommand">
+            <tag name="console.command" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="fom.user_helper.service" />
+            <argument>%fom.user_entity%</argument>
+        </service>
+    </services>
+</container>
