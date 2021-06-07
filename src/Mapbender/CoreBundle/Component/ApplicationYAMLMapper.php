@@ -84,7 +84,7 @@ class ApplicationYAMLMapper
         return $application;
     }
 
-    protected function createApplication($definition)
+    public function createApplication($definition)
     {
         $timestamp = filemtime($definition['__filename__']);
         unset($definition['__filename__']);

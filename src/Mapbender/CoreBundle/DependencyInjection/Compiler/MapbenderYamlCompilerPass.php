@@ -46,12 +46,33 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             @trigger_error("DEPRECATED: explicit path passed to MapbenderYamlCompilerPass constructor. Use mapbender.yaml_application_dirs parameter collection to customize Yaml application load paths", E_USER_DEPRECATED);
             $sourcePaths = array($this->applicationDir);
         }
-        $this->strictElementConfigs = $container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%');
+        $this->setStrictElementConfigs($container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%'));
         foreach ($sourcePaths as $path) {
             if (\is_dir($path)) {
                 $this->loadYamlApplications($container, $path);
             }
         }
+    }
+
+    /**
+     * @param bool $strict
+     */
+    public function setStrictElementConfigs($strict)
+    {
+        $this->strictElementConfigs = $strict;
+    }
+
+    /**
+     * @param mixed[] $rawConfig
+     * @param string $slug
+     * @param string $filename
+     * @return mixed[]
+     */
+    public function prepareApplicationConfig($rawConfig, $slug, $filename)
+    {
+        $configOut = $this->processApplicationDefinition($slug, $rawConfig);
+        $configOut['__filename__'] = \realpath($filename);
+        return $configOut;
     }
 
     /**
@@ -74,8 +95,7 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             $fileData = Yaml::parse(file_get_contents($file->getRealPath()));
             if (!empty($fileData['parameters']['applications'])) {
                 foreach ($fileData['parameters']['applications'] as $slug => $appDefinition) {
-                    $applications[$slug] = $this->processApplicationDefinition($slug, $appDefinition);
-                    $applications[$slug]['__filename__'] = $file->getRealPath();
+                    $applications[$slug] = $this->prepareApplicationConfig($appDefinition, $slug, $file->getRealPath());
                 }
             }
         }

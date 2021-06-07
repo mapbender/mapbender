@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Component\Console\Command\Command;
 
@@ -16,14 +17,17 @@ abstract class AbstractApplicationTransportCommand extends Command
     protected $defaultEntityManager;
     /** @var ImportHandler */
     protected $importHandler;
+    /** @var ApplicationYAMLMapper */
+    protected $yamlRepository;
 
     public function __construct(EntityManagerInterface $defaultEntityManager,
-                                ImportHandler $importHandler
-                                )
+                                ImportHandler $importHandler,
+                                ApplicationYAMLMapper $yamlRepository)
     {
         parent::__construct(null);
         $this->defaultEntityManager = $defaultEntityManager;
         $this->importHandler = $importHandler;
+        $this->yamlRepository = $yamlRepository;
     }
 
     /**

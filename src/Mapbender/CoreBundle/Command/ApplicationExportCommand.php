@@ -17,8 +17,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
     /** @var ExportHandler */
     protected $exportHandler;
 
@@ -27,9 +25,8 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
                                 ExportHandler $exportHandler,
                                 ApplicationYAMLMapper $yamlRepository)
     {
-        parent::__construct($defaultEntityManager, $importHandler);
+        parent::__construct($defaultEntityManager, $importHandler, $yamlRepository);
         $this->exportHandler = $exportHandler;
-        $this->yamlRepository = $yamlRepository;
     }
 
     protected function configure()
