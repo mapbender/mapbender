@@ -1,14 +1,18 @@
-## dev-master @ 118440f98
+## dev-master @ 9b406b399
 * Fix WMS min / max scale not applying correctly with fractional zoom
 * [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))
 * [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
+* Fix error duplicating application with empty Acl
 * Fix broken alignment / overflowing content of dropdown-style Elements (SrsSelector, ScaleSelector, ApplicationSwitcher) when displaying labels
 * Fix invisible collapsed backed main menu button on small screens
 * Fix site links (imprint etc) not showing in main menu for anonymous users
 * Fix main menu "Applications" link not showing for anonymous users
 * Fix ACL class list overflowing on very small screens
+* Fix translation key appearing verbatim in global ACL class editing title
 * Fix broken layout of Application list interaction buttons on very small screens
 * Fix Application list main title spacing / block sizing on very small screens
+* Fix list filter hiding portions of content inside matching Application / Source list entries
+* Fix list filter conflicts between source and shared instance lists (single page, separate tabs)
 * Fix inconsistent font weight (higher than other content) in backend dialogs
 * Fix availability of Ubuntu font in isolated networks (font now bundled)
 * Update screenshot preview / placeholder styling in Application form to match Application list
