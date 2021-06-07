@@ -35,7 +35,7 @@
 {% block tab_containers %}
     <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
         {%- set items = sources -%}
-        {%- set list_id = list_id | default('listFilterServices') -%}
+        {%- set list_id = 'listFilterServices' -%}
         <div class="list-head">
             <div class="row">
                 <div class="col-sm-5 col-xs-12 col-12">
@@ -91,7 +91,7 @@
 
     </div>
     <div{{ tab_macros.tab_content_attributes('SharedInstances', '', false) }}>
-        {%- set list_id = list_id | default('listFilterSharedInstances') -%}
+        {%- set list_id = 'listFilterSharedInstances' -%}
         {%- set list_class = '-fn-instance-list' -%}
         {%- set items = shared_instances -%}
         <div class="list-head">
