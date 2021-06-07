@@ -6,7 +6,9 @@ use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use FOM\UserBundle\DependencyInjection\Factory\SspiFactory;
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 
@@ -22,6 +24,12 @@ class FOMUserBundle extends ManagerBundle
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new SspiFactory());
+
+        $configLocator = new FileLocator(__DIR__ . '/Resources/config');
+        $xmlLoader = new XmlFileLoader($container, $configLocator);
+        $xmlLoader->load('security.xml');
+        $xmlLoader->load('services.xml');
+
         $this->addMenu($container);
         $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', 'FOM\UserBundle\Entity\User'));
     }

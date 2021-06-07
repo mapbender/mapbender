@@ -2,9 +2,7 @@
 
 namespace FOM\UserBundle\DependencyInjection;
 
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class FOMUserExtension extends Extension {
@@ -33,10 +31,6 @@ class FOMUserExtension extends Extension {
         $container->setParameter("fom_user.login_check_log_time", $config["login_check_log_time"]);
         $container->setParameter("fom_user.login_attempts_before_delay", $config["login_attempts_before_delay"]);
         $container->setParameter("fom_user.login_delay_after_fail", $config["login_delay_after_fail"]);
-
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('security.xml');
-        $loader->load('services.xml');
     }
 
     public function getAlias() {
