@@ -81,60 +81,41 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
      */
     protected function buildSrsConfigs()
     {
-        $allSrs = array();
+        $customTitles = array();
         $configuration = $this->entity->getConfiguration();
         $mainSrsParts  = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
-        $configuration["srs"] = $mainSrsParts[0];
-        $allSrs[] = array(
-            "name" => $mainSrsParts[0],
-            "title" => (count($mainSrsParts) > 1) ? trim($mainSrsParts[1]) : '',
-        );
-        $allSrsNames[] = $allSrs[0]['name'];
-
-        if (!empty($configuration["otherSrs"])) {
-            $otherSrs = array();
-            if (is_array($configuration["otherSrs"])) {
-                $otherSrsConfigs = $configuration["otherSrs"];
-            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
-                $otherSrsConfigs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
-            } else {
-                // @todo: this should be an error
-                $otherSrsConfigs = array();
+        $defaultSrsName = $mainSrsParts[0];
+        $configuration['srs'] = $defaultSrsName;
+        if (!empty($mainSrsParts[1])) {
+            $customTitles[$mainSrsParts[0]] = $mainSrsParts[1];
+        }
+        $srsNames = array($defaultSrsName);
+        if (!empty($configuration['otherSrs'])) {
+            $otherSrsConfigs = $configuration['otherSrs'];
+            if (\is_string($otherSrsConfigs)) {
+                $otherSrsConfigs = preg_split('/\s*,\s*/', trim($otherSrsConfigs));
             }
+
             foreach ($otherSrsConfigs as $srs) {
                 $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
-                // @todo: non-unique srses should be an error
-                if (!\in_array($otherSrsParts[0], $allSrsNames)) {
-                    $otherSrs[] = array(
-                        "name" => $otherSrsParts[0],
-                        "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
-                    );
-                    $allSrsNames[] = $otherSrsParts;
+                if ($otherSrsParts[0] !== $defaultSrsName) {
+                    $srsNames[] = $otherSrsParts[0];
+                    if (!empty($otherSrsParts[1])) {
+                        $customTitles[$otherSrsParts[0]] = $otherSrsParts[1];
+                    }
                 }
             }
-            // Sort (already unique) entries via array_unique, the only sensible sorting method in PHP (no reference semantics).
-            // @todo: there should be no sorting at all
-            $allSrs = array_merge($allSrs, array_unique($otherSrs, SORT_REGULAR));
         }
-        $allSrs = array_unique($allSrs, SORT_REGULAR);
-        return $this->getSrsDefinitions($allSrs);
-    }
-
-    /**
-     * Checks if the SRS with $name appears in the list of configured SRSes
-     *
-     * @param string[][] $srsConfigs
-     * @param string $name
-     * @return bool
-     */
-    protected function hasSrs($srsConfigs, $name)
-    {
-        foreach ($srsConfigs as $srsConfig) {
-            if (strtoupper($srsConfig['name']) === strtoupper($name)) {
-                return true;
+        $defs = $this->getSrsDefinitions($srsNames);
+        foreach ($defs as $i => $def) {
+            if (!empty($customTitles[$def['name']])) {
+                $defs[$i]['title'] = $customTitles[$def['name']];
             }
         }
-        return false;
+        return array(
+            'srs' => $defaultSrsName,
+            'srsDefs' => $defs,
+        );
     }
 
     /**
@@ -144,10 +125,7 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
     {
         $defaultConfiguration = $this->getDefaultConfiguration();
         $configuration        = parent::getConfiguration();
-
-        $srsConfigs = $this->buildSrsConfigs();
-        $configuration['srs'] = $srsConfigs[0]['name'];
-        $configuration["srsDefs"] = $srsConfigs;
+        $configuration += $this->buildSrsConfigs();
 
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
@@ -193,37 +171,27 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
 
     /**
      * Returns proj4js srs definitions from srs names
-     * @param array[] $srsSpecs arrays with 'name' and 'title' keys
-     * @return string[][] each entry with keys 'name' (code), 'title' (display label) and 'definition' (proj4 compatible)
+     * @param string[] $names
+     * @return string[][]
      */
-    protected function getSrsDefinitions(array $srsSpecs)
+    protected function getSrsDefinitions(array $names)
     {
-        $titleMap = array_column($srsSpecs, 'title', 'name');
         /** @var RegistryInterface $managerRegistry */
         $managerRegistry = $this->container->get('doctrine');
         $srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+        /** @var SRS[] $srses */
         $srses = $srsRepository->findBy(array(
-            'name' => array_keys($titleMap),
+            'name' => $names,
         ));
-
-        /** @var SRS[] $rowMap */
-        $rowMap = array();
+        $defs = array();
         foreach ($srses as $srs) {
-            $rowMap[$srs->getName()] = $srs;
+            $defs[] = array(
+                'name' => $srs->getName(),
+                'title' => $srs->getTitle(),
+                'definition' => $srs->getDefinition(),
+            );
         }
-        $result = array();
-        // Database response may return in random order. Produce results maintaining order of input $srsSpecs.
-        foreach (array_keys($titleMap) as $srsName) {
-            if (!empty($rowMap[$srsName])) {
-                $result[] = array(
-                    'name' => $rowMap[$srsName]->getName(),
-                    'title' => $titleMap[$srsName] ?: $rowMap[$srsName]->getTitle(),
-                    'definition' => $rowMap[$srsName]->getDefinition(),
-                );
-            }
-            // @todo: unsupporteded SRS should be an error
-        }
-        return $result;
+        return $defs;
     }
 
     /**
