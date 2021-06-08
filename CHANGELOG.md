@@ -1,4 +1,4 @@
-## dev-master @ 9b406b399
+## dev-master @ 777ed42d4
 * Fix WMS min / max scale not applying correctly with fractional zoom
 * [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))
 * [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
@@ -15,6 +15,10 @@
 * Fix list filter conflicts between source and shared instance lists (single page, separate tabs)
 * Fix inconsistent font weight (higher than other content) in backend dialogs
 * Fix availability of Ubuntu font in isolated networks (font now bundled)
+* [ViewManager]: Add intermediate popover step with distinct form fields to improve updating workflow
+* [ViewManager]: Add read-only detail view to allow record inspection without saving privileges
+* [ViewManager]: prevent confusing public <=> private satus changes on update; deliberate status change now requires saving a new record
+* [ViewManager]: default "showDate" (in listings) to false to make more space for long titles (date is always shown in info / update)
 * Update screenshot preview / placeholder styling in Application form to match Application list
 * Increase form field contrast in backend
 * Add login backdrop image customizability via `branding.login_backdrop` parameter (see [PR#1360](https://github.com/mapbender/mapbender/pull/1360))
