@@ -29,7 +29,7 @@ class ElementDistribution
         $this->anchoredContentElements = array();
         $this->unanchoredContentElements = new ElementBucket('content');    /** @todo: use region descriptor object instead of string */
         foreach ($elements as $element) {
-            if (\is_a($element->getClass(), 'Mapbender\CoreBundle\Element\Map', true)) {
+            if (\is_a($element->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true)) {
                 if ($this->mapElement) {
                     throw new MultipleMapElementsException("Invalid application: multiple map elements");
                 }
