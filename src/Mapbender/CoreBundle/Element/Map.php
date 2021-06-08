@@ -2,14 +2,13 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Map element.
@@ -200,12 +199,13 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
     protected function getSrsDefinitions(array $srsSpecs)
     {
         $titleMap = array_column($srsSpecs, 'title', 'name');
-        /** @var EntityManagerInterface $em */
-        $em = $this->container->get("doctrine")->getManager();
-        /** @var SRS[] $srses */
-        $srses = $em->getRepository('MapbenderCoreBundle:SRS')->findBy(array(
+        /** @var RegistryInterface $managerRegistry */
+        $managerRegistry = $this->container->get('doctrine');
+        $srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+        $srses = $srsRepository->findBy(array(
             'name' => array_keys($titleMap),
         ));
+
         /** @var SRS[] $rowMap */
         $rowMap = array();
         foreach ($srses as $srs) {
