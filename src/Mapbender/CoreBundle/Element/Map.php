@@ -145,13 +145,11 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
     {
         $defaultConfiguration = $this->getDefaultConfiguration();
         $configuration        = parent::getConfiguration();
-        $extra                = array();
 
         $srsConfigs = $this->buildSrsConfigs();
         $configuration['srs'] = $srsConfigs[0]['name'];
         $configuration["srsDefs"] = $srsConfigs;
 
-        $configuration['extra'] = $extra;
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
         } else {
