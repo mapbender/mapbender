@@ -106,6 +106,9 @@
             $(link).attr('href', url);
         },
         _replace: function($row, $form, id) {
+            if (!id) {
+                throw new Error("Cannot update record without id");
+            }
             var data = Object.assign(this._getCommonSaveData(), {
                 title: $('input[name="title"]', $form).val() || $row.attr('data-title')
             });
