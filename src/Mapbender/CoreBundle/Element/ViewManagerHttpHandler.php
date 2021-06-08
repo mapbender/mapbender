@@ -113,6 +113,7 @@ class ViewManagerHttpHandler
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
         if ($id = $request->query->get('id')) {
+            // Update existing record
             /** @var ViewManagerState|null $record */
             $record = $this->getRepository()->find($id);
             if (!$record) {
@@ -121,15 +122,16 @@ class ViewManagerHttpHandler
             if ($newTitle = $request->request->get('title')) {
                 $record->setTitle($newTitle);
             }
+        } else {
+            // New record
+            $record = new ViewManagerState();
+            $record->setApplicationSlug($element->getApplication()->getSlug());
+            $record->setTitle($request->request->get('title'));
             if ($request->request->get('savePublic')) {
                 $record->setUserId(null);
             } else {
                 $record->setUserId($this->getUserId());
             }
-        } else {
-            $record = new ViewManagerState();
-            $record->setApplicationSlug($element->getApplication()->getSlug());
-            $record->setTitle($request->request->get('title'));
         }
         $this->updateRecord($record, $request);
 
