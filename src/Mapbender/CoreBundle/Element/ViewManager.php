@@ -64,7 +64,7 @@ class ViewManager extends Element
             'publicEntries' => self::ACCESS_READONLY,
             'privateEntries' => true,
             'allowAnonymousSave' => false,
-            'showDate' => true,
+            'showDate' => false,
         );
     }
 
