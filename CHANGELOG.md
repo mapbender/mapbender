@@ -1,4 +1,4 @@
-## dev-master @ 777ed42d4
+## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
 * [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))
 * [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
