@@ -293,7 +293,9 @@ mb:
         title: Ansichtsverwaltung
         description: Speichert Kartenzustände zum späteren Abruf
       saveAsPublic: Als öffentlichen Eintrag speichern
-      isPublic: Öffentlicher Eintrag
+      recordStatus:
+        public: Öffentlicher Eintrag
+        private: Privater Eintrag
       confirmDelete: Eintrag wirklich löschen?
       no_data: Keine Daten
       title: Titel

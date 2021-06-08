@@ -35,8 +35,6 @@
             ;
             var $infoContent = $updateInfoCommon.clone();
             $('input', $infoContent).prop('readonly', true);
-            // Attribute "readonly" doesn't work for checkboxes
-            $('input[type="checkbox"]', $infoContent).prop('disabled', true);
             $('.-fn-update', $infoContent).remove();
             this.updateContent = $updateInfoCommon.html();
             this.infoContent = $infoContent.html();
@@ -110,11 +108,6 @@
             var data = Object.assign(this._getCommonSaveData(), {
                 title: $('input[name="title"]', $form).val() || $row.attr('data-title')
             });
-            var $publicCb = $('input[name="public"]', $form);
-            if ($publicCb.length && !$publicCb.prop('disabled')) {
-                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
-                data.savePublic =  $publicCb.prop('checked') && '1' || ''
-            }
             var params = {id: id};
             var self = this;
             return $.ajax([[this.elementUrl, 'save'].join('/'), $.param(params)].join('?'), {
@@ -141,7 +134,8 @@
                 return $.Deferred().reject().promise();
             }
             var data = Object.assign(this._getCommonSaveData(), {
-                title: title
+                title: title,
+                savePublic: this._getSavePublic()
             });
 
             var self = this;
@@ -184,8 +178,6 @@
             var currentSettings = this.mbMap.getModel().getCurrentSettings();
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
             return {
-                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
-                savePublic: this._getSavePublic(),
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
                 layersetsDiff: diff.layersets,
                 sourcesDiff: diff.sources
@@ -205,7 +197,11 @@
             }
             $('input[name="title"]', $popover).val($row.attr('data-title'));
             $('input[name="mtime"]', $popover).val($row.attr('data-mtime'));
-            $('input[name="public"]', $popover).prop('checked', $row.attr('data-visibility-group') === 'public');
+            var statusText = $row.attr('data-visibility-group') === 'public'
+                ? Mapbender.trans('mb.core.viewManager.recordStatus.public')
+                : Mapbender.trans('mb.core.viewManager.recordStatus.private')
+            ;
+            $('.-js-record-status', $popover).text(statusText);
             $('.-js-update-content-anchor', $row).append($popover);
 
             var self = this;

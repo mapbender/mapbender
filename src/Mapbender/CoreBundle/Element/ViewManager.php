@@ -42,7 +42,9 @@ class ViewManager extends Element
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/element/mbViewManager.scss',
             ),
-            'trans' => array(),
+            'trans' => array(
+                'mb.core.viewManager.recordStatus.*',
+            ),
         );
     }
 

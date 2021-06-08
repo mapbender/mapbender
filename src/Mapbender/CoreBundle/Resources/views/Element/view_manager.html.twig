@@ -44,11 +44,7 @@
                     <input name="mtime" type="text" class="form-control" readonly="readonly" disabled="disabled" />
                 </div>
             </div>
-            {%- if grants.savePublic and grants.savePrivate -%}
-            <div class="checkbox">
-                <label><input type="checkbox" name="public">{{ 'mb.core.viewManager.isPublic' | trans }}</label>
-            </div>
-            {%- endif -%}
+            <p class="-js-record-status"></p>
         </div>
         <div class="text-nowrap text-right">
             <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
