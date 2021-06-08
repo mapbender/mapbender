@@ -150,8 +150,6 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         $srsConfigs = $this->buildSrsConfigs();
         $configuration['srs'] = $srsConfigs[0]['name'];
         $configuration["srsDefs"] = $srsConfigs;
-        /** @var Request $request */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
 
         $configuration['extra'] = $extra;
         if (!isset($configuration["tileSize"])) {
