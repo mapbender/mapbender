@@ -78,7 +78,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\LinkButton',
             'Mapbender\CoreBundle\Element\ViewManager',
-            'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',
             'Mapbender\CoreBundle\Element\ResetView',
