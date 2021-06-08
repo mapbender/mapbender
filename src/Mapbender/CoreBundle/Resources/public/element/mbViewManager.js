@@ -12,6 +12,7 @@
         defaultSavePublic: false,
         deleteConfirmationContent: null,
         updateContent: null,
+        infoContent: null,
         mapPromise: null,
         baseUrl: null,
 
@@ -29,9 +30,16 @@
             this.deleteConfirmationContent = $('.-js-delete-confirmation-content', this.element)
                 .remove().removeClass('hidden').html()
             ;
-            this.updateContent = $('.-js-update-content', this.element)
-                .remove().removeClass('hidden').html()
+            var $updateInfoCommon = $('.-js-update-content', this.element)
+                .remove().removeClass('hidden')
             ;
+            var $infoContent = $updateInfoCommon.clone();
+            $('input', $infoContent).prop('readonly', true);
+            // Attribute "readonly" doesn't work for checkboxes
+            $('input[type="checkbox"]', $infoContent).prop('disabled', true);
+            $('.-fn-update', $infoContent).remove();
+            this.updateContent = $updateInfoCommon.html();
+            this.infoContent = $infoContent.html();
             this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
@@ -65,12 +73,12 @@
                     });
                 });
             });
-            this.element.on('click', '.-fn-open-update[data-id]', function() {
+            this.element.on('click', '.-fn-open-update[data-id], .-fn-open-info', function() {
                 // @todo: put id data on the row instead
                 var $clickTarget = $(this);
-                var recordId = $clickTarget.attr('data-id');
+                var recordId = !$clickTarget.is('.-fn-open-info') && $clickTarget.attr('data-id') || null;
                 var $row = $clickTarget.closest('tr');
-                self._openUpdate($row, recordId);
+                self._openUpdateOrInfo($row, recordId);
             });
         },
         _load: function() {
@@ -182,13 +190,18 @@
                 sourcesDiff: diff.sources
             };
         },
-        _openUpdate: function($row, recordId) {
+        _openUpdateOrInfo: function($row, recordId) {
             this._closePopovers();
             var $popover = $(document.createElement('div'))
                 .addClass('popover bottom')
                 .append($(document.createElement('div')).addClass('arrow'))
-                .append(this.updateContent)
             ;
+            var isUpdate = !!recordId;
+            if (isUpdate) {
+                $popover.append(this.updateContent);
+            } else {
+                $popover.append(this.infoContent);
+            }
             $('input[name="title"]', $popover).val($row.attr('data-title'));
             $('input[name="mtime"]', $popover).val($row.attr('data-mtime'));
             $('input[name="public"]', $popover).prop('checked', $row.attr('data-visibility-group') === 'public');

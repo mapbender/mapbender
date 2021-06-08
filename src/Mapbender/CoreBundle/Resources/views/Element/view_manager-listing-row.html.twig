@@ -3,11 +3,13 @@
     <td>{{ record.title }}</td>
     <td class="text-nowrap">{{ record.mtime | date(dateFormat) }}</td>
     <td class="text-nowrap text-right">
-        {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
         <span class="static-popover-wrap -js-update-content-anchor">
-            <i class="-fn-open-update fa fas fa-save clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.replace' | trans }}" data-id="{{ record.id }}"></i>
+            {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
+                <i class="-fn-open-update fa fas fa-save clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.replace' | trans }}" data-id="{{ record.id }}"></i>
+            {%- else -%}
+                <i class="-fn-open-info fa fas fa-info-circle clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.details' | trans }}"></i>
+            {%- endif -%}
         </span>
-        {%- endif -%}
         {%- if _is_private or grants.deletePublic -%}
         <span class="static-popover-wrap -js-confirmation-anchor-delete">
             <i class="-fn-delete fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}" data-id="{{ record.id }}"></i>
