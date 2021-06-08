@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementFactory;
@@ -119,8 +120,11 @@ class ElementMarkupRenderer
             );
             if ($view instanceof TemplateView) {
                 $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
+            } elseif ($view instanceof ElementView) {
+                // Empty ElementView
+                $content = '';
             } else {
-                throw new \Exception("FIXME: Don't know how to render " . get_class($view));
+                throw new \Exception("Don't know how to render " . get_class($view));
             }
             return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
         } else {
