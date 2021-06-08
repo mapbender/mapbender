@@ -62,10 +62,9 @@
                 evt.preventDefault();
                 self._apply(self._decodeDiff(this));
             });
-            this.element.on('click', '.-fn-delete[data-id]', function() {
-                // @todo: put id data on the row instead
-                var rowId = $(this).attr('data-id');
+            this.element.on('click', '.-fn-delete', function() {
                 var $row = $(this).closest('tr');
+                var rowId = $row.attr('data-id');
                 self._confirm($row, self.deleteConfirmationContent).then(function() {
                     self._delete(rowId).then(function() {
                         $row.remove();
@@ -73,11 +72,10 @@
                     });
                 });
             });
-            this.element.on('click', '.-fn-open-update[data-id], .-fn-open-info', function() {
-                // @todo: put id data on the row instead
+            this.element.on('click', '.-fn-open-update, .-fn-open-info', function() {
                 var $clickTarget = $(this);
-                var recordId = !$clickTarget.is('.-fn-open-info') && $clickTarget.attr('data-id') || null;
                 var $row = $clickTarget.closest('tr');
+                var recordId = !$clickTarget.is('.-fn-open-info') && $row.attr('data-id') || null;
                 self._openUpdateOrInfo($row, recordId);
             });
         },
