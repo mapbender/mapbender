@@ -15,6 +15,12 @@
       &.bottom {
         top: 2ex;
       }
+      .form-horizontal {
+        min-width: 17em;
+      }
+      .form-horizontal, .form-group {
+        margin-bottom: 0.75em;
+      }
     }
   }
 }

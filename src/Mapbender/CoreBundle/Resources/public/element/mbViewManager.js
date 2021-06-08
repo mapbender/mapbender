@@ -11,6 +11,7 @@
         referenceSettings: null,
         defaultSavePublic: false,
         deleteConfirmationContent: null,
+        updateContent: null,
         mapPromise: null,
         baseUrl: null,
 
@@ -26,6 +27,9 @@
             });
             this.defaultSavePublic = (this.options.publicEntries === 'rw') || (this.options.publicEntries === 'rwd');
             this.deleteConfirmationContent = $('.-js-delete-confirmation-content', this.element)
+                .remove().removeClass('hidden').html()
+            ;
+            this.updateContent = $('.-js-update-content', this.element)
                 .remove().removeClass('hidden').html()
             ;
             this._load();   // Does not need map element to finish => can start asynchronously
@@ -61,11 +65,12 @@
                     });
                 });
             });
-            this.element.on('click', '.-fn-update[data-id]', function() {
+            this.element.on('click', '.-fn-open-update[data-id]', function() {
+                // @todo: put id data on the row instead
                 var $clickTarget = $(this);
                 var recordId = $clickTarget.attr('data-id');
                 var $row = $clickTarget.closest('tr');
-                self._replace($row, recordId);
+                self._openUpdate($row, recordId);
             });
         },
         _load: function() {
@@ -92,13 +97,15 @@
             var url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, ''), hash].join('#');
             $(link).attr('href', url);
         },
-        _replace: function($row, id) {
-            var title = $('input[name="title"]', this.element).val() || $row.attr('data-title');
+        _replace: function($row, $form, id) {
             var data = Object.assign(this._getCommonSaveData(), {
-                title: title,
-                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
-                savePublic: $row.attr('data-visibility-group') === 'public' && '1' || ''
+                title: $('input[name="title"]', $form).val() || $row.attr('data-title')
             });
+            var $publicCb = $('input[name="public"]', $form);
+            if ($publicCb.length && !$publicCb.prop('disabled')) {
+                // @see https://stackoverflow.com/questions/14716730/send-a-boolean-value-in-jquery-ajax-data/14716803
+                data.savePublic =  $publicCb.prop('checked') && '1' || ''
+            }
             var params = {id: id};
             var self = this;
             return $.ajax([[this.elementUrl, 'save'].join('/'), $.param(params)].join('?'), {
@@ -155,7 +162,7 @@
         },
         _getSavePublic: function() {
             var $savePublicCb = $('input[name="save-as-public"]', this.element);
-            var savePublic
+            var savePublic;
             if (!$savePublicCb.length) {
                 savePublic = this.defaultSavePublic;
             } else {
@@ -175,6 +182,26 @@
                 sourcesDiff: diff.sources
             };
         },
+        _openUpdate: function($row, recordId) {
+            this._closePopovers();
+            var $popover = $(document.createElement('div'))
+                .addClass('popover bottom')
+                .append($(document.createElement('div')).addClass('arrow'))
+                .append(this.updateContent)
+            ;
+            $('input[name="title"]', $popover).val($row.attr('data-title'));
+            $('input[name="mtime"]', $popover).val($row.attr('data-mtime'));
+            $('input[name="public"]', $popover).prop('checked', $row.attr('data-visibility-group') === 'public');
+            $('.-js-update-content-anchor', $row).append($popover);
+
+            var self = this;
+            $popover.on('click', '.-fn-update', function() {
+                self._replace($row, $popover, recordId);
+            });
+            $popover.on('click', '.-fn-close', function() {
+                $popover.remove();
+            });
+        },
         _confirm: function($row, content) {
             var deferred = $.Deferred();
             var $popover = $(document.createElement('div'))
@@ -191,18 +218,21 @@
                 deferred.reject();
             });
             $popover.data('deferred', deferred);
-            // Close / reject other pending popovers
+            this._closePopovers();
+            $('.-js-confirmation-anchor-delete', $row).append($popover);
+
+            return deferred.promise();
+        },
+        _closePopovers: function() {
             $('table .popover', this.element).each(function() {
                 var $other = $(this);
                 var otherPromise = $other.data('deferred');
                 if (otherPromise) {
+                    // Reject pending promises on delete confirmation popovers
                     otherPromise.reject();
                 }
                 $other.remove();
             });
-            $('.-js-confirmation-anchor-delete', $row).append($popover);
-
-            return deferred.promise();
         },
         _updatePlaceholder: function() {
             var $rows = $('table tbody tr', this.element);

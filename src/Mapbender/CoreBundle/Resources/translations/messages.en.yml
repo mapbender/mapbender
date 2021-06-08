@@ -292,6 +292,7 @@ mb:
         title: View manager
         description: Saves map states for later restoration
       saveAsPublic: Save as public
+      isPublic: Public entry
       confirmDelete: Confirm deletion
       no_data: No data
       title: Title
