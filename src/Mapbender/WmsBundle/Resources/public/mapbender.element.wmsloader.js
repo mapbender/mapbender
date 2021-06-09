@@ -50,7 +50,7 @@
             if(!this.popup || !this.popup.$element){
                 this.element.show();
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
+                    title: self.element.attr('data-title'),
                     draggable: true,
                     modal: false,
                     closeOnESC: false,
