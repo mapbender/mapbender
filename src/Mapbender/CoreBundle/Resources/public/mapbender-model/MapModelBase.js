@@ -62,7 +62,7 @@ window.Mapbender.MapModelBase = (function() {
             this._poiOptions = [];
         }
         this.initialViewParams = this._getInitialViewParams(mapOptions);
-        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
+        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extent_max);
         this.sourceTree = this.getConfiguredSources_();
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
             viewParams: this._getConfiguredViewParams(mapOptions)
@@ -919,7 +919,7 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getConfiguredViewParams: function(mapOptions) {
-            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
+            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extent_start);
             startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, mapOptions.srs);
             var viewportSize = this.getCurrentViewportSize();
             var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);

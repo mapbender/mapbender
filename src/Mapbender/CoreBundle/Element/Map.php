@@ -47,9 +47,8 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'tileSize' => 512,
-            'extents' => array(
-                'max' => array(0, 40, 20, 60),
-                'start' => array(5, 45, 15, 55)),
+            'extent_max' => array(0, 40, 20, 60),
+            'extent_start' => array(5, 45, 15, 55),
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
             'fixedZoomSteps' => false,
         );
@@ -197,15 +196,13 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         }
         unset($config['layerset']);
 
-        $config += array('extents' => array());
-        if (!empty($config['extent_start'])) {
-            $config['extents'] += array('start' => $config['extent_start']);
+        if (!empty($config['extents']['start'])) {
+            $config['extent_start'] = $config['extents']['start'];
         }
-        if (!empty($config['extent_max'])) {
-            $config['extents'] += array('max' => $config['extent_max']);
+        if (!empty($config['extents']['max'])) {
+            $config['extent_max'] = $config['extents']['max'];
         }
-        unset($config['extent_start']);
-        unset($config['extent_max']);
+        unset($config['extents']);
 
         $defaults = static::getDefaultConfiguration();
         $config += array(

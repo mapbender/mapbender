@@ -45,11 +45,9 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ))
             ->add('extent_max', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.max_extent',
-                'property_path' => '[extents][max]',
             ))
             ->add('extent_start', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
                 'label' => 'mb.manager.admin.map.start_extent',
-                'property_path' => '[extents][start]',
             ))
             ->add('fixedZoomSteps', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'label' => 'mb.core.map.admin.fixedZoomSteps',
