@@ -2,8 +2,9 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\SQLSearchEngine;
-use Mapbender\ManagerBundle\Component\Mapper;
+use Mapbender\CoreBundle\Entity;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Christian Wygoda
  */
-class SearchRouter extends Element
+class SearchRouter extends Element implements ConfigMigrationInterface
 {
 
     public static function getClassTitle()
@@ -243,20 +244,17 @@ class SearchRouter extends Element
         return $formViews;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    public static function updateEntityConfig(Entity\Element $entity)
     {
-        foreach ($configuration['routes'] as $routekey => $routevalue) {
-            if (key_exists('configuration', $routevalue)) {
-                foreach ($configuration['routes'][ $routekey ]['configuration'] as $key => $value) {
-                    $configuration['routes'][ $routekey ][ $key ] = $value;
-                }
-                unset($configuration['routes'][ $routekey ]['configuration']);
+        $configuration = $entity->getConfiguration();
+        foreach ($configuration['routes'] as $routeKey => $routeValue) {
+            if (!empty($routeValue['configuration']) && \is_array($routeValue['configuration'])) {
+                $routeValue = $routeValue['configuration'] + $routeValue;
             }
+            unset($routeValue['configuration']);
+            $configuration['routes'][$routeKey] = $routeValue;
         }
-        return $configuration;
+        $entity->setConfiguration($configuration);
     }
 
     /**
