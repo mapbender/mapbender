@@ -13,7 +13,6 @@ class FeatureInfoAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null,
             'maxCount' => 100,
         ));
     }
@@ -45,11 +44,7 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))

@@ -39,11 +39,7 @@ class POIAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
     }
 }

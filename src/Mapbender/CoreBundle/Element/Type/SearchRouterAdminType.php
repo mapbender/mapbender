@@ -15,7 +15,6 @@ class SearchRouterAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null,
             'routes' => array(),
         ));
     }
@@ -23,11 +22,7 @@ class SearchRouterAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
