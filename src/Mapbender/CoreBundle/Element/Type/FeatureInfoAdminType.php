@@ -3,20 +3,9 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FeatureInfoAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'maxCount' => 100,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
