@@ -203,16 +203,18 @@ class SearchRouter extends Element implements ConfigMigrationInterface
      */
     public function getRouteSelectForm()
     {
-        $configuration = $this->getConfiguration();
+        $defaultTitle = $this->getDefaultRouteConfiguration()['title'];
+        $routeConfigs = $this->entity->getConfiguration()['routes'];
+        $choices = array();
+        foreach ($routeConfigs as $value => $routeConfig) {
+            $title = (!empty($routeConfig['title'])) ? $routeConfig['title'] : $defaultTitle;
+            $choices[$title] = $value;
+        }
         /** @var FormFactoryInterface $formFactory */
         $formFactory   = $this->container->get('form.factory');
-        $form          = $formFactory->createNamed(
-            'search_routes',
-            'Mapbender\CoreBundle\Element\Type\SearchRouterSelectType',
-            null,
-            array('routes' => $configuration['routes'])
-        );
-        return $form->get('route');
+        return $formFactory->createNamed('search_routes_route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', null, array(
+            'choices' => $choices,
+        ));
     }
 
     /**
