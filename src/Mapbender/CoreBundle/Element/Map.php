@@ -199,21 +199,6 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
      */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
-            $configuration['extents'] = array(
-                'start' => $configuration['extent_start'],
-                'max' => $configuration['extent_max']
-            );
-            unset($configuration['extent_start']);
-            unset($configuration['extent_max']);
-        }
-        if (is_string($configuration['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
-        }
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
-        }
-
         if (key_exists('layersets', $configuration)) {
             foreach ($configuration['layersets'] as &$layerset) {
                 $layerset = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $layerset);
@@ -230,6 +215,30 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
             $config['layersets'] = (array)$config['layerset'];
         }
         unset($config['layerset']);
+
+        $config += array('extents' => array());
+        if (!empty($config['extent_start'])) {
+            $config['extents'] += array('start' => $config['extent_start']);
+        }
+        if (!empty($config['extent_max'])) {
+            $config['extents'] += array('max' => $config['extent_max']);
+        }
+        unset($config['extent_start']);
+        unset($config['extent_max']);
+
+        $defaults = static::getDefaultConfiguration();
+        $config += array(
+            'otherSrs' => $defaults['otherSrs'],
+            'scales' => $defaults['scales'],
+        );
+
+        if (is_string($config['otherSrs'])) {
+            $configuration['otherSrs'] = explode(',', $config['otherSrs']);
+        }
+        if (is_string($config['scales'])) {
+            $configuration['scales'] = explode(',', $config['scales']);
+        }
+
         $entity->setConfiguration($config);
     }
 }
