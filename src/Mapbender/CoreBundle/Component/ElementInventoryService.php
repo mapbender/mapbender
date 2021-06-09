@@ -126,7 +126,7 @@ class ElementInventoryService
 
     protected function getDisabledClasses()
     {
-        return array_merge($this->disabledClassesFromConfig, $this->getInternallynDisabledClasses());
+        return array_merge($this->disabledClassesFromConfig, $this->getInternallyDisabledClasses());
     }
 
     public function isClassDisabled($className)
@@ -143,7 +143,7 @@ class ElementInventoryService
         return $disabled;
     }
 
-    protected function getInternallynDisabledClasses()
+    protected function getInternallyDisabledClasses()
     {
         return array(
             'Mapbender\WmcBundle\Element\WmcLoader',
