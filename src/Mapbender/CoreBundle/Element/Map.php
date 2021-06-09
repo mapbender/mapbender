@@ -118,30 +118,11 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
-    {
-        $defaultConfiguration = $this->getDefaultConfiguration();
-        $configuration        = parent::getConfiguration();
-        $configuration += $this->buildSrsConfigs();
-
-        if (!isset($configuration["tileSize"])) {
-            $configuration["tileSize"] = $defaultConfiguration["tileSize"];
-        } else {
-            $configuration["tileSize"] = max(self::MINIMUM_TILE_SIZE, $configuration["tileSize"]);
-        }
-
-        return $configuration;
-    }
-
     public function getPublicConfiguration()
     {
-        $conf = $this->getConfiguration();
-        if ($conf['scales']) {
-            $conf['scales'] = array_values(array_map('intval', $conf['scales']));
-        }
+        $conf = $this->entity->getConfiguration();
+        $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
+        $conf += $this->buildSrsConfigs();
         return $conf;
     }
 
@@ -230,14 +211,16 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         $config += array(
             'otherSrs' => $defaults['otherSrs'],
             'scales' => $defaults['scales'],
+            'tileSize' => $defaults['tileSize'],
         );
 
         if (is_string($config['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $config['otherSrs']);
+            $config['otherSrs'] = explode(',', $config['otherSrs']);
         }
         if (is_string($config['scales'])) {
-            $configuration['scales'] = explode(',', $config['scales']);
+            $config['scales'] = explode(',', $config['scales']);
         }
+        $config['scales'] = array_values(array_map('intval', $config['scales']));
 
         $entity->setConfiguration($config);
     }
