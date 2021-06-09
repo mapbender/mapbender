@@ -137,7 +137,9 @@ class TargetElementType extends AbstractType
     {
         $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
+        /** @todo Sf4: remove this path */
         if (!empty($options['element_class']) && is_a($options['element_class'], 'Mapbender\Component\Element\MainMapElementInterface', true)) {
+            @trigger_error("DEPRECATED: using TargetElementType to select Map element. This will be an error in v3.3. Use Mapbender\ManagerBundle\Form\Type\Element\MapTargetType instead.", E_USER_DEPRECATED);
             $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
             $builder->addEventSubscriber($elementSubscriber);
         }
