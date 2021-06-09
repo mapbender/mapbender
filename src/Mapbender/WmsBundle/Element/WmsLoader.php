@@ -46,7 +46,6 @@ class WmsLoader extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            "tooltip" => "",
             "target" => null,
             "autoOpen" => false,
             "defaultFormat" => "image/png",
@@ -112,7 +111,6 @@ class WmsLoader extends Element
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
                 'example_url' => $this->container->getParameter('wmsloader.example_url'),
-                'configuration' => $this->getConfiguration(),
         ));
     }
 
