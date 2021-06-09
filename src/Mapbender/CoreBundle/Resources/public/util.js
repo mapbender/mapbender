@@ -348,7 +348,7 @@ Mapbender.Util.preloadImageAsset = function(url) {
         deferred.resolveWith(null, [image]);
     };
     image.onerror = function() {
-        deffered.reject();
+        deferred.reject();
     };
     image.src = fullUrl;
     return deferred.promise();
