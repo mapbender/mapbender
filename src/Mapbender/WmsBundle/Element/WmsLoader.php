@@ -66,36 +66,6 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $configuration = parent::getConfiguration();
-
-        /** @var Request $request */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        if ($request->get('wms_url')) {
-            $wms_url = $request->get('wms_url');
-            $all = $request->query->all();
-            foreach ($all as $key => $value) {
-                if (strtolower($key) === "version" && stripos($wms_url, "version") === false) {
-                    $wms_url .= "&version=" . $value;
-                } elseif (strtolower($key) === "request" && stripos($wms_url, "request") === false) {
-                    $wms_url .= "&request=" . $value;
-                } elseif (strtolower($key) === "service" && stripos($wms_url, "service") === false) {
-                    $wms_url .= "&service=" . $value;
-                }
-            }
-            $configuration['wms_url'] = urldecode($wms_url);
-        }
-        if ($request->get('wms_id')) {
-            $wmsId = $request->get('wms_id');
-            $configuration['wms_id'] = $wmsId;
-        }
-        return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets()
     {
         return array(
