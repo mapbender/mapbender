@@ -158,13 +158,16 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         $categoryId = $actionParts[0];
         $action = $actionParts[1];
 
-        $categoryConf = $this->getCategoryConfig($categoryId);
-        if (!$categoryConf) {
+        $routeConfigs = $this->entity->getConfiguration()['routes'];
+        if (empty($routeConfigs[$categoryId])) {
             throw new NotFoundHttpException();
         }
+        $categoryConf = array_replace_recursive($this->getDefaultRouteConfiguration(), $routeConfigs[$categoryId]);
+        /** @todo Sf4: no container access, no container passing */
+        $engine = new $categoryConf['class']($this->container);
+        $data = json_decode($request->getContent(), true);
+
         if ('autocomplete' === $action) {
-            $data = json_decode($request->getContent(), true);
-            $engine  = new $categoryConf['class']($this->container);
             $results = $engine->autocomplete(
                 $categoryConf,
                 $data['key'],
@@ -179,10 +182,8 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         }
 
         if ('search' === $action) {
-            $data = json_decode($request->getContent(), true);
             $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
-            $engine   = new $categoryConf['class']($this->container);
             $query    = array(
                 'form' => $form->getData(),
             );
@@ -239,8 +240,9 @@ class SearchRouter extends Element implements ConfigMigrationInterface
     public function getFormViews()
     {
         $formViews = array();
-        $configuration = $this->getConfiguration();
-        foreach ($configuration['routes'] as $name => $conf) {
+        $routeDefaults = $this->getDefaultRouteConfiguration();
+        foreach ($this->entity->getConfiguration()['routes'] as $name => $conf) {
+            $conf = array_replace_recursive($routeDefaults, $conf);
             $formViews[] = $this->getForm($conf, $name)->createView();
         }
         return $formViews;
@@ -259,37 +261,13 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         $entity->setConfiguration($configuration);
     }
 
-    /**
-     * Get the publicly exposed configuration, usually directly derived from
-     * the configuration field of the configuration entity. If you, for
-     * example, store passwords in your element configuration, you should
-     * override this method to return a cleaned up version of your
-     * configuration which can safely be exposed in the client.
-     *
-     * @return array
-     */
-    public function getConfiguration()
+    public function getPublicConfiguration()
     {
-        $configuration = parent::getConfiguration();
-        foreach (array_keys($configuration['routes']) as $categoryId) {
-            $withDefaults = $this->getCategoryConfig($categoryId);
-            $configuration['routes'][$categoryId] = $withDefaults;
-        }
-        return $configuration;
-    }
-
-    /**
-     * @param string $categoryId
-     * @return array|null
-     */
-    protected function getCategoryConfig($categoryId)
-    {
+        $routeDefaults = $this->getDefaultRouteConfiguration();
         $config = $this->entity->getConfiguration();
-        if (empty($config['routes'][$categoryId])) {
-            return null;
-        } else {
-            $defaults = $this->getDefaultRouteConfiguration();
-            return array_replace_recursive($defaults, $config['routes'][$categoryId]);
+        foreach ($config['routes'] as $key => $routeConfig) {
+            $config['routes'][$key] = array_replace_recursive($routeDefaults, $routeConfig);
         }
+        return $config;
     }
 }
