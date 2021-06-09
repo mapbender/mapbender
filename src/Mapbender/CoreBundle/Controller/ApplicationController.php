@@ -7,6 +7,7 @@ use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
@@ -19,6 +20,7 @@ use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +41,19 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var ElementInventoryService */
+    protected $elementInventory;
+
+
+    /**
+     * @param ContainerInterface|null $container
+     * @todo Sf4: use DI for service / parameter access in containers
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->elementInventory = $container->get('mapbender.element_inventory.service');
+    }
 
     /**
      * @return ConfigService
@@ -129,14 +144,23 @@ class ApplicationController extends ApplicationControllerBase
         if (!$filter->prepareFrontend(array($element), true)) {
             throw new NotFoundHttpException();
         }
-        /** @todo Sf4: replace (transient) ElementFactory usage with something compatible with service-type Elements */
-        /** @var ElementFactory $factory */
-        $factory = $this->get('mapbender.element_factory.service');
-        $elementComponent = $factory->componentFromEntity($element, true);
-        if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
-            throw new NotFoundHttpException();
+        $elementHandler = $this->elementInventory->getHandlerService($element);
+        if ($elementHandler) {
+            $httpHandler = $elementHandler->getHttpHandler();
+            if ($httpHandler) {
+                return $httpHandler->handleRequest($element, $request);
+            } else {
+                throw new NotFoundHttpException();
+            }
+        } else {
+            /** @var ElementFactory $factory */
+            $factory = $this->get('mapbender.element_factory.service');
+            $elementComponent = $factory->componentFromEntity($element, true);
+            if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
+                throw new NotFoundHttpException();
+            }
+            return $elementComponent->handleHttpRequest($request);
         }
-        return $elementComponent->handleHttpRequest($request);
     }
 
     /**
