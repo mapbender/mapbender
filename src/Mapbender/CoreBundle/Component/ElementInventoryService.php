@@ -79,6 +79,10 @@ class ElementInventoryService implements HttpHandlerProvider
         }
     }
 
+    /**
+     * @param Element $element
+     * @return \Mapbender\Component\Element\ElementHttpHandlerInterface|null
+     */
     public function getHttpHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
@@ -92,6 +96,25 @@ class ElementInventoryService implements HttpHandlerProvider
         } else {
             if ($this->shimFactory && ($shim = $this->shimFactory->getShim($element))) {
                 return $shim->getHttpHandler($element);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return AbstractElementService|null
+     */
+    public function getFrontendHandler(Element $element)
+    {
+        // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
+        $nativeService = $this->getHandlerService($element, false);
+        if ($nativeService) {
+            return $nativeService;
+        } else {
+            if ($this->shimFactory && ($shim = $this->shimFactory->getShim($element))) {
+                return $shim;
             } else {
                 return null;
             }

@@ -3,13 +3,11 @@
 
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
-use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementView;
+use Mapbender\Component\Element\LegacyView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -31,19 +29,15 @@ class ElementMarkupRenderer
     protected $inventory;
     /** @var bool */
     protected $allowResponsiveElements;
-    /** @var ElementFactory */
-    protected $elementFactory;
 
     public function __construct(EngineInterface $templatingEngine,
                                 TranslatorInterface $translator,
                                 ElementInventoryService $inventory,
-                                ElementFactory $elementFactory,
                                 $allowResponsiveElements)
     {
         $this->templatingEngine = $templatingEngine;
         $this->translator = $translator;
         $this->inventory = $inventory;
-        $this->elementFactory = $elementFactory;
         $this->allowResponsiveElements = $allowResponsiveElements;
     }
 
@@ -98,43 +92,38 @@ class ElementMarkupRenderer
 
     protected function renderContent(Element $element, $wrapperTag, $attributes)
     {
-        $handlerService = $this->inventory->getHandlerService($element);
-        if ($handlerService) {
-            return $this->renderServiceElement($handlerService, $element, $wrapperTag, $attributes);
-        } elseif (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {
-            return $this->wrapTag($this->renderLegacyElement($element), $wrapperTag, $attributes);
+        $view = $this->inventory->getFrontendHandler($element)->getView($element);
+        if ($view) {
+            if ($view instanceof LegacyView) {
+                return $this->wrapTag($view->getContent(), $wrapperTag, $attributes);
+            } else {
+                return $this->renderView($view, $wrapperTag, $attributes + array(
+                    'id' => $element->getId(),
+                ));
+            }
         } else {
-            throw new ElementErrorException("Don't know how to render {$element->getClass()}");
+            return '';
         }
     }
 
     /**
-     * @todo: prefer interface type, add signature type hint
-     * @param AbstractElementService $handlerService
-     * @param Element $element
+     * @param ElementView $view
      * @param string $wrapperTag
      * @param string[] $baseAttributes
      * @return string
      */
-    protected function renderServiceElement($handlerService, Element $element, $wrapperTag, $baseAttributes)
+    protected function renderView(ElementView $view, $wrapperTag, $baseAttributes)
     {
-        $view = $handlerService->getView($element);
-        if ($view) {
-            $attributes = $this->prepareAttributes($view->attributes, $baseAttributes) + array(
-                'id' => $element->getId(),
-            );
-            if ($view instanceof TemplateView) {
-                $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
-            } elseif ($view instanceof ElementView) {
-                // Empty ElementView
-                $content = '';
-            } else {
-                throw new \Exception("Don't know how to render " . get_class($view));
-            }
-            return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
+        $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
+        if ($view instanceof TemplateView) {
+            $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
+        } elseif ($view instanceof ElementView) {
+            // Empty ElementView
+            $content = '';
         } else {
-            return '';
+            throw new \Exception("Don't know how to render " . get_class($view));
         }
+        return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
     }
 
     protected function prepareAttributes($viewAttributes, $baseAttributes)
@@ -159,15 +148,6 @@ class ElementMarkupRenderer
             }
         }
         return $attributes;
-    }
-
-    /**
-     * @param Element $element
-     * @return string
-     */
-    protected function renderLegacyElement(Element $element)
-    {
-        return $this->elementFactory->componentFromEntity($element, true)->render();
     }
 
     /**
