@@ -16,7 +16,6 @@
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
-        <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
@@ -187,11 +186,6 @@
             <argument type="service" id="signer" />
             <argument type="service" id="mapbender.source.instancetunnel.service" />
             <argument>%owsproxy.baseroute%</argument>
-        </service>
-        <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
-            <argument type="service" id="mapbender.element_filter" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
             <argument type="service" id="filesystem" />
