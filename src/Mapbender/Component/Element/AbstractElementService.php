@@ -8,7 +8,8 @@ use Mapbender\CoreBundle\Component\ElementBase\EditableInterface;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 
-abstract class AbstractElementService implements MinimalInterface, EditableInterface
+abstract class AbstractElementService
+    implements MinimalInterface, EditableInterface, HttpHandlerProvider
 {
     /**
      * @param Element $element
@@ -53,9 +54,10 @@ abstract class AbstractElementService implements MinimalInterface, EditableInter
     }
 
     /**
+     * @param Element $element
      * @return ElementHttpHandlerInterface|null
      */
-    public function getHttpHandler()
+    public function getHttpHandler(Element $element)
     {
         return null;
     }

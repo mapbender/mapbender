@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
+use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
@@ -146,8 +147,7 @@ class ApplicationController extends ApplicationControllerBase
         }
         $elementHandler = $this->elementInventory->getHandlerService($element);
         if ($elementHandler) {
-            $httpHandler = $elementHandler->getHttpHandler();
-            if ($httpHandler) {
+            if (($elementHandler instanceof HttpHandlerProvider) && ($httpHandler = $elementHandler->getHttpHandler($element))) {
                 return $httpHandler->handleRequest($element, $request);
             } else {
                 throw new NotFoundHttpException();
