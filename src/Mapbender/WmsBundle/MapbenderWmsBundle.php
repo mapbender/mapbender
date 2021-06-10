@@ -21,6 +21,7 @@ class MapbenderWmsBundle extends MapbenderBundle
         $loader = new XmlFileLoader($container, $configLocator);
         $loader->load('services.xml');
         $loader->load('commands.xml');
+        $loader->load('elements.xml');
 
         $container->addCompilerPass(new RegisterWmsSourceServicePass());
     }
@@ -30,10 +31,8 @@ class MapbenderWmsBundle extends MapbenderBundle
      */
     public function getElements()
     {
-        $elements = array(
-            'Mapbender\WmsBundle\Element\WmsLoader',
+        return array(
             'Mapbender\WmsBundle\Element\DimensionsHandler',
         );
-        return $elements;
     }
 }
