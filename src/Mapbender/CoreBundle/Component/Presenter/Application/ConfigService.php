@@ -173,28 +173,20 @@ class ConfigService
     {
         $elementConfig = array();
         foreach ($elements as $element) {
-            $service = $this->elementFilter->getInventory()->getHandlerService($element, true);
-            if ($service) {
-                $values = array(
-                    'init' => $service->getWidgetName($element),
-                    'configuration' => $service->getClientConfiguration($element),
-                );
-            } else {
+            $handler = $this->elementFilter->getInventory()->getFrontendHandler($element);
+            if ($handler) {
                 try {
-                    $component = $this->elementFactory->componentFromEntity($element, true);
+                    $values = array(
+                        'init' => $handler->getWidgetName($element),
+                        'configuration' => $handler->getClientConfiguration($element),
+                    );
                 } catch (ElementErrorException $e) {
                     // for frontend presentation, incomplete / invalid elements are silently suppressed
                     // => do nothing
                     continue;
                 }
-
-                $values = array(
-                    'init' => $component->getWidgetName(),
-                    'configuration' => $component->getPublicConfiguration(),
-                );
+                $elementConfig[$element->getId()] = $values;
             }
-
-            $elementConfig[$element->getId()] = $values;
         }
         return $elementConfig;
     }
