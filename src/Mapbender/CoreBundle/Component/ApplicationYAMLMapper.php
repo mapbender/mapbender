@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -26,19 +27,19 @@ class ApplicationYAMLMapper
     protected $logger;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
-    /** @var ElementFactory */
+    /** @var ElementEntityFactory */
     protected $elementFactory;
     /** @var array[] */
     protected $definitions;
 
     /**
      * @param array[] $definitions
-     * @param ElementFactory $elementFactory
+     * @param ElementEntityFactory $elementFactory
      * @param SourceInstanceFactory $sourceInstanceFactory
      * @param LoggerInterface|null $logger
      */
     public function __construct($definitions,
-                                ElementFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
+                                ElementEntityFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
                                 LoggerInterface $logger = null)
     {
         $this->definitions = $definitions;

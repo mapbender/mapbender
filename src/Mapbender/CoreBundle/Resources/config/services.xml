@@ -60,7 +60,7 @@
     <services>
         <service id="mapbender.application.yaml_entity_repository" class="%mapbender.application.yaml_entity_repository.class%" lazy="true">
             <argument>%applications%</argument>
-            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>

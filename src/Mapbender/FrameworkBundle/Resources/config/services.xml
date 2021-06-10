@@ -21,6 +21,10 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="security.authorization_checker" />
         </service>
+        <service id="mapbender.element_entity_factory" class="Mapbender\FrameworkBundle\Component\ElementEntityFactory">
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="translator" />
+        </service>
         <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
             <argument type="service" id="mapbender.element_shim_factory.container" />
         </service>

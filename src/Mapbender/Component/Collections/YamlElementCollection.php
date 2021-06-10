@@ -8,17 +8,18 @@ use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
-use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class YamlElementCollection extends AbstractLazyCollection implements Selectable
 {
-    /** @var ElementFactory */
+    /** @var ElementEntityFactory */
     protected $factory;
     /** @var Application */
     protected $application;
@@ -28,12 +29,12 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
     protected $logger;
 
     /**
-     * @param ElementFactory $factory
+     * @param ElementEntityFactory $factory
      * @param Application $application
      * @param array $data
      * @param LoggerInterface|null $logger
      */
-    public function __construct(ElementFactory $factory, Application $application, $data, LoggerInterface $logger = null)
+    public function __construct(ElementEntityFactory $factory, Application $application, $data, LoggerInterface $logger = null)
     {
         $this->factory = $factory;
         $this->application = $application;
@@ -76,7 +77,7 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
         try {
             $element = $this->factory->newEntity($className, $region);
             $element->setId($id);
-            $this->factory->configureElement($element, $configuration);
+            $this->configureElement($element, $configuration);
             if ($title) {
                 $element->setTitle($title);
             }
@@ -97,5 +98,32 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
     {
         $this->initialize();
         return $this->collection->matching($criteria);
+    }
+
+    /**
+     * @param Element $element
+     * @param mixed[] $configuration
+     */
+    protected function configureElement(Element $element, $configuration)
+    {
+        $element->setConfiguration($configuration);
+        /** @var string|MinimalInterface $componentClass */
+        $componentClass = $element->getClass();
+
+        // Do not use original $configuration array. Configuration may already have been modified once implicitly.
+        /** @see ConfigMigrationInterface */
+        $defaults = $componentClass::getDefaultConfiguration();
+        $configInitial = $element->getConfiguration();
+        $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
+            return $v !== null;
+        }));
+        // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
+        foreach (array_keys($configInitial) as $key) {
+            if (!array_key_exists($key, $mergedConfig)) {
+                assert($configInitial[$key] === null);
+                $mergedConfig[$key] = null;
+            }
+        }
+        $element->setConfiguration($mergedConfig);
     }
 }
