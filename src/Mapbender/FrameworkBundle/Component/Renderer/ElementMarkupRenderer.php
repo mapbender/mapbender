@@ -8,6 +8,7 @@ use Mapbender\Component\Element\ElementView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -26,6 +27,8 @@ class ElementMarkupRenderer
     protected $templatingEngine;
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var ElementInventoryService */
+    protected $inventory;
     /** @var bool */
     protected $allowResponsiveElements;
     /** @var ElementFactory */
@@ -33,11 +36,13 @@ class ElementMarkupRenderer
 
     public function __construct(EngineInterface $templatingEngine,
                                 TranslatorInterface $translator,
+                                ElementInventoryService $inventory,
                                 ElementFactory $elementFactory,
                                 $allowResponsiveElements)
     {
         $this->templatingEngine = $templatingEngine;
         $this->translator = $translator;
+        $this->inventory = $inventory;
         $this->elementFactory = $elementFactory;
         $this->allowResponsiveElements = $allowResponsiveElements;
     }
@@ -93,7 +98,7 @@ class ElementMarkupRenderer
 
     protected function renderContent(Element $element, $wrapperTag, $attributes)
     {
-        $handlerService = $this->elementFactory->getInventory()->getHandlerService($element);
+        $handlerService = $this->inventory->getHandlerService($element);
         if ($handlerService) {
             return $this->renderServiceElement($handlerService, $element, $wrapperTag, $attributes);
         } elseif (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {

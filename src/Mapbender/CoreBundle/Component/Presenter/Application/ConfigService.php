@@ -173,7 +173,7 @@ class ConfigService
     {
         $elementConfig = array();
         foreach ($elements as $element) {
-            $service = $this->elementFactory->getInventory()->getHandlerService($element, true);
+            $service = $this->elementFilter->getInventory()->getHandlerService($element, true);
             if ($service) {
                 $values = array(
                     'init' => $service->getWidgetName($element),

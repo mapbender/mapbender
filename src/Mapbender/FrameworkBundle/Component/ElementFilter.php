@@ -35,6 +35,14 @@ class ElementFilter
     }
 
     /**
+     * @return ElementInventoryService
+     */
+    public function getInventory()
+    {
+        return $this->inventory;
+    }
+
+    /**
      * @param string|MinimalInterface $className
      * @return string|null
      */

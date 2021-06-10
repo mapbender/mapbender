@@ -69,7 +69,7 @@ class ElementFactory extends BaseElementFactory
     public function newEntity($componentClass, $region, Entity\Application $application = null)
     {
         /** @var string|Component\ElementBase\MinimalInterface $componentClass */
-        $componentClass = $this->inventoryService->getAdjustedElementClassName($componentClass);
+        $componentClass = $this->elementFilter->getAdjustedElementClassName($componentClass);
         if (!$componentClass || !ClassUtil::exists($componentClass)) {
             throw new Component\Exception\UndefinedElementClassException($componentClass);
         }
@@ -106,7 +106,7 @@ class ElementFactory extends BaseElementFactory
     {
         $element->setConfiguration($configuration);
         /** @var string|Component\ElementBase\MinimalInterface $componentClass */
-        $componentClass = $this->inventoryService->getAdjustedElementClassName($element->getClass());
+        $componentClass = $this->elementFilter->getAdjustedElementClassName($element->getClass());
 
         // Do not use original $configuration array. Configuration may already have been modified once implicitly.
         /** @see ConfigMigrationInterface */
