@@ -4,8 +4,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
-use Mapbender\Component\BaseElementFactory;
-use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Extension\ElementExtension;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
@@ -17,7 +15,7 @@ use Symfony\Component\Form\FormRegistryInterface;
  *
  * Default instance in container as mapbender.manager.element_form_factory.service
  */
-class ElementFormFactory extends BaseElementFactory
+class ElementFormFactory
 {
     /** @var ElementFilter */
     protected $elementFilter;
@@ -31,21 +29,18 @@ class ElementFormFactory extends BaseElementFactory
     protected $elementExtension;
 
     /**
-     * @param ElementInventoryService $inventoryService
      * @param ElementFilter $elementFilter
      * @param FormFactoryInterface $formFactory
      * @param FormRegistryInterface $formRegistry
      * @param ElementExtension $elementExtension
      * @param bool $strict
      */
-    public function __construct(ElementInventoryService $inventoryService,
-                                ElementFilter $elementFilter,
+    public function __construct(ElementFilter $elementFilter,
                                 FormFactoryInterface $formFactory,
                                 FormRegistryInterface $formRegistry,
                                 ElementExtension $elementExtension,
                                 $strict = false)
     {
-        parent::__construct($inventoryService);
         $this->elementFilter = $elementFilter;
         $this->formFactory = $formFactory;
         $this->setStrict($strict);
@@ -144,5 +139,15 @@ class ElementFormFactory extends BaseElementFactory
             return $typeName;
         }
         return null;
+    }
+
+    /**
+     * @param Element $element
+     * @todo: update return type annotation
+     * @return string|\Mapbender\CoreBundle\Component\Element
+     */
+    protected function getComponentClass(Element $element)
+    {
+        return $this->elementFilter->getAdjustedElementClassName($element->getClass());
     }
 }

@@ -50,6 +50,15 @@ class ElementFilter
     }
 
     /**
+     * @param string $classNameIn
+     * @return string
+     */
+    public function getAdjustedElementClassName($classNameIn)
+    {
+        return $this->inventory->getAdjustedElementClassName($classNameIn);
+    }
+
+    /**
      * @param Element $element
      * @return string|null
      */
