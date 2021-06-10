@@ -73,7 +73,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Copyright',
             'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\GpsPosition',
-            'Mapbender\CoreBundle\Element\HTMLElement',
             'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\LinkButton',
