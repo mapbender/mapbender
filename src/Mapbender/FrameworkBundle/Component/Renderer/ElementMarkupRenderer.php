@@ -29,16 +29,20 @@ class ElementMarkupRenderer
     protected $inventory;
     /** @var bool */
     protected $allowResponsiveElements;
+    /** @var bool */
+    protected $debug;
 
     public function __construct(EngineInterface $templatingEngine,
                                 TranslatorInterface $translator,
                                 ElementInventoryService $inventory,
-                                $allowResponsiveElements)
+                                $allowResponsiveElements,
+                                $debug)
     {
         $this->templatingEngine = $templatingEngine;
         $this->translator = $translator;
         $this->inventory = $inventory;
         $this->allowResponsiveElements = $allowResponsiveElements;
+        $this->debug = $debug;
     }
 
     /**
@@ -92,17 +96,28 @@ class ElementMarkupRenderer
 
     protected function renderContent(Element $element, $wrapperTag, $attributes)
     {
-        $view = $this->inventory->getFrontendHandler($element)->getView($element);
-        if ($view) {
-            if ($view instanceof LegacyView) {
-                return $this->wrapTag($view->getContent(), $wrapperTag, $attributes);
+        try {
+            $view = $this->inventory->getFrontendHandler($element)->getView($element);
+            if ($view) {
+                if ($view instanceof LegacyView) {
+                    return $this->wrapTag($view->getContent(), $wrapperTag, $attributes);
+                } else {
+                    return $this->renderView($view, $wrapperTag, $attributes + array(
+                        'id' => $element->getId(),
+                    ));
+                }
             } else {
-                return $this->renderView($view, $wrapperTag, $attributes + array(
-                    'id' => $element->getId(),
-                ));
+                return '';
             }
-        } else {
-            return '';
+        } catch (\Twig\Error\Error $e) {
+            if ($this->debug) {
+                throw $e;
+            } else {
+                return "<!-- "
+                    . "element #{$element->getId()} failed to render with " . \htmlspecialchars($e->getMessage())
+                    . " -->"
+                ;
+            }
         }
     }
 

@@ -3,8 +3,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Psr\Log\LoggerInterface;
-use Twig\Error\Error;
 
 /**
  * HTMLElement.
@@ -64,26 +62,6 @@ class HTMLElement extends Element
             'tagName' => $tagName,
             'application' => $this->entity->getApplication(),
         );
-    }
-
-    /**
-     * Render markup.
-     * Because the entire template is user-configurable, we add some error handling here.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-
-        try {
-            return parent::render();
-        } catch (Error $e) {
-            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
-            $logger->warning($message . ", suppressing content", $this->getConfiguration());
-            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
-        }
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
