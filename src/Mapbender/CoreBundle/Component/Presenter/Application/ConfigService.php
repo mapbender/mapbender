@@ -34,8 +34,6 @@ class ConfigService
     protected $sourceTypeDirectory;
     /** @var UrlProcessor */
     protected $urlProcessor;
-    /** @var ElementFactory */
-    protected $elementFactory;
 
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -51,7 +49,6 @@ class ConfigService
                                 ApplicationDataService $cacheService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 UrlProcessor $urlProcessor,
-                                ElementFactory $elementFactory,
                                 UrlGeneratorInterface $router,
                                 LoggerInterface $logger,
                                 PackageInterface $baseUrlPackage,
@@ -61,7 +58,6 @@ class ConfigService
         $this->cacheService = $cacheService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
-        $this->elementFactory = $elementFactory;
         $this->router = $router;
         $this->logger = $logger;
         $this->assetBaseUrl = $baseUrlPackage->getUrl(null);
