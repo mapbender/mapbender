@@ -255,6 +255,7 @@
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- NOTE: base Element class availability is not an argument, but added via compiler passes; this is not configurable -->
             <argument>%mapbender.disabled_elements%</argument>
+            <argument type="service" id="mapbender.element_shim_factory" />
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.event_listener" event="postConnect" />

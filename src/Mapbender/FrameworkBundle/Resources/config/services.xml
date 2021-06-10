@@ -21,5 +21,10 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="security.authorization_checker" />
         </service>
+        <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
+            <argument type="service" id="mapbender.element_shim_factory.container" />
+        </service>
+        <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
+        <service id="mapbender.element_shim_factory.container" alias="service_container" />
     </services>
 </container>

@@ -5,7 +5,9 @@ namespace Mapbender\CoreBundle\Component;
 
 
 use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
 /**
  * Maintains inventory of Element Component classes
@@ -13,7 +15,7 @@ use Mapbender\CoreBundle\Entity\Element;
  * Default implementation for service mapbender.element_inventory.service
  * @since v3.0.8-beta1
  */
-class ElementInventoryService
+class ElementInventoryService implements HttpHandlerProvider
 {
     /** @var string[] */
     protected $movedElementClasses = array(
@@ -34,10 +36,14 @@ class ElementInventoryService
     /** @todo: prefer an interface type */
     /** @var AbstractElementService[] */
     protected $serviceElements = array();
+    /** @var ElementShimFactory|null */
+    protected $shimFactory;
 
-    public function __construct($disabledClasses)
+    public function __construct($disabledClasses,
+                                ElementShimFactory $shimFactory = null)
     {
         $this->disabledClassesFromConfig = $disabledClasses ?: array();
+        $this->shimFactory = $shimFactory;
     }
 
     /**
@@ -70,6 +76,25 @@ class ElementInventoryService
             return $this->serviceElements[$className];
         } else {
             return null;
+        }
+    }
+
+    public function getHttpHandler(Element $element)
+    {
+        // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
+        $nativeService = $this->getHandlerService($element, false);
+        if ($nativeService) {
+            if ($nativeService instanceof HttpHandlerProvider) {
+                return $nativeService->getHttpHandler($element);
+            } else {
+                return null;
+            }
+        } else {
+            if ($this->shimFactory && ($shim = $this->shimFactory->getShim($element))) {
+                return $shim->getHttpHandler($element);
+            } else {
+                return null;
+            }
         }
     }
 

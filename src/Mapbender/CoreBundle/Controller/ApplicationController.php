@@ -145,21 +145,11 @@ class ApplicationController extends ApplicationControllerBase
         if (!$filter->prepareFrontend(array($element), true)) {
             throw new NotFoundHttpException();
         }
-        $elementHandler = $this->elementInventory->getHandlerService($element);
-        if ($elementHandler) {
-            if (($elementHandler instanceof HttpHandlerProvider) && ($httpHandler = $elementHandler->getHttpHandler($element))) {
-                return $httpHandler->handleRequest($element, $request);
-            } else {
-                throw new NotFoundHttpException();
-            }
+        $handler = $this->elementInventory->getHttpHandler($element);
+        if ($handler) {
+            return $handler->handleRequest($element, $request);
         } else {
-            /** @var ElementFactory $factory */
-            $factory = $this->get('mapbender.element_factory.service');
-            $elementComponent = $factory->componentFromEntity($element, true);
-            if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
-                throw new NotFoundHttpException();
-            }
-            return $elementComponent->handleHttpRequest($request);
+            throw new NotFoundHttpException();
         }
     }
 
