@@ -65,12 +65,17 @@ class ElementClassesCommand extends ContainerAwareCommand
         $factory = $this->getContainer()->get('mapbender.element_factory.service');
         $application = new Application();
         foreach ($elementNames as $elementName) {
+            if (!\is_a($elementName, 'Mapbender\CoreBundle\Component\ElementInterface', true)) {
+                // Service or otherwise => skip
+                continue;
+            }
             try {
                 $entity = new \Mapbender\CoreBundle\Entity\Element();
+                $entity->setConfiguration(array());
                 $entity->setClass($elementName);
                 $entity->setApplication($application);
                 $instance = $factory->componentFromEntity($entity);
-                $rows[$elementName] = $this->formatElementInfo($instance);
+                $rows[$elementName] = $this->formatElementInfo($entity, $instance);
             } catch (\Exception $e) {
                 $rows[$elementName] = array(
                     "<error>$elementName</error>",
@@ -114,20 +119,21 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param Element $element
+     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param Element $component
      * @return string[]
      * @throws \ReflectionException
      */
-    protected function formatElementInfo($element)
+    protected function formatElementInfo(\Mapbender\CoreBundle\Entity\Element $element, $component)
     {
         $cells = array(
-            get_class($element),
-            $this->formatElementComments($element),
-            $this->formatGetWidgetName($element),
-            $this->formatFrontendTemplateInfo($element),
+            $element->getClass(),
+            $this->formatElementComments($component),
+            $this->formatGetWidgetName($component),
+            $this->formatFrontendTemplateInfo($component),
             $this->formatAdminType($element),
-            $this->formatAdminTemplateInfo($element),
-            $this->formatAssetRefStatus($element),
+            $this->formatAdminTemplateInfo($component),
+            $this->formatAssetRefStatus($component),
         );
         return $cells;
     }
@@ -165,7 +171,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param Element $element
+     * @param \Mapbender\CoreBundle\Entity\Element $element
      * @return string
      */
     protected function formatAdminType($element)
@@ -174,17 +180,17 @@ class ElementClassesCommand extends ContainerAwareCommand
         $formFactory = $this->getContainer()->get('mapbender.manager.element_form_factory.service');
 
         try {
-            $rc = new \ReflectionClass($element);
+            $rc = new \ReflectionClass($element->getClass());
             $rm = $rc->getMethod('getType');
         } catch (\ReflectionException $e) {
             return "<error>No reflection</error>";
         }
 
-        $adminType = $formFactory->getConfigurationFormType($element->getEntity());
+        $adminType = $formFactory->getConfigurationFormType($element);
         if (!$adminType) {
             return '<comment>none</comment>';
         }
-        $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
+        $elementBNS = BundleUtil::extractBundleNamespace($element->getClass());
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
             if (!ClassUtil::exists($adminType)) {
