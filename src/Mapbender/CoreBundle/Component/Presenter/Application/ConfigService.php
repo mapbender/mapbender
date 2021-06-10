@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Element as Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
@@ -75,18 +74,7 @@ class ConfigService
             'elements'    => $this->getElementConfiguration($activeElements),
         );
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
-
-        // Let (active, visible) Elements update the Application config
-        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
-        // visible state of the frontend.
-        $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($activeElements as $elementComponent) {
-            if ($elementComponent instanceof BoundConfigMutator) {
-                $configAfterElements = $elementComponent->updateAppConfig($configBeforeElement);
-                $configBeforeElement = $configAfterElements;
-            }
-        }
-        return $configAfterElements;
+        return $configuration;
     }
 
     public function getBaseConfiguration(Application $entity)
