@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Component;
 
 
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Extension\ElementExtension;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
@@ -25,27 +24,22 @@ class ElementFormFactory
     protected $strict;
     /** @var FormRegistryInterface */
     protected $formRegistry;
-    /** @var ElementExtension */
-    protected $elementExtension;
 
     /**
      * @param ElementFilter $elementFilter
      * @param FormFactoryInterface $formFactory
      * @param FormRegistryInterface $formRegistry
-     * @param ElementExtension $elementExtension
      * @param bool $strict
      */
     public function __construct(ElementFilter $elementFilter,
                                 FormFactoryInterface $formFactory,
                                 FormRegistryInterface $formRegistry,
-                                ElementExtension $elementExtension,
                                 $strict = false)
     {
         $this->elementFilter = $elementFilter;
         $this->formFactory = $formFactory;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
-        $this->elementExtension = $elementExtension;
     }
 
     public function setStrict($enable)

@@ -18,7 +18,6 @@
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="form.factory" />
             <argument type="service" id="form.registry" />
-            <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
