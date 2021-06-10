@@ -3,7 +3,6 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\Component\BaseElementFactory;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
@@ -16,7 +15,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Factory service providing preinitialized Element entities and Element components.
  * Instance registered at mapbender.element_factory.service
  */
-class ElementFactory extends BaseElementFactory
+class ElementFactory
 {
     /** @var ElementFilter */
     protected $elementFilter;
@@ -28,17 +27,14 @@ class ElementFactory extends BaseElementFactory
     protected $components = array();
 
     /**
-     * @param ElementInventoryService $inventoryService
      * @param ElementFilter $elementFilter
      * @param TranslatorInterface $translator
      * @param ContainerInterface $container only used for passing on to Element/Application component constructors
      */
-    public function __construct(ElementInventoryService $inventoryService,
-                                ElementFilter $elementFilter,
+    public function __construct(ElementFilter $elementFilter,
                                 TranslatorInterface $translator,
                                 ContainerInterface $container)
     {
-        parent::__construct($inventoryService);
         $this->elementFilter = $elementFilter;
         $this->translator = $translator;
         $this->container = $container;
