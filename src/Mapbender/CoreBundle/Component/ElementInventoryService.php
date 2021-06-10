@@ -62,16 +62,12 @@ class ElementInventoryService implements HttpHandlerProvider
 
     /**
      * @param Element $element
-     * @param bool $adjustClass
      * @return AbstractElementService|null
      * @todo: prefer interface type hinting
      */
-    public function getHandlerService(Element $element, $adjustClass = false)
+    public function getHandlerService(Element $element)
     {
         $className = $element->getClass();
-        if ($adjustClass) {
-            $className = $this->getAdjustedElementClassName($className);
-        }
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
         } else {
@@ -86,7 +82,7 @@ class ElementInventoryService implements HttpHandlerProvider
     public function getHttpHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        $nativeService = $this->getHandlerService($element, false);
+        $nativeService = $this->getHandlerService($element);
         if ($nativeService) {
             if ($nativeService instanceof HttpHandlerProvider) {
                 return $nativeService->getHttpHandler($element);
@@ -109,7 +105,7 @@ class ElementInventoryService implements HttpHandlerProvider
     public function getFrontendHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        $nativeService = $this->getHandlerService($element, false);
+        $nativeService = $this->getHandlerService($element);
         if ($nativeService) {
             return $nativeService;
         } else {
