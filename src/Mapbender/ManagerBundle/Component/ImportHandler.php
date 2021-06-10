@@ -5,12 +5,12 @@ namespace Mapbender\ManagerBundle\Component;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
@@ -33,8 +33,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ImportHandler extends ExchangeHandler
 {
-    /** @var ElementFactory */
-    protected $elementFactory;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ExportHandler */
     protected $exportHandler;
     /** @var UploadsManager */
@@ -44,19 +44,19 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param ElementFactory $elementFactory
+     * @param ElementFilter $elementFilter
      * @param ExportHandler $exportHandler
      * @param UploadsManager $uploadsManager
      * @param MutableAclProviderInterface $aclProvider
      */
     public function __construct(EntityManagerInterface $entityManager,
-                                ElementFactory $elementFactory,
+                                ElementFilter $elementFilter,
                                 ExportHandler $exportHandler,
                                 UploadsManager $uploadsManager,
                                 MutableAclProviderInterface $aclProvider)
     {
         parent::__construct($entityManager);
-        $this->elementFactory = $elementFactory;
+        $this->elementFilter = $elementFilter;
         $this->exportHandler = $exportHandler;
         $this->uploadsManager = $uploadsManager;
         $this->aclProvider = $aclProvider;
@@ -291,16 +291,19 @@ class ImportHandler extends ExchangeHandler
             if (!empty($configuration['target'])) {
                 $newId = $entityPool->getIdentFromMapper(get_class($element), $configuration['target'], false);
                 $configuration['target'] = $newId;
+                $element->setConfiguration($configuration);
             }
             try {
-                // allow Component\Element to fix relational data references post import (e.g. layerset ids on Map)
-                $elmComp = $this->elementFactory->componentFromEntity($element);
-                $configuration = $elmComp->denormalizeConfiguration($configuration, $entityPool);
+                $this->elementFilter->migrateConfig($element);
+                // allow Element service to fix relational data references post import (e.g. layerset ids on Map)
+                $importProcessor = $this->elementFilter->getInventory()->getImportProcessor($element);
+                if ($importProcessor) {
+                    $importProcessor->onImport($element, $entityPool);
+                }
             } catch (ElementErrorException $e) {
                 // Likely an import from an application with custom element classes that are not defined here
                 // => ignore, we still have the entity imported
             }
-            $element->setConfiguration($configuration);
             $this->em->persist($element);
         }
     }

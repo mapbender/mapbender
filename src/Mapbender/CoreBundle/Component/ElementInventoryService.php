@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\HttpHandlerProvider;
+use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
@@ -67,12 +68,7 @@ class ElementInventoryService implements HttpHandlerProvider
      */
     public function getHandlerService(Element $element)
     {
-        $className = $element->getClass();
-        if (!empty($this->serviceElements[$className])) {
-            return $this->serviceElements[$className];
-        } else {
-            return null;
-        }
+        return $this->getHandlerServiceInternal($element, false);
     }
 
     /**
@@ -82,19 +78,11 @@ class ElementInventoryService implements HttpHandlerProvider
     public function getHttpHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        $nativeService = $this->getHandlerService($element);
-        if ($nativeService) {
-            if ($nativeService instanceof HttpHandlerProvider) {
-                return $nativeService->getHttpHandler($element);
-            } else {
-                return null;
-            }
+        $handler = $this->getHandlerServiceInternal($element, true);
+        if ($handler && ($handler instanceof HttpHandlerProvider)) {
+            return $handler->getHttpHandler($element);
         } else {
-            if ($this->shimFactory && ($shim = $this->shimFactory->getShim($element))) {
-                return $shim->getHttpHandler($element);
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -105,15 +93,20 @@ class ElementInventoryService implements HttpHandlerProvider
     public function getFrontendHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        $nativeService = $this->getHandlerService($element);
-        if ($nativeService) {
-            return $nativeService;
+        return $this->getHandlerServiceInternal($element, true);
+    }
+
+    /**
+     * @param Element $element
+     * @return ImportAwareInterface|null
+     */
+    public function getImportProcessor(Element $element)
+    {
+        $handler = $this->getHandlerServiceInternal($element, true);
+        if ($handler && ($handler instanceof ImportAwareInterface)) {
+            return $handler;
         } else {
-            if ($this->shimFactory && ($shim = $this->shimFactory->getShim($element))) {
-                return $shim;
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -227,5 +220,22 @@ class ElementInventoryService implements HttpHandlerProvider
             'Mapbender\WmcBundle\Element\WmcList',
             'Mapbender\WmcBundle\Element\WmcEditor',
         );
+    }
+
+    /**
+     * @param Element $element
+     * @param bool $allowShim
+     * @return AbstractElementService|null
+     */
+    protected function getHandlerServiceInternal(Element $element, $allowShim = false)
+    {
+        $className = $element->getClass();
+        if (!empty($this->serviceElements[$className])) {
+            return $this->serviceElements[$className];
+        } elseif ($allowShim && $this->shimFactory) {
+           return $this->shimFactory->getShim($element);
+        } else {
+            return null;
+        }
     }
 }
