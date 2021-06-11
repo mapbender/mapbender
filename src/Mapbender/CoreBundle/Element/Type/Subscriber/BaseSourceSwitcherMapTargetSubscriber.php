@@ -22,11 +22,11 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
     public function preSetData(FormEvent $event)
     {
         /** @var Application $application */
-        $application = $event->getForm()->getParent()->getData()->getApplication();
-        $mapId = $event->getForm()->get('target')->getData();
+        $application = $event->getForm()->getParent()->getParent()->getData()->getApplication();
+        $mapId = $event->getData();
         if ($application && $mapId) {
             $sourceInstanceIds = $this->getSourceInstanceIdsFromMapId($application, $mapId);
-            $event->getForm()
+            $event->getForm()->getParent()
                 ->add('instancesets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
                     'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
                     'allow_add' => true,

@@ -5,20 +5,9 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Mapbender\CoreBundle\Element\Type\Subscriber\BaseSourceSwitcherMapTargetSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BaseSourceSwitcherAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
@@ -26,12 +15,8 @@ class BaseSourceSwitcherAdminType extends AbstractType
     {
         $builder
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
-        $builder->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber());
+        $builder->get('target')->addEventSubscriber(new BaseSourceSwitcherMapTargetSubscriber());
     }
 }
