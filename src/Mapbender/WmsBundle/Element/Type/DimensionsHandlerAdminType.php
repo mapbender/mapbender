@@ -5,24 +5,12 @@ namespace Mapbender\WmsBundle\Element\Type;
 use Mapbender\WmsBundle\Element\Type\Subscriber\DimensionsHandlerMapTargetSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Paul Schmidt
  */
 class DimensionsHandlerAdminType extends AbstractType
 {
-
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
@@ -32,12 +20,8 @@ class DimensionsHandlerAdminType extends AbstractType
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
-        $builder->addEventSubscriber(new DimensionsHandlerMapTargetSubscriber($options['application']));
+        $builder->get('target')->addEventSubscriber(new DimensionsHandlerMapTargetSubscriber());
     }
 }

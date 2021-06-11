@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element\Type\Subscriber;
 
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -13,14 +14,6 @@ use Symfony\Component\Form\FormEvents;
 
 class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
 {
-    /** @var Application */
-    protected $application;
-
-    public function __construct(Application $application)
-    {
-        $this->application = $application;
-    }
-
     public static function getSubscribedEvents()
     {
         return array(FormEvents::PRE_SET_DATA => 'preSetData');
@@ -28,13 +21,16 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
 
     public function preSetData(FormEvent $event)
     {
-        $mapId = $event->getForm()->get('target')->getData();
-        if ($mapId) {
-            $dimensions = $this->collectDimensions($this->application, $mapId);
+        $mapId = $event->getData();
+        /** @var Element $element */
+        $element = $event->getForm()->getParent()->getParent()->getData();
+        $application = $element->getApplication();
+        if ($mapId && $application) {
+            $dimensions = $this->collectDimensions($application, $mapId);
         } else {
             $dimensions = array();
         }
-        $event->getForm()
+        $event->getForm()->getParent()
             ->add('dimensionsets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
                 'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
                 'allow_add' => !!count($dimensions),
@@ -52,7 +48,7 @@ class DimensionsHandlerMapTargetSubscriber implements EventSubscriberInterface
      * @param int $mapId
      * @return DimensionInst[]
      */
-    protected function collectDimensions($application, $mapId)
+    protected function collectDimensions(Application $application, $mapId)
     {
         $dimensions = array();
         foreach ($this->getMapLayersets($application, $mapId) as $layerset) {
