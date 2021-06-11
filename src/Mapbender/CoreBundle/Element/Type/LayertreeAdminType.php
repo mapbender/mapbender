@@ -27,8 +27,6 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new LayertreeSubscriber($options['application']);
-        $builder->addEventSubscriber($subscriber);
         $builder->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
@@ -70,5 +68,6 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
             ))
         ;
+        $builder->get('target')->addEventSubscriber(new LayertreeSubscriber());
     }
 }
