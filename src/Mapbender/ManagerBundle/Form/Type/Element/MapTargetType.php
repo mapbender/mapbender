@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\DataTransformer\IntegerToLocalizedStringTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -49,17 +50,20 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
             }
         }
         $mapIds = array_keys($mapElements);
+        $parentForm = $event->getForm()->getParent();
         // @todo: with no maps, a required map target should be an error
         if (count($mapElements) !== 1) {
-            $this->addChoice($name, $event->getForm()->getParent(), $mapElements, $event->getForm()->getConfig()->getOptions());
+            $this->addChoice($name, $parentForm, $mapElements, $event->getForm()->getConfig()->getOptions());
         } else {
-            $this->addHidden($name, $event->getForm()->getParent());
+            $this->addHidden($name, $parentForm);
         }
 
         // Auto-initialize / replace invalid target ids
         $elementConfig = $element->getConfiguration();
         if ($mapElements && (empty($elementConfig[$name]) || empty($mapElements[$elementConfig[$name]]))) {
-            $event->getForm()->getParent()->get($name)->setData($mapIds[0]);
+            $parentForm->get($name)->setData(\intval($mapIds[0]));
+        } elseif ($event->getData() !== null) {
+            $event->setData(\intval($event->getData()));
         }
     }
 
@@ -75,7 +79,7 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
                 return $mapElement->getTitle() ?: $className::getClassTitle();
             },
             'choice_value' => function($mapId) {
-                return $mapId;
+                return $mapId !== null ? \intval($mapId) : $mapId;
             },
             'label' => $options['label'],
             'required' => $options['required'],
@@ -84,6 +88,10 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
 
     protected function addHidden($name, FormInterface $target)
     {
-        $target->add($name, 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+        $child = $target->getConfig()->getFormFactory()->createNamedBuilder($name, 'Symfony\Component\Form\Extension\Core\Type\HiddenType', null, array(
+            'auto_initialize' => false,
+        ));
+        $child->addModelTransformer(new IntegerToLocalizedStringTransformer());
+        $target->add($child->getForm(), 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
     }
 }
