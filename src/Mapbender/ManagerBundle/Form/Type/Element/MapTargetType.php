@@ -65,7 +65,9 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
             // Setting same data again on different scope to support other event listeners
             $event->setData(\intval($mapIds[0]));
         } elseif ($event->getData() !== null) {
-            $parentForm->get($name)->setData(\intval($mapIds[0]));
+            if ($mapIds) {
+                $parentForm->get($name)->setData(\intval($mapIds[0]));
+            }
             // Setting same data again on different scope to support other event listeners
             $event->setData(\intval($event->getData()));
         }
