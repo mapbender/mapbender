@@ -1,3 +1,9 @@
+## dev-master @ f1166e8f5
+* Fix unhandled errors on image resource request failure when preloading icon assets
+* Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
+* Fix display of validation errors in login
+* Add MapTargetType to simplify initializing map element id on Element forms
+
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
 * [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))
