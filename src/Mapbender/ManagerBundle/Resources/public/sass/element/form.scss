@@ -13,9 +13,6 @@
   .inputWrapper, .dropdown {
     width: calc(100% - #{$labelWidth + $space});
   }
-  .validationMsgBox{
-    min-width: 28%;
-  }
   .choiceExpandedSortable {
     &.input {
       // undo fixed pixel height on .input

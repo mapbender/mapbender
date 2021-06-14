@@ -4,31 +4,17 @@
  See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
 #}
 
-{% use "bootstrap_3_layout.html.twig" with checkbox_widget as bs3_checkbox_widget, checkbox_label as bs3_checkbox_label %}
+{% use "bootstrap_3_layout.html.twig" with
+  checkbox_widget as bs3_checkbox_widget,
+  checkbox_label as bs3_checkbox_label,
+  form_errors as bs3_errors
+%}
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="alert alert-danger">
-            <ul>
-            {% for error in errors %}
-                <li>{{ error.message }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock -%}
-
-{%- block form_errors_inline -%}
-{%- if errors|length > 0 -%}
-  <span class="validationMsgBox smallText">
-    {%- for error in errors -%}
-      {{ error.message }}
-    {%- endfor -%}
-  </span>
-{%- endif -%}
-{%- endblock form_errors_inline %}
+  {{- block('bs3_errors') -}}
+{%- endblock form_errors -%}
 
 {%- block form_widget_simple -%}
   {%- if type is not defined or type not in ['file', 'hidden'] -%}
@@ -170,7 +156,7 @@
 {% block checkbox_row %}
   <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
     {{- block('checkbox_widget') -}}
-    {{- block('form_errors_inline') -}}
+    {{- form_errors(form) -}}
   </div>
 {% endblock checkbox_row %}
 
@@ -187,7 +173,7 @@
     <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}
       {{- form_widget(form) -}}
-      {{- block('form_errors_inline') -}}
+      {{- form_errors(form) -}}
     </div>
   {%- endif -%}
 {% endblock form_row %}
