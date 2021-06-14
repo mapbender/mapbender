@@ -229,12 +229,11 @@ $(function() {
         }).then(
             function(data) {
                 if (data.length > 0) {
-                    var dirty = $form.data('dirty');
-                    var body = $form.parent();
-                    body.html(data);
-                    $form = $('form', body);
-                    $form.data('dirty', dirty);
-                    $form.data('discard', false);
+                    var $newForm = $($.parseHTML(data));
+                    if (!$newForm.is('form')) {
+                        $newForm = $('form', $newForm);
+                    }
+                    $('.modal-body', $form).empty().append($newForm.children());
                     return false;
                 } else {
                     return true;
