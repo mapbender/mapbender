@@ -1,8 +1,13 @@
-## dev-master @ f1166e8f5
+## dev-master @ 5d3e522af
 * Fix unhandled errors on image resource request failure when preloading icon assets
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
+* Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
 * Add MapTargetType to simplify initializing map element id on Element forms
+* Deprecated TargetElementType
+  * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
+  * prefer using new ControlTargetType for generic non-Map targetting
+* Removed unused POI option "tooltip"
 
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
