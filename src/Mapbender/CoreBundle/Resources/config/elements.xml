@@ -23,5 +23,8 @@
         <service id="mapbender.element.share_url" class="Mapbender\CoreBundle\Element\ShareUrl">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.activity_indicator" class="Mapbender\CoreBundle\Element\ActivityIndicator">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>
