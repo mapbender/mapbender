@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,10 +35,14 @@ class POIAdminType extends AbstractType
             ->add('body', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
             ))
-            ->add('gps', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\GpsPosition',
-                'application' => $options['application'],
+            ->add('gps', 'Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType', array(
                 'required' => false,
+                'include_buttons' => true,      // NOTE: GpsPosition is a button-type
+                'element_filter_function' => function(Element $element) {
+                    return \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\GpsPosition', true);
+                },
+                // @todo: provide placeholder translations
+                'placeholder' => 'Choose an option',
             ))
             ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
