@@ -67,7 +67,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ApplicationSwitcher',
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
-            'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
             'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\GpsPosition',

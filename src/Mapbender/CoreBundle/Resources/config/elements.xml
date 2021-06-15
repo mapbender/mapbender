@@ -26,5 +26,8 @@
         <service id="mapbender.element.activity_indicator" class="Mapbender\CoreBundle\Element\ActivityIndicator">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.coordinates_display" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>
