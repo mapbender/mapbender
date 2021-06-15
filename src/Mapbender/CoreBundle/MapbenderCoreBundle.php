@@ -64,7 +64,6 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getElements()
     {
         return array(
-            'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\Copyright',
             'Mapbender\CoreBundle\Element\FeatureInfo',
