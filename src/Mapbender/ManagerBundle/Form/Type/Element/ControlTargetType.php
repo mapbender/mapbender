@@ -152,7 +152,13 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             }
             return true;
         };
-        return $baseFilter;
+        if (!empty($options['element_filter_function'])) {
+            return function(Element $element) use ($baseFilter, $options) {
+                return $baseFilter($element) && ($options['element_filter_function']($element));
+            };
+        } else {
+            return $baseFilter;
+        }
     }
 
     /**
