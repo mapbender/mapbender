@@ -8,6 +8,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\FrameworkBundle\Component\ElementClassFilter;
 use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
 /**
@@ -16,7 +17,7 @@ use Mapbender\FrameworkBundle\Component\ElementShimFactory;
  * Default implementation for service mapbender.element_inventory.service
  * @since v3.0.8-beta1
  */
-class ElementInventoryService implements HttpHandlerProvider
+class ElementInventoryService extends ElementClassFilter implements HttpHandlerProvider
 {
     /** @var string[] */
     protected $movedElementClasses = array(
@@ -229,7 +230,11 @@ class ElementInventoryService implements HttpHandlerProvider
      */
     protected function getHandlerServiceInternal(Element $element, $allowShim = false)
     {
+        $classNameBefore = $element->getClass();
+        $this->prepareClass($element);
         $className = $element->getClass();
+        $element->setClass($classNameBefore);
+
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
         } elseif ($allowShim && $this->shimFactory) {

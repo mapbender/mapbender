@@ -26,23 +26,30 @@ class ElementShimFactory
 
     /**
      * @param Element $element
+     * @param string $className
      * @return AbstractElementService|null
      */
-    public function getShim(Element $element)
+    public function getShim(Element $element, $className = null)
     {
-        $key = \spl_object_id($element);
+        $className = $className ?: $element->getClass();
+        $key = \spl_object_id($element) . $className;
+
         if (!\array_key_exists($key, $this->instances)) {
-            $this->instances[$key] = $this->createShim($element);
+            $this->instances[$key] = $this->createShim($element, $className);
         }
         return $this->instances[$key] ?: null;
     }
 
-    protected function createShim(Element $element)
+    /**
+     * @param Element $element
+     * @param string|ElementInterface $className
+     * @return ElementShim
+     */
+    protected function createShim(Element $element, $className)
     {
-        $componentClassName = $element->getClass();
-        $component = new $componentClassName($this->container, $element);
+        $component = new $className($this->container, $element);
         if (!$component instanceof ElementInterface) {
-            throw new InvalidElementClassException($componentClassName);
+            throw new InvalidElementClassException($className);
         }
         return new ElementShim($component);
     }
