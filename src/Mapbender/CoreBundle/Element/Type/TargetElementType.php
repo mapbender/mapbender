@@ -109,10 +109,15 @@ class TargetElementType extends AbstractType
         } else {
             $elementIds = array();
             foreach ($application->getElements() as $elementEntity) {
-                /** @var Component\Element|string $elementComponentClass */
                 $elementComponentClass = $elementEntity->getClass();
                 if (ClassUtil::exists($elementComponentClass)) {
-                    if ($elementComponentClass::$ext_api) {
+                    $r = new \ReflectionClass($elementComponentClass);
+                    if ($r->hasProperty('ext_api') && $r->getProperty('ext_api')->isStatic()) {
+                        /** @var Component\Element|string $elementComponentClass */
+                        if ($elementComponentClass::$ext_api) {
+                            $elementIds[] = $elementEntity->getId();
+                        }
+                    } else {
                         $elementIds[] = $elementEntity->getId();
                     }
                 }
