@@ -25,9 +25,6 @@ class POIAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => false,
-            ))
             ->add('useMailto', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.poi.label.usemailto',
