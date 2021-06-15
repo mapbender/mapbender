@@ -55,7 +55,7 @@
         <service id="mapbendeer.form_type.control_target" class="Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
-            <argument type="service" id="mapbender.twig.element_class" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
     </services>
 </container>

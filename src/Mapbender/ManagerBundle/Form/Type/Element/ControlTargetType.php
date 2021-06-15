@@ -6,7 +6,7 @@ namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,16 +33,16 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ControlTargetType extends AbstractType implements EventSubscriberInterface
 {
-    /** @var ElementExtension */
-    protected $elementExtension;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var TranslatorInterface */
     protected $translator;
 
     public function __construct(TranslatorInterface $translator,
-                                ElementExtension $elementExtension)
+                                ElementFilter $elementFilter)
     {
         $this->translator = $translator;
-        $this->elementExtension = $elementExtension;
+        $this->elementFilter = $elementFilter;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -132,7 +132,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
     {
         $choices = array();
         foreach ($elements as $element) {
-            $title = $element->getTitle() ?: $this->elementExtension->element_default_title($element);
+            $title = $element->getTitle() ?: $this->elementFilter->getDefaultTitle($element);
             $choices[$title] = $element->getId();
         }
         return $this->sortChoices($choices);
