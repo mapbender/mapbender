@@ -49,7 +49,13 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
     {
         $resolver->setDefaults(array(
             'element_filter_function' => null,
-            'region_name_pattern' => '#(content|mobilePane)#',
+            'region_name_pattern' => function(Options $options) {
+                if ($options['include_buttons']) {
+                    return null;
+                } else {
+                    return '#(content|mobilePane)#';
+                }
+            },
             'include_buttons' => false,
             'include_floatable' => false,
             // placeholder = same as ChoiceType
