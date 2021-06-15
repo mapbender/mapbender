@@ -11,5 +11,17 @@
         <service id="mapbender.element.html" class="Mapbender\CoreBundle\Element\HTMLElement">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.control_button" class="Mapbender\CoreBundle\Element\ControlButton">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.reset_view" class="Mapbender\CoreBundle\Element\ResetView">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.link_button" class="Mapbender\CoreBundle\Element\LinkButton">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.share_url" class="Mapbender\CoreBundle\Element\ShareUrl">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>

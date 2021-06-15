@@ -4,11 +4,12 @@
 namespace Mapbender\CoreBundle\Element;
 
 
-class ShareUrl extends BaseButton
-{
-    // Disable being targetted by a Button
-    public static $ext_api = false;
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 
+class ShareUrl extends ButtonLike
+{
     public static function getClassTitle()
     {
         return 'mb.core.ShareUrl.class.title';
@@ -19,7 +20,7 @@ class ShareUrl extends BaseButton
         return 'mb.core.ShareUrl.class.description';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbShareUrl';
     }
@@ -32,20 +33,24 @@ class ShareUrl extends BaseButton
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
-                '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.scss',
-            ),
-            'trans' => array(
-                'mb.core.ShareUrl.*',
-            ),
+        $required = parent::getRequiredAssets($element) + array(
+            'js' => array(),
+            'css' => array(),
+            'trans' => array(),
         );
+        // Remove / replace base button script
+        $required['js'] = array_merge($required['js'], array(
+            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.js',
+        ));
+        $required['css'] = array_merge($required['css'], array(
+            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.scss',
+        ));
+        $required['trans'] = array_merge($required['trans'], array(
+            'mb.core.ShareUrl.*',
+        ));
+        return $required;
     }
 
     public static function getDefaultConfiguration()
@@ -56,8 +61,11 @@ class ShareUrl extends BaseButton
         return $defaults;
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return "MapbenderCoreBundle:Element:ShareUrl.html.twig";
+        $view = new TemplateView('MapbenderCoreBundle:Element:ShareUrl.html.twig');
+        parent::initializeView($view, $element);
+        $view->attributes['class'] = 'mb-button mb-element-shareurl';
+        return $view;
     }
 }

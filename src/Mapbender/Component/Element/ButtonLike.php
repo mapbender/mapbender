@@ -52,6 +52,8 @@ abstract class ButtonLike extends AbstractElementService
         $view->variables['label'] = $element->getTitle() ?: $this->getClassTitle();
         if (!empty($config['icon'])) {
             $view->variables['icon'] = $config['icon'];
+        } else {
+            $view->variables['icon'] = '';
         }
         $view->variables['show_label'] = $config['label'];
         $view->attributes['title'] = $config['tooltip'] ?: $view->variables['label'];
