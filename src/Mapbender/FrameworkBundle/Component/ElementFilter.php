@@ -135,6 +135,7 @@ class ElementFilter
      */
     public function migrateConfig(Element $element)
     {
+        $this->filterClass($element);
         $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
         if (!ClassUtil::exists($handlingClass)) {
             throw new UndefinedElementClassException($handlingClass);
@@ -169,5 +170,23 @@ class ElementFilter
             $disabled = $this->inventory->isClassDisabled($target->getClass());
         }
         return $disabled;
+    }
+
+    /**
+     * Implements (curated) element class splits.
+     * Currently: update legacy any-function Button into ControlButton / LinkButton
+     *
+     * @param Element $element
+     */
+    protected function filterClass(Element $element)
+    {
+        if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {
+            $config = $element->getConfiguration();
+            if (!empty($config['click'])) {
+                $element->setClass('Mapbender\CoreBundle\Element\LinkButton');
+            } else {
+                $element->setClass('Mapbender\CoreBundle\Element\ControlButton');
+            }
+        }
     }
 }

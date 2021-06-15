@@ -1,9 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
-
 /**
  * Button element
  *
@@ -12,7 +9,7 @@ use Mapbender\CoreBundle\Entity;
  * Unified LinkButton and / or ControlButton remnant. Can no longer be added to applications.
  * Kept only to support project-level child classes.
  */
-class Button extends BaseButton implements ConfigMigrationInterface
+class Button extends BaseButton
 {
     /**
      * @inheritdoc
@@ -57,18 +54,6 @@ class Button extends BaseButton implements ConfigMigrationInterface
         return 'mapbender.mbButton';
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
-    {
-        if ($entity->getClass() && $entity->getClass() === get_called_class()) {
-            $config = $entity->getConfiguration();
-            if (!empty($config['click'])) {
-                $entity->setClass('Mapbender\CoreBundle\Element\LinkButton');
-            } else {
-                $entity->setClass('Mapbender\CoreBundle\Element\ControlButton');
-            }
-        }
-    }
-
     /**
      * @inheritdoc
      */
@@ -81,6 +66,4 @@ class Button extends BaseButton implements ConfigMigrationInterface
     {
         return "MapbenderCoreBundle:Element:button{$suffix}";
     }
-
-
 }
