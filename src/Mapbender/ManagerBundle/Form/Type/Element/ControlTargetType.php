@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -51,6 +52,11 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             'region_name_pattern' => '#(content|mobilePane)#',
             'include_buttons' => false,
             'include_floatable' => false,
+            // placeholder = same as ChoiceType
+            /* @see \Symfony\Component\Form\Extension\Core\Type\ChoiceType::configureOptions() */
+            'placeholder' => function (Options $options) {
+                return $options['required'] ? null : '';
+            },
         ));
         $resolver->setAllowedTypes('element_filter_function', array('null', 'callable'));
         $resolver->setAllowedTypes('include_buttons', array('bool'));
@@ -75,8 +81,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $options = $config->getOptions();
         $elements = $this->getTargets($element, $options);
         // REPLACE entire type with a ChoiceType
-        $event->getForm()->getParent()->add($event->getForm()->getName(), 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-            'choices' => $this->getChoices($elements, $options),
+        $name = $event->getForm()->getName();
+        $choiceOptions = array(
+            'choices' => $this->formatChoices($elements),
             'choice_value' => function($choice) {
                 if ($choice) {
                     return \intval($choice);
@@ -85,7 +92,10 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
                 }
             },
             'label' => $config->getOption('label'),
-        ));
+            'placeholder' => $config->getOption('placeholder'),
+        );
+        $parentForm = $event->getForm()->getParent();
+        $parentForm->add($name, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions);
     }
 
     /**
@@ -108,10 +118,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
 
     /**
      * @param Element[] $elements
-     * @param array $options
      * @return array
      */
-    protected function getChoices($elements, array $options)
+    protected function formatChoices($elements)
     {
         $choices = array();
         foreach ($elements as $element) {
