@@ -58,5 +58,8 @@
             <tag name="mapbender.element" />
             <argument type="service" id="templating" />
         </service>
+        <service id="mapbender.element.gps_position" class="Mapbender\CoreBundle\Element\GpsPosition">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>
