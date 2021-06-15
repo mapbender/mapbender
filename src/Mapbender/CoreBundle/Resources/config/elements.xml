@@ -3,6 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services
         https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mb.element.view_manager.http_handler.class">Mapbender\CoreBundle\Element\ViewManagerHttpHandler</parameter>
+    </parameters>
     <services>
         <service id="mapbender.element.main_map" class="Mapbender\CoreBundle\Element\Map">
             <tag name="mapbender.element" />
@@ -28,6 +31,15 @@
         </service>
         <service id="mapbender.element.coordinates_display" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
             <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.view_manager" class="Mapbender\CoreBundle\Element\ViewManager">
+            <tag name="mapbender.element" />
+            <argument type="service" id="mb.element.view_manager.http_handler" />
+        </service>
+        <service id="mb.element.view_manager.http_handler" class="%mb.element.view_manager.http_handler.class%">
+            <argument type="service" id="templating" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="security.token_storage" />
         </service>
     </services>
 </container>

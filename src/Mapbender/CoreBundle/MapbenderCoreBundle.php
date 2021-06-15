@@ -72,7 +72,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\GpsPosition',
             'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\Legend',
-            'Mapbender\CoreBundle\Element\ViewManager',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',
             'Mapbender\CoreBundle\Element\Ruler',
