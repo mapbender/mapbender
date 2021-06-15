@@ -8,6 +8,9 @@ namespace Mapbender\CoreBundle\Element;
  * @internal
  * Unified LinkButton and / or ControlButton remnant. Can no longer be added to applications.
  * Kept only to support project-level child classes.
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @todo 3.3: remove this class
  */
 class Button extends BaseButton
 {
