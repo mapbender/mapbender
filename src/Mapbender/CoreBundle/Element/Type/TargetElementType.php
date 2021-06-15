@@ -24,6 +24,13 @@ use Symfony\Component\Translation\TranslatorInterface;
  * controlling a functional Element like a FeatureInfo).
  *
  * @see EntityType
+ *
+ * @depreacted for multi-purpose overengineering and problematic usage of EntityType; prefer new, more
+ * specialized type as appropriate:
+ * @see \Mapbender\ManagerBundle\Form\Type\Element\MapTargetType
+ * @see \Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType
+ *
+ * @todo 3.3: remove this class (+ tagged form.type service definition)
  */
 class TargetElementType extends AbstractType
 {
