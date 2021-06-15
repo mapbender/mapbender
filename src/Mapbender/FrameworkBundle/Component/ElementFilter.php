@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * @todo; add (guarded vs Symfony debug class loader) class exists checks here
  * @todo: add filter / prepare logic for backend
  */
-class ElementFilter
+class ElementFilter extends ElementClassFilter
 {
     /** @var ElementInventoryService */
     protected $inventory;
@@ -135,22 +135,14 @@ class ElementFilter
      */
     public function migrateConfig(Element $element)
     {
-        $this->filterClass($element);
+        $this->prepareClass($element);
         $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
         if (!ClassUtil::exists($handlingClass)) {
             throw new UndefinedElementClassException($handlingClass);
         }
-        while (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            // Update config
-            $classBefore = $handlingClass;
+        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $handlingClass */
             $handlingClass::updateEntityConfig($element);
-            $handlingClass = $element->getClass();
-            if ($handlingClass === $classBefore) {
-                break;
-            } elseif (!ClassUtil::exists($handlingClass)) {
-                throw new UndefinedElementClassException($handlingClass);
-            }
         }
         // Add config defaults
         /** @var string|MinimalInterface $handlingClass */
@@ -170,23 +162,5 @@ class ElementFilter
             $disabled = $this->inventory->isClassDisabled($target->getClass());
         }
         return $disabled;
-    }
-
-    /**
-     * Implements (curated) element class splits.
-     * Currently: update legacy any-function Button into ControlButton / LinkButton
-     *
-     * @param Element $element
-     */
-    protected function filterClass(Element $element)
-    {
-        if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {
-            $config = $element->getConfiguration();
-            if (!empty($config['click'])) {
-                $element->setClass('Mapbender\CoreBundle\Element\LinkButton');
-            } else {
-                $element->setClass('Mapbender\CoreBundle\Element\ControlButton');
-            }
-        }
     }
 }
