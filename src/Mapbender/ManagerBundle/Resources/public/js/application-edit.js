@@ -109,51 +109,68 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            // Support hack for Digitizer / DataManager using complex Yaml
-            // configuration
-            var useWideModal = !!$('.elementFormDataManager', nodes).length;
-            var $form = $(nodes);
-            var $modal = window.Mapbender.bootstrapModal($form, {
-                title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
-                subTitle: strings.subTitle || '',
-                cssClass: useWideModal && 'modal-lg',
-                buttons: (extraButtons || []).slice().concat([
-                    {
-                        label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                        cssClass: 'btn btn-success btn-sm',
-                        callback: function() {
-                            elementFormSubmit(this.$element, formUrl).then(function(success) {
-                                if (success) {
+            openElementEditor($(nodes), formUrl, strings, extraButtons);
+        });
+    }
+    function openElementEditor($form, formUrl, strings, extraButtons) {
+        // Support hack for Digitizer / DataManager using complex Yaml
+        // configuration
+        var useWideModal = !!$('.elementFormDataManager', $form).length;
+        var $modal = window.Mapbender.bootstrapModal($form, {
+            title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
+            subTitle: strings.subTitle || '',
+            cssClass: useWideModal && 'modal-lg',
+            buttons: (extraButtons || []).slice().concat([
+                {
+                    label: Mapbender.trans(strings.save || 'mb.actions.save'),
+                    cssClass: 'btn btn-success btn-sm',
+                    callback: function() {
+                        elementFormSubmit(this.$element, formUrl)
+                            .then(function(data) {
+                                if (data.length > 0) {
+                                    // Form rendered back with validation error messages
+                                    var wasDirty = $form.data('dirty');
+                                    var $newForm = $(data).filter('form');
+                                    // Prevent discard confirmation on old form
+                                    $form.data('dirty', false).data('discard', true);
+                                    $modal.modal('hide');
+                                    openElementEditor($newForm, formUrl, strings, extraButtons);
+                                    $newForm.data('dirty', wasDirty);
+                                } else {
+                                    // Success
                                     window.location.reload();
                                 }
+                            },
+                            function (e, statusCode, message) {
+                                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
                             })
-                        }
-                    },
-                    {
-                        label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        ;
                     }
-                ])
-            });
-            $form.on('change', function() {
-                $form.data('dirty', true);
-                $form.data('discard', false);
-            });
-            $modal.on('hide.bs.modal', function(event) {
-                if (!confirmDiscard.call($form, event)) {
-                    event.preventDefault();
+                },
+                {
+                    label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
+                    cssClass: 'btn btn-default btn-sm popupClose'
                 }
-            });
-            // Fix CodeMirror textareas not rendering properly before first
-            // focus / scroll
-            $('.CodeMirror-wrap', $modal).each(function() {
-                var cm = this.CodeMirror;
-                if (cm) {
-                    window.setTimeout(function() {
-                        cm.refresh();
-                    });
-                }
-            });
+            ])
+        });
+        $form.on('change', function() {
+            $form.data('dirty', true);
+            $form.data('discard', false);
+        });
+        $modal.on('hide.bs.modal', function(event) {
+            if (!confirmDiscard.call($form, event)) {
+                event.preventDefault();
+            }
+        });
+        // Fix CodeMirror textareas not rendering properly before first
+        // focus / scroll
+        $('.CodeMirror-wrap', $modal).each(function() {
+            var cm = this.CodeMirror;
+            if (cm) {
+                window.setTimeout(function() {
+                    cm.refresh();
+                });
+            }
         });
     }
 
@@ -226,23 +243,7 @@ $(function() {
             url: url,
             method: 'POST',
             data: data
-        }).then(
-            function(data) {
-                if (data.length > 0) {
-                    var $newForm = $($.parseHTML(data));
-                    if (!$newForm.is('form')) {
-                        $newForm = $('form', $newForm);
-                    }
-                    $('.modal-body', $form).empty().append($newForm.children());
-                    return false;
-                } else {
-                    return true;
-                }
-            },
-            function (e, statusCode, message) {
-                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
-            }
-        );
+        });
     }
 
     // Layers --------------------------------------------------------------------------------------
