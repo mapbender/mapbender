@@ -1,4 +1,4 @@
-## dev-master @ 5d3e522af
+## dev-master @ aed75311e
 * Fix unhandled errors on image resource request failure when preloading icon assets
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
@@ -8,6 +8,7 @@
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
 * Removed unused POI option "tooltip"
+* Removed legacy / broken Selenium + PhantomJS tests
 
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
