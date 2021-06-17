@@ -4,23 +4,34 @@
 namespace Mapbender\WmsBundle\Command;
 
 
-use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractSourceCommand extends ContainerAwareCommand
+abstract class AbstractSourceCommand extends Command
 {
+    /** @var RegistryInterface */
+    protected $managerRegistry;
+    /** @var Importer */
+    protected $importer;
+
+    public function __construct(RegistryInterface $managerRegistry,
+                                Importer $importer)
+    {
+        parent::__construct(null);
+        $this->managerRegistry = $managerRegistry;
+        $this->importer = $importer;
+    }
+
     /**
      * @return Importer
      */
     protected function getImporter()
     {
-        /** @var Importer $importer */
-        $importer = $this->getContainer()->get('mapbender.importer.source.wms.service');
-        return $importer;
+        return $this->importer;
     }
 
     /**
@@ -56,13 +67,8 @@ abstract class AbstractSourceCommand extends ContainerAwareCommand
         }
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     protected function getEntityManager()
     {
-        /** @var EntityManagerInterface $service */
-        $service = $this->getContainer()->get('doctrine.orm.default_entity_manager');
-        return $service;
+        return $this->managerRegistry->getEntityManager(null);
     }
 }

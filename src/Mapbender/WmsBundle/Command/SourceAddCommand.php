@@ -7,6 +7,9 @@ namespace Mapbender\WmsBundle\Command;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Console command mapbender:wms:add
+ */
 class SourceAddCommand extends UrlParseCommand
 {
     protected function configure()

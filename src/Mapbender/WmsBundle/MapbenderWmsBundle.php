@@ -20,6 +20,7 @@ class MapbenderWmsBundle extends MapbenderBundle
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $loader = new XmlFileLoader($container, $configLocator);
         $loader->load('services.xml');
+        $loader->load('commands.xml');
 
         $container->addCompilerPass(new RegisterWmsSourceServicePass());
     }
