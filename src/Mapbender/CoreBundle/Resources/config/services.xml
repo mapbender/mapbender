@@ -77,6 +77,9 @@
             <tag name="twig.extension"/>
             <argument type="service" id="mapbender.element_inventory.service" />
         </service>
+        <service id="mapbender.twig.form" class="Mapbender\CoreBundle\Extension\FormExtension">
+            <tag name="twig.extension"/>
+        </service>
         <service class="Mapbender\CoreBundle\Extension\BrandingExtension">
             <tag name="twig.extension"/>
             <argument>%branding.login_backdrop%</argument>
