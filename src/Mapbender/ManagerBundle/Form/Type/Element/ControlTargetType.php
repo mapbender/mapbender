@@ -100,6 +100,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             'label' => $config->getOption('label'),
             'placeholder' => $config->getOption('placeholder'),
             'required' => $config->getOption('required'),
+            'constraints' => $config->getOption('constraints'),
         );
         $parentForm = $event->getForm()->getParent();
         $parentForm->add($name, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions);
