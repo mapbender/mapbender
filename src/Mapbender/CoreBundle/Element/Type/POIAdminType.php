@@ -38,8 +38,6 @@ class POIAdminType extends AbstractType
                 'element_filter_function' => function(Element $element) {
                     return \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\GpsPosition', true);
                 },
-                // @todo: provide placeholder translations
-                'placeholder' => 'Choose an option',
             ))
             ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;

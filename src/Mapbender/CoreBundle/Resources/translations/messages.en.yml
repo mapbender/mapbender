@@ -36,6 +36,9 @@ mb:
         singular: Bound instance
         plural: Bound instances
     security: Security
+  form:
+    choice_required: Choose one
+    choice_optional: None
   states:
     active: active
     inactive: inactive

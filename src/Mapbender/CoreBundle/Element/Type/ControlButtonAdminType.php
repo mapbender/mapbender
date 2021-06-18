@@ -23,6 +23,7 @@ class ControlButtonAdminType extends AbstractType
         $builder
             ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType', array(
                 'constraints' => array(new NotBlank()),
+                'placeholder' => 'mb.form.choice_required',
             ))
             ->add('group', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,

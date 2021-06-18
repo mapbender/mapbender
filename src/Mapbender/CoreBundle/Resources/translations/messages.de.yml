@@ -36,6 +36,9 @@ mb:
         singular: Private Instanz
         plural: Private Instanzen
     security: Sicherheit
+  form:
+    choice_required: Auswahl erforderlich
+    choice_optional: Nichts ausgewählt
   states:
     active: aktiv
     inactive: inaktiv
