@@ -142,9 +142,13 @@ class ApplicationController extends ApplicationControllerBase
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
+
         if ($useCache) {
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . session_id(), "html");
+            // Must ensure session is started (may not be active even for authenticated users)
+            $request->getSession()->start();
+            $sessionId = $request->getSession()->getId();
+            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . $sessionId, "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
