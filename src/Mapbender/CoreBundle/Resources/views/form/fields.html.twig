@@ -82,7 +82,11 @@
   {#- Initially displayed value == exactly the text of the option initially marked with selected="selected" -#}
   {#- see https://github.com/symfony/symfony/blob/3.4/src/Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig#L55 -#}
   {%- if placeholder is not none and value is empty and not placeholder_in_choices -%}
-    {{- placeholder -}}
+    {%- if translation_domain is same as(false) or placeholder == '' -%}
+      {{- placeholder -}}
+    {%- else -%}
+      {{- placeholder | trans({}, translation_domain) -}}
+    {%- endif -%}
   {%- else -%}
     {%- set _selected = get_value_choice(preferred_choices, value) | default(get_value_choice(choices, value)) -%}
     {%- set _selected = _selected | default(first_choice(preferred_choices)) | default(first_choice(choices)) -%}
