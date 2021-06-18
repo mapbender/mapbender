@@ -1,14 +1,18 @@
-## dev-master @ aed75311e
+## dev-master @ d61917867
 * Fix unhandled errors on image resource request failure when preloading icon assets
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
+* Fix frontend dynamic html dependant on user getting cached and reused for anonymous users (session not started)
+* Fix missing colorpicker assets / broken FeatureInfo backend form if installed in a sub-path URL
+* SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
 * Add MapTargetType to simplify initializing map element id on Element forms
 * Deprecated TargetElementType
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
 * Removed unused POI option "tooltip"
 * Removed legacy / broken Selenium + PhantomJS tests
+* Resolved misc Symfony 4 incompatibilites in console command
 
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
