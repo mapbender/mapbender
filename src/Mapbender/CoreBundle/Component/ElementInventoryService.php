@@ -4,7 +4,10 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\Component\ClassUtil;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * Maintains inventory of Element Component classes
@@ -47,6 +50,42 @@ class ElementInventoryService
             return $classNameOut;
         } else {
             return $classNameIn;
+        }
+    }
+
+    /**
+     * @param string|MinimalInterface $className
+     * @return string|null
+     */
+    public function getClassTitle($className)
+    {
+        $adjustedClass = $this->getAdjustedElementClassName($className);
+        if (ClassUtil::exists($adjustedClass)) {
+            /** @var string|MinimalInterface $adjustedClass */
+            return $adjustedClass::getClassTitle();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return string|null
+     */
+    public function getDefaultTitle(Element $element)
+    {
+        /** @var null|string|MinimalInterface $className */
+        $className = $this->getAdjustedElementClassName($element->getClass());
+        if ($className && \is_a($className, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+            $target = $element->getTargetElement();
+            if ($target && $target !== $element) {
+                return $target->getTitle() ?: $this->getDefaultTitle($target);
+            }
+        }
+        if ($className && ClassUtil::exists($className)) {
+            return $className::getClassTitle();
+        } else {
+            return null;
         }
     }
 

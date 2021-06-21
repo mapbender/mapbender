@@ -86,10 +86,11 @@
         </service>
         <service id="mapbender.twig.element_markup" class="Mapbender\CoreBundle\Extension\ElementMarkupExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.presenter.application.service" />
-            <argument type="service" id="templating" />
-            <argument>%mapbender.responsive.elements%</argument>
-            <argument>%mapbender.responsive.containers%</argument>
+            <argument type="service" id="mapbender.renderer.element_markup" />
+        </service>
+        <service id="mapbender.twig.application_content" class="Mapbender\CoreBundle\Extension\ApplicationContentExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.renderer.application_markup" />
             <argument>%kernel.debug%</argument>
         </service>
 
@@ -102,7 +103,7 @@
             <tag name="form.type" />
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.twig.element_class" />
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
 
         <service class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
@@ -182,7 +183,6 @@
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="mapbender.twig.element_class" />
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />

@@ -7,8 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Component;
-use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,16 +37,16 @@ class TargetElementType extends AbstractType
     protected $repository;
     /** @var TranslatorInterface */
     protected $translator;
-    /** @var ElementExtension */
-    protected $elementExtension;
+    /** @var ElementInventoryService */
+    protected $inventoryService;
 
     public function __construct(TranslatorInterface $translator,
                                 EntityManagerInterface $entityManager,
-                                ElementExtension $elementExtension)
+                                ElementInventoryService $inventoryService)
     {
         $this->translator = $translator;
         $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
-        $this->elementExtension = $elementExtension;
+        $this->inventoryService = $inventoryService;
     }
 
     /**
@@ -67,13 +66,13 @@ class TargetElementType extends AbstractType
             'class' => 'Mapbender\CoreBundle\Entity\Element',
         );
         $type = $this;
-        $elementExt = $this->elementExtension;
+        $inventory = $this->inventoryService;
         $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
             'class' => 'Mapbender\CoreBundle\Entity\Element',
-            'choice_label' => function($element) use ($elementExt) {
-                return $element->getTitle() ?: $elementExt->element_default_title($element);
+            'choice_label' => function($element) use ($inventory) {
+                return $element->getTitle() ?: $inventory->getDefaultTitle($element);
             },
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',

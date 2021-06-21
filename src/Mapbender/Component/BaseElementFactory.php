@@ -79,6 +79,15 @@ class BaseElementFactory
     }
 
     /**
+     * @param Element $element
+     * @return string|null
+     */
+    public function getDefaultTitle(Element $element)
+    {
+        return $this->inventoryService->getDefaultTitle($element);
+    }
+
+    /**
      * @param string $className
      * @return bool
      */
