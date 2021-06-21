@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
-use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -25,19 +24,14 @@ class ApplicationService
     protected $uploadsManager;
     /** @var AuthorizationCheckerInterface  */
     protected $authorizationChecker;
-    /** @var AclProviderInterface */
-    protected $aclProvider;
-
 
     public function __construct(ElementFactory $elementFactory,
                                 UploadsManager $uploadsManager,
-                                AuthorizationCheckerInterface $authorizationChecker,
-                                AclProviderInterface $aclProvider)
+                                AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->elementFactory = $elementFactory;
         $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
-        $this->aclProvider = $aclProvider;
     }
 
     /**

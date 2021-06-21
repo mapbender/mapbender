@@ -16,8 +16,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ElementFactory extends BaseElementFactory
 {
-    /** @var Element[] */
-    protected $componentDummies = array();
     /** @var ContainerInterface */
     protected $container;
     /** @var TranslatorInterface */
@@ -114,21 +112,6 @@ class ElementFactory extends BaseElementFactory
             }
         }
         $element->setConfiguration($mergedConfig);
-    }
-
-    /**
-     * @param string $className
-     * @return Element
-     */
-    protected function getComponentDummy($className)
-    {
-        if (!array_key_exists($className, $this->componentDummies)) {
-            $element = new Entity\Element();
-            $element->setClass($className);
-            $dummy = $this->instantiateComponent($element);
-            $this->componentDummies[$className] = $dummy;
-        }
-        return $this->componentDummies[$className];
     }
 
     /**
