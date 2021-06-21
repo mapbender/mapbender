@@ -91,6 +91,7 @@ abstract class BaseKernel extends Kernel
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 
             // Bare-bones Mapbender
+            new FrameworkBundle\MapbenderFrameworkBundle(),
             new CoreBundle\MapbenderCoreBundle(),
         );
 
