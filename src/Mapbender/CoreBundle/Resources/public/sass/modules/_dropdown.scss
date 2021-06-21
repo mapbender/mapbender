@@ -22,7 +22,9 @@ select.numeric {
     height: #{$inputHeight - 4px};    // Deliberately downsize to fix weird vertical gaps after .dropdown
     overflow-y: hidden;
     padding-left: 5px;
-    &.iconDown:before{
+    &.iconDown:after {
+      content: "\f078"; // =.fa-chevron-down
+      font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       position: absolute;
       right: 0;
       margin-right: .5em;
