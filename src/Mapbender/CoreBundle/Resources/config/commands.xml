@@ -11,14 +11,14 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument>%mapbender.strict.static_app.element_configuration%</argument>
         </service>
-        <service class="Mapbender\CoreBundle\Command\ApplicationExportCommand">
+        <service id="mapbender.command.application_export" class="Mapbender\CoreBundle\Command\ApplicationExportCommand">
             <tag name="console.command" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
-        <service class="Mapbender\CoreBundle\Command\ApplicationCloneCommand">
+        <service id="mapbender.command.application_clone" class="Mapbender\CoreBundle\Command\ApplicationCloneCommand">
             <tag name="console.command" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application_importer.service" />

@@ -77,7 +77,7 @@
         <service id="mapbender.twig.form" class="Mapbender\CoreBundle\Extension\FormExtension">
             <tag name="twig.extension"/>
         </service>
-        <service class="Mapbender\CoreBundle\Extension\BrandingExtension">
+        <service id="mapbender.twig.branding" class="Mapbender\CoreBundle\Extension\BrandingExtension">
             <tag name="twig.extension"/>
             <argument>%branding.login_backdrop%</argument>
         </service>
@@ -96,15 +96,11 @@
             <argument>%mapbender.sitelinks%</argument>
         </service>
 
-        <service class="Mapbender\CoreBundle\Element\Type\TargetElementType">
+        <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.element_inventory.service" />
-        </service>
-
-        <service class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
-            <tag name="form.type" />
         </service>
 
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">

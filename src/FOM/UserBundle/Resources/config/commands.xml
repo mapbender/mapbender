@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <!-- see https://symfony.com/doc/4.4/console/commands_as_services.html -->
-        <service class="FOM\UserBundle\Command\ResetRootAccountCommand">
+        <service id="fom.command.reset_root" class="FOM\UserBundle\Command\ResetRootAccountCommand">
             <tag name="console.command" />
             <argument type="service" id="doctrine" />
             <argument type="service" id="fom.user_helper.service" />
