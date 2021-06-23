@@ -1,5 +1,4 @@
-## dev-master @ 69f57ec10
-* Fix unhandled errors on image resource request failure when preloading icon assets
+## dev-master @ c8a2d2725
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -10,10 +9,12 @@
 * SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
 * Add support for Yaml application definitions to `mapbender:application:import` command
 * Add support for reading entire directories to `mapbender:application:import` command
+* [Backend] Fix Application editing screenshot preview overflow on narrow screens
 * Removed unused POI option "tooltip"
 * Removed legacy / broken Selenium + PhantomJS tests
-* Resolved misc Symfony 4 incompatibilites in console commands and service definitions
+* Resolved misc Symfony 4 incompatibilites in console commands, service definitions and form types
 * Resolved FA5+ incompatibility in custom dropdown
+* [Framework] Fix unhandled errors on image resource request failure when preloading icon assets
 * Deprecated TargetElementType
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
