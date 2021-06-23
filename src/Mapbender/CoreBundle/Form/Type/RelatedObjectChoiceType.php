@@ -59,7 +59,6 @@ abstract class RelatedObjectChoiceType extends AbstractType
                 };
             },
             'choice_filter' => null,
-            'choices_as_values' => true,
             'placeholder' => null,
         ));
 

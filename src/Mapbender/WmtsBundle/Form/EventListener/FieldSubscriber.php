@@ -46,7 +46,6 @@ class FieldSubscriber implements EventSubscriberInterface
         $form->add('style', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'label' => 'Style',
             'choices' => $styleOpt,
-            'choices_as_values' => true,
             "required" => false,
             'auto_initialize' => false
         ));

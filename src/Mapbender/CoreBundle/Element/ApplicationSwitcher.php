@@ -11,7 +11,6 @@ use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Kernel;
 
 class ApplicationSwitcher extends Element
 {
@@ -81,9 +80,6 @@ class ApplicationSwitcher extends Element
                 'title' => $this->entity->getTitle(),
             ),
         );
-        if (Kernel::MAJOR_VERSION < 3) {
-            $options['choices_as_values'] = true;
-        }
         $form = $formFactory->createNamed('application', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $current, $options);
         return array(
             'form' => $form->createView(),

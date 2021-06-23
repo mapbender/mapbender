@@ -40,8 +40,5 @@ class TemplateChoiceType extends AbstractType
         $resolver->setDefaults(array(
             'choices' => $this->choices,
         ));
-        if (\Symfony\Component\HttpKernel\Kernel::MAJOR_VERSION < 3) {
-            $resolver->setDefault('choices_as_values', true);
-        }
     }
 }

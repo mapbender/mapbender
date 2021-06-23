@@ -33,7 +33,6 @@ class SketchAdminType extends AbstractType
                     'mb.core.sketch.geometrytype.circle' => 'circle',
                     'mb.core.sketch.geometrytype.text' => 'text',
                 ),
-                'choices_as_values' => true,
             ))
         ;
     }

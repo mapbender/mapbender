@@ -67,7 +67,6 @@ class SimpleSearchAdminType extends AbstractType
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON',
                 ),
-                'choices_as_values' => true,
                 'required' => true,
             ))
             ->add('sourceSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

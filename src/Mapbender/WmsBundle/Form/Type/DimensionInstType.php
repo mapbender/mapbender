@@ -122,7 +122,6 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'data' => explode(',', $data->getExtent()),
                 'mapped' => false,
                 'choices' => $choices,
-                'choices_as_values' => true,
                 'label' => $form->get('extent')->getConfig()->getOption('label'),
                 'auto_initialize' => false,
                 'multiple' => true,

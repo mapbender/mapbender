@@ -18,7 +18,6 @@ class FeatureInfoAdminType extends AbstractType
                     'Tabs' => 'tabs',
                     'Accordion' => 'accordion',
                 ),
-                'choices_as_values' => true,
             ))
             ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

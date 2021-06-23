@@ -24,7 +24,6 @@ class ZoomBarAdminType extends AbstractType
                     "Zoom in/out" => "zoom_in_out",
                     "Zoom slider" => "zoom_slider",
                 ),
-                'choices_as_values' => true,
                 'attr' => array(
                     'size' => 5,
                 ),

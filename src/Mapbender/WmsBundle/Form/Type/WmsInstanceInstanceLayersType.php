@@ -51,17 +51,14 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $builder
             ->add('format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $getMapFormatChoices,
-                'choices_as_values' => true,
                 'required' => true,
             ))
             ->add('infoformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $featureInfoFormatChoices,
-                'choices_as_values' => true,
                 'required' => false,
             ))
             ->add('exceptionformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $exceptionFormatChoices,
-                'choices_as_values' => true,
                 'required' => false,
             ))
             ->add('transparency', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
@@ -117,7 +114,6 @@ class WmsInstanceInstanceLayersType extends AbstractType
             }
             $builder->add('layerOrder', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $layerOrderChoices,
-                'choices_as_values' => true,
                 'required' => true,
                 'auto_initialize' => true,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.layerOrder',

@@ -24,7 +24,6 @@ class WmsLoaderAdminType extends AbstractType
                     "image/gif" => "image/gif",
                     "image/jpeg" => "image/jpeg",
                 ),
-                'choices_as_values' => true,
             ))
             ->add('defaultInfoFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 "choices" => array(
@@ -32,7 +31,6 @@ class WmsLoaderAdminType extends AbstractType
                     "text/xml" => "text/xml",
                     "text/plain" => "text/plain",
                 ),
-                'choices_as_values' => true,
             ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

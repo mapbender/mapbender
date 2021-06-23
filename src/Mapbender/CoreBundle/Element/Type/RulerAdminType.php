@@ -20,7 +20,6 @@ class RulerAdminType extends AbstractType
                     "line" => "line",
                     "area" => "area",
                 ),
-                'choices_as_values' => true,
             ))
         ;
     }

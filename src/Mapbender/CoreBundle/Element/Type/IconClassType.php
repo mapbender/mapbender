@@ -56,7 +56,6 @@ class IconClassType extends AbstractType
                 }
             },
             'choices' => array_flip($icons),
-            'choices_as_values' => true,
         ));
     }
 }

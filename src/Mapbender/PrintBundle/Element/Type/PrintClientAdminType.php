@@ -41,7 +41,6 @@ class PrintClientAdminType extends AbstractType
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
                 ),
-                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
             $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
@@ -50,7 +49,6 @@ class PrintClientAdminType extends AbstractType
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
                 ),
-                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.queueAccess.label',
             ));
         }

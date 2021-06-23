@@ -24,7 +24,6 @@ class LayertreeAdminType extends AbstractType
                     'Element' => 'element',
                     'Dialog' => 'dialog',
                 ),
-                'choices_as_values' => true,
             ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

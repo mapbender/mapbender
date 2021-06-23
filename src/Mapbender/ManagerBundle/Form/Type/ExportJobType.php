@@ -44,7 +44,6 @@ class ExportJobType extends AbstractType
                     ExchangeJob::FORMAT_JSON => ExchangeJob::FORMAT_JSON,
                     ExchangeJob::FORMAT_YAML => ExchangeJob::FORMAT_YAML,
                 ),
-                'choices_as_values' => true,
             ))
         ;
     }

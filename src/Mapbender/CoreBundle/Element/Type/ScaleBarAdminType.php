@@ -22,7 +22,6 @@ class ScaleBarAdminType extends AbstractType
                     'kilometer' => 'km',
                     'mile' => 'ml',
                 ),
-                'choices_as_values' => true,
             ))
         ;
     }

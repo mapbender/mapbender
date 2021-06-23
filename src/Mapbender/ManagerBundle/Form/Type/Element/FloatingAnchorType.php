@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FloatingAnchorType extends AbstractType
@@ -26,8 +25,5 @@ class FloatingAnchorType extends AbstractType
             ),
             'label' => 'mb.manager.admin.element.anchor.label',
         ));
-        if (Kernel::MAJOR_VERSION < 3) {
-            $resolver->setDefault('choices_as_values', true);
-        }
     }
 }

@@ -5,9 +5,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HttpSourceSelectionType extends HttpSourceOriginType
@@ -36,9 +34,6 @@ class HttpSourceSelectionType extends HttpSourceOriginType
             'mapped' => false,
         );
         if (count($this->choices) >= 1) {
-            if (Kernel::MAJOR_VERSION < 3) {
-                $fieldOptions['choices_as_values'] = true;
-            }
             $builder->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $fieldOptions + array(
                 'choices' => $this->choices,
             ));

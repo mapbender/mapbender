@@ -30,13 +30,8 @@ class LayersetAdminType extends AbstractType
                 foreach ($application->getLayersets() as $layerset) {
                     $choices[$layerset->getTitle()] = $layerset->getId();
                 }
-                if ($options->offsetExists('choices_as_values') && !$options['choices_as_values']) {
-                    return array_flip($choices);
-                } else {
-                    return $choices;
-                }
+                return $choices;
             },
-            'choices_as_values' => true,
         ));
     }
 }
