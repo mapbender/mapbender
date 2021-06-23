@@ -13,7 +13,6 @@ class TemplateView extends ElementView
 
     public function __construct($template)
     {
-        parent::__construct();
         $this->setTemplate($template);
     }
 

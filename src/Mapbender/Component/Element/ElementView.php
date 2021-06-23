@@ -4,11 +4,7 @@
 namespace Mapbender\Component\Element;
 
 
-class ElementView
+abstract class ElementView
 {
     public $attributes = array();
-
-    public function __construct()
-    {
-    }
 }

@@ -5,6 +5,7 @@ namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 use Mapbender\Component\Element\ElementView;
 use Mapbender\Component\Element\LegacyView;
+use Mapbender\Component\Element\StaticView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
@@ -132,9 +133,8 @@ class ElementMarkupRenderer
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
         if ($view instanceof TemplateView) {
             $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
-        } elseif ($view instanceof ElementView) {
-            // Empty ElementView
-            $content = '';
+        } elseif ($view instanceof StaticView) {
+            $content = $view->getContent();
         } else {
             throw new \Exception("Don't know how to render " . get_class($view));
         }
