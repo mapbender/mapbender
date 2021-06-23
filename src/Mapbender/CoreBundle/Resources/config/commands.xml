@@ -24,5 +24,9 @@
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
+        <service id="mapbender.command.init_db" class="Mapbender\CoreBundle\Command\InitDbCommand">
+            <tag name="console.command" command="mapbender:database:init" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
     </services>
 </container>
