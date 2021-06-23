@@ -1,4 +1,4 @@
-## dev-master @ c8a2d2725
+## dev-master @ 471c03ff4
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -9,6 +9,7 @@
 * SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
 * Add support for Yaml application definitions to `mapbender:application:import` command
 * Add support for reading entire directories to `mapbender:application:import` command
+* Add automatic fix for incomplete / broken Element "weight" column values to `mapbender:database:init` command
 * [Backend] Fix Application editing screenshot preview overflow on narrow screens
 * Removed unused POI option "tooltip"
 * Removed legacy / broken Selenium + PhantomJS tests
