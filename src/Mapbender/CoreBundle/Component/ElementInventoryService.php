@@ -29,8 +29,13 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
         'Mapbender\CoreBundle\Element\Redlining' => 'Mapbender\CoreBundle\Element\Sketch',
     );
 
+    protected $inventoryDirty = true;
+    /** @var string[] */
+    protected $legacyInventory = array();
     /** @var string[] */
     protected $fullInventory = array();
+    /** @var string[] */
+    protected $activeInventory = array();
     /** @var string[] */
     protected $noCreationClassNames = array();
     /** @var string[] */
@@ -117,7 +122,8 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     public function setInventory($classNames)
     {
         // map value:value to ease array_intersect_key in getActiveInventory
-        $this->fullInventory = array_combine($classNames, $classNames);
+        $this->legacyInventory = array_combine($classNames, $classNames);
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -137,6 +143,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
                 $this->replaceElement($handledClassName, $serviceClass);
             }
         }
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -162,6 +169,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
         if ($circular) {
             throw new \LogicException("Circular class replacement detected for " . implode(', ', $circular));
         }
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -177,6 +185,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
         }
         $this->noCreationClassNames[] = $className;
         $this->noCreationClassNames = array_unique(array_merge($this->noCreationClassNames));
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -186,12 +195,8 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
      */
     public function getActiveInventory()
     {
-        $moved = array_intersect_key($this->movedElementClasses, $this->fullInventory);
-        $inventoryCopy = $this->fullInventory + array();
-        foreach ($moved as $original => $replacement) {
-            $inventoryCopy[$original] = $replacement;
-        }
-        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames, $this->getDisabledClasses()));
+        $this->resolveInventory();
+        return $this->activeInventory;
     }
 
     /**
@@ -201,6 +206,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
      */
     public function getRawInventory()
     {
+        $this->resolveInventory();
         return array_values($this->fullInventory);
     }
 
@@ -241,6 +247,23 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
            return $this->shimFactory->getShim($element);
         } else {
             return null;
+        }
+    }
+
+    protected function resolveInventory()
+    {
+        if ($this->inventoryDirty) {
+            $this->fullInventory = $this->legacyInventory;
+            foreach (array_keys($this->serviceElements) as $serviceClass) {
+                $this->fullInventory[$serviceClass] = $serviceClass;
+            }
+            $moved = array_intersect_key($this->movedElementClasses, $this->fullInventory);
+            $active = $this->fullInventory;
+            foreach ($moved as $original => $replacement) {
+                $active[$original] = $replacement;
+            }
+            $active = array_diff(array_values($active), $this->noCreationClassNames, $this->getDisabledClasses());
+            $this->activeInventory = array_unique($active);
         }
     }
 }
