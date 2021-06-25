@@ -106,21 +106,15 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
      */
     protected function configureElement(Element $element, $configuration)
     {
-        $element->setConfiguration($configuration);
-        /** @var string|MinimalInterface $componentClass */
-        $componentClass = $element->getClass();
-
-        // Do not use original $configuration array. Configuration may already have been modified once implicitly.
-        /** @see ConfigMigrationInterface */
-        $defaults = $componentClass::getDefaultConfiguration();
-        $configInitial = $element->getConfiguration();
-        $mergedConfig = array_replace($defaults, array_filter($configInitial, function($v) {
+        $defaults = $element->getConfiguration() ?: array();
+        // Replace non-null top level values
+        $mergedConfig = array_replace($defaults, array_filter($configuration, function($v) {
             return $v !== null;
         }));
         // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
-        foreach (array_keys($configInitial) as $key) {
+        foreach (array_keys($configuration) as $key) {
             if (!array_key_exists($key, $mergedConfig)) {
-                assert($configInitial[$key] === null);
+                assert($configuration[$key] === null);
                 $mergedConfig[$key] = null;
             }
         }
