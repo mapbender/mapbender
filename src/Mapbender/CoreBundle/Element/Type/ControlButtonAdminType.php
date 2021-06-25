@@ -4,17 +4,11 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ControlButtonAdminType extends AbstractType
+class ControlButtonAdminType extends BaseButtonAdminType
 {
-    public function getParent()
-    {
-        return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
-    }
-
     /**
      * @inheritdoc
      */
@@ -29,5 +23,6 @@ class ControlButtonAdminType extends AbstractType
                 'required' => false,
             ))
         ;
+        parent::buildForm($builder, $options);
     }
 }
