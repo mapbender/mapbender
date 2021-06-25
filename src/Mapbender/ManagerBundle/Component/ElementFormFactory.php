@@ -68,11 +68,12 @@ class ElementFormFactory
         }
 
         $this->elementFilter->prepareForForm($element);
+        $handlingClass = $this->getHandlingClass($element);
 
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
-                'element_class' => $element->getClass(),
+                'element_class' => $handlingClass,
                 'required' => false,
             ))
         ;
@@ -80,7 +81,6 @@ class ElementFormFactory
 
         $options = array();
 
-        $handlingClass = $this->getHandlingClass($element);
         $twigTemplate = $handlingClass::getFormTemplate();
         $options['label'] = false;
 

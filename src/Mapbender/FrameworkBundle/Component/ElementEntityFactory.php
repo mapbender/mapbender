@@ -27,28 +27,29 @@ class ElementEntityFactory
     }
 
     /**
-     * @param $componentClass
+     * @param $className
      * @param $region
      * @param Application|null $application
      * @return Element
      */
-    public function newEntity($componentClass, $region, Application $application = null)
+    public function newEntity($className, $region, Application $application = null)
     {
-        /** @var string|MinimalInterface $componentClass */
-        $componentClass = $this->elementFilter->getAdjustedElementClassName($componentClass);
-        if (!$componentClass || !ClassUtil::exists($componentClass)) {
-            throw new UndefinedElementClassException($componentClass);
+        /** @var string|MinimalInterface $handlingClass */
+        $handlingClass = $this->elementFilter->getAdjustedElementClassName($className);
+        if (!$handlingClass || !ClassUtil::exists($handlingClass)) {
+            throw new UndefinedElementClassException($handlingClass);
         }
+        $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($handlingClass);
 
         $entity = new Element();
-        $configuration = $componentClass::getDefaultConfiguration();
+        $configuration = $handlingClass::getDefaultConfiguration();
         $entity
-            ->setClass($componentClass)
+            ->setClass($canonicalClass)
             ->setRegion($region)
             ->setWeight(0)
             ->setConfiguration($configuration)
         ;
-        if (!$componentClass || !\is_a($componentClass, 'Mapbender\CoreBundle\Element\ControlButton')) {
+        if (!$handlingClass || !\is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton')) {
             // Leave title empty. Will be resolved to target title when rendering
             // @todo: make title column nullable (will require schema update)
             $entity->setTitle('');

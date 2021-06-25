@@ -89,8 +89,9 @@ class ElementFilter extends ElementClassFilter
 
     public function prepareForForm(Element $element)
     {
-        // @todo: prevent replacement of persisted class (shreds db content permanently)
         $this->migrateConfig($element);
+        $canonical = $this->inventory->getCanonicalClassName($element->getClass());
+        $element->setClass($canonical);
     }
 
     /**
