@@ -4,7 +4,8 @@
 namespace Mapbender\CoreBundle\Component;
 
 
-use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementServiceFrontendInterface;
+use Mapbender\Component\Element\ElementServiceInterface;
 use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Entity\Element;
@@ -42,8 +43,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     protected $noCreationClassNames = array();
     /** @var string[] */
     protected $disabledClassesFromConfig = array();
-    /** @todo: prefer an interface type */
-    /** @var AbstractElementService[] */
+    /** @var ElementServiceInterface[] */
     protected $serviceElements = array();
     /** @var ElementShimFactory|null */
     protected $shimFactory;
@@ -80,8 +80,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
 
     /**
      * @param Element $element
-     * @return AbstractElementService|null
-     * @todo: prefer interface type hinting
+     * @return ElementServiceInterface|null
      */
     public function getHandlerService(Element $element)
     {
@@ -105,7 +104,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
 
     /**
      * @param Element $element
-     * @return AbstractElementService|null
+     * @return ElementServiceFrontendInterface|null
      */
     public function getFrontendHandler(Element $element)
     {
@@ -138,14 +137,13 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     }
 
     /**
-     * @param AbstractElementService $instance
+     * @param ElementServiceInterface $instance
      * @param string[] $handledClassNames
      * @param string|null $canonical
-     * @todo: prefer an interface type
      * @noinspection PhpUnused
      * @see \Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass::process()
      */
-    public function registerService(AbstractElementService $instance, $handledClassNames, $canonical = null)
+    public function registerService(ElementServiceInterface $instance, $handledClassNames, $canonical = null)
     {
         $serviceClass = \get_class($instance);
         if ($canonical) {
@@ -248,7 +246,7 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     /**
      * @param Element $element
      * @param bool $allowShim
-     * @return AbstractElementService|null
+     * @return ElementServiceInterface|null
      */
     protected function getHandlerServiceInternal(Element $element, $allowShim = false)
     {
