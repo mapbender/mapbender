@@ -80,8 +80,8 @@ class ElementFormFactory
 
         $options = array();
 
-        $componentClassName = $this->getComponentClass($element);
-        $twigTemplate = $componentClassName::getFormTemplate();
+        $handlingClass = $this->getHandlingClass($element);
+        $twigTemplate = $handlingClass::getFormTemplate();
         $options['label'] = false;
 
         $resolvedType = $this->formRegistry->getType($configurationType);
@@ -93,7 +93,7 @@ class ElementFormFactory
         $formType->add('configuration', $configurationType, $options);
 
         $regionName = $element->getRegion();
-        if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
             if (!$regionName || false !== strpos($regionName, 'content')) {
                 $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
             } else {
@@ -123,8 +123,8 @@ class ElementFormFactory
      */
     public function getConfigurationFormType(Element $element)
     {
-        $componentClassName = $this->getComponentClass($element);
-        $typeName = $componentClassName::getType();
+        $handlingClass = $this->getHandlingClass($element);
+        $typeName = $handlingClass::getType();
         if (is_string($typeName) && preg_match('#^[\w\d]+(\\\\[\w\d]+)+$#', $typeName)) {
             // typename is a fully qualified class name, which is good (forward compatible with Symfony 3)
             if (!is_a($typeName, 'Symfony\Component\Form\FormTypeInterface', true)) {
@@ -137,10 +137,9 @@ class ElementFormFactory
 
     /**
      * @param Element $element
-     * @todo: update return type annotation
-     * @return string|\Mapbender\CoreBundle\Component\Element
+     * @return string|\Mapbender\CoreBundle\Component\ElementBase\EditableInterface
      */
-    protected function getComponentClass(Element $element)
+    protected function getHandlingClass(Element $element)
     {
         return $this->elementFilter->getAdjustedElementClassName($element->getClass());
     }
