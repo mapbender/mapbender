@@ -16,15 +16,12 @@ class ElementShim extends AbstractElementService
 {
     /** @var ElementInterface|BoundSelfRenderingInterface */
     protected $component;
-    /** @var ElementHttpShim|null */
-    protected $httpHandler;
+    /** @var ElementHttpShim|null|false */
+    protected $httpHandler = null;
 
     public function __construct(ElementInterface $component)
     {
         $this->component = $component;
-        if ($component instanceof \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface) {
-            $this->httpHandler = new ElementHttpShim($component);
-        }
     }
 
     public function getWidgetName(Element $element)
@@ -49,7 +46,41 @@ class ElementShim extends AbstractElementService
 
     public function getHttpHandler(Element $element)
     {
-        return $this->httpHandler;
+        if ($this->httpHandler === null) {
+            $this->httpHandler = $this->initHttpHandler($this->component) ?: false;
+        }
+        return $this->httpHandler ?: null;
+    }
+
+    /**
+     * @param ElementInterface $component
+     * @return ElementHttpShim|null
+     * @throws \ReflectionException
+     */
+    protected function initHttpHandler($component)
+    {
+        if (!($component instanceof \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface)) {
+            return null;
+        }
+        try {
+            $refl = new \ReflectionClass($component);
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+        $baseClassName = 'Mapbender\CoreBundle\Component\Element';
+        /** @see \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface::handleHttpRequest $hasHttp */
+        $handlerMethod = $refl->getMethod('handleHttpRequest');
+        $declaring = $handlerMethod->getDeclaringClass()->getName();
+        $hasHttp = $declaring !== $baseClassName;
+        if (!$hasHttp && $refl->hasMethod('httpAction')) {
+            $declaring = $refl->getMethod('httpAction')->getDeclaringClass()->getName();
+            $hasHttp = $declaring !== $baseClassName;
+        }
+        if ($hasHttp) {
+            return new ElementHttpShim($component);
+        } else {
+            return null;
+        }
     }
 
     public function onImport(Element $element, Mapper $mapper)
