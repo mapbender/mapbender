@@ -37,6 +37,8 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     /** @var string[] */
     protected $activeInventory = array();
     /** @var string[] */
+    protected $canonicals = array();
+    /** @var string[] */
     protected $noCreationClassNames = array();
     /** @var string[] */
     protected $disabledClassesFromConfig = array();
@@ -62,6 +64,15 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
         if (!empty($this->movedElementClasses[$classNameIn])) {
             $classNameOut = $this->movedElementClasses[$classNameIn];
             return $classNameOut;
+        } else {
+            return $classNameIn;
+        }
+    }
+
+    public function getCanonicalClassName($classNameIn)
+    {
+        if (!empty($this->canonicals[$classNameIn])) {
+            return $this->canonicals[$classNameIn];
         } else {
             return $classNameIn;
         }
@@ -129,19 +140,24 @@ class ElementInventoryService extends ElementClassFilter implements HttpHandlerP
     /**
      * @param AbstractElementService $instance
      * @param string[] $handledClassNames
+     * @param string|null $canonical
      * @todo: prefer an interface type
      * @noinspection PhpUnused
      * @see \Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass::process()
      */
-    public function registerService(AbstractElementService $instance, $handledClassNames)
+    public function registerService(AbstractElementService $instance, $handledClassNames, $canonical = null)
     {
         $serviceClass = \get_class($instance);
+        if ($canonical) {
+            $handledClassNames[] = $canonical;
+        }
         $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
         foreach (array_unique($handledClassNames) as $handledClassName) {
             $this->serviceElements[$handledClassName] = $instance;
             if ($handledClassName !== $serviceClass) {
                 $this->replaceElement($handledClassName, $serviceClass);
             }
+            $this->canonicals[$handledClassName] = $canonical ?: $serviceClass;
         }
         $this->inventoryDirty = true;
     }
