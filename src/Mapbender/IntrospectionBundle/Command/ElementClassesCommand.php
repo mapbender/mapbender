@@ -5,11 +5,12 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 
 use Mapbender\Component\ClassUtil;
-use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementServiceInterface;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -71,7 +72,7 @@ class ElementClassesCommand extends ContainerAwareCommand
         $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
-                $entity = new \Mapbender\CoreBundle\Entity\Element();
+                $entity = new Element();
                 $entity->setConfiguration(array());
                 $entity->setClass($elementName);
                 $entity->setApplication($application);
@@ -120,12 +121,12 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Element $element
-     * @param AbstractElementService $handler
+     * @param Element $element
+     * @param ElementServiceInterface $handler
      * @return string[]
      * @throws \ReflectionException
      */
-    protected function formatElementInfo(\Mapbender\CoreBundle\Entity\Element $element, AbstractElementService $handler)
+    protected function formatElementInfo(Element $element, ElementServiceInterface $handler)
     {
         $cells = array(
             $element->getClass(),
@@ -139,11 +140,11 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param AbstractElementService $handler
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param ElementServiceInterface $handler
+     * @param Element $element
      * @return string
      */
-    protected static function formatGetWidgetName(AbstractElementService $handler, \Mapbender\CoreBundle\Entity\Element $element)
+    protected static function formatGetWidgetName(ElementServiceInterface $handler, Element $element)
     {
         try {
             $widgetConstructor = $handler->getWidgetName($element);
@@ -172,7 +173,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param Element $element
      * @return string
      */
     protected function formatAdminType($element)
@@ -224,11 +225,11 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param AbstractElementService $handler
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param ElementServiceInterface $handler
+     * @param Element $element
      * @return string
      */
-    protected function formatAssetRefStatus(AbstractElementService $handler, \Mapbender\CoreBundle\Entity\Element $element)
+    protected function formatAssetRefStatus(ElementServiceInterface $handler, Element $element)
     {
         $explicitRefPattern = '^(/|\.\./|(@[\w]+Bundle/)|([\w]+Bundle:))';
         $assetRefs = $handler->getRequiredAssets($element) ?: array(array());   // for array_merge safety with empty input
@@ -323,7 +324,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param Element $element
      * @return string
      * @throws \ReflectionException
      */
@@ -340,7 +341,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param Element $element
      * @param string $path twig-style
      * @param bool $isAutomatic
      * @return string
@@ -366,7 +367,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Element $element
+     * @param Element $element
      * @return string
      * @throws \ReflectionException
      */
