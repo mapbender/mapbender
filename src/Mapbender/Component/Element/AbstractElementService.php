@@ -4,19 +4,12 @@
 namespace Mapbender\Component\Element;
 
 
-use Mapbender\CoreBundle\Component\ElementBase\EditableInterface;
-use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 
 abstract class AbstractElementService
-    implements MinimalInterface, EditableInterface, HttpHandlerProvider
-{
-    /**
-     * @param Element $element
-     * @return ElementView
-     */
-    abstract public function getView(Element $element);
+    implements ElementServiceInterface, HttpHandlerProvider
 
+{
     /**
      * @param Element $element
      * @return array
@@ -25,15 +18,6 @@ abstract class AbstractElementService
     {
         return $element->getConfiguration() ?: array();
     }
-
-    /**
-     * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
-     * May also return boolean false to indicate no javascript logic needs initializing at all.
-     *
-     * @param Element $element
-     * @return string|false
-     */
-    abstract public function getWidgetName(Element $element);
 
     /**
      * Get lists of paths to required assets.
@@ -46,7 +30,6 @@ abstract class AbstractElementService
      *
      * @param Element $element
      * @return string[][]
-     * @noinspection PhpUnusedParameterInspection
      */
     public function getRequiredAssets(Element $element)
     {
