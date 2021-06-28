@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
@@ -179,24 +180,30 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         $element->setClass($definition['class']);
         $element->setConfiguration($configBefore);
 
-        $this->prepareClass($element);
-
-        if (!$element->getClass() || !ClassUtil::exists($element->getClass())) {
-            // @todo: warn? throw?
+        $handlingClass = $this->getHandlingClassName($element);
+        if (!$handlingClass) {
+            if ($this->strictElementConfigs) {
+                throw new \RuntimeException('Missing reuired Yaml Element definition value for "class"');
+            }
+            // @todo: warn?
             return null;
+        } elseif (!ClassUtil::exists($handlingClass)) {
+            $msg = "Your Yaml application contains an undefined / unhandled element class {$definition['class']}";
+            @trigger_error("WARNING: {$msg}", E_USER_DEPRECATED);
         }
 
-        $elementClass = $element->getClass();
-        if (\is_a($elementClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $elementClass */
-            $elementClass::updateEntityConfig($element);
+        $definition['class'] = $handlingClass;
 
+        try {
+            $this->migrateConfigInternal($element, $handlingClass);
             $configAfter = $element->getConfiguration();
             $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
             $definition = array_replace($configAfter, $nonConfigs);
+            $this->checkElementConfig($handlingClass, array_diff_key($definition, array_flip($nonConfigKeys)));
+        } catch (UndefinedElementClassException $e) {
+            // May be a canoncial. Keep the Element without migrating.
         }
-        $definition['class'] = $element->getClass();
-        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip($nonConfigKeys)));
+
         return $definition;
     }
 

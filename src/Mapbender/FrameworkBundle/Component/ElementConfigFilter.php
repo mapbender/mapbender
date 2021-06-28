@@ -4,6 +4,8 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
+use Mapbender\Component\ClassUtil;
+use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 
 class ElementConfigFilter
@@ -16,13 +18,31 @@ class ElementConfigFilter
      */
     protected function prepareClass(Element $element)
     {
+        $element->setClass($this->getHandlingClassName($element));
+    }
+
+    protected function getHandlingClassName(Element $element)
+    {
         if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {
             $config = $element->getConfiguration();
             if (!empty($config['click'])) {
-                $element->setClass('Mapbender\CoreBundle\Element\LinkButton');
+                return 'Mapbender\CoreBundle\Element\LinkButton';
             } else {
-                $element->setClass('Mapbender\CoreBundle\Element\ControlButton');
+                return 'Mapbender\CoreBundle\Element\ControlButton';
             }
+        } else {
+            return $element->getClass();
+        }
+    }
+
+    protected function migrateConfigInternal(Element $element, $handlingClass)
+    {
+        if (!$handlingClass || !ClassUtil::exists($handlingClass)) {
+            throw new UndefinedElementClassException($handlingClass);
+        }
+        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $handlingClass */
+            $handlingClass::updateEntityConfig($element);
         }
     }
 }
