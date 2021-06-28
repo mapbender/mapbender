@@ -68,7 +68,7 @@ class ElementFormFactory
         }
 
         $this->elementFilter->prepareForForm($element);
-        $handlingClass = $this->getHandlingClass($element);
+        $handlingClass = $this->elementFilter->getHandlingClassName($element);
 
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
@@ -123,7 +123,7 @@ class ElementFormFactory
      */
     public function getConfigurationFormType(Element $element)
     {
-        $handlingClass = $this->getHandlingClass($element);
+        $handlingClass = $this->elementFilter->getHandlingClassName($element);
         $typeName = $handlingClass::getType();
         if (is_string($typeName) && preg_match('#^[\w\d]+(\\\\[\w\d]+)+$#', $typeName)) {
             // typename is a fully qualified class name, which is good (forward compatible with Symfony 3)
@@ -133,14 +133,5 @@ class ElementFormFactory
             return $typeName;
         }
         return null;
-    }
-
-    /**
-     * @param Element $element
-     * @return string|\Mapbender\CoreBundle\Component\ElementBase\EditableInterface
-     */
-    protected function getHandlingClass(Element $element)
-    {
-        return $this->elementFilter->getAdjustedElementClassName($element->getClass());
     }
 }

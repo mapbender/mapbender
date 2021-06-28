@@ -34,21 +34,20 @@ class ElementEntityFactory
      */
     public function newEntity($className, $region, Application $application = null)
     {
-        /** @var string|MinimalInterface $handlingClass */
-        $handlingClass = $this->elementFilter->getAdjustedElementClassName($className);
-        if (!$handlingClass || !ClassUtil::exists($handlingClass)) {
-            throw new UndefinedElementClassException($handlingClass);
-        }
-        $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($handlingClass);
-
+        $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($className);
         $entity = new Element();
-        $configuration = $handlingClass::getDefaultConfiguration();
         $entity
             ->setClass($canonicalClass)
             ->setRegion($region)
             ->setWeight(0)
-            ->setConfiguration($configuration)
         ;
+        /** @var string|MinimalInterface $handlingClass */
+        $handlingClass = $this->elementFilter->getHandlingClassName($entity);
+        if (!$handlingClass || !ClassUtil::exists($handlingClass)) {
+            throw new UndefinedElementClassException($handlingClass);
+        }
+        $entity->setConfiguration($handlingClass::getDefaultConfiguration());
+
         if (!$handlingClass || !\is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton')) {
             // Leave title empty. Will be resolved to target title when rendering
             // @todo: make title column nullable (will require schema update)

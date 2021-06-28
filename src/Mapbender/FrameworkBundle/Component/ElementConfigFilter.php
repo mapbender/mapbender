@@ -21,7 +21,7 @@ class ElementConfigFilter
         $element->setClass($this->getHandlingClassName($element));
     }
 
-    protected function getHandlingClassName(Element $element)
+    public function getHandlingClassName(Element $element)
     {
         if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {
             $config = $element->getConfiguration();
