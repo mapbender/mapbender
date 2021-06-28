@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
-use Mapbender\FrameworkBundle\Component\ElementClassFilter;
+use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  */
-class MapbenderYamlCompilerPass extends ElementClassFilter implements CompilerPassInterface
+class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerPassInterface
 {
     /** @var string Applications directory path where YAML files are */
     protected $applicationDir;

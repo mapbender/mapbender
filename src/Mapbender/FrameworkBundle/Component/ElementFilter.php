@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * @todo; add (guarded vs Symfony debug class loader) class exists checks here
  * @todo: add filter / prepare logic for backend
  */
-class ElementFilter extends ElementClassFilter
+class ElementFilter extends ElementConfigFilter
 {
     /** @var ElementInventoryService */
     protected $inventory;

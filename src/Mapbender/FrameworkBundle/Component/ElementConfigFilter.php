@@ -6,7 +6,7 @@ namespace Mapbender\FrameworkBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Element;
 
-class ElementClassFilter
+class ElementConfigFilter
 {
     /**
      * Implements (curated) element class splits.

@@ -9,7 +9,7 @@ use Mapbender\Component\Element\ElementServiceInterface;
 use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\FrameworkBundle\Component\ElementClassFilter;
+use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
 /**
@@ -18,7 +18,7 @@ use Mapbender\FrameworkBundle\Component\ElementShimFactory;
  * Default implementation for service mapbender.element_inventory.service
  * @since v3.0.8-beta1
  */
-class ElementInventoryService extends ElementClassFilter implements HttpHandlerProvider
+class ElementInventoryService extends ElementConfigFilter implements HttpHandlerProvider
 {
     /** @var string[] */
     protected $movedElementClasses = array(
