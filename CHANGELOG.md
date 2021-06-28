@@ -1,4 +1,4 @@
-## dev-master @ 471c03ff4
+## dev-master @ 512e33474
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -11,6 +11,7 @@
 * Add support for reading entire directories to `mapbender:application:import` command
 * Add automatic fix for incomplete / broken Element "weight" column values to `mapbender:database:init` command
 * [Backend] Fix Application editing screenshot preview overflow on narrow screens
+* [Backend] Fix (visual) backend form order of ControlButton to prevent clipping of "target" dropdown
 * Removed unused POI option "tooltip"
 * Removed legacy / broken Selenium + PhantomJS tests
 * Resolved misc Symfony 4 incompatibilites in console commands, service definitions and form types
