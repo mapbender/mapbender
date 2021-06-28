@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Element;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class ApplicationSwitcherHttpHandler
+class ApplicationSwitcherHttpHandler implements ElementHttpHandlerInterface
 {
     /** @var AuthorizationCheckerInterface */
     protected $authChecker;
@@ -37,7 +38,7 @@ class ApplicationSwitcherHttpHandler
      * @param Request $request
      * @return Response
      */
-    public function handleHttpRequest(Entity\Element $element, Request $request)
+    public function handleRequest(Entity\Element $element, Request $request)
     {
         switch ($request->attributes->get('action')) {
             default:

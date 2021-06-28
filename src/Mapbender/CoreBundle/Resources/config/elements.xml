@@ -5,6 +5,7 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mb.element.view_manager.http_handler.class">Mapbender\CoreBundle\Element\ViewManagerHttpHandler</parameter>
+        <parameter key="mb.element.application_switcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
     </parameters>
     <services>
         <service id="mapbender.element.main_map" class="Mapbender\CoreBundle\Element\Map">
@@ -40,6 +41,18 @@
             <argument type="service" id="templating" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
+        </service>
+        <service id="mapbender.element.application_switcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
+            <tag name="mapbender.element" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.element.application_switcher.http_handler" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
+        <service id="mapbender.element.application_switcher.http_handler" class="%mb.element.application_switcher.http_handler.class%">
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
     </services>
 </container>
