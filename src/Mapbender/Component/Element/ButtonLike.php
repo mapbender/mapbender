@@ -49,10 +49,11 @@ abstract class ButtonLike extends AbstractElementService
 
         $config = $element->getConfiguration();
 
-        $label = $element->getTitle() ?: $this->getClassTitle();
-        $view->variables['icon'] = $config['icon'];
-        $view->variables['label'] = $label;
-        $view->attributes['title'] = $config['tooltip'] ?: $label;
+        $view->variables['label'] = $element->getTitle() ?: $this->getClassTitle();
+        if (!empty($config['icon'])) {
+            $view->variables['icon'] = $config['icon'];
+        }
         $view->variables['show_label'] = $config['label'];
+        $view->attributes['title'] = $config['tooltip'] ?: $view->variables['label'];
     }
 }
