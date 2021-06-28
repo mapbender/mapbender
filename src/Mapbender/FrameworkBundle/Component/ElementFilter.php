@@ -127,6 +127,11 @@ class ElementFilter extends ElementConfigFilter
         return $elementsOut;
     }
 
+    protected function getHandlingClassName(Element $element)
+    {
+        return $this->inventory->getAdjustedElementClassName(parent::getHandlingClassName($element));
+    }
+
     /**
      * Performs Element class replacements and updates configuration structure to current standards.
      *
@@ -135,15 +140,8 @@ class ElementFilter extends ElementConfigFilter
      */
     public function migrateConfig(Element $element)
     {
-        $this->prepareClass($element);
-        $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
-        if (!ClassUtil::exists($handlingClass)) {
-            throw new UndefinedElementClassException($handlingClass);
-        }
-        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $handlingClass */
-            $handlingClass::updateEntityConfig($element);
-        }
+        $handlingClass = $this->getHandlingClassName($element);
+        $this->migrateConfigInternal($element, $handlingClass);
         // Add config defaults
         /** @var string|MinimalInterface $handlingClass */
         $element->setConfiguration($element->getConfiguration() + $handlingClass::getDefaultConfiguration());
@@ -172,7 +170,7 @@ class ElementFilter extends ElementConfigFilter
     {
         $enabled = $element->getEnabled() && !empty($element->getClass()) && !$this->inventory->isClassDisabled($element->getClass());
         if ($enabled) {
-            $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
+            $handlingClass = $this->getHandlingClassName($element);
             $enabled = ClassUtil::exists($handlingClass) && !$this->inventory->isClassDisabled($handlingClass);
             if ($enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
                 $target = $element->getTargetElement();
