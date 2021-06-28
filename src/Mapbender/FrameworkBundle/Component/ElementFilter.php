@@ -120,8 +120,7 @@ class ElementFilter extends ElementClassFilter
     {
         $elementsOut = array();
         foreach ($elements as $element) {
-            $enabled = $element->getEnabled() && !$this->isDisabledType($element);
-            if ($enabled && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
+            if ($this->isEnabled($element) && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
                 $elementsOut[] = $element;
             }
         }
@@ -163,5 +162,23 @@ class ElementFilter extends ElementClassFilter
             $disabled = $this->inventory->isClassDisabled($target->getClass());
         }
         return $disabled;
+    }
+
+    /**
+     * @param Element $element
+     * @return bool
+     */
+    protected function isEnabled(Element $element)
+    {
+        $enabled = $element->getEnabled() && !empty($element->getClass()) && !$this->inventory->isClassDisabled($element->getClass());
+        if ($enabled) {
+            $handlingClass = $this->inventory->getAdjustedElementClassName($element->getClass());
+            $enabled = ClassUtil::exists($handlingClass) && !$this->inventory->isClassDisabled($handlingClass);
+            if ($enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+                $target = $element->getTargetElement();
+                $enabled = $target && $this->isEnabled($target);
+            }
+        }
+        return $enabled;
     }
 }
