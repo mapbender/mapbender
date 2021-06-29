@@ -83,7 +83,14 @@ class ApplicationAssetService
         return $this->compileAssetContent(null, $refs, $type);
     }
 
-    public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type)
+    /**
+     * Get asset content for backend or login.
+     *
+     * @param TemplateAssetDependencyInterface $source
+     * @param string $type
+     * @return string
+     */
+    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, $type)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
