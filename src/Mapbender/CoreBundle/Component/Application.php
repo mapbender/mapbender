@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +31,7 @@ class Application
      */
     public static function getUploadsDir($container, $webRelative = false)
     {
-        $ulm = self::getServiceStatic($container)->getUploadsManager();
+        $ulm = self::getUploadsManagerStatic($container);
         try {
 
             if ($webRelative) {
@@ -55,7 +54,7 @@ class Application
      */
     public static function getAppWebDir($container, $slug)
     {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        $ulm = static::getUploadsManagerStatic($container);
         try {
             $ulm->getSubdirectoryPath($slug, true);
             return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
@@ -103,12 +102,12 @@ class Application
 
     /**
      * @param ContainerInterface $container
-     * @return ApplicationService
+     * @return UploadsManager
      */
-    private static function getServiceStatic(ContainerInterface $container)
+    private static function getUploadsManagerStatic(ContainerInterface $container)
     {
-        /** @var ApplicationService $service */
-        $service = $container->get('mapbender.presenter.application.service');
+        /** @var UploadsManager $service */
+        $service = $container->get('mapbender.uploads_manager.service');
         return $service;
     }
 }
