@@ -52,7 +52,7 @@ class ElementExtension extends AbstractExtension
      */
     public function element_class_title($element)
     {
-        return $this->elementFilter->getClassTitle($element->getClass());
+        return $this->elementFilter->getClassTitle($element);
     }
 
     /**

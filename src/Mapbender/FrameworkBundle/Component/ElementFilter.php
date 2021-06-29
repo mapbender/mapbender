@@ -43,27 +43,18 @@ class ElementFilter extends ElementConfigFilter
     }
 
     /**
-     * @param string|MinimalInterface $className
+     * @param Element $element
      * @return string|null
      */
-    public function getClassTitle($className)
+    public function getClassTitle(Element $element)
     {
-        $adjustedClass = $this->inventory->getAdjustedElementClassName($className);
-        if (ClassUtil::exists($adjustedClass)) {
-            /** @var string|MinimalInterface $adjustedClass */
-            return $adjustedClass::getClassTitle();
+        $handlingClass = $this->inventory->getHandlingClassName($element);
+        if (ClassUtil::exists($handlingClass)) {
+            /** @var string|MinimalInterface $handlingClass */
+            return $handlingClass::getClassTitle();
         } else {
             return null;
         }
-    }
-
-    /**
-     * @param string $classNameIn
-     * @return string
-     */
-    public function getAdjustedElementClassName($classNameIn)
-    {
-        return $this->inventory->getAdjustedElementClassName($classNameIn);
     }
 
     /**
@@ -73,7 +64,7 @@ class ElementFilter extends ElementConfigFilter
     public function getDefaultTitle(Element $element)
     {
         /** @var null|string|MinimalInterface $className */
-        $className = $this->inventory->getAdjustedElementClassName($element->getClass());
+        $className = $this->inventory->getHandlingClassName($element);
         if ($className && \is_a($className, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
             $target = $element->getTargetElement();
             if ($target && $target !== $element) {
@@ -135,7 +126,7 @@ class ElementFilter extends ElementConfigFilter
      */
     public function getHandlingClassName(Element $element)
     {
-        return $this->inventory->getAdjustedElementClassName(parent::getHandlingClassName($element));
+        return $this->inventory->getHandlingClassName($element);
     }
 
     /**
@@ -146,7 +137,7 @@ class ElementFilter extends ElementConfigFilter
      */
     public function migrateConfig(Element $element)
     {
-        $handlingClass = $this->getHandlingClassName($element);
+        $handlingClass = $this->inventory->getHandlingClassName($element);
         $this->migrateConfigInternal($element, $handlingClass);
         // Add config defaults
         /** @var string|MinimalInterface $handlingClass */
@@ -177,7 +168,7 @@ class ElementFilter extends ElementConfigFilter
     {
         $enabled = $element->getEnabled() && !empty($element->getClass()) && !$this->inventory->isClassDisabled($element->getClass());
         if ($enabled) {
-            $handlingClass = $this->getHandlingClassName($element);
+            $handlingClass = $this->inventory->getHandlingClassName($element);
             $enabled = ClassUtil::exists($handlingClass) && !$this->inventory->isClassDisabled($handlingClass);
             if ($checkTargets && $enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
                 $target = $element->getTargetElement();

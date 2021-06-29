@@ -8,6 +8,7 @@ use Mapbender\Component\Element\ElementServiceFrontendInterface;
 use Mapbender\Component\Element\ElementServiceInterface;
 use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\Component\Element\ImportAwareInterface;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 use Mapbender\FrameworkBundle\Component\ElementShimFactory;
@@ -57,7 +58,8 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
 
     /**
      * @param string $classNameIn
-     * @return string
+     * @return string|MinimalInterface
+     * @deprecated prefer getHandlingClassName (requires Element argument)
      */
     public function getAdjustedElementClassName($classNameIn)
     {
@@ -67,6 +69,15 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
         } else {
             return $classNameIn;
         }
+    }
+
+    public function getHandlingClassName(Element $element)
+    {
+        $handlingClass = parent::getHandlingClassName($element);
+        if (!empty($this->movedElementClasses[$handlingClass])) {
+            $handlingClass = $this->movedElementClasses[$handlingClass];
+        }
+        return $handlingClass;
     }
 
     public function getCanonicalClassName($classNameIn)
