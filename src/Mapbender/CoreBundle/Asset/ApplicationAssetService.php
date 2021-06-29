@@ -6,7 +6,6 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\Component\InaccessibleContainer;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
@@ -15,7 +14,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Produces merged application assets.
@@ -39,8 +37,6 @@ class ApplicationAssetService
     protected $debug;
     /** @var bool */
     protected $strict;
-    /** @var Container */
-    protected $inaccessibleContainer;
 
     public function __construct(CssCompiler $cssCompiler,
                                 JsCompiler $jsCompiler,
@@ -59,7 +55,6 @@ class ApplicationAssetService
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->debug = $debug;
         $this->strict = $strict;
-        $this->inaccessibleContainer = new InaccessibleContainer();
     }
 
     /**
@@ -328,10 +323,9 @@ class ApplicationAssetService
                 return array();
             }
             assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
-            /** @var \Mapbender\CoreBundle\Component\Element $dummyComponent */
-            $dummyComponent = new $handlingClass($this->inaccessibleContainer, $element);
-            @trigger_error("DEPRECATED: Legacy Element class {$handlingClass} is incompatible with Symfony 4+. Support will be removed in Mapbender 3.3. Inherit from AbstractElementService instead.", E_USER_DEPRECATED);
-            $fullElementRefs = $dummyComponent->getAssets();
+            /** @todo: update ElementFilter to clarify shim usage */
+            $shimService = $this->inventory->getFrontendHandler($element);
+            $fullElementRefs = $shimService->getRequiredAssets($element);
             $elementRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
             return $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
         }

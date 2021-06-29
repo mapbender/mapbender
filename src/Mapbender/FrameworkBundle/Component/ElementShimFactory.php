@@ -29,9 +29,8 @@ class ElementShimFactory
      * @param string $className
      * @return AbstractElementService|null
      */
-    public function getShim(Element $element, $className = null)
+    public function getShim(Element $element, $className)
     {
-        $className = $className ?: $element->getClass();
         $key = \spl_object_id($element) . $className;
 
         if (!\array_key_exists($key, $this->instances)) {
@@ -51,6 +50,8 @@ class ElementShimFactory
         if (!$component instanceof ElementInterface) {
             throw new InvalidElementClassException($className);
         }
+        @trigger_error("DEPRECATED: Legacy Element class {$className} is incompatible with Symfony 4+. Support will be removed in Mapbender 3.3. Inherit from AbstractElementService instead.", E_USER_DEPRECATED);
+
         return new ElementShim($component);
     }
 }
