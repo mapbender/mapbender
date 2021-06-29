@@ -132,6 +132,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'mapbender.yml',
             'constraints.yml',
             'formTypes.yml',
+            'elements.xml',
         );
     }
 

@@ -3,11 +3,16 @@
 
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
+use Mapbender\Component\Element\ElementView;
+use Mapbender\Component\Element\LegacyView;
+use Mapbender\Component\Element\StaticView;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -19,18 +24,26 @@ class ElementMarkupRenderer
 {
     /** @var EngineInterface */
     protected $templatingEngine;
+    /** @var TranslatorInterface */
+    protected $translator;
+    /** @var ElementInventoryService */
+    protected $inventory;
     /** @var bool */
     protected $allowResponsiveElements;
-    /** @var ElementFactory */
-    protected $elementFactory;
+    /** @var bool */
+    protected $debug;
 
     public function __construct(EngineInterface $templatingEngine,
-                                ElementFactory $elementFactory,
-                                $allowResponsiveElements)
+                                TranslatorInterface $translator,
+                                ElementInventoryService $inventory,
+                                $allowResponsiveElements,
+                                $debug)
     {
         $this->templatingEngine = $templatingEngine;
-        $this->elementFactory = $elementFactory;
+        $this->translator = $translator;
+        $this->inventory = $inventory;
         $this->allowResponsiveElements = $allowResponsiveElements;
+        $this->debug = $debug;
     }
 
     /**
@@ -49,17 +62,17 @@ class ElementMarkupRenderer
             if (!array_key_exists($regionName, $wrappers)) {
                 $wrappers[$regionName] = $this->getRegionGlue($regionName);
             }
-            $defaultWrapperMarkup = $this->renderWrappers(array_filter(array($wrappers[$regionName])));
-
-            $elementWrapper = $this->getElementWrapper($element);
-            if ($elementWrapper) {
-                $elementWrapMarkup = $this->renderWrappers(array_merge($wrappers, array($elementWrapper)));
-            } else {
-                $elementWrapMarkup = $defaultWrapperMarkup;
+            $wrapper = $wrappers[$regionName];
+            if ($visibilityClass = $this->getElementVisibilityClass($element)) {
+                $wrapper['class'] = ltrim($wrapper['class'] . ' ' . $visibilityClass);
+                if (!$wrapper['tagName']) {
+                    $wrapper['tagName'] = 'div';
+                }
             }
-            $markupFragments[] = $elementWrapMarkup['open'];
-            $markupFragments[] = $this->renderContent($element);
-            $markupFragments[] = $elementWrapMarkup['close'];
+
+            $markupFragments[] = $this->renderContent($element, $wrapper['tagName'], array_filter(array(
+                'class' => $wrapper['class'],
+            )));
         }
         return implode('', $markupFragments);
     }
@@ -75,39 +88,81 @@ class ElementMarkupRenderer
             if (!$element instanceof Element) {
                 throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
             }
-            $markup .= '<div class="' . rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)) . '">'
-                     . $this->renderContent($element)
-                     . '</div>'
-            ;
+            $markup .= $this->renderContent($element, 'div', array(
+                'class' => rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)),
+            ));
         }
         return $markup;
     }
 
-    protected function renderContent(Element $element)
+    protected function renderContent(Element $element, $wrapperTag, $attributes)
     {
-        if (\is_a($element->getClass(), 'Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface', true)) {
-            return $this->elementFactory->componentFromEntity($element, true)->render();
-        } else {
-            /** @todo: implement Element services with visitor-style rendering */
-            throw new \Exception("Not implemented");
+        try {
+            $view = $this->inventory->getFrontendHandler($element)->getView($element);
+            if ($view) {
+                if ($view instanceof LegacyView) {
+                    return $this->wrapTag($view->getContent(), $wrapperTag, $attributes);
+                } else {
+                    return $this->renderView($view, $wrapperTag, $attributes + array(
+                        'id' => $element->getId(),
+                    ));
+                }
+            } else {
+                return '';
+            }
+        } catch (\Twig\Error\Error $e) {
+            if ($this->debug) {
+                throw $e;
+            } else {
+                return "<!-- "
+                    . "element #{$element->getId()} failed to render with " . \htmlspecialchars($e->getMessage())
+                    . " -->"
+                ;
+            }
         }
     }
 
     /**
-     * @param Element $element
-     * @return string[]|null
+     * @param ElementView $view
+     * @param string $wrapperTag
+     * @param string[] $baseAttributes
+     * @return string
      */
-    protected function getElementWrapper(Element $element)
+    protected function renderView(ElementView $view, $wrapperTag, $baseAttributes)
     {
-        $visibilityClass = $this->getElementVisibilityClass($element);
-        if ($visibilityClass) {
-            return array(
-                'tagName' => 'div',
-                'class' => $visibilityClass,
-            );
+        $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
+        if ($view instanceof TemplateView) {
+            $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
+        } elseif ($view instanceof StaticView) {
+            $content = $view->getContent();
         } else {
-            return null;
+            throw new \Exception("Don't know how to render " . get_class($view));
         }
+        return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
+    }
+
+    protected function prepareAttributes($viewAttributes, $baseAttributes)
+    {
+        $classes = array('mb-element');
+        if (!empty($viewAttributes['class'])) {
+            $classes[] = $viewAttributes['class'];
+        }
+        if (!empty($baseAttributes['class'])) {
+            $classes[] = $baseAttributes['class'];
+        }
+        $attributes = array_replace($viewAttributes + $baseAttributes, array(
+            'class' => implode(' ', array_filter($classes)),
+        ));
+        $translatable = array(
+            'title',
+            'data-title',
+        );
+        foreach ($translatable as $attribute) {
+            if (!empty($attributes[$attribute])) {
+                $attributes[$attribute] = $this->translator->trans($attributes[$attribute]);
+            }
+        }
+        return $attributes;
     }
 
     /**
@@ -131,33 +186,26 @@ class ElementMarkupRenderer
         }
     }
 
-
     /**
-     * @param (string[]|null)[] $wrappers
-     * @return string[] with entries 'open', 'close'
+     * @param string $content
+     * @param string $tagName return $content unchanged if $tagName empty
+     * @param string[] $attributes
+     * @return string
      */
-    protected function renderWrappers($wrappers)
+    protected function wrapTag($content, $tagName, $attributes)
     {
-        $tagName = null;
-        $classes = array();
-        foreach ($wrappers ?: array() as $wrapper) {
-            // use tag name from first wrapper entry
-            if ($tagName === null) {
-                $tagName = $wrapper['tagName'];
+        if ($tagName) {
+            $renderedAttributes = array();
+            foreach ($attributes as $name => $value) {
+                $renderedAttributes[] = $name . '="' . \htmlspecialchars($value) . '"';
             }
-            // concatenate all classes
-            $classes[] = $wrapper['class'];
-        }
-        if (!$tagName) {
-            return array(
-                'open' => '',
-                'close' => '',
-            );
+            return
+                "<$tagName" . \rtrim(' ' . implode(' ', $renderedAttributes)) . '>'
+                . $content
+                . "</$tagName>"
+            ;
         } else {
-            return array(
-                'open' => '<' . $tagName . ' class="' . implode(' ', $classes) . '">',
-                'close' => "</{$tagName}>",
-            );
+            return $content;
         }
     }
 
@@ -177,7 +225,10 @@ class ElementMarkupRenderer
                 'class' => 'toolBarItem',
             );
         } else {
-            return null;
+            return array(
+                'tagName' => null,
+                'class' => '',
+            );
         }
     }
 }

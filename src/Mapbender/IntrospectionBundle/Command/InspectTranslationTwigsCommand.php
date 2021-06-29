@@ -5,11 +5,11 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -102,15 +102,15 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
     {
         $dummyApplication = new Application();
         $twigPaths = array();
-        /** @var ElementInventoryService $service */
-        $service = $this->getContainer()->get('mapbender.element_inventory.service');
-        /** @var ElementFactory $factory  */
-        $factory = $this->getContainer()->get('mapbender.element_factory.service');
-        $classNames = $service->getRawInventory();
+        /** @var ElementInventoryService $inventory */
+        $inventory = $this->getContainer()->get('mapbender.element_inventory.service');
+        /** @var ElementEntityFactory $factory  */
+        $factory = $this->getContainer()->get('mapbender.element_entity_factory');
+        $classNames = $inventory->getRawInventory();
         foreach ($classNames as $className) {
             $element = $factory->newEntity($className, 'content', $dummyApplication);
-            $componentDummy = $factory->componentFromEntity($element);
-            $assetDependencies = $componentDummy->getAssets();
+            $handler = $inventory->getFrontendHandler($element);
+            $assetDependencies = $handler->getRequiredAssets($element);
             if (!empty($assetDependencies['trans'])) {
                 $twigPaths = array_merge($twigPaths, $this->filterTranslationDependencies($assetDependencies['trans']));
             }

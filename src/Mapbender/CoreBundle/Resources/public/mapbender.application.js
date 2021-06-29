@@ -324,12 +324,11 @@ $.extend(Mapbender, (function($) {
             var id = elementIds[i];
             var data = config[id];
             var $node = $('#' + id);
+            // Note: config may reference Elements that have been suppressed in markup (grants)
             if ($node.length) {
                 var initInfo = data.init && _getElementInitInfo(data.init);
                 var readyEventName = initInfo && initInfo.eventPrefix && [initInfo.eventPrefix, 'ready'].join('') || null;
                 Mapbender.elementRegistry.trackElementNode($node, readyEventName);
-            } else {
-                console.error("No matching dom node for configured element", id, data);
             }
         }
     }
@@ -337,6 +336,10 @@ $.extend(Mapbender, (function($) {
         var elementIds = Object.keys(config);
         for (var i = 0; i < elementIds.length; ++i) {
             var elementId = elementIds[i];
+            // Note: config may reference Elements that have been suppressed in markup (grants)
+            if (!document.getElementById(elementId)) {
+                continue;
+            }
             var elementData = config[elementId];
             try {
                 initElement(elementId, elementData);

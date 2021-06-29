@@ -6,12 +6,14 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\CoreBundle\Component\ElementFactory;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 
 /**
  * Produces merged application assets.
@@ -19,18 +21,18 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
  */
 class ApplicationAssetService
 {
-    /** @var ApplicationService */
-    protected $applicationService;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var ElementFactory */
-    protected $elementFactory;
     /** @var CssCompiler */
     protected $cssCompiler;
     /** @var JsCompiler */
     protected $jsCompiler;
     /** @var TranslationCompiler */
     protected $translationCompiler;
+    /** @var ElementFilter */
+    protected $elementFilter;
+    /** @var ElementInventoryService */
+    protected $inventory;
+    /** @var TypeDirectoryService */
+    protected $sourceTypeDirectory;
     /** @var bool */
     protected $debug;
     /** @var bool */
@@ -39,18 +41,18 @@ class ApplicationAssetService
     public function __construct(CssCompiler $cssCompiler,
                                 JsCompiler $jsCompiler,
                                 TranslationCompiler $translationCompiler,
-                                ApplicationService $applicationService,
+                                ElementFilter $elementFilter,
+                                ElementInventoryService $inventory,
                                 TypeDirectoryService $sourceTypeDirectory,
-                                ElementFactory $elementFactory,
                                 $debug=false,
                                 $strict=false)
     {
         $this->cssCompiler = $cssCompiler;
         $this->jsCompiler = $jsCompiler;
         $this->translationCompiler = $translationCompiler;
-        $this->applicationService = $applicationService;
+        $this->elementFilter = $elementFilter;
+        $this->inventory = $inventory;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
-        $this->elementFactory = $elementFactory;
         $this->debug = $debug;
         $this->strict = $strict;
     }
@@ -68,11 +70,11 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string
      */
-    public function getAssetContent(Entity\Application $application, $type)
+    public function getAssetContent(Application $application, $type)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -97,11 +99,11 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param $type
      * @return string[]
      */
-    public function collectAssetReferences(Entity\Application $application, $type)
+    public function collectAssetReferences(Application $application, $type)
     {
         $referenceLists = array(
             $this->getBaseAssetReferences($type),
@@ -161,11 +163,11 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string[]
      */
-    public function getMapEngineAssetReferences(Entity\Application $application, $type)
+    public function getMapEngineAssetReferences(Application $application, $type)
     {
         $engineCode = $application->getMapEngineCode();
         switch ("{$engineCode}-{$type}") {
@@ -192,7 +194,7 @@ class ApplicationAssetService
                 $commonAssets = array();
                 break;
             case 'ol4-js':  // legacy identifier
-            case Entity\Application::MAP_ENGINE_CURRENT . '-js':
+            case Application::MAP_ENGINE_CURRENT . '-js':
                 // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
                 // Currently known missing:
                 // * ol.proj.getTransformFromProjections
@@ -227,7 +229,7 @@ class ApplicationAssetService
                 );
                 break;
             case 'ol4-css':
-            case Entity\Application::MAP_ENGINE_CURRENT . '-css':
+            case Application::MAP_ENGINE_CURRENT . '-css':
                 return array(
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
                 );
@@ -275,11 +277,11 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string[]
      */
-    public function getTemplateBaseAssetReferences(Entity\Application $application, $type)
+    public function getTemplateBaseAssetReferences(Application $application, $type)
     {
         $templateComponent = $this->getDummyTemplateComponent($application);
         $refs = $templateComponent->getAssets($type);
@@ -287,30 +289,54 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string[]
      */
-    public function getElementAssetReferences(Entity\Application $application, $type)
+    public function getElementAssetReferences(Application $application, $type)
     {
         $combinedRefs = array();
         // Skip grants checks here to avoid issues with application asset caching.
         // Non-granted Elements will skip HTML rendering and config and will not be initialized.
         // Emitting the base js / css / translation assets OTOH is always safe to do
-        foreach ($this->applicationService->getActiveElements($application, false) as $element) {
-            $elementRefs = ArrayUtil::getDefault($element->getAssets() ?: array(), $type, array());
-            $qualifiedRefs = $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
-            $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
+        foreach ($this->elementFilter->filterFrontend($application->getElements(), false, false) as $element) {
+            $elementRefs = $this->getSingleElementAssetReferences($element, $type);
+            $combinedRefs = array_merge($combinedRefs, $elementRefs);
         }
         return $combinedRefs;
     }
 
+    protected function getSingleElementAssetReferences(Element $element, $type)
+    {
+        if ($handler = $this->inventory->getHandlerService($element)) {
+            $fullElementRefs = $handler->getRequiredAssets($element);
+            // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)
+            return ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
+        } else {
+            try {
+                // Migrate to potentially update class
+                $this->elementFilter->migrateConfig($element);
+                $handlingClass = $element->getClass();
+            } catch (ElementErrorException $e) {
+                // for frontend presentation, incomplete / invalid elements are silently suppressed
+                // => return nothing
+                return array();
+            }
+            assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
+            /** @todo: update ElementFilter to clarify shim usage */
+            $shimService = $this->inventory->getFrontendHandler($element);
+            $fullElementRefs = $shimService->getRequiredAssets($element);
+            $elementRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
+            return $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
+        }
+    }
+
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string[]
      */
-    protected function getLayerAssetReferences(Entity\Application $application, $type)
+    protected function getLayerAssetReferences(Application $application, $type)
     {
         switch ($type) {
             case 'js':
@@ -324,11 +350,11 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @param string $type
      * @return string[]
      */
-    public function getTemplateLateAssetReferences(Entity\Application $application, $type)
+    public function getTemplateLateAssetReferences(Application $application, $type)
     {
         $templateComponent = $this->getDummyTemplateComponent($application);
         $refs = $templateComponent->getLateAssets($type);
@@ -336,10 +362,10 @@ class ApplicationAssetService
     }
 
     /**
-     * @param Entity\Application $application
+     * @param Application $application
      * @return Template
      */
-    protected function getDummyTemplateComponent(Entity\Application $application)
+    protected function getDummyTemplateComponent(Application $application)
     {
         $templateClassName = $application->getTemplate();
         /** @var Template $instance */

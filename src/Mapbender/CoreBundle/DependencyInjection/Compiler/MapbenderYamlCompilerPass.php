@@ -4,9 +4,11 @@ namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
+use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,7 +23,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  */
-class MapbenderYamlCompilerPass implements CompilerPassInterface
+class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerPassInterface
 {
     /** @var string Applications directory path where YAML files are */
     protected $applicationDir;
@@ -166,35 +168,42 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     protected function processElementDefinition($definition)
     {
-        $nonConfigKeys = $this->getTopLevelElementKeys();
-        if ($definition['class'] && !ClassUtil::exists($definition['class'])) {
+        if (empty($definition['class'])) {
+            // @todo: warn? throw?
             return null;
         }
-        // @todo: look up and adjust migrated class names as well
-        if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
-            $dummyEntity = new Element();
-            $nonConfigs = array_intersect_key($definition, array_flip($nonConfigKeys));
-            $configBefore = array_diff_key($definition, $nonConfigs);
-            $dummyEntity->setConfiguration($configBefore);
-            do {
-                $className = $definition['class'];
-                $dummyEntity->setClass($className);
-                $className::updateEntityConfig($dummyEntity);
-                // Migration may have changed class name, which may chain to another migration
-                $definition['class'] = $dummyEntity->getClass();
-                if (!\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-                    break;
-                }
-            } while ($className !== $definition['class']);
 
-            $configAfter = $dummyEntity->getConfiguration();
-            $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
-            $definition = array_replace($configAfter, $nonConfigs, array(
-                'class' => $dummyEntity->getClass(),
-            ));
+        $nonConfigKeys = $this->getTopLevelElementKeys();
+        $element = new Element();
+        $nonConfigs = array_intersect_key($definition, array_flip($nonConfigKeys));
+        $configBefore = array_diff_key($definition, $nonConfigs);
+        $element->setClass($definition['class']);
+        $element->setConfiguration($configBefore);
+
+        $handlingClass = $this->getHandlingClassName($element);
+        if (!$handlingClass) {
+            if ($this->strictElementConfigs) {
+                throw new \RuntimeException('Missing reuired Yaml Element definition value for "class"');
+            }
+            // @todo: warn?
+            return null;
+        } elseif (!ClassUtil::exists($handlingClass)) {
+            $msg = "Your Yaml application contains an undefined / unhandled element class {$definition['class']}";
+            @trigger_error("WARNING: {$msg}", E_USER_DEPRECATED);
         }
-        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip($nonConfigKeys)));
+
+        $definition['class'] = $handlingClass;
+
+        try {
+            $this->migrateConfigInternal($element, $handlingClass);
+            $configAfter = $element->getConfiguration();
+            $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
+            $definition = array_replace($configAfter, $nonConfigs);
+            $this->checkElementConfig($handlingClass, array_diff_key($definition, array_flip($nonConfigKeys)));
+        } catch (UndefinedElementClassException $e) {
+            // May be a canoncial. Keep the Element without migrating.
+        }
+
         return $definition;
     }
 

@@ -5,17 +5,19 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 
 use Mapbender\Component\ClassUtil;
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\Component\Element\ElementServiceInterface;
+use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
@@ -33,6 +35,15 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class ElementClassesCommand extends ContainerAwareCommand
 {
+    /** @var ElementInventoryService */
+    protected $inventory;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->inventory = $container->get('mapbender.element_inventory.service');
+    }
+
     protected function configure()
     {
         $this->setName('mapbender:inspect:element:classes');
@@ -47,30 +58,26 @@ class ElementClassesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var ElementInventoryService $inventoryService */
-        $inventoryService = $this->getContainer()->get('mapbender.element_inventory.service');
-        $elementNames = $inventoryService->getActiveInventory();
+        $elementNames = $this->inventory->getActiveInventory();
         $headers = array(
             'Name',
             'Comments',
             'Widget Constructor',
-            'Frontend template',
             'AdminType',
             'AdminTemplate',
             'Implicit asset references',
         );
 
         $rows = array();
-        /** @var ElementFactory $factory */
-        $factory = $this->getContainer()->get('mapbender.element_factory.service');
         $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
-                $entity = new \Mapbender\CoreBundle\Entity\Element();
+                $entity = new Element();
+                $entity->setConfiguration(array());
                 $entity->setClass($elementName);
                 $entity->setApplication($application);
-                $instance = $factory->componentFromEntity($entity);
-                $rows[$elementName] = $this->formatElementInfo($instance);
+                $handler = $this->inventory->getFrontendHandler($entity);
+                $rows[$elementName] = $this->formatElementInfo($entity, $handler);
             } catch (\Exception $e) {
                 $rows[$elementName] = array(
                     "<error>$elementName</error>",
@@ -115,32 +122,33 @@ class ElementClassesCommand extends ContainerAwareCommand
 
     /**
      * @param Element $element
+     * @param ElementServiceInterface $handler
      * @return string[]
      * @throws \ReflectionException
      */
-    protected function formatElementInfo($element)
+    protected function formatElementInfo(Element $element, ElementServiceInterface $handler)
     {
         $cells = array(
-            get_class($element),
+            $element->getClass(),
             $this->formatElementComments($element),
-            $this->formatGetWidgetName($element),
-            $this->formatFrontendTemplateInfo($element),
+            $this->formatGetWidgetName($handler, $element),
             $this->formatAdminType($element),
             $this->formatAdminTemplateInfo($element),
-            $this->formatAssetRefStatus($element),
+            $this->formatAssetRefStatus($handler, $element),
         );
         return $cells;
     }
 
     /**
+     * @param ElementServiceInterface $handler
      * @param Element $element
      * @return string
      */
-    protected static function formatGetWidgetName($element)
+    protected static function formatGetWidgetName(ElementServiceInterface $handler, Element $element)
     {
         try {
-            $widgetConstructor = $element->getWidgetName();
-            $rc = new \ReflectionClass($element);
+            $widgetConstructor = $handler->getWidgetName($element);
+            $rc = new \ReflectionClass($element->getClass());
             $rm = $rc->getMethod('getWidgetName');
         } catch (\ReflectionException $e) {
             return '<error>No reflection</error>';
@@ -174,17 +182,17 @@ class ElementClassesCommand extends ContainerAwareCommand
         $formFactory = $this->getContainer()->get('mapbender.manager.element_form_factory.service');
 
         try {
-            $rc = new \ReflectionClass($element);
+            $rc = new \ReflectionClass($element->getClass());
             $rm = $rc->getMethod('getType');
         } catch (\ReflectionException $e) {
             return "<error>No reflection</error>";
         }
 
-        $adminType = $formFactory->getConfigurationFormType($element->getEntity());
+        $adminType = $formFactory->getConfigurationFormType($element);
         if (!$adminType) {
             return '<comment>none</comment>';
         }
-        $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
+        $elementBNS = BundleUtil::extractBundleNamespace($element->getClass());
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
             if (!ClassUtil::exists($adminType)) {
@@ -217,13 +225,14 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
+     * @param ElementServiceInterface $handler
      * @param Element $element
      * @return string
      */
-    protected function formatAssetRefStatus($element)
+    protected function formatAssetRefStatus(ElementServiceInterface $handler, Element $element)
     {
         $explicitRefPattern = '^(/|\.\./|(@[\w]+Bundle/)|([\w]+Bundle:))';
-        $assetRefs = $element->getAssets() ?: array(array());   // for array_merge safety with empty input
+        $assetRefs = $handler->getRequiredAssets($element) ?: array(array());   // for array_merge safety with empty input
         $implicitRefs = array();
         foreach (call_user_func_array('array_merge', $assetRefs) as $ref) {
             if (!preg_match("#{$explicitRefPattern}#", $ref)) {
@@ -319,25 +328,12 @@ class ElementClassesCommand extends ContainerAwareCommand
      * @return string
      * @throws \ReflectionException
      */
-    protected function formatFrontendTemplateInfo($element)
-    {
-        $refl = new \ReflectionClass($element);
-        $template = $element->getFrontendTemplatePath();
-        $abstractBaseClass = 'Mapbender\CoreBundle\Component\Element';
-        $templateMethod = $refl->getMethod('getFrontendTemplatePath');
-        $isAuto = $templateMethod->class === $abstractBaseClass;
-        return $this->formatTemplatePath($element, $template, $isAuto);
-    }
-
-    /**
-     * @param Element $element
-     * @return string
-     * @throws \ReflectionException
-     */
     protected function formatAdminTemplateInfo($element)
     {
-        $refl = new \ReflectionClass($element);
-        $template = $element->getFormTemplate();
+        $refl = new \ReflectionClass($element->getClass());
+        /** @var ElementInterface|string $className */
+        $className = $element->getClass();
+        $template = $className::getFormTemplate();
         $abstractBaseClass = 'Mapbender\CoreBundle\Component\Element';
         $templateMethod = $refl->getMethod('getFormTemplate');
         $isAuto = $templateMethod->class === $abstractBaseClass;
@@ -353,7 +349,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     protected function formatTemplatePath($element, $path, $isAutomatic)
     {
         $templateBundle = BundleUtil::extractBundleNameFromTemplatePath($path);
-        $elementBundle = BundleUtil::extractBundleNameFromClassName(get_class($element));
+        $elementBundle = BundleUtil::extractBundleNameFromClassName($element->getClass());
         if ($templateBundle != $elementBundle) {
             $parts = explode(':', $path);
             $info = "<note>{$parts[0]}</note>:" . implode(':', array_slice($parts, 1));
@@ -378,7 +374,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     protected function formatElementComments($element)
     {
         $issues = array();
-        $rc = new \ReflectionClass($element);
+        $rc = new \ReflectionClass($element->getClass());
         $classDoc = $rc->getDocComment();
         if (strpos($classDoc, '@deprecated') !== false) {
             $issues[] = "<comment>deprecated</comment>";

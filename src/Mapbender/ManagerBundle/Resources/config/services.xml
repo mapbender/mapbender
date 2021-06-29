@@ -15,10 +15,9 @@
     </parameters>
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
+            <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="form.factory" />
-            <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="form.registry" />
-            <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
@@ -56,7 +55,7 @@
         <service id="mapbendeer.form_type.control_target" class="Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
-            <argument type="service" id="mapbender.twig.element_class" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
     </services>
 </container>

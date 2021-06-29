@@ -4,10 +4,8 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
-use Mapbender\Component\BaseElementFactory;
-use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 
@@ -16,35 +14,32 @@ use Symfony\Component\Form\FormRegistryInterface;
  *
  * Default instance in container as mapbender.manager.element_form_factory.service
  */
-class ElementFormFactory extends BaseElementFactory
+class ElementFormFactory
 {
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var FormFactoryInterface */
     protected $formFactory;
     /** @var bool */
     protected $strict;
     /** @var FormRegistryInterface */
     protected $formRegistry;
-    /** @var ElementExtension */
-    protected $elementExtension;
 
     /**
+     * @param ElementFilter $elementFilter
      * @param FormFactoryInterface $formFactory
-     * @param ElementInventoryService $inventoryService
      * @param FormRegistryInterface $formRegistry
-     * @param ElementExtension $elementExtension
      * @param bool $strict
      */
-    public function __construct(FormFactoryInterface $formFactory,
-                                ElementInventoryService $inventoryService,
+    public function __construct(ElementFilter $elementFilter,
+                                FormFactoryInterface $formFactory,
                                 FormRegistryInterface $formRegistry,
-                                ElementExtension $elementExtension,
                                 $strict = false)
     {
-        parent::__construct($inventoryService);
+        $this->elementFilter = $elementFilter;
         $this->formFactory = $formFactory;
         $this->setStrict($strict);
         $this->formRegistry = $formRegistry;
-        $this->elementExtension = $elementExtension;
     }
 
     public function setStrict($enable)
@@ -68,14 +63,17 @@ class ElementFormFactory extends BaseElementFactory
             $options['attr']['data-ft-element-id'] = $element->getId();
         }
 
-        $this->addConfigurationDefaults($element);
-        $this->migrateElementConfiguration($element);
-        $this->addConfigurationDefaults($element);
+        if (!$element->getClass()) {
+            throw new \LogicException("Empty component class name on element");
+        }
+
+        $this->elementFilter->prepareForForm($element);
+        $handlingClass = $this->elementFilter->getHandlingClassName($element);
 
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
-                'element_class' => $element->getClass(),
+                'element_class' => $handlingClass,
                 'required' => false,
             ))
         ;
@@ -83,8 +81,7 @@ class ElementFormFactory extends BaseElementFactory
 
         $options = array();
 
-        $componentClassName = $this->getComponentClass($element);
-        $twigTemplate = $componentClassName::getFormTemplate();
+        $twigTemplate = $handlingClass::getFormTemplate();
         $options['label'] = false;
 
         $resolvedType = $this->formRegistry->getType($configurationType);
@@ -96,7 +93,7 @@ class ElementFormFactory extends BaseElementFactory
         $formType->add('configuration', $configurationType, $options);
 
         $regionName = $element->getRegion();
-        if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
             if (!$regionName || false !== strpos($regionName, 'content')) {
                 $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
             } else {
@@ -126,8 +123,8 @@ class ElementFormFactory extends BaseElementFactory
      */
     public function getConfigurationFormType(Element $element)
     {
-        $componentClassName = $this->getComponentClass($element);
-        $typeName = $componentClassName::getType();
+        $handlingClass = $this->elementFilter->getHandlingClassName($element);
+        $typeName = $handlingClass::getType();
         if (is_string($typeName) && preg_match('#^[\w\d]+(\\\\[\w\d]+)+$#', $typeName)) {
             // typename is a fully qualified class name, which is good (forward compatible with Symfony 3)
             if (!is_a($typeName, 'Symfony\Component\Form\FormTypeInterface', true)) {
@@ -136,14 +133,5 @@ class ElementFormFactory extends BaseElementFactory
             return $typeName;
         }
         return null;
-    }
-
-    public function migrateElementConfiguration(Element $element, $migrateClass = true)
-    {
-        parent::migrateElementConfiguration($element, $migrateClass);
-        $defaultTitle = $this->elementExtension->element_default_title($element);
-        if ($element->getTitle() === $defaultTitle) {
-            $element->setTitle('');    // @todo: allow null (requires schema update)
-        }
     }
 }

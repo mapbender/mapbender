@@ -6,22 +6,19 @@ namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 use Mapbender\Component\Application\ElementDistribution;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ApplicationMarkupRenderer
 {
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ElementMarkupRenderer */
     protected $elementRenderer;
-    /** @var ElementFactory */
-    protected $elementFactory;
-    /** @var AuthorizationCheckerInterface  */
-    protected $authorizationChecker;
     /** @var EngineInterface */
     protected $templatingEngine;
     /** @var bool */
@@ -30,16 +27,14 @@ class ApplicationMarkupRenderer
     /** @var ElementDistribution[] */
     protected $distributions = array();
 
-    public function __construct(ElementMarkupRenderer $elementRenderer,
-                                ElementFactory $elementFactory,
+    public function __construct(ElementFilter $elementFilter,
+                                ElementMarkupRenderer $elementRenderer,
                                 EngineInterface $templatingEngine,
-                                AuthorizationCheckerInterface $authorizationChecker,
                                 $allowResponsiveContainers)
     {
+        $this->elementFilter = $elementFilter;
         $this->elementRenderer = $elementRenderer;
-        $this->elementFactory = $elementFactory;
         $this->templatingEngine = $templatingEngine;
-        $this->authorizationChecker = $authorizationChecker;
         $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
@@ -117,27 +112,8 @@ class ApplicationMarkupRenderer
      */
     public function createElementDistribution(Application $application)
     {
-        return new ElementDistribution($this->prepareDisplayableElements($application));
-    }
-
-    /**
-     * @param Application $application
-     * @return Element[]
-     */
-    protected function prepareDisplayableElements(Application $application)
-    {
-        $entitiesOut = array();
-        foreach ($application->getElements() as $element) {
-            $this->elementFactory->migrateElementConfiguration($element, true);
-            $enabled = !$this->elementFactory->isTypeOfElementDisabled($element) && $element->getEnabled();
-            if ($enabled && $this->authorizationChecker->isGranted('VIEW', $element)) {
-                if (!$element->getTitle()) {
-                    $element->setTitle($this->elementFactory->getDefaultTitle($element));
-                }
-                $entitiesOut[] = $element;
-            }
-        }
-        return $entitiesOut;
+        $elements = $this->elementFilter->prepareFrontend($application->getElements(), true, true);
+        return new ElementDistribution($elements);
     }
 
     /**

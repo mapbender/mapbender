@@ -5,10 +5,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -30,6 +31,19 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ElementController extends ApplicationControllerBase
 {
+    /** @var ElementEntityFactory */
+    protected $elementEntityFactory;
+
+    /**
+     * @param ContainerInterface $container
+     * @todo Sf4: use controller services with DI for service / parameter access
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->elementEntityFactory = $container->get('mapbender.element_entity_factory');
+    }
+
     /**
      * Show element class selection
      *
@@ -104,7 +118,7 @@ class ElementController extends ApplicationControllerBase
         $class = $request->query->get('class');
         $region = $request->query->get('region');
 
-        $element = $this->getFactory()->newEntity($class, $region, $application);
+        $element = $this->elementEntityFactory->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
         $formInfo = $formFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
@@ -378,16 +392,6 @@ class ElementController extends ApplicationControllerBase
         $element->setScreenType($newValue);
         $em->flush();
         return new Response(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @return ElementFactory
-     */
-    protected function getFactory()
-    {
-        /** @var ElementFactory $service */
-        $service = $this->get('mapbender.element_factory.service');
-        return $service;
     }
 
     /**

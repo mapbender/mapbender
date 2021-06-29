@@ -4,10 +4,14 @@
 namespace Mapbender\CoreBundle\Component;
 
 
-use Mapbender\Component\ClassUtil;
+use Mapbender\Component\Element\ElementServiceFrontendInterface;
+use Mapbender\Component\Element\ElementServiceInterface;
+use Mapbender\Component\Element\HttpHandlerProvider;
+use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
-use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
+use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
 /**
  * Maintains inventory of Element Component classes
@@ -15,7 +19,7 @@ use Mapbender\CoreBundle\Entity\Element;
  * Default implementation for service mapbender.element_inventory.service
  * @since v3.0.8-beta1
  */
-class ElementInventoryService
+class ElementInventoryService extends ElementConfigFilter implements HttpHandlerProvider
 {
     /** @var string[] */
     protected $movedElementClasses = array(
@@ -27,21 +31,35 @@ class ElementInventoryService
         'Mapbender\CoreBundle\Element\Redlining' => 'Mapbender\CoreBundle\Element\Sketch',
     );
 
+    protected $inventoryDirty = true;
+    /** @var string[] */
+    protected $legacyInventory = array();
     /** @var string[] */
     protected $fullInventory = array();
+    /** @var string[] */
+    protected $activeInventory = array();
+    /** @var string[] */
+    protected $canonicals = array();
     /** @var string[] */
     protected $noCreationClassNames = array();
     /** @var string[] */
     protected $disabledClassesFromConfig = array();
+    /** @var ElementServiceInterface[] */
+    protected $serviceElements = array();
+    /** @var ElementShimFactory|null */
+    protected $shimFactory;
 
-    public function __construct($disabledClasses)
+    public function __construct($disabledClasses,
+                                ElementShimFactory $shimFactory = null)
     {
         $this->disabledClassesFromConfig = $disabledClasses ?: array();
+        $this->shimFactory = $shimFactory;
     }
 
     /**
      * @param string $classNameIn
-     * @return string
+     * @return string|MinimalInterface
+     * @deprecated prefer getHandlingClassName (requires Element argument)
      */
     public function getAdjustedElementClassName($classNameIn)
     {
@@ -53,16 +71,43 @@ class ElementInventoryService
         }
     }
 
-    /**
-     * @param string|MinimalInterface $className
-     * @return string|null
-     */
-    public function getClassTitle($className)
+    public function getHandlingClassName(Element $element)
     {
-        $adjustedClass = $this->getAdjustedElementClassName($className);
-        if (ClassUtil::exists($adjustedClass)) {
-            /** @var string|MinimalInterface $adjustedClass */
-            return $adjustedClass::getClassTitle();
+        $handlingClass = parent::getHandlingClassName($element);
+        if (!empty($this->movedElementClasses[$handlingClass])) {
+            $handlingClass = $this->movedElementClasses[$handlingClass];
+        }
+        return $handlingClass;
+    }
+
+    public function getCanonicalClassName($classNameIn)
+    {
+        if (!empty($this->canonicals[$classNameIn])) {
+            return $this->canonicals[$classNameIn];
+        } else {
+            return $classNameIn;
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return ElementServiceInterface|null
+     */
+    public function getHandlerService(Element $element)
+    {
+        return $this->getHandlerServiceInternal($element, false);
+    }
+
+    /**
+     * @param Element $element
+     * @return \Mapbender\Component\Element\ElementHttpHandlerInterface|null
+     */
+    public function getHttpHandler(Element $element)
+    {
+        // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
+        $handler = $this->getHandlerServiceInternal($element, true);
+        if ($handler && ($handler instanceof HttpHandlerProvider)) {
+            return $handler->getHttpHandler($element);
         } else {
             return null;
         }
@@ -70,20 +115,23 @@ class ElementInventoryService
 
     /**
      * @param Element $element
-     * @return string|null
+     * @return ElementServiceFrontendInterface|null
      */
-    public function getDefaultTitle(Element $element)
+    public function getFrontendHandler(Element $element)
     {
-        /** @var null|string|MinimalInterface $className */
-        $className = $this->getAdjustedElementClassName($element->getClass());
-        if ($className && \is_a($className, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target && $target !== $element) {
-                return $target->getTitle() ?: $this->getDefaultTitle($target);
-            }
-        }
-        if ($className && ClassUtil::exists($className)) {
-            return $className::getClassTitle();
+        // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
+        return $this->getHandlerServiceInternal($element, true);
+    }
+
+    /**
+     * @param Element $element
+     * @return ImportAwareInterface|null
+     */
+    public function getImportProcessor(Element $element)
+    {
+        $handler = $this->getHandlerServiceInternal($element, true);
+        if ($handler && ($handler instanceof ImportAwareInterface)) {
+            return $handler;
         } else {
             return null;
         }
@@ -95,7 +143,32 @@ class ElementInventoryService
     public function setInventory($classNames)
     {
         // map value:value to ease array_intersect_key in getActiveInventory
-        $this->fullInventory = array_combine($classNames, $classNames);
+        $this->legacyInventory = array_combine($classNames, $classNames);
+        $this->inventoryDirty = true;
+    }
+
+    /**
+     * @param ElementServiceInterface $instance
+     * @param string[] $handledClassNames
+     * @param string|null $canonical
+     * @noinspection PhpUnused
+     * @see \Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass::process()
+     */
+    public function registerService(ElementServiceInterface $instance, $handledClassNames, $canonical = null)
+    {
+        $serviceClass = \get_class($instance);
+        if ($canonical) {
+            $handledClassNames[] = $canonical;
+        }
+        $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
+        foreach (array_unique($handledClassNames) as $handledClassName) {
+            $this->serviceElements[$handledClassName] = $instance;
+            if ($handledClassName !== $serviceClass) {
+                $this->replaceElement($handledClassName, $serviceClass);
+            }
+            $this->canonicals[$handledClassName] = $canonical ?: $serviceClass;
+        }
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -121,6 +194,7 @@ class ElementInventoryService
         if ($circular) {
             throw new \LogicException("Circular class replacement detected for " . implode(', ', $circular));
         }
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -136,6 +210,7 @@ class ElementInventoryService
         }
         $this->noCreationClassNames[] = $className;
         $this->noCreationClassNames = array_unique(array_merge($this->noCreationClassNames));
+        $this->inventoryDirty = true;
     }
 
     /**
@@ -145,12 +220,8 @@ class ElementInventoryService
      */
     public function getActiveInventory()
     {
-        $moved = array_intersect_key($this->movedElementClasses, $this->fullInventory);
-        $inventoryCopy = $this->fullInventory + array();
-        foreach ($moved as $original => $replacement) {
-            $inventoryCopy[$original] = $replacement;
-        }
-        return array_unique(array_diff(array_values($inventoryCopy), $this->noCreationClassNames, $this->getDisabledClasses()));
+        $this->resolveInventory();
+        return $this->activeInventory;
     }
 
     /**
@@ -160,6 +231,7 @@ class ElementInventoryService
      */
     public function getRawInventory()
     {
+        $this->resolveInventory();
         return array_values($this->fullInventory);
     }
 
@@ -173,15 +245,6 @@ class ElementInventoryService
         return \in_array($className, $this->getDisabledClasses());
     }
 
-    public function isTypeOfElementDisabled(Entity\Element $element)
-    {
-        $disabled = $this->isClassDisabled($element->getClass());
-        if (!$disabled && ($target = $element->getTargetElement())) {
-            $disabled = $this->isClassDisabled($target->getClass());
-        }
-        return $disabled;
-    }
-
     protected function getInternallyDisabledClasses()
     {
         return array(
@@ -189,5 +252,40 @@ class ElementInventoryService
             'Mapbender\WmcBundle\Element\WmcList',
             'Mapbender\WmcBundle\Element\WmcEditor',
         );
+    }
+
+    /**
+     * @param Element $element
+     * @param bool $allowShim
+     * @return ElementServiceInterface|null
+     */
+    protected function getHandlerServiceInternal(Element $element, $allowShim = false)
+    {
+        $className = $this->getHandlingClassName($element);
+
+        if (!empty($this->serviceElements[$className])) {
+            return $this->serviceElements[$className];
+        } elseif ($allowShim && $this->shimFactory) {
+           return $this->shimFactory->getShim($className);
+        } else {
+            return null;
+        }
+    }
+
+    protected function resolveInventory()
+    {
+        if ($this->inventoryDirty) {
+            $this->fullInventory = $this->legacyInventory;
+            foreach (array_keys($this->serviceElements) as $serviceClass) {
+                $this->fullInventory[$serviceClass] = $serviceClass;
+            }
+            $moved = array_intersect_key($this->movedElementClasses, $this->fullInventory);
+            $active = $this->fullInventory;
+            foreach ($moved as $original => $replacement) {
+                $active[$original] = $replacement;
+            }
+            $active = array_diff(array_values($active), $this->noCreationClassNames, $this->getDisabledClasses());
+            $this->activeInventory = array_unique($active);
+        }
     }
 }

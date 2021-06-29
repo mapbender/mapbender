@@ -3,7 +3,9 @@
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
-use Mapbender\CoreBundle\Component\Element as Element;
+use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
@@ -11,10 +13,10 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -24,8 +26,8 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  */
 class ConfigService
 {
-    /** @var ApplicationService */
-    protected $basePresenter;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ApplicationDataService */
     protected $cacheService;
     /** @var TypeDirectoryService */
@@ -43,7 +45,7 @@ class ConfigService
     protected $assetBaseUrl;
 
 
-    public function __construct(ApplicationService $basePresenter,
+    public function __construct(ElementFilter $elementFilter,
                                 ApplicationDataService $cacheService,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 UrlProcessor $urlProcessor,
@@ -52,7 +54,7 @@ class ConfigService
                                 PackageInterface $baseUrlPackage,
                                 $debug)
     {
-        $this->basePresenter = $basePresenter;
+        $this->elementFilter = $elementFilter;
         $this->cacheService = $cacheService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
@@ -68,7 +70,8 @@ class ConfigService
      */
     public function getConfiguration(Application $entity)
     {
-        $activeElements = $this->basePresenter->getActiveElements($entity);
+        /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
+        $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
@@ -159,16 +162,27 @@ class ConfigService
     }
 
     /**
-     * @param Element[] $elements Element Components
+     * @param Entity\Element[] $elements
      * @return mixed[]
      */
-    public static function getElementConfiguration($elements)
+    protected function getElementConfiguration($elements)
     {
         $elementConfig = array();
         foreach ($elements as $element) {
-            $elementConfig[$element->getId()] = array(
-                'init'          => $element->getWidgetName(),
-                'configuration' => $element->getPublicConfiguration());
+            $handler = $this->elementFilter->getInventory()->getFrontendHandler($element);
+            if ($handler) {
+                try {
+                    $values = array(
+                        'init' => $handler->getWidgetName($element),
+                        'configuration' => $handler->getClientConfiguration($element),
+                    );
+                } catch (ElementErrorException $e) {
+                    // for frontend presentation, incomplete / invalid elements are silently suppressed
+                    // => do nothing
+                    continue;
+                }
+                $elementConfig[$element->getId()] = $values;
+            }
         }
         return $elementConfig;
     }
