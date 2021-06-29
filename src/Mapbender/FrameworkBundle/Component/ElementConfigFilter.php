@@ -10,17 +10,6 @@ use Mapbender\CoreBundle\Entity\Element;
 
 class ElementConfigFilter
 {
-    /**
-     * Implements (curated) element class splits.
-     * Currently: update legacy any-function Button into ControlButton / LinkButton
-     *
-     * @param Element $element
-     */
-    protected function prepareClass(Element $element)
-    {
-        $element->setClass($this->getHandlingClassName($element));
-    }
-
     public function getHandlingClassName(Element $element)
     {
         if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {

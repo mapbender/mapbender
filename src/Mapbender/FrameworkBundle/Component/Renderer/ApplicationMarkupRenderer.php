@@ -112,7 +112,7 @@ class ApplicationMarkupRenderer
      */
     public function createElementDistribution(Application $application)
     {
-        $elements = $this->elementFilter->prepareFrontend($application->getElements(), true);
+        $elements = $this->elementFilter->prepareFrontend($application->getElements(), true, true);
         return new ElementDistribution($elements);
     }
 

@@ -97,11 +97,12 @@ class ElementFilter extends ElementConfigFilter
     /**
      * @param Element[] $elements
      * @param bool $requireGrant
+     * @param bool $checkTargets
      * @return Element[]
      */
-    public function prepareFrontend($elements, $requireGrant)
+    public function prepareFrontend($elements, $requireGrant, $checkTargets)
     {
-        $elements = $this->filterFrontend($elements, $requireGrant);
+        $elements = $this->filterFrontend($elements, $requireGrant, $checkTargets);
         foreach ($elements as $element) {
             if (!$element->getTitle()) {
                 $element->setTitle($this->getDefaultTitle($element));
@@ -114,13 +115,14 @@ class ElementFilter extends ElementConfigFilter
     /**
      * @param Element[] $elements
      * @param bool $requireGrant
+     * @param bool $checkTargets
      * @return Element[]
      */
-    public function filterFrontend($elements, $requireGrant)
+    public function filterFrontend($elements, $requireGrant, $checkTargets)
     {
         $elementsOut = array();
         foreach ($elements as $element) {
-            if ($this->isEnabled($element) && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
+            if ($this->isEnabled($element, $checkTargets) && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
                 $elementsOut[] = $element;
             }
         }
@@ -168,17 +170,18 @@ class ElementFilter extends ElementConfigFilter
 
     /**
      * @param Element $element
+     * @param bool $checkTargets
      * @return bool
      */
-    protected function isEnabled(Element $element)
+    protected function isEnabled(Element $element, $checkTargets)
     {
         $enabled = $element->getEnabled() && !empty($element->getClass()) && !$this->inventory->isClassDisabled($element->getClass());
         if ($enabled) {
             $handlingClass = $this->getHandlingClassName($element);
             $enabled = ClassUtil::exists($handlingClass) && !$this->inventory->isClassDisabled($handlingClass);
-            if ($enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
+            if ($checkTargets && $enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
                 $target = $element->getTargetElement();
-                $enabled = $target && $this->isEnabled($target);
+                $enabled = $target && $this->isEnabled($target, false);
             }
         }
         return $enabled;

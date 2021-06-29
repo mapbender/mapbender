@@ -142,7 +142,7 @@ class ApplicationController extends ApplicationControllerBase
         /** @todo Sf4: use DI for service access */
         /** @var ElementFilter $filter */
         $filter = $this->get('mapbender.element_filter');
-        if (!$filter->prepareFrontend(array($element), true)) {
+        if (!$filter->prepareFrontend(array($element), true, false)) {
             throw new NotFoundHttpException();
         }
         $handler = $this->elementInventory->getHttpHandler($element);

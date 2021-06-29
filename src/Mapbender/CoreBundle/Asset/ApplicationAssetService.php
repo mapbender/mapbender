@@ -304,7 +304,7 @@ class ApplicationAssetService
         // Skip grants checks here to avoid issues with application asset caching.
         // Non-granted Elements will skip HTML rendering and config and will not be initialized.
         // Emitting the base js / css / translation assets OTOH is always safe to do
-        foreach ($this->elementFilter->filterFrontend($application->getElements(), false) as $element) {
+        foreach ($this->elementFilter->filterFrontend($application->getElements(), false, false) as $element) {
             $elementRefs = $this->getSingleElementAssetReferences($element, $type);
             $combinedRefs = array_merge($combinedRefs, $elementRefs);
         }

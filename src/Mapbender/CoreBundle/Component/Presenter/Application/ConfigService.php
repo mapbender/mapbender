@@ -71,7 +71,7 @@ class ConfigService
     public function getConfiguration(Application $entity)
     {
         /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
-        $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true);
+        $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),

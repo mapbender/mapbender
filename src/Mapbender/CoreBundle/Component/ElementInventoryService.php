@@ -250,10 +250,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      */
     protected function getHandlerServiceInternal(Element $element, $allowShim = false)
     {
-        $classNameBefore = $element->getClass();
-        $this->prepareClass($element);
-        $className = $element->getClass();
-        $element->setClass($classNameBefore);
+        $className = $this->getHandlingClassName($element);
 
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
