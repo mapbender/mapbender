@@ -113,7 +113,7 @@ class ElementFilter extends ElementConfigFilter
     {
         $elementsOut = array();
         foreach ($elements as $element) {
-            if ($this->isEnabled($element, $checkTargets) && (!$requireGrant || $this->authorizationChecker->isGranted('VIEW', $element))) {
+            if ($this->isEnabled($element, $requireGrant, $checkTargets)) {
                 $elementsOut[] = $element;
             }
         }
@@ -161,10 +161,11 @@ class ElementFilter extends ElementConfigFilter
 
     /**
      * @param Element $element
+     * @param bool $checkGrant
      * @param bool $checkTargets
      * @return bool
      */
-    protected function isEnabled(Element $element, $checkTargets)
+    protected function isEnabled(Element $element, $checkGrant, $checkTargets)
     {
         $enabled = $element->getEnabled() && !empty($element->getClass()) && !$this->inventory->isClassDisabled($element->getClass());
         if ($enabled) {
@@ -172,7 +173,10 @@ class ElementFilter extends ElementConfigFilter
             $enabled = ClassUtil::exists($handlingClass) && !$this->inventory->isClassDisabled($handlingClass);
             if ($checkTargets && $enabled && \is_a($handlingClass, 'Mapbender\CoreBundle\Element\ControlButton', true)) {
                 $target = $element->getTargetElement();
-                $enabled = $target && $this->isEnabled($target, false);
+                $enabled = $target && $this->isEnabled($target, $checkGrant, false);
+            }
+            if ($checkGrant && $enabled) {
+                $enabled = $this->authorizationChecker->isGranted('VIEW', $element);
             }
         }
         return $enabled;
