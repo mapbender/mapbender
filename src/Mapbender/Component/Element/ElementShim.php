@@ -5,67 +5,105 @@ namespace Mapbender\Component\Element;
 
 use Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface;
 use Mapbender\CoreBundle\Component\ElementInterface;
+use Mapbender\CoreBundle\Component\Exception\InvalidElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
+use Psr\Container\ContainerInterface;
 
 /**
- * Bridges non-static AbstractElementService API to Component\Element
+ * Bridges non-static AbstractElementService API to Component\Element.
+ * Multiplexing facade handling many / all Component\Element instances of the
+ * same class.
  */
 class ElementShim extends AbstractElementService
     implements ImportAwareInterface
 {
-    /** @var ElementInterface|BoundSelfRenderingInterface */
-    protected $component;
-    /** @var ElementHttpShim|null|false */
-    protected $httpHandler = null;
+    /** @var string */
+    protected $handlingClassName;
+    /** @var ContainerInterface */
+    protected $componentContainer;
+    /** @var ElementInterface[] */
+    protected $components = array();
+    /** @var ElementHttpShim[] */
+    protected $httpHandlers = array();
+    /** @var boolean|null (lazy initialized to boolean) */
+    protected $httpSupport = null;
 
-    public function __construct(ElementInterface $component)
+    public function __construct(ContainerInterface $componentContainer, $handlingClassName)
     {
-        $this->component = $component;
+        $this->handlingClassName = $handlingClassName;
+        $this->componentContainer = $componentContainer;
     }
 
     public function getWidgetName(Element $element)
     {
-        return $this->component->getWidgetName();
+        return $this->getComponent($element)->getWidgetName();
     }
 
     public function getClientConfiguration(Element $element)
     {
-        return $this->component->getPublicConfiguration();
+        return $this->getComponent($element)->getPublicConfiguration();
     }
 
     public function getRequiredAssets(Element $element)
     {
-        return $this->component->getAssets();
+        return $this->getComponent($element)->getAssets();
     }
 
     public function getView(Element $element)
     {
-        return new LegacyView($this->component->render());
+        return new LegacyView($this->getComponent($element)->render());
     }
 
     public function getHttpHandler(Element $element)
     {
-        if ($this->httpHandler === null) {
-            $this->httpHandler = $this->initHttpHandler($this->component) ?: false;
+        if ($this->httpSupport === null) {
+            $this->httpSupport = $this->detectHttpSupport();
         }
-        return $this->httpHandler ?: null;
+        if (!$this->httpSupport) {
+            return null;
+        }
+        $key = \spl_object_id($element);
+        if (!array_key_exists($key, $this->httpHandlers)) {
+            /** @var \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface $component */
+            $component = $this->getComponent($element);
+            assert($component instanceof \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface);
+            $this->httpHandlers[$key] = new ElementHttpShim($component);
+        }
+        return $this->httpHandlers[$key] ?: null;
     }
 
     /**
-     * @param ElementInterface $component
-     * @return ElementHttpShim|null
-     * @throws \ReflectionException
+     * @param Element $element
+     * @return ElementInterface|BoundSelfRenderingInterface
      */
-    protected function initHttpHandler($component)
+    protected function getComponent(Element $element)
     {
-        if (!($component instanceof \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface)) {
-            return null;
+        $key = \spl_object_id($element);
+        if (empty($this->components[$key])) {
+            $hc = $this->handlingClassName;
+            /** @see \Mapbender\CoreBundle\Component\Element::__construct */
+            $instance = new $hc($this->componentContainer, $element);
+            if (!$instance instanceof ElementInterface) {
+                throw new InvalidElementClassException($this->handlingClassName);
+            }
+            $this->components[$key] = $instance;
+        }
+        return $this->components[$key];
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function detectHttpSupport()
+    {
+        if (!\is_a($this->handlingClassName, 'Mapbender\CoreBundle\Component\ElementHttpHandlerInterface', true)) {
+            return false;
         }
         try {
-            $refl = new \ReflectionClass($component);
+            $refl = new \ReflectionClass($this->handlingClassName);
         } catch (\ReflectionException $e) {
-            return null;
+            return false;
         }
         $baseClassName = 'Mapbender\CoreBundle\Component\Element';
         /** @see \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface::handleHttpRequest $hasHttp */
@@ -76,17 +114,14 @@ class ElementShim extends AbstractElementService
             $declaring = $refl->getMethod('httpAction')->getDeclaringClass()->getName();
             $hasHttp = $declaring !== $baseClassName;
         }
-        if ($hasHttp) {
-            return new ElementHttpShim($component);
-        } else {
-            return null;
-        }
+        return $hasHttp;
     }
 
     public function onImport(Element $element, Mapper $mapper)
     {
-        if ($this->component instanceof \Mapbender\CoreBundle\Component\Element) {
-            $configOut = $this->component->denormalizeConfiguration($element->getConfiguration(), $mapper);
+        $component = $this->getComponent($element);
+        if ($component instanceof \Mapbender\CoreBundle\Component\Element) {
+            $configOut = $component->denormalizeConfiguration($element->getConfiguration(), $mapper);
             $element->setConfiguration($configOut);
         }
     }

@@ -266,7 +266,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
         } elseif ($allowShim && $this->shimFactory) {
-           return $this->shimFactory->getShim($element, $className);
+           return $this->shimFactory->getShim($className);
         } else {
             return null;
         }
