@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
+use Mapbender\Utils\AssetReferenceUtil;
 
 /**
  * Produces merged application assets.
@@ -316,8 +317,6 @@ class ApplicationAssetService
     {
         if ($handler = $this->inventory->getHandlerService($element)) {
             $fullElementRefs = $handler->getRequiredAssets($element);
-            // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)
-            return ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
         } else {
             try {
                 // Migrate to potentially update class
@@ -332,9 +331,9 @@ class ApplicationAssetService
             /** @todo: update ElementFilter to clarify shim usage */
             $shimService = $this->inventory->getFrontendHandler($element);
             $fullElementRefs = $shimService->getRequiredAssets($element);
-            $elementRefs = ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
-            return $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
         }
+        // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)
+        return ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
     }
 
     /**
@@ -380,60 +379,23 @@ class ApplicationAssetService
     }
 
     /**
-     * Amend given bundle-implicit assetic $reference with bundle scope from
-     * given $scopeObject. If the $reference is already bundle-qualified, return
-     * it unmodified.
-     * If the passed reference is interpreted as a web-anchored file path (starts with '/')
-     * or an app/Resources-relative path (starts with '.'), also return it unmodified.
-     *
-     * @param object $scopeObject
-     * @param string $reference
-     * @return string
-     */
-    protected function qualifyAssetReference($scopeObject, $reference)
-    {
-        // If it starts with an @ we assume it's already an assetic reference
-        $firstChar = $reference[0];
-        if ($firstChar === '@' || $firstChar === '/' || $firstChar === '.') {
-            return $reference;
-        } else {
-            if (!$scopeObject) {
-                throw new \RuntimeException("Can't resolve asset path $reference with empty object context");
-            }
-            $message = "Missing explicit bundle path in asset reference "
-                     . print_r($reference, true)
-                     . " from " . get_class($scopeObject);
-            if ($this->strict) {
-                throw new \RuntimeException($message);
-            } else {
-                @trigger_error("Deprecated: {$message}", E_USER_DEPRECATED);
-            }
-            $namespaces = explode('\\', get_class($scopeObject));
-            $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
-            return sprintf('@%s/Resources/public/%s', $bundle, $reference);
-        }
-    }
-
-    /**
-     * Bulk version of qualifyAssetReference
+     * Amends magically implicit bundle scope in unqualified assetic resource references.
+     * 'file.js' => '@MapbenderMagicallyImplicitBundle/Resources/public/file.js'
      *
      * @param object $scopeObject
      * @param string[] $references
      * @param string $type
      * @return string[]
+     * @deprecated only use asset references assetic understands without further processing
      */
     protected function qualifyAssetReferencesBulk($scopeObject, $references, $type)
     {
         // NOTE: Translations assets are views (twig templates); they never supported
         //       automatic bundle namespace inferrence, and they still don't.
-        if ($type !== 'trans') {
-            $refsOut = array();
-            foreach ($references as $singleRef) {
-                $refsOut[] = $this->qualifyAssetReference($scopeObject, $singleRef);
-            }
-            return $refsOut;
-        } else {
+        if ($type === 'trans') {
             return $references;
+        } else {
+            return AssetReferenceUtil::qualifyBulk($scopeObject, $references, $this->strict);
         }
     }
 }

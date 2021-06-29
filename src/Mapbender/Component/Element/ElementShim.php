@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
+use Mapbender\Utils\AssetReferenceUtil;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -28,6 +29,8 @@ class ElementShim extends AbstractElementService
     protected $httpHandlers = array();
     /** @var boolean|null (lazy initialized to boolean) */
     protected $httpSupport = null;
+    /** @var string[][] */
+    protected $assets = array();
 
     public function __construct(ContainerInterface $componentContainer, $handlingClassName)
     {
@@ -47,7 +50,20 @@ class ElementShim extends AbstractElementService
 
     public function getRequiredAssets(Element $element)
     {
-        return $this->getComponent($element)->getAssets();
+        $key = \spl_object_id($element);
+        if (!\array_key_exists($key, $this->assets)) {
+            $component = $this->getComponent($element);
+            $references = $component->getAssets() + array(
+                'js' => array(),
+                'css' => array(),
+                'trans' => array(),
+            );
+            foreach (array('js', 'css') as $type) {
+                $references[$type] = AssetReferenceUtil::qualifyBulk($component, $references[$type], false);
+            }
+            $this->assets[$key] = $references;
+        }
+        return $this->assets[$key];
     }
 
     public function getView(Element $element)
