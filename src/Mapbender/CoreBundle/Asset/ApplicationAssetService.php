@@ -93,8 +93,7 @@ class ApplicationAssetService
             $source->getAssets($type),
             $source->getLateAssets($type),
         );
-        $references = call_user_func_array('\array_merge', $referenceLists);
-        $references = array_unique($this->qualifyAssetReferencesBulk($source, $references, $type));
+        $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
         return $this->compileAssetContent(null, $references, $type);
     }
 
