@@ -1,4 +1,4 @@
-## dev-master @ 512e33474
+## dev-master @ b2466ee52
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -16,11 +16,12 @@
 * Removed legacy / broken Selenium + PhantomJS tests
 * Resolved misc Symfony 4 incompatibilites in console commands, service definitions and form types
 * Resolved FA5+ incompatibility in custom dropdown
+* [Framework] Add new infrastructure for Symfony 4-compatible Elements (see [PR#1367](https://github.com/mapbender/mapbender/pull/1367))
 * [Framework] Fix unhandled errors on image resource request failure when preloading icon assets
 * Deprecated TargetElementType
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
-* Deprecated fixture-based Application import into db (prefer e.g. `mapbender:application:import app/config/applications`)
+* Deprecated fixture-based Application import into db (prefer e.g. `app/console mapbender:application:import app/config/applications`)
 
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
