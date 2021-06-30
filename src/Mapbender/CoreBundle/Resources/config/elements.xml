@@ -39,6 +39,9 @@
         <service id="mapbender.element.ScaleBar" class="Mapbender\CoreBundle\Element\ScaleBar">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.ZoomBar" class="Mapbender\CoreBundle\Element\ZoomBar">
+            <tag name="mapbender.element" />
+        </service>
         <service id="mapbender.element.ViewManager" class="Mapbender\CoreBundle\Element\ViewManager">
             <tag name="mapbender.element" />
             <argument type="service" id="mb.element.ViewManager.http_handler" />

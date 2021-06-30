@@ -1,9 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * Mapbender Zoombar
@@ -14,7 +16,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element implements FloatingElement
+class ZoomBar extends AbstractElementService implements FloatingElement
 {
 
     /**
@@ -36,7 +38,7 @@ class ZoomBar extends Element implements FloatingElement
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -71,19 +73,16 @@ class ZoomBar extends Element implements FloatingElement
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbZoomBar';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:zoombar.html.twig';
-    }
-
-    public function getFrontendTemplateVars()
-    {
-        $target = $this->entity->getTargetElement('target');
+        $view = new TemplateView('MapbenderCoreBundle:Element:zoombar.html.twig');
+        $view->attributes['class'] = 'mb-element-zoombar';
+        $target = $element->getTargetElement('target');
         $scales = array();
         if ($target) {
             $mapConfig = $target->getConfiguration();
@@ -92,21 +91,22 @@ class ZoomBar extends Element implements FloatingElement
                 asort($scales, SORT_NUMERIC | SORT_REGULAR);
             }
         }
-        $withDefaults = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
-        return array(
+        $withDefaults = $element->getConfiguration() + $this->getDefaultConfiguration();
+        $view->variables = array(
             'zoom_levels' => $scales,
             'configuration' => array_replace($withDefaults, array(
-                'components' => $this->filterComponentList($this->entity, $withDefaults['components']),
+                'components' => $this->filterComponentList($element, $withDefaults['components']),
             )),
         );
+        return $view;
     }
 
     /**
-     * @param Entity\Element $entity
+     * @param Element $entity
      * @param string[] $componentList
      * @return string[]
      */
-    protected static function filterComponentList(Entity\Element $entity, $componentList)
+    protected static function filterComponentList(Element $entity, $componentList)
     {
         if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
             $componentList[] = 'zoom_in_out';
@@ -115,13 +115,13 @@ class ZoomBar extends Element implements FloatingElement
         return $componentList;
     }
 
-    protected static function getComponentBlacklist(Entity\Element $entity)
+    protected static function getComponentBlacklist(Element $element)
     {
         $blackList = array();
-        $application = $entity->getApplication();
+        $application = $element->getApplication();
         if ($application) {
             switch ($application->getMapEngineCode()) {
-                case Entity\Application::MAP_ENGINE_OL2:
+                case Application::MAP_ENGINE_OL2:
                     $blackList[] = 'rotation';
                     break;
                 default:

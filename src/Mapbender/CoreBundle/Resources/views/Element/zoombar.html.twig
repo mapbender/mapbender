@@ -10,7 +10,6 @@
     {% endblock %}
 {% endif %}
 {% spaceless %}
-<div id="{{ id }}" class="mb-element mb-element-zoombar {{configuration.anchor}}">
     {% if configuration.draggable is defined and configuration.draggable %}
       <div class="move-icon-wrap component">
           <span class="iconMove"></span>
@@ -25,7 +24,7 @@
       </div>
     </div>
 {%- endif -%}
-    <div class="component">
+<div class="component">
   <ul class="toolPane toolBarColors">
     {% if 'zoom_max' in configuration.components %}
       <li class="zoom-world clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoombyworld" | trans }}">
@@ -58,6 +57,5 @@
       </li>
     {% endif %}
   </ul>
-    </div>
 </div>
 {% endspaceless %}
