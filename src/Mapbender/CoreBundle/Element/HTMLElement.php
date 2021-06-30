@@ -62,7 +62,9 @@ class HTMLElement extends AbstractElementService
             $view->attributes['class'] .= rtrim(' ' . $config['classes']);
         }
         $view->variables['content'] = $config['content'];
+        /** @see https://doc.mapbender.org/en/functions/misc/html.html for twig variable expectations */
         $view->variables['application'] = $element->getApplication();
+        $view->variables['entity'] = $element;
         return $view;
     }
 
