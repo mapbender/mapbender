@@ -88,14 +88,12 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     public function getView(Element $element)
     {
         if (preg_match('#(toolbar|footer)#', $element->getRegion())) {
-            $template = "MapbenderWmsBundle:Element:dimensionshandler.toolbar.html.twig";
+            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.toolbar.html.twig');
+            $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
         } else {
-            $template = "MapbenderWmsBundle:Element:dimensionshandler.html.twig";
+            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.html.twig');
         }
-        $view = new TemplateView($template);
         $view->attributes['class'] = 'mb-element-dimensionshandler';
-        /** @todo: do not use tooltips when rendered in sidepane (title is on accordeon / tab header) */
-        $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
 
         /** @todo: render nothing if no controllable dimensions */
         $dimensionsets = array();
