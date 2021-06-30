@@ -72,5 +72,8 @@
             <!-- @todo: avoid rendering twigs into config (local dependendence breaks cachability) -->
             <argument type="service" id="templating" />
         </service>
+        <service id="mapbender.element.POI" class="Mapbender\CoreBundle\Element\POI">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>

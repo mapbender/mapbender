@@ -2,13 +2,16 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Class POI
  * @package Mapbender\CoreBundle\Element
  */
-class POI extends Element
+class POI extends AbstractElementService
 {
 
     /**
@@ -42,6 +45,7 @@ class POI extends Element
     {
         return array(
             'useMailto' => true,
+            /** @todo: use translatable texts */
             'body'      => 'Please take a look at this POI',
             'target'    => null,
             'gps'       => null
@@ -59,7 +63,7 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js'    => array(
@@ -78,25 +82,23 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbPOI';
-    }
-
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return 'MapbenderCoreBundle:Element:poi.html.twig';
     }
 
     /**
      * @inheritdoc
      */
-    public function render()
+    public function getView(Element $element)
     {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'configuration' => $this->getConfiguration(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:poi.html.twig');
+        $view->attributes['class'] = 'mb-element-poi';
+        /** @todo: respect configured title! */
+        /** @todo: do not abuse tooltips to generate popup dialog titles */
+        $view->attributes['title'] = 'mb.core.poi.sharepoi';
+        $config = $element->getConfiguration() ?: array();
+        $view->variables['body'] = ArrayUtil::getDefault($config, 'body', $this->getDefaultConfiguration()['body']);
+        return $view;
     }
 }

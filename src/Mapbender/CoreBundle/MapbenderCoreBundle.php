@@ -69,7 +69,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\Overview',
-            'Mapbender\CoreBundle\Element\POI',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleSelector',
             'Mapbender\CoreBundle\Element\SearchRouter',
