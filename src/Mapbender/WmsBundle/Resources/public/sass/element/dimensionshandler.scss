@@ -27,11 +27,10 @@
   }
 }
 
-.toolBarItem .mb-element-dimensionshandler{
+.toolBar .mb-element-dimensionshandler {
   width: 140px;
-  margin-top: -1px; // eat into toolbar item padding to center vertically with other toolbar items
-  display: inline-block;
-  vertical-align: top;
+  /** @todo: reevaluate global padding for all .toolBarItem (only desirable for .mb-button) */
+  padding: 0 5px; // maintain some horizontal padding (slider handle can overlap left / right edges)
   .dimensionset {
     font-size: 11px;
     line-height: 11px;
@@ -42,7 +41,6 @@
         border: 2px solid $middleFontColor !important;
         background-color: lighten($middleFontColor, 20%) !important;
         height:14px;
-        width: 10px;
         top: -5px;
       }
     }

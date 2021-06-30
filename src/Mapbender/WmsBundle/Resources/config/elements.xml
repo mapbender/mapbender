@@ -12,5 +12,8 @@
             <argument type="service" id="mapbender.importer.source.wms.service" />
             <argument>%wmsloader.example_url%</argument>
         </service>
+        <service class="Mapbender\WmsBundle\Element\DimensionsHandler">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>

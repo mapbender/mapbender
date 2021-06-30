@@ -32,7 +32,6 @@ class MapbenderWmsBundle extends MapbenderBundle
     public function getElements()
     {
         return array(
-            'Mapbender\WmsBundle\Element\DimensionsHandler',
         );
     }
 }
