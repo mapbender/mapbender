@@ -2,12 +2,11 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\Element\StaticView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\Utils\HtmlUtil;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * @author Paul Schmidt
@@ -92,6 +91,9 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
         $view = new TemplateView('MapbenderCoreBundle:Element:scalebar.html.twig');
         // @todo: fix template to include a text display area that doesn't require CSS positioning / sizing hacks
         $view->attributes['class'] = 'mb-element-scaleline smallText';
+        $config = $element->getConfiguration() ?: array();
+        $maxWidth = \intval(ArrayUtil::getDefault($config, 'maxWidth', null) ?: $this->getDefaultConfiguration()['maxWidth']);
+        $view->attributes['style'] = "width: auto; min-width: {$maxWidth}px;";
         return $view;
     }
 
