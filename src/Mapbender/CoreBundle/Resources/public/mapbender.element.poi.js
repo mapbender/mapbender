@@ -113,7 +113,7 @@
                 modal: false,
                 scrollable: false,
                 width: 500,
-                title: this.element.attr('title'),
+                title: this.element.attr('data-title'),
                 content: $('.input', this.element).html(),
                 buttons: [
                     {

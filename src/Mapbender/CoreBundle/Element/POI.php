@@ -95,8 +95,7 @@ class POI extends AbstractElementService
         $view = new TemplateView('MapbenderCoreBundle:Element:poi.html.twig');
         $view->attributes['class'] = 'mb-element-poi';
         /** @todo: respect configured title! */
-        /** @todo: do not abuse tooltips to generate popup dialog titles */
-        $view->attributes['title'] = 'mb.core.poi.sharepoi';
+        $view->attributes['data-title'] = 'mb.core.poi.sharepoi';   // Used as popup title
         $config = $element->getConfiguration() ?: array();
         $view->variables['body'] = ArrayUtil::getDefault($config, 'body', $this->getDefaultConfiguration()['body']);
         return $view;
