@@ -1,4 +1,4 @@
-## dev-master @ b2466ee52
+## dev-master @ ad23d52ef
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -6,10 +6,12 @@
 * Fix missing colorpicker assets / broken FeatureInfo backend form if installed in a sub-path URL
 * Fix wrong initial value display of custom dropdown with uninitialzed data
 * Fix custom choice field placeholders not getting translated
+* [HTMLElement] fix twig variable "entity" not available as documented
 * SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
 * Add support for Yaml application definitions to `mapbender:application:import` command
 * Add support for reading entire directories to `mapbender:application:import` command
 * Add automatic fix for incomplete / broken Element "weight" column values to `mapbender:database:init` command
+* Switch most Mapbender Elements to new Symfony-4-compatible Element API (see [PR#1368](https://github.com/mapbender/mapbender/pull/1368))
 * [Backend] Fix Application editing screenshot preview overflow on narrow screens
 * [Backend] Fix (visual) backend form order of ControlButton to prevent clipping of "target" dropdown
 * Removed unused POI option "tooltip"
