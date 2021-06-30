@@ -6,7 +6,6 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Featureinfo element
@@ -17,15 +16,6 @@ use Symfony\Component\Templating\EngineInterface;
  */
 class FeatureInfo extends AbstractElementService
 {
-    /** @todo: avoid rendering twigs into config (local dependendence breaks cachability) */
-    /** @var EngineInterface */
-    protected $templatingEngine;
-
-    public function __construct(EngineInterface $templatingEngine)
-    {
-        $this->templatingEngine = $templatingEngine;
-    }
-
     /**
      * @inheritdoc
      */
@@ -59,13 +49,6 @@ class FeatureInfo extends AbstractElementService
         if (empty($config['maxCount']) || $config['maxCount'] < 0) {
             $config['maxCount'] = $defaults['maxCount'];
         }
-        $iframeScripts = array(
-            $this->templatingEngine->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js'),
-        );
-        if (!empty($config['highlighting'])) {
-            $iframeScripts[] = $this->templatingEngine->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js');
-        }
-        $config['iframeInjection'] = implode("\n\n", $iframeScripts);
         return $config + $defaults;
     }
 
@@ -132,6 +115,12 @@ class FeatureInfo extends AbstractElementService
         $view->attributes['data-title'] = $element->getTitle();
         $config = $element->getConfiguration() ?: array();
         $view->variables['displayType'] = ArrayUtil::getDefault($config, 'displayType', 'tabs');
+        $view->variables['iframe_scripts'] = array(
+            '@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js',
+        );
+        if (!empty($config['highlighting'])) {
+            $view->variables['iframe_scripts'][] = '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js';
+        }
         return $view;
     }
 

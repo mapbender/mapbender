@@ -8,7 +8,6 @@
             displayType: 'tabs',
             printResult: false,
             onlyValid: false,
-            iframeInjection: null,
             highlighting: false,
             featureColorDefault: '#ffa500',
             featureColorHover: 'ff0000',
@@ -29,10 +28,10 @@
             header: null,
             content: null
         },
-
-
+        iframeScriptContent_: '',
 
         _create: function() {
+            this.iframeScriptContent_ = $('.-js-iframe-script-template[data-script]', this.element).remove().attr('data-script');
             this.mobilePane = this.element.closest('.mobilePane');
             this.template = {
                 header: $('.js-header', this.element).remove(),
@@ -484,7 +483,7 @@
                 // Highlighting support (generate source-scoped feature ids)
                 ['var sourceId = "', sourceId, '";'].join(''),
                 ['var elementId = ', JSON.stringify(this.element.attr('id')) , ';'].join(''),
-                this.options.iframeInjection,
+                this.iframeScriptContent_,
                 '</script>'
             ];
             return parts.join('');
