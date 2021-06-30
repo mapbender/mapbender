@@ -1,10 +1,7 @@
 <div class="input">
-    <form id="poiForm">
-        {# @todo: do not rely on potentially repeatable DOM ids in scripts! #}
-        <textarea id="body" class="input">{{ body | trans }}:</textarea>
-    </form>
+    <textarea class="input">{{ body | trans }}:</textarea>
 </div>
 <div class="output">
     <p>{{ 'mb.core.poi.text.snippet'|trans }}</p>
-    <textarea></textarea>
+    <textarea class="input"></textarea>
 </div>

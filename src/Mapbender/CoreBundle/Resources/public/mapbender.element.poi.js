@@ -114,7 +114,7 @@
                 scrollable: false,
                 width: 500,
                 title: this.element.attr('data-title'),
-                content: $('.input', this.element).html(),
+                content: $('.input', this.element).first().html(),
                 buttons: [
                     {
                         label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
@@ -168,8 +168,7 @@
         },
 
         _sendPoi: function(content) {
-            var form = $('form', content);
-            var body = $('#body', form).val();
+            var body = $('textarea', content).val();
 
             if(!this.poi) {
                 return;
@@ -189,10 +188,10 @@
                 var ta = $('<div/>', {
                     html: $('.output', this.element).html()
                 });
-                ta.addClass("poi-link");
                 $('textarea', ta).val(body);
                 new Mapbender.Popup({
                     destroyOnClose: true,
+                    cssClass: 'mb-poi-popup',
                     modal: true,
                     title: this.element.attr('title'),
                     width: 500,
