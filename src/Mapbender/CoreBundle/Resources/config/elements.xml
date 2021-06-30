@@ -54,7 +54,7 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
-        <service class="Mapbender\CoreBundle\Element\AboutDialog">
+        <service id="mapbender.element.about_dialog" class="Mapbender\CoreBundle\Element\AboutDialog">
             <tag name="mapbender.element" />
             <argument type="service" id="templating" />
         </service>
