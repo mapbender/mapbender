@@ -33,6 +33,9 @@
         <service id="mapbender.element.CoordinatesDisplay" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.ScaleDisplay" class="Mapbender\CoreBundle\Element\ScaleDisplay">
+            <tag name="mapbender.element" />
+        </service>
         <service id="mapbender.element.ViewManager" class="Mapbender\CoreBundle\Element\ViewManager">
             <tag name="mapbender.element" />
             <argument type="service" id="mb.element.ViewManager.http_handler" />
