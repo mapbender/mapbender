@@ -306,6 +306,7 @@ mb:
       enter_title: Titel eingeben
       apply: Abrufen
       replace: Überschreiben
+      details: Details anzeigen
       admin:
         access.none: Nicht anzeigen
         access.ro: Nur lesen

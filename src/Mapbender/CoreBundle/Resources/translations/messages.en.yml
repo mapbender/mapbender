@@ -305,6 +305,7 @@ mb:
       enter_title: Enter title
       apply: Apply
       replace: Replace
+      details: Show details
       admin:
         access.none: Do not show
         access.ro: Read only
