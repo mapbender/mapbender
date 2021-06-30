@@ -1,14 +1,17 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\StaticView;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\Utils\HtmlUtil;
 
 /**
  * Activity indicator
  *
  * @author Christian Wygoda
  */
-class ActivityIndicator extends Element
+class ActivityIndicator extends AbstractElementService
 {
 
     /**
@@ -43,7 +46,7 @@ class ActivityIndicator extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbActivityIndicator';
     }
@@ -59,7 +62,7 @@ class ActivityIndicator extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -71,21 +74,14 @@ class ActivityIndicator extends Element
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:activityindicator.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(),
-                    array('id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        $view = new StaticView(HtmlUtil::renderTag('i', '', array(
+            'class' => 'fa fas fa-spinner fa-spin',
+        )));
+        $view->attributes['class'] = 'mb-element-activityindicator';
+        $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle() ?: $this->getClassTitle();
+        return $view;
     }
 
     /**

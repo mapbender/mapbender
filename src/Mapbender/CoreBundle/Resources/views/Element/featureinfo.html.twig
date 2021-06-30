@@ -1,12 +1,11 @@
-<div id="{{ id }}" class="mb-element mb-element-featureinfo hidden" data-title="{{ title |trans }}">
-{% if configuration.displayType | default('tabs') == 'tabs' %}
+{% if displayType | default('tabs') == 'tabs' %}
     <div class="tabContainer js-content-parent">
         <ul class="tabs js-header-parent">
             <li class="tab js-header js-header-content" data-idname="tab"></li>
         </ul>
         <div class="container js-content js-content-content" data-idname="container"></div>
     </div>
-{% elseif configuration.displayType == 'accordion' %}
+{% else %}
     <div class="accordionContainer js-header-parent js-content-parent">
         <div class="accordion js-header" data-idname="accordion">
             <div class="js-header-content"></div>
@@ -16,4 +15,3 @@
        </div>
     </div>
 {% endif %}
-</div>

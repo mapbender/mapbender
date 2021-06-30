@@ -1,5 +1,4 @@
-<div id="{{ id }}" class="mb-element mb-element-scaleselector" title="{{ configuration.tooltip|default(title)|trans }}">
-{% if configuration.label %}
+{% if show_label %}
   <span class="labelInput">{{ title|trans }}</span>
 {% endif %}
   <div class="dropdown numeric">
@@ -11,4 +10,3 @@
     <div class="dropdownValue iconDown"></div>
     <ul class="dropdownList"></ul>
   </div>
-</div>

@@ -4,16 +4,38 @@
 namespace Mapbender\CoreBundle\Element;
 
 
-use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 
-class ApplicationSwitcher extends Element
+
+class ApplicationSwitcher extends AbstractElementService
 {
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+    /** @var RegistryInterface */
+    protected $managerRegistry;
+    /** @var ElementHttpHandlerInterface */
+    protected $httpHandler;
+    /** @var ApplicationYAMLMapper */
+    protected $yamlAppRepository;
+
+    public function __construct(FormFactoryInterface $formFactory,
+                                RegistryInterface $managerRegistry,
+                                ElementHttpHandlerInterface $httpHandler,
+                                ApplicationYAMLMapper $yamlAppRepository)
+    {
+        $this->formFactory = $formFactory;
+        $this->managerRegistry = $managerRegistry;
+        $this->httpHandler = $httpHandler;
+        $this->yamlAppRepository = $yamlAppRepository;
+    }
+
     public static function getClassTitle()
     {
         return 'mb.core.applicationSwitcher.class.title';
@@ -37,12 +59,17 @@ class ApplicationSwitcher extends Element
         return 'Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType';
     }
 
-    public function getWidgetName()
+    public static function getFormTemplate()
+    {
+        return null;
+    }
+
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbApplicationSwitcher';
     }
 
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -54,53 +81,35 @@ class ApplicationSwitcher extends Element
         );
     }
 
-    public function getFrontendTemplatePath()
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:application_switcher.html.twig';
+        $view = new TemplateView('MapbenderCoreBundle:Element:application_switcher.html.twig');
+        $view->attributes['class'] = 'mb-element-applicationswitcher';
+        $view->variables['form'] = $this->buildChoiceForm($element)->createView();
+        return $view;
     }
 
-    public function getFrontendTemplateVars()
+    public function getHttpHandler(Element $element)
     {
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = $this->container->get('form.factory');
-        $choices = array();
-        $config = $this->entity->getConfiguration();
-        $current = $this->entity->getApplication()->getSlug();
-        foreach (ArrayUtil::getDefault($config, 'applications', array()) as $slug) {
-            // @todo: use titles as labels
-            $choices[$slug] = $slug;
-        }
-        // Current Application must be part of the selection
-        if (!\in_array($current, $choices)) {
-            $choices[$current] = $current;
-        }
+        return $this->httpHandler;
+    }
+
+    protected function buildChoiceForm(Element $element)
+    {
+        $current = $element->getApplication()->getSlug();
         $options = array(
-            'choices' => $this->getApplicationChoices($this->entity),
+            'choices' => $this->getApplicationChoices($element),
             'attr' => array(
-                'title' => $this->entity->getTitle(),
+                'title' => $element->getTitle(),
             ),
         );
-        $form = $formFactory->createNamed('application', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $current, $options);
-        return array(
-            'form' => $form->createView(),
-        );
+        return $this->formFactory->createNamed('application', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $current, $options);
     }
 
-    public function handleHttpRequest(Request $request)
-    {
-        /** @var ApplicationSwitcherHttpHandler $handler */
-        $handler = $this->container->get('mb.element.application_switcher.http_handler');
-        return $handler->handleHttpRequest($this->entity, $request);
-    }
-
-    protected function getApplicationChoices(Entity\Element $element)
+    protected function getApplicationChoices(Element $element)
     {
         // @todo: provide a combined yaml+db repository for Application entities
-        /** @var EntityManagerInterface $em */
-        $em = $this->container->get('doctrine.orm.default_entity_manager');
-        $dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
-        /** @var ApplicationYAMLMapper $yamlRepository */
-        $yamlRepository = $this->container->get('mapbender.application.yaml_entity_repository');
+        $dbRepository = $this->managerRegistry->getRepository('Mapbender\CoreBundle\Entity\Application');
 
         $currentApplication = $element->getApplication();
         $choices = array();
@@ -114,7 +123,7 @@ class ApplicationSwitcher extends Element
             if (\in_array($slug, $choices)) {
                 continue;
             }
-            $application = $yamlRepository->getApplication($slug);
+            $application = $this->yamlAppRepository->getApplication($slug);
             if (!$application) {
                 $application = $dbRepository->findOneBy(array('slug' => $slug));
             }

@@ -94,7 +94,7 @@ span.iconBig {
       }
     }
   }
-  .mb-button, .mb-aboutButton, .mb-gpsButton {
+  .mb-button {
     opacity: $toolBarButtonDefaultOpacity;
     &:hover {
       opacity: $toolBarButtonHoverOpacity;
@@ -104,7 +104,7 @@ span.iconBig {
     // Invert background and foreground
     background-color: $toolBarFontColor;
     color: $toolBarBackgroundColor;
-    .mb-button, .mb-aboutButton, .mb-gpsButton {
+    .mb-button {
       opacity: $toolBarButtonActiveOpacity;
     }
   }

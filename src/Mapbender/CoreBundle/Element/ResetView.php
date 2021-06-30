@@ -4,11 +4,12 @@
 namespace Mapbender\CoreBundle\Element;
 
 
-class ResetView extends BaseButton
-{
-    // Disable being targetted by a Button
-    public static $ext_api = false;
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 
+class ResetView extends ButtonLike
+{
     public static function getClassTitle()
     {
         return 'mb.core.resetView.class.title';
@@ -19,7 +20,7 @@ class ResetView extends BaseButton
         return 'mb.core.resetView.class.description';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.resetView';
     }
@@ -32,17 +33,16 @@ class ResetView extends BaseButton
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
-                '@MapbenderCoreBundle/Resources/public/element/resetView.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
-            ),
+        $requirements = parent::getRequiredAssets($element) + array(
+            'js' => array(),
         );
+        $requirements['js'] = \array_merge($requirements['js'], array(
+            '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
+            '@MapbenderCoreBundle/Resources/public/element/resetView.js',
+        ));
+        return $requirements;
     }
 
     /**
@@ -58,8 +58,10 @@ class ResetView extends BaseButton
         return $defaults;
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return "MapbenderCoreBundle:Element:ResetView.html.twig";
+        $view = new TemplateView('MapbenderCoreBundle:Element:ResetView.html.twig');
+        $this->initializeView($view, $element);
+        return $view;
     }
 }

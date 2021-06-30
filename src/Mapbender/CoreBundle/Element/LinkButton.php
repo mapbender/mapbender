@@ -4,7 +4,11 @@
 namespace Mapbender\CoreBundle\Element;
 
 
-class LinkButton extends BaseButton
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+
+class LinkButton extends ButtonLike
 {
     public static function getClassTitle()
     {
@@ -16,8 +20,9 @@ class LinkButton extends BaseButton
         return 'mb.core.linkbutton.class.description';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
+        // No script
         return false;
     }
 
@@ -36,8 +41,11 @@ class LinkButton extends BaseButton
         return 'Mapbender\CoreBundle\Element\Type\LinkButtonAdminType';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:link_button.html.twig';
+        $view = new TemplateView('MapbenderCoreBundle:Element:link_button.html.twig');
+        $this->initializeView($view, $element);
+        $view->variables['link_target'] = $element->getConfiguration()['click'];
+        return $view;
     }
 }

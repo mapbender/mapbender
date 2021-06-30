@@ -2,10 +2,12 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\MainMapElementInterface;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -15,10 +17,19 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  *
  * @author Christian Wygoda
  */
-class Map extends Element implements MainMapElementInterface, ConfigMigrationInterface
+class Map extends AbstractElementService
+    implements MainMapElementInterface, ConfigMigrationInterface, ImportAwareInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;
+
+    /** @var \Doctrine\Persistence\ObjectRepository */
+    protected $srsRepository;
+
+    public function __construct(RegistryInterface $managerRegistry)
+    {
+        $this->srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+    }
 
     /**
      * @inheritdoc
@@ -57,31 +68,40 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbMap';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
+    public function getView(Element $element)
+    {
+        $view = new StaticView('');
+        $view->attributes['class'] = 'mb-element-map';
+
+        return $view;
+    }
+
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js',
             ),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/map.scss',
+            )
+        );
     }
 
     /**
      * Returns a list of all configured SRSes, producing an array with 'name' and 'title' for each
+     * @param Element $element
      * @return string[][]
      */
-    protected function buildSrsConfigs()
+    protected function buildSrsConfigs(Element $element)
     {
         $customTitles = array();
-        $configuration = $this->entity->getConfiguration();
+        $configuration = $element->getConfiguration();
         $mainSrsParts  = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
         $defaultSrsName = $mainSrsParts[0];
         $configuration['srs'] = $defaultSrsName;
@@ -117,20 +137,16 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         );
     }
 
-    public function getPublicConfiguration()
-    {
-        $conf = $this->entity->getConfiguration();
-        $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
-        $conf += $this->buildSrsConfigs();
-        return $conf;
-    }
-
     /**
-     * @inheritdoc
+     * @param Element $element
+     * @return array
      */
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getClientConfiguration(Element $element)
     {
-        return "MapbenderCoreBundle:Element:map{$suffix}";
+        $conf = $element->getConfiguration();
+        $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
+        $conf += $this->buildSrsConfigs($element);
+        return $conf;
     }
 
     /**
@@ -156,11 +172,8 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
      */
     protected function getSrsDefinitions(array $names)
     {
-        /** @var RegistryInterface $managerRegistry */
-        $managerRegistry = $this->container->get('doctrine');
-        $srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
         /** @var SRS[] $srses */
-        $srses = $srsRepository->findBy(array(
+        $srses = $this->srsRepository->findBy(array(
             'name' => $names,
         ));
         $defs = array();
@@ -174,20 +187,20 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
         return $defs;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper)
     {
-        if (key_exists('layersets', $configuration)) {
-            foreach ($configuration['layersets'] as &$layerset) {
-                $layerset = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $layerset);
+        $configuration = $element->getConfiguration();
+        if (!empty($configuration['layersets'])) {
+            $newIds = array();
+            foreach ($configuration['layersets'] as $oldId) {
+                $newIds[] = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $oldId);
             }
+            $configuration['layersets'] = $newIds;
+            $element->setConfiguration($configuration);
         }
-        return $configuration;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration();
         if (isset($config['layerset']) && !isset($config['layersets'])) {

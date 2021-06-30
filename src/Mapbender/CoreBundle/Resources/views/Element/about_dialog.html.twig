@@ -1,1 +1,4 @@
-<span id="{{ id }}" class="mb-aboutButton" title="{{ configuration.tooltip|default(title)|trans }}"><span class="iconAbout iconBig"></span>{% if configuration.label %}<span>{{ title|trans }}</span>{% endif %}</span>
+<span class="iconAbout iconBig"></span>
+{% if show_label and label %}
+    <span>{{ label | trans }}</span>
+{% endif %}

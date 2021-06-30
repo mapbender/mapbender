@@ -1,7 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * A ScaleSelector
@@ -10,7 +14,7 @@ use Mapbender\CoreBundle\Component\Element;
  * 
  * @author Paul Schmidt
  */
-class ScaleSelector extends Element
+class ScaleSelector extends AbstractElementService
 {
 
     /**
@@ -32,11 +36,12 @@ class ScaleSelector extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.js',
+                /** @todo: upate legacy asset reference */
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
@@ -68,22 +73,34 @@ class ScaleSelector extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbScaleSelector';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:scaleselector.html.twig';
-    }
-
-    public function getFrontendTemplateVars()
-    {
-        return array(
-            'configuration' => $this->entity->getConfiguration(),
-            'scales' => $this->getMapScales($this->entity),
+        $config = $element->getConfiguration() ?: array();
+        $defaults = $this->getDefaultConfiguration();
+        $title = $element->getTitle() ?: $this->getClassTitle();
+        $view = new TemplateView('MapbenderCoreBundle:Element:scaleselector.html.twig');
+        $view->attributes['class'] = 'mb-element-scaleselector';
+        $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
+        $target = $element->getTargetElement('target');
+        $scales = array();
+        if ($target) {
+            $mapConfig = $target->getConfiguration();
+            if (!empty($mapConfig['scales'])) {
+                $scales = $mapConfig['scales'];
+                asort($scales, SORT_NUMERIC | SORT_REGULAR);
+            }
+        }
+        $view->variables = array(
+            'show_label' => ArrayUtil::getDefault($config, 'label', $defaults['label']),
+            'scales' => $scales,
+            'title' => $title,
         );
+        return $view;
     }
 
     /**

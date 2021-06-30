@@ -4,13 +4,14 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Mapbender\Component\ClassUtil;
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+use Mapbender\CoreBundle\Entity\Element;
 
-class ControlButton extends BaseButton
+class ControlButton extends ButtonLike
 {
-    // Disable being targetted by any other Button
-    public static $ext_api = false;
-
     /**
      * @inheritdoc
      */
@@ -27,9 +28,18 @@ class ControlButton extends BaseButton
         return "mb.core.controlbutton.class.description";
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbControlButton';
+    }
+
+    public function getRequiredAssets(Element $element)
+    {
+        $requirements = parent::getRequiredAssets($element) + array(
+            'js' => array(),
+        );
+        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js';
+        return $requirements;
     }
 
     public static function getType()
@@ -50,43 +60,28 @@ class ControlButton extends BaseButton
         ));
     }
 
-    public function getAssets()
+    public function getView(Element $element)
     {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
-            ),
-        );
-    }
-
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return 'MapbenderCoreBundle:Element:control_button.html.twig';
-    }
-
-    public function getFrontendTemplateVars()
-    {
-        $title = $this->entity->getTitle();
-        if (!$title) {
-            $target = $this->entity->getTargetElement('target');
-            if ($target) {
-                $title = $target->getTitle();
-                if ($target && $target->getClass()) {
-                    /** @var MinimalInterface|string $targetClass */
-                    $targetClass = $target->getClass();
-                    $title = $targetClass::getClassTitle();
-                }
-            }
+        $target = $element->getTargetElement('target');
+        if (!$target || !$target->getClass() || !ClassUtil::exists($target->getClass())) {
+            return false;
         }
-        if (!$title) {
-            $title = $this->getClassTitle();
+
+        $view = new TemplateView('MapbenderCoreBundle:Element:control_button.html.twig');
+        $this->initializeView($view, $element);
+
+        $config = $element->getConfiguration();
+        $view->attributes['data-group'] = $config['group'];
+
+        // Undo / replace parent label and tooltip fallbacks with target title
+        $label = $element->getTitle() ?: $target->getTitle();
+        if (!$label) {
+            /** @var MinimalInterface|string $targetClass */
+            $targetClass = $target->getClass();
+            $label = $targetClass::getClassTitle();
         }
-        return array(
-            'configuration' => $this->entity->getConfiguration(),
-            'title' => $title,
-        );
+        $view->variables['label'] = $label;
+        $view->attributes['title'] = $config['tooltip'] ?: $label;
+        return $view;
     }
 }
