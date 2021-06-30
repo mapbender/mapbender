@@ -87,6 +87,11 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
 
     public function getView(Element $element)
     {
+        $dimensionsets = $this->formatDimensionLabels($element);
+        if (!$dimensionsets) {
+            return false;
+        }
+
         if (preg_match('#(toolbar|footer)#', $element->getRegion())) {
             $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.toolbar.html.twig');
             $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
@@ -94,8 +99,12 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
             $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.html.twig');
         }
         $view->attributes['class'] = 'mb-element-dimensionshandler';
+        $view->variables['dimensionsets'] = $dimensionsets;
+        return $view;
+    }
 
-        /** @todo: render nothing if no controllable dimensions */
+    protected function formatDimensionLabels(Element $element)
+    {
         $dimensionsets = array();
         foreach ($element->getConfiguration()['dimensionsets'] as $setId => $setConfig) {
             if (!empty($setConfig['title'])) {
@@ -108,9 +117,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
                 }
             }
         }
-
-        $view->variables['dimensionsets'] = $dimensionsets;
-        return $view;
+        return $dimensionsets;
     }
 
     public static function updateEntityConfig(Element $entity)
