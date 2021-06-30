@@ -168,18 +168,18 @@
         },
 
         _sendPoi: function(content) {
-            var body = $('textarea', content).val();
+            var label = $('textarea', content).val();
 
             if(!this.poi) {
                 return;
             }
 
             var poi = $.extend({}, this.poi, {
-                label: body.replace(/\n|\r/g, '<br />')
+                label: label
             });
             var params = $.param({ poi: poi });
             var poiURL = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + params;
-            body += '\n\n' + poiURL;
+            var body = [label, '\n\n', poiURL].join('');
             if(this.options.useMailto) {
                 var mailto_link = 'mailto:?body=' + escape(body);
                 var win = window.open(mailto_link, 'emailWindow');
