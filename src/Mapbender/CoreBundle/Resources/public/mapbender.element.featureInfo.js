@@ -257,7 +257,7 @@
                         modal: false,
                         closeOnESC: false,
                         detachOnClose: false,
-                        content: widget.element.removeClass('hidden'),
+                        content: this.element,
                         resizable: true,
                         cssClass: 'featureinfoDialog',
                         width: options.width,

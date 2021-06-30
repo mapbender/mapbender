@@ -66,7 +66,6 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\Copyright',
-            'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\Overview',

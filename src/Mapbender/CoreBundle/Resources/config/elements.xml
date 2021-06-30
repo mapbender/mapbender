@@ -61,5 +61,10 @@
         <service id="mapbender.element.gps_position" class="Mapbender\CoreBundle\Element\GpsPosition">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.FeatureInfo" class="Mapbender\CoreBundle\Element\FeatureInfo">
+            <tag name="mapbender.element" />
+            <!-- @todo: avoid rendering twigs into config (local dependendence breaks cachability) -->
+            <argument type="service" id="templating" />
+        </service>
     </services>
 </container>
