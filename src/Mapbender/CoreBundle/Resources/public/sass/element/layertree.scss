@@ -35,9 +35,15 @@
     white-space: nowrap;
     overflow-x: hidden;
   }
+  .leave.state-loading .layer-title {
+    opacity: 0.75;
+  }
   .leave.state-outofscale, .leave.state-outofbounds {
     .layer-title {
       opacity: 0.5;
+    }
+    &.state-loading .layer-title {
+      opacity: 0.35;
     }
   }
   .themeContainer{
@@ -56,9 +62,6 @@
   }
   .error-icon-wrapper, .leave.state-error .layer-title {
     color: $errorColor;
-  }
-  .leave.state-loading {
-    opacity: 0.75;
   }
   .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
     margin-left: 4px;
