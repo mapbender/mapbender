@@ -491,20 +491,18 @@
             $.each(dims, function(idx, item) {
                 var $control = template.clone();
                 var label = $('.layer-dimension-title', $control);
-                var dimCheckbox = $('.layer-dimension-checkbox', $control);
 
                 var dimDataKey = source.id + '~' + idx;
                 dimData[dimDataKey] = dimData[dimDataKey] || {
                     checked: false
                 };
-                var inpchkbox = $('input[type="checkbox"]', dimCheckbox);
+                var inpchkbox = $('input[type="checkbox"]', $control);
                 inpchkbox.data('dimension', item);
                 inpchkbox.prop('checked', dimData[dimDataKey].checked);
                 inpchkbox.on('change', function(e) {
                     updateData(dimDataKey, {checked: $(this).prop('checked')});
                     self._callDimension(source, $(e.target));
                 });
-                inpchkbox.mbCheckbox();
                 label.attr('title', label.attr('title') + ' ' + item.name);
                 $('.layer-dimension-bar', menu).toggleClass('hidden', item.type === 'single');
                 $('.layer-dimension-textfield', $control)

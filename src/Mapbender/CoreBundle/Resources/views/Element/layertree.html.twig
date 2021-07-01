@@ -34,10 +34,7 @@
               {% endif %}
               {% if 'dimension' in configuration.menu %}
                   <div class="layer-control-dimensions layer-control-root-only">
-                      <div class="layer-dimension-checkbox checkWrapper conCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
-                        <input type="checkbox" />
-                      </div>
-                      <span class="layer-dimension-title" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+                      <div class="checkbox"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
                       <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
                         <div class="layer-dimension-handle layer-slider-handle"></div>
                       </div>
