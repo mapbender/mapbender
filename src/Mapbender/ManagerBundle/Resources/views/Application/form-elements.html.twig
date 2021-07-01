@@ -42,8 +42,8 @@
             </th>
           </tr>
           <tr>
-            <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
-            <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
+            <th class="titleColumn">{{ 'mb.manager.admin.element.title' | trans }}</th>
+            <th class="typeColumn">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
               <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"><i class="fa fas fa-plus"></i></a>
             </th>
@@ -54,8 +54,8 @@
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn">{{ element_title(element) | trans }}</td>
-                <td class="typeColumn">{{ element_class_title(element) | trans }}</td>
+                <td>{{ element_title(element) | trans }}</td>
+                <td>{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
                   <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                       data-toggle-flag-icons="fa-eye-slash:fa-eye"
