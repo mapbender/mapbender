@@ -2,8 +2,8 @@
 
 namespace FOM\UserBundle;
 
+use FOM\UserBundle\Component\Menu\SecurityMenu;
 use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
-use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\Config\FileLocator;
@@ -37,8 +37,7 @@ class FOMUserBundle extends ManagerBundle
 
     protected function addMenu(ContainerBuilder $container)
     {
-        $securityItem = MenuItem::create('mb.terms.security', 'fom_user_security_index')
-            ->requireNamedGrant('ROLE_USER')
+        $securityItem = SecurityMenu::create('mb.terms.security', 'fom_user_security_index')
             ->setWeight(100)
         ;
         $container->addCompilerPass(new RegisterMenuRoutesPass($securityItem));
