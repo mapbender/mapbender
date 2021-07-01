@@ -410,7 +410,9 @@ window.Mapbender.MapModelBase = (function() {
                 'sloff',
                 'lson',
                 'lsoff',
-                'sop'
+                'sop',
+                'wms_id',
+                'wms_url'
             ]);
         },
         processUrlParams: function() {
