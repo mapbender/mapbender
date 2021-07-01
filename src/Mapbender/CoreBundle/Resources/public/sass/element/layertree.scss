@@ -8,6 +8,14 @@
   .leave .leave, .themeContainer .leave {
     margin-left: 1.28em;
   }
+  .selectedWrapper.disabled, .featureInfoWrapper.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .iconCheckbox, .iconCheckboxActive {
+    // Mitigate visual glyph height mismatch vs folder / info bubble icons
+    padding-top: 0.1ch;
+  }
 
   .selectedWrapper, .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
     // keep constant size to prevent visual "jump" on icon glyph change and neatly

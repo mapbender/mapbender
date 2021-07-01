@@ -83,14 +83,13 @@
             if (this.options.allowReorder && !this.isTouch_) {
                 this._createSortable();
             }
-            $('.checkWrapper input[type="checkbox"]', this.element).mbCheckbox();
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
-            this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('click', '.-fn-toggle-theme', $.proxy(self._toggleSourceVisibility, self));
+            this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
+            this.element.on('click', '.-fn-toggle-layer:not(.disabled)', $.proxy(self._toggleSelected, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
@@ -117,7 +116,7 @@
             });
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
-                    $('input[name="selected"]', this).click();
+                    $('.-fn-toggle-layer', this).click();
                 });
             }
         },
@@ -195,9 +194,10 @@
         },
         _updateThemeNode: function(layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
-            var $checkbox = $('> .leaveContainer input[name="sourceVisibility"][type="checkbox"]', $node_);
-            $checkbox.prop('checked', layerset.getSelected());
-            $checkbox.mbCheckbox();
+            var $checkbox = $('> .leaveContainer .-fn-toggle-theme', $node_);
+            var newState = layerset.getSelected();
+            $checkbox.toggleClass(['active', $checkbox.attr('data-icon-on')].join(' '), newState);
+            $checkbox.toggleClass($checkbox.attr('data-icon-off'), !newState);
         },
         _getThemeOptions: function(layerset) {
             var matches =  (this.options.themes || []).filter(function(item) {
@@ -222,7 +222,7 @@
             var nodeType;
             var $childList = $('ul.layers', $li);
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
-                $('input[name="info"]', $li).closest('.checkWrapper').remove();
+                $('.-fn-toggle-info', $li).remove();
             }
             if (layer.children && layer.children.length) {
                 if (layer.getParent()) {
@@ -236,7 +236,7 @@
                 var $folder = $('.-fn-toggle-children', $li);
                 $folder.toggleClass('iconFolderActive', treeOptions.toggle);
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
-                    $('input[name="selected"]', $li).closest('.checkWrapper').remove();
+                    $('.-fn-toggle-layer', $li).remove();
                 }
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
@@ -284,8 +284,7 @@
             if (!this.options.useTheme || !$themeNode.length) {
                 return true;
             }
-            var $sourceVisCheckbox = $('>.leaveContainer input[name="sourceVisibility"]', $themeNode);
-            return $sourceVisCheckbox.prop('checked');
+            return $('>.leaveContainer .-fn-toggle-theme', $themeNode).hasClass('active');
         },
         _redisplayLayerState: function($li, layer) {
             var $title = $('>.leaveContainer .layer-title', $li);
@@ -327,21 +326,22 @@
         },
         _updateLayerCheckboxes: function($scope, treeOptions) {
             var allow = treeOptions.allow || {};
-            var $selectedChk = $('input[name="selected"]:first', $scope);
-            var $infoChk = $('input[name="info"]:first', $scope);
+            var $layerControl = $('.-fn-toggle-layer', $scope);
+            var $infoControl = $('.-fn-toggle-info', $scope);
             if (treeOptions.selected !== null && typeof treeOptions.selected !== 'undefined') {
-                $selectedChk.prop('checked', !!treeOptions.selected);
+                $layerControl.toggleClass(['active', $layerControl.attr('data-icon-on')].join(' '), !!treeOptions.selected);
+                $layerControl.toggleClass($layerControl.attr('data-icon-off'), !treeOptions.selected);
             }
             if (allow.selected !== null && typeof allow.selected !== 'undefined') {
-                $selectedChk.prop('disabled', !allow.selected);
+                $layerControl.toggleClass('disabled', !allow.selected);
             }
             if (treeOptions.info !== null && typeof treeOptions.info !== 'undefined') {
-                $infoChk.prop('checked', !!treeOptions.info);
+                $infoControl.toggleClass(['active', $infoControl.attr('data-icon-on')].join(' '), !!treeOptions.info);
+                $infoControl.toggleClass($infoControl.attr('data-icon-off'), !treeOptions.info);
             }
             if (allow.info !== null && typeof allow.info !== 'undefined') {
-                $infoChk.prop('disabled', !allow.info);
+                $infoControl.toggleClass('disabled', !allow.info);
             }
-            $('input[type="checkbox"]', $scope).mbCheckbox();
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
@@ -388,13 +388,16 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-            var $sourceVsbl = $(e.target);
-            var $themeNode = $sourceVsbl.closest('.themeContainer');
+            var $themeControl = $(e.target);
+            var newState = !$themeControl.hasClass('active');
+            $themeControl.toggleClass(['active', $themeControl.attr('data-icon-on')].join(' '), newState);
+            $themeControl.toggleClass($themeControl.attr('data-icon-off'), !newState);
+            var $themeNode = $themeControl.closest('.themeContainer');
             var themeId = $themeNode.attr('data-layersetid');
             var theme = Mapbender.layersets.filter(function(x) {
                 return x.id === themeId;
             })[0];
-            this.model.controlTheme(theme, $sourceVsbl.prop('checked'));
+            this.model.controlTheme(theme, newState);
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
             }
@@ -402,13 +405,16 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.target);
+            var newState = !$target.hasClass('active');
+            $target.toggleClass('active iconCheckboxActive', newState);
+            $target.toggleClass('iconCheckbox', !newState);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
             if (layer.parent) {
-                this.model.controlLayer(layer, $(e.target).prop('checked'));
+                this.model.controlLayer(layer, newState);
             } else {
                 if (this._isThemeChecked($target)) {
-                    this.model.setSourceVisibility(source, $(e.target).prop('checked'));
+                    this.model.setSourceVisibility(source, newState);
                 }
             }
             if (this._mobilePane) {
@@ -417,8 +423,12 @@
             return false;
         },
         _toggleInfo: function(e) {
-            var layer = $(e.target).closest('li.leave').data('layer');
-            this.model.controlLayer(layer, null, $(e.target).prop('checked'));
+            var $target = $(e.target);
+            var newState = !$target.hasClass('active');
+            $target.toggleClass('iconInfoActive active', newState);
+            $target.toggleClass('iconInfo', !newState);
+            var layer = $target.closest('li.leave').data('layer');
+            this.model.controlLayer(layer, null, newState);
         },
         _initMenu: function($layerNode) {
             var layer = $layerNode.data('layer');
