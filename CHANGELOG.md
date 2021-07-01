@@ -1,4 +1,4 @@
-## dev-master @ ad23d52ef
+## dev-master @ af120cb1e
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -6,7 +6,12 @@
 * Fix missing colorpicker assets / broken FeatureInfo backend form if installed in a sub-path URL
 * Fix wrong initial value display of custom dropdown with uninitialzed data
 * Fix custom choice field placeholders not getting translated
-* [HTMLElement] fix twig variable "entity" not available as documented
+* [HTMLElement] Fix twig variable "entity" not available as documented
+* [ScaleBar] Fix non-constant sizing when placed in a toolbar
+* [POI] Fix line break encoding (verbatim "<br />") in newly generated POI links with multi-line labels
+* [POI] Fix incosistent styling of the two opened popups
+* [DimensionsHandler] Fix rendering an empty block if no controllable dimensions configured
+* [ViewManager] Fix missing translation value placeholder tooltip on details button
 * SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
 * Add support for Yaml application definitions to `mapbender:application:import` command
 * Add support for reading entire directories to `mapbender:application:import` command
@@ -14,12 +19,14 @@
 * Switch most Mapbender Elements to new Symfony-4-compatible Element API (see [PR#1368](https://github.com/mapbender/mapbender/pull/1368))
 * [Backend] Fix Application editing screenshot preview overflow on narrow screens
 * [Backend] Fix (visual) backend form order of ControlButton to prevent clipping of "target" dropdown
+* [Backend] Fix layout of Element / Layerset tables with empty content
 * Removed unused POI option "tooltip"
 * Removed legacy / broken Selenium + PhantomJS tests
 * Resolved misc Symfony 4 incompatibilites in console commands, service definitions and form types
 * Resolved FA5+ incompatibility in custom dropdown
 * [Framework] Add new infrastructure for Symfony 4-compatible Elements (see [PR#1367](https://github.com/mapbender/mapbender/pull/1367))
 * [Framework] Fix unhandled errors on image resource request failure when preloading icon assets
+* [Framework] Support suppressing sidepane tab buttons / accordion headers for Elements that render nothing
 * Deprecated TargetElementType
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
