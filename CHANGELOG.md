@@ -1,4 +1,4 @@
-## dev-master @ c2a1eefb0
+## dev-master @ 42b2bb61e
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -6,6 +6,9 @@
 * Fix missing colorpicker assets / broken FeatureInfo backend form if installed in a sub-path URL
 * Fix wrong initial value display of custom dropdown with uninitialzed data
 * Fix custom choice field placeholders not getting translated
+* [Layertree] Fix source selections reverting to outdated state after reactivating a deactivated Layerset / Theme
+* [Layertree] Fix touch event handling issues (by removing usage of custom checkbox widget)
+* [Layertree] Fix opened layer menu becoming inaccessible while source is loading
 * [HTMLElement] Fix twig variable "entity" not available as documented
 * [ScaleBar] Fix non-constant sizing when placed in a toolbar
 * [POI] Fix line break encoding (verbatim "<br />") in newly generated POI links with multi-line labels
