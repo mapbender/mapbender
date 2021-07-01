@@ -194,10 +194,12 @@
         },
         _updateThemeNode: function(layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
-            var $checkbox = $('> .leaveContainer .-fn-toggle-theme', $node_);
+            var $themeControl = $('> .leaveContainer .-fn-toggle-theme', $node_);
+            if ($themeControl.length > 1) {
+                console.log("Multiple themes?!", $themeControl.get());
+            }
             var newState = layerset.getSelected();
-            $checkbox.toggleClass(['active', $checkbox.attr('data-icon-on')].join(' '), newState);
-            $checkbox.toggleClass($checkbox.attr('data-icon-off'), !newState);
+            this.updateIconVisual_($themeControl, newState, true);
         },
         _getThemeOptions: function(layerset) {
             var matches =  (this.options.themes || []).filter(function(item) {
@@ -328,20 +330,8 @@
             var allow = treeOptions.allow || {};
             var $layerControl = $('.-fn-toggle-layer', $scope);
             var $infoControl = $('.-fn-toggle-info', $scope);
-            if (treeOptions.selected !== null && typeof treeOptions.selected !== 'undefined') {
-                $layerControl.toggleClass(['active', $layerControl.attr('data-icon-on')].join(' '), !!treeOptions.selected);
-                $layerControl.toggleClass($layerControl.attr('data-icon-off'), !treeOptions.selected);
-            }
-            if (allow.selected !== null && typeof allow.selected !== 'undefined') {
-                $layerControl.toggleClass('disabled', !allow.selected);
-            }
-            if (treeOptions.info !== null && typeof treeOptions.info !== 'undefined') {
-                $infoControl.toggleClass(['active', $infoControl.attr('data-icon-on')].join(' '), !!treeOptions.info);
-                $infoControl.toggleClass($infoControl.attr('data-icon-off'), !treeOptions.info);
-            }
-            if (allow.info !== null && typeof allow.info !== 'undefined') {
-                $infoControl.toggleClass('disabled', !allow.info);
-            }
+            this.updateIconVisual_($layerControl, treeOptions.selected, allow.selected);
+            this.updateIconVisual_($infoControl, treeOptions.info, allow.info);
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
@@ -390,8 +380,7 @@
         _toggleSourceVisibility: function(e) {
             var $themeControl = $(e.target);
             var newState = !$themeControl.hasClass('active');
-            $themeControl.toggleClass(['active', $themeControl.attr('data-icon-on')].join(' '), newState);
-            $themeControl.toggleClass($themeControl.attr('data-icon-off'), !newState);
+            this.updateIconVisual_($themeControl, newState, true);
             var $themeNode = $themeControl.closest('.themeContainer');
             var themeId = $themeNode.attr('data-layersetid');
             var theme = Mapbender.layersets.filter(function(x) {
@@ -406,8 +395,7 @@
         _toggleSelected: function(e) {
             var $target = $(e.target);
             var newState = !$target.hasClass('active');
-            $target.toggleClass('active iconCheckboxActive', newState);
-            $target.toggleClass('iconCheckbox', !newState);
+            this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
             if (layer.parent) {
@@ -670,6 +658,15 @@
             if (this.callback) {
                 (this.callback)();
                 this.callback = null;
+            }
+        },
+        updateIconVisual_: function($el, active, enabled) {
+            if (active !== null && (typeof active !== 'undefined')) {
+                $el.toggleClass(['active', $el.attr('data-icon-on')].join(' '), !!active);
+                $el.toggleClass($el.attr('data-icon-off'), !active);
+            }
+            if (enabled !== null && (typeof enabled !== 'undefined')) {
+                $el.toggleClass('disabled', !enabled);
             }
         },
         _destroy: $.noop
