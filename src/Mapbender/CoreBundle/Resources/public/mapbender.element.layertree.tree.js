@@ -281,13 +281,6 @@
             var $node = $('[data-sourceid="' + sourceId + '"][data-id="' + layerId + '"]', this.element);
             $node.remove();
         },
-        _isThemeChecked: function($li) {
-            var $themeNode = $li.closest('li.themeContainer', this.element);
-            if (!this.options.useTheme || !$themeNode.length) {
-                return true;
-            }
-            return $('>.leaveContainer .-fn-toggle-theme', $themeNode).hasClass('active');
-        },
         _redisplayLayerState: function($li, layer) {
             var $title = $('>.leaveContainer .layer-title', $li);
             // NOTE: outOfScale is only calculated for leaves. May be null
@@ -401,9 +394,7 @@
             if (layer.parent) {
                 this.model.controlLayer(layer, newState);
             } else {
-                if (this._isThemeChecked($target)) {
-                    this.model.setSourceVisibility(source, newState);
-                }
+                this.model.setSourceVisibility(source, newState);
             }
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
