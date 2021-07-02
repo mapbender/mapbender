@@ -156,17 +156,39 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      */
     public function registerService(ElementServiceInterface $instance, $handledClassNames, $canonical = null)
     {
-        $serviceClass = \get_class($instance);
-        if ($canonical) {
-            $handledClassNames[] = $canonical;
-        }
-        $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
-        foreach (array_unique($handledClassNames) as $handledClassName) {
-            $this->serviceElements[$handledClassName] = $instance;
-            if ($handledClassName !== $serviceClass) {
-                $this->replaceElement($handledClassName, $serviceClass);
+        $this->registerServices(array(array(
+            $instance,
+            $handledClassNames,
+            $canonical ?: \get_class($instance),
+        )));
+    }
+
+    /**
+     * Bulk service registration
+     *
+     * @param array[] $serviceInfoList
+     *
+     * Each entry array must contain
+     *   0 => the service instance (object)
+     *   1 => handled class names (string[])
+     *   2 => canonical name (string)
+     */
+    public function registerServices(array $serviceInfoList)
+    {
+        foreach ($serviceInfoList as $serviceInfo) {
+            $instance = $serviceInfo[0];
+            $handledClassNames = $serviceInfo[1];
+            $canonical = $serviceInfo[2];
+
+            $serviceClass = \get_class($instance);
+            $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
+            foreach (array_unique($handledClassNames) as $handledClassName) {
+                $this->serviceElements[$handledClassName] = $instance;
+                if ($handledClassName !== $serviceClass) {
+                    $this->replaceElement($handledClassName, $serviceClass);
+                }
+                $this->canonicals[$handledClassName] = $canonical ?: $serviceClass;
             }
-            $this->canonicals[$handledClassName] = $canonical ?: $serviceClass;
         }
         $this->inventoryDirty = true;
     }
