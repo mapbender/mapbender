@@ -16,7 +16,7 @@ $(function(){
             return;
         }
         // HACK: prevent button from ever gaining a visual highlight
-        $button.parent('.toolBarItem').removeClass('toolBarItemActive');
+        $button.removeClass('toolBarItemActive');
 
         e.stopImmediatePropagation();
 
