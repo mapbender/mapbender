@@ -8,6 +8,10 @@ use Mapbender\CoreBundle\Entity;
 
 /**
  * Minimal Element with a bound entity.
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @todo 3.3: remove this interface
  */
 abstract class MinimalBound implements BoundEntityInterface
 {

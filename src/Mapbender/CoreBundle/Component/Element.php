@@ -23,6 +23,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * implement an Mapbender3 element.
  *
  * @author Christian Wygoda
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @todo 3.3: remove this class
  */
 abstract class Element extends MinimalBound
     implements ElementInterface, ElementHttpHandlerInterface, BoundSelfRenderingInterface

@@ -10,8 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Interface for Mapbender Elements wishing to support http interactions with the client.
- * This is currently hard-baked into the base Component\Element class for continuity reasons, but it may
- * become optional at some point.
+ * Default implementation is hard-baked into Component\Element.
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @see \Mapbender\Component\Element\HttpHandlerProvider
+ * @see \Mapbender\Component\Element\ElementHttpHandlerInterface
+ * @todo 3.3: remove this interface
  */
 interface ElementHttpHandlerInterface
 {
