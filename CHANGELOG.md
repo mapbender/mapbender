@@ -1,4 +1,4 @@
-## dev-master @ 42b2bb61e
+## v3.2.6-RC1
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
 * Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
@@ -31,6 +31,8 @@
 * [Framework] Add new infrastructure for Symfony 4-compatible Elements (see [PR#1367](https://github.com/mapbender/mapbender/pull/1367))
 * [Framework] Fix unhandled errors on image resource request failure when preloading icon assets
 * [Framework] Support suppressing sidepane tab buttons / accordion headers for Elements that render nothing
+* Deprecated CoreBundle\Component\Element
+  * prefer writing Element PHP code for [new service-type Element infrastructure](https://github.com/mapbender/mapbender/pull/1367)
 * Deprecated TargetElementType
   * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
   * prefer using new ControlTargetType for generic non-Map targetting
