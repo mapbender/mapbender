@@ -6,7 +6,7 @@
     {{ parent() }}
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/fonts/open-sans/open-sans.css') }}" />
     <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}"/>
-    <link rel="stylesheet" href="{{ asset('/bundles/mapbendercore/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"/>
 {% endblock %}
 
 {% block trans %}
@@ -18,7 +18,7 @@
     <script type="text/javascript">window.applicationConfigUrl = '{{ path('mapbender_core_application_configuration', {'slug': application.slug}) }}';</script>
     {{parent()}}
     <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
-    <script type="text/javascript" src="{{ asset('/bundles/mapbendercore/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/mapbendercore/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}
