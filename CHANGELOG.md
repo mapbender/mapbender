@@ -1,5 +1,6 @@
-## dev-master @ eefb6c4c7
+## dev-master @ 822125fca
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
+* [Backend] Fix "Cancel" in ACL editing not returning to security index page
 
 ## v3.2.6-RC1
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
