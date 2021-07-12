@@ -1,3 +1,6 @@
+## dev-master @ eefb6c4c7
+* [Overview] Fix initially closed overview map showing max extent when opening for the first time
+
 ## v3.2.6-RC1
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
 * Fix display of validation errors in login
