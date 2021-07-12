@@ -105,7 +105,12 @@
                 .width(this.options.width)
                 .height(this.options.height)
             ;
-            this.overview.ovmap_.updateSize();
+
+            var self = this;
+            this.overview.getOverviewMap().updateSize();
+            window.setTimeout(function() {
+                self.overview.render();
+            });
         },
         _initAsOl2Control: function(layers) {
             this.overview = this._createOverviewControl(layers);
@@ -286,14 +291,15 @@
         }
         ,
         _changeSrs4: function(event, data) {
-            var properties = this.overview.ovmap_.getProperties();
+            var ovMap = this.overview.getOverviewMap();
+            var properties = ovMap.getProperties();
             properties.view = new ol.View({
               projection: data.to,
               center: this.mbMap.model.olMap.getView().getCenter(),
               extent: this.mbMap.model.getMaxExtent(),
               resolution: this.mbMap.model.olMap.getView().getResolution()
             });
-            this.overview.ovmap_.setProperties(properties);
+            ovMap.setProperties(properties);
         }
     });
 
