@@ -7,13 +7,21 @@
 }
 
 .featureinfoDialog {
+  .accordionContainer > .container-accordion > .accordion-cell {
+    padding: 0;
+    iframe {
+      padding: 10px 0;
+    }
+  }
+  .tabContainer .container {
+    padding: 10px;
+  }
   .popupContent {
     height: 100%; // for accordion growth
     .contentItem {
       height: 100%; // for accordion growth
       .mb-element-featureinfo {
         height: 100%; // for accordion growth
-        position: relative;
         .tabContainer {
           // Prevent doubled scrollbars Popup + iframe
           // NOTE: With default css 34px is the exact height of the tab header bar...
@@ -38,25 +46,6 @@
         }
         &:after {
           clear: both;
-        }
-      }
-    }
-  }
-}
-
-// Popup
-.popupContent {
-  > .contentItem {
-    > .mb-element-featureinfo {
-      > .tabContainer {
-        > .container {
-          &.active {
-            iframe {
-              position: absolute;
-              top: 0;
-              left: 0;
-            }
-          }
         }
       }
     }
