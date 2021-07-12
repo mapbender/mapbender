@@ -21,25 +21,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 class GroupController extends UserControllerBase
 {
     /**
-     * Renders group list.
-     *
-     * @Route("/group", methods={"GET"})
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $oid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
-        $repository = $this->getEntityManager()->getRepository('FOM\UserBundle\Entity\Group');
-
-        return $this->render('@FOMUser/Group/index.html.twig', array(
-            'groups' => $repository->findAll(),
-            'create_permission' => $this->isGranted('CREATE', $oid),
-            'title' => $this->translate('fom.user.group.index.groups'),
-        ));
-    }
-
-    /**
      * @Route("/group/new", methods={"GET", "POST"})
      *
      * There is one weirdness when storing groups: In Doctrine Many-to-Many

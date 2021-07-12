@@ -22,42 +22,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class UserController extends UserControllerBase
 {
     /**
-     * Renders user list.
-     *
-     * @ManagerRoute("/user", methods={"GET"})
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $users = $this->getUserRepository()->findAll();
-        $allowed_users = array();
-
-        // Bulk-prefetch ACLs for all User entities into AclProvider's internal cache
-        $oids = array();
-        foreach ($users as $index => $user) {
-            $oids[] = ObjectIdentity::fromDomainObject($user);
-        }
-        $this->getAclManager()->getACLs($oids);
-
-        foreach ($users as $index => $user) {
-            if ($this->isGranted('VIEW', $user)) {
-                $allowed_users[] = $user;
-            }
-        }
-
-        $oid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\User');
-
-        return $this->render('@FOMUser/User/index.html.twig', array(
-            'users'             => $allowed_users,
-            'oid' => $oid,
-            // @todo: remove create_permission template variable
-            'group_oid' => new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group'),
-            'create_permission' => $this->isGranted('CREATE', $oid),
-            'title' => $this->translate('fom.user.user.index.title'),
-        ));
-    }
-
-    /**
      * @ManagerRoute("/user/new", methods={"GET", "POST"})
      * @param Request $request
      * @return Response

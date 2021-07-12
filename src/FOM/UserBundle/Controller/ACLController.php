@@ -13,20 +13,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ACLController extends UserControllerBase
 {
     /**
-     * @Route("/acl")
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $oid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
-        $this->denyAccessUnlessGranted('EDIT', $oid);
-
-        return $this->render('@FOMUser/ACL/index.html.twig', array(
-            'classes' => $this->getACLClasses(),
-        ));
-    }
-
-    /**
      * @Route("/acl/edit", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
