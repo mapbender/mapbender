@@ -1,8 +1,9 @@
-## dev-master @ 8f0f6b9ff
+## dev-master @ 1225c4509
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
-* [Backend] Fix "Cancel" in ACL editing not returning to security index page
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
 * [FeatureInfo] Prefer root layer title over instance title for tab headers
+* [Backend] Fix "Cancel" in ACL editing not returning to security index page
+* [Backend] Fix missing validation error message when attempting to save Layerset with duplicated title
 
 ## v3.2.6-RC1
 * Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
