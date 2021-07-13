@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: ~
-      failure:
-        unique.title: ~
     remove:
       success: ~
       failure: ~

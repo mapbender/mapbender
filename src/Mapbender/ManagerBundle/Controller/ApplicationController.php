@@ -429,8 +429,9 @@ class ApplicationController extends WelcomeController
                 $em->flush();
                 $this->addFlash('success', $this->translate('mb.layerset.create.success'));
             } else {
-                // @todo: use form error translations directly; also support message for empty title
-                $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+                foreach ($form->getErrors(false, true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,

@@ -4,3 +4,5 @@ mb:
       app:
         screenshotfile:
           format_error: Этот формат не поддерживается!
+    layerset:
+      unique_title: Такой заголовок уже используется.

@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: Ihr Layerset wurde erstellt.
-      failure:
-        unique.title: Der Layerset-Titel wird bereits verwendet.
     remove:
       success: Ihr Layerset wurde gelöscht.
       failure: Ihr Layerset kann nicht gelöscht werden.

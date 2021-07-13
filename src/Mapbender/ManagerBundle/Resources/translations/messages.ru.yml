@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: Набор слоев создан.
-      failure:
-        unique.title: Такой заголовок уже используется.
     remove:
       success: Набор слоев удален.
       failure: Произошла ошибка при удалении набора слоев.
