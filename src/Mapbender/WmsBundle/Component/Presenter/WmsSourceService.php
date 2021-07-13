@@ -158,6 +158,20 @@ class WmsSourceService extends SourceService
     }
 
     /**
+     * @param WmsInstance $sourceInstance
+     * @return array
+     */
+    public function getConfiguration(SourceInstance $sourceInstance)
+    {
+        $config = parent::getConfiguration($sourceInstance);
+        $root = $sourceInstance->getRootlayer();
+        if ($root) {
+            $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
+        }
+        return $config;
+    }
+
+    /**
      * @param WmsInstanceLayer $instanceLayer
      * @return array
      */

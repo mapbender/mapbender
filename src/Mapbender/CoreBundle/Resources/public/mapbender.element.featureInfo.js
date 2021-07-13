@@ -156,14 +156,9 @@
                 });
             });
         },
-        _getTabTitle: function(source) {
-            // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
-            //  title of the root layer. This should be made consistent one way or the other.
-            return source.configuration.title;
-        },
         _setInfo: function(source, url) {
             var self = this;
-            var layerTitle = this._getTabTitle(source);
+            var layerTitle = source.getTitle();
             var ajaxOptions = {
                 url: url
             };
