@@ -33,10 +33,15 @@ class WmsMetadata extends SourceMetadata
     public function getData(SourceInstance $instance, $itemId = null)
     {
         /** @var WmsInstance $instance */
+        $root = $instance->getRootlayer();
+        $title = $root
+            ? $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $instance->getSource()->getTitle()
+            : $instance->getSource()->getTitle()
+        ;
         $src = $instance->getSource();
         $sectionData = array();
         $sectionData[] = $this->formatSection(static::$SECTION_COMMON, array(
-            'title' => $this->formatAlternatives($src->getTitle(), $instance->getTitle()),
+            'title' => $title,
             'name' => strval($src->getName()),
             'version' => strval($src->getVersion()),
             'originUrl' => strval($src->getOriginUrl()),
