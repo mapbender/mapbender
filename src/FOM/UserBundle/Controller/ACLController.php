@@ -45,7 +45,9 @@ class ACLController extends UserControllerBase
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setClassACEs($class, $form->get('acl')->getData());
 
-            return $this->redirectToRoute('fom_user_acl_index');
+            return $this->redirectToRoute('fom_user_security_index', array(
+                '_fragment' => 'tabAcl',
+            ));
         } elseif ($form->isSubmitted()) {
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
