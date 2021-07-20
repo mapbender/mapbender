@@ -1,8 +1,8 @@
-## dev-master @ fa9a473f9
+## dev-master @ 06cd6243a
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
 * [FeatureInfo] Prefer root layer title over instance title for tab headers
-* Fix missing colorpicker assets in frontend if installed in a sub-path URL
+* Fix missing colorpicker assets in frontend if installed in a sub-path URL ([PR#1371](https://github.com/mapbender/mapbender/pull/1371))
 * [Backend] Fix "Cancel" in ACL editing not returning to security index page
 * [Backend] Fix successful ACL editing save not returning to sercurity index page
 * [Backend] Fix missing validation error message when attempting to save Layerset with duplicated title
