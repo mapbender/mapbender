@@ -1,8 +1,10 @@
-## dev-master @ 1225c4509
+## dev-master @ fa9a473f9
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
 * [FeatureInfo] Prefer root layer title over instance title for tab headers
+* Fix missing colorpicker assets in frontend if installed in a sub-path URL
 * [Backend] Fix "Cancel" in ACL editing not returning to security index page
+* [Backend] Fix successful ACL editing save not returning to sercurity index page
 * [Backend] Fix missing validation error message when attempting to save Layerset with duplicated title
 
 ## v3.2.6-RC1
