@@ -3,6 +3,8 @@
         {{ form_row(form.public) }}
         {{ form_row(form.state) }}
         {{ form_row(form.abstract) }}
+
+{# removed ticket: https://repo.wheregroup.com/db/tickets/-/issues/1181 2021-07-20 arno
         {{ form_row(form.keywords) }}
         {{ form_label(form.descriptionurl) }}
         <div class="clearContainer"></div>
@@ -10,6 +12,7 @@
         {{ form_label(form.logourl) }} ({{ 'mb.wmc.wmceditor.screenshot'|trans }})
         <div class="clearContainer"></div>
         {{ form_widget(form.logourl) }}
+#}
         {{ form_row(form.screenshot) }}
         {{ form_rest(form) }}
     </div>
