@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Template;
 
 
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Template FullscreenAlternative
@@ -35,14 +36,16 @@ class FullscreenAlternative extends Fullscreen
 
     public function getRegionClasses(Application $application, $regionName)
     {
-        $classes = parent::getRegionClasses($application, $regionName);
-        if ($regionName === 'sidepane') {
-            $removeIndex = array_search('left', $classes, true);
-            if ($removeIndex !== false) {
-                unset($classes[$removeIndex]);
-            }
-            $classes[] = 'right';
+        switch ($regionName) {
+            default:
+                return parent::getRegionClasses($application, $regionName);
+            case 'sidepane':
+                $props = $this->extractRegionProperties($application, $regionName);
+                $classes = array(ArrayUtil::getDefault($props, 'align') ?: 'right');
+                if (!empty($props['closed'])) {
+                    $classes[] = 'closed';
+                }
+                return $classes;
         }
-        return $classes;
     }
 }
