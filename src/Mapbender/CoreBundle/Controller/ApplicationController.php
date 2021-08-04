@@ -4,10 +4,7 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
-use Mapbender\CoreBundle\Component\ElementFactory;
-use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
