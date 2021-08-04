@@ -97,6 +97,7 @@ class UserController extends UserControllerBase
 
             $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
         }
+        $securityIndexGranted = $this->isGranted('VIEW', new ObjectIdentity('class', 'FOM\UserBundle\Entity\User'));
 
         $form->handleRequest($request);
 
@@ -136,7 +137,7 @@ class UserController extends UserControllerBase
             $this->addFlash('success', 'The user has been saved.');
 
             // Do not redirect to security index if access will be denied
-            if ($this->isGranted('VIEW', new ObjectIdentity('class', 'FOM\UserBundle\Entity\User'))) {
+            if ($securityIndexGranted) {
                 return $this->redirectToRoute('fom_user_security_index', array(
                     '_fragment' => 'tabUsers',
                 ));
@@ -147,6 +148,9 @@ class UserController extends UserControllerBase
             'form'             => $form->createView(),
             'profile_template' => $this->getProfileTemplate(),
             'title' => $this->translate($isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user'),
+            'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
+                '_fragment' => 'tabUsers'
+            )),
         ));
     }
 
