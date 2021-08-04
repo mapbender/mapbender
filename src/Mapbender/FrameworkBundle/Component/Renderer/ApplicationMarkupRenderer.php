@@ -141,6 +141,11 @@ class ApplicationMarkupRenderer
                     break;
             }
         }
+        // HACK: fix unit-less sidepane width (must be CSS unit)
+        /** @todo: Template class should be responsible for a) defaults (currently in CSS only), b) fixing malformed values */
+        if (!empty($props['width']) && \preg_match('#\d$#', $props['width'])) {
+            $props['width'] = $props['width'] . 'px';
+        }
 
         return array_replace($template->getRegionTemplateVars($application, $regionName), array(
             'elements' => $elements,
