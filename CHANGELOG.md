@@ -1,9 +1,10 @@
-## dev-master @ 008b042b5
+## v3.2.6
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
 * [FeatureInfo] Prefer root layer title over instance title for tab headers
 * Fix missing colorpicker assets in frontend if installed in a sub-path URL ([PR#1371](https://github.com/mapbender/mapbender/pull/1371))
 * Fix no effect of sidepane "align" setting (left / right) in FullscreenAlternative template
+* Fix pileup of separate application HTML cache files for anonymous users
 * Automatically amend "px" to unit-less manual sidepane width setting
 * [Backend] Fix "Cancel" in ACL editing not returning to security index page
 * [Backend] Fix limited users editing their own profile getting redirected to "access denied" page on successful save
