@@ -135,9 +135,12 @@ class UserController extends UserControllerBase
             }
             $this->addFlash('success', 'The user has been saved.');
 
-            return $this->redirectToRoute('fom_user_security_index', array(
-                '_fragment' => 'tabUsers',
-            ));
+            // Do not redirect to security index if access will be denied
+            if ($this->isGranted('VIEW', new ObjectIdentity('class', 'FOM\UserBundle\Entity\User'))) {
+                return $this->redirectToRoute('fom_user_security_index', array(
+                    '_fragment' => 'tabUsers',
+                ));
+            }
         }
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user'             => $user,
