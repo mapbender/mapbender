@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Application controller.
@@ -168,11 +169,16 @@ class ApplicationController extends ApplicationControllerBase
         );
 
         if ($useCache) {
+            $user = $this->getUser();
+            $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-            // Must ensure session is started (may not be active even for authenticated users)
-            $request->getSession()->start();
-            $sessionId = $request->getSession()->getId();
-            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . $sessionId, "html");
+            if ($isAnon) {
+                $cacheFile = $this->getCachedAssetPath($request, $slug . '-anon', "html");
+            } else {
+                $request->getSession()->start();
+                $sessionId = $request->getSession()->getId();
+                $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . $sessionId, "html");
+            }
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
