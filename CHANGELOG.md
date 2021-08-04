@@ -1,4 +1,4 @@
-## dev-master @ c3daa3e09
+## dev-master @ 008b042b5
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
 * [FeatureInfo] Prefer root layer title over instance title for tab headers
@@ -6,6 +6,8 @@
 * Fix no effect of sidepane "align" setting (left / right) in FullscreenAlternative template
 * Automatically amend "px" to unit-less manual sidepane width setting
 * [Backend] Fix "Cancel" in ACL editing not returning to security index page
+* [Backend] Fix limited users editing their own profile getting redirected to "access denied" page on successful save
+* [Backend] Fix limited users landing on "access denied" page when clicking "Cancel" when editing their own profile
 * [Backend] Fix successful ACL editing save not returning to sercurity index page
 * [Backend] Fix missing validation error message when attempting to save Layerset with duplicated title
 
