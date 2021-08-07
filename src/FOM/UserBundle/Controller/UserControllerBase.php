@@ -36,7 +36,7 @@ abstract class UserControllerBase extends Controller
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return \Doctrine\Persistence\ObjectRepository
      */
     protected function getUserRepository()
     {
