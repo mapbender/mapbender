@@ -119,7 +119,7 @@ class TargetElementType extends AbstractType
                 if (ClassUtil::exists($elementComponentClass)) {
                     $r = new \ReflectionClass($elementComponentClass);
                     if ($r->hasProperty('ext_api') && $r->getProperty('ext_api')->isStatic()) {
-                        /** @var Component\Element|string $elementComponentClass */
+                        /** @var \Mapbender\CoreBundle\Component\Element|string $elementComponentClass */
                         if ($elementComponentClass::$ext_api) {
                             $elementIds[] = $elementEntity->getId();
                         }
