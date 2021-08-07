@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -45,7 +46,8 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
         $element = $event->getForm()->getParent()->getParent()->getData();
         $mapElements = array();
         foreach ($element->getApplication()->getElements() as $other) {
-            if ($element !== $other && $other->getClass() && \is_a($other->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true)) {
+            $otherClassName = $other->getClass();
+            if ($element !== $other && $otherClassName && ClassUtil::exists($otherClassName) && \is_a($otherClassName, 'Mapbender\Component\Element\MainMapElementInterface', true)) {
                 $mapElements[$other->getId()] = $other;
             }
         }
