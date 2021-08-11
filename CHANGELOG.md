@@ -1,3 +1,7 @@
+## dev-master @ b46b74e57
+* [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
+* [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
+
 ## v3.2.6
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
 * [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
