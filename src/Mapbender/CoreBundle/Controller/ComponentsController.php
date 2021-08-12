@@ -80,7 +80,6 @@ class ComponentsController
                 break;
             case 'bootstrap-colorpicker':
                 $path = $this->getWebPath() . '/bundles/mapbendercore/bootstrap-colorpicker';
-                $path = $this->getVendorPath() . "/debugteam/{$packageName}";
                 break;
             case 'mapbender-icons':
                 $path = $this->getVendorPath() . "/mapbender/{$packageName}";
