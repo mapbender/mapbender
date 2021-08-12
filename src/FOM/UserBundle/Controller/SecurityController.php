@@ -10,8 +10,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 
-class SecurityController extends AbstractSecurityController
+class SecurityController extends UserControllerBase
 {
+    protected $aclClasses;
+
+    public function __construct($userEntityClass, array $aclClasses)
+    {
+        parent::__construct($userEntityClass);
+        $this->aclClasses = $aclClasses;
+    }
+
     /**
      * @Route("/manager/security", methods={"GET"})
      * @param Request $request
@@ -50,7 +58,7 @@ class SecurityController extends AbstractSecurityController
             $vars['groups'] = $this->getDoctrine()->getRepository('FOM\UserBundle\Entity\Group')->findAll();
         }
         if ($grants['acl']) {
-            $vars['acl_classes'] = $this->getACLClasses();
+            $vars['acl_classes'] = $this->aclClasses;
         }
 
         return $this->render('@FOMUser/Security/index.html.twig', $vars);

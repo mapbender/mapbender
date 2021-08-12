@@ -10,8 +10,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ACLController extends AbstractSecurityController
+class ACLController extends UserControllerBase
 {
+    protected $aclClasses;
+
+    public function __construct($userEntityClass, array $aclClasses)
+    {
+        parent::__construct($userEntityClass);
+        $this->aclClasses = $aclClasses;
+    }
+
     /**
      * @Route("/acl/edit", methods={"GET", "POST"})
      * @param Request $request
@@ -25,8 +33,8 @@ class ACLController extends AbstractSecurityController
         $this->denyAccessUnlessGranted('EDIT', $oid);
 
         $class = $request->query->get('class');
-        $acl_classes = $this->getACLClasses();
-        if(!array_key_exists($class, $acl_classes)) {
+
+        if(!array_key_exists($class, $this->aclClasses)) {
             throw $this->createNotFoundException('No manageable class given.');
         }
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
@@ -57,7 +65,7 @@ class ACLController extends AbstractSecurityController
             'class' => $class,
             'form' => $form->createView(),
             'title' => $translator->trans('fom.user.acl.edit.edit_class_acl', array(
-                '%name%' => $translator->trans($acl_classes[$class]),
+                '%name%' => $translator->trans($this->aclClasses[$class]),
             ))
         ));
     }

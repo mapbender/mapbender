@@ -3,6 +3,7 @@
 namespace FOM\UserBundle;
 
 use FOM\UserBundle\Component\Menu\SecurityMenu;
+use FOM\UserBundle\DependencyInjection\Compiler\CollectAclClassesPass;
 use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
@@ -39,6 +40,7 @@ class FOMUserBundle extends ManagerBundle
 
         $this->addMenu($container);
         $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', 'FOM\UserBundle\Entity\User'));
+        $container->addCompilerPass(new CollectAclClassesPass('fom.user.acl_classes'));
     }
 
     protected function addMenu(ContainerBuilder $container)

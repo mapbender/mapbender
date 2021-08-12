@@ -20,10 +20,12 @@
         <service id="FOM\UserBundle\Controller\SecurityController"
                 class="FOM\UserBundle\Controller\SecurityController">
             <argument>%fom.user_entity%</argument>
+            <argument>%fom.user.acl_classes%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\ACLController"
                 class="FOM\UserBundle\Controller\ACLController">
             <argument>%fom.user_entity%</argument>
+            <argument>%fom.user.acl_classes%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\UserController"
                 class="FOM\UserBundle\Controller\UserController">

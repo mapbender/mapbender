@@ -33,6 +33,7 @@
         <!-- internal; automatically replaced with value extracted from 'security' extension config
              see ForwardUserEntityClassPass -->
         <parameter key="fom.user_entity">null</parameter>
+        <parameter key="fom.user.acl_classes" type="collection" />
     </parameters>
     <services>
         <service id="fom.user_helper.service" class="%fom.user_helper.service.class%">
