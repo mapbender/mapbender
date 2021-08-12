@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 
-class SecurityController extends UserControllerBase
+class SecurityController extends AbstractSecurityController
 {
     /**
      * @Route("/manager/security", methods={"GET"})

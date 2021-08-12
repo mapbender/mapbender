@@ -3,6 +3,7 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -239,5 +240,15 @@ class UserController extends UserControllerBase
         /** @var TokenStorageInterface $tokenStorage */
         $tokenStorage = $this->get('security.token_storage');
         return $tokenStorage->getToken();
+    }
+
+    /**
+     * @return AclManager
+     */
+    protected function getAclManager()
+    {
+        /** @var AclManager $service */
+        $service = $this->get('fom.acl.manager');
+        return $service;
     }
 }

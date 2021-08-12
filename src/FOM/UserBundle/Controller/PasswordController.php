@@ -5,7 +5,6 @@ use FOM\UserBundle\Entity\User;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -34,46 +33,23 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Christian Wygoda
  * @author Paul Schmidt
  */
-class PasswordController extends UserControllerBase
+class PasswordController extends AbstractEmailProcessController
 {
-    protected $emailFromAddress;
     protected $enableReset;
-    protected $isDebug;
     protected $maxTokenAge;
 
     public function __construct($userEntityClass,
+                                $emailFromName,
                                 $emailFromAddress,
                                 $enableReset,
                                 $maxTokenAge,
                                 $isDebug)
     {
-        parent::__construct($userEntityClass);
-        $this->emailFromAddress = $emailFromAddress;
+        parent::__construct($userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
-        $this->isDebug = $isDebug;
-        if (!$this->emailFromAddress) {
-            $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
-        }
         if (!$this->enableReset) {
             $this->debug404("Password reset disabled by configuration");
-        }
-    }
-
-    /**
-     * Throws a 404, displaying the given $message only in debug mode
-     * @todo: fold copy&paste PasswordController vs RegistrationController
-     *
-     * @param string|null $message
-     * @throws NotFoundHttpException
-     */
-    protected function debug404($message)
-    {
-        if ($this->isDebug && $message) {
-            $message = $message . ' (this message is only display in debug mode)';
-            throw new NotFoundHttpException($message);
-        } else {
-            throw new NotFoundHttpException();
         }
     }
 
@@ -210,7 +186,7 @@ class PasswordController extends UserControllerBase
         $user->setResetTime(new \DateTime());
 
         //send email
-        $mailFrom = array($this->emailFromAddress => $this->emailFromAddress);
+        $mailFrom = array($this->emailFromAddress => $this->emailFromName);
         /** @var \Swift_Mailer $mailer */
         $mailer = $this->get('mailer');
 

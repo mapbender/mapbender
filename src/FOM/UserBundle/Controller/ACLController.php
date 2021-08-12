@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ACLController extends UserControllerBase
+class ACLController extends AbstractSecurityController
 {
     /**
      * @Route("/acl/edit", methods={"GET", "POST"})

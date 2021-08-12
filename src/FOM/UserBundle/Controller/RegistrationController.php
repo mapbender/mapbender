@@ -7,7 +7,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -17,14 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Paul Schmidt
  */
 
-class RegistrationController extends UserControllerBase
+class RegistrationController extends AbstractEmailProcessController
 {
-    protected $emailFromAddress;
-    protected $emailFromName;
     protected $enableRegistration;
     protected $maxTokenAge;
     protected $groupTitles;
-    protected $isDebug;
 
     public function __construct($userEntityClass,
                                 $emailFromAddress,
@@ -34,35 +30,12 @@ class RegistrationController extends UserControllerBase
                                 array $groupTitles,
                                 $isDebug)
     {
-        parent::__construct($userEntityClass);
-        $this->emailFromAddress = $emailFromAddress;
-        $this->emailFromName = $emailFromName ?: $emailFromAddress;
+        parent::__construct($userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
         $this->enableRegistration = $enableRegistration;
         $this->groupTitles = $groupTitles;
         $this->maxTokenAge = $maxTokenAge;
-        $this->isDebug = $isDebug;
-        if (!$this->emailFromAddress) {
-            $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
-        }
         if (!$this->enableRegistration) {
             $this->debug404("Registration disabled by configuration");
-        }
-    }
-
-    /**
-     * Throws a 404, displaying the given $message only in debug mode
-     * @todo: fold copy&paste PasswordController vs RegistrationController
-     *
-     * @param string|null $message
-     * @throws NotFoundHttpException
-     */
-    protected function debug404($message)
-    {
-        if ($this->isDebug && $message) {
-            $message = $message . ' (this message is only display in debug mode)';
-            throw new NotFoundHttpException($message);
-        } else {
-            throw new NotFoundHttpException();
         }
     }
 
