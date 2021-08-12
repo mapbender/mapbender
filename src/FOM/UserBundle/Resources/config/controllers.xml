@@ -6,6 +6,7 @@
         <!-- @todo: minimize controller argument dependencies (all inherit from UserControllerBase, but not all access all arguments) -->
         <service id="FOM\UserBundle\Controller\GroupController"
                 class="FOM\UserBundle\Controller\GroupController">
+            <argument type="service" id="security.acl.provider" />
             <argument>%fom.user_entity%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
@@ -29,12 +30,15 @@
         </service>
         <service id="FOM\UserBundle\Controller\UserController"
                 class="FOM\UserBundle\Controller\UserController">
+            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\RegistrationController"
                 class="FOM\UserBundle\Controller\RegistrationController">
+            <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
             <argument>%fom_user.mail_from_name%</argument>

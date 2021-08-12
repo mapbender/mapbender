@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Controller;
 
+use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,11 +19,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractEmailProcessController
 {
+    /** @var UserHelperService */
+    protected $userHelper;
+
     protected $enableRegistration;
     protected $maxTokenAge;
     protected $groupTitles;
 
-    public function __construct($userEntityClass,
+    public function __construct(UserHelperService $userHelper,
+                                $userEntityClass,
                                 $emailFromAddress,
                                 $emailFromName,
                                 $enableRegistration,
@@ -31,6 +36,7 @@ class RegistrationController extends AbstractEmailProcessController
                                 $isDebug)
     {
         parent::__construct($userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
+        $this->userHelper = $userHelper;
         $this->enableRegistration = $enableRegistration;
         $this->groupTitles = $groupTitles;
         $this->maxTokenAge = $maxTokenAge;
@@ -67,8 +73,8 @@ class RegistrationController extends AbstractEmailProcessController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $helperService = $this->getUserHelper();
-            $helperService->setPassword($user, $user->getPassword());
+
+            $this->userHelper->setPassword($user, $user->getPassword());
 
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
@@ -98,7 +104,7 @@ class RegistrationController extends AbstractEmailProcessController
             $em->persist($user);
             $em->flush();
 
-            $helperService->giveOwnRights($user);
+            $this->userHelper->giveOwnRights($user);
 
             return $this->redirectToRoute('fom_user_registration_send');
         }

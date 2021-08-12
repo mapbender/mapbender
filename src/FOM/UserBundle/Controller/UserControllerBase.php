@@ -5,9 +5,7 @@ namespace FOM\UserBundle\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use FOM\UserBundle\Component\UserHelperService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 
 abstract class UserControllerBase extends Controller
 {
@@ -34,25 +32,5 @@ abstract class UserControllerBase extends Controller
     protected function getUserRepository()
     {
         return $this->getDoctrine()->getRepository($this->userEntityClass);
-    }
-
-    /**
-     * @return UserHelperService
-     */
-    protected function getUserHelper()
-    {
-        /** @var UserHelperService $service */
-        $service = $this->get('fom.user_helper.service');
-        return $service;
-    }
-
-    /**
-     * @return MutableAclProviderInterface
-     */
-    protected function getAclProvider()
-    {
-        /** @var MutableAclProviderInterface $service */
-        $service = $this->get('security.acl.provider');
-        return $service;
     }
 }

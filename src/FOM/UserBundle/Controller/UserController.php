@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\AclManager;
+use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -22,12 +24,23 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class UserController extends UserControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+    /** @var UserHelperService */
+    protected $userHelper;
+
     protected $profileEntityClass;
     protected $profileTemplate;
 
-    public function __construct($userEntityClass, $profileEntityClass, $profileTemplate)
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                UserHelperService $userHelper,
+                                $userEntityClass,
+                                $profileEntityClass,
+                                $profileTemplate)
     {
         parent::__construct($userEntityClass);
+        $this->aclProvider = $aclProvider;
+        $this->userHelper = $userHelper;
         $this->profileEntityClass = $profileEntityClass;
         $this->profileTemplate = $profileTemplate;
     }
@@ -137,7 +150,7 @@ class UserController extends UserControllerBase
 
                 if ($isNew) {
                     // Make sure, the new user has VIEW & EDIT permissions
-                    $this->getUserHelper()->giveOwnRights($user);
+                    $this->userHelper->giveOwnRights($user);
                 }
 
                 $em->commit();
@@ -185,18 +198,17 @@ class UserController extends UserControllerBase
         }
 
         $this->denyAccessUnlessGranted('DELETE', $user);
-        $aclProvider = $this->getAclProvider();
 
         $em = $this->getEntityManager();
         $em->beginTransaction();
 
         try {
-            if ($aclProvider instanceof MutableAclProvider) {
+            if (($this->aclProvider) instanceof MutableAclProvider) {
                 $sid = UserSecurityIdentity::fromAccount($user);
-                $aclProvider->deleteSecurityIdentity($sid);
+                $this->aclProvider->deleteSecurityIdentity($sid);
             }
             $oid = ObjectIdentity::fromDomainObject($user);
-            $aclProvider->deleteAcl($oid);
+            $this->aclProvider->deleteAcl($oid);
 
             $em->remove($user);
             if ($user->getProfile()) {

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
@@ -20,6 +21,15 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  */
 class GroupController extends UserControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+
+    public function __construct(MutableAclProviderInterface $aclProvider, $userEntityClass)
+    {
+        parent::__construct($userEntityClass);
+        $this->aclProvider = $aclProvider;
+    }
+
     /**
      * @Route("/group/new", methods={"GET", "POST"})
      *
@@ -53,16 +63,14 @@ class GroupController extends UserControllerBase
 
             $em->flush();
 
-            // creating the ACL
-            $aclProvider = $this->getAclProvider();
             $objectIdentity = ObjectIdentity::fromDomainObject($group);
-            $acl = $aclProvider->createAcl($objectIdentity);
+            $acl = $this->aclProvider->createAcl($objectIdentity);
 
             // retrieving the security identity of the currently logged-in user
             $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
 
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-            $aclProvider->updateAcl($acl);
+            $this->aclProvider->updateAcl($acl);
 
             $this->addFlash('success', 'The group has been saved.');
 
@@ -139,20 +147,19 @@ class GroupController extends UserControllerBase
         }
         // ACL access check
         $this->denyAccessUnlessGranted('DELETE', $group);
-        $aclProvider = $this->getAclProvider();
         $em = $this->getEntityManager();
         $em->beginTransaction();
 
         try {
-            if ($aclProvider instanceof MutableAclProvider) {
+            if (($this->aclProvider) instanceof MutableAclProvider) {
                 $sid = new RoleSecurityIdentity($group->getRole());
-                $aclProvider->deleteSecurityIdentity($sid);
+                $this->aclProvider->deleteSecurityIdentity($sid);
             }
 
             $em->remove($group);
 
             $oid = ObjectIdentity::fromDomainObject($group);
-            $aclProvider->deleteAcl($oid);
+            $this->aclProvider->deleteAcl($oid);
 
             $em->flush();
             $em->commit();
