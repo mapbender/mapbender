@@ -1,5 +1,6 @@
 {% extends "MapbenderManagerBundle::layouts/single_form.html.twig" %}
 {%- set return_url = path('fom_user_security_index', {_fragment: 'tabAcl'}) -%}
+{%- set title = 'fom.user.acl.edit.edit_class_acl' | trans({'%name%': acl_class | trans}) -%}
 
 {% block form_fields %}
     {{- form_row(form) -}}

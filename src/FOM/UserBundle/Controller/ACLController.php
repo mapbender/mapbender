@@ -8,7 +8,6 @@ use FOM\ManagerBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ACLController extends UserControllerBase
 {
@@ -60,13 +59,11 @@ class ACLController extends UserControllerBase
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
 
-        $translator = $this->getTranslator();
+
         return $this->render('@FOMUser/ACL/edit.html.twig', array(
             'class' => $class,
             'form' => $form->createView(),
-            'title' => $translator->trans('fom.user.acl.edit.edit_class_acl', array(
-                '%name%' => $translator->trans($this->aclClasses[$class]),
-            ))
+            'acl_class' => $this->aclClasses[$class],
         ));
     }
 
@@ -86,15 +83,4 @@ class ACLController extends UserControllerBase
             'users' => $users,
         ));
     }
-
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        /** @var TranslatorInterface $translator */
-        $translator = $this->get('translator');
-        return $translator;
-    }
-
 }

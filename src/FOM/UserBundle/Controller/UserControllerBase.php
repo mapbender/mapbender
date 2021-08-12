@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\UserHelperService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UserControllerBase extends Controller
 {
