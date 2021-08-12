@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
-use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ExportJob;
@@ -329,6 +328,7 @@ class ApplicationController extends WelcomeController
             }
         }
 
+        /** @var string|Template $templateClass */
         $templateClass = $application->getTemplate();
 
         // restore old slug to keep urls working
@@ -823,7 +823,7 @@ class ApplicationController extends WelcomeController
      */
     protected function createRegionProperties(Application $application)
     {
-        /** @var Template::class $templateClass */
+        /** @var string|Template $templateClass */
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
 
