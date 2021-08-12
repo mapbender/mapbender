@@ -158,7 +158,7 @@ class UserController extends UserControllerBase
             'user'             => $user,
             'form'             => $form->createView(),
             'profile_template' => $this->profileTemplate,
-            'title' => $this->translate($isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user'),
+            'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
             'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
                 '_fragment' => 'tabUsers'
             )),

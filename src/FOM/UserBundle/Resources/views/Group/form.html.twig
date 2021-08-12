@@ -1,5 +1,6 @@
 {% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
 {%- set return_url = path('fom_user_security_index', {_fragment: 'tabGroups'}) -%}
+{%- set title = title | trans -%}
 
 {% block js %}
   {{parent()}}

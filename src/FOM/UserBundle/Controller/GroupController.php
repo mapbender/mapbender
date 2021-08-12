@@ -74,7 +74,7 @@ class GroupController extends UserControllerBase
         return $this->render('@FOMUser/Group/form.html.twig', array(
             'group' => $group,
             'form' => $form->createView(),
-            'title' => $this->translate('fom.user.group.form.new_group'),
+            'title' => 'fom.user.group.form.new_group',
         ));
     }
 
@@ -119,7 +119,7 @@ class GroupController extends UserControllerBase
         return $this->render('@FOMUser/Group/form.html.twig', array(
             'group' => $group,
             'form' => $form->createView(),
-            'title' => $this->translate('fom.user.group.form.edit_group'),
+            'title' => 'fom.user.group.form.edit_group',
         ));
     }
 

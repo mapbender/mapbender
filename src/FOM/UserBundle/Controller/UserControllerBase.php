@@ -56,11 +56,4 @@ abstract class UserControllerBase extends Controller
         $service = $this->get('security.acl.provider');
         return $service;
     }
-
-    protected function translate($x)
-    {
-        /** @var TranslatorInterface $translator */
-        $translator = $this->container->get('translator');
-        return $translator->trans($x);
-    }
 }
