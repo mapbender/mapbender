@@ -40,9 +40,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    protected $containerTimestamp;
+    protected $fileCacheDirectory;
+    protected $enableConfigCache;
+    protected $isDebug;
+
     /** @var ElementInventoryService */
     protected $elementInventory;
 
+    public function __construct($containerTimestamp,
+                                $fileCacheDirectory,
+                                $enableConfigCache,
+                                $isDebug)
+    {
+        $this->containerTimestamp = intval(ceil($containerTimestamp));
+        $this->enableConfigCache = $enableConfigCache;
+        $this->fileCacheDirectory = $fileCacheDirectory;
+        $this->isDebug = $isDebug;
+    }
 
     /**
      * @param ContainerInterface|null $container
@@ -78,11 +93,10 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function assetsAction(Request $request, $slug, $type)
     {
-        $isProduction = $this->isProduction();
         $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
             // @todo: TBD more reasonable criteria of backend / login asset cachability
-            $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
+            $appModificationTs =$this->containerTimestamp;
         } else {
             $source = $this->getApplicationEntity($slug);
             $appModificationTs = $source->getUpdated()->getTimestamp();
@@ -92,7 +106,7 @@ class ApplicationController extends ApplicationControllerBase
             'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
 
-        $useCached = $isProduction && file_exists($cacheFile);
+        $useCached = (!$this->isDebug) && file_exists($cacheFile);
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
             $response = new BinaryFileResponse($cacheFile, 200, $headers);
             // allow file timestamp to be read again correctly for 'Last-Modified' header
@@ -108,7 +122,7 @@ class ApplicationController extends ApplicationControllerBase
             $content = $assetService->getBackendAssetContent($source, $type);
         }
 
-        if ($isProduction) {
+        if (!$this->isDebug) {
             file_put_contents($cacheFile, $content);
             return new BinaryFileResponse($cacheFile, 200, $headers);
         } else {
@@ -162,13 +176,12 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
-        $useCache = $this->isProduction();
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
 
-        if ($useCache) {
+        if (!$this->isDebug) {
             $user = $this->getUser();
             $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
@@ -254,16 +267,16 @@ class ApplicationController extends ApplicationControllerBase
         $configService = $this->getConfigService();
         $cacheService = $configService->getCacheService();
         $cacheKeyPath = array('config.json');
-        $cachable = !!$this->container->getParameter('cachable.mapbender.application.config');
-        if ($cachable) {
+
+        if ($this->enableConfigCache) {
             $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
         } else {
             $response = false;
         }
-        if (!$cachable || !$response) {
+        if (!$this->enableConfigCache || !$response) {
             $freshConfig = $configService->getConfiguration($applicationEntity);
             $response = new JsonResponse($freshConfig);
-            if ($cachable) {
+            if ($this->enableConfigCache) {
                 $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
             }
         }
@@ -312,7 +325,7 @@ class ApplicationController extends ApplicationControllerBase
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
         $url = $instanceTunnel->getService()->getInternalUrl($request, false);
-        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
+        if ($this->isDebug && $request->query->has('reveal-internal')) {
             return new Response($url);
         }
 
@@ -341,7 +354,7 @@ class ApplicationController extends ApplicationControllerBase
         if (!$url) {
             throw $this->createNotFoundException();
         }
-        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
+        if ($this->isDebug && $request->query->has('reveal-internal')) {
             return new Response($url);
         } else {
             return $instanceTunnel->getUrl($url);
@@ -400,7 +413,7 @@ class ApplicationController extends ApplicationControllerBase
             $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
             $extension = "{$baseUrlHash}.{$extension}";
         }
-        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$extension}";
+        return $this->fileCacheDirectory . "/{$slug}.min.{$extension}";
     }
 
     /**
@@ -428,7 +441,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function isProduction()
     {
-        return !$this->getParameter('kernel.debug');
+        return !$this->isDebug;
     }
 
     /**

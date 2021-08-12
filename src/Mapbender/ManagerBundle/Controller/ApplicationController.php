@@ -46,6 +46,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ApplicationController extends WelcomeController
 {
+    protected $enableResponsiveElements;
+
+    public function __construct($enableResponsiveElements)
+    {
+        $this->enableResponsiveElements = $enableResponsiveElements;
+    }
+
     /**
      * Render a list of applications the current logged in user has access to.
      *
@@ -333,14 +340,13 @@ class ApplicationController extends WelcomeController
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
-        $allowScreenTypesGlobal = $this->getParameter('mapbender.responsive.elements');
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'regions'             => $templateClass::getRegions(),
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
             // Allow screenType filtering only on current map engine
-            'allow_screentypes' => $allowScreenTypesGlobal && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
+            'allow_screentypes' => $this->enableResponsiveElements && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
         ));
     }
 

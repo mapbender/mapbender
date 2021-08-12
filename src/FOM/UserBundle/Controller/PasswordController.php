@@ -2,11 +2,10 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -37,23 +36,44 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordController extends UserControllerBase
 {
-    /**
-     * Check if password reset is allowed.
-     *
-     * setContainer is called after controller creation is used to deny access to controller if password reset has
-     * been disabled.
-     * @param ContainerInterface $container
-     * @throws AccessDeniedHttpException
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        parent::setContainer($container);
+    protected $emailFromAddress;
+    protected $enableReset;
+    protected $isDebug;
+    protected $maxTokenAge;
 
-        if (!$this->getEmailFromAdress()) {
+    public function __construct($userEntityClass,
+                                $emailFromAddress,
+                                $enableReset,
+                                $maxTokenAge,
+                                $isDebug)
+    {
+        parent::__construct($userEntityClass);
+        $this->emailFromAddress = $emailFromAddress;
+        $this->enableReset = $enableReset;
+        $this->maxTokenAge = $maxTokenAge;
+        $this->isDebug = $isDebug;
+        if (!$this->emailFromAddress) {
             $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
         }
-        if (!$this->container->getParameter('fom_user.reset_password')) {
+        if (!$this->enableReset) {
             $this->debug404("Password reset disabled by configuration");
+        }
+    }
+
+    /**
+     * Throws a 404, displaying the given $message only in debug mode
+     * @todo: fold copy&paste PasswordController vs RegistrationController
+     *
+     * @param string|null $message
+     * @throws NotFoundHttpException
+     */
+    protected function debug404($message)
+    {
+        if ($this->isDebug && $message) {
+            $message = $message . ' (this message is only display in debug mode)';
+            throw new NotFoundHttpException($message);
+        } else {
+            throw new NotFoundHttpException();
         }
     }
 
@@ -122,7 +142,7 @@ class PasswordController extends UserControllerBase
         $user = $this->getUserFromResetToken($request);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
@@ -143,12 +163,11 @@ class PasswordController extends UserControllerBase
         $user = $this->getUserFromResetToken($request);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
-        $max_token_age = $this->container->getParameter("fom_user.max_reset_time");
-        if (!$this->checkTimeInterval($user->getResetTime(), $max_token_age)) {
+        if (!$this->checkTimeInterval($user->getResetTime(), $this->maxTokenAge)) {
             return $this->tokenExpired($user);
         }
 
@@ -191,9 +210,7 @@ class PasswordController extends UserControllerBase
         $user->setResetTime(new \DateTime());
 
         //send email
-        $fromName = $this->getEmailFromAdress();
-        $fromEmail = $this->getEmailFromAdress();
-        $mailFrom = array($fromEmail => $fromName);
+        $mailFrom = array($this->emailFromAddress => $this->emailFromAddress);
         /** @var \Swift_Mailer $mailer */
         $mailer = $this->get('mailer');
 

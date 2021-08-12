@@ -19,6 +19,15 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class LoginController extends Controller
 {
+    protected $enableRegistration;
+    protected $enablePasswordReset;
+
+    public function __construct($enableRegistration, $enablePasswordReset)
+    {
+        $this->enableRegistration = $enableRegistration;
+        $this->enablePasswordReset = $enablePasswordReset;
+    }
+
     /**
      * User login
      *
@@ -48,8 +57,8 @@ class LoginController extends Controller
 
         return $this->render('@MapbenderCore/Login/login.html.twig', array(
             'form' => $form->createView(),
-            'selfregister' => $this->getParameter("fom_user.selfregister"),
-            'reset_password' => $this->getParameter("fom_user.reset_password"),
+            'selfregister' => $this->enableRegistration,
+            'reset_password' => $this->enablePasswordReset,
         ));
     }
 

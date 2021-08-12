@@ -17,12 +17,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UserControllerBase extends Controller
 {
-    /**
-     * @return string
-     */
-    protected function getUserEntityClass()
+    protected $userEntityClass;
+
+    public function __construct($userEntityClass)
     {
-        return $this->getParameter('fom.user_entity');
+        $this->userEntityClass = $userEntityClass;
     }
 
     /**
@@ -31,7 +30,7 @@ abstract class UserControllerBase extends Controller
     protected function getEntityManager()
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->getDoctrine()->getManagerForClass($this->getUserEntityClass());
+        $em = $this->getDoctrine()->getManagerForClass($this->userEntityClass);
         return $em;
     }
 
@@ -40,32 +39,7 @@ abstract class UserControllerBase extends Controller
      */
     protected function getUserRepository()
     {
-        $userEntity = $this->getUserEntityClass();
-        return $this->getDoctrine()->getManagerForClass($userEntity)->getRepository($userEntity);
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getEmailFromAdress()
-    {
-        return $this->container->getParameter('fom_user.mail_from_address');
-    }
-
-    /**
-     * Throws a 404, displaying the given $message only in debug mode
-     *
-     * @param string|null $message
-     * @throws NotFoundHttpException
-     */
-    protected function debug404($message)
-    {
-        if ($this->container->getParameter('kernel.debug') && $message) {
-            $message = $message . ' (this message is only display in debug mode)';
-            throw new NotFoundHttpException($message);
-        } else {
-            throw new NotFoundHttpException();
-        }
+        return $this->getDoctrine()->getRepository($this->userEntityClass);
     }
 
     /**

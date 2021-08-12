@@ -21,6 +21,16 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class UserController extends UserControllerBase
 {
+    protected $profileEntityClass;
+    protected $profileTemplate;
+
+    public function __construct($userEntityClass, $profileEntityClass, $profileTemplate)
+    {
+        parent::__construct($userEntityClass);
+        $this->profileEntityClass = $profileEntityClass;
+        $this->profileTemplate = $profileTemplate;
+    }
+
     /**
      * @ManagerRoute("/user/new", methods={"GET", "POST"})
      * @param Request $request
@@ -29,7 +39,7 @@ class UserController extends UserControllerBase
      */
     public function createAction(Request $request)
     {
-        $userClass = $this->getUserEntityClass();
+        $userClass = $this->userEntityClass;
         $oid = new ObjectIdentity('class', $userClass);
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
@@ -65,7 +75,7 @@ class UserController extends UserControllerBase
     protected function userActionCommon(Request $request, User $user)
     {
         $isNew = !$user->getId();
-        $profileClass = $this->getProfileEntityClass();
+        $profileClass = $this->profileEntityClass;
         if ($profileClass) {
             if ($isNew) {
                 $profile = new $profileClass();
@@ -146,7 +156,7 @@ class UserController extends UserControllerBase
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user'             => $user,
             'form'             => $form->createView(),
-            'profile_template' => $this->getProfileTemplate(),
+            'profile_template' => $this->profileTemplate,
             'title' => $this->translate($isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user'),
             'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
                 '_fragment' => 'tabUsers'
@@ -200,22 +210,6 @@ class UserController extends UserControllerBase
         }
 
         return new Response();
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getProfileEntityClass()
-    {
-        return $this->getParameter('fom_user.profile_entity');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getProfileTemplate()
-    {
-        return $this->getParameter('fom_user.profile_template');
     }
 
     /**

@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobal
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -96,9 +97,12 @@ class MapbenderCoreBundle extends MapbenderBundle
         foreach ($this->getConfigs() as $configName) {
             if (preg_match('#\.xml$#', $configName)) {
                 $xmlLoader->load($configName);
+                $resourcePath = $xmlLoader->getLocator()->locate($configName);
             } else {
                 $yamlLoader->load($configName);
+                $resourcePath = $yamlLoader->getLocator()->locate($configName);
             }
+            $container->addResource(new FileResource($resourcePath));
         }
     }
 
@@ -110,6 +114,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'security.xml',
             'services.xml',
+            'controllers.xml',
             'commands.xml',
             'mapbender.yml',
             'constraints.yml',

@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Controller;
 
 
 use Mapbender\Component\AutoMimeResponseFile;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,8 +18,17 @@ use Symfony\Component\Routing\Annotation\Route;
  * a "component installer" package, such as robloach/component-installer (abandoned) or
  * mnsami/composer-custom-directory-installer on the system.
  */
-class ComponentsController extends Controller
+class ComponentsController
 {
+    protected $webRoot;
+    protected $vendorRoot;
+
+    public function __construct($webRoot, $vendorRoot)
+    {
+        $this->webRoot = realpath($webRoot);
+        $this->vendorRoot = realpath($vendorRoot);
+    }
+
     /**
      * @Route("/components/{packageName}/{path}", methods={"GET"}, requirements={"path"=".+"})
      * @param Request $request
@@ -93,12 +101,12 @@ class ComponentsController extends Controller
      */
     protected function getVendorPath()
     {
-        return realpath($this->getParameter('kernel.root_dir') . '/../vendor');
+        return $this->vendorRoot;
     }
 
     protected function getWebPath()
     {
-        return realpath($this->getParameter('kernel.root_dir') . '/../web');
+        return $this->webRoot;
     }
 
     /**
