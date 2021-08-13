@@ -5,11 +5,12 @@ namespace FOM\UserBundle\Controller;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
 use FOM\ManagerBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
-class ACLController extends UserControllerBase
+class ACLController extends AbstractController
 {
     /** @var AclManager */
     protected $aclManager;
@@ -19,9 +20,8 @@ class ACLController extends UserControllerBase
 
     public function __construct(AclManager $aclManager,
                                 AssignableSecurityIdentityFilter $sidFilter,
-                                $userEntityClass, array $aclClasses)
+                                array $aclClasses)
     {
-        parent::__construct($userEntityClass);
         $this->aclManager = $aclManager;
         $this->sidFilter = $sidFilter;
         $this->aclClasses = $aclClasses;

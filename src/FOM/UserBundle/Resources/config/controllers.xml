@@ -3,7 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <!-- @todo: minimize controller argument dependencies (all inherit from UserControllerBase, but not all access all arguments) -->
         <service id="FOM\UserBundle\Controller\GroupController"
                 class="FOM\UserBundle\Controller\GroupController">
             <argument type="service" id="security.acl.provider" />
@@ -27,7 +26,6 @@
                 class="FOM\UserBundle\Controller\ACLController">
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="fom.acl_assignment_filter" />
-            <argument>%fom.user_entity%</argument>
             <argument>%fom.user.acl_classes%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\UserController"

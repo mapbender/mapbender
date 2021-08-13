@@ -5,9 +5,9 @@ namespace FOM\UserBundle\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-abstract class UserControllerBase extends Controller
+abstract class UserControllerBase extends AbstractController
 {
     protected $userEntityClass;
 
