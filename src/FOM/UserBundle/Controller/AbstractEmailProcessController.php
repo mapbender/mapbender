@@ -14,17 +14,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class AbstractEmailProcessController extends UserControllerBase
 {
+    /** @var \Swift_Mailer */
+    protected $mailer;
 
     protected $emailFromAddress;
     protected $emailFromName;
     protected $isDebug;
 
-    public function __construct($userEntityClass,
+    public function __construct(\Swift_Mailer $mailer,
+                                $userEntityClass,
                                 $emailFromAddress,
                                 $emailFromName,
                                 $isDebug)
     {
         parent::__construct($userEntityClass);
+        $this->mailer = $mailer;
         $this->emailFromAddress = $emailFromAddress;
         $this->emailFromName = $emailFromName ?: $emailFromAddress;
         $this->isDebug = $isDebug;

@@ -11,11 +11,19 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class ACLController extends UserControllerBase
 {
+    /** @var AclManager */
+    protected $aclManager;
+    /** @var AssignableSecurityIdentityFilter */
+    protected $sidFilter;
     protected $aclClasses;
 
-    public function __construct($userEntityClass, array $aclClasses)
+    public function __construct(AclManager $aclManager,
+                                AssignableSecurityIdentityFilter $sidFilter,
+                                $userEntityClass, array $aclClasses)
     {
         parent::__construct($userEntityClass);
+        $this->aclManager = $aclManager;
+        $this->sidFilter = $sidFilter;
         $this->aclClasses = $aclClasses;
     }
 
@@ -48,9 +56,7 @@ class ACLController extends UserControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var AclManager $aclManager */
-            $aclManager = $this->get('fom.acl.manager');
-            $aclManager->setClassACEs($class, $form->get('acl')->getData());
+            $this->aclManager->setClassACEs($class, $form->get('acl')->getData());
 
             return $this->redirectToRoute('fom_user_security_index', array(
                 '_fragment' => 'tabAcl',
@@ -73,14 +79,9 @@ class ACLController extends UserControllerBase
      */
     public function overviewAction()
     {
-        /** @var AssignableSecurityIdentityFilter $filter */
-        $filter = $this->get('fom.acl_assignment_filter');
-        $users = $filter->getAssignableUsers();
-        $groups = $filter->getAssignableGroups();
-
         return $this->render('@FOMUser/ACL/groups-and-users.html.twig', array(
-            'groups' => $groups,
-            'users' => $users,
+            'groups' => $this->sidFilter->getAssignableGroups(),
+            'users' => $this->sidFilter->getAssignableUsers(),
         ));
     }
 }

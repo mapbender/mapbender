@@ -4,7 +4,6 @@ namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
@@ -26,7 +25,8 @@ class RegistrationController extends AbstractEmailProcessController
     protected $maxTokenAge;
     protected $groupTitles;
 
-    public function __construct(UserHelperService $userHelper,
+    public function __construct(\Swift_Mailer $mailer,
+                                UserHelperService $userHelper,
                                 $userEntityClass,
                                 $emailFromAddress,
                                 $emailFromName,
@@ -35,7 +35,7 @@ class RegistrationController extends AbstractEmailProcessController
                                 array $groupTitles,
                                 $isDebug)
     {
-        parent::__construct($userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
+        parent::__construct($mailer, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
         $this->userHelper = $userHelper;
         $this->enableRegistration = $enableRegistration;
         $this->groupTitles = $groupTitles;
@@ -88,14 +88,8 @@ class RegistrationController extends AbstractEmailProcessController
                 if ($group) {
                     $user->addGroup($group);
                 } else {
-                    $msg = sprintf('Self-registration group "%s" not found for user "%s"',
-                        $groupTitle,
-                        $user->getUsername());
-                    /** @var LoggerInterface $logger */
-                    $logger = $this->get('logger');
-                    $logger->error($msg);
+                    @trigger_error("WARNING: Self-registration group '{$groupTitle}' not found for user '{$user->getUsername()}'", E_USER_DEPRECATED);
                 }
-
             }
 
             $this->sendEmail($user);
@@ -188,8 +182,6 @@ class RegistrationController extends AbstractEmailProcessController
     protected function sendEmail($user)
     {
        $mailFrom = array($this->emailFromAddress => $this->emailFromName);
-       /** @var \Swift_Mailer $mailer */
-       $mailer = $this->get('mailer');
        $text = $this->renderView('FOMUserBundle:Registration:email-body.text.twig', array("user" => $user));
        $html = $this->renderView('FOMUserBundle:Registration:email-body.html.twig', array("user" => $user));
        $message = new \Swift_Message();
@@ -201,7 +193,7 @@ class RegistrationController extends AbstractEmailProcessController
            ->addPart($html, 'text/html')
        ;
 
-       $mailer->send($message);
+       $this->mailer->send($message);
     }
 
     /**

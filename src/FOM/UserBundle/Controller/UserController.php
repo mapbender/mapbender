@@ -14,8 +14,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User management controller
@@ -28,12 +27,15 @@ class UserController extends UserControllerBase
     protected $aclProvider;
     /** @var UserHelperService */
     protected $userHelper;
+    /** @var AclManager */
+    protected $aclManager;
 
     protected $profileEntityClass;
     protected $profileTemplate;
 
     public function __construct(MutableAclProviderInterface $aclProvider,
                                 UserHelperService $userHelper,
+                                AclManager $aclManager,
                                 $userEntityClass,
                                 $profileEntityClass,
                                 $profileTemplate)
@@ -41,6 +43,7 @@ class UserController extends UserControllerBase
         parent::__construct($userEntityClass);
         $this->aclProvider = $aclProvider;
         $this->userHelper = $userHelper;
+        $this->aclManager = $aclManager;
         $this->profileEntityClass = $profileEntityClass;
         $this->profileTemplate = $profileTemplate;
     }
@@ -106,17 +109,21 @@ class UserController extends UserControllerBase
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
             'group_permission' => $groupPermission,
         ));
+
         if ($ownerGranted) {
             $aclOptions = array();
             if ($user->getId()) {
                 $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
             } else {
-                $aclOptions['data'] = array(
-                    array(
-                        'sid' => UserSecurityIdentity::fromToken($this->getUserToken()),
-                        'mask' => MaskBuilder::MASK_OWNER,
-                    ),
-                );
+                $currentUser = $this->getUser();
+                if ($currentUser && ($currentUser instanceof UserInterface)) {
+                    $aclOptions['data'] = array(
+                        array(
+                            'sid' => UserSecurityIdentity::fromAccount($currentUser),
+                            'mask' => MaskBuilder::MASK_OWNER,
+                        ),
+                    );
+                }
             }
 
             $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
@@ -143,7 +150,7 @@ class UserController extends UserControllerBase
                         $em->flush();
                     }
                     $aces = $form->get('acl')->getData();
-                    $this->getAclManager()->setObjectACEs($user, $aces);
+                    $this->aclManager->setObjectACEs($user, $aces);
                 }
 
                 $em->flush();
@@ -242,25 +249,5 @@ class UserController extends UserControllerBase
             $em->persist($profile);
         }
         $em->persist($user);
-    }
-
-    /**
-     * @return TokenInterface|null
-     */
-    protected function getUserToken()
-    {
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this->get('security.token_storage');
-        return $tokenStorage->getToken();
-    }
-
-    /**
-     * @return AclManager
-     */
-    protected function getAclManager()
-    {
-        /** @var AclManager $service */
-        $service = $this->get('fom.acl.manager');
-        return $service;
     }
 }

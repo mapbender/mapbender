@@ -38,14 +38,15 @@ class PasswordController extends AbstractEmailProcessController
     protected $enableReset;
     protected $maxTokenAge;
 
-    public function __construct($userEntityClass,
+    public function __construct(\Swift_Mailer $mailer,
+                                $userEntityClass,
                                 $emailFromName,
                                 $emailFromAddress,
                                 $enableReset,
                                 $maxTokenAge,
                                 $isDebug)
     {
-        parent::__construct($userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        parent::__construct($mailer, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
         if (!$this->enableReset) {
@@ -187,8 +188,6 @@ class PasswordController extends AbstractEmailProcessController
 
         //send email
         $mailFrom = array($this->emailFromAddress => $this->emailFromName);
-        /** @var \Swift_Mailer $mailer */
-        $mailer = $this->get('mailer');
 
         $text = $this->renderView('@FOMUser/Password/email-body.text.twig', array("user" => $user));
         $html = $this->renderView('@FOMUser/Password/email-body.html.twig', array("user" => $user));
@@ -200,7 +199,7 @@ class PasswordController extends AbstractEmailProcessController
             ->setBody($text)
             ->addPart($html, 'text/html')
         ;
-        $mailer->send($message);
+        $this->mailer->send($message);
 
         $em = $this->getEntityManager();
         $em->flush();

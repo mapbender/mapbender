@@ -10,6 +10,7 @@
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
                 class="FOM\UserBundle\Controller\PasswordController">
+            <argument type="service" id="mailer" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
             <argument>%fom_user.mail_from_name%</argument>
@@ -24,6 +25,8 @@
         </service>
         <service id="FOM\UserBundle\Controller\ACLController"
                 class="FOM\UserBundle\Controller\ACLController">
+            <argument type="service" id="fom.acl.manager" />
+            <argument type="service" id="fom.acl_assignment_filter" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom.user.acl_classes%</argument>
         </service>
@@ -31,12 +34,14 @@
                 class="FOM\UserBundle\Controller\UserController">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="fom.user_helper.service" />
+            <argument type="service" id="fom.acl.manager" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\RegistrationController"
                 class="FOM\UserBundle\Controller\RegistrationController">
+            <argument type="service" id="mailer" />
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
