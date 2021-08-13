@@ -1,9 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Controller;
 
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -19,8 +21,16 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class WelcomeController extends ApplicationControllerBase
+class WelcomeController extends AbstractController
 {
+    /** @var ApplicationYAMLMapper */
+    protected $yamlRepository;
+
+    public function __construct(ApplicationYAMLMapper $yamlRepository)
+    {
+        $this->yamlRepository = $yamlRepository;
+    }
+
     /**
      * Render user application list.
      *
@@ -30,8 +40,8 @@ class WelcomeController extends ApplicationControllerBase
      */
     public function listAction(Request $request)
     {
-        $yamlApplications = $this->getYamlRepository()->getApplications();
-        $dbApplications = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Application')->findBy(array(), array(
+        $yamlApplications = $this->yamlRepository->getApplications();
+        $dbApplications = $this->getDoctrine()->getRepository(Application::class)->findBy(array(), array(
             'title' => 'ASC',
         ));
         /** @var Application[] $allApplications */
@@ -47,7 +57,7 @@ class WelcomeController extends ApplicationControllerBase
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
             'create_permission' => $this
-                ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
+                ->isGranted('CREATE', new ObjectIdentity('class', Application::class)),
         ));
     }
 }

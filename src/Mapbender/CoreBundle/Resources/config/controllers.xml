@@ -20,5 +20,9 @@
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>
         </service>
+        <service id="Mapbender\CoreBundle\Controller\WelcomeController"
+                 class="Mapbender\CoreBundle\Controller\WelcomeController">
+                <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
     </services>
 </container>
