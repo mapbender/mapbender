@@ -5,6 +5,7 @@
     <services>
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
                  class="Mapbender\CoreBundle\Controller\ApplicationController">
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
             <argument>%cachable.mapbender.application.config%</argument>

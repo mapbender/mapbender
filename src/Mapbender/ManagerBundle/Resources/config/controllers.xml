@@ -11,5 +11,11 @@
                  class="Mapbender\ManagerBundle\Controller\IndexController">
             <argument type="service" id="mapbender.twig.manager.menu" />
         </service>
+        <service id="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
+                 class="Mapbender\ManagerBundle\Controller\ApplicationExchangeController">
+            <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="mapbender.application_importer.service" />
+        </service>
     </services>
 </container>

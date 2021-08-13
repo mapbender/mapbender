@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

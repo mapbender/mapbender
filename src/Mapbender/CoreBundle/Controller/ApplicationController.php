@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
@@ -40,6 +41,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var ApplicationYAMLMapper */
+    protected $yamlRepository;
     protected $containerTimestamp;
     protected $fileCacheDirectory;
     protected $enableConfigCache;
@@ -48,11 +51,13 @@ class ApplicationController extends ApplicationControllerBase
     /** @var ElementInventoryService */
     protected $elementInventory;
 
-    public function __construct($containerTimestamp,
+    public function __construct(ApplicationYAMLMapper $yamlRepository,
+                                $containerTimestamp,
                                 $fileCacheDirectory,
                                 $enableConfigCache,
                                 $isDebug)
     {
+        $this->yamlRepository = $yamlRepository;
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->enableConfigCache = $enableConfigCache;
         $this->fileCacheDirectory = $fileCacheDirectory;
@@ -234,7 +239,14 @@ class ApplicationController extends ApplicationControllerBase
      */
     private function getApplicationEntity($slug)
     {
-        $application = $this->requireApplication($slug, true);
+        /** @var ApplicationEntity|null $application */
+        $application = $this->getDoctrine()->getRepository(ApplicationEntity::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        $application = $application ?: $this->yamlRepository->getApplication($slug);
+        if (!$application) {
+            throw new NotFoundHttpException();
+        }
         $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
     }

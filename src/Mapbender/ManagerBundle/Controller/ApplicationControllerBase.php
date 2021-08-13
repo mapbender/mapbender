@@ -7,7 +7,6 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\AclManager;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -51,25 +50,6 @@ abstract class ApplicationControllerBase extends Controller
     }
 
     /**
-     * @param string $slug
-     * @param bool $includeYaml
-     * @return Application
-     */
-    protected function requireApplication($slug, $includeYaml = false)
-    {
-        $application = $this->getDbApplicationRepository()->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if (!$application && $includeYaml) {
-            $application = $this->getYamlRepository()->getApplication($slug);
-        }
-        if (!$application) {
-            throw $this->createNotFoundException("No such application");
-        }
-        return $application;
-    }
-
-    /**
      * @param string $id
      * @param Application|null $application
      * @return Layerset
@@ -110,32 +90,12 @@ abstract class ApplicationControllerBase extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return string
-     */
-    protected function getUploadsBaseUrl(Request $request)
-    {
-        $ulm = $this->getUploadsManager();
-        return $this->getBaseUrl($request) . '/' . $ulm->getWebRelativeBasePath(true);
-    }
-
-    /**
      * @return TranslatorInterface
      */
     protected function getTranslator()
     {
         /** @var TranslatorInterface $service */
         $service = $this->get('translator');
-        return $service;
-    }
-
-    /**
-     * @return ApplicationYAMLMapper
-     */
-    protected function getYamlRepository()
-    {
-        /** @var ApplicationYAMLMapper $service */
-        $service = $this->get('mapbender.application.yaml_entity_repository');
         return $service;
     }
 
@@ -153,5 +113,21 @@ abstract class ApplicationControllerBase extends Controller
     protected function getDbApplicationRepository()
     {
         return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\Application');
+    }
+
+    /**
+     * @param string $slug
+     * @return Application
+     */
+    protected function requireDbApplication($slug)
+    {
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$application) {
+            throw $this->createNotFoundException("No such application");
+        }
+        return $application;
     }
 }

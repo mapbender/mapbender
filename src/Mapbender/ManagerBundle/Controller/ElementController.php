@@ -54,7 +54,7 @@ class ElementController extends ApplicationControllerBase
      */
     public function selectAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $template    = $application->getTemplate();
         $region      = $request->get('region');
 
@@ -108,7 +108,7 @@ class ElementController extends ApplicationControllerBase
      */
     public function newAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $class = $request->query->get('class');
         $region = $request->query->get('region');
 
@@ -204,7 +204,7 @@ class ElementController extends ApplicationControllerBase
         $entityManager = $this->getEntityManager();
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
             'label' => false,
         ));
