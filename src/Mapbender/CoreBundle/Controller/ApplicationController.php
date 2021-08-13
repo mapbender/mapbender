@@ -19,7 +19,6 @@ use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,26 +51,18 @@ class ApplicationController extends ApplicationControllerBase
     protected $elementInventory;
 
     public function __construct(ApplicationYAMLMapper $yamlRepository,
+                                ElementInventoryService $elementInventory,
                                 $containerTimestamp,
                                 $fileCacheDirectory,
                                 $enableConfigCache,
                                 $isDebug)
     {
         $this->yamlRepository = $yamlRepository;
+        $this->elementInventory = $elementInventory;
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->enableConfigCache = $enableConfigCache;
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
-    }
-
-    /**
-     * @param ContainerInterface|null $container
-     * @todo Sf4: use DI for service / parameter access in containers
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        parent::setContainer($container);
-        $this->elementInventory = $container->get('mapbender.element_inventory.service');
     }
 
     /**

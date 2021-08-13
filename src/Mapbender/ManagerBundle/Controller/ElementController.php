@@ -9,7 +9,6 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -31,17 +30,20 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ElementController extends ApplicationControllerBase
 {
+    /** @var ElementInventoryService */
+    protected $inventory;
     /** @var ElementEntityFactory */
-    protected $elementEntityFactory;
+    protected $factory;
+    /** @var ElementFormFactory */
+    protected $elementFormFactory;
 
-    /**
-     * @param ContainerInterface $container
-     * @todo Sf4: use controller services with DI for service / parameter access
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function __construct(ElementInventoryService $inventory,
+                                ElementEntityFactory $factory,
+                                ElementFormFactory $elementFormFactory)
     {
-        parent::setContainer($container);
-        $this->elementEntityFactory = $container->get('mapbender.element_entity_factory');
+        $this->inventory = $inventory;
+        $this->factory = $factory;
+        $this->elementFormFactory = $elementFormFactory;
     }
 
     /**
@@ -58,9 +60,7 @@ class ElementController extends ApplicationControllerBase
         $template    = $application->getTemplate();
         $region      = $request->get('region');
 
-        /** @var ElementInventoryService $inventoryService */
-        $inventoryService = $this->container->get('mapbender.element_inventory.service');
-        $classNames = $inventoryService->getActiveInventory();
+        $classNames = $this->inventory->getActiveInventory();
 
         $trans      = $this->container->get('translator');
         $elements   = array();
@@ -112,9 +112,8 @@ class ElementController extends ApplicationControllerBase
         $class = $request->query->get('class');
         $region = $request->query->get('region');
 
-        $element = $this->elementEntityFactory->newEntity($class, $region, $application);
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
+        $element = $this->factory->newEntity($class, $region, $application);
+        $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -158,8 +157,7 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
+        $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -389,22 +387,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @return ElementFormFactory
-     */
-    protected function getFormFactory()
-    {
-        /** @var ElementFormFactory $service */
-        $service = $this->get('mapbender.manager.element_form_factory.service');
-        return $service;
-    }
-
-    /**
      * @return EntityRepository
      */
     protected function getRepository()
     {
         /** @var EntityRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Element');
+        $repository = $this->getDoctrine()->getRepository(Element::class);
         return $repository;
     }
 }

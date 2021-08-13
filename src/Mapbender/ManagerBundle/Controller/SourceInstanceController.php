@@ -9,7 +9,6 @@ use FOM\ManagerBundle\Configuration\Route;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Entity\Repository\LayersetRepository;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Symfony\Component\HttpFoundation\Request;
@@ -125,15 +124,5 @@ class SourceInstanceController extends ApplicationControllerBase
             $viewData['layerset_groups'][] = $appViewData;
         }
         return $viewData;
-    }
-
-    /**
-     * @return LayersetRepository
-     */
-    protected function getLayersetRepository()
-    {
-        /** @var LayersetRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
-        return $repository;
     }
 }
