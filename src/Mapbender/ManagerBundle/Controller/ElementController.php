@@ -62,12 +62,6 @@ class ElementController extends ApplicationControllerBase
         $inventoryService = $this->container->get('mapbender.element_inventory.service');
         $classNames = $inventoryService->getActiveInventory();
 
-        // Dirty hack for deprecated Responsive template
-        if (method_exists($template, 'getElementWhitelist')) {
-            $regionWhitelist = $template::getElementWhitelist();
-            $classNames = array_intersect(array_values($regionWhitelist[$region]), $classNames);
-        }
-
         $trans      = $this->container->get('translator');
         $elements   = array();
 

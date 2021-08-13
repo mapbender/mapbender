@@ -16,26 +16,10 @@ use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
 {
-    /**
-     * Check view access permissions for given application.
-     *
-     * Unpublished applications are viewable only by users who can also edit them.
-     *
-     * @param Application $application
-     * @throws AccessDeniedException
-     * @deprecated use ->isGranted / ->denyAccessUnlessGranted('VIEW', $application) directly
-     *       Custom grant logic now resides in voters in namespace Mapbender\CoreBundle\Security\Voters
-     */
-    protected function checkApplicationAccess(Application $application)
-    {
-        $this->denyAccessUnlessGranted('VIEW', $application);
-    }
-
     /**
      * @return AclManager
      */
