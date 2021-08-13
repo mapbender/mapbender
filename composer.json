@@ -5,7 +5,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=5.4.30",
+        "php": ">=5.5",
         "ext-dom": "*",
         "ext-gd": "*",
         "symfony/symfony": "^3 || ^4",

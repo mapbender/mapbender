@@ -2,7 +2,9 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use FOM\ManagerBundle\Configuration\Route;
@@ -19,14 +21,13 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  *
  * @author Christian Wygoda
  */
-class GroupController extends UserControllerBase
+class GroupController extends AbstractController
 {
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
 
-    public function __construct(MutableAclProviderInterface $aclProvider, $userEntityClass)
+    public function __construct(MutableAclProviderInterface $aclProvider)
     {
-        parent::__construct($userEntityClass);
         $this->aclProvider = $aclProvider;
     }
 
@@ -53,7 +54,7 @@ class GroupController extends UserControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($group);
 
             // See method documentation for Doctrine weirdness
@@ -94,13 +95,15 @@ class GroupController extends UserControllerBase
      */
     public function editAction(Request $request, $id)
     {
-        $em = $this->getEntityManager();
         /** @var Group|null $group */
-        $group = $em->getRepository('FOMUserBundle:Group')->find($id);
+        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
         if (!$group) {
             throw new NotFoundHttpException('The group does not exist');
         }
         $this->denyAccessUnlessGranted('EDIT', $group);
+
+        /** @var EntityManagerInterface $em $em */
+        $em = $this->getDoctrine()->getManagerForClass(Group::class);
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
 
@@ -139,15 +142,15 @@ class GroupController extends UserControllerBase
     public function deleteAction($id)
     {
         /** @var Group|null $group */
-        $group = $this->getDoctrine()->getRepository('FOMUserBundle:Group')
-            ->find($id);
+        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
 
         if($group === null) {
             throw new NotFoundHttpException('The group does not exist');
         }
         // ACL access check
         $this->denyAccessUnlessGranted('DELETE', $group);
-        $em = $this->getEntityManager();
+        /** @var EntityManagerInterface $em $em */
+        $em = $this->getDoctrine()->getManagerForClass(Group::class);
         $em->beginTransaction();
 
         try {

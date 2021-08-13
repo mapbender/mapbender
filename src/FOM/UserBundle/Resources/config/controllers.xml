@@ -7,7 +7,6 @@
         <service id="FOM\UserBundle\Controller\GroupController"
                 class="FOM\UserBundle\Controller\GroupController">
             <argument type="service" id="security.acl.provider" />
-            <argument>%fom.user_entity%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
                 class="FOM\UserBundle\Controller\PasswordController">
