@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Doctrine\Common\Collections\Criteria;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
@@ -12,7 +11,6 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
@@ -119,41 +117,6 @@ class ApplicationController extends ApplicationControllerBase
             return new BinaryFileResponse($cacheFile, 200, $headers);
         } else {
             return new Response($content, 200, $headers);
-        }
-    }
-
-    /**
-     * Element action controller.
-     *
-     * Passes the request to
-     * the element's handleHttpRequest.
-     * @Route("/application/{slug}/element/{id}/{action}",
-     *     defaults={ "id" = null, "action" = null },
-     *     requirements={ "action" = ".+" })
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @param string $action
-     * @return Response
-     */
-    public function elementAction(Request $request, $slug, $id, $action)
-    {
-        $application = $this->getApplicationEntity($slug);
-        $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
-        if (!$element) {
-            throw new NotFoundHttpException();
-        }
-        /** @todo Sf4: use DI for service access */
-        /** @var ElementFilter $filter */
-        $filter = $this->get('mapbender.element_filter');
-        if (!$filter->prepareFrontend(array($element), true, false)) {
-            throw new NotFoundHttpException();
-        }
-        $handler = $this->elementInventory->getHttpHandler($element);
-        if ($handler) {
-            return $handler->handleRequest($element, $request);
-        } else {
-            throw new NotFoundHttpException();
         }
     }
 

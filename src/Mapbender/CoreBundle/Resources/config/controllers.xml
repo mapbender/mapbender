@@ -31,5 +31,10 @@
             <argument type="service" id="mapbender.source.instancetunnel.service" />
             <argument>%kernel.debug%</argument>
         </service>
+        <service id="Mapbender\CoreBundle\Controller\ElementController"
+                 class="Mapbender\CoreBundle\Controller\ElementController">
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="mapbender.element_filter" />
+        </service>
     </services>
 </container>
