@@ -6,6 +6,8 @@ use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -73,7 +75,10 @@ class RepositoryController extends ApplicationControllerBase
                 }
             }
         }
-        $sharedInstances = $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+        /** @var SourceInstanceRepository $instanceRepository */
+        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
+
+        $sharedInstances = $instanceRepository->findReusableInstances(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));
@@ -407,8 +412,8 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceWeightAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $instanceRepository = $this->getSourceInstanceRepository();
-        $instance = $instanceRepository->find($instanceId);
+        /** @var SourceInstance|null $instance */
+        $instance = $this->getDoctrine()->getRepository(SourceInstance::class)->find($instanceId);
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
@@ -575,5 +580,15 @@ class RepositoryController extends ApplicationControllerBase
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);
+    }
+
+    /**
+     * @return ApplicationRepository
+     */
+    protected function getDbApplicationRepository()
+    {
+        /** @var ApplicationRepository $repository */
+        $repository = $this->getDoctrine()->getRepository(Application::class);
+        return $repository;
     }
 }

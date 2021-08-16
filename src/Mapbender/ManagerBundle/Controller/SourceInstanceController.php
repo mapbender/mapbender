@@ -7,7 +7,9 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
@@ -49,7 +51,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('DELETE', $oid);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $em = $this->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->remove($instance);
             $em->flush();
             if ($returnUrl = $request->query->get('return')) {
@@ -74,7 +76,7 @@ class SourceInstanceController extends ApplicationControllerBase
     {
         // @todo: only act on post
         // @todo: push translate method from ApplicationController into base class
-        $em = $this->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $instance = $directory->createInstance($source);
@@ -94,7 +96,6 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     protected function getApplicationRelationViewData(SourceInstance $instance)
     {
-        $applicationRepository = $this->getDbApplicationRepository();
         $applicationOrder = array(
             'title' => Criteria::ASC,
             'slug' => Criteria::ASC,
@@ -102,6 +103,8 @@ class SourceInstanceController extends ApplicationControllerBase
         $viewData = array(
             'layerset_groups' => array(),
         );
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->getDoctrine()->getRepository(Application::class);
         $relatedApplications = $applicationRepository->findWithSourceInstance($instance, null, $applicationOrder);
         foreach ($relatedApplications as $application) {
             /** @var Layerset[] $relatedLayersets */

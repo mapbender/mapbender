@@ -8,8 +8,6 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
-use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class ApplicationControllerBase extends Controller
@@ -36,29 +34,13 @@ abstract class ApplicationControllerBase extends Controller
             /** @var Layerset|false $layerset */
             $layerset = $application->getLayersets()->matching($layersetCriteria)->first();
         } else {
-            $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Layerset');
+            $repository = $this->getDoctrine()->getRepository(Layerset::class);
             $layerset = $repository->find($id);
         }
         if (!$layerset) {
             throw $this->createNotFoundException("No such layerset");
         }
         return $layerset;
-    }
-
-    /**
-     * @return SourceInstanceRepository
-     */
-    protected function getSourceInstanceRepository()
-    {
-        return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\SourceInstance');
-    }
-
-    /**
-     * @return ApplicationRepository
-     */
-    protected function getDbApplicationRepository()
-    {
-        return $this->getDoctrine()->getRepository('\Mapbender\CoreBundle\Entity\Application');
     }
 
     /**

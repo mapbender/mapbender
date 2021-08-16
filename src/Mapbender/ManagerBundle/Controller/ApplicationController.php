@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -377,16 +378,18 @@ class ApplicationController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('VIEW', $sourceOid);
 
         $layerset = $this->requireLayerset($layersetId, $application);
-        $sources = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
+        $sources = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));
+        /** @var SourceInstanceRepository $instanceRepository */
+        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
 
         return $this->render('@MapbenderManager/Application/list-source.html.twig', array(
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $sources,
-            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+            'reusable_instances' => $instanceRepository->findReusableInstances(array(), array(
                 'title' => 'ASC',
                 'id' => 'ASC',
             )),
