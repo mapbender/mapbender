@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ExportJob;
-use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -30,6 +29,7 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -42,10 +42,14 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
     protected $enableResponsiveElements;
 
-    public function __construct($enableResponsiveElements)
+    public function __construct(TranslatorInterface $translator,
+                                $enableResponsiveElements)
     {
+        $this->translator = $translator;
         $this->enableResponsiveElements = $enableResponsiveElements;
     }
 
@@ -767,17 +771,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function translate($key)
     {
-        return $this->getTranslator()->trans($key);
-    }
-
-    /**
-     * @return ImportHandler
-     */
-    protected function getApplicationImporter()
-    {
-        /** @var ImportHandler $service */
-        $service = $this->get('mapbender.application_importer.service');
-        return $service;
+        return $this->translator->trans($key);
     }
 
     /**

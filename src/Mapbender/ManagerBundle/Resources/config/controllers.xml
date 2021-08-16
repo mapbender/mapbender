@@ -5,7 +5,8 @@
     <services>
         <service id="Mapbender\ManagerBundle\Controller\ApplicationController"
                  class="Mapbender\ManagerBundle\Controller\ApplicationController">
-                <argument>%mapbender.responsive.elements%</argument>
+            <argument type="service" id="translator" />
+            <argument>%mapbender.responsive.elements%</argument>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\IndexController"
                  class="Mapbender\ManagerBundle\Controller\IndexController">
