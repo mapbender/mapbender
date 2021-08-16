@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Component\ExportHandler;
-use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -22,7 +21,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -30,7 +28,6 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Mapbender application management
@@ -142,54 +139,6 @@ class ApplicationController extends ApplicationControllerBase
         ));
     }
 
-
-    /**
-     * Returns serialized application.
-     *
-     * @ManagerRoute("/application/export", methods={"GET", "POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function exportAction(Request $request)
-    {
-        $expHandler = $this->getApplicationExporter();
-        $job = new ExportJob();
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ExportJobType', $job, array(
-            'application' => $this->getExportableApplications(),
-            'attr' => array(
-                'target' => '_blank',
-            ),
-        ));
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $expHandler->exportApplication($job->getApplication());
-            switch ($job->getFormat()) {
-                case ExportJob::FORMAT_JSON:
-                    return new JsonResponse($data, 200, array(
-                        'Content-disposition' => 'attachment; filename=export.json',
-                    ));
-                    break;
-                case ExportJob::FORMAT_YAML:
-                    $content = Yaml::dump($data, 20);
-                    return new Response($content, 200, array(
-                        'Content-Type'        => 'text/plain',
-                        'Content-disposition' => 'attachment; filename=export.yaml',
-                    ));
-                    break;
-                default:
-                    throw new BadRequestHttpException("mb.manager.controller.application.method_not_supported");
-            }
-
-        } else {
-            return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
-                'form' => $form->createView(),
-                'submit_text' => 'mb.manager.admin.application.export.btn.export',
-                'title' => $this->getTranslator()->trans('mb.manager.managerbundle.export_application'),
-                'return_path' => 'mapbender_manager_application_index',
-            ));
-        }
-    }
 
     /**
      * Edit application
@@ -782,22 +731,6 @@ class ApplicationController extends ApplicationControllerBase
         /** @var ExportHandler $service */
         $service = $this->get('mapbender.application_exporter.service');
         return $service;
-    }
-
-    /**
-     * @return Application[]
-     */
-    protected function getExportableApplications()
-    {
-        $all = $this->getDoctrine()->getRepository(Application::class)->findAll();
-
-        $allowed = array();
-        foreach ($all as $application) {
-            if ($this->isGranted('EDIT', $application)) {
-                $allowed[] = $application;
-            }
-        }
-        return $allowed;
     }
 
     /**
