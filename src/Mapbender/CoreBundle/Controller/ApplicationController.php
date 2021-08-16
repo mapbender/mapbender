@@ -2,8 +2,6 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
@@ -11,8 +9,6 @@ use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
-use Mapbender\ManagerBundle\Template\LoginTemplate;
-use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -34,7 +30,6 @@ class ApplicationController extends ApplicationControllerBase
 {
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
-    protected $containerTimestamp;
     protected $fileCacheDirectory;
     protected $isDebug;
 
@@ -43,66 +38,13 @@ class ApplicationController extends ApplicationControllerBase
 
     public function __construct(ApplicationYAMLMapper $yamlRepository,
                                 ElementInventoryService $elementInventory,
-                                $containerTimestamp,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
         $this->yamlRepository = $yamlRepository;
         $this->elementInventory = $elementInventory;
-        $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
-    }
-
-    /**
-     * Asset controller.
-     *
-     * Dumps the assets for the given application and type. These are up to
-     * date and this controller will be used during development mode.
-     *
-     * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
-     * @param Request $request
-     * @param string $slug of Application
-     * @param string $type one of 'css', 'js' or 'trans'
-     * @return Response
-     */
-    public function assetsAction(Request $request, $slug, $type)
-    {
-        $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
-        if ($source = $this->getManagerAssetDependencies($slug)) {
-            // @todo: TBD more reasonable criteria of backend / login asset cachability
-            $appModificationTs =$this->containerTimestamp;
-        } else {
-            $source = $this->getApplicationEntity($slug);
-            $appModificationTs = $source->getUpdated()->getTimestamp();
-        }
-        $headers = array(
-            'Content-Type' => $this->getMimeType($type),
-            'Cache-Control' => 'max-age=0, must-revalidate, private',
-        );
-
-        $useCached = (!$this->isDebug) && file_exists($cacheFile);
-        if ($useCached && $appModificationTs < filectime($cacheFile)) {
-            $response = new BinaryFileResponse($cacheFile, 200, $headers);
-            // allow file timestamp to be read again correctly for 'Last-Modified' header
-            clearstatcache($cacheFile, true);
-            $response->isNotModified($request);
-            return $response;
-        }
-        /** @var ApplicationAssetService $assetService */
-        $assetService = $this->container->get('mapbender.application_asset.service');
-        if ($source instanceof ApplicationEntity) {
-            $content = $assetService->getAssetContent($source, $type);
-        } else {
-            $content = $assetService->getBackendAssetContent($source, $type);
-        }
-
-        if (!$this->isDebug) {
-            file_put_contents($cacheFile, $content);
-            return new BinaryFileResponse($cacheFile, 200, $headers);
-        } else {
-            return new Response($content, 200, $headers);
-        }
     }
 
     /**
@@ -122,16 +64,7 @@ class ApplicationController extends ApplicationControllerBase
         );
 
         if (!$this->isDebug) {
-            $user = $this->getUser();
-            $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
-            // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-            if ($isAnon) {
-                $cacheFile = $this->getCachedAssetPath($request, $slug . '-anon', "html");
-            } else {
-                $request->getSession()->start();
-                $sessionId = $request->getSession()->getId();
-                $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . $sessionId, "html");
-            }
+            $cacheFile = $this->getCachePath($request, $slug);
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
@@ -187,22 +120,6 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param string $slug
-     * @return TemplateAssetDependencyInterface|null
-     */
-    private function getManagerAssetDependencies($slug)
-    {
-        switch ($slug) {
-            case 'manager':
-                return new ManagerTemplate();
-            case 'mb3-login':
-                return new LoginTemplate();
-            default:
-                return null;
-        }
-    }
-
-    /**
      * Metadata action.
      *
      * @Route("/application/metadata/{instance}/{layerId}")
@@ -229,58 +146,27 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * @param Request $request
      * @param string $slug
-     * @param string $type
      * @return string
      */
-    protected function getCachedAssetPath(Request $request, $slug, $type)
+    protected function getCachePath(Request $request, $slug)
     {
-        $localeDependent = array(
-            'html',
-            'trans',
-        );
-        if (in_array($type, $localeDependent)) {
-            $extension = $this->getTranslator()->getLocale() . ".{$type}";
+        // Output depends on locale and base url => bake into cache key
+        // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
+        $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
+        $locale = $this->getTranslator()->getLocale();
+        // Output also depends on user (granted elements may vary)
+        $user = $this->getUser();
+        $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
+        // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
+        if ($isAnon) {
+            $userMarker = 'anon';
         } else {
-            $extension = $type;
+            $request->getSession()->start();
+            $userMarker = $request->getSession()->getId();
         }
-        $baseUrlDependent = array(
-            'html',
-            'css',
-        );
-        if (in_array($type, $baseUrlDependent)) {
-            // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
-            $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-            $extension = "{$baseUrlHash}.{$extension}";
-        }
-        return $this->fileCacheDirectory . "/{$slug}.min.{$extension}";
-    }
 
-    /**
-     * Get mime type
-     *
-     * @param string $type
-     * @return string
-     */
-    protected function getMimeType($type)
-    {
-        switch ($type) {
-            case 'js':
-            case 'trans':
-                return 'application/javascript';
-            case 'css':
-                return 'text/css';
-            default:
-                // Uh-oh
-                return null;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isProduction()
-    {
-        return !$this->isDebug;
+        $name = "{$slug}-{$userMarker}.min.{$baseUrlHash}.{$locale}.html";
+        return $this->fileCacheDirectory . "/{$name}";
     }
 
     /**
