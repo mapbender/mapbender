@@ -35,11 +35,10 @@ class SourceInstanceController extends ApplicationControllerBase
 
     /**
      * @Route("/instance/{instance}", methods={"GET"})
-     * @param Request $request
      * @param SourceInstance $instance
      * @return Response
      */
-    public function viewAction(Request $request, SourceInstance $instance)
+    public function viewAction(SourceInstance $instance)
     {
         $viewData = $this->getApplicationRelationViewData($instance);
         return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
@@ -68,7 +67,7 @@ class SourceInstanceController extends ApplicationControllerBase
                 ));
             }
         } else {
-            return $this->viewAction($request, $instance);
+            return $this->viewAction($instance);
         }
     }
 

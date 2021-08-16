@@ -67,7 +67,6 @@ class ElementController extends ApplicationControllerBase
     public function selectAction(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
-        $template    = $application->getTemplate();
         $region      = $request->get('region');
 
         $classNames = $this->inventory->getActiveInventory();
