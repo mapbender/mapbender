@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
