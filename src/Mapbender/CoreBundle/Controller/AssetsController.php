@@ -7,7 +7,7 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -73,7 +73,7 @@ class AssetsController extends YamlApplicationAwareController
             $response->isNotModified($request);
             return $response;
         }
-        if ($source instanceof ApplicationEntity) {
+        if ($source instanceof Application) {
             $content = $this->assetService->getAssetContent($source, $type);
         } else {
             $content = $this->assetService->getBackendAssetContent($source, $type);

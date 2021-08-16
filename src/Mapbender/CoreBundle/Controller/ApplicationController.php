@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Component\UploadsManager;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -90,10 +90,10 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param ApplicationEntity $application
+     * @param Application $application
      * @return string
      */
-    protected function renderApplication(ApplicationEntity $application)
+    protected function renderApplication(Application $application)
     {
         /** @var string|Template $templateCls */
         $templateCls = $application->getTemplate();
@@ -110,14 +110,14 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * @param string $slug
-     * @return ApplicationEntity
+     * @return Application
      * @throws NotFoundHttpException
      * @throws AccessDeniedException
      */
     private function getApplicationEntity($slug)
     {
-        /** @var ApplicationEntity|null $application */
-        $application = $this->getDoctrine()->getRepository(ApplicationEntity::class)->findOneBy(array(
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         $application = $application ?: $this->yamlRepository->getApplication($slug);
@@ -179,10 +179,10 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param ApplicationEntity $application
+     * @param Application $application
      * @return string|null
      */
-    protected function getPublicUploadsBaseUrl(ApplicationEntity $application)
+    protected function getPublicUploadsBaseUrl(Application $application)
     {
         $slug = $application->getSlug();
         try {
