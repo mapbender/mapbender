@@ -408,13 +408,12 @@ class WmsSourceService extends SourceService
      */
     public function useTunnel(SourceInstance $sourceInstance)
     {
-        if ($sourceInstance->getLayerset()) {
-            // @todo: reusable source instances: use a proper detection method for wmsloader; this logic is conflicting with Instances that are no longer owned by a single Layerset
+        if ($sourceInstance->getId()) {
             /** @var WmsInstance $sourceInstance */
             $vsHandler = new VendorSpecificHandler();
             return (!!$sourceInstance->getSource()->getUsername()) || $vsHandler->hasHiddenParams($sourceInstance);
         } else {
-            // no layerset, dynamically added (~WmsLoader)
+            // dynamically added (~WmsLoader)
             return false;
         }
     }
@@ -428,8 +427,7 @@ class WmsSourceService extends SourceService
         if ($this->useTunnel($sourceInstance)) {
             return false;
         } else {
-            if ($sourceInstance->getSource()->getUsername() && !$sourceInstance->getLayerset()) {
-                // @todo: reusable source instances: use a proper detection method for wmsloader; this logic is conflicting with Instances that are no longer owned by a single Layerset
+            if (!$sourceInstance->getId() && ($sourceInstance->getSource()->getUsername() || \preg_match('#//[^/]+@#', $sourceInstance->getSource()->getOriginUrl()))) {
                 // WmsLoader special: proxify url with embedded credentials to bypass browser
                 // filtering of basic auth in img tags.
                 // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
