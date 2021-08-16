@@ -32,6 +32,7 @@
         </service>
         <service id="Mapbender\ManagerBundle\Controller\RepositoryController"
                  class="Mapbender\ManagerBundle\Controller\RepositoryController">
+            <argument type="service" id="security.acl.provider" />
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>

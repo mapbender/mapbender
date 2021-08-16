@@ -36,14 +36,18 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class RepositoryController extends ApplicationControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
     /** @var TranslatorInterface */
     protected $translator;
     /** @var TypeDirectoryService */
     protected $typeDirectory;
 
-    public function __construct(TranslatorInterface $translator,
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                TranslatorInterface $translator,
                                 TypeDirectoryService $typeDirectory)
     {
+        $this->aclProvider = $aclProvider;
         $this->translator = $translator;
         $this->typeDirectory = $typeDirectory;
     }
@@ -214,10 +218,8 @@ class RepositoryController extends ApplicationControllerBase
         }
         // capture ACL and entity updates in a single transaction
         $em->beginTransaction();
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider = $this->get('security.acl.provider');
         $oid         = ObjectIdentity::fromDomainObject($source);
-        $aclProvider->deleteAcl($oid);
+        $this->aclProvider->deleteAcl($oid);
 
         $dtNow = new \DateTime('now');
         foreach ($affectedApplications as $affectedApplication) {
@@ -563,15 +565,13 @@ class RepositoryController extends ApplicationControllerBase
      */
     protected function initializeAccessControl($entity)
     {
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider    = $this->get('security.acl.provider');
         $objectIdentity = ObjectIdentity::fromDomainObject($entity);
-        $acl            = $aclProvider->createAcl($objectIdentity);
+        $acl = $this->aclProvider->createAcl($objectIdentity);
 
         $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-        $aclProvider->updateAcl($acl);
+        $this->aclProvider->updateAcl($acl);
     }
 
     /**
