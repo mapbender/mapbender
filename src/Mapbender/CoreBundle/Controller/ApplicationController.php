@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -314,15 +313,14 @@ class ApplicationController extends ApplicationControllerBase
      * Get SourceInstances via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("/application/{slug}/instance/{instanceId}/tunnel")
+     * @Route("/instance/{instanceId}/tunnel")
      * @param Request $request
-     * @param string $slug
      * @param string $instanceId
      * @return Response
      */
-    public function instanceTunnelAction(Request $request, $slug, $instanceId)
+    public function instanceTunnelAction(Request $request, $instanceId)
     {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
+        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
@@ -343,16 +341,15 @@ class ApplicationController extends ApplicationControllerBase
      * Get a layer's legend image via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("/application/{slug}/instance/{instanceId}/tunnel/legend/{layerId}")
+     * @Route("instance/{instanceId}/tunnel/legend/{layerId}")
      * @param Request $request
-     * @param string $slug
      * @param string $instanceId
      * @param string $layerId
      * @return Response
      */
-    public function instanceTunnelLegendAction(Request $request, $slug, $instanceId, $layerId)
+    public function instanceTunnelLegendAction(Request $request,$instanceId, $layerId)
     {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
+        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $url = $instanceTunnel->getService()->getInternalUrl($request, false);
         if (!$url) {
             throw $this->createNotFoundException();
@@ -366,10 +363,9 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * @param string $instanceId
-     * @param string $applicationSlug
      * @return \Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint
      */
-    protected function getGrantedTunnelEndpoint($instanceId, $applicationSlug)
+    protected function getGrantedTunnelEndpoint($instanceId)
     {
         /** @var SourceInstance|null $instance */
         $instance = $this->getDoctrine()
@@ -377,13 +373,10 @@ class ApplicationController extends ApplicationControllerBase
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
-        // Deny forged cross-requests to an instance that doesn't belong to this application
-        $application = $instance->getLayerset()->getApplication();
-        if ($application->getSlug() !== $applicationSlug) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $application);
+        if (($layerset = $instance->getLayerset()) && $application = $layerset->getApplication()) {
+            if (!$this->isGranted('VIEW', $application)) {
+                $this->denyAccessUnlessGranted('VIEW', $application);
+            }
         }
         /** @var InstanceTunnelService $tunnelService */
         $tunnelService = $this->get('mapbender.source.instancetunnel.service');

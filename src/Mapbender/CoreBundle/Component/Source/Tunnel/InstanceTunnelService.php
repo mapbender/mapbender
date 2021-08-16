@@ -111,7 +111,6 @@ class InstanceTunnelService
         $vsHandler = new VendorSpecificHandler();
         $vsParams = $vsHandler->getPublicParams($endpoint->getSourceInstance(), $this->tokenStorage->getToken());
         $params = array_replace($vsParams, array(
-            'slug' => $endpoint->getApplicationEntity()->getSlug(),
             'instanceId' => $endpoint->getSourceInstance()->getId(),
         ));
 
@@ -152,10 +151,7 @@ class InstanceTunnelService
     public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
     {
         $sourceInstance = $instanceLayer->getSourceInstance();
-        // @todo reusable source instances: work around "missing" layerset => instance ownership
-        $application = $sourceInstance->getLayerset()->getApplication();
         return $this->router->generate($this->legendTunnelRouteName, array(
-            'slug' => $application->getSlug(),
             'instanceId' => $sourceInstance->getId(),
             'layerId' => $instanceLayer->getId(),
         ));
