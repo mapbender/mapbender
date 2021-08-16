@@ -571,6 +571,8 @@ class ApplicationController extends ApplicationControllerBase
     public function updateregionpropertiesAction(Request $request, Application $application, $regionName)
     {
         $this->denyAccessUnlessGranted('EDIT', $application);
+        // Provided by AbstractController
+        /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
         /** @var FormFactoryInterface $factory */
         $factory = $this->get('form.factory');
         $formBuilder = $factory->createNamedBuilder('application', 'Symfony\Component\Form\Extension\Core\Type\FormType', $application);
