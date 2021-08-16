@@ -6,7 +6,6 @@ use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
@@ -17,7 +16,6 @@ use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -38,7 +36,6 @@ class ApplicationController extends ApplicationControllerBase
     protected $yamlRepository;
     protected $containerTimestamp;
     protected $fileCacheDirectory;
-    protected $enableConfigCache;
     protected $isDebug;
 
     /** @var ElementInventoryService */
@@ -48,25 +45,13 @@ class ApplicationController extends ApplicationControllerBase
                                 ElementInventoryService $elementInventory,
                                 $containerTimestamp,
                                 $fileCacheDirectory,
-                                $enableConfigCache,
                                 $isDebug)
     {
         $this->yamlRepository = $yamlRepository;
         $this->elementInventory = $elementInventory;
         $this->containerTimestamp = intval(ceil($containerTimestamp));
-        $this->enableConfigCache = $enableConfigCache;
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
-    }
-
-    /**
-     * @return ConfigService
-     */
-    private function getConfigService()
-    {
-        /** @var ConfigService $presenter */
-        $presenter = $this->get('mapbender.presenter.application.config.service');
-        return $presenter;
     }
 
     /**
@@ -215,34 +200,6 @@ class ApplicationController extends ApplicationControllerBase
             default:
                 return null;
         }
-    }
-
-    /**
-     *
-     * @Route("/application/{slug}/config")
-     * @param string $slug
-     * @return Response
-     */
-    public function configurationAction($slug)
-    {
-        $applicationEntity = $this->getApplicationEntity($slug);
-        $configService = $this->getConfigService();
-        $cacheService = $configService->getCacheService();
-        $cacheKeyPath = array('config.json');
-
-        if ($this->enableConfigCache) {
-            $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
-        } else {
-            $response = false;
-        }
-        if (!$this->enableConfigCache || !$response) {
-            $freshConfig = $configService->getConfiguration($applicationEntity);
-            $response = new JsonResponse($freshConfig);
-            if ($this->enableConfigCache) {
-                $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
-            }
-        }
-        return $response;
     }
 
     /**

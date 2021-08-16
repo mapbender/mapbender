@@ -9,7 +9,6 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
-            <argument>%cachable.mapbender.application.config%</argument>
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
@@ -35,6 +34,12 @@
                  class="Mapbender\CoreBundle\Controller\ElementController">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
+        </service>
+        <service id="Mapbender\CoreBundle\Controller\ConfigController"
+                 class="Mapbender\CoreBundle\Controller\ConfigController">
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="mapbender.presenter.application.config.service" />
+            <argument>%cachable.mapbender.application.config%</argument>
         </service>
     </services>
 </container>
