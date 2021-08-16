@@ -3,6 +3,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
@@ -12,7 +13,6 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
-use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -39,14 +40,22 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var AclManager */
+    protected $aclManager;
     protected $enableResponsiveElements;
 
-    public function __construct(TranslatorInterface $translator,
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                TranslatorInterface $translator,
+                                AclManager $aclManager,
                                 $enableResponsiveElements)
     {
+        $this->aclProvider = $aclProvider;
         $this->translator = $translator;
+        $this->aclManager = $aclManager;
         $this->enableResponsiveElements = $enableResponsiveElements;
     }
 
@@ -92,7 +101,7 @@ class ApplicationController extends ApplicationControllerBase
             $em->persist($application);
             $em->flush();
             if ($form->has('acl')) {
-                $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
+                $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
             }
             $scFile = $form->get('screenshotFile')->getData();
 
@@ -164,7 +173,7 @@ class ApplicationController extends ApplicationControllerBase
                 $em->persist($application);
                 $em->flush();
                 if ($form->has('acl')) {
-                    $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
+                    $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
                 }
                 $em->commit();
                 $this->addFlash('success', $this->translate('mb.application.save.success'));
@@ -233,7 +242,7 @@ class ApplicationController extends ApplicationControllerBase
         try {
             $em = $this->getEntityManager();
             $em->beginTransaction();
-            $this->getAclProvider()->deleteAcl(ObjectIdentity::fromDomainObject($application));
+            $this->aclProvider->deleteAcl(ObjectIdentity::fromDomainObject($application));
             $em->remove($application);
             $em->flush();
             $em->commit();
@@ -709,6 +718,8 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function getUserToken()
     {
+        // Provided by AbstractController
+        /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
         /** @var TokenStorageInterface $tokenStorage */
         $tokenStorage = $this->get('security.token_storage');
         return $tokenStorage->getToken();

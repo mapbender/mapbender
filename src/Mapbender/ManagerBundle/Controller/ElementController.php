@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
@@ -36,14 +37,18 @@ class ElementController extends ApplicationControllerBase
     protected $factory;
     /** @var ElementFormFactory */
     protected $elementFormFactory;
+    /** @var AclManager */
+    protected $aclManager;
 
     public function __construct(ElementInventoryService $inventory,
                                 ElementEntityFactory $factory,
-                                ElementFormFactory $elementFormFactory)
+                                ElementFormFactory $elementFormFactory,
+                                AclManager $aclManager)
     {
         $this->inventory = $inventory;
         $this->factory = $factory;
         $this->elementFormFactory = $elementFormFactory;
+        $this->aclManager = $aclManager;
     }
 
     /**
@@ -218,7 +223,7 @@ class ElementController extends ApplicationControllerBase
             try {
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $this->getAclManager()->setObjectACEs($element, $form->get('acl')->getData());
+                $this->aclManager->setObjectACEs($element, $form->get('acl')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");

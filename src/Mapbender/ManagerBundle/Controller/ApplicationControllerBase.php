@@ -6,7 +6,6 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -14,31 +13,10 @@ use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
 {
-    /**
-     * @return AclManager
-     */
-    protected function getAclManager()
-    {
-        /** @var AclManager $service */
-        $service = $this->get('fom.acl.manager');
-        return $service;
-    }
-
-    /**
-     * @return MutableAclProviderInterface
-     */
-    protected function getAclProvider()
-    {
-        /** @var MutableAclProviderInterface $service */
-        $service = $this->get('security.acl.provider');
-        return $service;
-    }
-
     /**
      * @return EntityManagerInterface
      */
