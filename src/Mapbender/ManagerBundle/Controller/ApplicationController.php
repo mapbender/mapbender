@@ -448,54 +448,6 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * Add a new SourceInstance to the Layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add", methods={"GET"})
-     *
-     * @param Request $request
-     * @param string $slug of Application
-     * @param int $layersetId
-     * @param int $sourceId
-     * @return Response
-     */
-    public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
-    {
-        $entityManager = $this->getEntityManager();
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if ($application) {
-            $this->denyAccessUnlessGranted('EDIT', $application);
-        } else {
-            throw $this->createNotFoundException();
-        }
-        $layerset = $this->requireLayerset($layersetId, $application);
-        /** @var Source|null $source */
-        $source = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        $newInstance = $directory->createInstance($source);
-        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
-            /** @var SourceInstanceAssignment $otherAssignment */
-            $otherAssignment->setWeight($index + 1);
-            $entityManager->persist($otherAssignment);
-        }
-
-        $newInstance->setWeight(0);
-        $newInstance->setLayerset($layerset);
-        $layerset->getInstances()->add($newInstance);
-
-        $entityManager->persist($application);
-        $application->setUpdated(new \DateTime('now'));
-
-        $entityManager->flush();
-        $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
-        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
-            "slug" => $slug,
-            "instanceId" => $newInstance->getId(),
-        ));
-    }
-
-    /**
      * @ManagerRoute("/instance/{instance}/attach/{layerset}")
      * @param Request $request
      * @param Layerset $layerset

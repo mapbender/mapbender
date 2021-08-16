@@ -32,10 +32,12 @@
         <service id="Mapbender\ManagerBundle\Controller\RepositoryController"
                  class="Mapbender\ManagerBundle\Controller\RepositoryController">
             <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
         <service id="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  class="Mapbender\ManagerBundle\Controller\SourceInstanceController">
             <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
     </services>
 </container>

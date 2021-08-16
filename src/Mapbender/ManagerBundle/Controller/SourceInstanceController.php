@@ -20,11 +20,17 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
     protected $translator;
+    /** @var TypeDirectoryService */
+    protected $typeDirectory;
 
-    public function __construct(TranslatorInterface $translator)
+
+    public function __construct(TranslatorInterface $translator,
+                                TypeDirectoryService $typeDirectory)
     {
         $this->translator = $translator;
+        $this->typeDirectory = $typeDirectory;
     }
 
     /**
@@ -67,6 +73,55 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
+     * Add a new SourceInstance to the Layerset
+     * @Route("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add",
+     *     name="mapbender_manager_application_addinstance",
+     *     methods={"GET"})
+     *
+     * @param Request $request
+     * @param string $slug of Application
+     * @param int $layersetId
+     * @param int $sourceId
+     * @return Response
+     */
+    public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        } else {
+            throw $this->createNotFoundException();
+        }
+        $layerset = $this->requireLayerset($layersetId, $application);
+        /** @var Source|null $source */
+        $source = $this->getDoctrine()->getRepository(Source::class)->find($sourceId);
+        $newInstance = $this->typeDirectory->createInstance($source);
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
+            /** @var SourceInstanceAssignment $otherAssignment */
+            $otherAssignment->setWeight($index + 1);
+            $entityManager->persist($otherAssignment);
+        }
+
+        $newInstance->setWeight(0);
+        $newInstance->setLayerset($layerset);
+        $layerset->getInstances()->add($newInstance);
+
+        $entityManager->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+
+        $entityManager->flush();
+        $this->addFlash('success', $this->translator->trans('mb.source.instance.create.success'));
+        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
+            "slug" => $slug,
+            "instanceId" => $newInstance->getId(),
+        ));
+    }
+
+    /**
      * @Route("/instance/createshared/{source}", methods={"GET", "POST"}))
      * @param Request $request
      * @param Source $source
@@ -75,11 +130,8 @@ class SourceInstanceController extends ApplicationControllerBase
     public function createsharedAction(Request $request, Source $source)
     {
         // @todo: only act on post
-        // @todo: push translate method from ApplicationController into base class
         $em = $this->getDoctrine()->getManager();
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        $instance = $directory->createInstance($source);
+        $instance = $this->typeDirectory->createInstance($source);
         $instance->setLayerset(null);
         $em->persist($instance);
         $em->flush();

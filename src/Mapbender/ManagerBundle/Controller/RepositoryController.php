@@ -38,10 +38,14 @@ class RepositoryController extends ApplicationControllerBase
 {
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var TypeDirectoryService */
+    protected $typeDirectory;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator,
+                                TypeDirectoryService $typeDirectory)
     {
         $this->translator = $translator;
+        $this->typeDirectory = $typeDirectory;
     }
 
     /**
@@ -68,9 +72,8 @@ class RepositoryController extends ApplicationControllerBase
         // User that added the source to the system, but not editable in any way.
         // => On listings ALWAYS check grants on oids for sources, nothing else works as expected
         if ($this->isGranted('EDIT', $oid)) {
-            $typeDirectory = $this->getTypeDirectory();
             foreach ($sources as $source) {
-                if ($typeDirectory->getRefreshSupport($source)) {
+                if ($this->typeDirectory->getRefreshSupport($source)) {
                     $reloadableIds[] = $source->getId();
                 }
             }
@@ -108,9 +111,8 @@ class RepositoryController extends ApplicationControllerBase
         if ($form->isSubmitted() && $form->isValid()) {
             $sourceType = $form->get('type')->getData();
 
-            $directory = $this->getTypeDirectory();
             try {
-                $loader = $directory->getSourceLoaderByType($sourceType);
+                $loader = $this->typeDirectory->getSourceLoaderByType($sourceType);
                 $source = $loader->evaluateServer($form->getData());
 
                 $this->setAliasForDuplicate($source);
@@ -250,7 +252,7 @@ class RepositoryController extends ApplicationControllerBase
             $this->denyAccessUnlessGranted('EDIT', $oid);
             throw $this->createNotFoundException();
         }
-        $canUpdate = $this->getTypeDirectory()->getRefreshSupport($source);
+        $canUpdate = $this->typeDirectory->getRefreshSupport($source);
         if (!$canUpdate) {
             throw $this->createNotFoundException();
         }
@@ -264,7 +266,7 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         /** @var RefreshableSourceLoader $loader */
-        $loader = $this->getTypeDirectory()->getSourceLoaderByType($source->getType());
+        $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
         $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
@@ -339,7 +341,7 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
-        $factory = $this->getTypeDirectory()->getInstanceFactory($instance->getSource());
+        $factory = $this->typeDirectory->getInstanceFactory($instance->getSource());
         $form = $this->createForm($factory->getFormType($instance), $instance);
 
         $form->handleRequest($request);
@@ -542,16 +544,6 @@ class RepositoryController extends ApplicationControllerBase
         }
         $layerset = $assignment->getLayerset();
         return $this->toggleInstanceEnabledCommon($request, $layerset, $assignment);
-    }
-
-    /**
-     * @return TypeDirectoryService
-     */
-    protected function getTypeDirectory()
-    {
-        /** @var TypeDirectoryService $service */
-        $service = $this->get('mapbender.source.typedirectory.service');
-        return $service;
     }
 
     protected function setAliasForDuplicate(Source $source)
