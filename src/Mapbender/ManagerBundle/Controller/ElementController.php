@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class ElementController
@@ -31,6 +32,8 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ElementController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
     /** @var ElementInventoryService */
     protected $inventory;
     /** @var ElementEntityFactory */
@@ -40,11 +43,13 @@ class ElementController extends ApplicationControllerBase
     /** @var AclManager */
     protected $aclManager;
 
-    public function __construct(ElementInventoryService $inventory,
+    public function __construct(TranslatorInterface $translator,
+                                ElementInventoryService $inventory,
                                 ElementEntityFactory $factory,
                                 ElementFormFactory $elementFormFactory,
                                 AclManager $aclManager)
     {
+        $this->translator = $translator;
         $this->inventory = $inventory;
         $this->factory = $factory;
         $this->elementFormFactory = $elementFormFactory;
@@ -67,7 +72,6 @@ class ElementController extends ApplicationControllerBase
 
         $classNames = $this->inventory->getActiveInventory();
 
-        $trans      = $this->container->get('translator');
         $elements   = array();
 
         /** @var MinimalInterface|string $elementClassName */
@@ -75,11 +79,12 @@ class ElementController extends ApplicationControllerBase
             if (!$this->checkRegionCompatibility($elementClassName, $region)) {
                 continue;
             }
-            $title = $trans->trans($elementClassName::getClassTitle());
+            // Translate before sorting for properly localized order
+            $title = $this->translator->trans($elementClassName::getClassTitle());
             $elements[$title] = array(
                 'class' => $elementClassName,
                 'title' => $title,
-                'description' => $trans->trans($elementClassName::getClassDescription()),
+                'description' => $this->translator->trans($elementClassName::getClassDescription()),
             );
         }
 

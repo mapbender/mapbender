@@ -24,6 +24,7 @@
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
                  class="Mapbender\ManagerBundle\Controller\ElementController">
+            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
