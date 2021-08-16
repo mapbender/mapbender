@@ -17,6 +17,7 @@
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_importer.service" />
+            <argument type="service" id="mapbender.application_exporter.service" />
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
                  class="Mapbender\ManagerBundle\Controller\ElementController">

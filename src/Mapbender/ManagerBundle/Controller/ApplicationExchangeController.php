@@ -10,9 +10,11 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
+use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\ImportJob;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,14 +30,18 @@ class ApplicationExchangeController extends AbstractController
     protected $yamlRepository;
     /** @var ImportHandler */
     protected $importHandler;
+    /** @var ExportHandler */
+    protected $exportHandler;
 
     public function __construct(TranslatorInterface $translator,
                                 ApplicationYAMLMapper $yamlRepository,
-                                ImportHandler $importHandler)
+                                ImportHandler $importHandler,
+                                ExportHandler $exportHandler)
     {
         $this->translator = $translator;
         $this->yamlRepository = $yamlRepository;
         $this->importHandler = $importHandler;
+        $this->exportHandler = $exportHandler;
     }
 
     /**
@@ -129,5 +135,29 @@ class ApplicationExchangeController extends AbstractController
             $this->addFlash('error', $e->getMessage());
             return $this->forward('MapbenderManagerBundle:Application:index');
         }
+    }
+
+    /**
+     * Export application as json (direct link)
+     * @ManagerRoute("/application/{slug}/export", name="mapbender_manager_application_exportdirect", methods={"GET"})
+     * @param Request $request
+     * @param string $slug
+     * @return Response
+     */
+    public function exportdirectAction(Request $request, $slug)
+    {
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$application) {
+            throw $this->createNotFoundException("No such application");
+        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $data = $this->exportHandler->exportApplication($application);
+        $fileName = "{$application->getSlug()}.json";
+        return new JsonResponse($data, 200, array(
+            'Content-disposition' => "attachment; filename={$fileName}",
+        ));
     }
 }

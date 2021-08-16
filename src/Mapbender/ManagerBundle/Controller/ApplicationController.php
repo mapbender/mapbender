@@ -122,25 +122,6 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * Export application as json (direct link)
-     * @ManagerRoute("/application/{slug}/export", methods={"GET"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function exportdirectAction(Request $request, $slug)
-    {
-        $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $data = $this->getApplicationExporter()->exportApplication($application);
-        $fileName = "{$application->getSlug()}.json";
-        return new JsonResponse($data, 200, array(
-            'Content-disposition' => "attachment; filename={$fileName}",
-        ));
-    }
-
-
-    /**
      * Edit application
      *
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
@@ -721,16 +702,6 @@ class ApplicationController extends ApplicationControllerBase
     protected function translate($key)
     {
         return $this->translator->trans($key);
-    }
-
-    /**
-     * @return ExportHandler
-     */
-    protected function getApplicationExporter()
-    {
-        /** @var ExportHandler $service */
-        $service = $this->get('mapbender.application_exporter.service');
-        return $service;
     }
 
     /**
