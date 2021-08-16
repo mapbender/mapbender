@@ -6,14 +6,11 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class ApplicationControllerBase extends Controller
 {
@@ -46,25 +43,6 @@ abstract class ApplicationControllerBase extends Controller
             throw $this->createNotFoundException("No such layerset");
         }
         return $layerset;
-    }
-
-    /**
-     * @param Request $request
-     * @return string
-     */
-    protected function getBaseUrl(Request $request)
-    {
-        return $request->getSchemeAndHttpHost() . $request->getBasePath();
-    }
-
-    /**
-     * @return UploadsManager
-     */
-    protected function getUploadsManager()
-    {
-        /** @var UploadsManager $service */
-        $service = $this->get('mapbender.uploads_manager.service');
-        return $service;
     }
 
     /**

@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
@@ -33,21 +34,24 @@ class ApplicationController extends ApplicationControllerBase
     protected $translator;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
-    protected $fileCacheDirectory;
-    protected $isDebug;
-
     /** @var ElementInventoryService */
     protected $elementInventory;
+    /** @var UploadsManager */
+    protected $uploadsManager;
+    protected $fileCacheDirectory;
+    protected $isDebug;
 
     public function __construct(TranslatorInterface $translator,
                                 ApplicationYAMLMapper $yamlRepository,
                                 ElementInventoryService $elementInventory,
+                                UploadsManager $uploadsManager,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
         $this->translator = $translator;
         $this->yamlRepository = $yamlRepository;
         $this->elementInventory = $elementInventory;
+        $this->uploadsManager = $uploadsManager;
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
     }
@@ -180,11 +184,10 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function getPublicUploadsBaseUrl(ApplicationEntity $application)
     {
-        $ulm = $this->getUploadsManager();
         $slug = $application->getSlug();
         try {
-            $ulm->getSubdirectoryPath($slug, true);
-            return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
+            $this->uploadsManager->getSubdirectoryPath($slug, true);
+            return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
         } catch (IOException $e) {
             return null;
         }

@@ -6,6 +6,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
@@ -46,16 +47,20 @@ class ApplicationController extends ApplicationControllerBase
     protected $translator;
     /** @var AclManager */
     protected $aclManager;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     protected $enableResponsiveElements;
 
     public function __construct(MutableAclProviderInterface $aclProvider,
                                 TranslatorInterface $translator,
                                 AclManager $aclManager,
+                                UploadsManager $uploadsManager,
                                 $enableResponsiveElements)
     {
         $this->aclProvider = $aclProvider;
         $this->translator = $translator;
         $this->aclManager = $aclManager;
+        $this->uploadsManager = $uploadsManager;
         $this->enableResponsiveElements = $enableResponsiveElements;
     }
 
@@ -89,7 +94,7 @@ class ApplicationController extends ApplicationControllerBase
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
+                $appDirectory = $this->uploadsManager->getSubdirectoryPath($application->getSlug(), true);
             } catch (IOException $e) {
                 $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
                 return $this->redirectToRoute('mapbender_manager_application_index');
@@ -159,11 +164,10 @@ class ApplicationController extends ApplicationControllerBase
             $em->flush();
 
             try {
-                $ulm = $this->getUploadsManager();
                 if ($oldSlug !== $application->getSlug()) {
-                    $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
+                    $uploadPath = $this->uploadsManager->renameSubdirectory($oldSlug, $application->getSlug(), true);
                 } else {
-                    $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
+                    $uploadPath = $this->uploadsManager->getSubdirectoryPath($application->getSlug(), true);
                 }
                 $scFile = $form->get('screenshotFile')->getData();
                 if ($scFile && !$form->get('removeScreenShot')->getData()) {
@@ -246,7 +250,7 @@ class ApplicationController extends ApplicationControllerBase
             $em->remove($application);
             $em->flush();
             $em->commit();
-            $this->getUploadsManager()->removeSubdirectory($slug);
+            $this->uploadsManager->removeSubdirectory($slug);
             $this->addFlash('success', $this->translate('mb.application.remove.success'));
         } catch (IOException $e) {
             $this->addFlash('error', $this->translate('mb.application.failure.remove.directory'));

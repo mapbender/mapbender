@@ -8,6 +8,7 @@
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="translator" />
             <argument type="service" id="fom.acl.manager" />
+            <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.elements%</argument>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\IndexController"
