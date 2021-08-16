@@ -65,8 +65,8 @@ class InstanceTunnelService
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         // @todo: TBD if it's worth making this configurable
-        $this->tunnelRouteName = 'mapbender_core_application_instancetunnel';
-        $this->legendTunnelRouteName = 'mapbender_core_application_instancetunnellegend';
+        $this->tunnelRouteName = 'mapbender_core_instancetunnel_instancetunnel';
+        $this->legendTunnelRouteName = 'mapbender_core_instancetunnel_instancetunnellegend';
     }
 
     /**

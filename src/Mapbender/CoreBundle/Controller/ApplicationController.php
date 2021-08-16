@@ -8,12 +8,10 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -307,80 +304,6 @@ class ApplicationController extends ApplicationControllerBase
         return  new Response($content, 200, array(
             'Content-Type' => 'text/html',
         ));
-    }
-
-    /**
-     * Get SourceInstances via tunnel
-     * @see InstanceTunnelService
-     *
-     * @Route("/instance/{instanceId}/tunnel")
-     * @param Request $request
-     * @param string $instanceId
-     * @return Response
-     */
-    public function instanceTunnelAction(Request $request, $instanceId)
-    {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
-        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
-        if (!$requestType) {
-            throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
-        }
-        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
-        if ($this->isDebug && $request->query->has('reveal-internal')) {
-            return new Response($url);
-        }
-
-        if (!$url) {
-            throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
-        }
-
-        return $instanceTunnel->getUrl($url);
-    }
-
-    /**
-     * Get a layer's legend image via tunnel
-     * @see InstanceTunnelService
-     *
-     * @Route("instance/{instanceId}/tunnel/legend/{layerId}")
-     * @param Request $request
-     * @param string $instanceId
-     * @param string $layerId
-     * @return Response
-     */
-    public function instanceTunnelLegendAction(Request $request,$instanceId, $layerId)
-    {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
-        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
-        if (!$url) {
-            throw $this->createNotFoundException();
-        }
-        if ($this->isDebug && $request->query->has('reveal-internal')) {
-            return new Response($url);
-        } else {
-            return $instanceTunnel->getUrl($url);
-        }
-    }
-
-    /**
-     * @param string $instanceId
-     * @return \Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint
-     */
-    protected function getGrantedTunnelEndpoint($instanceId)
-    {
-        /** @var SourceInstance|null $instance */
-        $instance = $this->getDoctrine()
-            ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
-        if (!$instance) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        if (($layerset = $instance->getLayerset()) && $application = $layerset->getApplication()) {
-            if (!$this->isGranted('VIEW', $application)) {
-                $this->denyAccessUnlessGranted('VIEW', $application);
-            }
-        }
-        /** @var InstanceTunnelService $tunnelService */
-        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
-        return $tunnelService->makeEndpoint($instance);
     }
 
     /**
