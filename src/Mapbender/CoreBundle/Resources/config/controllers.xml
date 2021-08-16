@@ -5,6 +5,7 @@
     <services>
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
                  class="Mapbender\CoreBundle\Controller\ApplicationController">
+            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument>%kernel.cache_dir%</argument>

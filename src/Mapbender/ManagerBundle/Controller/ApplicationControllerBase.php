@@ -68,16 +68,6 @@ abstract class ApplicationControllerBase extends Controller
     }
 
     /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        /** @var TranslatorInterface $service */
-        $service = $this->get('translator');
-        return $service;
-    }
-
-    /**
      * @return SourceInstanceRepository
      */
     protected function getSourceInstanceRepository()

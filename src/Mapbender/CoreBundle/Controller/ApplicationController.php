@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Application controller.
@@ -28,6 +29,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
     protected $fileCacheDirectory;
@@ -36,11 +39,13 @@ class ApplicationController extends ApplicationControllerBase
     /** @var ElementInventoryService */
     protected $elementInventory;
 
-    public function __construct(ApplicationYAMLMapper $yamlRepository,
+    public function __construct(TranslatorInterface $translator,
+                                ApplicationYAMLMapper $yamlRepository,
                                 ElementInventoryService $elementInventory,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
+        $this->translator = $translator;
         $this->yamlRepository = $yamlRepository;
         $this->elementInventory = $elementInventory;
         $this->fileCacheDirectory = $fileCacheDirectory;
@@ -153,7 +158,7 @@ class ApplicationController extends ApplicationControllerBase
         // Output depends on locale and base url => bake into cache key
         // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
         $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-        $locale = $this->getTranslator()->getLocale();
+        $locale = $this->translator->getLocale();
         // Output also depends on user (granted elements may vary)
         $user = $this->getUser();
         $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);

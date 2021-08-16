@@ -21,6 +21,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  *  Mapbender repository controller
@@ -33,6 +34,14 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class RepositoryController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * Renders the layer service repository.
      *
@@ -70,7 +79,6 @@ class RepositoryController extends ApplicationControllerBase
         ));
 
         return $this->render('@MapbenderManager/Repository/index.html.twig', array(
-            'title' => $this->getTranslator()->trans('mb.manager.admin.sources'),
             'sources' => $sources,
             'reloadableIds' => $reloadableIds,
             'shared_instances' => $sharedInstances,
@@ -116,13 +124,13 @@ class RepositoryController extends ApplicationControllerBase
                 ));
             } catch (\Exception $e) {
                 $importerResponse = null;
-                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
+                $form->addError(new FormError($this->translator->trans($e->getMessage())));
             }
         }
 
         return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'title' => $this->getTranslator()->trans('mb.manager.admin.source.new.add'),
+            'title' => $this->translator->trans('mb.manager.admin.source.new.add'),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));
@@ -273,13 +281,13 @@ class RepositoryController extends ApplicationControllerBase
                 ));
             } catch (\Exception $e) {
                 $em->rollback();
-                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
+                $form->addError(new FormError($this->translator->trans($e->getMessage())));
             }
         }
 
         return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'title' => $this->getTranslator()->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
+            'title' => $this->translator->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));

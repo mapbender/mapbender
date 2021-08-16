@@ -14,9 +14,17 @@ use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
+    protected $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @Route("/instance/{instance}", methods={"GET"})
      * @param Request $request
@@ -73,7 +81,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $instance->setLayerset(null);
         $em->persist($instance);
         $em->flush();
-        $msg = $this->getTranslator()->trans('mb.manager.sourceinstance.created_reusable');
+        $msg = $this->translator->trans('mb.manager.sourceinstance.created_reusable');
         $this->addFlash('success', $msg);
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
