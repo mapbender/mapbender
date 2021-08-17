@@ -29,7 +29,6 @@ class OverviewAdminType extends AbstractType
                 'application' => $options['application'],
                 'required' => true,
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('maximized', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.overview.maximize',

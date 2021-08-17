@@ -3,7 +3,6 @@
     $.widget("mapbender.mbOverview", {
         options: {
             layerset: 0,
-            target: null,
             width: 200,
             height: 100,
             anchor: 'right-top',
@@ -19,24 +18,25 @@
          */
         _create: function(){
             this._updateToggleIcon(this.options.maximized);
-            if(!Mapbender.checkTarget("mbOverview", this.options.target)){
-                return;
-            }
             var lsId = this.options.layerset;
             var layerset = Mapbender.layersets.filter(function(x) {
                 return ('' + lsId) === ('' + x.id);
             })[0];
             this.sources_ = layerset && layerset.children.slice().reverse() || [];
 
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget('mbOverview');
+            });
         },
 
         /**
          * Initializes the overview
          */
         _setup: function() {
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-
             this.element.addClass(this.options.anchor);
             if (!this.options.maximized) {
                 this.element.addClass("closed");

@@ -39,7 +39,6 @@ class Overview extends AbstractElementService implements FloatingElement, Import
     {
         return array(
             'layerset' => null,
-            'target' => null,
             'width' => 200,
             'height' => 100,
             'anchor' => 'right-top',
