@@ -60,7 +60,6 @@ class Copyright extends Element
     {
 
         return array(
-            'titel' => 'Copyright',
             'autoOpen' => false,
             'content' => null,
             'popupWidth'    => 300,

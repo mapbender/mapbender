@@ -24,9 +24,6 @@ class CopyrightAdminType extends AbstractType
     {
         // @todo: add missing field labels
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => false,
-            ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.copyright.label.autoopen',
