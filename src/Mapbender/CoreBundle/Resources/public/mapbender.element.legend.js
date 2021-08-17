@@ -19,7 +19,6 @@
          */
         _create: function() {
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
-            this.htmlContainer = $('> .legends', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self._setup(mbMap);
@@ -68,7 +67,7 @@
         onMapLayerChanges: function(e) {
             var html = this.render();
 
-            this.htmlContainer.html(html);
+            this.element.html(html);
         },
 
         /**
@@ -275,7 +274,7 @@
         getPopupOptions: function() {
             var self = this;
             return {
-                title: this.element.attr('title'),
+                title: this.element.attr('data-title'),
                 draggable: true,
                 resizable: true,
                 modal: false,
