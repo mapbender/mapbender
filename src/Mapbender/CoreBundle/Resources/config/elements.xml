@@ -49,6 +49,9 @@
         <service id="mapbender.element.ScaleBar" class="Mapbender\CoreBundle\Element\ScaleBar">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.SrsSelector" class="Mapbender\CoreBundle\Element\SrsSelector">
+            <tag name="mapbender.element" />
+        </service>
         <service id="mapbender.element.ZoomBar" class="Mapbender\CoreBundle\Element\ZoomBar">
             <tag name="mapbender.element" />
         </service>

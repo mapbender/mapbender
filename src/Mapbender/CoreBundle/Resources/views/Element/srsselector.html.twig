@@ -1,10 +1,8 @@
-<div id="{{ id }}" class="mb-element mb-element-srsselector" title="{{ configuration.tooltip|default(title)|trans }}">
-  {% if configuration.label %}
-    <span class="labelInput">{{ title|trans }}</span>
+  {% if label is not empty %}
+    <span class="labelInput">{{ label | trans }}</span>
   {% endif %}
   <div class="dropdown">
     <select class="hiddenDropdown" id="srsselector"></select>
     <div class="dropdownValue iconDown"></div>
     <ul class="dropdownList"></ul>
   </div>
-</div>
