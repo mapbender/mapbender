@@ -195,7 +195,7 @@
             this._reset();
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     modal: false,
                     draggable: true,
                     resizable: true,
