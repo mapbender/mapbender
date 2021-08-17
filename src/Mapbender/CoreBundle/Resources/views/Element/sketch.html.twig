@@ -1,22 +1,21 @@
-<div id="{{ id }}" class="mb-element mb-element-sketch">
     <div class="form-group">
         <div class="btn-group btn-group-sm">
-        {% if 'point' in configuration.geometrytypes %}
+        {% if 'point' in geometrytypes %}
             <button type="button" data-tool-name="point" title="{{ "mb.core.sketch.geometrytype.point"|trans }}" class="btn btn-default"><i class="icon-draw-point"></i></button>
         {% endif %}
-        {% if 'line' in configuration.geometrytypes %}
+        {% if 'line' in geometrytypes %}
             <button type="button" data-tool-name="line" title="{{ "mb.core.sketch.geometrytype.line"|trans }}" class="btn btn-default"><i class="icon-draw-line"></i></button>
         {% endif %}
-        {% if 'polygon' in configuration.geometrytypes %}
+        {% if 'polygon' in geometrytypes %}
             <button type="button" data-tool-name="polygon" title="{{ "mb.core.sketch.geometrytype.polygon"|trans }}" class="btn btn-default"><i class="icon-draw-polygon"></i></button>
         {% endif %}
-        {% if 'rectangle' in configuration.geometrytypes %}
+        {% if 'rectangle' in geometrytypes %}
             <button type="button" data-tool-name="rectangle" title="{{ "mb.core.sketch.geometrytype.rectangle"|trans }}" class="btn btn-default"><i class="icon-draw-rectangle"></i></button>
         {% endif %}
-        {% if 'circle' in configuration.geometrytypes %}
+        {% if 'circle' in geometrytypes %}
             <button type="button" data-tool-name="circle" title="{{ "mb.core.sketch.geometrytype.circle"|trans }}" class="btn btn-default"><i class="icon-draw-circle"></i></button>
         {% endif %}
-        {% if 'text' in configuration.geometrytypes %}
+        {% if 'text' in geometrytypes %}
             <button type="button" data-tool-name="text" title="{{ "mb.core.sketch.geometrytype.text"|trans }}" class="btn btn-default"><i class="fa fas fa-font"></i></button>
         {% endif %}
         </div>
@@ -36,4 +35,3 @@
             </td>
         </tr>
     </table>
-</div>

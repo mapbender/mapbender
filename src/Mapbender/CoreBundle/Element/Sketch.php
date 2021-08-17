@@ -2,9 +2,11 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 
-class Sketch extends Element
+class Sketch extends AbstractElementService
 {
 
     /**
@@ -26,7 +28,7 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbSketch';
     }
@@ -34,7 +36,7 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -85,27 +87,18 @@ class Sketch extends Element
         return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
     }
 
-    public function getPublicConfiguration()
+    public function getClientConfiguration(Element $element)
     {
-        return array_replace(parent::getPublicConfiguration(), array(
-            'title' => $this->entity->getTitle() ?: $this->getClassTitle(),
+        return array_replace($element->getConfiguration(), array(
+            'title' => $element->getTitle(),
         ));
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:sketch.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'configuration' => $this->getConfiguration(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:sketch.html.twig');
+        $view->attributes['class'] = 'mb-element-sketch';
+        $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
+        return $view;
     }
 }

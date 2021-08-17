@@ -79,5 +79,8 @@
         <service id="mapbender.element.POI" class="Mapbender\CoreBundle\Element\POI">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.Sketch" class="Mapbender\CoreBundle\Element\Sketch">
+            <tag name="mapbender.element" replaces="Mapbender\CoreBundle\Element\Redlining" />
+        </service>
     </services>
 </container>
