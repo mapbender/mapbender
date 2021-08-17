@@ -33,6 +33,10 @@
         <service id="mapbender.element.CoordinatesDisplay" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.Copyright" class="Mapbender\CoreBundle\Element\Copyright">
+            <tag name="mapbender.element" />
+            <argument type="service" id="templating" />
+        </service>
         <service id="mapbender.element.ScaleDisplay" class="Mapbender\CoreBundle\Element\ScaleDisplay">
             <tag name="mapbender.element" />
         </service>

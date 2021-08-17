@@ -28,7 +28,7 @@
             widget.callback = callback ? callback : null;
             if(!widget.popup || !widget.popup.$element){
                 widget.popup = new Mapbender.Popup2({
-                    title:               element.attr('title'),
+                    title: element.attr('data-title'),
                     modal:               true,
                     closeOnOutsideClick: true,
                     content:             [ $.ajax({url: widget.elementUrl + 'content'})],

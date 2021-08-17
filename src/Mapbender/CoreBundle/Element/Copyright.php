@@ -1,8 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\StaticView;
+use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * A Copyright
@@ -11,8 +16,15 @@ use Symfony\Component\HttpFoundation\Response;
  * 
  * @author Paul Schmidt
  */
-class Copyright extends Element
+class Copyright extends AbstractElementService implements ElementHttpHandlerInterface
 {
+    /** @var EngineInterface */
+    protected $templateEngine;
+
+    public function __construct(EngineInterface $templateEngine)
+    {
+        $this->templateEngine = $templateEngine;
+    }
 
     /**
      * @inheritdoc
@@ -41,7 +53,7 @@ class Copyright extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -70,27 +82,17 @@ class Copyright extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbCopyright';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:copyright.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration(),
-        ));
+        $view = new StaticView('');
+        $view->attributes['class'] = 'mb-element-copyright';
+        $view->attributes['data-title'] = $element->getTitle();
+        return $view;
     }
 
     /**
@@ -101,20 +103,20 @@ class Copyright extends Element
         return 'MapbenderCoreBundle:ElementAdmin:copyright.html.twig';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function getHttpHandler(Element $element)
     {
-        $response = new Response();
-        switch ($action) {
-            case 'content':
-                $about = $this->container->get('templating')
-                    ->render('MapbenderCoreBundle:Element:copyright-content.html.twig',
-                    array("configuration" => $this->getConfiguration()));
-                $response->setContent($about);
-                return $response;
-        }
+        return $this;
     }
 
+    public function handleRequest(Element $element, Request $request)
+    {
+        switch ($request->attributes->get('action')) {
+            case 'content':
+                return $this->templateEngine->renderResponse('MapbenderCoreBundle:Element:copyright-content.html.twig', array(
+                    'configuration' => $element->getConfiguration(),
+                ));
+            default:
+                throw new NotFoundHttpException();
+        }
+    }
 }
