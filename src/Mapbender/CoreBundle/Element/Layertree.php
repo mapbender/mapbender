@@ -2,13 +2,13 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ImportAwareInterface;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
 
-/**
- *
- */
-class Layertree extends Element
+class Layertree extends AbstractElementService implements ImportAwareInterface
 {
 
     /**
@@ -30,7 +30,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbLayertree';
     }
@@ -46,7 +46,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         $assets = array(
             'js' => array(
@@ -68,16 +68,6 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $configuration = parent::getConfiguration();
-        $configuration['menu'] = isset($configuration['menu']) ? array_values($configuration['menu']) : array();
-        return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getDefaultConfiguration()
     {
         return array(
@@ -94,22 +84,15 @@ class Layertree extends Element
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:layertree.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')->render(
-            $this->getFrontendTemplatePath(), array(
-                'id' => $this->getId(),
-                'configuration' => $this->getConfiguration(),
-                'title' => $this->getTitle(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:layertree.html.twig');
+        $view->attributes['class'] = 'mb-element-layertree';
+        $view->attributes['data-title'] = $element->getTitle();
+        $view->variables['configuration'] = array(
+            'menu' => $element->getConfiguration()['menu'],
+        );
+        return $view;
     }
 
     /**
@@ -120,11 +103,13 @@ class Layertree extends Element
         return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
     }
 
+
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper)
     {
+        $configuration = $element->getConfiguration();
         if (!empty($configuration['themes'])) {
             foreach ($configuration['themes'] as $k => $themeConfig) {
                 $oldLsId = $themeConfig['id'];
@@ -133,7 +118,7 @@ class Layertree extends Element
                 // but all ids loaded by doctrine will be strings.
                 $configuration['themes'][$k]['id'] = strval($newLsId);
             }
+            $element->setConfiguration($configuration);
         }
-        return $configuration;
     }
 }

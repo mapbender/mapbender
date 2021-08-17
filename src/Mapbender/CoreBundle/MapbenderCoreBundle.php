@@ -66,7 +66,6 @@ class MapbenderCoreBundle extends MapbenderBundle
     {
         return array(
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
-            'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SimpleSearch',
         );

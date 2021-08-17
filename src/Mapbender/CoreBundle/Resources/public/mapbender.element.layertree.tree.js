@@ -50,7 +50,6 @@
             if (this.options.type === 'dialog' && this.options.autoOpen) {
                 this.open();
             }
-            this.element.removeClass('hidden');
             this._createEvents();
             this._trigger('ready');
         },
