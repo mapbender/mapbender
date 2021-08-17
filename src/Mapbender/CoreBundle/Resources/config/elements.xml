@@ -40,6 +40,9 @@
         <service id="mapbender.element.Legend" class="Mapbender\CoreBundle\Element\Legend">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.Overview" class="Mapbender\CoreBundle\Element\Overview">
+            <tag name="mapbender.element" />
+        </service>
         <service id="mapbender.element.Ruler" class="Mapbender\CoreBundle\Element\Ruler">
             <tag name="mapbender.element" />
         </service>
