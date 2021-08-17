@@ -2,14 +2,13 @@
 
 $.widget('mapbender.mbSimpleSearch', {
     options: {
-        url: null,
         /** one of 'WKT', 'GeoJSON' */
+        geom_format: null,
         token_regex: null,
         token_regex_in: null,
         token_regex_out: null,
         label_attribute: null,
         geom_attribute: null,
-        geom_format: null,
         result_buffer: null,
         result_minscale: null,
         result_maxscale: null,

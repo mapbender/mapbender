@@ -67,7 +67,6 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
-            // @todo: add form field
             'sourceSrs' => 'EPSG:4326',
             'query_ws_replace' => null,
             'result_buffer' => 300,
@@ -88,6 +87,17 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
         }
         $view->variables['delay'] = $config['delay'];
         return $view;
+    }
+
+    public function getClientConfiguration(Element $element)
+    {
+        $config = parent::getClientConfiguration($element);
+        // Hide internal query url (may include basic auth credentials)
+        unset($config['url']);
+        if (empty($config['sourceSrs'])) {
+            $config['sourceSrs'] = $this->getDefaultConfiguration()['sourceSrs'];
+        }
+        return $config;
     }
 
     /**
