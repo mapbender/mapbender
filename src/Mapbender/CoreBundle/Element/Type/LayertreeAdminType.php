@@ -18,13 +18,6 @@ class LayertreeAdminType extends AbstractType
     {
         $builder
             ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
-            ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                'choices' => array(
-                    'Element' => 'element',
-                    'Dialog' => 'dialog',
-                ),
-            ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.autoopen',

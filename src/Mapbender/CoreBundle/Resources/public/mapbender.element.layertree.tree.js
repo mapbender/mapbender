@@ -24,11 +24,13 @@
             simple: "simple"
         },
         _mobilePane: null,
+        useDialog_: false,
         isTouch_: false,
 
         _create: function() {
             // see https://stackoverflow.com/a/4819886
             this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+            this.useDialog_ = !this.element.closest('.sideContent,.mobilePane').length;
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -48,7 +50,7 @@
 
             this.model = mbMap.getModel();
             this._createTree();
-            if (this.options.type === 'dialog' && this.options.autoOpen) {
+            if (this.useDialog_ && this.options.autoOpen) {
                 this.open();
             }
             this._createEvents();
@@ -600,11 +602,11 @@
             this.open(callback);
         },
         /**
-         * Opens a dialog with a layertree (if options.type == 'dialog')
+         * Opens a popup dialog
          */
         open: function(callback) {
             this.callback = callback ? callback : null;
-            if (this.options.type === 'dialog') {
+            if (this.useDialog_) {
                 var self = this;
                 if (!this.popup || !this.popup.$element) {
                     this.popup = new Mapbender.Popup2({
@@ -636,10 +638,10 @@
             this._reset();
         },
         /**
-         * closes a dialog with a layertree (if options.type == 'dialog')
+         * Closes the popup dialog
          */
         close: function() {
-            if (this.options.type === 'dialog') {
+            if (this.useDialog_) {
                 if (this.popup && this.popup.$element) {
                     this.popup.$element.hide();
                 }
