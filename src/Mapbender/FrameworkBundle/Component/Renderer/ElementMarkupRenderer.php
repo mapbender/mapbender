@@ -88,7 +88,8 @@ class ElementMarkupRenderer
             if (!$element instanceof Element) {
                 throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
             }
-            $markup .= $this->renderContent($element, 'div', array(
+            $content = $this->renderContent($element, 'div', array());
+            $markup .= $this->wrapTag($content, 'div', array(
                 'class' => rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)),
             ));
         }
