@@ -65,7 +65,6 @@ class SrsSelector extends AbstractElementService
         return array(
             'tooltip' => static::getClassTitle(),
             'label' => false,
-            "target" => null,
         );
     }
 
