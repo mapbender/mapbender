@@ -27,16 +27,17 @@
         isTouch_: false,
 
         _create: function() {
-            if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
-                return;
-            }
             // see https://stackoverflow.com/a/4819886
             this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget('mbLayertree');
+            });
         },
-        _setup: function() {
+        _setup: function(mbMap) {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li.-fn-template', this.element).remove();
             this.template.removeClass('hidden -fn-template');
@@ -45,7 +46,7 @@
             this.themeTemplate = $('li.-fn-theme-template', this.element).remove();
             this.themeTemplate.removeClass('hidden -fn-theme-template');
 
-            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
+            this.model = mbMap.getModel();
             this._createTree();
             if (this.options.type === 'dialog' && this.options.autoOpen) {
                 this.open();
