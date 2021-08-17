@@ -37,10 +37,7 @@
          * Initializes the overview
          */
         _setup: function() {
-            this.element.addClass(this.options.anchor);
-            if (!this.options.maximized) {
-                this.element.addClass("closed");
-            } else if (!this.element.hasClass('closed')) {
+            if (!this.element.hasClass('closed')) {
                 // if we start closed, wait with initialization until opened
                 this._initOverview();
             }

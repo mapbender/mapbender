@@ -85,6 +85,13 @@ class Overview extends AbstractElementService implements FloatingElement, Import
     {
         $view = new TemplateView('MapbenderCoreBundle:Element:overview.html.twig');
         $view->attributes['class'] = 'mb-element-overview';
+        $config = $element->getConfiguration();
+        if (empty($config['maximized'])) {
+            $view->attributes['class'] .= ' closed';
+        }
+        if (!empty($config['anchor'])) {
+            $view->attributes['class'] .= ' ' . $config['anchor'];
+        }
         return $view;
     }
 
