@@ -89,9 +89,6 @@ class Overview extends AbstractElementService implements FloatingElement, Import
         if (empty($config['maximized'])) {
             $view->attributes['class'] .= ' closed';
         }
-        if (!empty($config['anchor'])) {
-            $view->attributes['class'] .= ' ' . $config['anchor'];
-        }
         return $view;
     }
 
