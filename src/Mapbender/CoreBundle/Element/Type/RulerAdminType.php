@@ -12,7 +12,6 @@ class RulerAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('type', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
                 array(
                 'required' => true,

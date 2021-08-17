@@ -63,7 +63,6 @@ class Ruler extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            'target' => null,
             'type' => 'line',
         );
     }
