@@ -55,6 +55,11 @@
         <service id="mapbender.element.ScaleBar" class="Mapbender\CoreBundle\Element\ScaleBar">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
+            <tag name="mapbender.element" />
+            <argument type="service" id="mapbender.http_transport.service" />
+            <argument>%kernel.debug%</argument>
+        </service>
         <service id="mapbender.element.SrsSelector" class="Mapbender\CoreBundle\Element\SrsSelector">
             <tag name="mapbender.element" />
         </service>
