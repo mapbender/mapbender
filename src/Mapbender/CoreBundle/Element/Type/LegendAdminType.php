@@ -17,7 +17,6 @@ class LegendAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('showSourceTitle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showsourcetitle',

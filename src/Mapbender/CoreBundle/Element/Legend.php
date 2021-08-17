@@ -54,8 +54,6 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
-            "elementType" => null,
             "autoOpen" => true,
             "showSourceTitle" => true,
             "showLayerTitle" => true,

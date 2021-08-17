@@ -20,10 +20,10 @@
         _create: function() {
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbLegend", self.options.target);
+                Mapbender.checkTarget("mbLegend");
             });
         },
 
