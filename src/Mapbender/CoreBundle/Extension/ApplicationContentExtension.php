@@ -118,6 +118,10 @@ class ApplicationContentExtension extends AbstractExtension
      */
     public function unanchored_content_elements(Application $application)
     {
-        return  $this->renderer->renderRegionContentByName($application, 'content');
+        return
+            '<div class="hidden">'
+            . $this->renderer->renderRegionContentByName($application, 'content')
+            . '</div>'
+        ;
     }
 }
