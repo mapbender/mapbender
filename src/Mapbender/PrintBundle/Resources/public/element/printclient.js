@@ -843,8 +843,6 @@
             $('.tab-container', this.element).tabs({
                 active: 0,
                 classes: {
-                    "ui-tabs-nav": "btn-group btn-group-sm list-unstyled",
-                    "ui-tabs-tab": "btn btn-default",
                     "ui-tabs-active": "active"
                 },
                 activate: function (event, ui) {
