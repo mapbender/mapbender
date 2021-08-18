@@ -68,7 +68,6 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     public static function getDefaultConfiguration()
     {
         return array(
-            'title'         => "mb.core.searchrouter.class.title",
             "width"         => 700,
             "height"        => 500,
             "routes"        => array(),
