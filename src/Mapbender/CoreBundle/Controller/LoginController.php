@@ -19,11 +19,19 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class LoginController extends Controller
 {
+    /** @var AuthenticationUtils */
+    protected $authUtils;
+    /** @var TranslatorInterface */
+    protected $translator;
     protected $enableRegistration;
     protected $enablePasswordReset;
 
-    public function __construct($enableRegistration, $enablePasswordReset)
+    public function __construct(AuthenticationUtils $authUtils,
+                                TranslatorInterface $translator,
+                                $enableRegistration, $enablePasswordReset)
     {
+        $this->authUtils = $authUtils;
+        $this->translator = $translator;
         $this->enableRegistration = $enableRegistration;
         $this->enablePasswordReset = $enablePasswordReset;
     }
@@ -43,15 +51,11 @@ class LoginController extends Controller
         ));
 
         if ($request->getMethod() === 'GET') {
-            /** @var AuthenticationUtils $authenticationUtils */
-            $authenticationUtils = $this->get('security.authentication_utils');
-            $error = $authenticationUtils->getLastAuthenticationError(true);
-            $lastUsername = $authenticationUtils->getLastUsername();
+            $error = $this->authUtils->getLastAuthenticationError(true);
+            $lastUsername = $this->authUtils->getLastUsername();
             $form->get('_username')->setData($lastUsername);
             if ($error) {
-                /** @var TranslatorInterface $translator */
-                $translator = $this->get('translator');
-                $form->addError(new FormError($translator->trans($error->getMessage())));
+                $form->addError(new FormError($this->translator->trans($error->getMessage())));
             }
         }
 

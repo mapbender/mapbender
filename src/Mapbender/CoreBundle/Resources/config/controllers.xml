@@ -19,6 +19,8 @@
         </service>
         <service id="Mapbender\CoreBundle\Controller\LoginController"
                  class="Mapbender\CoreBundle\Controller\LoginController">
+            <argument type="service" id="security.authentication_utils" />
+            <argument type="service" id="translator" />
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>
         </service>
