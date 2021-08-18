@@ -25,7 +25,6 @@ class PrintClientAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

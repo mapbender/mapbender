@@ -116,7 +116,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             "templates" => array(
                 array(
                     'template' => "a4portrait",
