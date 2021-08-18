@@ -9,8 +9,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
- * Map's overview element
- *
  * @author Paul Schmidt
  */
 class BaseSourceSwitcher extends AbstractElementService implements ImportAwareInterface
