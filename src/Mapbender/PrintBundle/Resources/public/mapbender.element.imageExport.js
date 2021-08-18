@@ -13,7 +13,7 @@
         _create: function(){
             this.$form = $('form', this.element);
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self.map = mbMap;   // legacy
                 self._setup();

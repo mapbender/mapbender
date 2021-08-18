@@ -84,7 +84,6 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null
         );
     }
 
