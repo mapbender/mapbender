@@ -19,6 +19,7 @@ class MapbenderPrintBundle extends MapbenderBundle
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $loader = new XmlFileLoader($container, $configLocator);
         $loader->load('services.xml');
+        $loader->load('elements.xml');
 
         $container->addCompilerPass(new AddBasePrintPluginsPass());
         parent::build($container);
