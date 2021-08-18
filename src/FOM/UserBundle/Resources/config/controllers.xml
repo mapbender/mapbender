@@ -4,11 +4,13 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="FOM\UserBundle\Controller\GroupController"
-                class="FOM\UserBundle\Controller\GroupController">
+                 class="FOM\UserBundle\Controller\GroupController"
+                 public="true">
             <argument type="service" id="security.acl.provider" />
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
-                class="FOM\UserBundle\Controller\PasswordController">
+                 class="FOM\UserBundle\Controller\PasswordController"
+                 public="true">
             <argument type="service" id="mailer" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
@@ -18,18 +20,21 @@
             <argument>%kernel.debug%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\SecurityController"
-                class="FOM\UserBundle\Controller\SecurityController">
+                 class="FOM\UserBundle\Controller\SecurityController"
+                 public="true">
             <argument>%fom.user_entity%</argument>
             <argument>%fom.user.acl_classes%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\ACLController"
-                class="FOM\UserBundle\Controller\ACLController">
+                 class="FOM\UserBundle\Controller\ACLController"
+                 public="true">
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="fom.acl_assignment_filter" />
             <argument>%fom.user.acl_classes%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\UserController"
-                class="FOM\UserBundle\Controller\UserController">
+                 class="FOM\UserBundle\Controller\UserController"
+                 public="true">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="fom.user_helper.service" />
             <argument type="service" id="fom.acl.manager" />
@@ -38,7 +43,8 @@
             <argument>%fom_user.profile_template%</argument>
         </service>
         <service id="FOM\UserBundle\Controller\RegistrationController"
-                class="FOM\UserBundle\Controller\RegistrationController">
+                 class="FOM\UserBundle\Controller\RegistrationController"
+                 public="true">
             <argument type="service" id="mailer" />
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>

@@ -4,7 +4,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
-                 class="Mapbender\CoreBundle\Controller\ApplicationController">
+                 class="Mapbender\CoreBundle\Controller\ApplicationController"
+                 public="true">
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_inventory.service" />
@@ -13,39 +14,46 @@
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
-                 class="Mapbender\CoreBundle\Controller\ComponentsController">
+                 class="Mapbender\CoreBundle\Controller\ComponentsController"
+                 public="true">
             <argument>%kernel.root_dir%/../web</argument>
             <argument>%kernel.root_dir%/../vendor</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\LoginController"
-                 class="Mapbender\CoreBundle\Controller\LoginController">
+                 class="Mapbender\CoreBundle\Controller\LoginController"
+                 public="true">
             <argument type="service" id="security.authentication_utils" />
             <argument type="service" id="translator" />
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\WelcomeController"
-                 class="Mapbender\CoreBundle\Controller\WelcomeController">
+                 class="Mapbender\CoreBundle\Controller\WelcomeController"
+                 public="true">
                 <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
         <service id="Mapbender\CoreBundle\Controller\InstanceTunnelController"
-                 class="Mapbender\CoreBundle\Controller\InstanceTunnelController">
+                 class="Mapbender\CoreBundle\Controller\InstanceTunnelController"
+                 public="true">
             <argument type="service" id="mapbender.source.instancetunnel.service" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ElementController"
-                 class="Mapbender\CoreBundle\Controller\ElementController">
+                 class="Mapbender\CoreBundle\Controller\ElementController"
+                 public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
         </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
-                 class="Mapbender\CoreBundle\Controller\ConfigController">
+                 class="Mapbender\CoreBundle\Controller\ConfigController"
+                 public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
             <argument>%cachable.mapbender.application.config%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\AssetsController"
-                 class="Mapbender\CoreBundle\Controller\AssetsController">
+                 class="Mapbender\CoreBundle\Controller\AssetsController"
+                 public="true">
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_asset.service" />
