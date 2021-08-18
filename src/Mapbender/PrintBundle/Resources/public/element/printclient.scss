@@ -7,7 +7,6 @@
   .job-list {
     @extend .mapbender-element-result-table;
     display: none;  // Will be overruled by inline style once jQueryUI tab widget takes over
-    max-height: 400px;
     overflow-y: auto;
     table {
       td.interface {
@@ -18,6 +17,9 @@
         }
       }
     }
+  }
+  .popup & .job-list {
+    max-height: 400px;
   }
 
   // jquery-ui tab styling
