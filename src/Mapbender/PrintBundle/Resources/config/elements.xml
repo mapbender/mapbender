@@ -10,7 +10,7 @@
             <argument type="service" id="mapbender.source.url_processor.service" />
         </service>
         <service id="mapbender.element.PrintClient" class="Mapbender\PrintBundle\Element\PrintClient">
-            <tag name="mapbender.element" />
+            <tag name="mapbender.element" replaces="Mapbender\CoreBundle\Element\PrintClient" />
             <argument type="service" id="router" />
             <argument type="service" id="form.factory" />
             <argument type="service" id="security.token_storage" />
