@@ -144,11 +144,11 @@ class BaseSourceSwitcher extends AbstractElementService implements ImportAwareIn
     public function onImport(Element $element, Mapper $mapper)
     {
         $configuration = $element->getConfiguration();
-        foreach ($configuration['instancesets'] as $key => &$instanceset) {
-            foreach ($instanceset['instances'] as &$instance) {
-                if ($instance) {
-                    $instance =
-                        $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instance, true);
+        foreach ($configuration['instancesets'] as $setId => $instanceset) {
+            foreach ($instanceset['instances'] as $k => $instanceId) {
+                if ($instanceId) {
+                    $newId = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instanceId, true);
+                    $configuration['instancesets'][$setId][$k] = $newId;
                 }
             }
         }
