@@ -82,7 +82,7 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
         $view = new TemplateView('MapbenderCoreBundle:Element:simple_search.html.twig');
         $view->attributes['class'] = 'mb-element-simplesearch';
         $config = $element->getConfiguration();
-        if ($element->getRegion()) {
+        if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
         $view->variables['delay'] = $config['delay'];
