@@ -30,15 +30,14 @@
         },
         open: function(callback){
             this.callback = callback ? callback : null;
-            var self = this;
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup({
-                    title: self.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     draggable: true,
                     header: true,
                     modal: false,
                     closeOnESC: false,
-                    content: self.element,
+                    content: this.element,
                     width: 250,
                     scrollable: false
                 });

@@ -2,4 +2,12 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="mapbender.element.ImageExport" class="Mapbender\PrintBundle\Element\ImageExport">
+            <tag name="mapbender.element" />
+            <argument type="service" id="router" />
+            <argument type="service" id="mapbender.imageexport.service" />
+            <argument type="service" id="mapbender.source.url_processor.service" />
+        </service>
+    </services>
 </container>
