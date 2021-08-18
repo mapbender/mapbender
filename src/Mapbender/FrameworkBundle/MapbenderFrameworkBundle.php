@@ -20,6 +20,7 @@ class MapbenderFrameworkBundle extends Bundle
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $loader = new XmlFileLoader($container, $configLocator);
         $loader->load('services.xml');
+        $loader->load('symfony.xml');
         // Register service elements
         // Run pass with reduced priority, so it happens after non-service inventory building has completed
         $container->addCompilerPass(new RegisterElementServicesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, -1);
