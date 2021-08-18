@@ -13,15 +13,11 @@
         loadingLayers: [],
 
         _create: function () {
-            var elementIds = Object.keys(Mapbender.configuration.elements);
-            for (var i = 0; i < elementIds.length; ++i) {
-                var id = elementIds[i];
-                var elementConfig = Mapbender.configuration.elements[id];
-                if (elementConfig.init === 'mapbender.mbMap') {
-                    if (Mapbender.checkTarget("mbActivityIndicator", id)) {
-                        Mapbender.elementRegistry.waitReady(id).then($.proxy(this._setupMap, this));
-                    }
-                }
+            var $mbMap = $('.mb-element-map');
+            if ($mbMap.length) {
+                this._setupMap({element: $mbMap.eq(0)});
+            } else {
+                Mapbender.checkTarget("mbActivityIndicator");
             }
             this.element.on('ajaxStart', $.proxy(this._onAjaxStart, this));
             this.element.on('ajaxStop', $.proxy(this._onAjaxStop, this));
