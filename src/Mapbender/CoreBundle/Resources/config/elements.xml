@@ -55,6 +55,12 @@
         <service id="mapbender.element.ScaleBar" class="Mapbender\CoreBundle\Element\ScaleBar">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.SearchRouter" class="Mapbender\CoreBundle\Element\SearchRouter">
+            <tag name="mapbender.element" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
         <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
             <tag name="mapbender.element" />
             <argument type="service" id="mapbender.http_transport.service" />

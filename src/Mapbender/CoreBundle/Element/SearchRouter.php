@@ -1,14 +1,20 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Doctrine\Persistence\ConnectionRegistry;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Component\SQLSearchEngine;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -16,8 +22,23 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Christian Wygoda
  */
-class SearchRouter extends Element implements ConfigMigrationInterface
+class SearchRouter extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
+    /** @var ConnectionRegistry */
+    protected $connectionRegistry;
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+    /** @var LoggerInterface|null */
+    protected $logger;
+
+    public function __construct(ConnectionRegistry $connectionRegistry,
+                                FormFactoryInterface $formFactory,
+                                LoggerInterface $logger = null)
+    {
+        $this->connectionRegistry = $connectionRegistry;
+        $this->formFactory = $formFactory;
+        $this->logger = $logger;
+    }
 
     public static function getClassTitle()
     {
@@ -39,7 +60,7 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbSearchRouter';
     }
@@ -109,24 +130,23 @@ class SearchRouter extends Element implements ConfigMigrationInterface
             ),
         );
     }
-
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:search_router.html.twig';
-    }
+        $view = new TemplateView('MapbenderCoreBundle:Element:search_router.html.twig');
+        $view->attributes['class'] = 'mb-element-searchrouter';
+        $view->attributes['data-title'] = $element->getTitle();
 
-    public function getFrontendTemplateVars()
-    {
-        return array(
-            'route_select_form' => $this->getRouteSelectForm()->createView(),
-            'search_forms' => $this->getFormViews(),
+        $view->variables = array(
+            'route_select_form' => $this->getRouteSelectForm($element)->createView(),
+            'search_forms' => $this->getFormViews($element),
         );
+        return $view;
     }
 
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js'    => array(
@@ -143,28 +163,27 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function getHttpHandler(Element $element)
     {
-        /** @var SQLSearchEngine $engine */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
+        return $this;
+    }
 
-        $actionParts = explode('/', $action);
+    public function handleRequest(Element $element, Request $request)
+    {
+        $actionParts = explode('/', $request->attributes->get('action'));
         if (count($actionParts) !== 2) {
             throw new NotFoundHttpException();
         }
         $categoryId = $actionParts[0];
         $action = $actionParts[1];
 
-        $routeConfigs = $this->entity->getConfiguration()['routes'];
+        $routeConfigs = $element->getConfiguration()['routes'];
         if (empty($routeConfigs[$categoryId])) {
             throw new NotFoundHttpException();
         }
         $categoryConf = array_replace_recursive($this->getDefaultRouteConfiguration(), $routeConfigs[$categoryId]);
-        /** @todo Sf4: no container access, no container passing */
-        $engine = new $categoryConf['class']($this->container);
+        $engineClassName = $categoryConf['class'];
+        $engine = new $engineClassName($this->buildEngineContainer($engineClassName));
         $data = json_decode($request->getContent(), true);
 
         if ('autocomplete' === $action) {
@@ -200,20 +219,19 @@ class SearchRouter extends Element implements ConfigMigrationInterface
     /**
      * Create form for selecting search route (= search form) to display.
      *
+     * @param Element $element
      * @return FormInterface Search route select form
      */
-    public function getRouteSelectForm()
+    protected function getRouteSelectForm(Element $element)
     {
         $defaultTitle = $this->getDefaultRouteConfiguration()['title'];
-        $routeConfigs = $this->entity->getConfiguration()['routes'];
+        $routeConfigs = $element->getConfiguration()['routes'];
         $choices = array();
         foreach ($routeConfigs as $value => $routeConfig) {
             $title = (!empty($routeConfig['title'])) ? $routeConfig['title'] : $defaultTitle;
             $choices[$title] = $value;
         }
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory   = $this->container->get('form.factory');
-        return $formFactory->createNamed('search_routes_route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', null, array(
+        return $this->formFactory->createNamed('search_routes_route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', null, array(
             'choices' => $choices,
         ));
     }
@@ -225,30 +243,27 @@ class SearchRouter extends Element implements ConfigMigrationInterface
      */
     protected function getForm($categoryConfig, $categoryId)
     {
-        /** @var FormFactoryInterface $factory */
-        $factory = $this->container->get('form.factory');
-        return $factory->createNamed($categoryId, 'Mapbender\CoreBundle\Element\Type\SearchRouterFormType', null, array(
+        return $this->formFactory->createNamed($categoryId, 'Mapbender\CoreBundle\Element\Type\SearchRouterFormType', null, array(
             'fields' => $categoryConfig,
         ));
     }
 
     /**
-     * Get form views
-     *
+     * @param Element $element
      * @return FormView[]
      */
-    public function getFormViews()
+    protected function getFormViews(Element $element)
     {
         $formViews = array();
         $routeDefaults = $this->getDefaultRouteConfiguration();
-        foreach ($this->entity->getConfiguration()['routes'] as $name => $conf) {
+        foreach ($element->getConfiguration()['routes'] as $name => $conf) {
             $conf = array_replace_recursive($routeDefaults, $conf);
             $formViews[] = $this->getForm($conf, $name)->createView();
         }
         return $formViews;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $configuration = $entity->getConfiguration();
         foreach ($configuration['routes'] as $routeKey => $routeValue) {
@@ -261,13 +276,25 @@ class SearchRouter extends Element implements ConfigMigrationInterface
         $entity->setConfiguration($configuration);
     }
 
-    public function getPublicConfiguration()
+    public function getClientConfiguration(Element $element)
     {
         $routeDefaults = $this->getDefaultRouteConfiguration();
-        $config = $this->entity->getConfiguration();
+        $config = $element->getConfiguration();
         foreach ($config['routes'] as $key => $routeConfig) {
             $config['routes'][$key] = array_replace_recursive($routeDefaults, $routeConfig);
         }
         return $config;
+    }
+
+    protected function buildEngineContainer($engineClassName)
+    {
+        $container = new Container();
+        switch ($engineClassName) {
+            default:
+            case 'Mapbender\CoreBundle\Component\SQLSearchEngine':
+                $container->set('doctrine', $this->connectionRegistry);
+                $container->set('logger', $this->logger ?: new NullLogger());
+                return $container;
+        }
     }
 }
