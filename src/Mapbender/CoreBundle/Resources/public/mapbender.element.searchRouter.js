@@ -195,7 +195,6 @@
                     $input.autocomplete("close");
                 },
                 open: function(event, ui, t) {
-                    console.log("Autocomplete open", arguments);
                     $(event.target).data("uiAutocomplete").menu.element.outerWidth($input.outerWidth());
                 },
                 source: function(request, response){
