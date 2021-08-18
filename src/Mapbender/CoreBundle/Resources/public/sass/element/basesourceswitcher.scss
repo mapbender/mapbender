@@ -7,7 +7,7 @@
     margin-right: 0.5em;
   }
 
-  .toolBarItem & {
+  &.toolBarItem {
     // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
     text-align: left;
     position: relative;
