@@ -39,7 +39,6 @@ class BaseSourceSwitcher extends AbstractElementService implements ImportAwareIn
     {
         return array(
             'tooltip' => static::getClassTitle(),
-            'target' => null,
             'instancesets' => array(),
         );
     }

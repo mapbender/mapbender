@@ -7,11 +7,11 @@
 
         _create: function () {
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbBaseSourceSwitcher", self.options.target)
+                Mapbender.checkTarget('mbBaseSourceSwitcher')
             });
         },
 
