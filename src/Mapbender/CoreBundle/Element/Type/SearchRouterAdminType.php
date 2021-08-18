@@ -10,7 +10,6 @@ class SearchRouterAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(

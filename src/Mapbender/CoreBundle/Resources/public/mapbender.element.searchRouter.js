@@ -14,11 +14,11 @@
             var self = this;
             this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbSearchRouter", self.options.target);
+                Mapbender.checkTarget('mbSearchRouter');
             });
         },
 
@@ -34,7 +34,6 @@
         _setup: function() {
             var widget = this;
             var element = widget.element;
-            var options = widget.options;
 
             var routeSelect = $('select#search_routes_route', element);
             var routeCount;
