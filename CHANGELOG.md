@@ -1,4 +1,4 @@
-## dev-master @ 87519f6f5
+## dev-master @ 011ad1bc1
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
@@ -6,11 +6,14 @@
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
 * Resolve Symfony 4 incompatibilities in Controllers
 * Resolve Symfony 4 incompatibilities in Elements
+  * BaseSourceSwitcher
   * Copyright
+  * ImageExport
   * Layertree
   * Legend
   * Overview
   * Ruler
+  * SearchRouter
   * SimpleSearch
   * SrsSelector
   * Sketch
