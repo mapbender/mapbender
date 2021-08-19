@@ -187,6 +187,9 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
                 }
                 $this->canonicals[$handledClassName] = $canonical ?: $serviceClass;
             }
+            if ($canonical !== $serviceClass && false === \array_search($canonical, $handledClassNames)) {
+                $this->replaceElement($canonical, $serviceClass);
+            }
         }
         $this->inventoryDirty = true;
     }
