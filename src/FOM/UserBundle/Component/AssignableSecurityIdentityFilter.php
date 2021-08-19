@@ -9,7 +9,6 @@ use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Core\Role\Role;
-use Symfony\Component\Security\Core\Role\RoleInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -115,7 +114,7 @@ class AssignableSecurityIdentityFilter
             if ($value instanceof Group) {
                 return $value;
             }
-            if ($value instanceof RoleInterface) {
+            if ($value instanceof Role) {
                 // no warning. Convert to unpersisted group for template compatibility (getAsRole)
                 $group = new Group();
                 $group->setTitle(preg_replace('#^ROLE_(GROUP_)?#', '', $value->getRole()));
