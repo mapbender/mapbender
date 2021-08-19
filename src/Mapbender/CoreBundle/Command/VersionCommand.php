@@ -4,17 +4,30 @@
 namespace Mapbender\CoreBundle\Command;
 
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class VersionCommand extends ContainerAwareCommand
+class VersionCommand extends Command
 {
+    protected $name;
+    protected $version;
+    protected $projectName;
+    protected $projectVersion;
+
+    public function __construct($name, $version, $projectName, $projectVersion)
+    {
+        $this->name = $name;
+        $this->version = $version;
+        $this->projectName = $projectName;
+        $this->projectVersion = $projectVersion;
+        parent::__construct(null);
+    }
+
     protected function configure()
     {
         $this
-            ->setName('mapbender:version')
             ->setHelp('Display Mapbender version')
             // --version is taken by Symfony...
             ->addOption('--number-only', null, InputOption::VALUE_NONE, 'Display only version (default: name and version)')
@@ -35,11 +48,11 @@ class VersionCommand extends ContainerAwareCommand
     {
 
         if ($input->getOption('project')) {
-            $name = $this->getContainer()->getParameter('branding.project_name');
-            $version = $this->getContainer()->getParameter('branding.project_version');
+            $name = $this->projectName;
+            $version = $this->projectVersion;
         } else {
-            $name = $this->getContainer()->getParameter('mapbender.branding.name');
-            $version = $this->getContainer()->getParameter('mapbender.version');
+            $name = $this->name;
+            $version = $this->version;
         }
         if ($input->getOption('name-only')) {
             $output->writeln($name);

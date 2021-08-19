@@ -39,19 +39,30 @@ namespace Mapbender\CoreBundle\Command;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ConfigCheckCommand extends ContainerAwareCommand
+class ConfigCheckCommand extends Command
 {
+    /** @var RegistryInterface */
+    protected $managerRegistry;
+    protected $rootDir;
+
+    public function __construct(RegistryInterface $managerRegistry,
+                                $rootDir)
+    {
+        $this->managerRegistry = $managerRegistry;
+        $this->rootDir = $rootDir;
+        parent::__construct(null);
+    }
 
     protected function configure()
     {
         $this
             ->setDescription('Check Mapbender requirements')
-            ->setName('mapbender:config:check')
         ;
     }
 
@@ -75,8 +86,7 @@ class ConfigCheckCommand extends ContainerAwareCommand
         $headers = ['Connection','Status','Message'];
         $rows=[];
         $success=true;
-        $doctrine=$this->getContainer()->get('doctrine');
-        $connections=$doctrine->getConnections();
+        $connections = $this->managerRegistry->getConnections();
         foreach ($connections AS $connection){
             try {
                 $connection->isConnected();
@@ -92,11 +102,12 @@ class ConfigCheckCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param OutputInterface $output
+     * @param SymfonyStyle $output
      * @return bool
      * @todo  APACHE mod_rewrite;
      */
-    protected function checkSystemRequirements(SymfonyStyle $output = null){
+    protected function checkSystemRequirements(SymfonyStyle $output)
+    {
         $output->title("Check System Requirements");
         $headers = ['Extension name','Is loaded?','Message'];
         $rows=[];
@@ -130,15 +141,15 @@ class ConfigCheckCommand extends ContainerAwareCommand
     /**
      * @todo: maybe this only works on Linux
      */
-    protected function checkPermissions(SymfonyStyle $output = null){
+    protected function checkPermissions(SymfonyStyle $output)
+    {
         $output->title("Check Permissions");
         $headers = ['Folder', 'User', 'Group','Permissions'];
         $rows=[];
         $success = true;
         $folders= array('app/logs/','app/cache/','web/uploads/','web/xmlschemas/','web/');
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
         foreach ($folders as $folder){
-            $filename = $rootDir.'/../'.$folder;
+            $filename = $this->rootDir . '/../' . $folder;
             $permission= substr(sprintf('%o',fileperms($filename)), -4);
             $stat = stat($filename);
             $ownername=posix_getpwuid($stat['uid'])['name'];
@@ -150,20 +161,20 @@ class ConfigCheckCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param OutputInterface $output
+     * @param SymfonyStyle $output
      * @return bool
      */
-    protected function checkAssets(SymfonyStyle $output = null){
+    protected function checkAssets(SymfonyStyle $output)
+    {
         $output->title("Check Asset Folders");
         $headers = ['Folder','is Symlink?'];
         $rows=[];
         $success = true;
         $ignoreFolders= array('.','..','.gitignore','.gitkeep');
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
-        $webDirs=scandir($rootDir.'/../web/bundles');
+        $webDirs = scandir($this->rootDir.'/../web/bundles');
         foreach ($webDirs as $webDir){
             if(!in_array($webDir,$ignoreFolders)){
-                if(is_link($rootDir.'/../web/bundles/'.$webDir)){
+                if (is_link($this->rootDir.'/../web/bundles/'.$webDir)) {
                     $rows[]=[$webDir,'yes'];
                 }else{
                     $rows[]=[$webDir,'no'];
@@ -178,7 +189,8 @@ class ConfigCheckCommand extends ContainerAwareCommand
      * @todo: this only works on Linux
      *
      */
-    protected function checkFastCGI(SymfonyStyle $output = null){
+    protected function checkFastCGI(SymfonyStyle $output)
+    {
         $output->title('Check FastCGI');
         $matches=array();
         $outputCmd='';
@@ -196,7 +208,8 @@ class ConfigCheckCommand extends ContainerAwareCommand
      * @todo: this only works on Linux
      *
      */
-    protected function checkModRewrite(SymfonyStyle $output = null){
+    protected function checkModRewrite(SymfonyStyle $output)
+    {
         $output->title('Check Apache mod_rewrite');
         $matches=array();
         $outputCmd='';
@@ -210,7 +223,8 @@ class ConfigCheckCommand extends ContainerAwareCommand
         }
     }
 
-    protected function checkPhpIni(SymfonyStyle $output = null){
+    protected function checkPhpIni(SymfonyStyle $output)
+    {
         $output->title("Check PHP ini");
         $headers = ['Parameter','Value'];
         $rows=[];
@@ -224,7 +238,8 @@ class ConfigCheckCommand extends ContainerAwareCommand
         $output->table($headers,$rows);
     }
 
-    protected function getLoadedPhpExtensions(SymfonyStyle $output = null){
+    protected function getLoadedPhpExtensions(SymfonyStyle $output)
+    {
         $output->title("Loaded PHP Extensions");
         $loadedExtensions= get_loaded_extensions ();
         if(count($loadedExtensions)!=0){

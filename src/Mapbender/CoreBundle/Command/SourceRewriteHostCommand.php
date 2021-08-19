@@ -10,17 +10,26 @@ use Mapbender\Component\Transformer\ChangeTrackingTransformer;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Entity\Source;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SourceRewriteHostCommand extends ContainerAwareCommand
+class SourceRewriteHostCommand extends Command
 {
+    /** @var RegistryInterface */
+    protected $managerRegistry;
+
+    public function __construct(RegistryInterface $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+        parent::__construct(null);
+    }
+
     protected function configure()
     {
-        $this->setName('mapbender:source:rewrite:host');
         $this->setDescription("Update host names in source urls, without reloading capabilities");
         $this->addArgument('from', InputArgument::REQUIRED);
         $this->addArgument('to', InputArgument::REQUIRED);
@@ -120,7 +129,7 @@ class SourceRewriteHostCommand extends ContainerAwareCommand
     protected function getEntityManager()
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->managerRegistry->getManager();
         return $em;
     }
 }

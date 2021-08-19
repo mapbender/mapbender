@@ -11,13 +11,10 @@ use Sensio\Bundle\GeneratorBundle\Generator\Generator;
  */
 class ElementGenerator extends Generator
 {
-    public function create($container, $bundle, $bundleDir, $bundleNamespace, $className, $type)
+    public function create($bundle, $bundleDir, $bundleNamespace, $className, $type)
     {
         $files = array();
         $classNameLower = strtolower($className);
-
-        // Copy skeleton files
-        $filesystem = $container->get('filesystem');
 
         $classFile  = sprintf('%s/Element/%s.php', $bundleDir, $className);
         $widgetFile = sprintf('%s/Resources/public/mapbender.element.%s.js', $bundleDir, $classNameLower);

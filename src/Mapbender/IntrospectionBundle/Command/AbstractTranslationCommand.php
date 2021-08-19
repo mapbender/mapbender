@@ -4,13 +4,13 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractTranslationCommand extends ContainerAwareCommand
+abstract class AbstractTranslationCommand extends Command
 {
     // NOTE: Symfony does not provide listing all available catalogs, so we have to start with a master list
     // HINT: find . -name 'messages.*.yml' -printf '%f\n' -o -name 'messages.*.xlf' -printf '%f\n' | sort -u
@@ -32,9 +32,14 @@ abstract class AbstractTranslationCommand extends ContainerAwareCommand
     /** @var string[]|false */
     protected $fallbackLocales;
 
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+        parent::__construct(null);
+    }
+
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->translator = $this->getContainer()->get('translator');
         if (method_exists($this->translator, 'getFallbackLocales')) {
             // Translator or DataCollectorTranslator, potentially more implementations
             // method is not part of any interfaces though (as of Symfony 2.8)

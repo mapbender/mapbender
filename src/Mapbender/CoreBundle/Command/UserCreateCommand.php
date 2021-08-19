@@ -4,7 +4,9 @@
 namespace Mapbender\CoreBundle\Command;
 
 
+use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,9 +14,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UserCreateCommand extends AbstractUserCommand
 {
+    /** @var UserHelperService */
+    protected $userHelper;
+
+    public function __construct(RegistryInterface $managerRegistry,
+                                UserHelperService $userHelper)
+    {
+        $this->userHelper = $userHelper;
+        parent::__construct($managerRegistry);
+    }
+
     protected function configure()
     {
-        $this->setName('mapbender:user:create');
         $this->setHelp('Create a new local user, or optionally (with --update) modify an existing user');
         $this->addArgument('name', InputArgument::REQUIRED);
         $this->addOption('update', null, InputOption::VALUE_NONE, 'Allow update of existing user');
@@ -75,7 +86,7 @@ class UserCreateCommand extends AbstractUserCommand
             ++$mods;
         }
         if ($input->getOption('password')) {
-            $this->getUserHelper()->setPassword($user, $input->getOption('password'));
+            $this->userHelper->setPassword($user, $input->getOption('password'));
             ++$mods;
         }
         return $mods;
@@ -96,6 +107,6 @@ class UserCreateCommand extends AbstractUserCommand
         $em->flush();
         $em->persist($user);
         // Add default privileges (VIEW and EDIT on own information)
-        $this->getUserHelper()->giveOwnRights($user);
+        $this->userHelper->giveOwnRights($user);
     }
 }

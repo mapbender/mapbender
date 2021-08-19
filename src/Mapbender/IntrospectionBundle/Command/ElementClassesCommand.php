@@ -12,13 +12,12 @@ use Mapbender\Component\BundleUtil;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * CLI command to inspect Mapbender element classes and perform some sanity checks.
@@ -33,20 +32,28 @@ use Symfony\Component\HttpKernel\Kernel;
  * * (overridden) form template != automatically calculated form template (to detect inheritance / convention issues)
  *
  */
-class ElementClassesCommand extends ContainerAwareCommand
+class ElementClassesCommand extends Command
 {
+    /** @var KernelInterface */
+    protected $kernel;
+    /** @var ElementFormFactory */
+    protected $elementFormFactory;
     /** @var ElementInventoryService */
     protected $inventory;
 
-    public function setContainer(ContainerInterface $container = null)
+    public function __construct(KernelInterface $kernel,
+                                ElementInventoryService $inventory,
+                                ElementFormFactory $elementFormFactory)
     {
-        parent::setContainer($container);
-        $this->inventory = $container->get('mapbender.element_inventory.service');
+        $this->kernel = $kernel;
+        $this->inventory = $inventory;
+        $this->elementFormFactory = $elementFormFactory;
+
+        parent::__construct(null);
     }
 
     protected function configure()
     {
-        $this->setName('mapbender:inspect:element:classes');
         $this->setHelp('Summarizes information about all available Mapbender Element classes in all currently active bundles');
     }
 
@@ -85,10 +92,10 @@ class ElementClassesCommand extends ContainerAwareCommand
                 );
             }
         }
-        $this->renderInfoPerNamespace($output, $headers, $rows);
+        $this->renderInfoPerNamespace($input, $output, $headers, $rows);
     }
 
-    protected function renderInfoPerNamespace(OutputInterface $output, $headers, $rows)
+    protected function renderInfoPerNamespace(InputInterface $input, OutputInterface $output, $headers, $rows)
     {
         ksort($rows);
         // split the information into buckets by bundle namespace
@@ -116,7 +123,7 @@ class ElementClassesCommand extends ContainerAwareCommand
 
         foreach ($namespaceBuckets as $bundleNamespace => $rows) {
             $output->writeln("Elements in $bundleNamespace:");
-            $this->renderTable($output, $headers, $rows);
+            $this->renderTable($input, $output, $headers, $rows);
         }
     }
 
@@ -178,9 +185,6 @@ class ElementClassesCommand extends ContainerAwareCommand
      */
     protected function formatAdminType($element)
     {
-        /** @var ElementFormFactory $formFactory */
-        $formFactory = $this->getContainer()->get('mapbender.manager.element_form_factory.service');
-
         try {
             $rc = new \ReflectionClass($element->getClass());
             $rm = $rc->getMethod('getType');
@@ -188,7 +192,7 @@ class ElementClassesCommand extends ContainerAwareCommand
             return "<error>No reflection</error>";
         }
 
-        $adminType = $formFactory->getConfigurationFormType($element);
+        $adminType = $this->elementFormFactory->getConfigurationFormType($element);
         if (!$adminType) {
             return '<comment>none</comment>';
         }
@@ -275,11 +279,9 @@ class ElementClassesCommand extends ContainerAwareCommand
     protected function templateExists($twigPath)
     {
         // Kernel::locateResource seems to be the best general purpose resource locator
-        /** @var Kernel $kernel */
-        $kernel = $this->getContainer()->get('kernel');
         /** Symfony file locators throw InvalidArgumentException if files are not found... */
         try {
-            $realPath = $kernel->locateResource($this->resourcePathFromTwigPath($twigPath));
+            $realPath = $this->kernel->locateResource($this->resourcePathFromTwigPath($twigPath));
             return file_exists($realPath) && filesize($realPath);
         } catch (\InvalidArgumentException $e) {
             return false;
@@ -287,40 +289,15 @@ class ElementClassesCommand extends ContainerAwareCommand
     }
 
     /**
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @param string[] $headers
      * @param array[] $rows
      */
-    protected function renderTable(OutputInterface $output, $headers, $rows)
+    protected function renderTable(InputInterface $input, OutputInterface $output, $headers, $rows)
     {
-        if (class_exists('Symfony\Component\Console\Helper\TableHelper')) {
-            $th = $this->getTableHelper();
-            $th->setHeaders($headers);
-            $th->setRows($rows);
-            $th->render($output);
-        } else {
-            foreach ($rows as $row) {
-                foreach ($headers as $cellIndex => $header) {
-                    if (array_key_exists($cellIndex, $row)) {
-                        $reflowed = preg_replace('#\n+#', '; ', $row[$cellIndex]);
-                        $output->writeln("  {$header}: {$reflowed}");
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @return TableHelper
-     * @todo: this will be gone in Symfony 3.0
-     */
-    protected function getTableHelper()
-    {
-        /** @var TableHelper $table */
-        $table = $this->getHelper('table');
-        $table->setCellRowFormat('%s');
-        $table->setCellHeaderFormat('%s');
-        return $table;
+        $tableHelper = new SymfonyStyle($input, $output);
+        $tableHelper->table($headers, $rows);
     }
 
     /**

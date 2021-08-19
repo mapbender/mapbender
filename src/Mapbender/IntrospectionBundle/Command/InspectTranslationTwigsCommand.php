@@ -12,17 +12,37 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class InspectTranslationTwigsCommand extends ContainerAwareCommand
+class InspectTranslationTwigsCommand extends Command
 {
+    /** @var FilesystemLoader */
+    protected $twigLoader;
+    /** @var ElementInventoryService */
+    protected $inventory;
+    /** @var ElementEntityFactory */
+    protected $entityFactory;
+    protected $bundles;
+
+    public function __construct(FilesystemLoader $twigLoader,
+                                ElementInventoryService $inventory,
+                                ElementEntityFactory $entityFactory,
+                                $bundles)
+    {
+        $this->twigLoader = $twigLoader;
+        $this->inventory = $inventory;
+        $this->entityFactory = $entityFactory;
+        $this->bundles = $bundles;
+        parent::__construct(null);
+    }
+
     public function configure()
     {
         $this
-            ->setName('mapbender:inspect:translation:twigs')
             ->addOption('elements', null, InputOption::VALUE_NONE)
             ->addOption('templates', null, InputOption::VALUE_NONE)
             ->addOption('admin', null, InputOption::VALUE_NONE)
@@ -52,11 +72,9 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $resources = $this->collectResourcePaths($input);
-        /** @var \Symfony\Bundle\TwigBundle\Loader\Filesystemloader $twigLoader */
-        $twigLoader = $this->getContainer()->get('twig.loader');
         foreach ($resources as $resourceName) {
             try {
-                $content = $twigLoader->getSourceContext($resourceName)->getCode();
+                $content = $this->twigLoader->getSourceContext($resourceName)->getCode();
             } catch (\Twig\Error\LoaderError $e) {
                 // do absolutely nothing
                 continue;
@@ -102,14 +120,10 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
     {
         $dummyApplication = new Application();
         $twigPaths = array();
-        /** @var ElementInventoryService $inventory */
-        $inventory = $this->getContainer()->get('mapbender.element_inventory.service');
-        /** @var ElementEntityFactory $factory  */
-        $factory = $this->getContainer()->get('mapbender.element_entity_factory');
-        $classNames = $inventory->getRawInventory();
+        $classNames = $this->inventory->getRawInventory();
         foreach ($classNames as $className) {
-            $element = $factory->newEntity($className, 'content', $dummyApplication);
-            $handler = $inventory->getFrontendHandler($element);
+            $element = $this->entityFactory->newEntity($className, 'content', $dummyApplication);
+            $handler = $this->inventory->getFrontendHandler($element);
             $assetDependencies = $handler->getRequiredAssets($element);
             if (!empty($assetDependencies['trans'])) {
                 $twigPaths = array_merge($twigPaths, $this->filterTranslationDependencies($assetDependencies['trans']));
@@ -121,7 +135,7 @@ class InspectTranslationTwigsCommand extends ContainerAwareCommand
     protected function collectTemplateResourcePaths()
     {
         $templateClasses = array();
-        foreach ($this->getContainer()->getParameter('kernel.bundles') as $bundleClassName) {
+        foreach ($this->bundles as $bundleClassName) {
             if (\is_a($bundleClassName, 'Mapbender\CoreBundle\Component\MapbenderBundle', true)) {
                 /** @var MapbenderBundle $bundle */
                 $bundle = new $bundleClassName();
