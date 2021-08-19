@@ -209,7 +209,7 @@ class ElementController extends ApplicationControllerBase
         }
 
         $entityManager = $this->getEntityManager();
-        $entityManager->detach($element); // prevent element from being stored with default config/stored again
+        $entityManager->clear(Element::class); // prevent element from being stored with default config/stored again
 
         $application = $this->requireDbApplication($slug);
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(

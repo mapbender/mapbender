@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
@@ -93,7 +94,7 @@ class Importer extends RefreshableSourceLoader
         EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
         $contact = clone $reloaded->getContact();
-        $this->entityManager->detach($contact);
+        $this->entityManager->clear(Contact::class);
         if ($target->getContact()) {
             $this->entityManager->remove($target->getContact());
         }
