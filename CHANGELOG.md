@@ -1,4 +1,4 @@
-## dev-master @ 39ce703cf
+## dev-master @ dd81337f0
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
@@ -6,7 +6,8 @@
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
 * Optimize Symfony container build parameters
-* Resolve Symfony 4 incompatibilities in Controllers
+* Resolve misc doctrine deprecations
+* Resolve Symfony 4 incompatibilities in controllers and console commands
 * Resolve Symfony 4 incompatibilities in all remaining Elements
   * BaseSourceSwitcher
   * Copyright
