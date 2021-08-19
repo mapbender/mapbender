@@ -7,14 +7,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PrintQueueRerunCommand extends AbstractPrintQueueCommand
+class PrintQueueRerunCommand extends AbstractPrintQueueExecutionCommand
 {
     protected function configure()
     {
         $this
             ->setDescription("Rerun a print queue job")
             ->addArgument('id', InputArgument::REQUIRED, "id of job (required)")
-            ->setName('mapbender:print:queue:rerun')
         ;
     }
 

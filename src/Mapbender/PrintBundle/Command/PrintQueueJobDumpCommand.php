@@ -19,7 +19,6 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
     {
         $this
             ->setDescription('Dump queued print job from the DB to JSON or YAML')
-            ->setName('mapbender:print:queue:dumpjob')
             ->addArgument('id', InputArgument::REQUIRED, 'Job ID to extract')
             ->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yml', 'json')
         ;

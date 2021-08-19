@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Mapbender\PrintBundle\Command\RunJobCommand"
+                 class="Mapbender\PrintBundle\Command\RunJobCommand">
+            <tag name="console.command" command="mapbender:print:runJob" />
+            <!-- @todo: eliminate bridge service (use print service directly) -->
+            <argument type="service" id="mapbender.print_service_bridge.service" />
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueGcFilesCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueGcFilesCommand">
+            <tag name="console.command" command="mapbender:print:queue:gcfiles" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueCleanCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueCleanCommand">
+            <tag name="console.command" command="mapbender:print:queue:clean" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueNextCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueNextCommand">
+            <tag name="console.command" command="mapbender:print:queue:next" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <!-- @todo: eliminate bridge service (use print service directly) -->
+            <argument type="service" id="mapbender.print_service_bridge.service" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+            <argument>%mapbender.print.queue.memory_limit%</argument>
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueRepairCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueRepairCommand">
+            <tag name="console.command" command="mapbender:print:queue:repair" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueRerunCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueRerunCommand">
+            <tag name="console.command" command="mapbender:print:queue:rerun" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <!-- @todo: eliminate bridge service (use print service directly) -->
+            <argument type="service" id="mapbender.print_service_bridge.service" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+            <argument>%mapbender.print.queue.memory_limit%</argument>
+        </service>
+        <service id="Mapbender\PrintBundle\Command\PrintQueueJobDumpCommand"
+                 class="Mapbender\PrintBundle\Command\PrintQueueJobDumpCommand">
+            <tag name="console.command" command="mapbender:print:queue:dumpjob" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="filesystem" />
+            <argument>%mapbender.print.queue.storage_dir%</argument>
+        </service>
+    </services>
+</container>

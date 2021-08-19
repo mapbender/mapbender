@@ -12,7 +12,6 @@ class PrintQueueGcFilesCommand extends AbstractPrintQueueCleanCommand
 {
     protected function configure()
     {
-        $this->setName('mapbender:print:queue:gcfiles');
         $this->setDescription("Delete unreferenced files from print queue storage path");
         $this->addOption('dry-run', null, InputOption::VALUE_NONE);
     }
