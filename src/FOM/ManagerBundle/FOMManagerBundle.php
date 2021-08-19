@@ -6,7 +6,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use FOM\ManagerBundle\DependencyInjection\Compiler\RouteAnnotationsPass;
 
 /**
  * FoMManagerBundle - provides Manager interface infrastructure for other bundles.
@@ -20,7 +19,6 @@ class FOMManagerBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new RouteAnnotationsPass());
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/Resources/config'));
         $loader->load('services.xml');
     }

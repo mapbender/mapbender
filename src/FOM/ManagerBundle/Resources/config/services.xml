@@ -8,5 +8,17 @@
             <argument type="service" id="security.token_storage"/>
             <argument type="service" id="security.acl.provider"/>
         </service>
+        <service id="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader"
+                 class="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader">
+            <tag name="routing.loader" />
+            <argument type="service" id="annotation_reader" />
+            <argument>%fom_manager.route_prefix%</argument>
+        </service>
+        <service id="FOM\ManagerBundle\Routing\AnnotationDirectoryLoader"
+                 class="FOM\ManagerBundle\Routing\AnnotationDirectoryLoader">
+            <tag name="routing.loader" />
+            <argument type="service" id="file_locator" />
+            <argument type="service" id="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader" />
+        </service>
     </services>
 </container>

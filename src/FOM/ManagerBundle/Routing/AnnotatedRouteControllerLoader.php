@@ -3,7 +3,6 @@
 namespace FOM\ManagerBundle\Routing;
 
 use Symfony\Component\Routing\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Routing\AnnotatedRouteControllerLoader as BaseLoader;
 use Doctrine\Common\Annotations\Reader;
 
 /**
@@ -15,7 +14,7 @@ use Doctrine\Common\Annotations\Reader;
  *
  * @author Christian Wygoda
  */
-class AnnotatedRouteControllerLoader extends BaseLoader
+class AnnotatedRouteControllerLoader extends \Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader
 {
     protected $prefix;
 
