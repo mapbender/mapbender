@@ -14,7 +14,6 @@
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
-        "sensio/generator-bundle": "^2 || ^3",
 
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2",

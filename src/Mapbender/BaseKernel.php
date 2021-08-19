@@ -98,7 +98,6 @@ abstract class BaseKernel extends Kernel
         $environment = $this->getEnvironment();
         if ($environment == 'dev' || strpos($environment, 'test') === 0) {
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 
         return $bundles;
