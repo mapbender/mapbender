@@ -23,7 +23,7 @@ class TestBase extends WebTestCase
             $this->runCommand('doctrine:database:create');
             $this->runCommand('doctrine:schema:create');
             $this->runCommand('fom:user:resetroot --username=root --password=root --email=root@example.com --silent');
-            $this->runCommand('doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/ --append');
+            $this->runCommand('mapbender:database:init');
         }
     }
 
