@@ -13,7 +13,7 @@
         "symfony/acl-bundle": "^1 || ^2",
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
-        "doctrine/doctrine-bundle": "^1.12 || ^2",
+        "doctrine/doctrine-bundle": "^1.12",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
 
         "setasign/fpdf": "^1.8",

@@ -1,12 +1,10 @@
-## dev-master @ dd81337f0
+## dev-master @ 860b5c3dc
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
 * [PrintClient] Fix initial flash of unstyled tab headers / tab containers if element visible on page load and queue mode is active
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
-* Optimize Symfony container build parameters
-* Resolve misc doctrine deprecations
 * Resolve Symfony 4 incompatibilities in controllers and console commands
 * Resolve Symfony 4 incompatibilities in all remaining Elements
   * BaseSourceSwitcher
@@ -21,6 +19,10 @@
   * SimpleSearch
   * SrsSelector
   * Sketch
+* Resolve misc doctrine deprecations
+* Resolve extension configuration deprecations
+* Add missing (previously implicit) doctrine/doctrine-bundle dependency
+* Optimize Symfony container build parameters
 
 ## v3.2.6
 * [Overview] Fix initially closed overview map showing max extent when opening for the first time
