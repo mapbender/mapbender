@@ -5,7 +5,6 @@ namespace Mapbender\PrintBundle\Component\Service;
 
 
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -14,27 +13,18 @@ use Symfony\Component\HttpFoundation\Request;
  * Also hosts plugins for PrintClient Element.
  *
  * Registered in container at mapbender.print_service_bridge.service (yes, exactly like that)
+ * @deprecated inject / access PrintService (service id "mapbender.print.service") and / or plugin host (service id "mapbender.print.plugin_host.service) directly
  */
 class PrintServiceBridge implements PrintServiceInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var PrintServiceInterface */
+    protected $printService;
     /** @var PrintPluginHost */
     protected $pluginHost;
 
     private static $instance = null;
 
-    /** @var object|false|null */
-    protected $servicyPrintService;
-
-    /** @var string|false|null */
-    protected $unservicyPrintServiceClassName;
-
-    /**
-     * @param ContainerInterface $container only used for instantiation old-style non-service service
-     * @param PrintPluginHost $pluginHost
-     */
-    public function __construct(ContainerInterface $container, PrintPluginHost $pluginHost)
+    public function __construct(PrintServiceInterface $printService, PrintPluginHost $pluginHost)
     {
         // strict singleton enforcement: no two instances may be created, including child class instances
         if (self::$instance) {
@@ -42,7 +32,7 @@ class PrintServiceBridge implements PrintServiceInterface
         } else {
             self::$instance = $this;
         }
-        $this->container = $container;
+        $this->printService = $printService;
         $this->pluginHost = $pluginHost;
     }
 
@@ -70,28 +60,12 @@ class PrintServiceBridge implements PrintServiceInterface
      */
     public function dumpPrint(array $printJobData)
     {
-        $serviceOrMaybeNot = $this->getPrintServiceInstance();
-        if ($serviceOrMaybeNot instanceof PrintServiceInterface) {
-            return $serviceOrMaybeNot->dumpPrint($printJobData);
-        } else {
-            // Legacy path
-            // NOTE: Retrieved object could be anything, not even necessarily a child of the old default class.
-            /** @var \Mapbender\PrintBundle\Component\PrintService $serviceOrMaybeNot */
-            return $serviceOrMaybeNot->doPrint($printJobData);
-        }
+        return $this->printService->dumpPrint($printJobData);
     }
 
     public function storePrint(array $printJobData, $fileName)
     {
-        $serviceOrMaybeNot = $this->getPrintServiceInstance();
-        if ($serviceOrMaybeNot instanceof PrintServiceInterface) {
-            $serviceOrMaybeNot->storePrint($printJobData, $fileName);
-        } else {
-            // Legacy path
-            // NOTE: Retrieved object could be anything, not even necessarily a child of the old default class.
-            /** @var \Mapbender\PrintBundle\Component\PrintService $serviceOrMaybeNot */
-            file_put_contents($fileName, $serviceOrMaybeNot->doPrint($printJobData));
-        }
+        return $this->printService->storePrint($printJobData, $fileName);
     }
 
     /**
@@ -99,34 +73,10 @@ class PrintServiceBridge implements PrintServiceInterface
      * and may or may not extend from a known base class.
      *
      * @return PrintServiceInterface|\Mapbender\PrintBundle\Component\PrintService|object
+     * @deprecated inject / access PrintService (service id "mapbender.print.service") directly
      */
     public function getPrintServiceInstance()
     {
-        if ($this->servicyPrintService === null) {
-            $serviceInstance = $this->container->get('mapbender.print.service', ContainerInterface::NULL_ON_INVALID_REFERENCE);
-            $classNameParam = $this->container->getParameter('mapbender.print.service.class');
-            if (!$serviceInstance) {
-                if (!$classNameParam) {
-                    throw new \LogicException("Without a registered mapbender.print.service, container param mapbender.print.service.class MUST be defined and non-empty");
-                }
-                $this->servicyPrintService = false;
-                $this->unservicyPrintServiceClassName = $classNameParam;
-            } elseif ($classNameParam && get_class($serviceInstance) != $classNameParam) {
-                throw new \LogicException("Container-registered mapbender.print.service is not an instance of container param mapbender.print.service.class");
-            } elseif (!$serviceInstance instanceof PrintServiceInterface) {
-                throw new \LogicException("Registered mapbender.print.service does not implement the required PrintServiceInterface");
-            } else {
-                $this->servicyPrintService = $serviceInstance;
-                $this->unservicyPrintServiceClassName = false;
-            }
-        }
-        if ($this->servicyPrintService) {
-            return $this->servicyPrintService;
-        } else {
-            $cn = $this->unservicyPrintServiceClassName;
-            // Old-style print accumulates job state
-            // => instantiate new every time
-            return new $cn($this->container);
-        }
+        return $this->printService;
     }
 }
