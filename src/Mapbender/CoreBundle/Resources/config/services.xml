@@ -162,8 +162,7 @@
         </service>
 
         <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
-            <argument>%owsproxy.proxy%</argument>
-            <argument type="service" id="logger" />
+            <argument type="service" id="owsproxy.http_foundation_client" />
         </service>
 
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">

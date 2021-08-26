@@ -24,14 +24,11 @@ class Loader extends SourceLoader
     /**
      * @param HttpTransportInterface $httpTransport
      * @param XmlValidatorService $validator
-     * @param mixed[] $proxyConfig
      */
-    public function __construct(HttpTransportInterface $httpTransport, XmlValidatorService $validator,
-                                $proxyConfig)
+    public function __construct(HttpTransportInterface $httpTransport, XmlValidatorService $validator)
     {
         parent::__construct($httpTransport);
         $this->validator = $validator;
-        $this->proxyConfig = $proxyConfig;
     }
 
     /**
@@ -47,7 +44,7 @@ class Loader extends SourceLoader
             $source = WmtsCapabilitiesParser::getParser($document)->parse();
         } catch (NoWmtsDocument $e) {
             $document = TmsCapabilitiesParser100::createDocument($content);
-            $source = TmsCapabilitiesParser100::getParser($this->proxyConfig, $document)->parse();
+            $source = TmsCapabilitiesParser100::getParser($this->httpTransport, $document)->parse();
         }
         return $source;
     }

@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
@@ -10,8 +11,6 @@ use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
 
 /**
  * @author Paul Schmidt
@@ -26,18 +25,16 @@ class TmsCapabilitiesParser100
 
     /** @var \DOMXPath */
     protected $xpath;
-
-    /** @var array */
-    protected $proxy_config;
+    /** @var HttpTransportInterface */
+    protected $httpTransport;
 
     /**
-     *
-     * @param array $proxy_config
+     * @param HttpTransportInterface $httpTransport
      * @param \DOMDocument $doc
      */
-    public function __construct($proxy_config, \DOMDocument $doc)
+    public function __construct(HttpTransportInterface $httpTransport, \DOMDocument $doc)
     {
-        $this->proxy_config = $proxy_config;
+        $this->httpTransport = $httpTransport;
         $this->doc   = $doc;
         $this->xpath = new \DOMXPath($doc);
     }
@@ -105,17 +102,17 @@ class TmsCapabilitiesParser100
     /**
      * Gets a capabilities parser
      *
-     * @param mixed[] $proxy_config
+     * @param HttpTransportInterface $httpTransport
      * @param \DOMDocument $doc the GetCapabilities document
      * @return static
      * @throws NotSupportedVersionException if a service version is not supported
      */
-    public static function getParser($proxy_config, \DOMDocument $doc)
+    public static function getParser(HttpTransportInterface $httpTransport, \DOMDocument $doc)
     {
         $version = $doc->documentElement->getAttribute("version");
         switch ($version) {
             case "1.0.0":
-                return new TmsCapabilitiesParser100($proxy_config, $doc);
+                return new TmsCapabilitiesParser100($httpTransport, $doc);
             default:
                 throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
         }
@@ -136,15 +133,12 @@ class TmsCapabilitiesParser100
         
         foreach ($titleMapElts as $titleMapElt) {
             $url         = $this->getValue("./@href", $titleMapElt);
-            $proxy_query = ProxyQuery::createFromUrl($url);
-            $proxy       = new CommonProxy($this->proxy_config, $proxy_query);
-            $browserResponse = $proxy->handle();
-            $content         = $browserResponse->getContent();
+            $content = $this->httpTransport->getUrl($url)->getContent();
             $doc             = new \DOMDocument();
             if (!@$doc->loadXML($content)) {
                 throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
             }
-            $tilemap = new TmsCapabilitiesParser100($this->proxy_config, $doc);
+            $tilemap = new TmsCapabilitiesParser100($this->httpTransport, $doc);
             // Url Service endpoint (without the version number)
             $pos_vers = strpos($url, $vers);
             $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
