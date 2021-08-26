@@ -5,12 +5,12 @@ namespace Mapbender\CoreBundle\Command;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Transformer\BaseUrlTransformer;
 use Mapbender\Component\Transformer\ChangeTrackingTransformer;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Entity\Source;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,10 +19,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SourceRewriteHostCommand extends Command
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
 
-    public function __construct(RegistryInterface $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
         parent::__construct(null);

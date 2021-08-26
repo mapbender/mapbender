@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\MainMapElementInterface;
@@ -10,7 +11,6 @@ use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Map element.
@@ -26,7 +26,7 @@ class Map extends AbstractElementService
     /** @var \Doctrine\Persistence\ObjectRepository */
     protected $srsRepository;
 
-    public function __construct(RegistryInterface $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
     }

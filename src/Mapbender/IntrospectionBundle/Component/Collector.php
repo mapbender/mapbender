@@ -3,23 +3,22 @@
 
 namespace Mapbender\IntrospectionBundle\Component;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Collector
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
 
     /** @var WorkingSet|null */
     protected $defaultWorkingSet;
 
-    public function __construct(RegistryInterface $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
     }

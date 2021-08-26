@@ -4,9 +4,9 @@ namespace FOM\UserBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,13 +31,13 @@ class ResetRootAccountCommand extends Command
     /** @var string */
     protected $userEntityClass;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 UserHelperService $userHelper,
                                 $userEntityClass)
     {
         parent::__construct('fom:user:resetroot');
         $this->userRepository = $managerRegistry->getRepository($userEntityClass);
-        $this->entityManager = $managerRegistry->getEntityManagerForClass($userEntityClass);
+        $this->entityManager = $managerRegistry->getManagerForClass($userEntityClass);
         $this->userHelper = $userHelper;
         $this->userEntityClass = $userEntityClass;
     }

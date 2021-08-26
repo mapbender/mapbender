@@ -4,9 +4,9 @@
 namespace Mapbender\CoreBundle\Command;
 
 
+use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,7 +17,7 @@ class UserCreateCommand extends AbstractUserCommand
     /** @var UserHelperService */
     protected $userHelper;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 UserHelperService $userHelper)
     {
         $this->userHelper = $userHelper;

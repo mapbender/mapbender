@@ -3,8 +3,8 @@
 namespace Mapbender\CoreBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,10 +13,10 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DatabaseUpgradeCommand extends Command
 {
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
 
-    public function __construct(RegistryInterface $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
         parent::__construct(null);
@@ -64,7 +64,9 @@ class DatabaseUpgradeCommand extends Command
 
         /** @var EntityManager $em */
         $em = $this->managerRegistry->getManager();
-        $maps = $em->getRepository('MapbenderCoreBundle:Element')->findBy(array('class'=>'Mapbender\CoreBundle\Element\Map'));
+        $maps = $this->managerRegistry->getRepository('MapbenderCoreBundle:Element')->findBy(array(
+            'class'=>'Mapbender\CoreBundle\Element\Map',
+        ));
         $output->writeln('Updating map element configs');
         $output->writeln('Found ' . count($maps) . ' map elements');
         $progressBar = new ProgressBar($output, count($maps) );

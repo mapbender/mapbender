@@ -36,10 +36,9 @@ namespace Mapbender\CoreBundle\Command;
  * Displays the Permission Owner and Group for 'app/logs/','app/cache/','web/uploads/','web/xmlschemas/' and 'web/' Directory
  */
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,11 +46,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigCheckCommand extends Command
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
     protected $rootDir;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 $rootDir)
     {
         $this->managerRegistry = $managerRegistry;
@@ -80,14 +79,13 @@ class ConfigCheckCommand extends Command
     }
 
     protected function checkDatabaseConnection(SymfonyStyle $output){
-        /** @var  Registry $doctrine */
-        /** @var  Connection $connection*/
         $output->title("Check Database connections");
         $headers = ['Connection','Status','Message'];
         $rows=[];
         $success=true;
         $connections = $this->managerRegistry->getConnections();
         foreach ($connections AS $connection){
+            /** @var Connection $connection*/
             try {
                 $connection->isConnected();
                 $connection->connect();
@@ -192,8 +190,6 @@ class ConfigCheckCommand extends Command
     protected function checkFastCGI(SymfonyStyle $output)
     {
         $output->title('Check FastCGI');
-        $matches=array();
-        $outputCmd='';
         if($this->isLinux()){
             $outputCmd=shell_exec('a2query -m| grep fcgi');
             if(isset($outputCmd)){
@@ -211,8 +207,6 @@ class ConfigCheckCommand extends Command
     protected function checkModRewrite(SymfonyStyle $output)
     {
         $output->title('Check Apache mod_rewrite');
-        $matches=array();
-        $outputCmd='';
         if($this->isLinux()){
             $outputCmd=shell_exec('a2query -m rewrite');
             if(isset($outputCmd)){

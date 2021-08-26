@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Element;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -11,7 +12,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,7 +39,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     /** @var string */
     protected $exampleUrl;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 AuthorizationCheckerInterface $authorizationChecker,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 Importer $sourceImporter,
