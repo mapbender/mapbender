@@ -145,7 +145,7 @@ class Map extends AbstractElementService
     {
         $conf = $element->getConfiguration();
         $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
-        $conf += $this->buildSrsConfigs($element);
+        $conf = $this->buildSrsConfigs($element) + $conf;
         return $conf;
     }
 
