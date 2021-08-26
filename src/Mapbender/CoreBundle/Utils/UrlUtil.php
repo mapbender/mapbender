@@ -153,8 +153,8 @@ class UrlUtil
     {
         $parts = parse_url($url);
         $credentialsParts = array(
-            'user' => urlencode($username),
-            'pass' => urlencode($pass),
+            'user' => rawurlencode($username),
+            'pass' => rawurlencode($pass),
         );
         if ($replace) {
             $parts = array_replace($parts, $credentialsParts);
