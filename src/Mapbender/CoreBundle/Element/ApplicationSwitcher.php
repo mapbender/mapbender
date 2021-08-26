@@ -4,13 +4,13 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 
@@ -18,7 +18,7 @@ class ApplicationSwitcher extends AbstractElementService
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
     /** @var ElementHttpHandlerInterface */
     protected $httpHandler;
@@ -26,7 +26,7 @@ class ApplicationSwitcher extends AbstractElementService
     protected $yamlAppRepository;
 
     public function __construct(FormFactoryInterface $formFactory,
-                                RegistryInterface $managerRegistry,
+                                ManagerRegistry $managerRegistry,
                                 ElementHttpHandlerInterface $httpHandler,
                                 ApplicationYAMLMapper $yamlAppRepository)
     {

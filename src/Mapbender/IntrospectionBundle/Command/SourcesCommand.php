@@ -4,6 +4,7 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Base;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSources;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
@@ -13,7 +14,6 @@ use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItemList;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\JsonFormatting;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\YamlFormatting;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,12 +24,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class SourcesCommand extends Command
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
     protected $buckets = array();
     protected $bucketBy = 'application';
 
-    public function __construct(RegistryInterface $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
         parent::__construct(null);

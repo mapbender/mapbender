@@ -4,21 +4,22 @@
 namespace Mapbender\WmsBundle\Command;
 
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractSourceCommand extends Command
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
     /** @var Importer */
     protected $importer;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 Importer $importer)
     {
         parent::__construct(null);
@@ -67,8 +68,13 @@ abstract class AbstractSourceCommand extends Command
         }
     }
 
+    /**
+     * @return EntityManagerInterface
+     */
     protected function getEntityManager()
     {
-        return $this->managerRegistry->getEntityManager(null);
+        /** @var EntityManagerInterface $em */
+        $em = $this->managerRegistry->getManager();
+        return $em;
     }
 }

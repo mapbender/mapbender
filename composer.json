@@ -12,7 +12,7 @@
         "symfony/security-acl": "~2.8 || ~3.0",
         "symfony/acl-bundle": "^1 || ^2",
         "twig/extensions": "1.x",
-        "doctrine/orm": "^2.2.3",
+        "doctrine/orm": "^2.5.2",
         "doctrine/doctrine-bundle": "^1.12",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
         "sensio/framework-extra-bundle": "^3 || ^4 || ^5 || ^6",

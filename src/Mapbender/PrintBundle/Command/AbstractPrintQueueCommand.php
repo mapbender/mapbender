@@ -4,10 +4,10 @@
 namespace Mapbender\PrintBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -24,7 +24,7 @@ abstract class AbstractPrintQueueCommand extends Command
     /** @var string */
     protected $storagePath;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 Filesystem $filesystem,
                                 $storagePath)
     {

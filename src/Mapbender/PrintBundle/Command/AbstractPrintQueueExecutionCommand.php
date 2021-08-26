@@ -4,10 +4,10 @@
 namespace Mapbender\PrintBundle\Command;
 
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\Utils\MemoryUtil;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -18,7 +18,7 @@ abstract class AbstractPrintQueueExecutionCommand extends AbstractPrintQueueComm
 
     protected $memoryLimit;
 
-    public function __construct(RegistryInterface $managerRegistry,
+    public function __construct(ManagerRegistry $managerRegistry,
                                 Filesystem $filesystem,
                                 PrintServiceInterface $printService,
                                 $storagePath,

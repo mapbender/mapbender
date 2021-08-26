@@ -2,11 +2,11 @@
 
 namespace FOM\UserBundle\Component;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use FOM\UserBundle\Component\Ldap;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 /**
@@ -15,14 +15,14 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
  */
 class FOMIdentitiesProvider implements IdentitiesProviderInterface
 {
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrineRegistry;
     /** @var Ldap\UserProvider */
     protected $ldapUserIdentitiesProvider;
     /** @var string */
     protected $userEntityClass;
 
-    public function __construct(RegistryInterface $doctrineRegistry,
+    public function __construct(ManagerRegistry $doctrineRegistry,
                                 Ldap\UserProvider $ldapUserProvider,
                                 $userEntityClass)
 
@@ -33,7 +33,7 @@ class FOMIdentitiesProvider implements IdentitiesProviderInterface
     }
 
     /**
-     * @return RegistryInterface
+     * @return ManagerRegistry
      */
     final protected function getDoctrine()
     {
