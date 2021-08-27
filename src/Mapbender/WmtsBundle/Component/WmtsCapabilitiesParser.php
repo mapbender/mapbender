@@ -12,7 +12,7 @@ use Mapbender\WmtsBundle\Component\Exception\WmtsException;
  *
  * @author Paul Schmidt
  */
-abstract class WmtsCapabilitiesParser
+abstract class WmtsCapabilitiesParser extends AbstractTileServiceParser
 {
     /**
      * The XML representation of the Capabilites Document
@@ -21,53 +21,15 @@ abstract class WmtsCapabilitiesParser
     protected $doc;
 
     /**
-     * An Xpath-instance
-     */
-    protected $xpath;
-
-    /**
      * Creates an instance
      *
      * @param \DOMDocument $doc
      */
     public function __construct(\DOMDocument $doc)
     {
+        parent::__construct(new \DOMXPath($doc));
         $this->doc = $doc;
-        $this->xpath = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
-    }
-
-    /**
-     * Finds the value
-     * @param string $xpath xpath expression
-     * @param \DOMNode $contextElm the node to use as context for evaluating the
-     * XPath expression.
-     * @return string the value of item or the selected item or null
-     */
-    protected function getValue($xpath, $contextElm = null)
-    {
-        if (!$contextElm) {
-            $contextElm = $this->doc;
-        }
-        try {
-            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
-            if (!$elm) {
-                return null;
-            }
-            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
-                /** @var \DOMAttr $elm */
-                return $elm->value;
-            } elseif ($elm->nodeType == XML_TEXT_NODE) {
-                /** @var \DOMText $elm */
-                return $elm->wholeText;
-            } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
-                return $elm;
-            } else {
-                return null;
-            }
-        } catch (\Exception $E) {
-            return null;
-        }
     }
 
     /**
