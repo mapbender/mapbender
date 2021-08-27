@@ -15,7 +15,7 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 /**
  * @author Paul Schmidt
  */
-class TmsCapabilitiesParser100
+class TmsCapabilitiesParser100 extends AbstractTileServiceParser
 {
     /**
      * The XML representation of the Capabilites Document
@@ -23,8 +23,6 @@ class TmsCapabilitiesParser100
      */
     protected $doc;
 
-    /** @var \DOMXPath */
-    protected $xpath;
     /** @var HttpTransportInterface */
     protected $httpTransport;
 
@@ -34,47 +32,9 @@ class TmsCapabilitiesParser100
      */
     public function __construct(HttpTransportInterface $httpTransport, \DOMDocument $doc)
     {
+        parent::__construct(new \DOMXPath($doc));
         $this->httpTransport = $httpTransport;
         $this->doc   = $doc;
-        $this->xpath = new \DOMXPath($doc);
-    }
-
-    public function getDoc()
-    {
-        return $this->doc;
-    }
-
-    /**
-     * Finds the value
-     * @param string $xpath xpath expression
-     * @param \DOMNode $contextElm the node to use as context for evaluating the
-     * XPath expression.
-     * @return string the value of item or the selected item or null
-     */
-    protected function getValue($xpath, $contextElm = null)
-    {
-        if (!$contextElm) {
-            $contextElm = $this->doc;
-        }
-        try {
-            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
-            if (!$elm) {
-                return null;
-            }
-            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
-                /** @var \DOMAttr $elm */
-                return $elm->value;
-            } elseif ($elm->nodeType == XML_TEXT_NODE) {
-                /** @var \DOMText $elm */
-                return $elm->wholeText;
-            } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
-                return $elm;
-            } else {
-                return null;
-            }
-        } catch (\Exception $E) {
-            return null;
-        }
     }
 
     /**
@@ -156,11 +116,11 @@ class TmsCapabilitiesParser100
      */
     private function parseService(WmtsSource $wmts, \DOMElement $cntxt)
     {
-        $wmts->setVersion($this->getValue("./@version", $cntxt));
-        $wmts->setTitle($this->getValue("./Title/text()", $cntxt));
-        $wmts->setDescription($this->getValue("./Abstract/text()", $cntxt));
+        $wmts->setVersion($this->getValue("./@version"));
+        $wmts->setTitle($this->getValue("./Title/text()"));
+        $wmts->setDescription($this->getValue("./Abstract/text()"));
 
-        $keywords = explode(' ', $this->getValue("./KeywordList/text()", $cntxt));
+        $keywords = explode(' ', $this->getValue("./KeywordList/text()"));
         foreach ($keywords as $value) {
             $value = trim($value);
             if ($value) {
