@@ -29,7 +29,7 @@
         "wheregroup/assetic-filter-sassc": "^0.0",
         "wheregroup/sassc-binaries": "^0.0.1",
 
-        "mapbender/owsproxy": "^3.0.6.2",
+        "mapbender/owsproxy": "^3.1.6",
 
         "datatables/datatables": "^1.10.16",
         "components/bootstrap": "^3 || ^4",
