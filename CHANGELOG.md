@@ -1,3 +1,12 @@
+## dev-staging/3.3 @ 9b8355aeb81f32a6f7c73eb7d1e2e51ea8ef9e17
+* Complete Symfony 4 support
+* Removed `mapbender:generate:element` command (code incompatible with Symfony 4; produced PHP code incompatible with Mapbender)
+* Replaced unmaintained kriswallsmith/assetic dependency with assetic/framework
+* Removed fixture facades for Application import / EPSG updates.
+* Dependency on sensio/framework-extra-bundle (+ bundle initialization) moved from starter to Mapbender
+
+NOTE: the minimum compatible PHP version is now 7.2.
+
 ## dev-master @ cec4a0dc8
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
