@@ -1,4 +1,4 @@
-## dev-master @ 18c4d65b7
+## dev-master @ cec4a0dc8
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * [Map] fix initialization error when using customized title for primary srs ([#1379](https://github.com/mapbender/mapbender/issues/1379))
@@ -22,6 +22,7 @@
   * Sketch
 * Resolve misc doctrine deprecations
 * Resolve extension configuration deprecations
+* Resolve owsproxy deprecations
 * Add missing (previously implicit) doctrine/doctrine-bundle dependency
 * Optimize Symfony container build parameters
 
