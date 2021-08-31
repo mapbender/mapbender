@@ -20,10 +20,10 @@
     {%- if region_props.name == 'tabs' -%}
       <div class="tabContainerAlt">
         <ul class="tabs">
-          {% for element_info in _visible %}
+          {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
             <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">{{ element.title | trans }}</li>
-          {% endfor %}
+          {%- endfor -%}
         </ul>
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
