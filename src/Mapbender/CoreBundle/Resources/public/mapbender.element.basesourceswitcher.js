@@ -16,6 +16,16 @@
         },
 
         _setup: function () {
+            var self = this;
+            this.element.on('click', '.basesourcesetswitch', function(evt) {
+                self._toggleMapset(evt);
+            });
+            this.mbMap.element.on('mbmapsourcechanged', function() {
+                self.updateHighlights();
+            });
+            this.updateHighlights();
+        },
+        updateHighlights: function() {
             var allActiveSources = [];
             var remainingMenuItems = [];
             var i, menuItem, $menuItem;
@@ -58,7 +68,6 @@
                 var noOtherSourcesActive = activeSubset.length === allActiveSources.length;
                 this._highlight($menuItem, allAssociatedSourcesActive && noOtherSourcesActive);
             }
-            $('.basesourcesetswitch', this.element).on('click', $.proxy(this._toggleMapset, this));
         },
         _highlight: function($node, state) {
             // Fake radio button for font size scalability on mobile
