@@ -1,7 +1,8 @@
-## dev-master @ 0af7c330a
+## dev-master @ 0c8bcee11
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
+* Fix completely empty footer rendering a visible block in fullscreen template ([#1332](https://github.com/mapbender/mapbender/issues/1332))
 * [Map] fix initialization error when using customized title for primary srs ([#1379](https://github.com/mapbender/mapbender/issues/1379))
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
 * [PrintClient] Fix initial flash of unstyled tab headers / tab containers if element visible on page load and queue mode is active
