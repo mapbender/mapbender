@@ -267,6 +267,10 @@ window.Mapbender.MapModelBase = (function() {
         setSourceVisibility: function(source, state) {
             this.controlLayer(source.getRootLayer(), state);
         },
+        setSourceOpacity: function(source, opacity) {
+            source.setOpacity(opacity);
+            this.triggerSourceChanged_(source);
+        },
         /**
          * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
          * This should be used if a sources internal configuration structure has been updated "manually".
