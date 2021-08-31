@@ -415,6 +415,7 @@
             var layer = $layerNode.data('layer');
             var source = layer.source;
             var menu = $(this.menuTemplate.clone());
+            var mapModel = this.model;
             if (layer.getParent()) {
                 $('.layer-control-root-only', menu).remove();
             }
@@ -439,7 +440,7 @@
                         var opacity = Math.max(0.0, Math.min(1.0, x));
                         var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
-                        source.setOpacity(opacity);
+                        mapModel.setSourceOpacity(source, opacity);
                     }
                 });
             }

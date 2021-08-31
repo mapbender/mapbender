@@ -1,14 +1,21 @@
-## v3.2.6 (WIP)
+## v3.2.6
+### Element API changes
 In preparation for making Mapbender compatible with Symfony 4,
 [a majority of standard Mapbender Elements](https://github.com/mapbender/mapbender/pull/1368)
 has adopted the [new Symfony-4-compatible Element API](https://github.com/mapbender/mapbender/pull/1367),
-incurring changes in PHP class hierarchy and PHP API.
+incurring changes in PHP class hierarchy and PHP API. PHP child classes
+of the updated Elements will most likely break and need adjustments.
 
+### Doctrine fixtures
 Fixture-based Yaml Application import into the db has been deprecated and should no longer
 be used. Replace the `app/console doctrine:fixture:load ...` command with
 `app/console mapbender:application:import app/config/applications`. Direct import command
 support for directories and Yaml application definitions are new features
 not available in Mapbender <=v3.2.5.
+
+Similarly, the fixture to populate / update the mb_core_srs table ("LoadEpsgData")
+is deprecated. Use `app/console mapbender:database:init` to perform
+these updates.
 
 ## 3.0.8.5-RC1
 ### Relative urls in CSS depending on entry script

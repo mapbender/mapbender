@@ -7,12 +7,16 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-master @ cec4a0dc8
+## dev-master @ 054db48dc
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
+* Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
+* Fix completely empty footer rendering a visible block in fullscreen template ([#1332](https://github.com/mapbender/mapbender/issues/1332))
 * [Map] fix initialization error when using customized title for primary srs ([#1379](https://github.com/mapbender/mapbender/issues/1379))
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
 * [PrintClient] Fix initial flash of unstyled tab headers / tab containers if element visible on page load and queue mode is active
+* [BaseSourceSwitcher] Fix missing visual sync with Layertree updates / restored map state ([#1322]((https://github.com/mapbender/mapbender/issues/1322))
+* [Sketch] Use proper stop icon instead of ~pause icon on "Stop drawing" button
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
 * Resolve Symfony 4 incompatibilities in controllers and console commands
