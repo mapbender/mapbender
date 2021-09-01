@@ -1,13 +1,15 @@
-## dev-master @ 054db48dc
+## dev-master @ 1561ad1e7
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
 * Fix completely empty footer rendering a visible block in fullscreen template ([#1332](https://github.com/mapbender/mapbender/issues/1332))
+* Fix missing vertical margins on multi-row "Buttons"-type sidepane headers
 * [Map] fix initialization error when using customized title for primary srs ([#1379](https://github.com/mapbender/mapbender/issues/1379))
 * [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
 * [PrintClient] Fix initial flash of unstyled tab headers / tab containers if element visible on page load and queue mode is active
 * [BaseSourceSwitcher] Fix missing visual sync with Layertree updates / restored map state ([#1322]((https://github.com/mapbender/mapbender/issues/1322))
 * [Sketch] Use proper stop icon instead of ~pause icon on "Stop drawing" button
+* [ViewManager] Fix confusing frontend behaviour for anonymous users (who cannot have private entries). Suppress element entirely if public entry list is off.
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
 * Resolve Symfony 4 incompatibilities in controllers and console commands
