@@ -27,12 +27,6 @@ class Fullscreen extends Template
                     'name' => 'tabs',
                 ),
             ),
-            'toolbar' => array(
-                'item_alignment' => 'right',
-            ),
-            'footer' => array(
-                'item_alignment' => 'right',
-            ),
         );
     }
 
@@ -125,6 +119,38 @@ class Fullscreen extends Template
                 return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
             default:
                 return null;
+        }
+    }
+
+    public function getRegionTemplateVars(Application $application, $regionName)
+    {
+        $vars = parent::getRegionTemplateVars($application, $regionName);
+        switch ($regionName) {
+            default:
+                return $vars;
+            case 'toolbar':
+            case 'footer':
+                return array_replace($vars, array(
+                    'alignment_class' => $this->getToolbarAlignmentClass($application, $regionName),
+                ));
+        }
+    }
+
+    public static function getRegionPropertiesDefaults($regionName)
+    {
+        switch ($regionName) {
+            case 'toolbar':
+            case 'footer':
+                return array(
+                    'item_alignment' => 'right',
+                );
+            case 'sidepane':
+                return array(
+                    'name' => 'accordion',
+                    'align' => 'left',
+                );
+            default:
+                return parent::getRegionPropertiesDefaults($regionName);
         }
     }
 }

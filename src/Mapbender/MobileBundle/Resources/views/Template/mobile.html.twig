@@ -23,7 +23,7 @@
           {{ unanchored_content_elements(application) | raw }}
       </div>
 
-      <ul id="footer" class="toolBar itemsCenter bottom">
+      <ul id="footer" class="toolBar {{ toolbar_alignment_class | default('itemsCenter') }} bottom">
           {{ region_content(application, 'footer') | raw }}
       </ul>
 

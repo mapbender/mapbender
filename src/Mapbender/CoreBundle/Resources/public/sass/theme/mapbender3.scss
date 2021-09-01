@@ -128,14 +128,14 @@ ul.toolBar, .toolBar > ul {
     }
   }
 
-  .itemsRight {
+  .itemsRight, &.itemsRight {
     text-align:right;
     .toolBarItem{padding-left:$space/4;}
     .dropdown:not(.numeric) {
       text-align: left;
     }
   }
-  .itemsCenter {
+  .itemsCenter, &.itemsCenter {
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
