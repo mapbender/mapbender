@@ -68,6 +68,12 @@ span.iconBig {
   display: inline-block;
 }
 
+ul.toolBar, .toolBar > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;

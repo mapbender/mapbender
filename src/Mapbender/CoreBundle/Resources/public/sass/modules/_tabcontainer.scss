@@ -89,6 +89,7 @@
 .tabContainerAlt{
   position: relative;
   > .tabs {
+    list-style: none;
     border-bottom: dashed 1px $thirdColor;
     padding-bottom: $space;
     margin-bottom: $space;
