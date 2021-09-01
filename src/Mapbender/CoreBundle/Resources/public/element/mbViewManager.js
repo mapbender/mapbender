@@ -59,6 +59,12 @@
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
                 self._apply(self._decodeDiff(this));
+                var $marker = $('.recall-marker', $(this).closest('tr'));
+                $('.recall-marker', self.element).not($marker).css({opacity: ''});
+                $marker.css({opacity: '1'});
+                self.mbMap.element.one('mbmapviewchanged mb.sourcenodeselectionchanged mbmapsourcechanged', function() {
+                    $marker.animate({opacity: '0'});
+                });
             });
             this.element.on('click', '.-fn-delete', function() {
                 var $row = $(this).closest('tr');
