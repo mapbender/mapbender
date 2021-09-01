@@ -22,10 +22,7 @@
           {{ anchored_content_elements(application) | raw }}
           {{ unanchored_content_elements(application) | raw }}
       </div>
-
-      <ul id="footer" class="toolBar {{ toolbar_alignment_class | default('itemsCenter') }} bottom">
-          {{ region_content(application, 'footer') | raw }}
-      </ul>
+      {{ region_markup(application, 'footer', true) | raw }}
 
       <div id="mobilePane" class="mobilePane" data-state="">
           <i id="mobilePaneClose" class="mobileClose fa fas fa-times"></i>

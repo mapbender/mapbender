@@ -6,7 +6,7 @@ $(function(){
         toggle_(true);
     });
 
-    $('#footer').on('click', '.mb-button', function(e) {
+    $('.toolBar').on('click', '.mb-button', function(e) {
         var $button = $(this);
         var button = $button.data('mapbenderMbButton');
         var buttonOptions = button.options;
