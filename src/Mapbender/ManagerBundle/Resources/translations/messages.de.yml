@@ -31,6 +31,12 @@ mb:
         all: Alle
         mobile: Mobil
         desktop: Desktop
+    toolbar_alignment:
+      label: Ausrichtung
+      choice:
+        left: Links
+        right: Rechts
+        center: Zentriert
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen

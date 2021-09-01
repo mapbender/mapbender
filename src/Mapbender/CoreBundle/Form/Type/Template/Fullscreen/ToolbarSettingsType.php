@@ -24,7 +24,7 @@ class ToolbarSettingsType extends AbstractType implements EventSubscriberInterfa
 
     public function getParent()
     {
-        return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
+        return 'Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType';
     }
 
     public function configureOptions(OptionsResolver $resolver)

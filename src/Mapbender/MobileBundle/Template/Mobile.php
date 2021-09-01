@@ -24,6 +24,15 @@ class Mobile extends Template
         );
     }
 
+    public static function getRegionsProperties()
+    {
+        return array(
+            'footer' => array(
+                'item_alignment' => 'center',
+            ),
+        );
+    }
+
     public function getAssets($type)
     {
         switch ($type) {
@@ -50,5 +59,15 @@ class Mobile extends Template
     public function getBodyClass(Application $application)
     {
         return 'mobile-template';
+    }
+
+    public static function getRegionSettingsFormType($regionName)
+    {
+        switch ($regionName) {
+            case 'footer':
+                return 'Mapbender\MobileBundle\Form\Type\Template\FooterType';
+            default:
+                return null;
+        }
     }
 }
