@@ -66,6 +66,9 @@
                     $marker.animate({opacity: '0'});
                 });
             });
+            this.element.on('click', 'tr .name-cell', function() {
+                $('.-fn-apply', $(this).closest('tr')).trigger('click');
+            });
             this.element.on('click', '.-fn-delete', function() {
                 var $row = $(this).closest('tr');
                 var rowId = $row.attr('data-id');
