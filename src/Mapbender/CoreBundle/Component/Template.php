@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
@@ -159,5 +160,20 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
             }
         }
         return $defaults;
+    }
+
+    public static function getToolbarAlignmentClass(Application $application, $regionName)
+    {
+        $regionSettings = static::extractRegionProperties($application, $regionName) + static::getRegionPropertiesDefaults($regionName);
+        $setting = ArrayUtil::getDefault($regionSettings, 'item_alignment');
+        switch ($setting) {
+            default:
+            case 'left':
+                return 'itemsLeft';
+            case 'right':
+                return 'itemsRight';
+            case 'center':
+                return 'itemsCenter';
+        }
     }
 }

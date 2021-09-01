@@ -126,6 +126,7 @@ class ApplicationMarkupRenderer
     {
         $template = $this->getTemplateDescriptor($application);
         $props = $this->extractRegionProperties($application, $regionName);
+        $props += $template->getRegionPropertiesDefaults($regionName);
         $classes = $template->getRegionClasses($application, $regionName);
         if ($this->allowResponsiveContainers && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
             switch (ArrayUtil::getDefault($props, 'screenType')) {
