@@ -31,12 +31,14 @@ mb:
         all: Any
         mobile: Mobile
         desktop: Desktop
-    toolbar_alignment:
-      label: Alignment
-      choice:
-        left: Left
-        right: Right
-        center: Center
+    toolbar:
+      alignment:
+        label: Alignment
+        choice:
+          left: Left
+          right: Right
+          center: Center
+      generate_button_menu: Generate menu for buttons
     element:
       screentype:
         mobile: Show on mobile screens

@@ -31,12 +31,14 @@ mb:
         all: Alle
         mobile: Mobil
         desktop: Desktop
-    toolbar_alignment:
-      label: Ausrichtung
-      choice:
-        left: Links
-        right: Rechts
-        center: Zentriert
+    toolbar:
+      alignment:
+        label: Ausrichtung
+        choice:
+          left: Links
+          right: Rechts
+          center: Zentriert
+      generate_button_menu: Schaltflächen zu Menü zusammenfassen
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen

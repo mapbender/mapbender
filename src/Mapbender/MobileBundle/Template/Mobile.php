@@ -24,15 +24,6 @@ class Mobile extends Template
         );
     }
 
-    public static function getRegionsProperties()
-    {
-        return array(
-            'footer' => array(
-                'item_alignment' => 'center',
-            ),
-        );
-    }
-
     public function getAssets($type)
     {
         switch ($type) {
@@ -76,6 +67,19 @@ class Mobile extends Template
                 return 'Mapbender\MobileBundle\Form\Type\Template\FooterType';
             default:
                 return null;
+        }
+    }
+
+    public static function getRegionPropertiesDefaults($regionName)
+    {
+        switch ($regionName) {
+            case 'footer':
+                return array(
+                    'item_alignment' => 'center',
+                    'generate_button_menu' => false,
+                );
+            default:
+                return parent::getRegionPropertiesDefaults($regionName);
         }
     }
 }

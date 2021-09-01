@@ -143,6 +143,7 @@ class Fullscreen extends Template
             case 'footer':
                 return array(
                     'item_alignment' => 'right',
+                    'generate_button_menu' => false,
                 );
             case 'sidepane':
                 return array(
