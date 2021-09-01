@@ -39,7 +39,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getRegionTemplate(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplate(Application $application, $regionName)
     {
         switch ($regionName) {
             case 'sidepane':
@@ -53,17 +53,17 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplateVars(Application $application, $regionName)
     {
         return array();
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @param string $regionName
      * @return string[]
      */
-    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionClasses(Application $application, $regionName)
     {
         $classes = array();
         switch ($regionName) {
@@ -91,7 +91,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getTemplateVars(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getTemplateVars(Application $application)
     {
         return array(
             'region_props' => $application->getNamedRegionProperties(),
@@ -133,17 +133,17 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @param string $regionName
      * @return array
      */
-    protected static function extractRegionProperties(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    protected static function extractRegionProperties(Application $application, $regionName)
     {
         $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
         return $propsObject->getProperties() ?: array();
     }
 
-    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getBodyClass(Application $application)
     {
         return '';
     }
