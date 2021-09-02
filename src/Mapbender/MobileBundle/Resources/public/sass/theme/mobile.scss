@@ -102,11 +102,7 @@
 
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar {
-
-  .iconBig {
-    // Make big button icons even bigger (default is 160%)
-    font-size: 230%;
-  }
+  font-size: 19px;
 
   &.bottom {
     border-top: 3px solid $ciColor2;
