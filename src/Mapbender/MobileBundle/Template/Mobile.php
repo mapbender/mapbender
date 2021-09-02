@@ -47,14 +47,6 @@ class Mobile extends Template
         return 'MapbenderMobileBundle:Template:mobile.html.twig';
     }
 
-    public function getTemplateVars(Application $application)
-    {
-        $vars = parent::getTemplateVars($application);
-        return $vars + array(
-            'toolbar_alignment_class' => $this->getToolbarAlignmentClass($application, 'footer')
-        );
-    }
-
     public function getBodyClass(Application $application)
     {
         return 'mobile-template';

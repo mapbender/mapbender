@@ -55,7 +55,15 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
 
     public function getRegionTemplateVars(Application $application, $regionName)
     {
-        return array();
+        switch ($regionName) {
+            default:
+                return array();
+            case 'toolbar':
+            case 'footer':
+                return array_replace(array(
+                    'alignment_class' => $this->getToolbarAlignmentClass($application, $regionName),
+                ));
+        }
     }
 
     /**

@@ -122,20 +122,6 @@ class Fullscreen extends Template
         }
     }
 
-    public function getRegionTemplateVars(Application $application, $regionName)
-    {
-        $vars = parent::getRegionTemplateVars($application, $regionName);
-        switch ($regionName) {
-            default:
-                return $vars;
-            case 'toolbar':
-            case 'footer':
-                return array_replace($vars, array(
-                    'alignment_class' => $this->getToolbarAlignmentClass($application, $regionName),
-                ));
-        }
-    }
-
     public static function getRegionPropertiesDefaults($regionName)
     {
         switch ($regionName) {
