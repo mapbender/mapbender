@@ -153,6 +153,8 @@ ul.toolBar, .toolBar > ul {
   .menu-wrapper {
     .dropdown-menu {
       font-size: inherit;
+      line-height: 1.25;
+      padding: 0;
       >li>a {
         // Undo Bootstrap 3 restyling of .dropdown-menu>li>a (try ShareUrl for embedded link markup)
         line-height: inherit;
@@ -163,8 +165,13 @@ ul.toolBar, .toolBar > ul {
       }
     }
     .toolBarItem {
-      display: block;
-      margin: 0.25rem 0.5rem;  // Same margin on all entries (not just 2nd+)
+      margin: 0.25em;
+      padding: 0.25em;
+      .iconBig {
+        // emulate ~.fa-fw for neat text alignment
+        width: 1.25em;
+        text-align: center;
+      }
     }
   }
 }
