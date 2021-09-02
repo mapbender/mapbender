@@ -172,6 +172,10 @@ ul.toolBar, .toolBar > ul {
         width: 1.25em;
         text-align: center;
       }
+      // Avoid responsive ~button Element label folding
+      .hidden-sm, .hidden-xs, .hidden-md-down {
+        display: initial !important;
+      }
     }
   }
 }
