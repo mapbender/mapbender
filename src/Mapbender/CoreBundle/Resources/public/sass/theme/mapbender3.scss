@@ -79,6 +79,10 @@ ul.toolBar, .toolBar > ul {
   z-index: 4;
   user-select: none;
   .toolBarItem {
+    white-space: nowrap;
+    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+  }
+  >ul .toolBarItem {
     padding:5px;
     display: inline-block;
     > span {
@@ -86,8 +90,6 @@ ul.toolBar, .toolBar > ul {
       // inline does not get enough height to wrap contents vertically, inline-block does
       display: inline-block;
     }
-    white-space: nowrap;
-    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     .mb-element {
       vertical-align: inherit;
       display: inline-block;
