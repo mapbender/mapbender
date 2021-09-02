@@ -50,6 +50,15 @@ class ElementMarkupExtension extends AbstractExtension
     }
 
     /**
+     * @param Element[] $elements
+     * @return string
+     */
+    public function elements_markup(array $elements)
+    {
+        return $this->markupRenderer->renderElements($elements);
+    }
+
+    /**
      * @param Element $element
      * @return string|null
      */

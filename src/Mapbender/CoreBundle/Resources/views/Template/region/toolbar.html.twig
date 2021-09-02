@@ -9,7 +9,7 @@
     {%- endif -%}
     {%- if menu_content -%}
         {%- set direction = ('bottom' in region_class) ? 'dropup' : 'dropdown bs-dropdown' -%}
-        <div class="menu-wrapper pull-right open {{ direction }}">
+        <div class="menu-wrapper pull-right {{ direction }}">
             <button type="button" class="btn btn-default"><i class="fa fas fa-bars iconBig"></i></button>
             <ul class="dropdown-menu">
                 {{- menu_content | raw -}}

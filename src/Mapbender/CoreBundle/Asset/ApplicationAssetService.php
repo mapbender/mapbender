@@ -264,6 +264,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
