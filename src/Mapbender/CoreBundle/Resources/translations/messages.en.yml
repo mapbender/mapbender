@@ -418,3 +418,5 @@ mb:
         description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
+  template:
+    toolbar_menu_tooltip: Toggle menu

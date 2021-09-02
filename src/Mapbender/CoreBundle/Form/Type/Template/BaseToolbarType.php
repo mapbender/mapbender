@@ -27,5 +27,9 @@ class BaseToolbarType extends AbstractType
         $builder->add('generate_button_menu', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
             'label' => 'mb.manager.toolbar.generate_button_menu',
         ));
+        $builder->add('menu_label', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            'required' => false,
+            'label' => 'mb.manager.toolbar.menu_label',
+        ));
     }
 }
