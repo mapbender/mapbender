@@ -49,6 +49,8 @@ class ApplicationContentExtension extends AbstractExtension
             'anchored_content_elements' => new TwigFunction('anchored_content_elements', array($this, 'anchored_content_elements')),
             'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', array($this, 'unanchored_content_elements')),
             'map_markup' => new TwigFunction('map_markup', array($this, 'map_markup')),
+            'toolbar_menu_content' => new TwigFunction('toolbar_menu_content', array($this, 'toolbar_menu_content')),
+            'toolbar_inline_content' => new TwigFunction('toolbar_inline_content', array($this, 'toolbar_inline_content')),
         );
     }
 
@@ -123,5 +125,15 @@ class ApplicationContentExtension extends AbstractExtension
             . $this->renderer->renderRegionContentByName($application, 'content')
             . '</div>'
         ;
+    }
+
+    public function toolbar_menu_content(Application $application, $regionName)
+    {
+        return $this->renderer->renderToolbarMenuContent($application, $regionName);
+    }
+
+    public function toolbar_inline_content(Application $application, $regionName)
+    {
+        return $this->renderer->renderToolbarInlineContent($application, $regionName);
     }
 }

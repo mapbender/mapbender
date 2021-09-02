@@ -1,9 +1,25 @@
 {% block region_wrapper %}
 <div class="{{ ('toolBar ' ~ region_class) | trim }}">
+    {%- if region_props['generate_button_menu'] -%}
+        {%- set inline_items = toolbar_inline_content(application, region_name) -%}
+        {%- set menu_content = toolbar_menu_content(application, region_name) -%}
+    {%- else -%}
+        {%- set inline_items = region_content(application, region_name) -%}
+        {%- set menu_content = '' -%}
+    {%- endif -%}
+    {%- if menu_content -%}
+        {%- set direction = ('bottom' in region_class) ? 'dropup' : 'dropdown bs-dropdown' -%}
+        <div class="menu-wrapper pull-right open {{ direction }}">
+            <button type="button" class="btn btn-default"><i class="fa fas fa-bars iconBig"></i></button>
+            <ul class="dropdown-menu">
+                {{- menu_content | raw -}}
+            </ul>
+        </div>
+    {%- endif -%}
     {% block item_list %}
     <ul class="{{ alignment_class | default('itemsRight') }}">
         {% block item_list_body %}
-          {{ region_content(application, region_name) | raw }}
+            {{- inline_items | raw -}}
         {% endblock %}
     </ul>
     {% endblock item_list %}

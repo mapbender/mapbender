@@ -148,6 +148,23 @@ ul.toolBar, .toolBar > ul {
   a.mb-button:hover {
     text-decoration: none;
   }
+  .menu-wrapper {
+    .dropdown-menu {
+      font-size: inherit;
+      >li>a {
+        // Undo Bootstrap 3 restyling of .dropdown-menu>li>a (try ShareUrl for embedded link markup)
+        line-height: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        padding: 0;
+      }
+    }
+    .toolBarItem {
+      display: block;
+      margin: 0.25rem 0.5rem;  // Same margin on all entries (not just 2nd+)
+    }
+  }
 }
 
 // Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
