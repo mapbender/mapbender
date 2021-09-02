@@ -64,7 +64,7 @@ class Mobile extends Template
     {
         switch ($regionName) {
             case 'footer':
-                return 'Mapbender\MobileBundle\Form\Type\Template\FooterType';
+                return 'Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType';
             default:
                 return null;
         }
