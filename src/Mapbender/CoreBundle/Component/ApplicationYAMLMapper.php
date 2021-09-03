@@ -79,14 +79,18 @@ class ApplicationYAMLMapper
         if (!array_key_exists($slug, $this->definitions)) {
             return null;
         }
-        $application = $this->createApplication($this->definitions[$slug]);
-        $application->setId($slug);
-        $application->setSlug($slug);
+        $application = $this->createApplication($this->definitions[$slug], $slug);
         return $application;
     }
 
-    public function createApplication($definition)
+    /**
+     * @param mixed[] $definition
+     * @param string $slug
+     * @return Application
+     */
+    public function createApplication(array $definition, $slug)
     {
+
         $timestamp = filemtime($definition['__filename__']);
         unset($definition['__filename__']);
         if (!array_key_exists('title', $definition)) {
@@ -94,6 +98,8 @@ class ApplicationYAMLMapper
         }
 
         $application = new Application();
+        $application->setId($slug);
+        $application->setSlug($slug);
         $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
