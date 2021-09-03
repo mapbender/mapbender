@@ -703,8 +703,8 @@ window.Mapbender.MapModelOl4 = (function() {
                 }
                 var rules = {
                     externalGraphic: iconUrl,
-                    graphicXOffset: -anchor[0],
-                    graphicYOffset: -anchor[1],
+                    graphicXOffset: -anchor[0] * scale[0],
+                    graphicYOffset: -anchor[1] * scale[1],
                     graphicWidth: size[0] * scale[0],
                     graphicHeight: size[1]* scale[1]
                 };
