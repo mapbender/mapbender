@@ -656,27 +656,7 @@ window.Mapbender.MapModelOl4 = (function() {
                 style['pointRadius'] = image.getRadius() || 6;
             }
             if (image && (image instanceof ol.style.Icon)) {
-                var anchor = image.getAnchor();
-                var iconElement = image.getImage(1);
-                var iconUrl = iconElement && iconElement.src;
-                if (anchor !== null && iconUrl) {
-                    var size = image.getSize() || [iconElement.naturalWidth, iconElement.naturalHeight];
-                    // Normalize scale (multiple possible formats) to two-component array
-                    if (!Array.isArray(scale)) {
-                        scale = [scale, scale];
-                    }
-                    if (scale.length < 2) {
-                        scale.push(scale[0]);
-                    }
-                    Object.assign(style, {
-                        externalGraphic: iconUrl,
-                        graphicXOffset: -anchor[0],
-                        graphicYOffset: -anchor[1],
-                        graphicWidth: size[0] * scale[0],
-                        graphicHeight: size[1]* scale[1]
-                    });
-                    Mapbender.StyleUtil.fixSvgStyleAssetUrls(style);
-                }
+                Object.assign(style, this._extractSvgIconStyle(image));
             }
             return style;
         },
@@ -701,6 +681,38 @@ window.Mapbender.MapModelOl4 = (function() {
             style['labelXOffset'] = olTextStyle.getOffsetX();
             style['labelYOffset'] = olTextStyle.getOffsetY();
             return style;
+        },
+        /**
+         * @param {ol.style.Icon} image
+         * @return {Object}
+         * @private
+         */
+        _extractSvgIconStyle: function(image) {
+            var anchor = image.getAnchor();
+            var scale = image.getScale() || 1;
+            var iconElement = image.getImage(1);
+            var iconUrl = iconElement && iconElement.src;
+            if (anchor !== null && iconUrl) {
+                var size = image.getSize() || [iconElement.naturalWidth, iconElement.naturalHeight];
+                // Normalize scale (multiple possible formats) to two-component array
+                if (!Array.isArray(scale)) {
+                    scale = [scale, scale];
+                }
+                if (scale.length < 2) {
+                    scale.push(scale[0]);
+                }
+                var rules = {
+                    externalGraphic: iconUrl,
+                    graphicXOffset: -anchor[0],
+                    graphicYOffset: -anchor[1],
+                    graphicWidth: size[0] * scale[0],
+                    graphicHeight: size[1]* scale[1]
+                };
+                Mapbender.StyleUtil.fixSvgStyleAssetUrls(rules);
+                return rules;
+            } else {
+                return {};
+            }
         },
         /**
          * @param {Number} x
