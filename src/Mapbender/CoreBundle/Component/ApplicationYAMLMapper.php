@@ -130,15 +130,8 @@ class ApplicationYAMLMapper
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
-        if (array_key_exists('regionProperties', $definition)) {
-            foreach ($definition['regionProperties'] as $index => $regProps) {
-                $regionProperties = new RegionProperties();
-                $regionProperties->setId($application->getSlug() . ':' . $index);
-                $regionProperties->setName($regProps['name']);
-                $regionProperties->setProperties($regProps['properties']);
-                $regionProperties->setApplication($application);
-                $application->addRegionProperties($regionProperties);
-            }
+        if (!empty($definition['regionProperties'])) {
+            $this->parseRegionProperties($application, $definition['regionProperties']);
         }
         if (!empty($definition['elements'])) {
             $collection = new YamlElementCollection($this->elementFactory, $application, $definition['elements'], $this->logger);
@@ -177,5 +170,38 @@ class ApplicationYAMLMapper
         $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $layersetDefinition);
         $layerset->setInstances($instanceCollection);
         return $layerset;
+    }
+
+    protected function parseRegionProperties(Application $application, array $defs)
+    {
+        $regions = array();
+        foreach ($defs as $k => $spec) {
+            // NOTE: cannot detect based on "name", because Fullscreen sidepane
+            // actually has a "name" property (=type accordion/tabs/unstyled)
+            if (\array_key_exists('properties', $spec)) {
+                $regionName = $spec['name'];
+                $props = $spec['properties'];
+            } else {
+                $regionName = $k;
+                $props = $spec;
+            }
+            if (\is_numeric($regionName)) {
+                throw new \LogicException("Invalid region name {$regionName} in regionProperties definition for application {$application->getSlug()}");
+            }
+            if (\in_array($regionName, $regions)) {
+                throw new \LogicException("Invalid repeated regionProperties definition of region {$regionName} in application {$application->getSlug()}");
+            }
+            if (!$props) {
+                continue;
+            }
+            $regions[] = $regionName;
+
+            $regionProperties = new RegionProperties();
+            $regionProperties->setId($application->getSlug() . ':' . $regionName);
+            $regionProperties->setName($regionName);
+            $regionProperties->setProperties($props);
+            $regionProperties->setApplication($application);
+            $application->addRegionProperties($regionProperties);
+        }
     }
 }
