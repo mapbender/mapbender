@@ -1,4 +1,4 @@
-## dev-master @ bfa730b23
+## dev-master @ e32a368f9
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
@@ -14,6 +14,8 @@
 * [ViewManager] Visually mark most recently applied state entry
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
+* [ImageExport / Print] Fix missing output of temporary POI icons and Digitizer feature icons
+* Fix errors if Yaml applications omit certain "regionProperties" definitions
 * Support moving certain toolbar / footer elements into foldout menus (see [PR#1380](https://github.com/mapbender/mapbender/pull/1380))
 * Resolve Symfony 4 incompatibilities in controllers and console commands
 * Resolve Symfony 4 incompatibilities in all remaining Elements
