@@ -355,8 +355,9 @@
          * @private
          */
         _fixAssetPath: function(url) {
+            // @todo: fold copy&paste vs Mapbender.StyleUtil
             var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
-            if (urlOut === url) {
+            if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
                 console.warn("Asset path could not be resolved to local bundles reference", url);
                 return false;
             } else {
