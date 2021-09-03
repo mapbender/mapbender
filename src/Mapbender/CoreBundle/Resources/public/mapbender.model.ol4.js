@@ -661,12 +661,19 @@ window.Mapbender.MapModelOl4 = (function() {
                 var iconUrl = iconElement && iconElement.src;
                 if (anchor !== null && iconUrl) {
                     var size = image.getSize() || [iconElement.naturalWidth, iconElement.naturalHeight];
+                    // Normalize scale (multiple possible formats) to two-component array
+                    if (!Array.isArray(scale)) {
+                        scale = [scale, scale];
+                    }
+                    if (scale.length < 2) {
+                        scale.push(scale[0]);
+                    }
                     Object.assign(style, {
                         externalGraphic: iconUrl,
                         graphicXOffset: -anchor[0],
                         graphicYOffset: -anchor[1],
-                        graphicWidth: size[0] * scale,
-                        graphicHeight: size[1]* scale
+                        graphicWidth: size[0] * scale[0],
+                        graphicHeight: size[1]* scale[1]
                     });
                     Mapbender.StyleUtil.fixSvgStyleAssetUrls(style);
                 }
