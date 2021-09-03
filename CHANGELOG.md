@@ -1,4 +1,4 @@
-## dev-master @ 1561ad1e7
+## dev-master @ 753ecc018
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
@@ -10,6 +10,8 @@
 * [BaseSourceSwitcher] Fix missing visual sync with Layertree updates / restored map state ([#1322]((https://github.com/mapbender/mapbender/issues/1322))
 * [Sketch] Use proper stop icon instead of ~pause icon on "Stop drawing" button
 * [ViewManager] Fix confusing frontend behaviour for anonymous users (who cannot have private entries). Suppress element entirely if public entry list is off.
+* [ViewManager] Allow reapplying state entry also by clicking on its title
+* [ViewManager] Visually mark most recently applied state entry
 * [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
 * [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
 * Resolve Symfony 4 incompatibilities in controllers and console commands
