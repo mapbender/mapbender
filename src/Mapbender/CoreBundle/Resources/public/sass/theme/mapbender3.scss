@@ -79,6 +79,10 @@ ul.toolBar, .toolBar > ul {
   z-index: 4;
   user-select: none;
   .toolBarItem {
+    white-space: nowrap;
+    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+  }
+  >ul .toolBarItem {
     padding:5px;
     display: inline-block;
     > span {
@@ -86,8 +90,6 @@ ul.toolBar, .toolBar > ul {
       // inline does not get enough height to wrap contents vertically, inline-block does
       display: inline-block;
     }
-    white-space: nowrap;
-    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
     .mb-element {
       vertical-align: inherit;
       display: inline-block;
@@ -147,6 +149,34 @@ ul.toolBar, .toolBar > ul {
   }
   a.mb-button:hover {
     text-decoration: none;
+  }
+  .menu-wrapper {
+    .dropdown-menu {
+      font-size: inherit;
+      line-height: 1.25;
+      padding: 0;
+      >li>a {
+        // Undo Bootstrap 3 restyling of .dropdown-menu>li>a (try ShareUrl for embedded link markup)
+        line-height: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        padding: 0;
+      }
+    }
+    .toolBarItem {
+      margin: 0.25em;
+      padding: 0.25em;
+      .iconBig {
+        // emulate ~.fa-fw for neat text alignment
+        width: 1.25em;
+        text-align: center;
+      }
+      // Avoid responsive ~button Element label folding
+      .hidden-sm, .hidden-xs, .hidden-md-down {
+        display: initial !important;
+      }
+    }
   }
 }
 

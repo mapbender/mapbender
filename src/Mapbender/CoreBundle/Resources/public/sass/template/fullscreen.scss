@@ -134,14 +134,15 @@ body {
   }
 }
 .toolBar.top {
-  .toolBarItem {
+
+  >ul .toolBarItem {
     border-radius: 2 * $radius;
     &.logoContainer {
       border-radius: 0;
       padding: 0; // use padding pixels for more of the logo
     }
   }
-  .toolBarItem + .toolBarItem {
+  >ul .toolBarItem + .toolBarItem {
     margin-left: 0.5rem;
   }
 }

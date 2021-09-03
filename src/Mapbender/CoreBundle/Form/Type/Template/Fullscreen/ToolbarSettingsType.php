@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ToolbarSettingsType extends AbstractType implements EventSubscriberInterface
+class ToolbarSettingsType extends BaseToolbarType implements EventSubscriberInterface
 {
     protected $allowResponsiveContainers;
 
@@ -22,13 +23,9 @@ class ToolbarSettingsType extends AbstractType implements EventSubscriberInterfa
         $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
-    public function getParent()
-    {
-        return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults(array(
             'compound' => true,
         ));
@@ -42,6 +39,7 @@ class ToolbarSettingsType extends AbstractType implements EventSubscriberInterfa
             ));
         }
         $builder->addEventSubscriber($this);
+        parent::buildForm($builder, $options);
     }
 
     public static function getSubscribedEvents()

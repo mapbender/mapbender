@@ -3,7 +3,9 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Defines twig template and asset dependencies and regions for an Application template.
@@ -37,7 +39,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getRegionTemplate(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplate(Application $application, $regionName)
     {
         switch ($regionName) {
             case 'sidepane':
@@ -51,17 +53,25 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getRegionTemplateVars(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionTemplateVars(Application $application, $regionName)
     {
-        return array();
+        switch ($regionName) {
+            default:
+                return array();
+            case 'toolbar':
+            case 'footer':
+                return array_replace(array(
+                    'alignment_class' => $this->getToolbarAlignmentClass($application, $regionName),
+                ));
+        }
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @param string $regionName
      * @return string[]
      */
-    public function getRegionClasses(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    public function getRegionClasses(Application $application, $regionName)
     {
         $classes = array();
         switch ($regionName) {
@@ -89,7 +99,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
-    public function getTemplateVars(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getTemplateVars(Application $application)
     {
         return array(
             'region_props' => $application->getNamedRegionProperties(),
@@ -131,19 +141,47 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @param string $regionName
      * @return array
      */
-    protected static function extractRegionProperties(\Mapbender\CoreBundle\Entity\Application $application, $regionName)
+    protected static function extractRegionProperties(Application $application, $regionName)
     {
         $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
         return $propsObject->getProperties() ?: array();
     }
 
-    public function getBodyClass(\Mapbender\CoreBundle\Entity\Application $application)
+    public function getBodyClass(Application $application)
     {
         return '';
     }
-}
 
+    public static function getRegionPropertiesDefaults($regionName)
+    {
+        $definitions = ArrayUtil::getDefault(static::getRegionsProperties(), $regionName) ?: array();
+        $defaults = array();
+        foreach ($definitions as $name => $value) {
+            if (\is_array($value)) {
+                $defaults += $value;
+            } else {
+                $defaults[$name] = $value;
+            }
+        }
+        return $defaults;
+    }
+
+    public static function getToolbarAlignmentClass(Application $application, $regionName)
+    {
+        $regionSettings = static::extractRegionProperties($application, $regionName) + static::getRegionPropertiesDefaults($regionName);
+        $setting = ArrayUtil::getDefault($regionSettings, 'item_alignment');
+        switch ($setting) {
+            default:
+            case 'left':
+                return 'itemsLeft';
+            case 'right':
+                return 'itemsRight';
+            case 'center':
+                return 'itemsCenter';
+        }
+    }
+}

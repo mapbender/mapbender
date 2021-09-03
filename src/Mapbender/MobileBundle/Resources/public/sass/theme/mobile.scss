@@ -102,17 +102,10 @@
 
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar {
-  border-top: 3px solid $ciColor2;
+  font-size: 19px;
 
-  .iconBig {
-    // Make big button icons even bigger (default is 160%)
-    font-size: 230%;
-  }
-
-  &.itemsCenter{
-    text-align:center;
-  }
   &.bottom {
+    border-top: 3px solid $ciColor2;
     position: absolute;
     bottom: 0;
     width: 100%;

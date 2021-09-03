@@ -3,6 +3,8 @@
 
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
+use Mapbender\Component\ClassUtil;
+use Mapbender\Component\Element\ButtonLike;
 use Mapbender\Component\Element\ElementView;
 use Mapbender\Component\Element\LegacyView;
 use Mapbender\Component\Element\StaticView;
@@ -185,6 +187,22 @@ class ElementMarkupRenderer
             case ScreenTypes::DESKTOP_ONLY:
                 return 'hide-screentype-mobile';
         }
+    }
+
+    public function isMenuSupported(Element $element)
+    {
+        $handling = $this->inventory->getHandlingClassName($element);
+        if (!$handling || !ClassUtil::exists($handling)) {
+            return false;
+        }
+        if (\is_a($handling, ButtonLike::class, true)) {
+            return true;
+        }
+        $legacyBtn = 'Mapbender\CoreBundle\Element\BaseButton';
+        if (ClassUtil::exists($legacyBtn) && \is_a($handling, $legacyBtn, true)) {
+            return true;
+        }
+        return false;
     }
 
     /**
