@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ fd68537441b9ba1d338464be938046039a2a9d7a
+## v3.3.0RC1
 * Complete Symfony 4 support
 * Removed `mapbender:generate:element` command (code incompatible with Symfony 4; produced PHP code incompatible with Mapbender)
 * Replaced unmaintained kriswallsmith/assetic dependency with assetic/framework
