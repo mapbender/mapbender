@@ -172,9 +172,7 @@
          * @param layer
          */
         createLegendContainer: function(layer) {
-            return $('<ul/>')
-                .addClass('ebene1')
-            ;
+            return $(document.createElement('ul')).addClass('list-unstyled');
         },
         _createSourceHtml: function(sourceData) {
             var visibleChildLayers = sourceData.children;

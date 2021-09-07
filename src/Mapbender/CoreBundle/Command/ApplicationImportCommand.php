@@ -133,9 +133,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         $yamlCompiler->setStrictElementConfigs($this->strictElementConfigs);
         foreach ($appConfigs as $slug => $rawAppConfig) {
             $appConfig = $yamlCompiler->prepareApplicationConfig($rawAppConfig, $slug, $fileName);
-            $tempApplication = $this->yamlRepository->createApplication($appConfig);
-            $tempApplication->setId($slug);
-            $tempApplication->setSlug($slug);
+            $tempApplication = $this->yamlRepository->createApplication($appConfig, $slug);
 
             $newSlug = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'slug', $tempApplication->getSlug() . '_yml', '');
             $newTitle = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'title', $tempApplication->getTitle(), ' ');

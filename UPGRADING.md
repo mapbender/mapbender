@@ -30,21 +30,31 @@ You will see errors if your application kernel attempts to register it again sep
 ## v3.2.6
 ### Element API changes
 In preparation for making Mapbender compatible with Symfony 4,
-[a majority of standard Mapbender Elements](https://github.com/mapbender/mapbender/pull/1368)
-has adopted the [new Symfony-4-compatible Element API](https://github.com/mapbender/mapbender/pull/1367),
-incurring changes in PHP class hierarchy and PHP API. PHP child classes
-of the updated Elements will most likely break and need adjustments.
+a [new Symfony-4-compatible Element PHP API](https://github.com/mapbender/mapbender/pull/1367)
+has been introduced. Many elements have already been ported to this new
+API. PHP child classes of the updated Elements will most likely break
+and need some adjustments. Please see the linked PR for guidance.
 
-### Doctrine fixtures
-Fixture-based Yaml Application import into the db has been deprecated and should no longer
-be used. Replace the `app/console doctrine:fixture:load ...` command with
-`app/console mapbender:application:import app/config/applications`. Direct import command
-support for directories and Yaml application definitions are new features
-not available in Mapbender <=v3.2.5.
+### Doctrine fixtures for production data
+Fixture-based production database setup has been deprecated and
+will break on Mapbender 3.3 / Symfony 4.
+Quote: ["Fixtures are used to load a “fake” set of data into a database that can then be used for testing or to help give you some interesting data while you’re developing your application"](https://symfony.com/doc/current/bundles/DoctrineFixturesBundle/index.html).
 
-Similarly, the fixture to populate / update the mb_core_srs table ("LoadEpsgData")
-is deprecated. Use `app/console mapbender:database:init` to perform
-these updates.
+#### Initial Application import
+Avoid using `app/console doctrine:fixtures:load --fixtures=mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Application/`
+in scripts. Replace with `app/console mapbender:application:import app/config/applications`.
+
+#### Seeding mb_core_srs table
+Avoid using `app/console doctrine:fixtures:load --fixtures=mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/`
+in scripts. Replace with `app/console mapbender:database:init`.
+
+### Global application config modification
+It's not longer legal for Elements to perfrom unconstrained
+rewriting of the full application configuration (`updateAppConfig` PHP method).
+
+Use client-side script to inspect other elements. Handle
+client-side script events to make final adjustments during
+initialization.
 
 ## 3.0.8.5-RC1
 ### Relative urls in CSS depending on entry script

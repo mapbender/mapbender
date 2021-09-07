@@ -6,6 +6,8 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
 class ViewManager extends AbstractElementService
@@ -14,12 +16,17 @@ class ViewManager extends AbstractElementService
     const ACCESS_READWRITE = 'rw';
     const ACCESS_READWRITEDELETE = 'rwd';
 
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
     /** @var ViewManagerHttpHandler */
     protected $httpHandler;
 
-    public function __construct(ViewManagerHttpHandler $httpHandler)
+    public function __construct(TokenStorageInterface $tokenStorage,
+                                ViewManagerHttpHandler $httpHandler)
     {
         $this->httpHandler = $httpHandler;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public static function getClassTitle()
@@ -74,6 +81,16 @@ class ViewManager extends AbstractElementService
 
     public function getView(Element $element)
     {
+        $token = $this->tokenStorage->getToken();
+        if (!$token || ($token instanceof AnonymousToken)) {
+            $config = $element->getConfiguration() + $this->getDefaultConfiguration();
+            if (empty($config['publicEntries'])) {
+                // No access to public entries; private entries undefined for anons
+                // => suppress markup entirely
+                return false;
+            }
+        }
+
         $view = new TemplateView('MapbenderCoreBundle:Element:view_manager.html.twig');
         $view->attributes['class'] = 'mb-element-viewmanager';
         $view->variables['grants'] = $this->httpHandler->getGrantsVariables($element->getConfiguration());

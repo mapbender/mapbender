@@ -31,6 +31,15 @@ mb:
         all: Alle
         mobile: Mobil
         desktop: Desktop
+    toolbar:
+      alignment:
+        label: Ausrichtung
+        choice:
+          left: Links
+          right: Rechts
+          center: Zentriert
+      generate_button_menu: Schaltflächen zu Menü zusammenfassen
+      menu_label: Menütitel
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen

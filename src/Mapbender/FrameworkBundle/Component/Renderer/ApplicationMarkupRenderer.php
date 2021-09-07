@@ -74,8 +74,7 @@ class ApplicationMarkupRenderer
      */
     public function renderRegionContentByName(Application $application, $regionName)
     {
-        $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
-        $elements = $elementBucket ? $elementBucket->getElements() : array();
+        $elements = $this->getRegionElements($application, $regionName);
         if ($elements) {
             return $this->elementRenderer->renderElements($elements);
         } else {
@@ -126,6 +125,7 @@ class ApplicationMarkupRenderer
     {
         $template = $this->getTemplateDescriptor($application);
         $props = $this->extractRegionProperties($application, $regionName);
+        $props += $template->getRegionPropertiesDefaults($regionName);
         $classes = $template->getRegionClasses($application, $regionName);
         if ($this->allowResponsiveContainers && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
             switch (ArrayUtil::getDefault($props, 'screenType')) {
@@ -185,5 +185,47 @@ class ApplicationMarkupRenderer
             }
         }
         return array();
+    }
+
+    public function renderToolbarInlineContent(Application $application, $regionName)
+    {
+        $elr = $this->elementRenderer;
+        $elements = $this->getRegionElements($application, $regionName, function(Element $element) use ($elr) {
+            return !$elr->isMenuSupported($element);
+        });
+        if ($elements) {
+            return $this->elementRenderer->renderElements($elements);
+        } else {
+            return '';
+        }
+    }
+
+    public function renderToolbarMenuContent(Application $application, $regionName)
+    {
+        $elr = $this->elementRenderer;
+        $elements = $this->getRegionElements($application, $regionName, function(Element $element) use ($elr) {
+            return $elr->isMenuSupported($element);
+        });
+        if ($elements) {
+            return $this->elementRenderer->renderElements($elements);
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @param Application $application
+     * @param string $regionName
+     * @param callable|null $filter
+     * @return Element[]
+     */
+    protected function getRegionElements(Application $application, $regionName, $filter = null)
+    {
+        $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
+        $elements = $elementBucket ? $elementBucket->getElements() : array();
+        if ($filter) {
+            $elements = \array_filter($elements, $filter);
+        }
+        return $elements;
     }
 }

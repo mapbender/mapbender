@@ -89,6 +89,7 @@
 .tabContainerAlt{
   position: relative;
   > .tabs {
+    list-style: none;
     border-bottom: dashed 1px $thirdColor;
     padding-bottom: $space;
     margin-bottom: $space;
@@ -96,6 +97,7 @@
   .tab {
     display: inline-block;
     @extend .button;
+    margin: 0 0.25em 0.25em 0;
 
     &.active{
       cursor:default;

@@ -28,9 +28,11 @@ class RegionPropertiesMapper implements DataMapperInterface
                     ->where(Criteria::expr()->eq('name', $regionName))
                 ;
                 $rpEntity = $viewData->matching($criteria)->first() ?: null;
+                $application = $form->getParent()->getParent()->getData();
                 if (!$rpEntity) {
-                    $application = $form->getParent()->getParent()->getData();
                     $rpEntity = $this->createDefault($application, $regionName);
+                } else {
+                    $this->mergeDefaults($rpEntity, $application, $regionName);
                 }
                 $form->setData($rpEntity);
             } else {
@@ -65,17 +67,26 @@ class RegionPropertiesMapper implements DataMapperInterface
         $rpEntity = new RegionProperties();
         $rpEntity->setApplication($application);
         $rpEntity->setName($regionName);
-        /** @var Template|string $templateClass */
-        $templateClass = $application->getTemplate();
-        // @todo: provide a more reasonable method of initializing region defaults
-        $regionValues = array_values(ArrayUtil::getDefault($templateClass::getRegionsProperties(), $regionName) ?: array());
-        if ($regionValues) {
-            unset($regionValues['label']);
-        }
+        $regionValues = $this->getRegionDefaults($application, $regionName);
         if ($regionValues) {
             $rpEntity->setProperties($regionValues);
         }
-
         return $rpEntity;
+    }
+
+    protected function mergeDefaults(RegionProperties $props, Application $application, $regionName)
+    {
+        $defaults = $this->getRegionDefaults($application, $regionName);
+        $merged = ($props->getProperties() ?: array()) + $defaults;
+        $props->setProperties($merged);
+    }
+
+    protected function getRegionDefaults(Application $application, $regionName)
+    {
+        /** @var Template|string $templateClass */
+        $templateClass = $application->getTemplate();
+        $defaults = $templateClass::getRegionPropertiesDefaults($regionName);
+        unset($defaults['label']);
+        return $defaults;
     }
 }

@@ -51,4 +51,27 @@ class Mobile extends Template
     {
         return 'mobile-template';
     }
+
+    public static function getRegionSettingsFormType($regionName)
+    {
+        switch ($regionName) {
+            case 'footer':
+                return 'Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType';
+            default:
+                return null;
+        }
+    }
+
+    public static function getRegionPropertiesDefaults($regionName)
+    {
+        switch ($regionName) {
+            case 'footer':
+                return array(
+                    'item_alignment' => 'center',
+                    'generate_button_menu' => false,
+                );
+            default:
+                return parent::getRegionPropertiesDefaults($regionName);
+        }
+    }
 }

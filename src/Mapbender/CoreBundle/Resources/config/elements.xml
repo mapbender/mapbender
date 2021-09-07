@@ -80,6 +80,7 @@
         </service>
         <service id="mapbender.element.ViewManager" class="Mapbender\CoreBundle\Element\ViewManager">
             <tag name="mapbender.element" />
+            <argument type="service" id="security.token_storage" />
             <argument type="service" id="mb.element.ViewManager.http_handler" />
         </service>
         <service id="mb.element.ViewManager.http_handler" class="%mapbender.element.ViewManager.http_handler.class%">
