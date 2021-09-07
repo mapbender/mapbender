@@ -1,4 +1,4 @@
-## dev-master @ e32a368f9
+## v3.2.7
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
 * Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
