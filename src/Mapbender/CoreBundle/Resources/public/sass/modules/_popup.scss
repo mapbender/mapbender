@@ -5,7 +5,7 @@
 
 .popupHead {
   .popupTitle {
-    @extend .title;
+    font-size: 1.35rem;
   }
   border-bottom:dashed 1px darken(#fff, 30%);
   &.draggable{cursor:move;}
