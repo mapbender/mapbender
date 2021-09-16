@@ -7,6 +7,10 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
+## dev-release/3.2 @ a503ba558
+* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
+* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
+
 ## v3.2.7
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
 * Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
