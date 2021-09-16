@@ -1,3 +1,7 @@
+## dev-staging/3.3 @ f83e2c446
+* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
+* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
+
 ## v3.3.0RC1
 * Complete Symfony 4 support
 * Removed `mapbender:generate:element` command (code incompatible with Symfony 4; produced PHP code incompatible with Mapbender)
