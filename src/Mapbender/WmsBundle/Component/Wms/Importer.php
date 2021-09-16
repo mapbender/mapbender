@@ -94,12 +94,10 @@ class Importer extends RefreshableSourceLoader
         EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
         $contact = clone $reloaded->getContact();
-        $this->entityManager->clear(Contact::class);
         if ($target->getContact()) {
             $this->entityManager->remove($target->getContact());
         }
         $target->setContact($contact);
-        $this->entityManager->remove($reloaded->getContact());
 
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
         $this->assignLayerPriorities($target->getRootlayer(), 0);
