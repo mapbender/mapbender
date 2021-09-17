@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
       element:
-        delete:
-          title: 'Borrar Elemento'
-          confirm: '¿Realmente quieres borrar el elemento?'
-        btn:
-          delete: Borrar
-          cancel: Cancelar
-        requirements: 'Campos requeridos están marcados con etiquetas oscuras, mientras que los campos opcionales tienen etiquetas claras.'
-        base_data: 'Dato base'
-        configuration: Configuración
         title: Título
         type: Tipo
         add: 'Añadir un nuevo elemento a'
         show_hide: 'Cambiar mostrar/ocultar el elemento'
-        edit: 'Editar elemento'
         no_element_added:
           '': 'No añadido elemento'
       zoombar:
@@ -92,6 +82,7 @@ mb:
         edit:
           title: 'Editar aplicación'
           base_data: 'Dato Base'
+        screenshot: Captura de pantalla
         layouts: Diseños
         layersets: 'Conjunto de capas'
         custom_css: CSS
@@ -109,7 +100,6 @@ mb:
         no_application: 'Aplicación no disponible'
         new:
           title: 'Nueva Aplicación'
-          base_data: 'Dato Base'
         create_use: 'Crear una nueva aplicación proveyendo información básica y luego usando el modo edición para añadir elementos y capas.'
         btn:
           create: Crear
@@ -117,20 +107,17 @@ mb:
         upload:
           button: 'Seleccione un archivo'
           label: 'No ha seleccionado un archivo'
-          tooltip: 'De un clic para subir una captura de pantalla'
         export:
           addAcl: ACLs
           addSources: Fuentes
           btn:
             export: Exportar
-            cancel: Cancelar
         import:
           addApplications: Aplicaciones
           addAcl: ACLs
           addSources: Fuentes
           btn:
             import: Importar
-            cancel: Cancelar
         title: Title
         url:
           title: 'URL Title'
@@ -142,7 +129,6 @@ mb:
       username: Usuario
       password: Clave
       load: Cargar
-      cancel: Cancelar
     managerbundle:
       applications: Aplicaciones
       new_application: 'Nueva aplicación'
@@ -155,9 +141,6 @@ mb:
     element:
       yaml:
         message: ~
-    be:
-      element:
-        delete: 'Borrar elemento ''%element_title%'''
     components:
       popup:
         add_element:
@@ -184,8 +167,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Captura de Pantalla removida'
     import:
       application:
         failed: 'La aplicación no puede ser importada.'
@@ -193,22 +174,8 @@ mb:
     admin:
       button:
         show_label: 'Mostrar etiqueta'
-      scaleselector:
-        show_label: 'Mostrar etiqueta'
-      corrdsdisplay:
-        label: 'Mostrar etiqueta título'
-      srsselector:
-        show_label: 'Mostrar etiqueta'
-      gpsposition:
-        show_label: 'Mostrar etiqueta'
       element:
         autostart: 'Auto inicio'
-      about_dialog:
-        show_label: 'Mostrar etiqueta botón'
-    element:
-      be:
-        button:
-          show_label: 'Mostrar etiqueta'
     entity:
       app:
         screenshotfile:

@@ -72,9 +72,12 @@
     padding-bottom:$space;
     z-index:20;
     position:relative;
-    width: 100%;
     &.active{display:block;}
   }
+}
+
+.tabContainer .container, .tabContainerAlt .container {
+  width: auto;  // overrule Bootstrap .container (which has varying width depending on screen size)
 }
 
 .accordionContainer {
@@ -83,11 +86,8 @@
   width: 100%;
     
   .accordion{
-    display: table-row;
-    >div{
-      display: table-cell;
-      @extend .button;
-    }
+    @extend .button;
+    display: block;
     &.active{
       cursor:default;
       background-color:darken($buttonFirstColor, 10%);

@@ -19,7 +19,6 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     '/components/vis-ui.js/vis-ui.js-built.js',
 
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
@@ -30,7 +29,6 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     'mb.actions.*',
                     'mb.manager.components.popup.*',
                     'mb.manager.managerbundle.add_user_group',
-                    'mb.manager.upload.label_delete',
                     'mb.manager.admin.application.upload.label',
                     'mb.core.entity.app.screenshotfile.*',
                     'mb.application.save.failure.general',

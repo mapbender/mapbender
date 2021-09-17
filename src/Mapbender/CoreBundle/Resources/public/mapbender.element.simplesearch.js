@@ -10,32 +10,48 @@ $.widget('mapbender.mbSimpleSearch', {
         label_attribute: null,
         geom_attribute: null,
         geom_format: null,
-        result: {
-            buffer: null,
-            minscale: null,
-            maxscale: null,
-            icon_url: null,
-            icon_offset: null
-        },
+        result_buffer: null,
+        result_minscale: null,
+        result_maxscale: null,
+        result_icon_url: null,
+        result_icon_offset: null,
         delay: 0
     },
 
     marker: null,
     layer: null,
+    iconUrl_: null,
 
     _create: function() {
+        this.iconUrl_ = this.options.result_icon_url || null;
+        if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
+            // Local, asset-relative
+            var parts = [
+                Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
+                this.options.result_icon_url.replace(/^\//, '')
+            ];
+            this.iconUrl_ = parts.join('/');
+        }
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
 
-        // Set up autocomplete
-        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
-            url: url,
-            delay: this.options.delay,
-            dataTitle: this.options.label_attribute,
-            dataIdx: null,
-            preProcessor: $.proxy(this._tokenize, this)
+
+        // Work around FOM Autocomplete widget broken constructor, where all instance end up sharing the
+        // same options object
+        // @todo: drop the FOM Autocomplete widget usage entirely (SimpleSearch is the only user)
+        var acOptions = Object.assign({}, Mapbender.Autocomplete.prototype.options, {
+                url: url,
+                delay: this.options.delay,
+                dataTitle: this.options.label_attribute,
+                dataIdx: null,
+                preProcessor: $.proxy(this._tokenize, this)
         });
+        this.autocomplete = new Mapbender.Autocomplete(searchInput, {
+            url: acOptions.url,
+            delay: acOptions.delay
+        });
+        this.autocomplete.options = acOptions;
 
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
@@ -61,12 +77,14 @@ $.widget('mapbender.mbSimpleSearch', {
         }
 
         var feature = format.read(evtData.data[this.options.geom_attribute]);
+        // Unpack GeoJSON parsing result list => single feature
+        while (feature && Array.isArray(feature)) { feature = feature[0]; }
         var mbMap = this._getMbMap();
 
-        var zoomToFeatureOptions = this.options.result && {
-            maxScale: parseInt(this.options.result.maxscale) || null,
-            minScale: parseInt(this.options.result.minscale) || null,
-            buffer: parseInt(this.options.result.buffer) || null
+        var zoomToFeatureOptions = {
+            maxScale: parseInt(this.options.result_maxscale) || null,
+            minScale: parseInt(this.options.result_minscale) || null,
+            buffer: parseInt(this.options.result_buffer) || null
         };
         mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
@@ -79,10 +97,10 @@ $.widget('mapbender.mbSimpleSearch', {
         var bounds = feature.geometry.getBounds();
 
         // Add marker
-        if(self.options.result.icon_url) {
+        if (this.iconUrl_) {
             if(!self.marker) {
                 var addMarker = function() {
-                    var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
+                    var offset = (self.options.result_icon_offset || '').split(new RegExp('[, ;]'));
                     var x = parseInt(offset[0]);
 
                     var size = {
@@ -105,7 +123,7 @@ $.widget('mapbender.mbSimpleSearch', {
                 };
 
                 var image = new Image();
-                image.src = self.options.result.icon_url;
+                image.src = this.iconUrl_;
                 image.onload = addMarker;
                 image.onerror = addMarker;
             } else {

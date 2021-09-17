@@ -1,22 +1,7 @@
-@import url("components/open-sans/open-sans.css");
-@import url("components/bootstrap/css/bootstrap.min.css");
-
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/icons";
 @import "theme/mapbender3";
-
-.glyphicon {
-  position: relative;
-  display: inline-block;
-  font-family: 'FontAwesome';
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1;
-  top: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 .form-control-feedback {
   position: absolute;
@@ -31,11 +16,6 @@
   margin-top: -29px;
 }
 
-.glyphicon-ok:before {
-  content: "\f00c";
-  color: #3c763d;
-}
-
 body {
   overflow: hidden;
 }
@@ -48,7 +28,6 @@ body {
 
   &.confirm-dialog{
     padding: 5px;
-    text-shadow: 0px 1px 0px #fff;
   }
 
   .nav.nav-tabs.ui-tabs-nav {
@@ -58,239 +37,38 @@ body {
   .form-group {
     margin-bottom: 5px;
     position: relative;
-
-    &.has-warning {
-      > input, > select, > textarea {
-        border-color: $mandatoryColor;
-        &[type="file"] {
-          border: none;
-          color: $warnFontColor;
-        }
-      }
-    }
-
-    &.has-error {
-      > input, > select, > textarea {
-        border-color: $errorColor;
-        &[type="file"] {
-          border: none;
-          color: $errorFontColor;
-        }
-      }
-    }
   }
-
-  div.radio,
-  div.checkbox {
-    > label {
-      padding-right: 4px;
-    }
-    &.has-warning > label {
-      color: $warnFontColor;
-    }
-    &.has-error > label {
-      color: $errorFontColor;
-    }
-  }
-
-
   label {
-    margin-bottom: 0px;
-    font-size: 11px;
     color: #707070;
-    text-shadow: 0px 1px 0px #fff;
   }
-
-  textarea,
-  select,
-  input
-  {
-    &:-webkit-autofill {
-      background-color: #E0FBCF;
-      color: #858585;
-    }
+  label, .form-control {
+    font-size: 11px
   }
-
-  textarea,
-  select,
-  input[type="text"],
-  input[type="password"],
-  input[type="email"],
-  input[type="number"],
-  input[type="file"] {
-    color: #555;
-    font-size: 11px;
+  .form-control {
     border-radius: 0;
-    height: 29px;
-    display: block;
-    width: 100%;
-    padding: 2px 24px 2px 7px;
-    &.mandatory {
-      background-color: #f2b17f;
-    }
   }
-
-  input[type="checkbox"],
-  input[type="radio"] {
-    margin-left: -17px;
-  }
-
-
   hr {
     display: block;
     clear: both;
     height: 1px;
-    background-color: #c0c0c0;
-    //    border-top: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
     margin-top: 10px;
     margin-bottom: 10px;
-  }
-
-  select {
-    padding: 2px 3px;
-  }
-
-  select[multiple] {
-    height: auto;
-  }
-
-  textarea {
-    height: auto;
-  }
-
-  input[type="file"] {
-    padding: 0;
-    height: 24px;
-
-  }
-
-  input.form-control {
-    &[type='password'],
-    &[type='email'],
-    &[type='text'] {
-      height: 29px;
-      //    background-color: rgb(250, 255, 189);
-    }
-  }
-
-  .checkbox {
-    height: auto;
-    opacity: 1;
-    filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(enabled = false)";
-    top: auto;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    position: inherit;
-  }
-
-  select,
-  button,
-  textarea,
-  input,
-  .uneditable-input {
-    &:focus {
-      border-color: #578e2a;
-      outline: 0;
-      outline: thin dotted \9;
-      /* IE6-9 */
-      box-shadow: inset 0 1px 1px rgba(87, 142, 42, .075), 0 0 8px rgba(87, 142, 42, .6);
-    }
-  }
-
-  .btn {
-    $mainColor: #6FB536;
-    border-radius: 0;
-    font-size: 11px;
-    padding: 4px 9px;
-    border-color: #538E24;
-    background-color: $mainColor;
-    color: #ffffff;
-    &:hover, &:focus {
-      background-color: darken($mainColor, 10%);
-    }
   }
 
   // Tab-Navigator
   .tab-content.ui-tabs-panel {
     overflow: visible;
   }
-
-  fieldset {
-    margin-left: -15px;
-    vertical-align: bottom;
-    .checkbox,
-    .radio,
+  // Vis-ui legacy construct alert: fieldsets are used as a standin of .form-inline but with
+  // label placement above input.
+  // Luckily, these all have the form-group class added
+  fieldset.form-group {
     > .form-group {
-      width: auto;
       display: inline-block;
-      padding-left: 15px;
-      vertical-align: bottom;
-    }
-
-    > hr {
-      margin-left: 15px;
+      padding-right: 15px;
     }
   }
-}
-
-form {
-  // Form holder, needed to disable group form elements.
-  // Example: <fieldset disabled="disabled">...</fieldset>
-  > fieldset {
-    border: none;
-    padding: 0;
-  }
-
-  //  label{
-  //    color: #2A2929;
-  //  }
-
-  .form-group {
-
-    > label {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.checkbox-container {
-  .checkbox-inline {
-    clear: both;
-    label {
-      white-space: nowrap;
-    }
-  }
-}
-
-form {
-  input[type='submit'].hidden {
-    display: none;
-  }
-}
-
-.has-spinner {
-  &.active {
-    cursor: progress;
-    &.spinner {
-      opacity: 1;
-      width: auto; /* This doesn't work, just fix for unknown width elements */
-    }
-  }
-
-  .spinner {
-    display: inline-block;
-    opacity: 0;
-    width: 0;
-
-    -webkit-transition: opacity 0.25s, width 0.25s;
-    -moz-transition: opacity 0.25s, width 0.25s;
-    -o-transition: opacity 0.25s, width 0.25s;
-    transition: opacity 0.25s, width 0.25s;
-  }
-
 }
 
 /**
@@ -378,12 +156,6 @@ $tabSize: 32px;
   width: 10px;
   z-index: 20;
   display: none;
-
-  &.notCollapsable {
-    .sidePaneTabs {
-      display: none;
-    }
-  }
 
   &.left {
     @include absolute(120px '' $space*3 0);

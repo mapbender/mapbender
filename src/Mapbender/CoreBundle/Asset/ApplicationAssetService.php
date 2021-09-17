@@ -195,18 +195,22 @@ class ApplicationAssetService
         switch ($type) {
             case 'js':
                 return array(
+                    '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
+                    '@MapbenderCoreBundle/Resources/public/util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
+                    // form-theme specific widget auto-initialization
+                    '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;

@@ -2,7 +2,6 @@
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
-            displaytype: 'tree',
             autoOpen: false,
             useTheme: false,
             target: null,
@@ -16,10 +15,8 @@
             menu: []
         },
         model: null,
-        dlg: null,
         template: null,
         menuTemplate: null,
-        layerconf: null,
         popup: null,
         created: false,
         loadStarted: {},
@@ -68,8 +65,7 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
-            if (this.created)
-                this._unSortable();
+            $('ul.layers:first', this.element).empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var li_s = this._createSourceTree(sources[i]);
@@ -92,13 +88,12 @@
                 //        then through source instances in the layerset, so the layerset is already known
                 // @todo 3.1.0: this should happen server-side
                 var layerset = this._findLayersetWithSource(source);
-                var theme = {};
-                $.each(this.options.themes, function(idx, item) {
-                    if (item.id === layerset.id)
-                        theme = item;
+                var themesMatches = layerset && this.options.themes.filter(function(themeConfig) {
+                    return themeConfig.useTheme && ('' + themeConfig.id) === ('' + layerset.id);
                 });
-                if (theme.useTheme) {
-                    var $layersetEl = this._createThemeNode(layerset, theme);
+                var themeOptions = themesMatches.length && themesMatches[0];
+                if (themeOptions) {
+                    var $layersetEl = this._createThemeNode(layerset, themeOptions);
                     $targetList = $("ul.layers:first", $layersetEl);
                 }
             }
@@ -328,26 +323,16 @@
             }
             return li;
         },
-        _onSourceAdded: function(event, options) {
-            if (!this.created || !options.added)
-                return;
-            var added = options.added;
-            if (added.source.configuration.baseSource && !this.options.showBaseSource) {
+        _onSourceAdded: function(event, data) {
+            var source = data.source;
+            if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            if (this.options.displaytype === "tree") {
-                var li_s = this._createSourceTree(added.source);
-                var first_li = $(this.element).find('ul.layers:first li:first');
-                if (first_li && first_li.length !== 0) {
-                    first_li.before(li_s);
-                } else {
-                    $(this.element).find('ul.layers:first').append($(li_s));
-                }
-            } else {
-                return;
-            }
-            this.sourceAtTree[added.source.id ] = {
-                id: added.source.id
+            var li_s = this._createSourceTree(source);
+            // Insert on top
+            $('ul.layers:first', this.element).prepend(li_s);
+            this.sourceAtTree[source.id] = {
+                id: source.id
             };
             this._reset();
         },
@@ -797,7 +782,7 @@
                     var dimHandler = Mapbender.Dimension(item);
                     var label = $('#layer-dimension-value-' + item.name, menu);
                     new Dragdealer('layer-dimension-' + item.name, {
-                        x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
+                        x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
@@ -807,7 +792,8 @@
                             self._callDimension(source, inpchkbox);
                         },
                         animationCallback: function(x, y) {
-                            var value = dimHandler.valueFromPart(x);
+                            var step = Math.round(dimHandler.getStepsNum() * x);
+                            var value = dimHandler.valueFromStep(step);
                             label.text(value);
                             updateData({value: value});
                             inpchkbox.attr('data-value', value);
@@ -820,16 +806,13 @@
         },
         _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
-            var params = {};
-            params[dimension['__name']] = chkbox.attr('data-value');
-            if (chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {
-                    'add': params
-                });
-            } else if (params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {
-                    'remove': params
-                });
+            var paramName = dimension['__name'];
+            if (chkbox.is(':checked') && paramName) {
+                var params = {};
+                params[paramName] = chkbox.attr('data-value');
+                source.addParams(params);
+            } else if (paramName) {
+                source.removeParams([paramName]);
             }
             return true;
         },

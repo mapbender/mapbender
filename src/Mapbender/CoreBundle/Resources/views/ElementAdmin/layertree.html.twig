@@ -1,4 +1,42 @@
-<div class="elementForm elementFormLayerTree">
+{% form_theme form _self %}
+{%- if false %}{# predefine blocks without immediately rendering them #}
+    {% block _form_configuration_themes_widget %}
+        <div class="inputWrapper">
+            <table class="table" id="{{form.vars.id}}">
+            {% for theme in form.children %}
+                {{ form_row(theme) }}
+            {% endfor %}
+            </table>
+        </div>
+    {% endblock %}
+    {% block _form_configuration_themes_entry_opened_row %}
+        <span class="item-opened" title="{{ form.vars.attr.title | trans }}">
+            <i class="fa fas fa-fw {{ form.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
+            <span class="hidden">{{ form_widget(form) }}</span>
+        </span>
+    {% endblock %}
+    {% block _form_configuration_themes_entry_row %}
+        <tr>
+            <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
+                {{ form.vars.data.title }}
+            </td>
+            <td class="theme-settings text-nowrap text-right">
+                <span title="{{ form.useTheme.vars.attr.title | trans }}">
+                    {{ form_row(form.useTheme) }}
+                </span>
+                {{ form_row(form.opened) }}
+                <span title="{{ form.sourceVisibility.vars.attr.title | trans }}">
+                    {{ form_row(form.sourceVisibility) }}
+                </span>
+                <span title="{{ form.allSelected.vars.attr.title | trans }}">
+                    {{ form_row(form.allSelected) }}
+                </span>
+            </td>
+        </tr>
+    {% endblock %}
+{%- endif -%}
+
+<div class="elementFormLayerTree">
     <div>
         <div class="left">
             {{ form_row(form.configuration.showBaseSource) }}
@@ -29,14 +67,15 @@
     </div>
     {{ form_row(form.configuration.useTheme) }}
     {% if form.configuration.themes is defined %}
-        <div>
-          {{ form_label(form.configuration.themes) }}
-          <table id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
-          {% for theme in form.configuration.themes %}
-            {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
-          {% endfor %}
-          </table>
-          <div class="clearContainer"></div>
-        </div>
+        {{ form_row(form.configuration.themes) }}
+        <script type="text/javascript">
+            $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
+                var $cb = $('input[type="checkbox"]', this);
+                var $icon = $('>i', this);
+                $cb.prop('checked', !$cb.prop('checked'));
+                $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
+                $icon.toggleClass('fa-folder', !$cb.prop('checked'));
+            });
+        </script>
     {% endif %}
 </div>

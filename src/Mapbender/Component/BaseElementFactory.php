@@ -31,14 +31,8 @@ class BaseElementFactory
             throw new \LogicException("Empty component class name on element");
         }
         $componentClassName = $this->getComponentClass($element);
-        // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
-        // Exceptions via Symfony.
-        try {
-            if (!class_exists($componentClassName, true)) {
-                throw new UndefinedElementClassException($componentClassName);
-            }
-        } catch (\Exception $e) {
-            throw new UndefinedElementClassException($componentClassName, null, $e);
+        if (!ClassUtil::exists($componentClassName)) {
+            throw new UndefinedElementClassException($componentClassName);
         }
         $element->setClass($componentClassName);
     }
@@ -68,6 +62,24 @@ class BaseElementFactory
                 $componentClassName::updateEntityConfig($element);
             }
         }
+    }
+
+    /**
+     * @param string $className
+     * @return bool
+     */
+    public function isClassDisabled($className)
+    {
+        return $this->inventoryService->isClassDisabled($className);
+    }
+
+    /**
+     * @param Element $element
+     * @return bool
+     */
+    public function isTypeOfElementDisabled(Element $element)
+    {
+        return $this->inventoryService->isTypeOfElementDisabled($element);
     }
 
     /**

@@ -12,36 +12,9 @@ class DimensionInst extends Dimension
     const TYPE_MULTIPLE         = 'multiple';
     const TYPE_MULTIPLEINTERVAL = 'multipleinterval';
 
-    public $origextent = null;
     public $active;
     public $type;
     public $id;
-
-    /**
-     * @param DimensionInst $other
-     * @return bool
-     */
-    public function compare(DimensionInst $other)
-    {
-        return
-            $this->getOrigextent() === $other->getOrigextent()
-            &&
-            $this->getName() === $other->getName()
-            &&
-            $this->getUnits() === $other->getUnits()
-        ;
-    }
-
-    public function getOrigextent()
-    {
-        return $this->origextent;
-    }
-
-    public function setOrigextent($origextent)
-    {
-        $this->origextent = $origextent;
-        return $this;
-    }
 
     public function getActive()
     {
@@ -145,8 +118,7 @@ class DimensionInst extends Dimension
             'nearestValue' => $this->getNearestValue(),
             'unitSymbol' => $this->getUnitSymbol(),
             'units' => $this->getUnits(),
-            'extent' => $this->getData($this->getExtent()) ?: $this->getData($this->getOrigextent()),
-            'origextent' => $this->getData($this->getOrigextent()),
+            'extent' => $this->getData($this->getExtent()),
             'type' => $this->getType(),
         );
     }
@@ -162,14 +134,12 @@ class DimensionInst extends Dimension
         $inst->unitSymbol = $config['unitSymbol'];
         $inst->units = $config['units'];
         $inst->extent = $config['extent'];
-        $inst->origextent = $config['origextent'];
         $inst->type = $config['type'];
         return $inst;
     }
 
     /**
      * Factory method, copies attributes from given Dimension object.
-     * Adds Origextent initially equal to Dimension Extent
      * Adds Active initially false
      * Adds Type found from Dimension Extent via @see findType
      *
@@ -187,7 +157,6 @@ class DimensionInst extends Dimension
         $diminst->setUnitSymbol($dim->getUnitSymbol());
         $diminst->setUnits($dim->getUnits());
         $diminst->setActive(false);
-        $diminst->setOrigextent($dim->getExtent());
         $diminst->setExtent($dim->getExtent());
         $diminst->setType(static::findType($dim->getExtent()));
         return $diminst;

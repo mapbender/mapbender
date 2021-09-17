@@ -64,9 +64,6 @@ class ApplicationController extends ApplicationControllerBase
         $isProduction = $this->isProduction();
         $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
-            if (!$source) {
-                throw new NotFoundHttpException('The application can not be found.');
-            }
             // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
         } else {
@@ -75,13 +72,14 @@ class ApplicationController extends ApplicationControllerBase
         }
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
+            'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
 
         $useCached = $isProduction && file_exists($cacheFile);
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
             $response = new BinaryFileResponse($cacheFile, 200, $headers);
             // allow file timestamp to be read again correctly for 'Last-Modified' header
-            clearstatcache();
+            clearstatcache($cacheFile, true);
             $response->isNotModified($request);
             return $response;
         }
@@ -142,6 +140,7 @@ class ApplicationController extends ApplicationControllerBase
         $useCache = $this->isProduction();
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
+            'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
         if ($useCache) {
             // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
@@ -151,7 +150,7 @@ class ApplicationController extends ApplicationControllerBase
                 $content = $appComponent->getTemplate()->render();
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
-                clearstatcache();
+                clearstatcache($cacheFile, true);
             }
             $response = new BinaryFileResponse($cacheFile, 200, $headers);
             $response->isNotModified($request);
@@ -170,7 +169,7 @@ class ApplicationController extends ApplicationControllerBase
     private function getApplicationEntity($slug)
     {
         $application = $this->requireApplication($slug, true);
-        $this->checkApplicationAccess($application);
+        $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
     }
 

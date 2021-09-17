@@ -22,12 +22,6 @@ class Style implements MutableUrlTarget
     /** @var LegendUrl|null */
     public $legendUrl;
 
-    /** @var OnlineResource|null */
-    public $styleSheetUrl;
-
-    /** @var OnlineResource|null */
-    public $styleUlr;
-
     /**
      * Set name
      *
@@ -116,48 +110,6 @@ class Style implements MutableUrlTarget
         return $this->legendUrl;
     }
 
-    /**
-     * Set styleSheetUrl
-     *
-     * @param OnlineResource|null $styleSheetUrl
-     * @return $this
-     */
-    public function setStyleSheetUrl(OnlineResource $styleSheetUrl = NULL)
-    {
-        $this->styleSheetUrl = $styleSheetUrl;
-        return $this;
-    }
-
-    /**
-     * Get styleSheetUrl
-     *
-     * @return OnlineResource
-     */
-    public function getStyleSheetUrl()
-    {
-        return $this->styleSheetUrl;
-    }
-
-    /**
-     * Set styleUlr
-     *
-     * @param OnlineResource|null $styleUlr
-     * @return $this
-     */
-    public function setStyleUlr(OnlineResource $styleUlr = NULL)
-    {
-        $this->styleUlr = $styleUlr;
-        return $this;
-    }
-
-    /**
-     * @return OnlineResource|null
-     */
-    public function getStyleUlr()
-    {
-        return $this->styleUlr;
-    }
-
     public function mutateUrls(OneWayTransformer $transformer)
     {
         $legendUrl = $this->getLegendUrl();
@@ -165,14 +117,6 @@ class Style implements MutableUrlTarget
             $onlineResource->mutateUrls($transformer);
             $this->setLegendUrl(clone $legendUrl);
             $this->getLegendUrl()->setOnlineResource($onlineResource);
-        }
-        if ($onlineResource = $this->getStyleUlr()) {
-            $onlineResource->mutateUrls($transformer);
-            $this->setStyleUlr(clone $onlineResource);
-        }
-        if ($onlineResource = $this->getStyleSheetUrl()) {
-            $onlineResource->mutateUrls($transformer);
-            $this->setStyleSheetUrl(clone $onlineResource);
         }
     }
 }

@@ -8,8 +8,7 @@ use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Mapbender\CoreBundle\Extension\ElementExtension;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -29,17 +28,21 @@ class ApplicationService
     protected $authorizationChecker;
     /** @var AclProviderInterface */
     protected $aclProvider;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
 
     public function __construct(ElementFactory $elementFactory,
                                 UploadsManager $uploadsManager,
                                 AuthorizationCheckerInterface $authorizationChecker,
-                                AclProviderInterface $aclProvider)
+                                AclProviderInterface $aclProvider,
+                                ElementExtension $elementExtension)
     {
         $this->elementFactory = $elementFactory;
         $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->aclProvider = $aclProvider;
+        $this->elementExtension = $elementExtension;
     }
 
     /**
@@ -91,6 +94,9 @@ class ApplicationService
         foreach ($entities as $entity) {
             try {
                 $components[] = $this->elementFactory->componentFromEntity($entity, true);
+                if (!$entity->getTitle()) {
+                    $entity->setTitle($this->elementExtension->element_default_title($entity));
+                }
             } catch (ElementErrorException $e) {
                 // for frontend presentation, incomplete / invalid elements are silently suppressed
                 // => do nothing
@@ -108,7 +114,8 @@ class ApplicationService
     {
         $entitiesOut = array();
         foreach ($entities as $entity) {
-            if ($entity->getEnabled() && (!$requireGrant || $this->isElementGranted($entity))) {
+            $enabled = !$this->elementFactory->isTypeOfElementDisabled($entity) && $entity->getEnabled();
+            if ($enabled && (!$requireGrant || $this->isElementGranted($entity))) {
                 $entitiesOut[] = $entity;
             }
         }
@@ -122,26 +129,6 @@ class ApplicationService
      */
     protected function isElementGranted(Entity\Element $element, $permission = 'VIEW')
     {
-        $oid = ObjectIdentity::fromDomainObject($element);
-        try {
-            $acl = $this->aclProvider->findAcl($oid);
-            if ($acl->getObjectAces()) {
-                $isGranted = $this->authorizationChecker->isGranted($permission, $element);
-            } else {
-                $isGranted = true;
-            }
-        } catch (AclNotFoundException $e) {
-            $isGranted = true;
-        }
-
-        if (!$isGranted && $element->getApplication()->isYamlBased()) {
-            foreach ($element->getYamlRoles() ?: array() as $role) {
-                if ($this->authorizationChecker->isGranted($role)) {
-                    $isGranted = true;
-                    break;
-                }
-            }
-        }
-        return $isGranted;
+        return $this->authorizationChecker->isGranted($permission, $element);
     }
 }

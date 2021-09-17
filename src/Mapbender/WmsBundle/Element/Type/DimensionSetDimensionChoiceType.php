@@ -6,6 +6,7 @@ namespace Mapbender\WmsBundle\Element\Type;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,4 +43,10 @@ class DimensionSetDimensionChoiceType extends AbstractType
             'choices_as_values' => true,
         ));
     }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addModelTransformer(new DimensionSetDimensionChoiceTransformer($options['dimensions']));
+    }
+
 }

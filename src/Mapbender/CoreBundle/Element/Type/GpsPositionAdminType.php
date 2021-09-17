@@ -8,6 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GpsPositionAdminType extends AbstractType
 {
+
+    public function getParent()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
+    }
+
     /**
      * @inheritdoc
      */
@@ -25,13 +31,6 @@ class GpsPositionAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => false,
-            ))
-            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.gpsposition.show_label',
-            ))
             ->add('autoStart', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
@@ -39,9 +38,6 @@ class GpsPositionAdminType extends AbstractType
             ->add('target',  'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
-                'required' => false,
-            ))
-            ->add('icon', 'Mapbender\CoreBundle\Element\Type\IconClassType', array(
                 'required' => false,
             ))
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

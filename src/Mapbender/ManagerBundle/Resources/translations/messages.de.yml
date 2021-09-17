@@ -48,22 +48,18 @@ mb:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
       element:
-        delete:
-          title: 'Element entfernen'
-          confirm: 'Wollen Sie das Element wirklich löschen?'
-        btn:
-          delete: Löschen
-          cancel: Abbrechen
-        requirements: 'Pflichtfelder verfügen über dunkle Beschriftungen, optionale Felder über hellere Beschriftungen.'
-        base_data: Hintergrunddaten
-        configuration: 'Konfiguration des Elements'
         title: Titel
         type: Typ
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
-        edit: bearbeiten
         no_element_added:
           '': 'Kein Element vorhanden'
+        anchor:
+          label: Position
+          left-top: Oben links
+          left-bottom: Unten links
+          right-top: Oben rechts
+          right-bottom: Unten rechts
       zoombar:
         draggable: Verschiebbar
       overview:
@@ -94,6 +90,7 @@ mb:
         edit:
           title: 'Anwendung bearbeiten'
           base_data: 'Basisdaten'
+        screenshot: Vorschaubild
         layouts: Layouts
         layersets: Layerset
         custom_css: CSS
@@ -111,28 +108,24 @@ mb:
         no_application: 'Keine Anwendung vorhanden'
         new:
           title: 'Anwendung anlegen'
-          base_data: Basisdaten
         create_use: 'Erstellen Sie zunächst eine neue Anwendung mit Basisinformationen. Danach können Sie die Anwendung bearbeiten und Elemente sowie Layersets einzufügen.'
         btn:
           create: Speichern
           cancel: Abbrechen
         upload:
-          button: 'Datei auswählen:'
+          button: 'Datei auswählen'
           label: 'Keine Datei ausgewählt...'
-          tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
         export:
           addAcl: Acls
           addSources: Quellen
           btn:
             export: Exportieren
-            cancel: Abbrechen
         import:
           addApplications: Anwendungen
           addAcl: Acls
           addSources: Quellen
           btn:
             import: Importieren
-            cancel: Abrechen
         title: Titel
         url:
           title: 'URL Titel'
@@ -144,7 +137,6 @@ mb:
       username: Benutzername
       password: Passwort
       load: Laden
-      cancel: Abbrechen
     managerbundle:
       applications: Anwendungen
       new_application: 'Neue Anwendung'
@@ -157,9 +149,6 @@ mb:
     element:
       yaml:
         message: 'Benutzen Sie das <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Format, um die Elementkonfiguration zu beschreiben.'
-    be:
-      element:
-        delete: 'Element ''%element_title%'' löschen'
     components:
       popup:
         add_element:
@@ -188,8 +177,6 @@ mb:
           label: Buttons
         accordion:
           label: Akkordeon
-    upload:
-      label_delete: 'Bild entfernt.'
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'
@@ -197,22 +184,8 @@ mb:
     admin:
       button:
         show_label: 'Beschriftung anzeigen'
-      scaleselector:
-        show_label: 'Beschriftung anzeigen'
-      corrdsdisplay:
-        label: 'Beschriftung anzeigen'
-      srsselector:
-        show_label: 'Beschriftung anzeigen'
-      gpsposition:
-        show_label: 'Beschriftung anzeigen'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Buttontext anzeigen'
-    element:
-      be:
-        button:
-          show_label: 'Beschriftung anzeigen'
     entity:
       app:
         screenshotfile:

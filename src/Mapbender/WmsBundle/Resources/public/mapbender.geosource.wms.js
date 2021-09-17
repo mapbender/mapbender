@@ -20,12 +20,18 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
         },
         intersectsExtent: function(extent, srsName) {
-            var layerExtent = this.getBounds(srsName, false);
+            var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
                 // unlimited layer extent
                 return true;
             }
-            return Mapbender.Util.extentsIntersect(extent, layerExtent);
+            var extent_;
+            if (srsName !== 'EPSG:4326') {
+                extent_ = Mapbender.Model._transformExtent(extent, srsName, 'EPSG:4326');
+            } else {
+                extent_ = extent;
+            }
+            return Mapbender.Util.extentsIntersect(extent_, layerExtent);
         }
     });
     return WmsSourceLayer;
@@ -159,18 +165,6 @@ window.Mapbender.WmsSource = (function() {
                 }
             });
             return layers;
-        },
-        _bboxArrayToBounds: function(bboxArray, projCode) {
-            if (this.configuration.options.version === '1.3.0') {
-                var projDefaults = OpenLayers.Projection.defaults[projCode];
-                var yx = projDefaults && projDefaults.yx;
-                if (yx) {
-                    // Seriously.
-                    // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
-                    bboxArray = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
-                }
-            }
-            return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray, projCode);
         },
         checkLayerParameterChanges: function(layerParams) {
             var olLayer = this.getNativeLayer(0);

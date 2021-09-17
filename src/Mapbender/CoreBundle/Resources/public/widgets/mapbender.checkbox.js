@@ -1,6 +1,7 @@
 (function($) {
     var iconOnDefault = "iconCheckboxActive";
     var iconOffDefault = "iconCheckbox";
+    var iconIndeterminate = 'iconCheckboxHalf';
 
     /**
      * Replacement for fom/src/FOM/CoreBundle/Resources/public/js/widgets/checkbox.js:initCheckbox.
@@ -19,15 +20,20 @@
         var data = $cb.data('mbCheckbox');
         var $wrapper = $cb.parents('.checkWrapper');
         $wrapper.toggleClass('checkboxDisabled', $cb.prop('disabled'));
-        if ($cb.prop('checked')) {
+        var indeterminate = this.indeterminate;
+        if (indeterminate) {
+            $wrapper.addClass(iconIndeterminate);
+            $wrapper.removeClass([data.iconOn, iconOnDefault, data.iconOff, iconOffDefault].join(' '));
+        } else if ($cb.prop('checked')) {
             $wrapper.addClass(data.iconOn);
-            $wrapper.removeClass([data.iconOff, iconOffDefault].join(' '));
+            $wrapper.removeClass([data.iconOff, iconOffDefault, iconIndeterminate].join(' '));
         } else {
             $wrapper.addClass(data.iconOff);
-            $wrapper.removeClass([data.iconOn, iconOnDefault].join(' '));
+            $wrapper.removeClass([data.iconOn, iconOnDefault, iconIndeterminate].join(' '));
         }
     }
-    $.fn.mbCheckbox = function() {
+    $.fn.mbCheckbox = function(options) {
+        var listen_ = !options || (typeof (options.listen) === 'undefined' || options.listen);
         this.filter('.checkWrapper input[type="checkbox"]').each(function() {
             var $this = $(this);
             // Skip already initialized nodes, avoids binding events more than once
@@ -45,7 +51,7 @@
                 $this.on('change', function() {
                     propagateToWrapper.call(this);
                 });
-                $this.closest('.checkWrapper').on('click', function(e) {
+                if (listen_) $this.closest('.checkWrapper').on('click', function(e) {
                     $('input[type="checkbox"]', this).trigger('click');
                     // prevent bubbling to globally document-bound FOM initCheckbox binding
                     e.stopPropagation();

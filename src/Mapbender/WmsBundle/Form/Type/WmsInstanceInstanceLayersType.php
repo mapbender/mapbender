@@ -29,9 +29,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var WmsInstance $wmsinstance */
-        $wmsinstance = $options["data"];
-        $source = $wmsinstance->getSource();
+        /** @var WmsInstance $instance */
+        $instance = $options["data"];
+        $source = $instance->getSource();
 
         $getMapFormatChoices = array();
         foreach ($source->getGetMap()->getFormats() ?: array() as $value) {
@@ -86,12 +86,19 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\DimensionInstType',
                 'allow_add' => false,
                 'allow_delete' => false,
+                'entry_options' => array(
+                    'instance' => $instance,
+                    'by_reference' => false,
+                ),
             ))
             ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
                 'allow_add' => true,
                 'allow_delete' => true,
+                'entry_options' => array(
+                    'by_reference' => false,
+                ),
             ))
             ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',

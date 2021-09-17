@@ -35,17 +35,36 @@ h4, .h4, .bigText {
   font-size:$fontSize;
   color:$ciColor;
 }
-.labelInput, .labelText, .labelCheck{
+.labelText, .labelCheck {
   @extend .smallText;
-  @include noUserSelect;
+  user-select: none;
 }
-.labelInput{
-  display: inline-block;
-  color:$middleFontColor;
-  margin-right:$space/2;
-  line-height:$lineHeight + 8;
+.labelInput, .inputWrapper, .dropdown {
+  font-size: 0.85rem;
+}
 
-  .required{
+.labelInput, .labelCheck {
+  color:$middleFontColor;
+}
+.labelInput {
+  line-height: 2;
+  .form-horizontal & {
+    line-height: $inputHeight;
+    margin-right: $space/2;
+    vertical-align: top;
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: $space/2;
+    }
+  }
+  .form-horizontal .form-group & {
+    &, &+.inputWrapper, &+.dropdown {
+      margin-bottom: 0;
+    }
+  }
+
+  &.required:after {
+    margin-left: 0.25em;
+    content: '*';
     color:$errorColor;
   }
 }

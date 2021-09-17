@@ -2,21 +2,18 @@
 
     $.widget('mapbender.mbSearchRouter', {
         options: {
-            asDialog: true,     // Display as jQuery UI dialog
-            timeoutFactor: 2    // use delay * timeoutFactor before showing
         },
         callbackUrl: null,
         selected: null,
         highlightLayer: null,
         popup: null,
         mbMap: null,
+        useDialog_: null,
 
-        /**
-         * Widget creator
-         */
         _create: function() {
             var self = this;
             this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
@@ -64,21 +61,19 @@
                     .next('hr').hide();
             }
 
-            if(!options.asDialog) {
-                element.on('click', '.search-action-buttons a', function(event) {
-                    event.preventDefault();
-                    var target = $(event.target).attr('href');
-                    var targetBase = '#' + widget.element.attr('id') + '/button/';
-                    switch(target) {
-                        case (targetBase + 'reset'):
-                            widget._reset();
-                            break;
-                        case (targetBase + 'ok'):
-                            widget._search();
-                            break;
-                    }
-                });
-            }
+            element.on('click', '.search-action-buttons a', function(event) {
+                event.preventDefault();
+                var target = $(event.target).attr('href');
+                var targetBase = '#' + widget.element.attr('id') + '/button/';
+                switch(target) {
+                    case (targetBase + 'reset'):
+                        widget._reset();
+                        break;
+                    case (targetBase + 'ok'):
+                        widget._search();
+                        break;
+                }
+            });
 
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
@@ -94,15 +89,14 @@
         },
 
         /**
-         * Open method stub. Calls dialog's open method if widget is configured as
-         * an dialog (asDialog: true), otherwise just goes on and does nothing.
+         * Open popup dialog, when triggered by button; not in sidepane / mobile container
          */
         open: function(callback){
             this.callback = callback ? callback : null;
-            if(true === this.options.asDialog) {
+            if (this.useDialog_) {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
-                        title: this.element.attr('title'),
+                        title: this.element.attr('data-title'),
                         draggable: true,
                         modal: false,
                         closeOnESC: false,
@@ -135,18 +129,15 @@
         },
 
         /**
-         * Close method stub. Calls dialog's close method if widget is configured
-         * as an dialog (asDialog: true), otherwise just goes on and does nothing.
+         * Closes popup dialog.
          */
         close: function(){
-            if(true === this.options.asDialog){
-                if(this.popup){
-                    if(this.popup.$element){
-                        this.element.hide().appendTo($('body'));
-                        this.popup.destroy();
-                    }
-                    this.popup = null;
+            if (this.popup) {
+                if (this.popup.$element) {
+                    this.element.hide().appendTo($('body'));
+                    this.popup.destroy();
                 }
+                this.popup = null;
             }
             if (this.callback) {
                 (this.callback)();

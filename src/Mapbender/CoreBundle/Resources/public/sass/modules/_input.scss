@@ -1,60 +1,59 @@
-.input{
+.input, .dropdown {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
-  height:$inputHeight;
+  background-color: $inputBackgroundColor;
+}
+.input, .inputWrapper select {
   padding-left: 5px;
   padding-right: 5px;
-  background-color: $inputBackgroundColor;
+}
 
+.input:not(textarea), .dropdown {
+  height: $inputHeight;
+}
+.dropdown {
+  line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
+}
+.input {
+  &[disabled] {
+    background: darken($inputBackgroundColor, 10%)
+  }
+
+  &::placeholder {
+    color: inherit;
+    opacity: 0.55;
+  }
+}
+textarea.input {
+   min-height: 150px;
+}
+.input, .inputWrapper select {
   &:focus{
     outline:none;
     border:1px solid lighten($ciColor, 20%);
   }
-  &::placeholder {
-    color: mix($inputBackgroundColor, $inputForegroundColor, 50%);
-    opacity: 1;   // counter Firefox default opacity
-  }
+}
 
-  @extend .smallText;
+.inputWrapper, .dropdown {
+  display: inline-block;
+  width: 100%;
+  position: relative;
 }
 .inputWrapper{
-  position: relative;
-  display: inline-block;
-  .input {
+  .input, select {
       width: 100%;
   }
-
-  .validationMsgBox{
-    position: absolute;
+}
+.validationMsgBox {
+  position: absolute;
+}
+.validationMsgBox {
     z-index: 9999;
+    margin-left: 1em;
     min-width: 260px;
-    margin-left: -$space/2;
     color:$errorColor;
     padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
 
-    // small arrow left
-    &:after, &:before {
-      border: solid transparent;
-      content: "";
-      height: 0;
-      width: 0;
-      position: absolute;
-      right: 100%;
-    }
-    &:after{
-      border-right-color: lighten($errorColor, 50%);
-      border-width: 3px;
-      top: $space - 6px;
-      margin-top: -3px;
-    }
-    &:before{
-      border-right-color: lighten($errorColor, 40%);
-      border-width: 5px;
-      top: $space - 6px;
-      margin-top: -5px;
-    }
-  }
 }

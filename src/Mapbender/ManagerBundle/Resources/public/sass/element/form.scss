@@ -1,33 +1,20 @@
 .elementForm {
-  $labelWidth: 70px;
+  /** @todo: remove float from checkbox_widget block globally */
+  .checkWrapper.left {
+    float: none;
+  }
+  $labelWidth: 100px;
   .labelInput {
     width: $labelWidth;
-    margin-bottom: $space/2;
   }
   textarea {
-    height: 150px;
     resize: none;
   }
-  select {
-    font-size: 12px;
-    padding-left: 5px;
+  .inputWrapper, .dropdown {
+    width: calc(100% - #{$labelWidth + $space});
   }
-  .input {
-    width: 100%
-  }
-  .labelInput + .dropdown {
-    display: inline-block;
-  }
-  .dropdown {
-    min-width: 70%;
-  }
-  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
-    width: 70%;
-    color: $secondColor;
-
-    .validationMsgBox{
-      min-width: 28%;
-    }
+  .validationMsgBox{
+    min-width: 28%;
   }
   .choiceExpandedSortable {
     &.input {
@@ -35,23 +22,12 @@
       // @todo: .input should not have any height rule
       height: auto;
     }
-    .checkWrapper.left {
-      // undo redundant floats
-      // @todo: unfloat checkboxes globally
-      float: none;
-    }
     .sortableItem {
       cursor: move;
-      .checkWrapper, label {
-        margin: 0;
-      }
       label {
         cursor: inherit;
-        width: 92%; // for browser without calc
-        // Width taken by checkbox is exactly $fontSize
-        // No immediate variable refs inside calc(): https://github.com/sass/sass/issues/818
-        width: calc(100% - #{$fontSize} - 2px);  // subtract fontsize (=checkbox width) plus 2 extra pixels for safety
-        padding-left: 0.2em;
+        max-width: 90%; // Prevent breaking to new line if content is very long
+        margin-bottom: 0;
       }
       &:hover {
         background-color: darken($inputBackgroundColor, 10%);
@@ -64,53 +40,26 @@
   }
 }
 
-.wideLabelForm {
-  $label: 100px;
-  .labelInput {
-    width: $label;
-  }
-  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
-    width: calc(100% - #{$label + $space});
-  }
-  .dropdown {
-    min-width: calc(100% - #{$label + $space});
-    width: calc(100% - #{$label + $space});
-  }
-}
-
 .extraWideLabelForm {
   $label: 120px;
   .labelInput {
     width: 120px;
   }
-  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
-    width: calc(100% - #{$label + $space});
-  }
-  .dropdown {
-    min-width: calc(100% - #{$label + $space});
+  .inputWrapper, .dropdown {
     width: calc(100% - #{$label + $space});
   }
 }
 
 .collectionItem {
-  clear: both;
   position: relative;
-  .labelInput {
-    clear: both;
-  }
   textarea {
-    height: 100px;
-    margin-bottom: $space;
-  }
-  .inputWrapper textarea {
-    margin-bottom: 0;
+    min-height: 100px;
   }
 }
 
 .collectionRemove {
   line-height: $inputHeight;
   position: absolute;
-  right: 31px;
-  top: -6px;
+  right: -1em;
   z-index: 1;
 }

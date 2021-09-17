@@ -98,9 +98,6 @@ class MapbenderCoreExtension extends Extension
             'mapbender.yml',
             'constraints.yml',
             'formTypes.yml',
-            'components.yml',
-            'commands.yml',
-            'migrations.yml',
         ];
     }
 
@@ -110,6 +107,7 @@ class MapbenderCoreExtension extends Extension
     protected function getXmlConfigs()
     {
         return [
+            'security.xml',
             'services.xml',
         ];
     }

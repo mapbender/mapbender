@@ -40,18 +40,13 @@ class WelcomeController extends ApplicationControllerBase
         $allowedApplications = array();
 
         foreach ($allApplications as $application) {
-            try {
-                $this->checkApplicationAccess($application);
+            if ($this->isGranted('VIEW', $application)) {
                 $allowedApplications[] = $application;
-            } catch (AccessDeniedException $e) {
-                // skip silently
             }
         }
 
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
-            'uploads_web_url' => $this->getUploadsBaseUrl($request),
-            'time'              => new \DateTime(),
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
         ));

@@ -4,6 +4,7 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
@@ -183,7 +184,7 @@ class ElementClassesCommand extends ContainerAwareCommand
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
-            if (!class_exists($adminType)) {
+            if (!ClassUtil::exists($adminType)) {
                 // mark missing class as error
                 return "<error>{$adminType}</error>";
             } else {

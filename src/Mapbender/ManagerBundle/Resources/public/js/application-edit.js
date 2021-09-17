@@ -1,5 +1,38 @@
 $(function() {
     var popupCls = Mapbender.Popup;
+    function _handleLoginRedirect(html) {
+        if (/^<(!DOCTYPE|html)/i.test(html)) {
+            // Redirected to login
+            // Reload whole page; this will (again) redirect to login
+            window.location.reload();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function _formJax(options) {
+        return $.ajax(options).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return [];
+            }
+
+            var $markup = $(response);
+            // support top-level form tag(s)
+            var forms = $markup.filter('form').get();
+            if (!forms.length) {
+                // also support form(s) wrapped in something else
+                forms = $('form', $markup).get();
+            }
+            for (var i = 0; i< forms.length; ++i) {
+                var form = forms[i];
+                if (!form.getAttribute('action')) {
+                    // amend missing "action" attribute to match url of form source
+                    form.setAttribute('action', options.url);
+                }
+            }
+            return $markup.get();
+        });
+    }
     function confirmDiscard(e) {
         var $form = $('form', $(this).closest('.popup'));
         if ($form.data('dirty') && !$form.data('discard')) {
@@ -54,6 +87,7 @@ $(function() {
             var $clickedRadio = $('input[type="radio"]', this);
             $clickedRadio.prop('checked', true);
             updateGroupIcons.call($(this).parent());
+            $clickedRadio.trigger('change');
         }
         updateGroupIcons.call(this);
         $(this).on('click', '.radioWrapper', onClick);
@@ -78,19 +112,26 @@ $(function() {
     });
 
     function startEditElement(formUrl, strings, extraButtons) {
-        $.ajax(formUrl).then(function(response) {
+        _formJax({url: formUrl}).then(function(nodes) {
+            if (!nodes || !nodes.length) {
+                return;
+            }
             var popup = new popupCls({
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
                 modal: true,
                 cssClass: "elementPopup",
-                content: response,
+                content: [nodes],
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
                         cssClass: 'button',
                         callback: function() {
-                            elementFormSubmit(this.$element, formUrl);
+                            elementFormSubmit(this.$element, formUrl).then(function(success) {
+                                if (success) {
+                                    window.location.reload();
+                                }
+                            })
                         }
                     },
                     {
@@ -118,6 +159,9 @@ $(function() {
         $.ajax({
             url: listUrl
         }).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return;
+            }
             var popup = new popupCls({
                 title: Mapbender.trans(title),
                 subTitle: ' - ' + regionName,
@@ -131,11 +175,12 @@ $(function() {
                     }
                 ]
             });
-            popup.$element.on('click', '.chooseElement', function() {
-                var elTypeSubtitle = $('.subTitle', this).first().text();
+            popup.$element.on('click', '.chooseElement', function(e) {
+                e.preventDefault();
+                var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
                     title: title,
-                    subTitle: ' - ' + regionName + ' - ' + elTypeSubtitle,
+                    subTitle: ' - ' + regionName + ' - ' + elementTitle,
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
@@ -156,13 +201,15 @@ $(function() {
         });
     }
 
-    $(".addElement").bind("click", function() {
+    $(".addElement").bind("click", function(e) {
+        e.preventDefault();
         var regionName = $('.subTitle', $(this).closest('.region')).first().text();
         startElementChooser(regionName, $(this).attr('href'));
         return false;
     });
 
-    $(".editElement").bind("click", function() {
+    $(".editElement").bind("click", function(e) {
+        e.preventDefault();
         startEditElement($(this).attr('data-url'), {});
         return false;
     });
@@ -170,17 +217,15 @@ $(function() {
     function elementFormSubmit(scope, submitUrl) {
         var $form = $('form', scope),
             data = $form.serialize(),
-            url = submitUrl || $form.attr('action'),
-            self = this;
+            url = submitUrl || $form.attr('action')
+        ;
 
-        $.ajax({
+        return $.ajax({
             url: url,
             method: 'POST',
-            data: data,
-            error: function (e, statusCode, message) {
-                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
-            },
-            success: function(data) {
+            data: data
+        }).then(
+            function(data) {
                 if (data.length > 0) {
                     var dirty = $form.data('dirty');
                     var body = $form.parent();
@@ -188,12 +233,15 @@ $(function() {
                     $form = $('form', body);
                     $form.data('dirty', dirty);
                     $form.data('discard', false);
+                    return false;
                 } else {
-                    self.close();
-                    window.location.reload();
+                    return true;
                 }
+            },
+            function (e, statusCode, message) {
+                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
             }
-        });
+        );
     }
 
     // Delete element
@@ -208,17 +256,21 @@ $(function() {
     });
 
     // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset() {
+    function addOrEditLayerset(e) {
         var self = $(this);
         var isEdit = self.hasClass("editLayerset");
         var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
                                 : "mb.manager.components.popup.add_edit_layerset.title_add";
         var confirmText = isEdit ? 'mb.actions.save'
                                  : 'mb.actions.add';
-        $.ajax({url: self.attr("href")}).then(function(html) {
+        e.preventDefault();
+        _formJax({url: self.attr("href")}).then(function(nodes) {
+            if (!nodes || !nodes.length) {
+                return;
+            }
             new popupCls({
                 title: Mapbender.trans(popupTitle),
-                content: [html],
+                content: [nodes],
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
@@ -256,22 +308,26 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function() {
-        var self = $(this);
-        var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
-        new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-            subTitle: " - " + layersetTitle,
-            cssClass: 'new-instance-select',
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
-            buttons: [
-                {
-                    label: Mapbender.trans('mb.actions.cancel'),
-                    cssClass: 'button buttonCancel critical popupClose'
+    $(".addInstance").on("click", function(e) {
+        e.preventDefault();
+        var $target = $(this);
+        var layersetTitle = $target.attr('data-layerset-title');
+        $.ajax({url: $target.attr("href")}).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return;
+            }
+            new popupCls({
+                title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
+                subTitle: " - " + layersetTitle,
+                cssClass: 'new-instance-select',
+                content: response,
+                buttons: {
+                    'cancel': {
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'button buttonCancel critical popupClose'
+                    }
                 }
-            ]
+            });
         });
         return false;
     });
@@ -293,17 +349,17 @@ $(function() {
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
-        var $box = $('.validationMsgBox', fileGroup);
+        var $box = $('.alert-danger', fileGroup);
         if (!$box.length) {
-            $box = $('<span/>').addClass('validationMsgBox');
-            fileInput.after($box);
+            $box = $(document.createElement('div')).addClass('alert alert-danger');
+            fileGroup.append($box);
         }
         $box.text(message || '');
         $box.toggle(!!message);
     }
-    var maxFileSize = applicationForm.find('#application_maxFileSize').val();
-    var minWidth = applicationForm.find('#application_screenshotWidth').val();
-    var minHeight = applicationForm.find('#application_screenshotHeight').val();
+    var maxFileSize = fileInput.attr('data-max-size');
+    var minWidth = fileInput.attr('data-min-width');
+    var minHeight = fileInput.attr('data-min-height');
 
     fileInput.on('change', function(e) {
         setUploadFilename(e);
@@ -367,7 +423,7 @@ $(function() {
         deleteButton.on('click', function() {
             screenShot.addClass('default');
             screenShotImg.attr('src',"");
-            applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
+            applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
             applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
             deleteButton.addClass('hidden');
         });

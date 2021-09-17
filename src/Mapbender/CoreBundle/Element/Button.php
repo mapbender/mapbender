@@ -1,14 +1,18 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * Button element
  *
  * @author Christian Wygoda
+ * @internal
+ * Unified LinkButton and / or ControlButton remnant. Can no longer be added to applications.
+ * Kept only to support project-level child classes.
  */
-class Button extends Element
+class Button extends BaseButton implements ConfigMigrationInterface
 {
     /**
      * @inheritdoc
@@ -36,17 +40,13 @@ class Button extends Element
      */
     public static function getDefaultConfiguration()
     {
-        return array(
-            'title' => 'button',
-            'tooltip' => 'button',
-            'label' => true,
-            'icon' => null,
+        return array_replace(parent::getDefaultConfiguration(), array(
             'target' => null,
             'click' => null,
             'group' => null,
             'action' => null,
             'deactivate' => null,
-        );
+        ));
     }
 
     /**
@@ -54,20 +54,18 @@ class Button extends Element
      */
     public function getWidgetName()
     {
-        if (get_class() === get_called_class()) {
-            // Most definitely a control button
-            return 'mapbender.mbControlButton';
-        } else {
-            // Called for a child class without an own getWidgetName implementation
+        return 'mapbender.mbButton';
+    }
 
-            // We expect any other Element inheriting from button to just want a simple
-            // self-highlighting toggle switch, with no actual desire to control other
-            // Elements. We give them a simpler, non-controlling button widget.
-            @trigger_error(
-                "Warning: assuming " . get_class($this) . " doesn't want to control other Element widgets,"
-              . " using different JS widget constructor. Override getWidgetName if you really want to control"
-              . " other Elements", E_USER_DEPRECATED);
-            return 'mapbender.mbButton';
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        if ($entity->getClass() && $entity->getClass() === get_called_class()) {
+            $config = $entity->getConfiguration();
+            if (!empty($config['click'])) {
+                $entity->setClass('Mapbender\CoreBundle\Element\LinkButton');
+            } else {
+                $entity->setClass('Mapbender\CoreBundle\Element\ControlButton');
+            }
         }
     }
 
@@ -79,45 +77,10 @@ class Button extends Element
         return 'Mapbender\CoreBundle\Element\Type\ButtonAdminType';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
-    {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
-            ),
-        );
-    }
-
-    public function getConfiguration()
-    {
-        $config = $this->entity->getConfiguration();
-        if (!empty($config['click']) && 0 === strpos($config['click'], '#')) {
-            return array_replace($config, array(
-                'click' => null,
-            ));
-        } else {
-            return $config;
-        }
-    }
-
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
         return "MapbenderCoreBundle:Element:button{$suffix}";
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderManagerBundle:Element:button.html.twig';
-    }
 
 }

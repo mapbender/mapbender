@@ -5,12 +5,9 @@ namespace Mapbender\CoreBundle;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Mapbender\CoreBundle\Component\UploadsManager;
-use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,6 +23,8 @@ class Mapbender
     protected $manager;
     /** @var ApplicationYAMLMapper */
     protected $yamlMapper;
+    /** @var ImportHandler */
+    protected $importer;
 
     /** @var ContainerInterface */
     private $container;
@@ -48,6 +47,7 @@ class Mapbender
         $this->manager    = $registry->getManager();
         $this->container  = $container;
         $this->yamlMapper = $container->get('mapbender.application.yaml_entity_repository');
+        $this->importer = $container->get('mapbender.application_importer.service');
 
         /** @var MapbenderBundle $bundle */
         foreach ($bundles as $bundle) {
@@ -115,114 +115,13 @@ class Mapbender
         $application = $this->yamlMapper->getApplication($slug);
         $newSlug = EntityUtil::getUniqueValue($this->manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
         $newTitle = EntityUtil::getUniqueValue($this->manager, get_class($application), 'title', $application->getTitle(), ' ');
-        $elements             = array();
-        /** @var Layerset[] $layerSetMap */
-        $layerSetMap = array();
-        $translator           = $this->container->get("translator");
-
-        // @todo: move all the following code into the YamlApplicationImporter service
-
-        $application->setSlug($newSlug);
-        $application->setTitle($newTitle);
-        $application->setSource(Application::SOURCE_DB);
-
-        /** @var UploadsManager $ulm */
-        $ulm = $this->container->get('mapbender.uploads_manager.service');
-        $ulm->copySubdirectory($slug, $newSlug);
 
         $this->manager->beginTransaction();
-
-        /**
-         * Save application
-         */
-        $this->manager->persist($application);
-
-        /**
-         * Save elements
-         */
-        foreach ($application->getElements() as $elm) {
-            $elements[ $elm->getId() ] = $elm;
-            $title                     = $translator->trans($elm->getTitle());
-            $elm->setTitle($title);
-            $this->manager->persist($elm);
-        }
-
-        /**
-         * Save layer sets
-         */
-        /** @var TypeDirectoryService $instanceFactory */
-        $instanceFactory = $this->container->get('mapbender.source.typedirectory.service');
-        $siblingSources = array();
-        foreach ($application->getLayersets() as $set) {
-            $layerSetMap[$set->getId()] = $set;
-            foreach ($set->getInstances() as $inst) {
-                if (!$instanceFactory->matchInstanceToPersistedSource($inst, $siblingSources)) {
-                    $this->manager->persist($inst->getSource());
-                }
-                $siblingSources[] = $inst->getSource();
-                $this->manager->persist($inst);
-            }
-            $this->manager->persist($set);
-        }
-
-        // Flush to generate final layer ids
-        $this->manager->flush();
-
-        /**
-         * Post update element configurations
-         */
-        foreach ($elements as $element) {
-            $config = $element->getConfiguration();
-            if (isset($config['target'])) {
-                $elm              = $elements[ $config['target'] ];
-                $config['target'] = $elm->getId();
-            }
-            if (isset($config['layersets'])) {
-                $layerSets = array();
-                foreach ($config['layersets'] as $layerSetId) {
-                    $layerSet = $layerSetMap[$layerSetId];
-                    $layerSets[] = $layerSet->getId();
-                }
-                $config['layersets'] = $layerSets;
-
-            }
-            if (isset($config['layerset'])) {
-                $layerSet = $layerSetMap[$config['layerset']];
-                $config['layerset'] = $layerSet->getId();
-            }
-
-            if (is_a($element->getClass(), 'Mapbender\CoreBundle\Element\BaseSourceSwitcher', true)) {
-                if ($config['instancesets']) {
-                    foreach ($config['instancesets'] as $instanceSetId => $instanceSet) {
-                        $instances = array();
-                        foreach ($instanceSet["instances"] as $instanceNamedId) {
-                            foreach ($application->getLayersets() as $appInstanceSet) {
-                                foreach ($appInstanceSet->getInstances() as $appInstance) {
-                                    $instances = array();
-                                    // hack: Title becomes original UID by import
-                                    if ($appInstance->getSource()->getTitle() == $instanceNamedId) {
-                                        $instances[] = $appInstance->getId();
-                                        break;
-                                    }
-                                }
-
-                            }
-                        }
-                        $config['instancesets'][$instanceSetId]['instances'] = $instances;
-                    }
-                }
-            }
-
-            $element->setConfiguration($config);
-            $this->manager->persist($element);
-        }
-
-
-        /** @var YamlApplicationImporter $importerService */
-        $importerService = $this->container->get('mapbender.yaml_application_importer.service');
-        $importerService->addViewPermissions($application);
-
-        $this->manager->flush();
+        $clonedApp = $this->importer->duplicateApplication($application, $newSlug);
+        $clonedApp->setTitle($newTitle);
         $this->manager->commit();
+        if (\php_sapi_name() === 'cli') {
+            echo "Created database application {$clonedApp->getSlug()}\n";
+        }
     }
 }

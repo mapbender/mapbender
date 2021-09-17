@@ -1174,27 +1174,31 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var projCode = this.getCurrentProjectionCode();
 
         sourceDef.mqlid = this.map.trackSource(sourceDef).id;
+        this.mbMap.element.trigger('mbconfiguringsource', {
+            mbMap: this.mbMap,
+            source: sourceDef
+        });
         var olLayers = sourceDef.initializeLayers(projCode);
         for (i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
         }
         this._spliceLayers(sourceDef, olLayers);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceAdded',
-            value: {
-                added: {
-                    source: sourceDef,
-                    // legacy: no known consumer evaluates these props,
-                    // but even if, they've historically been wrong anyway
-                    // was: "before": always last source previously in list, even though
-                    // the new source was actually added *after* that
-                    before: null,
-                    after: null
-                }
+        this.mbMap.element.trigger('mbmapsourceadded', {
+            mbMap: this.mbMap,
+            source: sourceDef,
+            // Legacy nested event data format
+            added: {
+                source: sourceDef,
+                // legacy: no known consumer evaluates these props,
+                // but even if, they've historically been wrong anyway
+                // was: "before": always last source previously in list, even though
+                // the new source was actually added *after* that
+                before: null,
+                after: null
             }
         });
+
         this._checkSource(sourceDef, true, false);
         return sourceDef;
     },

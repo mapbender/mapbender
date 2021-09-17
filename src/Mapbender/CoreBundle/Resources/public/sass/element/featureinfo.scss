@@ -4,10 +4,6 @@
     height: 100%;
     border-width: 0;
   }
-
-  .container {
-    width: 100%;
-  }
 }
 
 .featureinfoDialog {
@@ -57,7 +53,6 @@
       height: 100%;
       position: relative;
       > .tabs {
-        display: block;
         > li.tab {
           margin-right: -1px;
           font-size: 13px;

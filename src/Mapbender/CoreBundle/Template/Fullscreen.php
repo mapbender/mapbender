@@ -35,4 +35,18 @@ class Fullscreen extends Template
     );
 
     public $twigTemplate = 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+
+    /**
+     * @param string $regionName
+     * @return string|null
+     */
+    public static function getRegionSettingsFormType($regionName)
+    {
+        switch ($regionName) {
+            case 'sidepane':
+                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
+            default:
+                return null;
+        }
+    }
 }

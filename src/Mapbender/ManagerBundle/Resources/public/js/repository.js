@@ -4,24 +4,14 @@ $(function() {
         if (!root.length) {
             root = $('#instanceTableCheckHead th[data-check-identifier="' + groupId + '"] .checkWrapper');
         }
+        var rootCb = !root.is('.checkWrapper') && root || $('>input[type=checkbox]', root);
         var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
         var checkboxes = $('input[type="checkbox"]:not(:disabled)', column);
         var rowCount = checkboxes.length;
         var checkedCount = checkboxes.filter(':checked').length;
-
-        if (rowCount === checkedCount) {
-            root.removeClass("iconCheckbox iconCheckboxHalf");
-            root.addClass("iconCheckboxActive");
-            $('input[type="checkbox"]', root).prop('checked', true);
-        } else if (checkedCount === 0) {
-            root.removeClass("iconCheckboxActive iconCheckboxHalf");
-            root.addClass("iconCheckbox");
-            $('input[type="checkbox"]', root).prop('checked', false);
-        } else {
-            root.removeClass("iconCheckbox iconCheckboxActive");
-            root.addClass("iconCheckboxHalf");
-            $('input[type="checkbox"]', root).prop('checked', false);
-        }
+        rootCb.prop('checked', rowCount === checkedCount);
+        rootCb.prop('indeterminate', checkedCount && rowCount !== checkedCount);
+        initCheckbox.call(rootCb);
     }
     // toggle all permissions
     function toggleAllStates(groupId, state, $scope) {
@@ -36,19 +26,6 @@ $(function() {
         // change root permission state
         setRootState(groupId);
     }
-    // old template
-    $("#instanceTableCheckHead .iconCheckbox[id]").each(function() {
-        var $this = $(this);
-        var $table = $this.closest('table');
-        var groupId = $this.attr('id');
-        setRootState(groupId);
-        $this.on('click', function() {
-           var newState = !$(this).hasClass("iconCheckboxActive");
-           toggleAllStates(groupId, newState, $table);
-        });
-
-    });
-    // new template
     $("#instanceTableCheckHead .checkboxColumn[data-check-identifier]").each(function() {
         var $this = $(this);
         var $table = $this.closest('table');
@@ -121,11 +98,8 @@ $(function() {
         });
     });
 
-    $("#instanceTable").on("click", ".iconMore", function(e) {
-        var $target = $(e.target).filter('.iconMore');
-        if (!$target.length) {
-            return;
-        }
+    $("#instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
+        var $target = $(this);
         var $row = $target.closest('tr');
         var $table = $row.closest('table');
         var $targetBox = $('.infoMsgBox', $row);

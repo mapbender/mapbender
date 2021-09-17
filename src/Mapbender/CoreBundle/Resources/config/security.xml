@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mb_core.security.voter.yaml_application.class">Mapbender\CoreBundle\Component\Security\Voter\YamlApplicationVoter</parameter>
+        <parameter key="mb_core.security.voter.db_application.class">Mapbender\CoreBundle\Component\Security\Voter\DbApplicationVoter</parameter>
+        <parameter key="mb_core.security.voter.yaml_application_element.class">Mapbender\CoreBundle\Component\Security\Voter\YamlApplicationElementVoter</parameter>
+        <parameter key="mb_core.security.voter.db_application_element.class">Mapbender\CoreBundle\Component\Security\Voter\DbApplicationElementVoter</parameter>
+    </parameters>
+    <services>
+        <service id="mb_core.security.voter.yaml_application" class="%mb_core.security.voter.yaml_application.class%">
+            <tag name="security.voter" priority="255" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
+        <service id="mb_core.security.voter.db_application" class="%mb_core.security.voter.db_application.class%">
+            <tag name="security.voter" priority="255" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
+        <service id="mb_core.security.voter.yaml_application_element" class="%mb_core.security.voter.yaml_application_element.class%">
+            <tag name="security.voter" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
+        <service id="mb_core.security.voter.db_application_element" class="%mb_core.security.voter.db_application_element.class%">
+            <tag name="security.voter" />
+            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
+            <argument type="service" id="security.acl.permission.map" />
+        </service>
+    </services>
+</container>

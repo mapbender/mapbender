@@ -12,6 +12,7 @@ use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Mapbender\Utils\MemoryUtil;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -74,39 +75,62 @@ class PrintClient extends Element implements ConfigMigrationInterface
             "templates" => array(
                 array(
                     'template' => "a4portrait",
-                    "label" => "A4 Portrait")
-                ,
+                    "label" => "A4 Portrait",
+                ),
                 array(
                     'template' => "a4landscape",
-                    "label" => "A4 Landscape")
-                ,
+                    "label" => "A4 Landscape",
+                ),
                 array(
                     'template' => "a3portrait",
-                    "label" => "A3 Portrait")
-                ,
+                    "label" => "A3 Portrait",
+                ),
                 array(
                     'template' => "a3landscape",
-                    "label" => "A3 Landscape")
-                ,
+                    "label" => "A3 Landscape",
+                ),
                 array(
                     'template' => "a4_landscape_offical",
-                    "label" => "A4 Landscape offical"),
+                    "label" => "A4 Landscape offical",
+                ),
                 array(
                     'template' => "a2_landscape_offical",
-                    "label" => "A2 Landscape offical")
+                    "label" => "A2 Landscape offical",
+                ),
             ),
-            "scales" => array(500, 1000, 5000, 10000, 25000),
-            "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
-                array('dpi' => "288", 'label' => "Document (288dpi)")),
+            "scales" => array(
+                500,
+                1000,
+                5000,
+                10000,
+                25000,
+            ),
+            "quality_levels" => array(
+                array(
+                    'dpi' => "72",
+                    'label' => "Draft (72dpi)",
+                ),
+                array(
+                    'dpi' => "288",
+                    'label' => "Document (288dpi)",
+                ),
+            ),
             "rotatable" => true,
             "legend" => true,
             "legend_default_behaviour" => true,
             "optional_fields" => array(
-                "title" => array("label" => 'Title', "options" => array("required" => false)),
+                "title" => array(
+                    "label" => 'Title',
+                    "options" => array(
+                        "required" => false,
+                    ),
+                ),
             ),
             'required_fields_first' => false,
             "replace_pattern" => null,
             "file_prefix" => 'mapbender',
+            'renderMode' => 'direct',
+            'queueAccess' => 'global',
         );
     }
 
@@ -168,9 +192,10 @@ class PrintClient extends Element implements ConfigMigrationInterface
             'action' => $this->getSubmitAction(),
         ));
         $vars = array(
-            'configuration' => $config,
+            'configuration' => $config,     // for legacy custom templates only
             'submitUrl' => $submitUrl,
             'settingsTemplate' => $this->getSettingsTemplate(),
+            'settingsForm' => $this->getSettingsForm()->createView(),
         );
         if ($this->isQueueModeEnabled()) {
             $submitFrameName = $this->getSubmitFrameName();
@@ -188,6 +213,36 @@ class PrintClient extends Element implements ConfigMigrationInterface
     protected function getSettingsTemplate()
     {
         return 'MapbenderPrintBundle:Element:printclient-settings.html.twig';
+    }
+
+    protected function getSettingsFormType()
+    {
+        return 'Mapbender\PrintBundle\Form\PrintClientSettingsType';
+    }
+
+    protected function getSettingsForm()
+    {
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        $formType = $this->getSettingsFormType();
+        $config = $this->entity->getConfiguration();
+        $options = array(
+            'templates' => ArrayUtil::getDefault($config, 'templates', array()),
+            'required_fields_first' => ArrayUtil::getDefault($config, 'required_fields_first', false),
+            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', array()) ?: array(),
+            'quality_levels' => ArrayUtil::getDefault($config, 'quality_levels', array()),
+            'scales' => ArrayUtil::getDefault($config, 'scales', array()),
+            'show_rotation' => ArrayUtil::getDefault($config, 'rotatable', true),
+            'show_printLegend' => ArrayUtil::getDefault($config, 'legend', true),
+            'compound' => true,
+        );
+        $data = array(
+            'rotation' => '0',
+            'printLegend' => !!ArrayUtil::getDefault($config, 'legend_default_behaviour', true),
+        );
+
+        // NOTE: null name prevents generation of nested property paths
+        return $formFactory->createNamed(null, $formType, $data, $options);
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')

@@ -53,17 +53,6 @@ class ZoomBarAdminType extends AbstractType
                 ),
                 'choices_as_values' => true,
             ))
-            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                "choices" => array(
-                    'inline' => 'inline',
-                    'left-top' => 'left-top',
-                    'left-bottom' => 'left-bottom',
-                    'right-top' => 'right-top',
-                    'right-bottom' => 'right-bottom',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('draggable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.admin.zoombar.draggable',

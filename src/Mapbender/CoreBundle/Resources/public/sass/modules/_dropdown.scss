@@ -1,23 +1,19 @@
-.dropdown{
-  cursor:pointer;
-  position: relative;
-  color: $inputForegroundColor;
-  border: solid 1px lighten($thirdColor, 15%);
+.dropdown {
+  cursor: pointer;
   .toolBar & {
     text-align: left;
   }
   padding-right: $space + $space/2;
-  background-color: $inputBackgroundColor;
 
   .dropdownValue, .dropdownList {
     user-select: none;
-    line-height: $inputHeight;
   }
   .dropdownValue {
     padding-left: 5px;
     &.iconDown:before{@include absolute(0 5px '' '');}
   }
   .dropdownList {
+    line-height: $inputHeight;
     background-color: inherit;
     margin-left: 0 !important;  // defeat icon follower margin inside .toolBar
     position: absolute;
@@ -50,6 +46,4 @@
   .hiddenDropdown{
     display:none;
   }
-
-  @extend .smallText;
 }

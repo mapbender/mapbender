@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
@@ -54,7 +55,11 @@ class ElementController extends ApplicationControllerBase
         $trans      = $this->container->get('translator');
         $elements   = array();
 
+        /** @var MinimalInterface|string $elementClassName */
         foreach ($classNames as $elementClassName) {
+            if (!$this->checkRegionCompatibility($elementClassName, $region)) {
+                continue;
+            }
             $title = $trans->trans($elementClassName::getClassTitle());
             $elements[$title] = array(
                 'class' => $elementClassName,
@@ -68,6 +73,19 @@ class ElementController extends ApplicationControllerBase
             'elements' => $elements,
             'region' => $region,
         ));
+    }
+
+    /**
+     * @param string $className
+     * @param string $regionName
+     * @return bool
+     */
+    private function checkRegionCompatibility($className, $regionName)
+    {
+        if (false === strpos($regionName, 'content')) {
+            return !\is_a($className, 'Mapbender\CoreBundle\Component\ElementBase\FloatingElement', true);
+        }
+        return true;
     }
 
     /**

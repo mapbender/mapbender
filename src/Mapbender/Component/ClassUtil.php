@@ -8,6 +8,23 @@ class ClassUtil
 {
 
     /**
+     * Symfony 2 & 3+ debug-mode safe version of class_exists.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function exists($name)
+    {
+        try {
+            return \class_exists($name, true);
+            // Debug mode class loader in Symfony 2 throws \RuntimeException
+            // Some versions of Symfony 3 have thrown ContextErrorException
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param object|string $instanceOrName
      * @return string[]
      * @throws \InvalidArgumentException if $instanceOrName is falsy

@@ -8,10 +8,14 @@ use Mapbender\Component\BaseElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Service for element configuration and acl forms.
@@ -26,21 +30,32 @@ class ElementFormFactory extends BaseElementFactory
     protected $container;
     /** @var bool */
     protected $strict;
+    /** @var FormRegistryInterface */
+    protected $formRegistry;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
+     * @param FormRegistryInterface $formRegistry
+     * @param ElementExtension $elementExtension
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
                                 ElementInventoryService $inventoryService,
-                                ContainerInterface $container, $strict = false)
+                                ContainerInterface $container,
+                                FormRegistryInterface $formRegistry,
+                                ElementExtension $elementExtension,
+                                $strict = false)
     {
         parent::__construct($inventoryService);
         $this->formFactory = $formFactory;
         $this->container = $container;
         $this->setStrict($strict);
+        $this->formRegistry = $formRegistry;
+        $this->elementExtension = $elementExtension;
     }
 
     public function setStrict($enable)
@@ -50,20 +65,31 @@ class ElementFormFactory extends BaseElementFactory
 
     /**
      * @param Element $element
-     * @param mixed[] $options forwarded to form builder
      * @return array
      */
-    public function getConfigurationForm($element, $options = array())
+    public function getConfigurationForm($element)
     {
-        // Create base form shared by all elements
+        // Add class and element id data attributes for functional test support
+        $options = array(
+            'attr' => array(
+                'class' => '-ft-element-form form-horizontal',
+            ),
+        );
+        if ($element->getId()) {
+            $options['attr']['data-ft-element-id'] = $element->getId();
+        }
+
         $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
-        $formType
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-        ;
         $this->migrateElementConfiguration($element);
+        $formType
+            ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
+                'element_class' => $element->getClass(),
+                'required' => false,
+            ))
+        ;
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = array('application' => $element->getApplication());
+        $options = array();
         if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
             $options['element'] = $element;
         }
@@ -75,9 +101,25 @@ class ElementFormFactory extends BaseElementFactory
         } else {
             $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
+            $options['label'] = false;
+        }
+
+        $resolvedType = $this->formRegistry->getType($configurationType);
+        if ($resolvedType->getOptionsResolver()->isDefined('application')) {
+            // Only pass the "application" option if the form type requires / declares it.
+            $options['application'] = $element->getApplication();
         }
 
         $formType->add('configuration', $configurationType, $options);
+        $componentClassName = $this->getComponentClass($element);
+        $regionName = $element->getRegion();
+        if (\is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+            if (!$regionName || false !== strpos($regionName, 'content')) {
+                $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
+            } else {
+                $formType->get('configuration')->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+            }
+        }
 
         return array(
             'form' => $formType->getForm(),
@@ -161,5 +203,14 @@ class ElementFormFactory extends BaseElementFactory
             $this->deprecated("Located undeclared servicy form type {$automaticServiceId} for {$componentClassName}; return the fully qualified class name of the form type from your element's getType instead");
         }
         return $automaticService; // may also be null
+    }
+
+    public function migrateElementConfiguration(Element $element, $migrateClass = true)
+    {
+        parent::migrateElementConfiguration($element, $migrateClass);
+        $defaultTitle = $this->elementExtension->element_default_title($element);
+        if ($element->getTitle() === $defaultTitle) {
+            $element->setTitle('');    // @todo: allow null (requires schema update)
+        }
     }
 }

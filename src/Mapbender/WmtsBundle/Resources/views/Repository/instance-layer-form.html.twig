@@ -7,12 +7,18 @@
     {{ form_row(form.selected) }}
     {{ form_row(form.allowinfo) }}
     {{ form_row(form.info) }}
-    <td class="moreColumn">
-      <div class="infoMsgBox hidden">
-        <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans}}</span><span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans}}">{{form.vars.data.sourceInstance.source.id}}-{{form.vars.data.sourceItem.id}}/{{form.vars.data.sourceInstance.id}}-{{form.vars.data.id}}</span><br>
-        <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form.vars.data.sourceItem.identifier }}</span>
-        {{ form_row(form.style) }}
+    <td class="text-right">
+    <div class="static-popover-wrap">
+      <div class="infoMsgBox popover left hidden">
+        <div class="arrow"></div>
+        <div class="popover-content form-horizontal">
+          {%- set layer = form.vars.data -%}
+          {{- form_row(form.displayId, {'value': layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id}) -}}
+          {{- form_row(form.displayName, {'value': layer.sourceItem.identifier }) -}}
+          {{- form_row(form.style) -}}
+        </div>
       </div>
-      <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"></span>
+      <span class="-fn-toggle-layer-detail" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
+    </div>
     </td>
 </tr>

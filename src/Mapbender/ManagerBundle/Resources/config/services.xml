@@ -20,10 +20,13 @@
             <argument type="service" id="form.factory" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="service_container" />
+            <argument type="service" id="form.registry" />
+            <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
             <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
         <service id="mapbender.twig.manager.menu" class="Mapbender\ManagerBundle\Extension\Twig\MenuExtension">
             <tag name="twig.extension"/>
@@ -44,6 +47,10 @@
         <service id="mabender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
             <tag name="form.type" alias="application_template_choice" />
             <argument>%kernel.bundles%</argument>
+        </service>
+        <service class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
+            <tag name="form.type" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
     </services>
 </container>

@@ -4,8 +4,11 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Extension\ElementExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,11 +31,16 @@ class TargetElementType extends AbstractType
     protected $repository;
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var ElementExtension */
+    protected $elementExtension;
 
-    public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(TranslatorInterface $translator,
+                                EntityManagerInterface $entityManager,
+                                ElementExtension $elementExtension)
     {
         $this->translator = $translator;
         $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
+        $this->elementExtension = $elementExtension;
     }
 
     /**
@@ -65,19 +73,30 @@ class TargetElementType extends AbstractType
             'class' => 'Mapbender\CoreBundle\Entity\Element',
         );
         $type = $this;
+        $elementExt = $this->elementExtension;
         $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
             'class' => 'Mapbender\CoreBundle\Entity\Element',
-            'choice_label' => 'title',
+            'choice_label' => function($element) use ($elementExt) {
+                return $element->getTitle() ?: $elementExt->element_default_title($element);
+            },
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',
             // Symfony does not recognize array-style callables
             'query_builder' => function(Options $options) use ($type) {
                 return $type->getChoicesQueryBuilder($options);
-            }
+            },
+            'choice_translation_domain' => 'messages',
         ));
         $resolver->setAllowedValues('class', array($fixedParentOptions['class']));
+        $resolver->setNormalizer('element_class', function(Options $options, $elementClassOption) {
+            if (false !== strpos($elementClassOption, '%')) {
+                return null;
+            } else {
+                return $elementClassOption ?: null;
+            }
+        });
     }
 
     /**
@@ -97,25 +116,25 @@ class TargetElementType extends AbstractType
         $filter->add($applicationFilter);
 
         if (!empty($options['element_class'])) {
-            if (is_integer(strpos($options['element_class'], "%"))) {
-                $classComparison = $qb->expr()->like($builderName . '.class', ':class');
-            } else {
-                $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
-            }
+            $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
             $filter->add($classComparison);
             $qb->setParameter('class', $options['element_class']);
         } else {
             $elementIds = array();
             foreach ($application->getElements() as $elementEntity) {
+                /** @var Component\Element|string $elementComponentClass */
                 $elementComponentClass = $elementEntity->getClass();
-                if (class_exists($elementComponentClass)) {
+                if (ClassUtil::exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
                         $elementIds[] = $elementEntity->getId();
                     }
                 }
             }
 
-            if (count($elementIds) > 0) {
+            if (!count($elementIds)) {
+                // No targets available. Add an impossible condition to match nothing.
+                $filter->add($qb->expr()->eq(1, 2));
+            } else {
                 $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
                 $qb->setParameter('elm_ids', $elementIds);
             }

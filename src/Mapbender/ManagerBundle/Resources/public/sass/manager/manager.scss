@@ -17,10 +17,6 @@
 @import "element/mbslider";
 
 
-@import url("components/open-sans/open-sans.css");
-@import url("components/bootstrap/css/bootstrap.min.css");
-
-
 $bannerHeight: 170px;
 $contentPaneWidth: 800px;
 $navWidth: 200px;
@@ -72,38 +68,15 @@ div.contentTitle {
 
 // ------------------------------------------------------------------------ PAGE
 .page{
-  top:-$bannerHeight;
   margin: 0 auto;
   width:$pageWidth;
 }
 .popupContainer,
 .page{
   position:relative;
-  a {
-    &:hover{
-      color: $darkFontColor;
-    }
-  }
-  @media (min-width: 992px){
-    .container {
-      width: auto;
-    }
-  }
-  @media (min-width: 768px){
-    .container {
-      width: auto;
-    }
-  }
-
   .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     border-top: none;
-
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
   }
-
 }
 .iconBig, .iconSmall{
   &:before {
@@ -132,13 +105,21 @@ div.contentTitle {
   hr{@include absolute('' 0 0 0);}
 }
 
+// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
+.head + .page {
+  margin-top: -$bannerHeight;
+}
+
 .account-bar-wrap {
   float: right;
 }
 .sitelinks {
-  margin-top: 0.5em;
+  &.list-inline li:not(:first-child):before {
+    content: "|";
+    margin-left: -5px;
+    margin-right: 5px;
+  }
   li {
-    display: inline-block;
     a, a:visited {
       color: inherit;
     }
@@ -147,21 +128,26 @@ div.contentTitle {
     }
   }
 }
+.sitelinks, .accountBar {
+  line-height: 2.5;
+}
+
 .accountBar {
   #accountOpen {
     cursor: pointer;
   }
-  padding: ($space/4) ($space/2) ($space/4) ($space/2);
+  padding: 0 ($space/2);
   background-color: $contentColor;
   border-bottom-left-radius: $containerBorderRadius;
   border-bottom-right-radius: $containerBorderRadius;
   > .accountMenu {
-    height: 21px; // root line height (not available as variable)
+    height: 2.5em; // Legacy hack: clip to exactly one line-height
     overflow: hidden;
     @include transition(all 0.2s ease-in-out);
 
     &.opened {
-      height: 63px;
+      // Legacy hack: assume exactly three lines of content
+      height: 3 * 2.5em;
     }
   }
 }
@@ -207,10 +193,13 @@ div.contentTitle {
   }
 }
 
-
+.leftPane, .rightPane {
+  display: inline-block;
+}
 .rightPane {
   width: $contentPaneWidth;
-  @include absolute(0 0 '' $navWidth);
+  position: absolute;
+  top: 0;
   .top {
     height: $space * 6;
   }
@@ -276,44 +265,21 @@ ul.dropdownList{
     min-height: 600px;
     position: relative;
     padding: $space;
-    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
+    background-color: lighten($contentColor, 2%);
+    @if ($managerContentPatternUrl != "") {
+      background-image: url($managerContentPatternUrl);
+    }
     border-radius: $containerBorderRadius;
-    .tabContainer, .containerExchange {
+    .tabContainer {
       margin-bottom: $space;
     }
 
     form {
-
       &:after{
         content: "";
         display: block;
         visibility: hidden;
         clear: both;
-      }
-
-      label.labelInput {
-        margin: 0;
-      }
-      .dropdown{
-        width: 100%;
-      }
-      .inputWrapper{
-        display: block;
-        textarea,
-        input[type="password"],
-        input[type="number"],
-        input[type="email"],
-        input[type="text"]{
-          width: 100%;
-        }
-      }
-      select[multiple="multiple"]{
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      input[type='submit']{
-        min-width: 20px;
       }
     }
 
@@ -327,6 +293,14 @@ ul.dropdownList{
       left: solid 1px $thirdColor;
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
+    }
+  }
+  .form-container {
+    border: 1px solid #c0c0c0;
+    background-color: #f9f9f9;
+    padding: 20px;
+    .button-group:last-child {
+      margin-bottom: 0;
     }
   }
   .mapbenderVersion{
@@ -371,17 +345,12 @@ label[for^="inputFilter"] {
 
 .permissionsTable{
   tr{
-    border-bottom: solid 1px darken($contentColor, 10%);
     &.new{
       .labelInput, .iconGroup, .iconUser{color:green;}
       background-color: #f0ffed;
     }
   }
-  th, td {
-    padding:5px 0;
-  }
   td{
-    .labelInput{width:150px;}
     .input{display:none;}
     .iconGroup:before, .iconUser:before{
       display: inline-block;
@@ -430,5 +399,4 @@ label[for^="inputFilter"] {
     right:solid 1px $thirdColor;
     bottom:solid 1px $thirdColor;
   }
-  @include border-bottom-radius($radius);
 }

@@ -328,20 +328,13 @@ class ImageExportService
      */
     protected function cropImage($image, $x0, $y0, $width, $height)
     {
-        if (PHP_VERSION_ID >= 55000) {
-            // imagecrop requires PHP >= 5.5, see http://php.net/manual/de/function.imagecrop.php
-            return imagecrop($image, array(
-                'x' => $x0,
-                'y' => $y0,
-                'width' => $width,
-                'height' => $height,
-            ));
-        } else {
-            $newImage = imagecreatetruecolor($width, $height);
-            imagesavealpha($newImage, true);
-            imagecopy($newImage, $image, 0, 0, $x0, $y0, $width, $height);
-            return $newImage;
-        }
+        // NOTE GD deficiency: imagecrop cannot be used because it COPIES onto a new black image and cannot disable blending
+        // This effectively converts transparent pixels to black.
+        $newImage = imagecreatetruecolor($width, $height);
+        imagesavealpha($newImage, true);
+        imagealphablending($newImage, false);
+        imagecopy($newImage, $image, 0, 0, $x0, $y0, $width, $height);
+        return $newImage;
     }
 
     /**

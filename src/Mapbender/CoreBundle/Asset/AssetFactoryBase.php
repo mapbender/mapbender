@@ -48,23 +48,88 @@ class AssetFactoryBase
         foreach ($inputs as $input) {
             if ($input instanceof StringAsset) {
                 $input->load();
+                if ($debug) {
+                    $parts[] = "/** !!! Emitting StringAsset content */";
+                }
                 $parts[] = $input->getContent();
             } else {
-                $normalizedReference = $this->normalizeReference($input);
-                while (!empty($migratedRefMapping[$normalizedReference])) {
-                    $normalizedReference = $migratedRefMapping[$normalizedReference];
-                }
-                if (empty($uniqueRefs[$normalizedReference])) {
-                    $realAssetPath = $this->locateAssetFile($normalizedReference);
+                $parts[] = $this->loadFileReference($input, $debug, $migratedRefMapping, $uniqueRefs);
+            }
+        }
+        return implode("\n", $parts);
+    }
+
+    /**
+     * @param string $input
+     * @param bool $debug
+     * @param array $migratedRefMapping
+     * @param string[] $uniqueRefs
+     * @return string
+     */
+    protected function loadFileReference($input, $debug, $migratedRefMapping, &$uniqueRefs)
+    {
+        $parts = array();
+        $normalizedReferenceBeforeRemap = $this->normalizeReference($input);
+
+        if (!empty($uniqueRefs[$normalizedReferenceBeforeRemap])) {
+            if ($debug) {
+                $parts[] = "/** !!! Skipping duplicate handling of {$normalizedReferenceBeforeRemap} (from original reference {$input}) */";
+            }
+            $normalizedReferences = array();
+        } else {
+            if ($debug) {
+                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $parts);
+            } else {
+                $dummy = array();   // Let's all thank PHP for its sane reference passing semantics
+                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $dummy);
+            }
+        }
+
+        foreach ($normalizedReferences as $normalizedReference) {
+            if (empty($uniqueRefs[$normalizedReference])) {
+                $realAssetPath = $this->locateAssetFile($normalizedReference);
+                if ($realAssetPath) {
                     if ($debug) {
                         $parts[] = $this->getDebugHeader($realAssetPath, $input);
                     }
                     $parts[] = file_get_contents($realAssetPath);
-                    $uniqueRefs[$normalizedReference] = true;
+                } elseif ($debug) {
+                    $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
                 }
+                $uniqueRefs[$normalizedReference] = true;
+            } elseif ($debug) {
+                $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
             }
         }
+        $uniqueRefs[$normalizedReferenceBeforeRemap] = true;
         return implode("\n", $parts);
+    }
+
+    /**
+     * @param string $normalizedReference
+     * @param array $migratedRefMapping
+     * @param string[] &$debugOutput
+     * @return string[]
+     */
+    protected function rewriteReference($normalizedReference, $migratedRefMapping, &$debugOutput)
+    {
+        $refsOut = array();
+        if (!empty($migratedRefMapping[$normalizedReference])) {
+            $replacements = (array)$migratedRefMapping[$normalizedReference];
+            $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
+            foreach ($replacements as $replacement) {
+                if ($replacement === $normalizedReference) {
+                    $refsOut[] = $replacement;
+                } else {
+                    foreach ($this->rewriteReference($replacement, $migratedRefMapping, $debugOutput) as $refOut) {
+                        $refsOut[] = $refOut;
+                    }
+                }
+            }
+        } else {
+            $refsOut[] = $normalizedReference;
+        }
+        return $refsOut;
     }
 
     /**
@@ -97,7 +162,7 @@ class AssetFactoryBase
 
     /**
      * @param string $input reference to an asset file
-     * @return string resolved absolute path to file
+     * @return string|null resolved absolute path to file, or null if file is missing (and should be ignored)
      */
     protected function locateAssetFile($input)
     {
@@ -107,7 +172,16 @@ class AssetFactoryBase
                 return realpath($inWeb);
             }
         }
-        return $this->fileLocator->locate($input);
+        try {
+            return $this->fileLocator->locate($input);
+        } catch (\InvalidArgumentException $e) {
+            if (preg_match('#^[/.]*?/vendor/#', $input)) {
+                // Ignore /vendor/ reference (avoid depending on internal package structure)
+                return null;
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**

@@ -12,21 +12,12 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPa
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * CoreBundle.
- *
  * @author Christian Wygoda
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
 
     /**
-     * Builds the bundle.
-     *
-     * It is only ever called once when the cache is empty.
-     *
-     * This method can be overridden to register compilation passes,
-     * other extensions, ...
-     *
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
     public function build(ContainerBuilder $container)
@@ -71,7 +62,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ActivityIndicator',
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
-            'Mapbender\CoreBundle\Element\Button',
+            'Mapbender\CoreBundle\Element\ControlButton',
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
             'Mapbender\CoreBundle\Element\FeatureInfo',
@@ -79,6 +70,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\HTMLElement',
             'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\Legend',
+            'Mapbender\CoreBundle\Element\LinkButton',
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',

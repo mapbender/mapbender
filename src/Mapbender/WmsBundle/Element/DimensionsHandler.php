@@ -3,15 +3,15 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\WmsBundle\Component\DimensionInst;
 
 /**
  * Dimensions handler
  * @author Paul Schmidt
  */
-class DimensionsHandler extends Element implements BoundConfigMutator
+class DimensionsHandler extends Element implements ConfigMigrationInterface
 {
 
     /**
@@ -65,9 +65,6 @@ class DimensionsHandler extends Element implements BoundConfigMutator
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
                 '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
-            'trans' => array(
-                'MapbenderWmsBundle:Element:dimensionshandler.json.twig',
-            ),
         );
     }
 
@@ -104,66 +101,46 @@ class DimensionsHandler extends Element implements BoundConfigMutator
     {
         $configuration = parent::getConfiguration();
         foreach ($configuration['dimensionsets'] as $setKey => $setConfig) {
-            if (!empty($setConfig['dimension']) && is_object($setConfig['dimension'])) {
-                /** @var DimensionInst $dimension */
-                $dimension = $setConfig['dimension'];
-                $dimensionConfig = $dimension->getConfiguration();
-                $configuration['dimensionsets'][$setKey]['dimension'] = $dimensionConfig;
+            $templateDimensionName = null;
+            foreach ($setConfig['group'] as $targetDimension) {
+                $templateDimensionName = \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
+                break;
             }
+            $configuration['dimensionsets'][$setKey]['dimension'] = array(
+                // dimension.name is used in template only
+                // @todo: update / santitize template variable access expectations
+                'name' => $templateDimensionName,
+            );
         }
         return $configuration;
     }
 
-    /**
-     * Replace dimension entries in generated frontend config with our desired values.
-     *
-     * @param mixed[] $appConfig
-     * @return mixed[]
-     */
-    public function updateAppConfig($appConfig)
+    public static function updateEntityConfig(Entity\Element $entity)
     {
-        $configuration = parent::getConfiguration();
-        $instances = array();
-        foreach ($configuration['dimensionsets'] as $key => $value) {
-            foreach (ArrayUtil::getDefault($value, 'group', array()) as $group) {
-                $item = explode("-", $group);
-                $instances[$item[0]] = $value['dimension'];
-            }
-        }
-        if (!$instances) {
-            // nothing to do, skip looping over all the layer configs
-            return $appConfig;
-        }
-
-        foreach ($appConfig['layersets'] as &$layerList) {
-            foreach ($layerList as &$layerMap) {
-                foreach ($layerMap as $layerId => &$layerDef) {
-                    if (empty($instances[$layerId]) || empty($layerDef['configuration']['options']['dimensions'])) {
-                        // layer is not controllable through DimHandler, leave its config alone
-                        continue;
-                    }
-                    $dimConfig = $instances[$layerId]->getConfiguration();
-                    $this->updateDimensionConfig($layerDef['configuration']['options']['dimensions'], $dimConfig);
+        $config = $entity->getConfiguration();
+        $dimensionsets = array();
+        if (!empty($config['dimensionsets'])) {
+            foreach ($config['dimensionsets'] as $key => $setConfig) {
+                // Convert legacy serialized DimensionInst objects 'dimension' to scalar string 'extent'
+                if (empty($setConfig['group']) || (empty($setConfig['dimension']) && empty($setConfig['extent']))) {
+                    // Entry non-salvagable => drop
+                    continue;
                 }
+                if (!empty($setConfig['dimension']) && \is_a($setConfig['dimension'], 'Mapbender\WmsBundle\Component\DimensionInst', true)) {
+                    $extent = $setConfig['dimension']->getExtent();
+                    if (is_array($extent)) {
+                        // Reconstruct single-string type extent / attempt to undo getData transformation
+                        // Fortunately, DimensionsHandler has historically only ever supported intervals
+                        /** @see DimensionInst::getData */
+                        $extent = implode('/', $extent);
+                    }
+                    $setConfig['extent'] = $extent;
+                }
+                unset($setConfig['dimension']);
+                $dimensionsets[$key] = $setConfig;
             }
         }
-        return $appConfig;
-    }
-
-    /**
-     * Updates the $target list of dimension config arrays by reference with our own settings (from backend).
-     * Matching is by type. If a dimension config entry matches on type, we copy our "extent" and "default" into it.
-     *
-     * @param mixed[] $target
-     * @param mixed[] $dimensionConfig
-     */
-    public static function updateDimensionConfig(&$target, $dimensionConfig)
-    {
-        foreach ($target as &$dimensionDef) {
-            if ($dimensionDef['type'] == $dimensionConfig['type']) {
-                $dimensionDef['extent'] = $dimensionConfig['extent'];
-                $dimensionDef['default'] = $dimensionConfig['default'];
-            }
-        }
+        $config['dimensionsets'] = $dimensionsets;
+        $entity->setConfiguration($config);
     }
 }

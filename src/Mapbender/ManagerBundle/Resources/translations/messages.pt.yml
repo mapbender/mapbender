@@ -46,20 +46,10 @@ mb:
         max_extent: 'Extensão maxima'
         start_extent: 'Extensão do princípio'
       element:
-        delete:
-          title: 'Remover elemento'
-          confirm: 'Realmente remover elemento?'
-        btn:
-          delete: Remover
-          cancel: Cancelar
-        requirements: 'Campos requeridos têm letra escura. Campos opcionais têm letra clara.'
-        base_data: 'Dados de segundo plano'
-        configuration: 'Configuração do elemento'
         title: Título
         type: Tipo
         add: 'Adicionar elemento'
         show_hide: Ativo/Inativo
-        edit: Editar
         no_element_added:
           '': 'Nenhum elemento existe'
       zoombar:
@@ -92,6 +82,7 @@ mb:
         edit:
           title: 'Editar aplicação'
           base_data: 'Dados de fundo'
+        screenshot: ~
         layouts: Layout
         layersets: 'Conjunto de camadas'
         custom_css: CSS
@@ -109,7 +100,6 @@ mb:
         no_application: 'Aplicação não existe'
         new:
           title: 'Criar aplicação'
-          base_data: 'Dados de fundo'
         create_use: 'Primeiro crie uma aplicação nova. Em seguida você pode editar a aplicação e adicionar elementos e conjuntos de camadas.'
         btn:
           create: Guardar
@@ -117,20 +107,17 @@ mb:
         upload:
           button: 'Escolher ficheiro'
           label: 'Nenhum ficheiro escolhido'
-          tooltip: 'Please click to upload a screenshot'
         export:
           addAcl: Acls
           addSources: Origem
           btn:
             export: Exportar
-            cancel: Cancelar
         import:
           addApplications: Aplicações
           addAcl: Acls
           addSources: Origens
           btn:
             import: Importar
-            cancel: Cancelar
         title: Title
         url:
           title: 'URL Title'
@@ -142,7 +129,6 @@ mb:
       username: 'Nome de usuário'
       password: Senha
       load: Carregar
-      cancel: Cancelar
     managerbundle:
       applications: Aplicações
       new_application: 'Criar aplicação'
@@ -155,9 +141,6 @@ mb:
     element:
       yaml:
         message: 'Utilize o formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> para descrever a configuração do elemento.'
-    be:
-      element:
-        delete: 'Remover elemento ''%element_title%'' '
     components:
       popup:
         add_element:
@@ -184,8 +167,6 @@ mb:
           label: Separador
         accordion:
           label: Acordeão
-    upload:
-      label_delete: 'Imagem removida'
     import:
       application:
         failed: 'Não pode importar aplicação'
@@ -193,22 +174,8 @@ mb:
     admin:
       button:
         show_label: 'Mostra rótulo'
-      scaleselector:
-        show_label: 'Mostra rótulo'
-      corrdsdisplay:
-        label: 'Mostrar rótulo'
-      srsselector:
-        show_label: 'Mostrar rótulo'
-      gpsposition:
-        show_label: 'Mostra rótulo'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Show button label'
-    element:
-      be:
-        button:
-          show_label: 'Mostra rótulo'
     entity:
       app:
         screenshotfile:

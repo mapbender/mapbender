@@ -66,10 +66,6 @@ $tabSize:32px;
   width:10px;
   z-index:20;
 
-  &.notCollapsable{
-    .sidePaneTabs{display:none;}
-  }
-
   &.left{
     @include absolute($topPaneHeight + $space*2 '' $space*2 0);
     .sidePaneTabs{right:-$tabSize;}

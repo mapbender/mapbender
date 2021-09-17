@@ -31,26 +31,16 @@
 
   .loginBox {
     padding: $space;
-    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
+    background-color: lighten($contentColor, 2%);
+    @if ($managerContentPatternUrl != "") {
+      background-image: url($managerContentPatternUrl);
+    }
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
       radius: $containerBorderRadius;
-    }
-
-    .input {
-      width: 100%;
-    }
-    .labelInput {
-      width: 100%;
-      line-height: 1.414;
-    }
-
-    .inputWrapper {
-      display: block;
-      width: 100%;
     }
   }
 
@@ -71,11 +61,6 @@
   .loginBox {
     margin-top: 15px;
   }
-  .labelInput {
-    display: block;
-    width: 100%;
-    margin-bottom: 2px;
-  }
   .input {
     margin-bottom: $space/2;
   }
@@ -85,9 +70,7 @@
   }
 
   .sitelinks {
-    text-align: right;
     li {
-      display: inline-block;
       a, a:visited {
         color: inherit;
       }

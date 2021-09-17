@@ -1,4 +1,4 @@
-<div class="elementFormMap elementForm">
+<div class="elementFormMap">
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.layersets) }}
     {{ form_row(form.configuration.dpi) }}
@@ -6,27 +6,29 @@
     {{ form_row(form.configuration.srs) }}
     <div>
         {{ form_label(form.configuration.extent_max) }}
-        <div class="row no-gutters singleRow">
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_max.0) }}</div>
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_max.1) }}</div>
+        <div class="inputWrapper">
+            <div class="row no-gutters singleRow">
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.0) }}</div>
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.1) }}</div>
+            </div>
+            <div class="row no-gutters singleRow">
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.2) }}</div>
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.3) }}</div>
+            </div>
         </div>
-        <div class="row no-gutters singleRow">
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_max.2) }}</div>
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_max.3) }}</div>
-        </div>
-        <div class="clearContainer"></div>
     </div>
     <div>
         {{ form_label(form.configuration.extent_start) }}
-        <div class="row no-gutters singleRow">
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_start.0) }}</div>
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_start.1) }}</div>
+        <div class="inputWrapper">
+            <div class="row no-gutters singleRow">
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.0) }}</div>
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.1) }}</div>
+            </div>
+            <div class="row no-gutters singleRow">
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.2) }}</div>
+                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.3) }}</div>
+            </div>
         </div>
-        <div class="row no-gutters singleRow">
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_start.2) }}</div>
-            <div class="col-xs-6">{{ form_row(form.configuration.extent_start.3) }}</div>
-        </div>
-        <div class="clearContainer"></div>
     </div>
     {{ form_rest(form.configuration) }}
 </div>

@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\DependencyInjection\Compiler;
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
@@ -115,7 +116,10 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         if (!empty($definition['elements'])) {
             foreach ($definition['elements'] as $region => $elementDefinitionList) {
                 foreach ($elementDefinitionList as $elementIndex => $elementDefinition) {
-                    $definition['elements'][$region][$elementIndex] = $this->processElementDefinition($elementDefinition);
+                    $processedDefinition = $this->processElementDefinition($elementDefinition);
+                    if ($processedDefinition) {
+                        $definition['elements'][$region][$elementIndex] = $processedDefinition;
+                    }
                 }
             }
         } else {
@@ -138,30 +142,39 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
 
     /**
      * @param array $definition
-     * @return array
+     * @return array|null
      */
     protected function processElementDefinition($definition)
     {
+        $nonConfigKeys = $this->getTopLevelElementKeys();
+        if ($definition['class'] && !ClassUtil::exists($definition['class'])) {
+            return null;
+        }
         // @todo: look up and adjust migrated class names as well
         if (\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
             /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $className */
-            $className = $definition['class'];
             $dummyEntity = new Element();
-            $nonConfigs = array_intersect_key($definition, array(
-                'class' => true,
-                'title' => true,
-            ));
+            $nonConfigs = array_intersect_key($definition, array_flip($nonConfigKeys));
             $configBefore = array_diff_key($definition, $nonConfigs);
             $dummyEntity->setConfiguration($configBefore);
-            $className::updateEntityConfig($dummyEntity);
+            do {
+                $className = $definition['class'];
+                $dummyEntity->setClass($className);
+                $className::updateEntityConfig($dummyEntity);
+                // Migration may have changed class name, which may chain to another migration
+                $definition['class'] = $dummyEntity->getClass();
+                if (!\is_a($definition['class'], 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+                    break;
+                }
+            } while ($className !== $definition['class']);
+
             $configAfter = $dummyEntity->getConfiguration();
-            $this->onElementConfigChange($nonConfigs['class'], $configBefore, $configAfter);
-            $definition = array_replace($configAfter, $nonConfigs);
+            $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
+            $definition = array_replace($configAfter, $nonConfigs, array(
+                'class' => $dummyEntity->getClass(),
+            ));
         }
-        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip(array(
-            'class',
-            'title',
-        ))));
+        $this->checkElementConfig($definition['class'], array_diff_key($definition, array_flip($nonConfigKeys)));
         return $definition;
     }
 
@@ -187,7 +200,8 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         if ($removedKeys) {
             $messageParts[] = 'removed ' . implode(', ', $removedKeys);
         }
-        if ($addedKeys) {
+        // Do not warn for added defaults
+        if ($addedKeys && $removedKeys) {
             $messageParts[] = 'added ' . implode(', ', $addedKeys);
         }
         foreach ($changedValueKeys as $k) {
@@ -253,5 +267,17 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         }
         unset($definition['class']);
         return $definition;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getTopLevelElementKeys()
+    {
+        return array(
+            'title',
+            'roles',
+            'class',
+        );
     }
 }

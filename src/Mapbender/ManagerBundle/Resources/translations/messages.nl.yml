@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. omvang (extent)'
         start_extent: 'Start omvang (extent)'
       element:
-        delete:
-          title: 'Verwijder element'
-          confirm: 'Wilt u werkelijk dit element verwijderen?'
-        btn:
-          delete: Verwijder
-          cancel: Cancel
-        requirements: 'Verplichte velden zijn donker gekleurd en optionele velden zijn lichter gekleurd.'
-        base_data: 'Basis data'
-        configuration: Configuratie
         title: Titel
         type: Type
         add: 'Voeg een nieuw element toe'
         show_hide: 'Wissel toon/verberg element'
-        edit: 'Wijzig element'
         no_element_added:
           '': 'Geen element toegevoegd'
       zoombar:
@@ -92,6 +82,7 @@ mb:
         edit:
           title: 'Wijzig applicatie'
           base_data: 'Basis data'
+        screenshot: Schermafbeelding
         layouts: Layouts
         layersets: Lagensets
         custom_css: CSS
@@ -109,7 +100,6 @@ mb:
         no_application: 'Geen applicatie beschikbaar'
         new:
           title: 'Nieuwe Applicatie'
-          base_data: 'Basis data'
         create_use: "Maak nieuwe applicatie aan met algemene informatie, \n          en gebruik vervolgens de bewerk-modus om elementen en lagen toe te voegen."
         btn:
           create: 'Aanmaken'
@@ -117,20 +107,17 @@ mb:
         upload:
           button: 'Selecteer bestand'
           label: 'Geen bestand geselecteerd'
-          tooltip: 'Klik om een schermafbeelding te laden'
         export:
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
             export: 'Exporteer'
-            cancel: 'Annuleren'
         import:
           addApplications: 'Toepassingen'
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
             import: 'Importeer'
-            cancel: 'Annuleren'
         title: Titel
         url:
           title: 'URL Titel'
@@ -142,7 +129,6 @@ mb:
       username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
-      cancel: Annuleren
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'
@@ -155,9 +141,6 @@ mb:
     element:
       yaml:
         message: 'Gebruik <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
-    be:
-      element:
-        delete: 'Verwijder element ''%element_title%'''
     components:
       popup:
         add_element:
@@ -184,8 +167,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Schermafdruk verwijderd'
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
@@ -193,22 +174,8 @@ mb:
     admin:
       button:
         show_label: 'Toon label'
-      scaleselector:
-        show_label: 'Toon label'
-      corrdsdisplay:
-        label: 'Toon titel label'
-      srsselector:
-        show_label: 'Toon label'
-      gpsposition:
-        show_label: 'Toon label'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Toon knop label'
-    element:
-      be:
-        button:
-          show_label: 'Toon label'
     entity:
       app:
         screenshotfile:

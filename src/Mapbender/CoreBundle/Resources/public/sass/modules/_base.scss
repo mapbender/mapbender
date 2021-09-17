@@ -60,3 +60,12 @@ p{margin:0;}
     width: 100%;
   }
 }
+
+// Backport of .table-bordered to Bootstrap 3, see https://getbootstrap.com/docs/4.6/content/tables/#borderless-table
+.table-borderless {
+  >thead, >tbody {
+    >tr>td, >tr>th {
+      border: none;
+    }
+  }
+}

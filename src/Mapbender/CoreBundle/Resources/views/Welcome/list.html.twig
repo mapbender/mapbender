@@ -20,10 +20,11 @@
           <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
             <div class="col1">
               <div class="cell">
-              {% if application.screenshot is not null %}
-                  <img src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
+              {%- set _screenshot_src = application_screenshot_path(application) -%}
+              {%- if _screenshot_src %}
+                  <img src="{{ _screenshot_src }}">
               {% else %}
-                  <span class="iconAppDefault"></span>
+                  <span class="fa fas fa-image"></span>
               {% endif %}
               </div>
             </div>
@@ -32,7 +33,8 @@
             <div class="buttonGroup">
               <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
 
-              {% if is_granted('EDIT', application) %}
+              {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
+              {%- if is_granted('CLONE', application) -%}
                 <a class="iconCopy hover-highlight-effect" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"></a>
               {% endif %}
 

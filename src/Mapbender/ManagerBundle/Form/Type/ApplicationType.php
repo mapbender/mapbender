@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,9 +14,9 @@ class ApplicationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'maxFileSize' => 0,
-            'screenshotHeight' => 0,
-            'screenshotWidth' => 0,
+            'maxFileSize' => 2097152,
+            'screenshotHeight' => 200,
+            'screenshotWidth' => 200,
             'include_acl' => true,
         ));
     }
@@ -57,15 +56,18 @@ class ApplicationType extends AbstractType
             ))
 
             ->add('screenshotFile', 'Symfony\Component\Form\Extension\Core\Type\FileType', array(
-                'label' => 'Screenshot',
+                'label' => 'mb.manager.admin.application.screenshot',
                 'mapped' => false,
                 'required' => false,
                 'attr' => array(
                     'accept'=>'image/*',
+                    'data-max-size' => $options['maxFileSize'],
+                    'data-min-width' => $options['screenshotWidth'],
+                    'data-min-height' => $options['screenshotHeight'],
                 ),
                 'constraints' => array(
                     new Constraints\Image(array(
-                        'maxSize' => '2M',
+                        'maxSize' => $options['maxFileSize'],
                         'mimeTypesMessage' => 'mb.core.entity.app.screenshotfile.format_error',
                         'minWidth' => $options['screenshotWidth'],
                         'minHeight' => $options['screenshotHeight'],
@@ -74,18 +76,6 @@ class ApplicationType extends AbstractType
             ))
             ->add('removeScreenShot', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
-            ))
-            ->add('maxFileSize', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['maxFileSize'],
-            ))
-            ->add('screenshotWidth', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['screenshotWidth'],
-            ))
-            ->add('screenshotHeight', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
-                'mapped' => false,
-                'data' => $options['screenshotHeight'],
             ))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
@@ -98,17 +88,9 @@ class ApplicationType extends AbstractType
         ;
         /** @var Application $application */
         $application = $options['data'];
-        $templateClassName = $application->getTemplate();
-        if ($templateClassName) {
-            /** @var Template::class $templateClassName */
-            foreach (array_keys($templateClassName::getRegionsProperties()) as $regionName) {
-                $builder->add($regionName, 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
-                    'property_path' => '[' . $regionName . ']',
-                    'application' => $options['data'],
-                    'region' => $regionName,
-                ));
-            }
-        }
+        $builder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
+            'application' => $application,
+        ));
 
         if ($options['include_acl']) {
             $builder
@@ -116,6 +98,7 @@ class ApplicationType extends AbstractType
                     'mapped' => false,
                     'data' => $options['data'],
                     'create_standard_permissions' => true,
+                    'standard_anon_access' => false,
                     'permissions' => 'standard::object',
                 ))
             ;

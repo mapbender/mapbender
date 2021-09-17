@@ -103,7 +103,9 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $keyword->setReferenceObject($wmts);
             $keywords->add($keyword);
         }
-        $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
+        if ($feesValue = $this->getValue("./ows:Fees/text()", $contextElm)) {
+            $wmts->setFees(mb_substr($feesValue, 0, 255));
+        }
         $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
     }
 
@@ -265,20 +267,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $formatsFiEls = $this->xpath->query("./wmts:InfoFormat", $contextElm);
         foreach ($formatsFiEls as $formatEl) {
             $wmtslayer->addInfoformat($this->getValue("./text()", $formatEl));
-        }
-        $dimsEls = $this->xpath->query("./wmts:Dimension", $contextElm);
-        foreach ($dimsEls as $dimEl) {
-            $dim        = new \Mapbender\WmtsBundle\Entity\Dimension();
-            $dim->setCurrent($this->getValue("./wmts:Current/text()", $dimEl))
-                ->setDefault($this->getValue("./wmts:Default/text()", $dimEl))
-                ->setIdentifier($this->getValue("./ows:Identifier/text()", $dimEl))
-                ->setOum($this->getValue("./ows:UOM/text()", $dimEl))
-                ->setUnitsSymbol($this->getValue("./wmts:UnitSymbol/text()", $dimEl));
-            $valuesElms = $this->xpath->query("./wmts:Value", $dimEl);
-            foreach ($valuesElms as $valueElm) {
-                $dim->addValue($this->getValue("./text()", $valueElm));
-            }
-            $wmtslayer->addDimension($dim);
         }
 
         $tmslsEls = $this->xpath->query("./wmts:TileMatrixSetLink", $contextElm);

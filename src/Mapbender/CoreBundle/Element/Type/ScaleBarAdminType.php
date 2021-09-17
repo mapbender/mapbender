@@ -31,16 +31,6 @@ class ScaleBarAdminType extends AbstractType
             ))
             // @todo: should be an optional positive integer
             ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                "choices" => array(
-                    'left-top' => 'left-top',
-                    'left-bottom' => 'left-bottom',
-                    'right-top' => 'right-top',
-                    'right-bottom' => 'right-bottom',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,

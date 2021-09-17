@@ -1,7 +1,5 @@
-<div class="elementForm">
   {{ form_row(form.title) }}
   {{ form_rest(form.configuration) }}
   {% if form.configuration.instancesets is not defined %}
   <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
   {% endif %}
-</div>

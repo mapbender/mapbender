@@ -2,13 +2,14 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 
 /**
  * Map's overview element
  *
  * @author Paul Schmidt
  */
-class ScaleBar extends Element
+class ScaleBar extends Element implements FloatableElement
 {
 
     /**

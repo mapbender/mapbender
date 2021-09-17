@@ -19,6 +19,7 @@ use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -90,10 +91,11 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * @param Application $app
+     * @param string|null $preferredSlug
      * @return Application
      * @throws ImportException
      */
-    public function duplicateApplication(Application $app)
+    public function duplicateApplication(Application $app, $preferredSlug = null)
     {
         $originalSlug = $app->getSlug();
         $importPool = new EntityPool();
@@ -109,6 +111,9 @@ class ImportHandler extends ExchangeHandler
             // database table, but it doesn't account for Yaml-defined
             // applications!
             $app->setSlug($app->getSlug() . '_db');
+        }
+        if ($preferredSlug) {
+            $app->setSlug($preferredSlug);
         }
 
         $exportData = $this->exportHandler->exportApplication($app);
@@ -299,7 +304,12 @@ class ImportHandler extends ExchangeHandler
      */
     protected function copyAcls(Application $target, Application $source)
     {
-        $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
+        try {
+            $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
+        } catch (AclNotFoundException $e) {
+            // Nothing to copy
+            return;
+        }
         $targetOid = ObjectIdentity::fromDomainObject($target);
         try {
             $targetAcl = $this->aclProvider->createAcl($targetOid);
@@ -520,7 +530,19 @@ class ImportHandler extends ExchangeHandler
         } catch (AclAlreadyExistsException $e) {
             $acl = $this->aclProvider->findAcl($oid);
         }
-        $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
+        /** @var \Symfony\Component\Security\Acl\Domain\Entry[] $aces */
+        $aces = $acl->getObjectAces();
+        $updatedExistingAce = false;
+        foreach ($aces as $index => $ace) {
+            if ($ace->getSecurityIdentity()->equals($sid)) {
+                $acl->updateObjectAce($index, $ace->getMask() | MaskBuilder::MASK_OWNER);
+                $updatedExistingAce = true;
+                break;
+            }
+        }
+        if (!$updatedExistingAce) {
+            $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
+        }
         $this->aclProvider->updateAcl($acl);
     }
 

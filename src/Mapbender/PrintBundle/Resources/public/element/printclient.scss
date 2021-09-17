@@ -1,23 +1,17 @@
 .mb-element-printclient {
-  $labelHeight: 23px;
 
   display: none;
   overflow: visible;
 
-  label.labelInput {
-    width: auto;
-    font-weight: inherit;
-    margin-bottom: inherit;
-    line-height: $labelHeight;
-    height: $labelHeight;
-  }
-  .input, .dropdown {
-    min-width: 190px;
-    width: 100%;
+  .dropdown, .inputWrapper {
     margin-bottom: $space/2;
   }
   .button.active {
     background-color: #538e24;
+  }
+  .checkWrapper.left {
+    // @todo: undo checkbox float globally
+    float: none;
   }
 
   .job-list {

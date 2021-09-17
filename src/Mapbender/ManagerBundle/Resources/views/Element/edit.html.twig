@@ -1,4 +1,5 @@
     {{ form_start(form, {'attr': {
+        'class': ((form.vars.attr.class | default('')) ~ ' elementForm') | trim,
         novalidate: 'novalidate', id: 'elementForm'
     }}) }}
 
@@ -12,7 +13,8 @@
             {% if theme is defined and theme != '' %}
                 {% include(theme) %}
             {% else %}
-                {{ form_rest(form) }}
+                {{ form_row(form.title) }}
+                {{ form_rest(form.configuration) }}
             {% endif %}
         {% endblock %}
     {% endblock %}

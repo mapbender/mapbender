@@ -1,4 +1,3 @@
-@import url("components/font-awesome/font-awesome-built.css");
 [class^="icon"],
 [class*=" icon"],
 .icon {
@@ -101,7 +100,6 @@ span.iconBig {
 .iconFacebook:before {content: "\f082"; font-family: FontAwesome;}
 .iconGooglePlus:before {content: "\f0d4"; font-family: FontAwesome;}
 .iconSketch:before {content: "\f044"; font-family: FontAwesome;}
-.iconMore:before {content: "\f0c9"; font-family: FontAwesome;}
 .iconClock:before {content: "\f017"; font-family: FontAwesome;}
 .iconFile:before {content: "\f016"; font-family: FontAwesome;}
 .iconBolt:before {content: "\f0e7"; font-family: FontAwesome;}
@@ -119,7 +117,6 @@ span.iconBig {
 .iconEdit:before{content:"\f040"; font-family: FontAwesome;}
 .iconPublish:before{content:"\f070"; font-family: FontAwesome;}
 .iconPublishActive:before{content:"\f06e"; font-family: FontAwesome;}
-.iconAppDefault:before{content:"\f03e"; font-family: FontAwesome;}
 .iconThumbsUp:before{content:"\f087"; font-family: FontAwesome;}
 .iconThumbsDown:before{content:"\f088"; font-family: FontAwesome;}
 .iconGroup:before{content:"\f0c0"; font-family: FontAwesome;}
@@ -138,11 +135,6 @@ span.iconBig {
 .iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
 .iconTab:before{content:"\f114"; font-family: FontAwesome;}
 .iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
-
-@import url("components/mapbender-icons/style.css");
-[class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: 'mapbender-icons';
-}
 
 .hover-highlight-effect {
   opacity: 0.6;

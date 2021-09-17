@@ -37,38 +37,10 @@ class WmtsInstance extends SourceInstance
      */
     protected $proxy = false;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    protected $dimensions;
-
 
     public function __construct()
     {
         $this->layers = new ArrayCollection();
-        $this->dimensions = array();
-    }
-
-    /**
-     * Returns dimensions
-     *
-     * @return array of DimensionIst
-     */
-    public function getDimensions()
-    {
-        return $this->dimensions ? : array();
-    }
-
-    /**
-     * Sets dimensions
-     *
-     * @param array $dimensions array of DimensionIst
-     * @return $this
-     */
-    public function setDimensions(array $dimensions)
-    {
-        $this->dimensions = $dimensions;
-        return $this;
     }
 
     /**

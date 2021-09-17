@@ -1,4 +1,3 @@
-{% set application = {'slug': 'manager'} %}
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
 {% block title %}{{ "mb.manager.admin.application.new.title" | trans}}{% endblock %}
@@ -10,27 +9,19 @@
 
 {% block manager_content %}
     {{ form_start(form, {"attr": {"novalidate": "novalidate"}}) }}
-    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
+    <div class="tabContainer">
       <ul class="tabs">
-        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
-          {% if form.acl is defined %}
-            <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
-          {% endif %}
+        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData row no-gutters">
-          <div class="col-xs-8">
-            {{ form_row(form.template) }}
-            {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
-           </div>
-           <div class="col-xs-4">
-               <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
-           </div>
+          <div class="col-xs-12 col-12">
+            <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
+          </div>
+          {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
-
-      <div id="containerSecurity" class="container containerSecurity">
-        {% block securityTab %}
-          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
-        {% endblock %}
+      <div id="containerSecurity" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
       </div>
     </div>
 

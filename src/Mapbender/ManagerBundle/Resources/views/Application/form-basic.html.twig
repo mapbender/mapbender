@@ -1,30 +1,49 @@
-<div class="form-group">
-    {{ form_row(form.title) }}
-</div>
-<div class="form-group">
-    {{ form_row(form.slug) }}
-</div>
-
-<div class="form-group">
-    {{ form_label(form.screenshotFile) }}
-
-    <div class="screenshot_upload" title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
+{%- form_theme form _self -%}
+{%- if false -%}
+{%- block _application_screenshotFile_widget -%}
+    <div class="screenshot_upload">
         <div class="upload">
-            <span class="label button upload_button">
+            <span class="button upload_button">
                 {{ 'mb.manager.admin.application.upload.button' | trans }}
             </span>
             <span class="upload_label">
-                {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
+                {{ form.parent.vars.data.screenshot | default('mb.manager.admin.application.upload.label' | trans) }}
             </span>
-            {{ form_widget(form.screenshotFile) }}
-            {{ form_widget(form.maxFileSize) }}
-            {{ form_widget(form.screenshotWidth) }}
-            {{ form_widget(form.screenshotHeight) }}
+            {{- block('form_widget_simple') -}}
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{%- endblock %}
+{%- endif -%}
+<div class="col-xs-8">
+    {%- if form.template is defined -%}
+    <div class="form-group">
+        {{ form_row(form.template) }}
+    </div>
+    {%- endif -%}
 
+    <div class="form-group">
+        {{ form_row(form.title) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.slug) }}
+    </div>
+
+    <div class="form-group">
+        {{- form_row(form.screenshotFile) -}}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.description) }}
+    </div>
+    {{- form_row(form.removeScreenShot) -}}
+</div>
+<div class="col-xs-4">
+    {%- set _screenshot_src = application_screenshot_path(application) -%}
+    <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
+        <div class="cell_edit">
+            <div class="delete button critical hidden">X</div>
+            <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
+            <i class="fa fas fa-image placeholder-icon"></i>
         </div>
     </div>
 </div>
-<div class="form-group">
-    {{ form_row(form.description) }}
-</div>
-{{ form_widget(form.removeScreenShot) }}

@@ -1,17 +1,23 @@
 .mb-wmcEditor{
-  th{text-align:left;}
-  .iconColumn{padding-left:$space/2;}
-  .iconAdd{color:$darkFontColor;}
-  .buttonBack{margin-left:$space;}
+  .iconColumn{
+    padding-left: $space/2;
+    display: table-cell;
+  }
+  a.iconAdd:before {
+    margin: 0;
+  }
   tr{vertical-align:top;}
+  .popupSubContent {
+    padding: 0 20px;
+  }
 }
 .elementFormWMC{
-  .labelInput{
-    width:110px;
-    float:left;
+  .labelInput {
+    width: 110px;
   }
-  .inputWrapper{margin-bottom:$space/2;}
-  .input{width:300px;}
+  .inputWrapper {
+    width: 300px;
+  }
 
   textarea {height: 100px;}
 }

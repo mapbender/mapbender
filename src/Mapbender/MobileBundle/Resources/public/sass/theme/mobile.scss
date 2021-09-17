@@ -64,17 +64,9 @@ fieldset{
   @include border-radius($radius);
 }
 /* -------------------------------------------------------------------- INPUT */
-.input{
-  color:$secondColor;
-  border:solid 1px lighten($thirdColor, 15%);
-  line-height:$lineHeight;
-  height:$inputHeight;
-  padding-left: 5px;
-  padding-right: 5px;
-  background-color: $contentColor;
-  width:100%;
-  @extend .bigText;
-  &:focus{outline:none;}
+@import "modules/input";
+.input, .dropdown {
+  font-size: 1.35rem;
 }
 /* ------------------------------------------------------------------- LAYOUT */
 @import "modules/layout";
@@ -281,10 +273,6 @@ fieldset{
   @include absolute(0 0 0 0);
 }
 .contentPane{@include absolute(0 0 0 0);}
-.dropdown{
-  text-align: left;
-  min-width: 200px;
-}
 
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper{
@@ -334,17 +322,6 @@ fieldset{
 
 
 
-/* ------------------------------------------------------------ MOBILE SPLASH */
-/* ------------------------------------------------------- ACTIVITY INDICATOR */
-.mb-element-activityindicator{display:none;}
-.mb-activity, .mb-activity-ajax{
-  .mb-element-activityindicator{
-    display: inline-block;
-    -webkit-animation:spin 1s linear infinite;
-    -moz-animation:spin 1s linear infinite;
-    animation:spin 1s linear infinite;
-  }
-}
 /* ------------------------------------------------------ BASESOURCE SWITCHER */
 .mb-element-basesourceswitcher{
   li{
@@ -386,7 +363,6 @@ fieldset{
 .mb-element-copyright-dialog{display: none;}
 /* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-featureinfo{
-  .tabs{display:none;}
   .container{
     display:block;
     background-color: $ciColor4;

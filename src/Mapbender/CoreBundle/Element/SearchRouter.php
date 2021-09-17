@@ -55,16 +55,11 @@ class SearchRouter extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip'       => "mb.core.searchrouter.class.title",
             'title'         => "mb.core.searchrouter.class.title",
             "target"        => null,
-            // Alternative "timeout" option is deprecated
-            'timeoutFactor' => 3,
             "width"         => 700,
             "height"        => 500,
             "routes"        => array(),
-            // Alternative "dialog" is deprecated
-            "asDialog"      => false,
         );
     }
 
@@ -260,10 +255,6 @@ class SearchRouter extends Element
      */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        if (key_exists('dialog', $configuration)) {
-            $configuration['asDialog'] = $configuration['dialog'];
-            unset($configuration['dialog']);
-        }
         foreach ($configuration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
                 foreach ($configuration['routes'][ $routekey ]['configuration'] as $key => $value) {

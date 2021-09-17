@@ -89,7 +89,6 @@ abstract class BaseKernel extends Kernel
             new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
 
             // Bare-bones Mapbender
             new CoreBundle\MapbenderCoreBundle(),
@@ -98,7 +97,6 @@ abstract class BaseKernel extends Kernel
         $environment = $this->getEnvironment();
         if ($environment == 'dev' || strpos($environment, 'test') === 0) {
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new \Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 

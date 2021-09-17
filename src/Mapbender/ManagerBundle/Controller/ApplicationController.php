@@ -111,7 +111,6 @@ class ApplicationController extends WelcomeController
         return $this->render('@MapbenderManager/Application/new.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
-            'screenshot_filename' => null,
         ));
     }
 
@@ -128,6 +127,9 @@ class ApplicationController extends WelcomeController
         $job = new ExportJob();
         $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ExportJobType', $job, array(
             'application' => $this->getExportableApplications(),
+            'attr' => array(
+                'target' => '_blank',
+            ),
         ));
         $form->handleRequest($request);
 
@@ -151,8 +153,11 @@ class ApplicationController extends WelcomeController
             }
 
         } else {
-            return $this->render('@MapbenderManager/Application/export.html.twig', array(
+            return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
                 'form' => $form->createView(),
+                'submit_text' => 'mb.manager.admin.application.export.btn.export',
+                'title' => $this->getTranslator()->trans('mb.manager.managerbundle.export_application'),
+                'return_path' => 'mapbender_manager_application_index',
             ));
         }
     }
@@ -194,8 +199,11 @@ class ApplicationController extends WelcomeController
                 // fall through to re-rendering form
             }
         }
-        return $this->render('@MapbenderManager/Application/import.html.twig', array(
+        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
+            'submit_text' => 'mb.manager.admin.application.import.btn.import',
+            'title' => $this->getTranslator()->trans('mb.manager.managerbundle.import_application'),
+            'return_path' => 'mapbender_manager_application_index'
         ));
     }
 
@@ -261,7 +269,6 @@ class ApplicationController extends WelcomeController
             $em = $this->getEntityManager();
             $em->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
-            $this->setRegionProperties($application, $form);
             if ($form->get('removeScreenShot')->getData() == '1') {
                 $application->setScreenshot(null);
             }
@@ -300,16 +307,6 @@ class ApplicationController extends WelcomeController
         }
 
         $templateClass = $application->getTemplate();
-        $screenShot = $application->getScreenshot();
-        if ($screenShot) {
-            $baseUrl = $this->getUploadsBaseUrl($request);
-            $screenShotUrl = $baseUrl ."/{$application->getSlug()}/{$screenShot}";
-            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
-                't' => date('d.m.Y-H:i:s'),
-            ));
-        } else {
-            $screenShotUrl = null;
-        }
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
@@ -318,8 +315,6 @@ class ApplicationController extends WelcomeController
             'regions'             => $templateClass::getRegions(),
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $screenShot,
         ));
     }
 
@@ -403,21 +398,12 @@ class ApplicationController extends WelcomeController
         $this->denyAccessUnlessGranted('EDIT', $application);
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId, $application);
-            $action = $this->generateUrl('mapbender_manager_application_editlayerset', array(
-                'slug' => $slug,
-                'layersetId' => $layerset->getId(),
-            ));
         } else {
             $layerset = new Layerset();
             $layerset->setApplication($application);
-            $action = $this->generateUrl('mapbender_manager_application_newlayerset', array(
-                'slug' => $slug,
-            ));
         }
 
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset, array(
-            'action' => $action,
-        ));
+        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
@@ -622,40 +608,8 @@ class ApplicationController extends WelcomeController
     private function createApplicationForm(Application $application)
     {
         return $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application, array(
-            'maxFileSize'          => 2097152,
-            'screenshotWidth'      => 200,
-            'screenshotHeight'     => 200,
             'include_acl' => $this->allowAclEditing($application),
         ));
-    }
-
-    /**
-     * Merge application, form and template default properties
-     *
-     * @param Application $application
-     * @param Form        $form
-     */
-    private function setRegionProperties(Application $application, Form $form)
-    {
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-        $applicationRegionProperties = $application->getRegionProperties();
-        foreach ($templateProps as $regionName => $regionProperties) {
-            foreach ($applicationRegionProperties as $regionProperty) {
-                if ($regionProperty->getName() === $regionName) {
-                    $propValues = $regionProperty->getProperties();
-                    $formValue = $form->get($regionName)->getData();
-                    $propValues = array_replace($propValues, array(
-                        'name' => $formValue ?: '',
-                    ));
-                    // Legacy quirk: label used to be copied into db but is redundant. Only used in form, where
-                    // it is taken from the Template, not from the entity.
-                    unset($propValues['label']);
-                    $regionProperty->setProperties($propValues);
-
-                }
-            }
-        }
     }
 
     /**

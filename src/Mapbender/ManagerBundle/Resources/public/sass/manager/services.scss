@@ -13,19 +13,6 @@
   }
 }
 
-/**
- * .box adds a border. If a fieldset has .box, that border appears at "strikethrough" height for the fieldset legend,
- * which looks pretty bad. For this combination, remove the standard bottom border and minimize legend width to allow the
- * border to at least fill the sides of the legend text.
- */
-fieldset.box {
-  legend {
-    display: inline-block;
-    width: auto;
-    border-bottom: none;
-  }
-}
-
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
   .labelText{float:left;}
@@ -126,31 +113,28 @@ fieldset.box {
       .labelInput{width:80px;}
       .inputWrapper, div.dropdown {
         width:200px;
-        margin:0.25em 0;
-        display: inline-block;
+      }
+      .collectionItem .collectionRemove {
+        left: #{80px + $space + 200px};
       }
     }
     .on-off-content{
       background-color: darken($contentColor, 9%);
+      .collectionItem:last-child {
+        margin-bottom: 0;
+      }
     }
-    .vendorspecific-content,.on-off-content .on-off-content{
+    .form-horizontal {
       padding: $space/2 $space/2 $space/2 $space/2;
-    }
-    .labelCheck{
-      margin: 0 0 0 0.25em;
-      height: auto;
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
+      .labelCheck {
+        margin-bottom: 0;
+      }
     }
     .blockgroup {
       margin-bottom: 1em;
-    }
-    .vendorspecific-content{
-      input {width:100%;}
-      a.collectionRemove {
-        float: right;
-      }
     }
     .mb-slider{margin-top: $space/2;}
   }
@@ -169,36 +153,30 @@ fieldset.box {
 
   &.table {
     background-color: lighten($contentColor, 2%);
-    > thead > tr > .checkboxColumn {
-      padding-left: 2px;
-      padding-right: 2px;
+    tbody tr td {
+      line-height: $inputHeight;
     }
-    > tbody > tr > td {
-      &.titleColumn {
-        width: 260px;
-      }
-      &.itemType {
-        padding-right: 0;
-        padding-left: 0;
-        cursor:ns-resize;
-        line-height:$inputHeight;
-      }
-      &.minScaleColumn,
-      &.maxScaleColumn {
+    > tbody > tr > td, > thead > tr > th {
+      padding-left: 0;
+      padding-right: 8px;
+      &.checkboxColumn {
+        width: 1%;
         padding-left: 4px;
+        padding-right: 4px;
       }
+    }
+    .titleColumn {
+      width: 260px;
+    }
+    .itemType {
+      cursor:ns-resize;
     }
   }
 
   tbody{
-    .dropdown{min-width:100%;}
-    .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn {
       .checkWrapper {
         display: inline-block;
-        line-height: $inputHeight;
-        float: none;
-        width: 1em;
       }
     }
   }
@@ -208,59 +186,20 @@ fieldset.box {
   .level3 .itemType{margin-left:22px;}
   .level4 .itemType{margin-left:28px;}
   .dummy{display:none;}
-  .moreColumn{
-    position: relative;
-    .iconMore{
-      line-height:$inputHeight;
-    }
-  }
-  .input{width:80px;}
-  .titleColumn .input{width:200px;}
 }
-.infoMsgBox{
-  z-index: 10;
+.infoMsgBox {
+  &.popover {
+    left: initial;
+  }
   min-width: 260px;
-  padding: 3px $space/2 3px $space/2;
-  background-color: white;
-  border:solid 1px $thirdColor;
-  position: absolute;
-  right: 2.5em;
-  top: $inputHeight - $space - 4px;
 
-  @include border-radius($radius);
-
-  // small arrow left
-  &:after, &:before {
-    position: absolute;
-    left: 100%;
-    border: solid transparent;
-    content: "";
-    height: 0;
-    width: 0;
+  .labelInput {
+    width: 40px;
   }
-  &:after{
-    border-left-color: $firstColor;
-    border-width: 4px;
-    top: $space - 7px;
-    margin-top: -4px;
-  }
-  &:before{
-    border-left-color: $firstColor;
-    border-width: 6px;
-    top: $space - 7px;
-    margin-top: -5px;
-  }
-
-  .labelText, label {
-    width: 4.5em;
-    display:inline-block;
-  }
-  // also revert 100% set by .instanceTable... selector
-  .dropdown, .instanceTable tbody & .dropdown {
-    min-width: 130px;
-  }
-  // also revert 100% set by contentPane... selector
   .dropdown, .contentPane > .content form & .dropdown {
-    width: auto;
+    width: 170px;
+  }
+  .inputWrapper, .contentPane > .content form & .inputWrapper {
+    width: 170px;
   }
 }

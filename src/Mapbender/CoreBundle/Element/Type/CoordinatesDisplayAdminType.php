@@ -23,22 +23,12 @@ class CoordinatesDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                "choices" => array(
-                    'left-top' => 'left-top',
-                    'left-bottom' => 'left-bottom',
-                    'right-top' => 'right-top',
-                    'right-bottom' => 'right-bottom',
-                ),
-                'choices_as_values' => true,
-            ))
             ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.corrdsdisplay.label', // sic
+                'label' => 'mb.core.admin.button.show_label',
             ))
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',

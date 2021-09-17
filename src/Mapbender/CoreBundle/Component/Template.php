@@ -171,6 +171,15 @@ abstract class Template
     }
 
     /**
+     * @param string $regionName
+     * @return string|null
+     */
+    public static function getRegionSettingsFormType($regionName)
+    {
+        return null;
+    }
+
+    /**
      * Get template bundle name
      *
      * @return string Bundle name

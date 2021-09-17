@@ -46,20 +46,10 @@ mb:
         max_extent: 'Макс. область'
         start_extent: 'Начало области'
       element:
-        delete:
-          title: 'Удалить элемент'
-          confirm: 'Вы действительно хотите удалить элемент?'
-        btn:
-          delete: Удалить
-          cancel: Отменить
-        requirements: 'Обязательные поля помечены темными метками, а необязательные - светлые.'
-        base_data: 'Базовые данные'
-        configuration: Конфигурация
         title: Название
         type: Тип
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
-        edit: 'Редактировать элемент'
         no_element_added:
           '': 'Элемент не добавлен'
       zoombar:
@@ -92,6 +82,7 @@ mb:
         edit:
           title: 'Редактировать приложение'
           base_data: 'Базовые данные'
+        screenshot: Скриншот
         layouts: 'Панели инструментов'
         layersets: Слои
         custom_css: CSS
@@ -109,28 +100,24 @@ mb:
         no_application: 'Нет доступных приложений'
         new:
           title: 'Новое приложение'
-          base_data: 'Базовые данные'
         create_use: 'Заполните основную информацию при создании нового приложения, а затем используйте режим редактирования, чтобы добавить элементы и слои.'
         btn:
           create: Создать
           cancel: Отменить
         upload:
-          button: 'Выбрать файл:'
+          button: 'Выбрать файл'
           label: 'Файл не выбран'
-          tooltip: 'Нажмите, чтобы загрузить скриншот'
         export:
           addAcl: ACLs
           addSources: Источники
           btn:
             export: Экспорт
-            cancel: Отменить
         import:
           addApplications: Приложения
           addAcl: ACLs
           addSources: Источники
           btn:
             import: Импорт
-            cancel: Отменить
         title: Название
         url:
           title: 'URL заголовок'
@@ -142,7 +129,6 @@ mb:
       username: 'Имя пользователя'
       password: Пароль
       load: Загрузить
-      cancel: Отменить
     managerbundle:
       applications: Приложения
       new_application: 'Новое приложение'
@@ -155,9 +141,6 @@ mb:
     element:
       yaml:
         message: 'Используйте <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Формат для описания конфигурации элемента..'
-    be:
-      element:
-        delete: 'Удалить элемент ''%element_title%'''
     components:
       popup:
         add_element:
@@ -184,8 +167,6 @@ mb:
           label: Вкладки
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Скриншот удален'
     import:
       application:
         failed: 'Приложение не может быть импортировано.'
@@ -193,22 +174,8 @@ mb:
     admin:
       button:
         show_label: 'Показать отметку'
-      scaleselector:
-        show_label: 'Показать отметку'
-      corrdsdisplay:
-        label: 'Показать название отметки'
-      srsselector:
-        show_label: 'Показать отметкиу'
-      gpsposition:
-        show_label: 'Показать отметкиу'
       element:
         autostart: Автозапуск
-      about_dialog:
-        show_label: 'Показать надпись на кнопке'
-    element:
-      be:
-        button:
-          show_label: 'Показать отметку'
     entity:
       app:
         screenshotfile:

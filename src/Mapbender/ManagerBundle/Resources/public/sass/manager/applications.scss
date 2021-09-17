@@ -15,37 +15,20 @@
 
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
-  min-width: 300px;
   .upload {
     position: relative;
-    height: $inputHeight;
-    line-height: $inputHeight;
     .upload_label {
       max-width: 60%;
       text-overflow: ellipsis;
     }
   }
 
-  .inputWrapper {
+  input, .inputWrapper {
+    opacity: 0;
     position: absolute;
     left: 0;
     top: 0;
-    cursor: pointer;
     width: 100%;
-    input {
-        opacity: 0;
-    }
-    .validationMsgBox {
-        position: absolute;
-        max-width: 150px;
-        width: auto;
-        min-width: auto;
-        right: 0;
-        top: 0;
-    }
-  }
-  .upload_button {
-    font-weight: normal;
   }
   .upload:hover .upload_button {
     background-color: darken($buttonFirstColor, 5%);
@@ -82,7 +65,7 @@
 .popup.elementPopup {
   width: $elementPopupWidth;
   min-width: $popupModalWidth;
-  .popupContent, .popupSubContent {
+  .popupContent {
     min-width: $elementPopupBodyWidth;
   }
   /*
@@ -104,9 +87,6 @@
 
 
 // ----------------------------------------------- NEW/EDIT APPLICATION
-.applicationTabContainer{
-  margin-bottom:$space;
-}
 .containerBaseData{
   $height: 200px;
   $width: 200px;
@@ -128,15 +108,12 @@
     img {
       display: block;
     }
-    .iconAppDefault {
+    &:not(.default) .placeholder-icon {
       display: none;
     }
     &.default {
       img {
         display: none;
-      }
-      .iconAppDefault {
-        display: inline-block;
       }
     }
     &.default{
@@ -144,8 +121,7 @@
       background-color:#404040;
     }
 
-    .iconAppDefault{
-      font-style: normal;
+    .placeholder-icon {
       font-size: 60px;
       color:lighten($darkFontColor, 10%);
     }
@@ -173,27 +149,6 @@
          margin: 0 auto;
         }
       }
-  }
-
-  textarea, input, .dropdown{min-width: 300px;}
-  textarea{height:100px;}
-  .alert-info, /** @deprecated: */.messageBox.hint {
-    // instruction box
-    margin-left: 1em;
-    margin-top: 21px;   // HACK: calculated root line-height (no variable)
-  }
-}
-
-.containerExchange {
-  border: 1px solid #c0c0c0;
-  background-color: #f9f9f9;
-  padding: 20px;
-}
-
-.popup{
-  .popupSubContent{
-    overflow: visible;
-    .labelInput, .input{float:left;}
   }
 }
 
@@ -302,6 +257,23 @@
     }
     &.checked.disabled {
       opacity: .6;
+    }
+  }
+}
+
+.static-popover-wrap {
+  position: relative; // for anchoring of absolute-positioned .popover
+  .popover {
+    display: initial;
+    &.left {
+      right: 2em;
+    }
+    &.left, &.right {
+      top: -1em;
+      .arrow {
+        top: 1em;
+        margin-top: 0;
+      }
     }
   }
 }

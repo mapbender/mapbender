@@ -46,20 +46,10 @@ mb:
         max_extent: 'Max. estensione'
         start_extent: 'Estensione iniziale'
       element:
-        delete:
-          title: 'Elimina Elemento'
-          confirm: 'Sei sicuro di volere eliminare l''elemento?'
-        btn:
-          delete: Elimina
-          cancel: Cancella
-        requirements: 'I campi richiesti sono segnati con labels scure, mentre quelli opzionali hanno labels più chiare.'
-        base_data: 'Dati di base'
-        configuration: Configurazione
         title: Titolo
         type: Tipo
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
-        edit: 'Modifica elemento'
         no_element_added:
           '': 'Nessun elemento aggiunto'
       zoombar:
@@ -92,8 +82,9 @@ mb:
         edit:
           title: 'Modifica applicazione'
           base_data: 'Dati di base'
-        layouts: Layouts
-        layersets: Layersets
+        screenshot: ~
+        layouts: ~
+        layersets: ~
         custom_css: CSS
         security:
           title: Sicurezza
@@ -109,28 +100,24 @@ mb:
         no_application: 'Nessuna applicazione disponibile'
         new:
           title: 'Nuova Applicazione'
-          base_data: 'Dati di base'
         create_use: 'Crea una nuova applicazione fornendo informazioni di base e poi usa la modalità di modifica per aggiungere elementi e layers.'
         btn:
           create: Crea
           cancel: Cancella
         upload:
-          button: 'Selezione file:'
+          button: 'Selezione file'
           label: 'Nessun file selezionato'
-          tooltip: 'Fai clic per caricare uno screenshot'
         export:
           addAcl: ACLs
           addSources: Risorse
           btn:
             export: Esporta
-            cancel: Cancella
         import:
           addApplications: Applicazioni
           addAcl: ACLs
           addSources: Risorsa
           btn:
             import: Importa
-            cancel: Cancella
         title: Titolo
         url:
           title: 'Titolo URL'
@@ -142,7 +129,6 @@ mb:
       username: Nome utente
       password: Password
       load: Carica
-      cancel: Cancella
     managerbundle:
       applications: Applicazioni
       new_application: 'Nuova applicazione'
@@ -155,9 +141,6 @@ mb:
     element:
       yaml:
         message: 'Usa il formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> per descrivere la configurazione dell''elemento.'
-    be:
-      element:
-        delete: 'Elimina elemento ''%element_title%'''
     components:
       popup:
         add_element:
@@ -184,8 +167,6 @@ mb:
           label: Tabs
         accordion:
           label: Accordion
-    upload:
-      label_delete: 'Screenshot rimosso'
     import:
       application:
         failed: 'L''applicazione non può essere importata.'
@@ -193,22 +174,8 @@ mb:
     admin:
       button:
         show_label: 'Mostra label'
-      scaleselector:
-        show_label: 'Mostra label'
-      corrdsdisplay:
-        label: 'Mostra il titolo della label'
-      srsselector:
-        show_label: 'Mostra label'
-      gpsposition:
-        show_label: 'Mostra label'
       element:
         autostart: Autostart
-      about_dialog:
-        show_label: 'Mostra label del pulsante'
-    element:
-      be:
-        button:
-          show_label: 'Mostra label'
     entity:
       app:
         screenshotfile:
