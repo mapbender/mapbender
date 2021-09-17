@@ -47,7 +47,6 @@ class FieldSubscriber implements EventSubscriberInterface
             ->add('style', 'Mapbender\CoreBundle\Form\Type\InstanceLayerStyleChoiceType', array(
                 'label' => 'Style',
                 'layer' => $event->getData(),
-                'choices' => $styleOpt,
                 'required' => false,
             ))
         ;
