@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Entity;
 
 /**
  * The Legend class shows legends of the map's layers.
- * 
+ *
  * @author Paul Schmidt
  */
 class Legend extends Element implements ConfigMigrationInterface
@@ -42,7 +42,7 @@ class Legend extends Element implements ConfigMigrationInterface
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:legend.json.twig',
+                'mb.core.legend.popup.*',   // @todo: use standard close action label for popup
             ),
         );
     }

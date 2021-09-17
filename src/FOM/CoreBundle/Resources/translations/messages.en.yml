@@ -1,0 +1,12 @@
+fom:
+  core:
+    components:
+      popup:
+        delete_user_group:
+          title: 'Confirm delete'
+          content: 'Really delete %userGroup%?'
+          btn:
+            cancel: Cancel
+            ok: OK
+    fields:
+      no_user_group_defined: 'No user or group defined.'

@@ -27,6 +27,11 @@ class WmtsSourceService extends SourceService
         return 'OGC WMTS / TMS';
     }
 
+    public function canDeactivateLayer(SourceInstanceItem $layer)
+    {
+        return true;
+    }
+
     /**
      * @param SourceInstance $sourceInstance
      * @return array|mixed[]|null
@@ -51,7 +56,6 @@ class WmtsSourceService extends SourceService
     {
         return array(
             "proxy" => $sourceInstance->getProxy(),
-            "visible" => $sourceInstance->getVisible(),
             "opacity" => $sourceInstance->getOpacity() / 100,
         );
     }
@@ -120,7 +124,6 @@ class WmtsSourceService extends SourceService
         $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
         $configuration   = array(
             "id" => $layerId,
-            "origId" => $layerId,
             'tileUrls' => array(),
             'format' => null,
             "title" => $instanceLayer->getTitle(),
@@ -241,7 +244,7 @@ class WmtsSourceService extends SourceService
      */
     protected function urnToSrsCode($urnOrCode)
     {
-        return preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
+        return preg_replace('#^urn:.*?:([A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
     }
 
     /**
@@ -318,10 +321,6 @@ class WmtsSourceService extends SourceService
                     '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
                     '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
                     '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
-                );
-            case 'trans':
-                return array(
-                    'MapbenderCoreBundle::geosource.json.twig',
                 );
             default:
                 throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));

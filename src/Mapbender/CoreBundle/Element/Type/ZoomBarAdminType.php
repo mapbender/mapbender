@@ -24,34 +24,29 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder
-            ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => true,
-                'multiple' => true,
-                'choices' => array(
-                    "Pan" => "pan",
-                    "History" => "history",
-                    "Zoom box" => "zoom_box",
-                    "zoom to max extent" => "zoom_max",
-                    "Zoom in/out" => "zoom_in_out",
-                    "Zoom slider" => "zoom_slider",
-                ),
-                'choices_as_values' => true,
-                'attr' => array(
-                    'size' => 6,
-                ),
-            ))
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            ->add('stepSize', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
-            ->add('stepByPixel', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'required' => true,
+                'multiple' => true,
                 'choices' => array(
-                    'true' => 'true',
-                    'false' => 'false',
+                    "Rotation" => "rotation",
+                    "zoom to max extent" => "zoom_max",
+                    'mb.core.zoombar.zoom_home' => 'zoom_home',
+                    "Zoom in/out" => "zoom_in_out",
+                    "Zoom slider" => "zoom_slider",
                 ),
                 'choices_as_values' => true,
+                'attr' => array(
+                    'size' => 5,
+                ),
+            ))
+            ->add('zoomHomeRestoresLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.zoombar.zoomHomeRestoresLayers',
             ))
             ->add('draggable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

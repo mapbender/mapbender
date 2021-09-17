@@ -33,7 +33,7 @@ class Ruler extends Element
             ),
             'css' => array(),
             'trans' => array(
-                'MapbenderCoreBundle:Element:ruler.json.twig',
+                'mb.core.ruler.create_error',
             ),
         );
     }
@@ -62,7 +62,6 @@ class Ruler extends Element
         return array(
             'target' => null,
             'type' => 'line',
-            'immediate' => false,
         );
     }
 
@@ -76,7 +75,7 @@ class Ruler extends Element
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return 'MapbenderCoreBundle:Element:measure_dialog.html.twig';
+        return 'MapbenderCoreBundle:Element:ruler.html.twig';
     }
 
     /**

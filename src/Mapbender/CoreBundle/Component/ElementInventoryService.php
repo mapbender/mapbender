@@ -21,6 +21,7 @@ class ElementInventoryService
         'Mapbender\DataSourceBundle\Element\DataManagerElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\DataStoreElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\QueryBuilderElement' => 'Mapbender\QueryBuilderBundle\Element\QueryBuilderElement',
+        'Mapbender\CoreBundle\Element\Redlining' => 'Mapbender\CoreBundle\Element\Sketch',
     );
 
     /** @var string[] */
@@ -125,12 +126,12 @@ class ElementInventoryService
 
     protected function getDisabledClasses()
     {
-        return $this->disabledClassesFromConfig;
+        return array_merge($this->disabledClassesFromConfig, $this->getInternallynDisabledClasses());
     }
 
     public function isClassDisabled($className)
     {
-        return \in_array($className, $this->disabledClassesFromConfig);
+        return \in_array($className, $this->getDisabledClasses());
     }
 
     public function isTypeOfElementDisabled(Entity\Element $element)
@@ -140,5 +141,14 @@ class ElementInventoryService
             $disabled = $this->isClassDisabled($target->getClass());
         }
         return $disabled;
+    }
+
+    protected function getInternallynDisabledClasses()
+    {
+        return array(
+            'Mapbender\WmcBundle\Element\WmcLoader',
+            'Mapbender\WmcBundle\Element\WmcList',
+            'Mapbender\WmcBundle\Element\WmcEditor',
+        );
     }
 }

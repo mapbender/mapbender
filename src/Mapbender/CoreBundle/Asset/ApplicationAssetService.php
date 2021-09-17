@@ -84,7 +84,7 @@ class ApplicationAssetService
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent($application->getSlug(), $refs, $type);
+        return $this->compileAssetContent(null, $refs, $type);
     }
 
     public function getTemplateAssetContent(TemplateAssetDependencyInterface $source, $type)
@@ -111,11 +111,20 @@ class ApplicationAssetService
     {
         $referenceLists = array(
             $this->getBaseAssetReferences($type),
+        );
+        if ($type === 'js') {
+            $referenceLists[] = array(
+                '@MapbenderCoreBundle/Resources/public/init/frontend.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            );
+        }
+        $referenceLists = array_merge($referenceLists, array(
             $this->getMapEngineAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
-        );
+        ));
         $references = call_user_func_array('\array_merge', $referenceLists);
         $references = array_unique($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
@@ -164,10 +173,12 @@ class ApplicationAssetService
      */
     public function getMapEngineAssetReferences(Entity\Application $application, $type)
     {
-        switch ($type) {
-            case 'js':
+        $engineCode = $application->getMapEngineCode();
+        switch ("{$engineCode}-{$type}") {
+            case 'ol2-js':
                 $commonAssets = array(
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
                     '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
@@ -177,10 +188,56 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl2.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl2.js',
                 );
                 break;
             default:
                 $commonAssets = array();
+                break;
+            case 'ol4-js':  // legacy identifier
+            case Entity\Application::MAP_ENGINE_CURRENT . '-js':
+                // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
+                // Currently known missing:
+                // * ol.proj.getTransformFromProjections
+                // * ol.style.Style.defaultFunction
+                if (false && !$this->debug) {
+                    $ol4 = '/components/openlayers/ol.js';
+                    $proj4js = '/components/proj4js/dist/proj4.js';
+                } else {
+                    $ol4 = '/components/openlayers/ol-debug.js';
+                    $proj4js = '/components/proj4js/dist/proj4-src.js';
+                }
+
+                $modelJsBase = "@MapbenderCoreBundle/Resources/public/mapbender-model";
+                $commonAssets = array(
+                    '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js',
+                    '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
+                    $proj4js,
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
+                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
+                    "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
+                    // "$modelJsBase/mapbender.model.mappopup.js",
+                );
+                break;
+            case 'ol4-css':
+            case Entity\Application::MAP_ENGINE_CURRENT . '-css':
+                return array(
+                    "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
+                );
                 break;
         }
         return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
@@ -198,22 +255,27 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/util.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
                     // form-theme specific widget auto-initialization
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
+            case 'trans':
+                return array(
+                    'mb.actions.*',
+                    'mb.terms.*',
+                );
             default:
                 return array();
         }
@@ -259,8 +321,8 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'js':
-            case 'trans':
                 return $this->sourceTypeDirectory->getAssets($application, $type);
+            case 'trans':
             case 'css':
                 return array();
             default:
@@ -287,9 +349,8 @@ class ApplicationAssetService
     protected function getDummyTemplateComponent(Entity\Application $application)
     {
         $templateClassName = $application->getTemplate();
-        $appComp = $this->elementFactory->appComponentFromEntity($application);
         /** @var Template $instance */
-        $instance = new $templateClassName($this->dummyContainer, $appComp);
+        $instance = new $templateClassName();
         return $instance;
     }
 

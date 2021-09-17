@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Template Fullscreen
@@ -11,30 +13,97 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Fullscreen extends Template
 {
-    protected static $title             = "Fullscreen";
-    protected static $regions           = array('toolbar', 'sidepane', 'content', 'footer');
-    protected static $regionsProperties = array(
-        'sidepane' => array(
-            'tabs'      => array(
-                'name'  => 'tabs',
-                'label' => 'mb.manager.template.region.tabs.label'),
-            'accordion' => array(
-                'name'  => 'accordion',
-                'label' => 'mb.manager.template.region.accordion.label')
-        )
-    );
-    protected static $css               = array(
-        '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'
-    );
-    protected static $js                = array(
-        '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-        '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
-        '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
-        '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-        "/components/vis-ui.js/vis-ui.js-built.js"
-    );
+    /**
+     * @inheritdoc
+     */
+    public static function getRegionsProperties()
+    {
+        return array(
+            'sidepane' => array(
+                'tabs' => array(
+                    'name' => 'tabs',
+                ),
+                'accordion' => array(
+                    'name' => 'accordion',
+                ),
+            ),
+        );
+    }
 
-    public $twigTemplate = 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+    /**
+     * @inheritdoc
+     */
+    public static function getTitle()
+    {
+        return 'Fullscreen';
+    }
+
+    public function getRegionTemplate(Application $application, $regionName)
+    {
+        switch ($regionName) {
+            default:
+                return parent::getRegionTemplate($application, $regionName);
+            case 'toolbar':
+                return 'MapbenderCoreBundle:Template:fullscreen/toolbar.html.twig';
+        }
+    }
+
+    public function getRegionClasses(Application $application, $regionName)
+    {
+        $classes = parent::getRegionClasses($application, $regionName);
+        switch ($regionName) {
+            default:
+                break;
+            case 'sidepane':
+                $props = $this->extractRegionProperties($application, $regionName);
+                $classes[] = ArrayUtil::getDefault($props, 'align') ?: 'left';
+                if (!empty($props['closed'])) {
+                    $classes[] = 'closed';
+                }
+                break;
+        }
+        return $classes;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                );
+            case 'js':
+                return array(
+                    '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
+                    '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
+                );
+            case 'trans':
+            default:
+                return parent::getAssets($type);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getRegions()
+    {
+        return array('toolbar', 'sidepane', 'content', 'footer');
+    }
+
+    public function getTwigTemplate()
+    {
+        return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+    }
+
+    public function getBodyClass(Application $application)
+    {
+        return 'desktop-template';
+    }
 
     /**
      * @param string $regionName
@@ -45,6 +114,9 @@ class Fullscreen extends Template
         switch ($regionName) {
             case 'sidepane':
                 return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
+            case 'toolbar':
+            case 'footer':
+            return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
             default:
                 return null;
         }

@@ -27,6 +27,34 @@ mb:
         success: A new instance has been created. Please edit it.
   manager:
     confirm_form_discard: Discard changes?
+    screentype:
+      label: Screen type
+      choice:
+        all: Any
+        mobile: Mobile
+        desktop: Desktop
+    element:
+      screentype:
+        mobile: Show on mobile screens
+        desktop: Show on desktop screens
+    sidepane:
+      width: Width
+      closed: Initially closed
+      align:
+        label: Position
+        choice:
+          left: Left
+          right: Right
+    sourceinstance:
+      embedded_in_applications: '{0} This instance is not used in any application|{1} This instance is used in one application|]1,Inf[ This instance is used in %count% applications'
+      convert_to_reusable: Convert to shared instance
+      convert_to_bound: Convert to bound instance
+      converted_to_bound: A bound copy of the shared instance has been added to the application
+      reusable_added_to_application: The shared instance has been added to the application
+      create_reusable: Create shared instance
+      created_reusable: A new shared instance has been created
+    application:
+      persistentView: Persistent map state
     admin:
       sources: Sources
       source:
@@ -52,8 +80,7 @@ mb:
         type: Type
         add: 'Add a new element to'
         show_hide: 'Toggle show/hide element'
-        no_element_added:
-          '': 'No element added'
+        no_element_added: No element added
         anchor:
           label: Position
           left-top: Top left
@@ -96,7 +123,6 @@ mb:
         custom_css: CSS
         security:
           title: Security
-          add_users_groups: 'Add users and groups'
           public: public access
         save: Save
         cancel: Cancel
@@ -121,7 +147,6 @@ mb:
           btn:
             export: Export
         import:
-          addApplications: Applications
           addAcl: ACLs
           addSources: Sources
           btn:
@@ -131,24 +156,21 @@ mb:
           title: 'URL Title'
         description: Description
         template: Template
-      applications: Applications
+        map_engine_code: Map engine
+        map_engine_code.ol2: OpenLayers 2 (legacy)
+        map_engine_code.current: OpenLayers 6
     source:
       serviceurl: 'Service URL'
       username: Username
       password: Password
       load: Load
     managerbundle:
-      applications: Applications
       new_application: 'New application'
-      sources: Sources
       add_source: 'Add source'
       add_user_group: 'Add users and groups'
       acl_element: 'Acl element'
       import_application: Import
       export_application: Export
-    element:
-      yaml:
-        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     components:
       popup:
         add_element:
@@ -169,12 +191,6 @@ mb:
         delete_user_group:
           title: 'Confirm delete'
           content: 'Really delete %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     import:
       application:
         failed: 'Application cannot be imported.'

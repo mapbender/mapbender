@@ -50,8 +50,7 @@ mb:
         type: 'Öğe tipi'
         add: 'Yeni bir öğe oluştur'
         show_hide: 'Geçiş gösterme/gizleme öğesi'
-        no_element_added:
-          '': 'Öğe eklenmedi'
+        no_element_added: Öğe eklenmedi
       zoombar:
         draggable: 'Sürüklenebilir'
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: 'Güvenlik'
-          add_users_groups: 'Kullanıcı ve Grup ekle'
           public: Kamu erişim
         save: 'Kaydet'
         cancel: 'Vazgeç'
@@ -113,7 +111,6 @@ mb:
           btn:
             export: 'Dışa aktar (Export)'
         import:
-          addApplications: 'Uygulama oluştur'
           addAcl: 'Erisim kontrolü (ACLs)'
           addSources: 'Kaynaklar'
           btn:
@@ -123,19 +120,13 @@ mb:
           title: 'URL Başlık'
         description: 'Açıklama'
         template: 'Şablon(Kalıp)'
-      applications: 'Uygulamalar'
     managerbundle:
-      applications: 'Uygulamalar'
       new_application: 'Uygulama oluştur'
-      sources: 'Kaynaklar'
       add_source: 'Kaynak ekle'
       add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle'
       acl_element: 'Acl element'
       import_application: 'İçe aktarım (Import)'
       export_application: 'Dışa aktarım (Export)'
-    element:
-      yaml:
-        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
     components:
       popup:
         add_element:
@@ -153,12 +144,6 @@ mb:
           title: 'Kaynak seç'
         delete_instance:
           title: 'Silme işlemini onayla'
-    template:
-      region:
-        tabs:
-          label: 'Sekmeler'
-        accordion:
-          label: 'Akordiyon'
     import:
       application:
         failed: 'Uygulama içeri aktarıllamıyor (Import).'

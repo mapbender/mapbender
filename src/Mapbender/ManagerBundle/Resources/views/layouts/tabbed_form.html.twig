@@ -1,0 +1,16 @@
+{% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
+{% block tabs_wrapper %}
+    {{- form_start(form, {"attr": {"novalidate": "novalidate"}}) -}}
+    {%- if form._token is defined -%}
+        {{- form_row(form._token) -}}
+    {%- endif -%}
+    {{- parent() -}}
+    <div class="button-group">
+        {% block form_buttons %}
+        <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="btn btn-success btn-sm"/>
+        {%- set _return_url = return_url | default(path( return_path | default('mapbender_manager_application_index'))) -%}
+        <a href="{{ _return_url }}" class="btn btn-default btn-sm">{{ 'mb.actions.cancel' | trans}}</a>
+        {% endblock %}
+    </div>
+    {{- form_end(form) -}}
+{% endblock %}

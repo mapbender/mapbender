@@ -1,4 +1,5 @@
 @import "libs/variables";
+@import "bundles/mapbendercore/sass/template/fullscreen_variables.scss";
 @import "libs/mixins";
 @import "libs/icons";
 @import "theme/mapbender3";
@@ -20,12 +21,17 @@ body {
   overflow: hidden;
 }
 
+.contentPane {
+  // prevent invisible contained elements from gaining size; a sized contentPane breaks popup
+  // positioning on drag / resize
+  height: 0;
+  overflow-y: hidden;
+}
+
 /*
   Override bootstrap standard declaration
 */
 .modal-body {
-  padding: 0px;
-
   &.confirm-dialog{
     padding: 5px;
   }
@@ -54,6 +60,19 @@ body {
     border-bottom: 1px solid #ffffff;
     margin-top: 10px;
     margin-bottom: 10px;
+  }
+
+  .btn {
+    $mainColor: #6FB536;
+    border-radius: 0;
+    font-size: 11px;
+    padding: 4px 9px;
+    border-color: #538E24;
+    background-color: $mainColor;
+    color: #ffffff;
+    &:hover, &:focus {
+      background-color: darken($mainColor, 10%);
+    }
   }
 
   // Tab-Navigator
@@ -85,93 +104,121 @@ body {
 }
 
 .logoContainer {
-  position: relative;
-  z-index: 10;
-  display: inline-block;
-  padding: $space/2 $space;
-  margin-left: $space;
   float: left;
-  background-color: white;
-}
-
-/* ---------------------------------------------------------- CONTENT */
-.templateWrapper {
-  margin: 0 auto;
-  overflow: hidden;
-  @include absolute(0 0 0 0);
-}
-
-.contentPane {
-  width: 100%;
-  height: 100%;
-  @include absolute(0 '' '' 0);
-  .left-top, .right-top, .left-bottom, .right-bottom {
-    z-index: 1;
-  }
-
-  /* Positioning */
-  .left-top {
-    @include absolute($space*7 '' '' $space);
-  }
-  .right-top {
-    @include absolute($space*3 $space '' '');
-  }
-  .left-bottom {
-    @include absolute('' '' $space*3 $space);
-  }
-  .right-bottom {
-    @include absolute('' $space $space*3 '');
+  .project-name {
+    font-size: 1.3rem;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.5em;
   }
 }
 
-/* --------------------------------------------------------- TOOLBARS */
+
 .toolBar {
-  z-index: 4;
-  label, span {
-    font-weight: normal;
-    font-size: 11px;
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */
-  }
+  opacity: 1; // avoid applying opacity twice (gradient + $toolBarOpacity)
   &.top {
-    position: relative;
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.9), rgba($toolBarBackgroundColor, 0.7));
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    // scale button icons and text all to the same size, undoing .iconBig
+    font-size: 1.6rem;
+    .toolBarItem {
+      .iconBig {
+        vertical-align: initial;
+        font-size: inherit;
+      }
+    }
   }
   &.bottom {
-    @include absolute('' 0 0 0);
+    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.7), rgba($toolBarBackgroundColor, 0.9));
+    box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+}
+.toolBar.top {
+  .toolBarItem {
+    border-radius: 2 * $radius;
+    &.logoContainer {
+      border-radius: 0;
+      padding: 0; // use padding pixels for more of the logo
+    }
+  }
+  .toolBarItem + .toolBarItem {
+    margin-left: 0.5rem;
   }
 }
 
-/* --------------------------------------------------------- SIDEPANE */
-$tabSize: 32px;
-.sidePaneTabs {
-  width: $tabSize;
-  height: $tabSize;
-  @include absolute(40% '' '' '');
-  /*@include transition(all 0.3s ease-in-out);*/
+
+.logo {
+  max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
+}
+.map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  .map-overlay-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    div.toolBar {
+      flex: 0;
+    }
+    div.sidePane {
+      flex: 1;
+    }
+    div.toolBar {
+      position: initial;
+    }
+  }
+}
+
+.map-overlay, .map-overlay-column, .overlay-fill {
+  pointer-events: none;
+}
+.overlay-fill > *, .toolBar {
+  pointer-events: initial;
+}
+
+.collapse-toggle {
+  color: #444;
+  background: #ccc;
 }
 
 .sidePane {
-  width: 10px;
-  z-index: 20;
-  display: none;
-
-  &.left {
-    @include absolute(120px '' $space*3 0);
-    .sidePaneTabs {
-      right: -$tabSize;
-    }
+  &:after {
+    clear: both;
   }
-  &.right {
-    @include absolute(80px 0 $space*3 '');
-    .sidePaneTabs {
-      left: -$tabSize;
-    }
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
+  color: #222;
+  // Make Legend and maybe other images visible against inverted background
+  img {
+    background: rgba(192, 192, 192, 0.85);
+    padding: $radius;
+    border-radius: $radius;
   }
 }
 
-.sidePaneOpened .sidePane {
-  width: 350px;
+html .accordionContainer .accordion {
+  background-color: #777;
+  color: #ddd;
+  font-size: 1.6rem;
+  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
+  &.active {
+    color: #fff;
+    &:hover {
+      background-color: #888;
+    }
+  }
+  &:hover {
+    background-color: #888;
+  }
+  &.active, &:hover, &.active:hover {
+    background-color: #888;
+  }
 }
 
+.mb-element-layertree, .mb-element-basesourceswitcher {
+  font-size: 1.1rem;
+}

@@ -5,134 +5,71 @@
 @import "libs/icons";
 
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
+@import 'bundles/mapbendermanager/sass/blocklist.scss';
 
 @import "bundles/mapbendermanager/sass/element/form.scss";
 @import "bundles/mapbendermanager/sass/element/layertree.scss";
 @import "bundles/mapbendermanager/sass/element/map.scss";
 @import "bundles/mapbendermanager/sass/element/printclient.scss";
 @import "bundles/mapbendermanager/sass/manager/services.scss";
-@import "bundles/mapbendermanager/sass/manager/user_control.scss";
 
 // ------------------------------------------------------- APPLICATIONS
-.screenshot_upload {
-  .upload {
+.inputWrapper.upload {
+  position: relative;
+  .btn {
+    // Increase z to enable cursor / color change on hoversm
     position: relative;
-    .upload_label {
-      max-width: 60%;
-      text-overflow: ellipsis;
-    }
+    z-index: 1;
+  }
+  .upload_label {
+    max-width: 60%;
+    text-overflow: ellipsis;
+    margin-left: 0.5em;
   }
 
-  input, .inputWrapper {
+  input {
     opacity: 0;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
   }
-  .upload:hover .upload_button {
-    background-color: darken($buttonFirstColor, 5%);
-  }
 }
-
-.listFilterApplicationBoxes{
-  $col1Width: 120px;
-  $height:120px;
-
-  .col1{
-    width:$col1Width;
-    line-height: $height;
-    max-height: $height;
-    text-align: center;
-    font-size: 70px;
-    color: lighten($darkFontColor, 10%);
-
-    div.cell {
-      max-height: inherit;
-    }
-    img {
-      max-height: inherit;
-      max-width: 100%;
-      display: block;
-      margin: 0 auto;
-    }
-  }
-}
-.mapbender-popup {
-  // modal mapbender popups only appear in the backend, aka manager application
-  width: max($popupModalWidth, $elementPopupWidth);
-}
-.popup.elementPopup {
-  width: $elementPopupWidth;
-  min-width: $popupModalWidth;
-  .popupContent {
-    min-width: $elementPopupBodyWidth;
-  }
-  /*
-    Temporary hack for FOM's legacy form field theme:
-    Ensure enough vertical space that certain element popups ending with a dropdown
-    (usually 1 or 2 text fields followed by a "target" <select>) size properly, so that the
-    absolute-positioned dropdown overlay does not vanish into the scrollable area below the body
-    of the popup. E.g. scale selector, image export.
-   */
-  min-height: 520px;
-}
-
-.popup.new-instance-select {
-  min-width: max($popupModalWidth, $elementPopupWidth);
-  width: 70%;
-}
-
-
-
 
 // ----------------------------------------------- NEW/EDIT APPLICATION
 .containerBaseData{
   $height: 200px;
   $width: 200px;
 
+  .screenshot-wrapper {
+    margin-top: 29px; // HACK: same as line-height of first label in application base data...
+    .btn {
+      vertical-align: top;
+      margin-left: 0.5em;
+    }
+  }
   // screen shot holder
   .screenshot_img{
-    width:200px;
-    height:200px;
-    margin: 29px 29px; // HACK: same as line-height of first label in application base data...
-    position: relative;  // for absolute .delete button
+    border-radius: 15px; // match .listFilterBoxes .preview-box
+    display: inline-block;
 
-    box-sizing: content-box;
-    border: 1px solid #c0c0c0;
-    background-color: #f9f9f9;
-    display: table;
-
-    overflow: hidden;
-
-    img {
-      display: block;
-    }
-    &:not(.default) .placeholder-icon {
-      display: none;
-    }
     &.default {
+      background-color: #EAEAEA;  // Same background as .listFilterBoxes li .preview-box
       img {
         display: none;
       }
     }
-    &.default{
-      border: 1px solid #a2a2a2;
-      background-color:#404040;
+    &:not(.default) {
+      .placeholder-icon {
+        display: none;
+      }
     }
 
     .placeholder-icon {
       font-size: 60px;
-      color:lighten($darkFontColor, 10%);
     }
 
     div.cell_edit{
-      position: relative;
-      .delete{
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
         display: table-cell;
         vertical-align:middle;
         text-align: center;
@@ -153,17 +90,11 @@
 }
 
 /**
-  Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
-  because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
+  Used for both elements and layersets.
  */
 .application-component-table {
-  width: 100%;
-  margin:$space 0;
-  thead {
-    border-bottom: solid 5px darken($contentColor, 15%);
-  }
-  th {
-    font-weight:normal;
+  thead>tr>th:first-child {
+    padding-left: 0;
   }
   tr.ui-sortable-handle {
     cursor: move;
@@ -174,90 +105,41 @@
       background-color:darken($contentColor, 4.8%);
     }
   }
-
-  tbody {
-    tr {
-      border-top: solid 1px darken($contentColor, 10%);
-      vertical-align: top;
-
-      >td:first-child {
-        // indent body row a bit vs first thead > th
-        padding-left: $space/2;
-      }
-      td {
-        // enforce a bit of space between cells, INCLUDING the very last
-        // cell (to mirror the "indent inwards" style of the first cell)
-        padding-right: $space/2;
-      }
+  // Element region / Layerset titles use embedded h3 tags
+  thead h3 {
+    font-size: 140%;
+  }
+  thead .regionProperties {
+    .popover {
+      width: 22em;
+      min-width: 22em;
+      left: auto;
     }
   }
-  tr {
-    height:30px;
-  }
-  .iconColumn {
-    // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
-    padding-right: $space / 2;
-    // neat alignment for "Layouts" table (differing number of icons in cells)
-    text-align: right;
-    // .iconColumn contents mix div / a / span elements, but they should all
-    // size and align the same way
-    > * {
-      display: inline-block;
-      min-width: 1.2em;
+  .regionProperties .form-horizontal {
+    .labelInput {
+      width: 45%;
+      margin-right: 4%;
     }
-    a:before {
-      // undo built-in margin on a.icon...:before
-      margin: 0;
+    .inputWrapper, .dropdown {
+      width: 50%;
     }
-  }
-  .iconColumn, .idColumn {
-    white-space: nowrap;
   }
 }
-
 // To prevent horizontal collapsse in drag-and-drop transit, .layersetTable and .elementsTable both need certain
 // cells to have forced expansion
 .elementsTable {
   .typeColumn, .titleColumn {width: 49%;}
 
   .placeholderRow{height:$space;}
+  .screentype-icon.disabled {
+    opacity: 0.3;
+  }
 }
 
 .layersetTable{
   .titleColumn {
     width: 99%;
-  }
-}
-
-
-// ------------------------------------------------------------- LAYOUT
-.checkContainer{
-  color:$middleFontColor;
-  display: block;
-  margin-bottom: $space/2;
-  background-color: $contentColor;
-  padding:5px $space/2 5px $space/2;
-  border:solid 1px white;
-  @include border-radius($radius);
-
-  &:hover{
-    background-color: white;
-    border:solid 1px darken(white, 15%);
-  }
-}
-.regionProperties{
-  .radioWrapper {
-    margin-left: $space/2;
-    opacity: .45;
-    &.disabled {
-      opacity: .2;
-    }
-    &.checked {
-      opacity: 1;
-    }
-    &.checked.disabled {
-      opacity: .6;
-    }
   }
 }
 

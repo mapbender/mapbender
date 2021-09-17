@@ -1,4 +1,5 @@
 (function($){
+    'use strict';
 
     /**
      * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~export
@@ -7,22 +8,20 @@
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
-        _geometryToGeoJson: null,
         $form: null,
 
         _create: function(){
-            if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
-                return;
-            }
             this.$form = $('form', this.element);
-            $(this.element).show();
-
-            var olGeoJson = new OpenLayers.Format.GeoJSON();
-            this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.onElementReady(this.options.target, function(mbMap) {
+                self.mbMap = mbMap;
+                self.map = mbMap;   // legacy
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget(self.widgetName, self.options.target);
+            });
         },
-        _setup: function(){
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
+        _setup: function() {
             this.$form.on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
         },
@@ -57,47 +56,59 @@
             }
         },
         /**
-         * @returns {Array<Object>} sourceTreeish configuration objects
+         * @returns {Array<Mapbender.Source>}
          * @private
          */
-        _getRasterSourceDefs: function() {
-            return this.map.getSourceTree();
+        _getRasterSources: function() {
+            return this.map.getModel().getSources().filter(function(x) {
+                return x.getActive();
+            });
         },
         _getExportScale: function() {
-            return null;
+            return this.mbMap.getModel().getCurrentScale(false);
         },
         _getExportExtent: function() {
-            return this.map.map.olMap.getExtent();
+            var lbrt = this.map.model.getCurrentExtentArray();
+            return {
+                left: lbrt[0],
+                bottom: lbrt[1],
+                right: lbrt[2],
+                top: lbrt[3]
+            };
         },
         _collectRasterLayerData: function() {
-            var sources = this._getRasterSourceDefs();
+            var sources = this._getRasterSources();
             var scale = this._getExportScale();
             var extent = this._getExportExtent();
+            var srsName = this.map.model.getCurrentProjectionCode();
 
             var dataOut = [];
 
             for (var i = 0; i < sources.length; i++) {
-                var sourceDef = sources[i];
-                var olLayer = this.map.model.getNativeLayer(sourceDef);
-                var extra = {
-                    opacity: sourceDef.configuration.options.opacity,
-                    changeAxis: this._changeAxis(olLayer)
-                };
-                _.forEach(this.map.model.getPrintConfigEx(sourceDef, scale, extent), function(printConfig) {
-                    dataOut.push($.extend({}, printConfig, extra));
-                });
+                var source = sources[i];
+                var sourcePrintData = source.getPrintConfigs(extent, scale, srsName);
+                dataOut.push.apply(dataOut, sourcePrintData);
             }
             return dataOut;
         },
         _collectJobData: function() {
             var mapExtent = this._getExportExtent();
-            var imageSize = this.map.map.olMap.getCurrentSize();
+            var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryAndMarkerLayers();
+            var geometryLayers;
+            switch (Mapbender.mapEngine.code) {
+                default:
+                    geometryLayers = this._collectGeometryLayers4();
+                    break;
+                case 'ol2':
+                    geometryLayers = this._collectGeometryAndMarkerLayers();
+                    break;
+            }
             return {
                 layers: rasterLayers.concat(geometryLayers),
-                width: imageSize.w,
-                height: imageSize.h,
+                width: imageSize.width,
+                height: imageSize.height,
+                rotation: -this.mbMap.getModel().getViewRotation(),
                 center: {
                     x: Math.min(mapExtent.left, mapExtent.right) + 0.5 * Math.abs(mapExtent.right - mapExtent.left),
                     y: Math.min(mapExtent.bottom, mapExtent.top) + 0.5 * Math.abs(mapExtent.top - mapExtent.bottom)
@@ -110,12 +121,18 @@
         },
         _onSubmit: function(evt) {
             // add job data to hidden form fields
-            var jobData = this._collectJobData();
-            if (!jobData.layers.length) {
-                Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
-                return false;
+            var jobData;
+            try {
+                jobData = this._collectJobData();
+                if (!jobData.layers.length) {
+                    Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
+                    return false;
+                }
+                this._injectJobData(jobData);
+            } catch (e) {
+                evt.preventDefault();
+                throw e;
             }
-            this._injectJobData(jobData);
             return true;    // let the browser do the rest
         },
         _injectJobData: function(jobData) {
@@ -195,19 +212,15 @@
         /**
          * Extracts and preprocesses the geometry from a feature for export backend consumption.
          *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @param {OpenLayers.Feature.Vector} feature
-         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (native Openlayers format!)
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer|ol.layer.Vector} layer
+         * @param {OpenLayers.Feature.Vector|ol.Feature} feature
+         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (Openlayers 2-native svg format!)
          * @private
+         * engine-agnostic
          */
         _extractFeatureGeometry: function(layer, feature) {
-            var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style) {
-                // stringify => decode: makes a deep copy of the style at the moment of capture
-                geometry.style = JSON.parse(JSON.stringify(feature.style));
-            } else {
-                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
-            }
+            var geometry = this.map.model.featureToGeoJsonGeometry(feature);
+            geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
                 geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
             }
@@ -232,6 +245,18 @@
             }
             return false;
         },
+        _dumpFeatureGeometries: function(layer, features, resolution) {
+            return this.map.model.dumpGeoJsonFeatures(features, layer, resolution, true)
+                .map(function(gjFeature) {
+                    // Legacy data format quirks (not actually GeoJson):
+                    // 1) Strip "type: 'Feature'" outer container object
+                    // 2) move style into geometry object
+                    return Object.assign({}, gjFeature.geometry, {
+                        style: gjFeature.style
+                    });
+                })
+            ;
+        },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
          * to have passsed through the _filterGeometryLayer check positively.
@@ -241,16 +266,46 @@
          * @private
          */
         _extractGeometryLayerData: function(layer) {
-            var geometries = layer.features
-                .filter(this._filterFeature.bind(this))
-                .map(this._extractFeatureGeometry.bind(this, layer))
-                .filter(this._filterFeatureGeometry.bind(this))
-            ;
+            var postFilter = this._filterFeatureGeometry.bind(this);
+            var features = layer.features.filter(this._filterFeature.bind(this))
+            var geometries = this._dumpFeatureGeometries(layer, features);
             return {
                 type: 'GeoJSON+Style',
                 opacity: 1,
-                geometries: geometries
+                geometries: geometries.filter(postFilter)
             };
+        },
+        _collectGeometryLayers4: function() {
+            var layersFlat = [];
+            this.map.model.olMap.getLayers().getArray().forEach(function (olLayer) {
+                olLayer.getLayersArray(layersFlat);
+            });
+            var vectorLayers = layersFlat.filter(function (olLayer) {
+                return (olLayer instanceof ol.layer.Vector) && olLayer.getVisible();
+            });
+            var dataOut = [];
+            for (var li = 0; li < vectorLayers.length; ++li) {
+                var layer = vectorLayers[li];
+                var features = layer.getSource().getFeatures();
+                if (!features.length) {
+                    continue;
+                }
+                // printclient support HACK
+                // @todo: implement filterFeature properly for dual-engine support
+                if (this.feature) {
+                    var skipFeature = this.feature;
+                    features = features.filter(function(f) {
+                        return f !== skipFeature;
+                    });
+                }
+                var layerFeatureData = this._dumpFeatureGeometries(layer, features);
+                dataOut.push({
+                    "type": "GeoJSON+Style",
+                    "opacity": layer.getOpacity(),
+                    "geometries": layerFeatureData
+                });
+            }
+            return dataOut;
         },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
@@ -318,33 +373,6 @@
                 return urlOut;
             }
         },
-        /**
-         * Check BBOX format inversion
-         *
-         * @param {OpenLayers.Layer.HTTPRequest} layer
-         * @returns {boolean}
-         * @private
-         */
-        _changeAxis: function(layer) {
-            // Overview map projection property is a string, regular map projection is an object.
-            // Normalize to string.
-            var projection = (layer.map.displayProjection || layer.map.getProjection());
-            var projCode;
-            if (typeof projection === 'string') {
-                projCode = projection;
-            } else {
-                projCode = projection.projCode;
-            }
-
-            if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
         _noDanglingCommaDummy: null
     });
 

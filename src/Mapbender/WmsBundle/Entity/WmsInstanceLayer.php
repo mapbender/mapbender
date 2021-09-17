@@ -80,11 +80,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $allowtoggle;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowreorder = true;
-
-    /**
      * @ORM\Column(type="float", nullable=true)
      */
     protected $minScale;
@@ -111,6 +106,22 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $sublayers = $this->getSublayer()->getValues();
+            $newSublayers = array();
+            $this->setId(null);
+            foreach ($sublayers as $layer) {
+                /** @var static $layer */
+                $layerClone = clone $layer;
+                $layerClone->setParent($this);
+                $newSublayers[] = $layerClone;
+            }
+            $this->sublayer = new ArrayCollection($newSublayers);
+        }
     }
 
     /**
@@ -338,28 +349,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setAllowtoggle($allowtoggle)
     {
         $this->allowtoggle = $allowtoggle;
-        return $this;
-    }
-
-    /**
-     * Get allowreorder
-     *
-     * @return boolean $allowreorder
-     */
-    public function getAllowreorder()
-    {
-        return $this->allowreorder;
-    }
-
-    /**
-     * Set allow reorder
-     *
-     * @param boolean $value
-     * @return $this
-     */
-    public function setAllowreorder($value)
-    {
-        $this->allowreorder = $value;
         return $this;
     }
 

@@ -50,8 +50,7 @@ mb:
         type: Тип
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
-        no_element_added:
-          '': 'Элемент не добавлен'
+        no_element_added: Элемент не добавлен
       zoombar:
         draggable: Перетаскиваемый
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Безопасность
-          add_users_groups: 'Добавить пользователей и группы'
           public: публичный доступ
         save: Сохранить
         cancel: Отменить
@@ -113,7 +111,6 @@ mb:
           btn:
             export: Экспорт
         import:
-          addApplications: Приложения
           addAcl: ACLs
           addSources: Источники
           btn:
@@ -123,24 +120,18 @@ mb:
           title: 'URL заголовок'
         description: Описание
         template: Template
-      applications: Приложения
     source:
       serviceurl: 'Сервис URL'
       username: 'Имя пользователя'
       password: Пароль
       load: Загрузить
     managerbundle:
-      applications: Приложения
       new_application: 'Новое приложение'
-      sources: Источники
       add_source: 'Добавить источник'
       add_user_group: 'Добавить пользователей и группы'
       acl_element: 'Acl элемент'
       import_application: Импорт
       export_application: Экспорт
-    element:
-      yaml:
-        message: 'Используйте <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Формат для описания конфигурации элемента..'
     components:
       popup:
         add_element:
@@ -161,12 +152,6 @@ mb:
         delete_user_group:
           title: 'Подтвердите удаление'
           content: 'Действительно удалить%userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Вкладки
-        accordion:
-          label: Accordion
     import:
       application:
         failed: 'Приложение не может быть импортировано.'

@@ -1,12 +1,13 @@
-<div id="dimension{{ num }}" class="on-off on-off-title">
-    <div class="row no-gutters">
+<div class="content-toggle-container closed">
+  <div class="panel-heading content-toggle clickable">
+    <div class="row no-gutters ">
         <div class="col-xs-3 col-md-2">{{ dim.vars.data.name | default('undefined') }}</div>
-        <div class="col-xs-4 col-md-3">
+        <div class="col-xs-4 col-md-3 form-inline">
             {{ form_row(dim.active) }}
-        </div>
+       </div>
     </div>
-</div>
-<div id="dimension{{ num }}-content" class="on-off-content hidden form-horizontal" data-diminstconfig="{{ dim.vars.diminstconfig | json_encode }}" data-origextent="{{ dim.vars.origextent }}">
+  </div>
+  <div class="content-toggle-target panel-body" data-diminstconfig="{{ dim.vars.diminstconfig | json_encode }}" data-origextent="{{ dim.vars.origextent }}">
     <div class="row no-gutters">
         <div class="col-xs-3">
             {{ form_row(dim.multipleValues) }}
@@ -26,5 +27,6 @@
     {% if dim.extentRanges is defined %}
         {{ form_row(dim.extentRanges) }}
     {% endif %}
-    <div id="dimension{{ num }}-extent" class="mb-slider"></div>
+    <div class="mb-slider"></div>
+  </div>
 </div>

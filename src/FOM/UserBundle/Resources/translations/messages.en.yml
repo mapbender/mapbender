@@ -1,0 +1,155 @@
+fom:
+  acl:
+    group_label:
+      anonymous: Anonymous users
+      authenticated: All authenticated users
+  user:
+    registration:
+      email_body_html: '<p>Hello %user_username%,</p><p>You have just recently registered to the Mapbender3 instance. To conclude your registration, please, click please <a href="%url%">here</a>.</p>'
+      done:
+        title: Registration
+        congratulations: Congratulations!
+        account_activated: 'You''re account has been successfully activated and is ready for use.'
+        back_to_login: 'Back to login'
+      form:
+        title: Registration
+        choose_password: 'Choose password'
+        confirm_password: 'Confirm password'
+        email: Email
+        back_to_login: 'Back to login'
+        register: Register
+      email_subject: 'Your registration'
+      send:
+        title: Registration
+        account_created: "Your account has been created. An email with your activation code\n            and link has been sent to the address you provided."
+        back_to_login: 'Back to login'
+      email_body_text: 'Hello %user_username%, You have just recently registered to the Mapbender3 instance. To conclude your registration, please, call in your browser the link %url%.'
+    group:
+      index:
+        groups: Groups
+        add_new_group: 'Add new group'
+        title: Title
+        description: Description
+        edit_group: 'Edit group'
+        delete_group: 'Delete group'
+        no_groups_available: 'No groups available.'
+      form:
+        edit_group: 'Edit Group'
+        new_group: 'New Group'
+      container:
+        base_data: 'Base data'
+        users: Users
+        users_of_selected: 'users of %users_count% selected'
+        no_user_exists: 'No user exists.'
+    login:
+      error_tockenexp:
+        title: 'Password Reset'
+        sorry: Sorry!
+        registration_token_expired: 'Your registration token has expired. Unfortunately, you will have to request a new token.'
+        request_new_token: 'Request new token'
+        back_to_login: 'Back to login'
+      login:
+        title: Login
+        username: User name
+        password: Password
+        register: Register
+        forgot_password: 'Forgot password'
+        login: Login
+      error_notocken:
+        password_reset: 'Password reset'
+        sorry: Sorry!
+        no_such_tocken: 'No such token can be found. If you think this is an error, please contact the site administrator.'
+        contact: 'Contact administrator'
+        back_to_login: 'Back to login'
+    user:
+      index:
+        title: Users
+        add_new_user: 'Add new user'
+        name: Name
+        email: E-Mail
+        groups: Groups
+        edit_user: 'Edit user'
+        contact_user: 'Contact user via e-mail'
+        edit_group: 'Edit group'
+        delete_user: 'Delete user'
+        no_users_available: 'No users available.'
+      form:
+        edit_user: 'Edit User'
+        new_user: 'New User'
+      container:
+        base_data: 'Base data'
+        profile: Profile
+        groups: Groups
+        security: Security
+        choose_password: 'Choose password'
+        confirm_password: 'Confirm password'
+        name: Name
+        users_of_selected: 'groups of %users_count% selected'
+        no_groups_defined: No groups defined
+        username: User name
+        description: Description
+        activated: activated
+    acl:
+      index:
+        access_control_lists: 'Global Access Control Lists'
+        name: Name
+        class: Class
+        edit: Edit
+      required: 'Required fields are marked with dark labels, while optional fields have lighter labels.'
+      edit:
+        edit_class_acl: 'Edit Class ACL for %name%'
+      groups_users:
+        name: Name
+        no_goups_users: 'No groups and users defined.'
+    password:
+      email_body_html: '<p>Hello %user_username%,</p><p>You have requested a new password for your Mapbender3 account. Please click <a href="%url%"> here to change it.</p>'
+      request_error_no_user: 'No such user can be found.'
+      done:
+        password_reset: 'Password reset'
+        congratulations: Congratulations!
+        password_been_reset: 'You''re password has been successfully reset.'
+        back_to_login: 'Back to login'
+      reset:
+        title: 'Reset password'
+        btn: 'Reset password'
+      form:
+        message: 'To reset your password please provide your username or your e-mail address.'
+        title: 'Forgot password'
+        username_email: User name or Email
+        back_to_login: 'Back to login'
+        require_password: 'Require password'
+      email_subject: 'Forgot password'
+      send:
+        title: 'Password Reset'
+        email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
+        back_to_login: 'Back to login'
+      request:
+        user_inactive: 'This user is inactive. Please activate first.'
+      email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender3 account. Please follow this link to change it: "%url%".'
+    userbundle:
+      user_control: 'User control'
+      users: Users
+      new_user: 'New user'
+      groups: Groups
+      new_group: 'New group'
+      classes:
+        acls: ACLs
+        users: Users
+        groups: groups
+      roles:
+        super_admin: 'Can administrate everything (super admin)'
+        user_admin: 'Can administrate users and groups'
+IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
+form:
+  profile:
+    basic:
+      firstname: 'First name'
+      lastName: 'Last name'
+      notes: Notes
+      phone: Phone
+      organizationName: Organization
+      organizationRole: Position
+      street: Street
+      zipCode: 'Zip code'
+      city: City
+      country: Country

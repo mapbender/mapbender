@@ -2,9 +2,6 @@
 $rootPath:  "bundles/mapbendercore/"; // !default;
 $imageBasePath: $rootPath + "image";
 $iconBasePath: $rootPath + "fonts";
-$contentPatternUrl: '';
-$managerContentPatternUrl: '';
-$headPatternUrl: $imageBasePath + "/head.png";
 
 //------------------------------------------------------------------font
 $fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -35,6 +32,15 @@ $darkFontColor:#3f3f3f; // darker gray
 $middleFontColor:#707070; // lighter gray
 $lightFontColor:#fff; // white
 
+// Toolbar colors (frontend)
+$toolBarFontColor: #222;
+$toolBarBackgroundColor: #eee;
+$toolBarOpacity: 0.8;
+// Default and hover opacity for Button (and Button-like) Elements in toolbars
+$toolBarButtonDefaultOpacity: 0.7;
+$toolBarButtonHoverOpacity: 1.0;
+$toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity;
+
 // the holy colors
 $ciColor:#5b932a; // green
 $ciColor2:#4899ba; // blue
@@ -58,3 +64,5 @@ $errorFontColor: #E12F2F;
 
 $containerBorderRadius: 5px !default;
 $elementBorderRadius: $containerBorderRadius - 2px;
+
+$sliderHandleBackgroundColor: $ciColor;

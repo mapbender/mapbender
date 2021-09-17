@@ -13,14 +13,80 @@
       -ms-user-select: none;      /* IE 10+ */
       user-select: none;          /* Likely future */
     }
-    @include absolute(0 0 0 0);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 }
 
 .mb-element-map {
-  .olHandlerBoxZoomBox {
+  .olHandlerBoxZoomBox, .ol-box {
     border: 2px solid $firstColor;
     background-color: white;
-    @include opacity(.6);
+    opacity: .6;
   }
+
+  // Minimal selection / event rules from original Openlayers 6 css to allow
+  // map interactions to properly receive events.
+  .ol-viewport, .ol-unselectable {
+    user-select: none;
+  }
+  .ol-overlaycontainer, .ol-overlaycontainer-stopevent {
+    pointer-events: none;
+  }
+  .ol-overlaycontainer > *, .ol-overlaycontainer-stopevent > * {
+    pointer-events: auto;
+  }
+  .ol-selectable {
+    user-select: text;
+  }
+
+  // Popup styling (Openlayers >= 4 only)
+  .mbmappopup {
+    background: #fff;
+    font-size: 1rem;
+    padding: 0.5em;
+    border: 1px solid #aaa;
+    border-radius: 0.5em;
+
+    .close-btn {
+      font-size: 153%;
+      float: right;
+      padding-left: 0.5em;
+      padding-bottom: 0.5em;
+    }
+    // Offset and anchor the whole popup, add an "arrow" with the usual border hacks
+    position: absolute;
+    min-width: 15vw;
+    left: -50px;
+    top: 12px;  // space used by "arrow" borders
+
+
+    &:after, &:before {
+      bottom: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    // "outer" arrow (grey, match popup border color)
+    &:before {
+      border-bottom-color: #aaa; // =popup border
+      border-width: 11px;
+      left: 50px;   // inverse of mbmappopup's left
+      margin-left: -11px;
+    }
+    // "inner" arrow (white)
+    &:after {
+      border-bottom-color: #fff; // =popup background
+      border-width: 10px;
+      left: 50px;   // inverse of mbmappopup's left
+      margin-left: -10px;
+    }
+  }
+
 }

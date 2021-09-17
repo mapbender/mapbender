@@ -1,5 +1,4 @@
 $(function() {
-    var popupCls = Mapbender.Popup;
     function _handleLoginRedirect(html) {
         if (/^<(!DOCTYPE|html)/i.test(html)) {
             // Redirected to login
@@ -34,7 +33,7 @@ $(function() {
         });
     }
     function confirmDiscard(e) {
-        var $form = $('form', $(this).closest('.popup'));
+        var $form = $('form', $(this).closest('.popup, .modal-dialog'));
         if ($form.data('dirty') && !$form.data('discard')) {
             // @todo: translate
             if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
@@ -72,30 +71,24 @@ $(function() {
             });
         }
     });
-    $(".regionProperties").each(function() {
-        function updateGroupIcons() {
-            function updateWrapper() {
-                var $cb = $('input[type="radio"]', this);
-                $(this)
-                    .toggleClass('checked', $cb.prop('checked'))
-                    .toggleClass('disabled', $cb.prop('disabled'))
-                ;
-            }
-            $('.radioWrapper', this).each(updateWrapper);
-        }
-        function onClick() {
-            var $clickedRadio = $('input[type="radio"]', this);
-            $clickedRadio.prop('checked', true);
-            updateGroupIcons.call($(this).parent());
-            $clickedRadio.trigger('change');
-        }
-        updateGroupIcons.call(this);
-        $(this).on('click', '.radioWrapper', onClick);
+    $('.regionProperties[data-url]').on('change', ':input', function() {
+        var $rprop = $(this).closest('.regionProperties');
+        var $inputs = $(':input', $rprop).filter(function() {
+            var $input = $(this);
+            return $input.attr('type') !== 'radio' || $input.is(':checked');
+        });
+        // Include CSRF token, so server can run validation
+        $inputs = $inputs.add($('input[name="application[_token]"]', $rprop.closest('form')));
+        var formData = $inputs.serializeArray();
+        $.ajax($rprop.attr('data-url'), {
+            method: 'POST',
+            data: formData
+        });
     });
 
     $("table.layersetTable tbody").sortable({
         connectWith: "table.layersetTable tbody",
-        items: "tr:not(.header)",
+        items: "tr.sourceinst[data-href]",
         distance: 20,
         stop: function(event, ui) {
             var $item = $(ui.item);
@@ -105,7 +98,7 @@ $(function() {
                 type: "POST",
                 data: {
                     number: $siblings.index($item),
-                    new_layersetId: $item.closest('table').attr("data-id")
+                    new_layersetId: $item.closest('table.layersetTable[data-id]').attr("data-id")
                 }
             });
         }
@@ -116,16 +109,18 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            var popup = new popupCls({
+            // Support hack for Digitizer / DataManager using complex Yaml
+            // configuration
+            var useWideModal = !!$('.elementFormDataManager', nodes).length;
+            var $form = $(nodes);
+            var $modal = window.Mapbender.bootstrapModal($form, {
                 title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
                 subTitle: strings.subTitle || '',
-                modal: true,
-                cssClass: "elementPopup",
-                content: [nodes],
+                cssClass: useWideModal && 'modal-lg',
                 buttons: (extraButtons || []).slice().concat([
                     {
                         label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-success btn-sm',
                         callback: function() {
                             elementFormSubmit(this.$element, formUrl).then(function(success) {
                                 if (success) {
@@ -136,19 +131,27 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-default btn-sm popupClose'
                     }
                 ])
             });
-
-            popup.$element.on('change', function() {
-                var $form = $('form', popup.$element);
+            $form.on('change', function() {
                 $form.data('dirty', true);
                 $form.data('discard', false);
             });
-            popup.$element.on('close', function(event, token) {
-                if (!confirmDiscard.call(this, event)) {
-                    token.cancel = true;
+            $modal.on('hide.bs.modal', function(event) {
+                if (!confirmDiscard.call($form, event)) {
+                    event.preventDefault();
+                }
+            });
+            // Fix CodeMirror textareas not rendering properly before first
+            // focus / scroll
+            $('.CodeMirror-wrap', $modal).each(function() {
+                var cm = this.CodeMirror;
+                if (cm) {
+                    window.setTimeout(function() {
+                        cm.refresh();
+                    });
                 }
             });
         });
@@ -162,35 +165,34 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            var popup = new popupCls({
+            var $modal = Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans(title),
-                subTitle: ' - ' + regionName,
-                modal: true,
-                content: response,
-                cssClass: "elementPopup",
+                subTitle: regionName,
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
+                        cssClass: 'btn btn-default btn-sm popupClose'
                     }
                 ]
             });
-            popup.$element.on('click', '.chooseElement', function(e) {
+            $modal.on('click', '.chooseElement', function(e) {
                 e.preventDefault();
                 var elementTitle = $(this).attr('data-element-title');
                 var editStrings = {
                     title: title,
-                    subTitle: ' - ' + regionName + ' - ' + elementTitle,
+                    subTitle: regionName + ' - ' + elementTitle,
                     save: 'mb.actions.add',
                     cancel: 'mb.actions.cancel'
                 };
+                $modal.modal('hide');
 
                 startEditElement($(this).attr('href'), editStrings, [
                     {
                         label: Mapbender.trans('mb.actions.back'),
-                        cssClass: 'button buttonBack',
+                        cssClass: 'btn btn-warning btn-sm pull-left',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
+                                $(this).closest('.modal').modal('hide');
                                 startElementChooser(regionName, listUrl);
                             }
                         }
@@ -244,8 +246,82 @@ $(function() {
         );
     }
 
-    // Delete element
-    $('.removeElement').bind("click", function() {
+    // Layers --------------------------------------------------------------------------------------
+    $(document).on('click', '.-fn-add-layerset, .-fn-edit-layerset', function() {
+        var $this = $(this);
+        var isEdit = !$this.hasClass("-fn-add-layerset");
+        var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
+                                : "mb.manager.components.popup.add_edit_layerset.title_add";
+        var confirmText = isEdit ? 'mb.actions.save'
+                                 : 'mb.actions.add';
+        var url = $this.attr('data-url');
+        _formJax({url: url}).then(function(nodes) {
+            if (!nodes || !nodes.length) {
+                return;
+            }
+            Mapbender.bootstrapModal(nodes, {
+                title: Mapbender.trans(popupTitle),
+                buttons: [
+                    {
+                        label: Mapbender.trans(confirmText),
+                        cssClass: 'btn btn-success btn-sm',
+                        type: 'submit'
+                    },
+                    {
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'btn btn-default btn-sm popupClose'
+                    }
+                ]
+            });
+        });
+    });
+
+    // Delete layerset Action
+    $(document).on('click', '.-fn-delete-layerset', function() {
+        var strings = {
+            title: 'mb.manager.components.popup.delete_layerset.title',
+            confirm: 'mb.actions.delete',
+            cancel: 'mb.actions.cancel'
+        };
+        var $el = $(this);
+        var actionUrl = $el.attr('data-url');
+        $.ajax({url: actionUrl}).then(function(content) {
+            Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
+        });
+    });
+    // Add Instance Action
+    $(document).on('click', '.-fn-add-instance', function(e) {
+        var $target = $(this);
+        var layersetTitle = $target.closest('table').attr('data-layerset-title');
+        $.ajax({url: $target.attr("data-url")}).then(function(response) {
+            if (_handleLoginRedirect(response)) {
+                return;
+            }
+            Mapbender.bootstrapModal($.parseHTML(response), {
+                title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
+                subTitle: layersetTitle,
+                cssClass: 'modal-lg',
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'btn btn-default btn-sm popupClose'
+                    }
+                ]
+            });
+        });
+        return false;
+    });
+    // Element / instance deletion after confirmation
+    $('.layersetTable').on('click', '.-fn-delete[data-url]', function() {
+        var $el = $(this);
+        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
+            title: 'mb.manager.components.popup.delete_instance.title',
+            confirm: 'mb.actions.delete',
+            cancel: 'mb.actions.cancel'
+        });
+        return false;
+    });
+    $('.elementsTable').on('click', '.-fn-delete[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_element.title',
@@ -255,97 +331,10 @@ $(function() {
         return false;
     });
 
-    // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset(e) {
-        var self = $(this);
-        var isEdit = self.hasClass("editLayerset");
-        var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
-                                : "mb.manager.components.popup.add_edit_layerset.title_add";
-        var confirmText = isEdit ? 'mb.actions.save'
-                                 : 'mb.actions.add';
-        e.preventDefault();
-        _formJax({url: self.attr("href")}).then(function(nodes) {
-            if (!nodes || !nodes.length) {
-                return;
-            }
-            new popupCls({
-                title: Mapbender.trans(popupTitle),
-                content: [nodes],
-                buttons: [
-                    {
-                        label: Mapbender.trans(confirmText),
-                        cssClass: 'button',
-                        callback: function() {
-                            $('form', this.$element).submit();
-                        }
-                    },
-                    {
-                        label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
-                    }
-                ]
-            });
-        });
-        return false;
-    }
-
-    // Add layerset action
-    $(".addLayerset").bind("click", addOrEditLayerset);
-    // Edit layerset action
-    $(".editLayerset").bind("click", addOrEditLayerset);
-    // Delete layerset Action
-    $(".removeLayerset").bind("click", function() {
-        var strings = {
-            title: 'mb.manager.components.popup.delete_layerset.title',
-            confirm: 'mb.actions.delete',
-            cancel: 'mb.actions.cancel'
-        };
-        var $el = $(this);
-        var actionUrl = $el.attr('href');
-        $.ajax({url: actionUrl}).then(function(content) {
-            Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
-        });
-        return false;
-    });
-    // Add Instance Action
-    $(".addInstance").on("click", function(e) {
-        e.preventDefault();
-        var $target = $(this);
-        var layersetTitle = $target.attr('data-layerset-title');
-        $.ajax({url: $target.attr("href")}).then(function(response) {
-            if (_handleLoginRedirect(response)) {
-                return;
-            }
-            new popupCls({
-                title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-                subTitle: " - " + layersetTitle,
-                cssClass: 'new-instance-select',
-                content: response,
-                buttons: {
-                    'cancel': {
-                        label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'button buttonCancel critical popupClose'
-                    }
-                }
-            });
-        });
-        return false;
-    });
-    // Delete instance
-    $('.removeInstance').bind("click", function() {
-        var $el = $(this);
-        Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
-            title: 'mb.manager.components.popup.delete_instance.title',
-            confirm: 'mb.actions.delete',
-            cancel: 'mb.actions.cancel'
-        });
-        return false;
-    });
-
     var applicationForm = $('form[name=application]');
     var screenShot = applicationForm.find('.screenshot_img');
-    var screenShotCell = applicationForm.find('div.cell_edit');
-    var screenShotImg = screenShotCell.find('img');
+    var screenShotImg = $('.screenshot-wrapper img');
+    var screenShotDelete = $('.screenshot-wrapper .-fn-delete');
     var fileInput = applicationForm.find('#application_screenshotFile');
     var fileGroup = fileInput.closest('.upload');
     function setFileError(message) {
@@ -361,6 +350,10 @@ $(function() {
     var minWidth = fileInput.attr('data-min-width');
     var minHeight = fileInput.attr('data-min-height');
 
+    $(document).on('click', '.inputWrapper.upload .btn', function() {
+        $('input[type="file"]', $(this).closest('.form-group')).click();
+    });
+
     fileInput.on('change', function(e) {
         setUploadFilename(e);
 
@@ -374,9 +367,8 @@ $(function() {
             if (img.width >= minWidth && img.height >= minHeight) {
                 setFileError(null);
                 screenShotImg.attr('src', src);
-                screenShotImg.before('<div class="delete button critical hidden">X</div>');
-                deleteScreenShotButtonInit();
                 screenShot.removeClass('default');
+                screenShotDelete.prop('disabled', false);
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
             } else {
                 validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
@@ -411,42 +403,12 @@ $(function() {
         $('.upload_label').text(displayFilename);
     };
 
-    var deleteScreenShotButtonInit = function() {
-
-        var deleteButton = screenShot.find('.delete');
-        screenShot.hover(function() {
-            deleteButton.toggleClass('hidden', $(this).hasClass('default'));
-        }, function() {
-            deleteButton.addClass('hidden');
-        });
-
-        deleteButton.on('click', function() {
-            screenShot.addClass('default');
-            screenShotImg.attr('src',"");
-            applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
-            applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
-            deleteButton.addClass('hidden');
-        });
-        return deleteButton;
-    };
-
-    deleteScreenShotButtonInit();
-
-    $(document).ready(function() {
-        $('.application-component-table tbody .iconColumn input[type="checkbox"][data-url]').each(function() {
-            var self = this;
-            initCheckbox.call(this);
-            $(self).on("change", function() {
-                $.ajax({
-                    url: $(self).attr('data-url'),
-                    type: 'POST',
-                    data: {
-                        'id': $(self).attr('data-id'),
-                        'enabled': $(self).is(":checked")
-                    }
-                });
-            });
-        });
+    screenShotDelete.on('click', function() {
+        screenShot.addClass('default');
+        screenShotImg.attr('src',"");
+        screenShotDelete.prop('disabled', true);
+        applicationForm.find('.upload_label').html(Mapbender.trans('mb.manager.admin.application.upload.label'));
+        applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
     });
 
     // Custom CSS editor
@@ -471,8 +433,13 @@ $(function() {
         });
 
         $('#tabCustomCss').on('click', function() {
-            codeMirror.refresh();
-            codeMirror.focus();
+            window.setTimeout(function() {
+                codeMirror.focus();
+                codeMirror.refresh();
+            });
         });
     })(jQuery);
+    $('.regionProperties [data-toggle-target]').on('click', function() {
+        $($(this).attr('data-toggle-target')).toggleClass('hidden');
+    });
 });

@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Enumeration\ScreenTypes;
 
 /**
  * Element configuration entity
@@ -15,7 +16,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Element
 {
-
     /**
      * @var integer
      * @ORM\Id
@@ -70,6 +70,13 @@ class Element
 
     /** @var string[]|null */
     protected $yamlRoles;
+
+    /**
+     * Allowable screen type
+     * @var string
+     * @ORM\Column(type="string", length=7, options={"default": "all"})
+     */
+    protected $screenType = 'all';  // = ScreenTypes::ALL
 
     /**
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
@@ -231,6 +238,26 @@ class Element
     public function setYamlRoles($yamlRoles)
     {
         $this->yamlRoles = $yamlRoles;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScreenType()
+    {
+        return $this->screenType;
+    }
+
+    /**
+     * @param string $screenType
+     * @throws \InvalidArgumentException
+     */
+    public function setScreenType($screenType)
+    {
+        if (!in_array($screenType, ScreenTypes::getValidValues(), true)) {
+            throw new \InvalidArgumentException("Unsupported screen type value " . print_r($screenType, true));
+        }
+        $this->screenType = $screenType;
     }
 
     /**

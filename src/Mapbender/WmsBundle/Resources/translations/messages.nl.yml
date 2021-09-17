@@ -7,9 +7,6 @@ mb:
           wmsurl: 'Service URL'
           wmsuser: Gebruiker
           wmspass: Wachtwoord
-        btn:
-          cancel: Annuleren
-          load: Laad
       error:
         load: 'WMSLoader: WMS capabilities kan niet geladen worden!'
       repo:
@@ -17,10 +14,7 @@ mb:
           label:
             formats: Formaten
         view:
-          title:
-            wms: WMS
           label:
-            backtoservicelist: 'Terug naar Service List'
             metadata: Metadata
             contact: Contact
             details: Details
@@ -94,8 +88,6 @@ mb:
             srs: SRS
             styles: Stijlen
             legendurl: 'Legenda URL'
-            stylesheeturl: 'Stylesheet URL'
-            styleurl: 'Stijl URL'
             scale: Schaal
             min: Min
             max: Max
@@ -131,30 +123,13 @@ mb:
               description: 'Instantie Laag Id in de vorm: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Laag naam'
             style: Stijl
-        new:
-          label:
-            addservice: 'Voeg Service toe'
-        instancelayer:
-          title:
-            servicerepository: 'Service Repository'
-          label:
-            wmsinstancelayers: 'WMS Instantie Lagen'
-          btn:
-            save: Bewaar
-        form:
-          label:
-            onlyvalid: 'alleen geldig'
       class:
         title: 'WMS lader'
         description: 'Laad een WMS via de getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: lader
       admin:
         label:
           autoopen: 'Auto open'
           splitlayers: 'Splits lagen'
-          declarative: 'Gebruik declaratief'
     repository:
       parser:
         couldnotparse: 'Kon Capabilities Document niet parsen'

@@ -1,48 +1,141 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
-
-{% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
-
+{% extends 'MapbenderManagerBundle::layouts/tabbed.html.twig' %}
+{%- set title = 'mb.manager.admin.sources' | trans -%}
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
 {% endblock %}
 
-{% block manager_content %}
-{% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
-{% endif %}
-{% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput">{{ "mb.actions.filter" | trans }}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+{% block tab_headers %}
+  {{- tab_macros.tab_header('Sources', 'mb.manager.admin.sources', 'active') -}}
+  {{- tab_macros.tab_header('SharedInstances', 'mb.terms.sourceinstance.reusable.plural') -}}
+{% endblock tab_headers %}
 
-  <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
-    {% for source in sources %}
-      <li class="filterItem">
-        <div class="col1">
-          <span class="smallerText">{{ source.id }}</span><br>
-          <span class="smallerText">{{ source.type }}</span><br>
-        </div>
-        <div class="col2 box">
-            <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-              {% if source.id in reloadableIds %}
-              <a class="iconReset hover-highlight-effect" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
-              {% endif %}
-              {% if is_granted('DELETE', oid) %}
-                 <a href="#" class="-fn-delete hover-highlight-effect"
-                  title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                  data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
-                  data-id="{{ source.id }}"><i class="fa fas fa-times"></i></a>
-              {% endif %}
+{%- macro source_meta(source) -%}
+<table class="table table-borderless table-condensed">
+    <tbody>
+      <tr>
+          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
+          <td>{{ source.type }} {{ source.version }}</td>
+      </tr>
+      <tr>
+          <th>URL:</th>
+          <td>{{ source.getOriginUrl() }}</td>
+      </tr>
+      {%- if source.description -%}
+      <tr>
+          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
+          <td>{{ source.description }}</td>
+      </tr>
+      {%- endif -%}
+  </tbody>
+</table>
+{%- endmacro -%}
+{%- import _self as source_macros -%}
+
+{% block tab_containers %}
+    <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
+        {%- set items = sources -%}
+        {%- set list_id = 'listFilterServices' -%}
+        <div class="list-head">
+            <div class="row">
+                <div class="col-sm-5 col-xs-12 col-12">
+                    {%- if create_permission -%}
+                    <div class="content-box content-box-md">
+                        <a href="{{ path('mapbender_manager_repository_new') }}">
+                          <i class="fa fas fa-plus fa-lg"></i>
+                          <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
+                        </a>
+                    </div>
+                    {%- endif -%}
+                </div>
+                {%- if items -%}
+                    <div class="col-sm-7 col-xs-12 col-12">
+                    {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                    </div>
+                {%- endif -%}
             </div>
-          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
-          <div class="description">{{ source.description }}</div>
         </div>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-    <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
-{% endif %}
 
-<div class="clearContainer"></div>
-{% endblock %}
+        {% embed 'MapbenderManagerBundle::fragments/blocklist.html.twig' %}
+            {%- block boxlist_item_content -%}
+                {%- set source = item -%}
+                {{- parent() -}}
+            {%- endblock -%}
+
+            {%- block item_content_main -%}
+                {{- source_macros.source_meta(item) -}}
+            {%- endblock -%}
+
+            {%- block item_interactions -%}
+                            <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
+                            {% if item.id in reloadableIds %}
+                              <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ item.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
+                            {% endif %}
+                            {% if is_granted('DELETE', oid) %}
+                              <a href="#" class="btn btn-default -fn-delete"
+                                          title="{{"mb.manager.admin.source.delete"|trans}} {{ item.title }}"
+                                          data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":item.id}) }}"
+                                          data-id="{{ item.id }}"><i class="fa fa-trash-o far fa-trash-alt"></i></a>
+                            {% endif %}
+            {%- endblock -%}
+
+            {%- block item_title -%}
+                      <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" class="title">{{ item.title }}</a> <sup>{{ item.alias }}</sup>
+            {%- endblock -%}
+
+            {%- block boxlist_placeholder_content -%}
+            {{- 'mb.manager.admin.source.no_source' | trans -}}
+            {%- endblock -%}
+        {% endembed %}
+
+
+    </div>
+    <div{{ tab_macros.tab_content_attributes('SharedInstances', '', false) }}>
+        {%- set list_id = 'listFilterSharedInstances' -%}
+        {%- set list_class = '-fn-instance-list' -%}
+        {%- set items = shared_instances -%}
+        <div class="list-head">
+            <div class="row">
+                <div class="col-sm-5 col-xs-12 col-12">
+                    {%- block list_actions -%}{%- endblock -%}
+                </div>
+                {%- if items -%}
+                    <div class="col-sm-7 col-xs-12 col-12">
+                    {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                    </div>
+                {%- endif -%}
+            </div>
+        </div>
+        {% embed 'MapbenderManagerBundle::fragments/blocklist.html.twig' %}
+            {%- block item_interactions -%}
+                          <a class="btn btn-default" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
+                            ><i class="fa fa-cog"></i></a>
+                          <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
+                            ><i class="fa fa-desktop"></i></a>
+                        {% if is_granted('DELETE', oid) %}
+                          <a class="btn btn-default -fn-delete" href="#"
+                              data-url="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
+                              title="{{"mb.actions.delete"|trans}}"
+                              ><i class="fa fa-trash-o far fa-trash-alt"></i></a>
+                        {% endif %}
+            {%- endblock -%}
+
+            {%- block boxlist_item_content -%}
+                {%- set source = item.source -%}
+                {{- parent() -}}
+            {%- endblock -%}
+
+            {%- block item_content_main -%}
+                {{- source_macros.source_meta(item.source) -}}
+            {%- endblock -%}
+
+            {%- block item_title -%}
+              <span class="title">{{ item.title | default(item.source.title) }}</span>
+            {%- endblock -%}
+
+            {%- block boxlist_placeholder_content -%}
+            {{- 'mb.manager.admin.source.no_source' | trans -}}
+            {%- endblock -%}
+        {% endembed %}
+    </div>
+{% endblock tab_containers %}

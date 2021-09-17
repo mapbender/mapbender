@@ -1,0 +1,45 @@
+<div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}"
+     {# @todo: provide default sidepane width not just at the CSS level; correct initial display of closed sidepane requires a known width #}
+     {%- if region_props.width | default('') -%}
+         {%- if region_props.closed | default(false) -%}
+             {{ ' ' }}style="width: {{ region_props.width }}; {{ 'left' in region_class ? 'left' : 'right' }}: -{{ region_props.width }};"
+         {%- else -%}
+             {{ ' ' }}style="width: {{ region_props.width }};"
+         {%- endif -%}
+     {%- endif -%}
+>
+  <div class="sideContent">
+    {% if region_props.name == 'tabs' %}
+      <div class="tabContainerAlt">
+        <ul class="tabs">
+          {% for element in elements %}
+            <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">{{ element.title | trans }}</li>
+          {% endfor %}
+        </ul>
+          {% for element in elements %}
+            <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
+                {{ element_markup(element) | raw }}
+            </div>
+          {% endfor %}
+      </div>
+    {% elseif region_props.name == 'accordion' %}
+      <div class="accordionContainer">
+        {% for element in elements %}
+          <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}"><div>{{ element.title | trans }}</div></div>
+          <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
+              <div class="accordion-cell">
+                  <div class="accordion-wrapper">
+                      {{ element_markup(element) | raw }}
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+    {% else %}
+        <div class="auto-scroll-v">
+            {{ region_content(application, region_name) | raw }}
+        </div>
+    {% endif %}
+  </div>
+  <span class="toggleSideBar collapse-toggle"><i class="fa fas fa-bars"></i></span>
+</div>

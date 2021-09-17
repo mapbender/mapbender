@@ -100,14 +100,11 @@ class ImageExport extends Element
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleHttpRequest(Request $request)
     {
+        $action = $request->attributes->get('action');
         switch ($action) {
             case 'export':
-                $request = $this->container->get('request_stack')->getCurrentRequest();
                 $data = $this->prepareJobData($request, $this->entity->getConfiguration());
                 $format = $request->request->get('imageformat');
                 $exportservice = $this->getExportService();

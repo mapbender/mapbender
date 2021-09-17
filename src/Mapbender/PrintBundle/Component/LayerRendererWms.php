@@ -180,10 +180,16 @@ class LayerRendererWms extends LayerRenderer
      */
     protected function preprocessUrl($layerDef, $canvas, Box $extent)
     {
+        $serviceParams = array(
+            'SERVICE' => 'WMS',
+            'REQUEST' => 'GetMap',
+            'TRANSPARENT' => 'true',
+        );
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
         $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
-        $url = UrlUtil::validateUrl($layerDef['url'], $params);
+        $url = UrlUtil::validateUrl($layerDef['url'], $params + $serviceParams);
         $symbolParams = $this->getSymbolizationParams($canvas, $url);
+
         return UrlUtil::validateUrl($url, $symbolParams);
     }
 
@@ -222,12 +228,8 @@ class LayerRendererWms extends LayerRenderer
         $maxRes = ArrayUtil::getDefault($layerDef, 'maxResolution', null);
         $targetResH = $this->clipResolutionComponent($resolution->getHorizontal(), $minRes, $maxRes);
         $targetResV = $this->clipResolutionComponent($resolution->getVertical(), $minRes, $maxRes);
-        if ($targetResH != $resolution->getHorizontal()) {
-            $params['WIDTH'] = intval(max(16, abs($extent->getWidth()) / $targetResH));
-        }
-        if ($targetResV != $resolution->getVertical()) {
-            $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
-        }
+        $params['WIDTH'] = intval(max(16, abs($extent->getWidth()) / $targetResH));
+        $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
         return $params;
     }
 

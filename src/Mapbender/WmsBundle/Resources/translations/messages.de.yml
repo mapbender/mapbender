@@ -7,9 +7,6 @@ mb:
           wmsurl: URL
           wmsuser: Benutzername
           wmspass: Password
-        btn:
-          cancel: Abbrechen
-          load: Laden
       error:
         load: 'WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden!'
       repo:
@@ -17,10 +14,7 @@ mb:
           label:
             formats: Formate
         view:
-          title:
-            wms: WMS
           label:
-            backtoservicelist: Zurück zu Datenquellen
             metadata: Metadaten
             contact: Kontakt
             details: Details
@@ -97,8 +91,6 @@ mb:
             srs: SRS
             styles: Styles
             legendurl: Legenden-URL
-            stylesheeturl: Stylesheet-URL
-            styleurl: 'Style URL'
             scale: Maßstab
             min: Minimal
             max: Maximal
@@ -134,30 +126,13 @@ mb:
               description: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Name
             style: Style
-        new:
-          label:
-            addservice: 'Dienst hinzufügen'
-        instancelayer:
-          title:
-            servicerepository: 'Dienste Repository'
-          label:
-            wmsinstancelayers: 'WMS Instanz Layer'
-          btn:
-            save: Speichern
-        form:
-          label:
-            onlyvalid: 'Nur valid'
       class:
         title: 'WMS laden'
         description: 'Lädt einen WMS per getCapabilities-Request'
-      tag:
-        wms: WMS
-        loader: laden
       admin:
         label:
           autoopen: 'Automatisch öffnen'
           splitlayers: 'Layer aufteilen'
-          declarative: 'deklarativ verwenden'
     repository:
       parser:
         couldnotparse: 'Das XML Dokument kann  nicht geparst werden.'

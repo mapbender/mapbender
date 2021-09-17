@@ -35,3 +35,34 @@
 	opacity: .3;
 	filter: Alpha(Opacity=30); /* support: IE8 */
 }
+
+.ui-button {
+    // See https://github.com/jquery/jquery-ui/blob/master/themes/base/button.css#L11
+    // not adopted from base theme: padding: .4em 1em;
+    display: inline-block;
+    position: relative;
+    // not adopted from base theme: line-height: normal;
+    margin-right: .1em;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    user-select: none;
+    overflow: visible;
+}
+
+.ui-button-icon-only {
+    // See https://github.com/jquery/jquery-ui/blob/master/themes/base/button.css#L37
+    width: 2em;
+    box-sizing: border-box;
+    text-indent: -99999px;
+    white-space: nowrap;
+
+    .ui-icon {
+        // See https://github.com/jquery/jquery-ui/blob/master/themes/base/button.css#L51
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -0.5em;	// != base theme -8px (not font-size responsive)
+        margin-left: -0.5em; // != base theme -8px (not font-size responsive)
+    }
+}

@@ -71,6 +71,7 @@ class ComponentsController extends Controller
                 $path = $this->getVendorPath() . "/components/{$packageName}";
                 break;
             case 'bootstrap-colorpicker':
+                $path = $this->getWebPath() . '/bundles/mapbendercore/bootstrap-colorpicker';
                 $path = $this->getVendorPath() . "/debugteam/{$packageName}";
                 break;
             case 'mapbender-icons':
@@ -93,6 +94,11 @@ class ComponentsController extends Controller
     protected function getVendorPath()
     {
         return realpath($this->getParameter('kernel.root_dir') . '/../vendor');
+    }
+
+    protected function getWebPath()
+    {
+        return realpath($this->getParameter('kernel.root_dir') . '/../web');
     }
 
     /**

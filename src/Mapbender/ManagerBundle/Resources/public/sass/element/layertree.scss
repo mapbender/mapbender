@@ -1,9 +1,10 @@
 .elementFormLayerTree {
-    .theme-settings {
-      user-select: none;
-      > span {
-        display: inline-block;
-        min-width: 1.25em;
-      }
-    }
+  .theme-settings {
+    user-select: none;
+  }
+  table .form-group {
+    margin-bottom: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
 }

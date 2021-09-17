@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -55,7 +56,7 @@ class ConfigService
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
-        $configuration += $this->getLayerSetConfiguration($entity);
+        $configuration['layersets'] = $this->getLayerSetConfigs($entity);
 
         // Let (active, visible) Elements update the Application config
         // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
@@ -77,8 +78,9 @@ class ConfigService
             'urls'          => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
-            'debug'         => ($this->container->get('kernel')->getEnvironment() !== 'prod'),
+            'debug' => ($this->container->getParameter('kernel.debug')),
             'mapEngineCode' => $entity->getMapEngineCode(),
+            'persistentView' => $entity->getPersistentView(),
         );
     }
 
@@ -98,7 +100,6 @@ class ConfigService
             'asset'    => $this->container->get('assets.packages')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
-            'metadata' => $router->generate('mapbender_core_application_metadata', $config),
             'config'   => $router->generate('mapbender_core_application_configuration', $config),
         );
 
@@ -106,44 +107,50 @@ class ConfigService
     }
 
     /**
-     * Returns layerset config. This is actually already an array with two subarrays 'layersets' (actual config)
-     * and 'layersetmap' (layer titles).
+     * Returns layerset configs.
      *
      * @param Application $entity
      * @return array[]
      */
-    public function getLayerSetConfiguration(Application $entity)
+    public function getLayerSetConfigs(Application $entity)
     {
         $configs = array();
-        $titles = array();
         foreach ($entity->getLayersets() as $layerSet) {
-            $layerId       = '' . $layerSet->getId();
-            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
-            $layerSets     = array();
+            $configs[] = array(
+                'id' => strval($layerSet->getId()),
+                'title' => $layerSet->getTitle() ?: strval($layerSet->getId()),
+                'instances' => $this->getSourceInstanceConfigs($layerSet),
+            );
+        }
+        return $configs;
+    }
 
-            foreach ($this->filterActiveSourceInstances($layerSet) as $layer) {
-                $sourceService = $this->getSourceService($layer);
-                if (!$sourceService) {
-                    // @todo: throw?
-                    continue;
-                }
-                $conf = $sourceService->getConfiguration($layer);
-                if (!$conf) {
-                    // @todo: throw?
-                    continue;
-                }
-                $layerSets[] = array(
-                    $layer->getId() => $conf,
-                );
+    /**
+     * @param Layerset $layerset
+     * @return array[]
+     */
+    protected function getSourceInstanceConfigs(Layerset $layerset)
+    {
+        $configs = array();
+        foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
+            $sourceService = $this->getSourceService($assignment->getInstance());
+            if (!$sourceService) {
+                // @todo: throw?
+                continue;
+            }
+            // @todo: move check into prefilter (get service twice?)
+            if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+                continue;
+            }
+            $conf = $sourceService->getConfiguration($assignment->getInstance());
+            if (!$conf) {
+                // @todo: throw?
+                continue;
             }
 
-            $configs[$layerId] = $layerSets;
-            $titles[$layerId] = $layerSetTitle;
+            $configs[] = $conf;
         }
-        return array(
-            'layersets' => $configs,
-            'layersetmap' => $titles,
-        );
+        return $configs;
     }
 
     /**
@@ -187,18 +194,18 @@ class ConfigService
      * Extracts active source instances from given Layerset entity.
      *
      * @param Layerset $entity
-     * @return SourceInstance[]
+     * @return SourceInstanceAssignment[]
      */
-    protected static function filterActiveSourceInstances(Layerset $entity)
+    protected static function filterActiveSourceInstanceAssignments(Layerset $entity)
     {
         $isYamlApp = $entity->getApplication()->isYamlBased();
-        $activeInstances = array();
-        foreach ($entity->getInstances() as $instance) {
-            if ($isYamlApp || $instance->getEnabled()) {
-                $activeInstances[] = $instance;
+        $active = array();
+        foreach ($entity->getCombinedInstanceAssignments() as $assignment) {
+            if ($isYamlApp || $assignment->getEnabled()) {
+                $active[] = $assignment;
             }
         }
-        return $activeInstances;
+        return $active;
     }
 
     /**

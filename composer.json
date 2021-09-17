@@ -6,46 +6,66 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4.30",
+        "ext-dom": "*",
+        "ext-gd": "*",
         "symfony/symfony": "^2.4|^3",
         "symfony/security-acl": "~2.8 || ~3.0",
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "symfony/swiftmailer-bundle": "^2.3 || ^3",
         "sensio/generator-bundle": "^2 || ^3",
 
-        "setasign/fpdi-fpdf": "1.6.*",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2",
 
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "^1.3",
 
-        "mapbender/vis-ui.js": "~0.0",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
-        "wheregroup/open-sans": "1.x",
         "wheregroup/doctrine-dbal-shims": "^1",
         "wheregroup/assetic-filter-sassc": "^0.0.1",
         "wheregroup/sassc-binaries": "^0.0.1",
 
-        "mapbender/fom": "~3.1.2 || ^3.2.1",
         "mapbender/owsproxy": "^3.0.6.2",
 
+        "datatables/datatables": "^1.10.16",
+        "components/bootstrap": "^3 || ^4",
+        "components/jqueryui": "^1",
+        "debugteam/bootstrap-colorpicker": "^1",
+
+        "mapbender/openlayers6-es5": "~0.3 || ^1",
         "mapbender/mapquery": "1.x"
     },
+    "provide": {
+        "mapbender/fom": "3.3"
+    },
+    "replace": {
+        "debugteam/bootstrap-colorpicker": "1.*",
+        "mapbender/fom": "*"
+    },
     "autoload": {
-        "psr-4": {"Mapbender\\": "src/Mapbender"}
+        "psr-4": {
+            "Mapbender\\": "src/Mapbender",
+            "FOM\\": "src/FOM"
+        }
     },
     "conflict": {
-        "mapbender/digitizer": "<1.1.68",
+        "mapbender/digitizer": "<1.4.8",
+        "mapbender/data-manager": "<1.1",
         "mapbender/data-source": "<0.1.11",
         "mapbender/coordinates-utility": "<1.0.9",
         "wheregroup/jquerydialogextendjs": "<2.1",
+        "mapbender/vis-ui.js": "<0.1.80",
         "mapbender/wmts": "*"
     },
     "extra": {
         "branch-alias": {
             "dev-release/3.0.5": "3.0.5.x-dev",
             "dev-release/3.0.6": "3.0.6.x-dev",
-            "dev-release/3.0.7": "3.0.8.x-dev"
+            "dev-release/3.0.7": "3.0.8.x-dev",
+            "dev-ol4": "3.1.0.0-dev"
         }
     }
 }

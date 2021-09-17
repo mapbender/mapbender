@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -62,10 +63,12 @@ class ElementClassesCommand extends ContainerAwareCommand
         $rows = array();
         /** @var ElementFactory $factory */
         $factory = $this->getContainer()->get('mapbender.element_factory.service');
+        $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
                 $entity = new \Mapbender\CoreBundle\Entity\Element();
                 $entity->setClass($elementName);
+                $entity->setApplication($application);
                 $instance = $factory->componentFromEntity($entity);
                 $rows[$elementName] = $this->formatElementInfo($instance);
             } catch (\Exception $e) {
@@ -178,8 +181,8 @@ class ElementClassesCommand extends ContainerAwareCommand
         }
 
         $adminType = $formFactory->getConfigurationFormType($element->getEntity());
-        if ($adminType === null) {
-            return '<error>' . $formFactory->getFallbackConfigurationFormType($element->getEntity()) . '</error>';
+        if (!$adminType) {
+            return '<comment>none</comment>';
         }
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
@@ -287,8 +290,14 @@ class ElementClassesCommand extends ContainerAwareCommand
             $th->setRows($rows);
             $th->render($output);
         } else {
-            $symfonyVersion = Kernel::VERSION;
-            throw new \RuntimeException("Table rendering support gone in Symfony $symfonyVersion");
+            foreach ($rows as $row) {
+                foreach ($headers as $cellIndex => $header) {
+                    if (array_key_exists($cellIndex, $row)) {
+                        $reflowed = preg_replace('#\n+#', '; ', $row[$cellIndex]);
+                        $output->writeln("  {$header}: {$reflowed}");
+                    }
+                }
+            }
         }
     }
 

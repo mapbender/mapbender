@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle;
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
-use Mapbender\ManagerBundle\Component\Menu\RegisterLegacyMenuRoutesPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\Config\FileLocator;
@@ -22,29 +21,16 @@ class MapbenderManagerBundle extends ManagerBundle
         $loader->load('services.xml');
 
         $this->addMenu($container);
-        $container->addCompilerPass(new RegisterLegacyMenuRoutesPass());
     }
 
     protected function addMenu(ContainerBuilder $container)
     {
-        $appMenu = MenuItem::create("mb.manager.managerbundle.applications", 'mapbender_manager_application_index')
+        $appMenu = MenuItem::create("mb.terms.application.plural", 'mapbender_core_welcome_list')
             ->setWeight(10)
-            ->addChildren(array(
-                MenuItem::create('mb.manager.managerbundle.new_application', 'mapbender_manager_application_new')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
-                MenuItem::create('mb.manager.managerbundle.export_application', 'mapbender_manager_application_export')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
-                MenuItem::create('mb.manager.managerbundle.import_application', 'mapbender_manager_application_import')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Application', 'CREATE'),
-            ))
         ;
         $sourceMenu = MenuItem::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
             ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
             ->setWeight(20)
-            ->addChildren(array(
-                MenuItem::create('mb.manager.managerbundle.add_source', 'mapbender_manager_repository_new')
-                    ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'CREATE'),
-            ))
         ;
 
         $container->addCompilerPass(new RegisterMenuRoutesPass($appMenu));

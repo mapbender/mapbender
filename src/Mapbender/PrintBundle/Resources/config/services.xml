@@ -33,7 +33,6 @@
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
-        <parameter key="mapbender.print.plugin.digitizer.paramkey.featuretypes">featuretypes</parameter>
         <parameter key="mapbender.print.plugin.queue.class">Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin</parameter>
         <!-- can only be activated safely if there is a cron job executing the queued jobs -->
         <parameter key="mapbender.print.queueable">false</parameter>
@@ -57,7 +56,6 @@
              see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes
              NOTE: this will never REDUCE memory limit vs a system configuration (php.ini etc), it only works upwards -->
         <parameter key="mapbender.print.queue.memory_limit">1G</parameter>
-        <parameter key="mapbender.form_type.element.printclient.class">Mapbender\PrintBundle\Element\Type\PrintClientAdminType</parameter>
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
@@ -119,10 +117,6 @@
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
         </service>
         <service id="mapbender.print.plugin.digitizer" class="%mapbender.print.plugin.digitizer.class%">
-            <argument type="service" id="service_container" />
-            <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
-                       'featureTypeParam'. That key must be retained. The value may be changed of course. -->
-            <argument>%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
         </service>
         <service id="mapbender.print.plugin.queue" class="%mapbender.print.plugin.queue.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
@@ -132,7 +126,7 @@
             <argument>%mapbender.print.queue.storage_dir%</argument>
             <argument>%mapbender.print.queue.load_path%</argument>
         </service>
-        <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
+        <service id="mapbender.form_type.element.printclient" class="Mapbender\PrintBundle\Element\Type\PrintClientAdminType">
             <argument>%mapbender.print.queueable%</argument>
             <tag name="form.type" />
         </service>

@@ -11,6 +11,7 @@ mb:
     print: Drucken
     refresh: Aktualisieren
     remove: Entfernen
+    reset: Zurücksetzen
     save: Speichern
     search: Suchen
   terms:
@@ -28,6 +29,13 @@ mb:
       plural: Instanzen
       typed:
         singular: '%type%-Instanz'
+      reusable:
+        singular: Freie Instanz
+        plural: Freie Instanzen
+      bound:
+        singular: Private Instanz
+        plural: Private Instanzen
+    security: Sicherheit
   states:
     active: aktiv
     inactive: inaktiv
@@ -37,18 +45,9 @@ mb:
         nolayer: 'Informationsebene existiert nicht.'
         unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
         noresult: 'kein Ergebnis'
-      popup:
-        btn:
-          ok: Schließen
-          print: Drucken
       class:
         title: Information
         description: Information
-      tag:
-        featureinfo: Information
-        feature: Objekt
-        info: Info
-        dialog: Dialog
     aboutdialog:
       content:
         versionprefix: Version
@@ -71,6 +70,8 @@ mb:
       error:
         geometry:
           missing: Der ausgewählte Eintrag enthält keine Geometrie.
+      admin:
+        sourceSrs: Quell-SRS
     searchrouter:
       popup:
         btn:
@@ -97,10 +98,6 @@ mb:
       class:
         title: 'MeetingPoint (POI)'
         description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
-      tag:
-        poi: 'MeetingPoint (POI)'
-        point: Punkt
-        interest: Interessse
       label:
         text: 'Bearbeiten Sie den Text'
     basesourceswitcher:
@@ -109,27 +106,16 @@ mb:
       class:
         title: 'Hintergrund wechseln'
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
     legend:
-      nolegend: 'Keine Legende verfügbar.'
       popup:
         btn:
           ok: Schließen
       class:
         title: Legende
         description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
-      tag:
-        layer: Themen
-        legend: Legende
     ruler:
-      popup:
-        btn:
-          ok: Schließen
       create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
       class:
         title: Linien-/Flächenmessung
@@ -145,24 +131,9 @@ mb:
         scale: Maßstab
         rotation: Drehung
         legend: 'Legende drucken'
-      popup:
-        btn:
-          ok: Drucken
-          cancel: Abbrechen
-      info:
-        noactivelayer: 'Keine aktive Ebene!'
-      form:
-        required: 'Bitte füllen Sie dieses Feld aus'
       class:
         title: Druck
         description: 'Druck Dialog'
-      tag:
-        print: Druck
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Druckrahmen deaktivieren'
         activate: 'Druckrahmen aktivieren'
@@ -174,21 +145,6 @@ mb:
       tag:
         overview: Übersicht
         map: 'Karte (overview)'
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Der Radius ist nicht gültig.'
-        form:
-          button:
-            'yes': Übernehmen
-            cancel: Abbrechen
-      class:
-        title: Skizzen
-        description: 'Es wird eine Vektorebene in der Karte hinzugefügt, über die Geometrieobjekte temporär gezeichnet werden.'
-      tag:
-        sketch: Skizzen
-        circle: Kreis
     metadata:
       popup:
         title: Metadaten
@@ -207,8 +163,6 @@ mb:
         position: Position
         button: Button
     layertree:
-      confirm:
-        allremove: 'Sollen wirklich alle Dienste gelöscht werden?'
       popup:
         btn:
           ok: Schließen
@@ -227,33 +181,20 @@ mb:
         opacity: Deckkraft
         zoomtolayer: 'Zoom auf Ebene'
         metadata: Metadaten
-        sources: Quellen
-        deleteallsources: 'Alle Dienste entfernen'
         legend: Legende
         kmlexport: 'KML Export'
         dimensions: Dimensions
         dimension_onoff: 'An/Aus Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
-        allvisibility_on: 'Alle Layer anzeigen'
       class:
         title: Ebenenbaum
         description: 'Baum der Karten-Ebenen'
-      tag:
-        layertree: Ebenenbaum
-        layer: Ebenen
-        tree: Baum
-      contextmenu:
-        nooption: 'Layer verfügt über keine Kontextmenü-Option'
     zoombar:
-      panup: 'Nach oben verschieben'
-      panright: 'Nach rechts verschieben'
-      pandown: 'Nach unten verschieben'
-      panleft: 'Nach links verschieben'
-      goback: Zurück
-      goforward: Vor
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
+      zoom_home: Zurück zum Anfang
+      zoomHomeRestoresLayers: '"Zurück zum Anfang" setzt Dienstezustände zurück'
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:
@@ -312,6 +253,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
+      admin:
+        fixedZoomSteps: Feste Maßstabsstufen
     scalebar:
       class:
         title: Maßstabsleiste
@@ -340,6 +283,36 @@ mb:
       tag:
         srs: SRS
         selector: Auswahl
+    ShareUrl:
+      class:
+        title: URL teilen
+        description: Teilt die aktuelle Kartenansicht über eine URL
+      copied_to_clipboard: URL in Zwischenablage kopiert
+    viewManager:
+      class:
+        title: Ansichtsverwaltung
+        description: Speichert Kartenzustände zum späteren Abruf
+      saveAsPublic: Als öffentlichen Eintrag speichern
+      recordStatus:
+        public: Öffentlicher Eintrag
+        private: Privater Eintrag
+      confirmDelete: Eintrag wirklich löschen?
+      no_data: Keine Daten
+      title: Titel
+      date: Datum
+      enter_title: Titel eingeben
+      apply: Abrufen
+      replace: Überschreiben
+      admin:
+        access.none: Nicht anzeigen
+        access.ro: Nur lesen
+        access.rw: Speichern erlauben
+        access.rwd: Speichern und löschen erlauben
+        publicEntries: Öffentliche Liste
+        privateEntries: Private Liste anzeigen
+        adminDeleteHint: "Hinweis: Administratoren dürfen öffentliche Einträge immer löschen"
+        allowAnonymousSave: Anonyme Besucher dürfen speichern
+        showDate: Datum anzeigen
     admin:
       poi:
         label:
@@ -356,8 +329,11 @@ mb:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
           autoopen: 'Automatisches Öffnen'
-          showoriginal: 'Original Zeigen'
           onlyvalid: 'Nur valide zeigen'
+          highlighting_group: 'Highlighting'
+          highlighting: Highlighting aktiv
+          featureColorDefault: Grundfarbe
+          featureColorHover: Hover-Farbe
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'
@@ -372,7 +348,6 @@ mb:
         label:
           showbasesources: 'BaseSources anzeigen'
           autoopen: 'Automatisches Öffnen'
-          showheader: 'Header anzeigen'
           showlayerremove: '"Layer entfernen" anzeigen'
           usetheme: 'Thematischer Layer'
           themes: Themen
@@ -380,56 +355,66 @@ mb:
             opened: 'Thema geöffnet/geschlossen'
             activate: 'Aktivieren von Layers hinzufügen/entfernen'
             useTheme: 'Thema anzeigen'
-            sourceVisibility: 'Thema: Dienste-Sichtbarkeit'
-            allSelected: 'Thema: Layer-Sichtbarkeit'
             label: Themenname
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
           hideinfo: 'Info ausblenden'
-      redlining:
-        label:
-          auto_activate: 'Automatisches Aktivieren'
-          deactivate_on_close: 'Beim Schließen deaktivieren'
+      template:
+        sidepane:
+          type:
+            label: Typ
+            choice:
+              tabs: Buttons
+              accordion: Akkordeon
+              unstyled: Unformatiert
     htmlelement:
       class:
         title: HTML
         description: 'HTML hinzufügen'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: 'Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.'
-    redlining:
+    sketch:
       geometrytype:
         point: Punkt
         line: Linie
         polygon: Polygon
         rectangle: Rechteck
-        text:
-          title: Text
-          label: Text
-          error:
-            notext: 'Kein Text eingetragen'
+        circle: Kreis
+        text: Text
+      inputs:
+        label: Beschriftung
+      error:
+        notext: 'Kein Text eingetragen'
       geometry:
         action:
           remove: 'Entfernen der Geometrie'
           edit: 'Editieren der Geometrie'
           zoom: 'Zoom auf die Geometrie'
-      dialog:
-        btn:
-          cancel: Schließen
+          stop_drawing: Zeichnen beenden
       class:
-        title: Redlining
-        description: 'Redlining Werkzeug'
-      tag:
-        redlining: redlining
-        geometry: geometrie
-  geosource:
-    image_error:
-      datails: 'Die Karte kann nicht angezeigt werden.'
-      exception: 'Ausnahmefehler: %exception%'
-      statuscode: 'HTTP Statuscode'
+        title: Skizzen
+        description: Zeichenwerkzeug
+      admin:
+        auto_activate: 'Automatisches Aktivieren'
+        deactivate_on_close: 'Beim Schließen deaktivieren'
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Skizzen
+    resetView:
+      class:
+        title: Ansicht zurücksetzen
+        description: Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her
+      admin:
+        resetDynamicSources: Hinzugeladene Quellen entfernen
+    applicationSwitcher:
+      class:
+        title: Anwendung wechseln
+        description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
+      admin:
+        open_in_new_tab: In neuem Tab öffnen
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

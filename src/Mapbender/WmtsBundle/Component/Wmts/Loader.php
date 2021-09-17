@@ -4,7 +4,6 @@
 namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
-use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;

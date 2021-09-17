@@ -22,22 +22,26 @@
 
 {% block form_main2 %}
   <div class="extendedGroup">
-      {% if form.dimensions is not null and form.dimensions | length > 0 %}
-        <div class="blockgroup">
-          <!-- todo: the header should be part of the "dimensions" input widget -->
-          <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-          <div id="dimension-content" class="on-off-content hidden">
-              {% for dim in form.dimensions %}
-                  {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
-              {% endfor %}
-          </div>
+    {% if form.dimensions %}
+      <div class="panel panel-default content-toggle-container closed">
+        <div class="panel-heading content-toggle clickable clearfix">
+          <i class="fa fa-lg fas fa-plus pull-right"></i>
+          {{ 'mb.wms.repo.instance.label.dimensions' | trans }}
         </div>
-      {% endif %}
-    <div class="blockgroup">
-      <!-- todo: the header should be part of the "vendorspecifics" input widget -->
-      <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
-      <div id="vendorspecific-content" class="on-off-content hidden form-horizontal">
-          {{ form_widget(form.vendorspecifics) }}
+        <div class="content-toggle-target">
+          {% for dim in form.dimensions %}
+              {%- include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim} -%}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    <div class="panel panel-default content-toggle-container closed">
+      <div class="panel-heading content-toggle clickable clearfix">
+        <i class="fa fa-lg fas fa-plus pull-right"></i>
+        {{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}
+      </div>
+      <div class="panel-body content-toggle-target form-horizontal">
+        {{ form_widget(form.vendorspecifics) }}
       </div>
     </div>
   </div>
@@ -53,7 +57,7 @@
 
 {% block form_layers %}
     {% set root = instance.source.getRootlayer() %}
-    <table id="instanceTable" class="table instanceTable">
+    <table id="instanceTable" class="table table-condensed table-bordered instanceTable">
       <thead>
       {% set _proto = form.layers.vars.prototype %}
         <tr>
@@ -65,7 +69,6 @@
           <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
           <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
           <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.toggle"|trans}}</th>
-          <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.reorder"|trans}}</th>
           <th></th>
         </tr>
         <tr>
@@ -76,7 +79,6 @@
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th></th>
         </tr>
         <tr id="instanceTableCheckHead">
@@ -88,7 +90,6 @@
           {{ form_row(_proto.info, {'tagName': 'th'}) }}
           {{ form_row(_proto.allowtoggle, {'tagName': 'th'}) }}
           {{ form_row(_proto.toggle, {'tagName': 'th'}) }}
-          {{ form_row(_proto.allowreorder, {'tagName': 'th'}) }}
           <th></th>
         </tr>
       </thead>

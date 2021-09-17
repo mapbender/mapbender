@@ -23,11 +23,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SourceInstanceLayerSelectorType extends AbstractType
 {
-    public function getName()
-    {
-        return 'application_source_instance_layer_selector';
-    }
-
     public function getParent()
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';

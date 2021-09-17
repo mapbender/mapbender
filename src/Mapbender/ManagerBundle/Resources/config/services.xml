@@ -11,8 +11,6 @@
         <parameter key="fom.acl_assignment.show_anonymous">true</parameter>
         <!-- populated by compiler passes -->
         <parameter type="collection" key="mapbender.manager.menu.items" />
-        <!-- popuplated by RegisterLegacyMenuRoutesPass -->
-        <parameter type="collection" key="mapbender.manager.menu.legacy_bundles" />
         <parameter type="collection" key="mapbender.manager.menu.route_prefix_blacklist" />
     </parameters>
     <services>
@@ -33,20 +31,24 @@
             <argument>%mapbender.manager.menu.items%</argument>
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="kernel" />
-            <argument>%mapbender.manager.menu.legacy_bundles%</argument>
-            <argument>%mapbender.manager.menu.route_prefix_blacklist%</argument>
         </service>
         <service id="mapbender.twig.manager.acl" class="Mapbender\ManagerBundle\Extension\Twig\AclExtension">
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
-        <service id="mapbender.form_toype.application_region_properties" class="Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType">
-            <tag name="form.type" alias="application_region_properties" />
-        </service>
-        <service id="mabender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
-            <tag name="form.type" alias="application_template_choice" />
+        <service class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
+            <tag name="form.type" />
             <argument>%kernel.bundles%</argument>
+        </service>
+        <service id="mabender.form_type.source_instance_item" class="Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType">
+            <tag name="form.type" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+        </service>
+        <service class="Mapbender\ManagerBundle\Form\Type\ApplicationChoiceType">
+            <tag name="form.type" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
         <service class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
             <tag name="form.type" />

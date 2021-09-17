@@ -7,13 +7,13 @@
 .mapbender-element-result-table {
 
   > .dataTables_wrapper {
-    position: relative;
 
     > table[role="grid"] {
-      font-size: $uiFontSize;
+      td, th {
+        padding: 4px;
+      }
       > thead > tr > th {
         background-color: $buttonFirstColor;
-        cursor: pointer;
         user-select: none;
         border: 1px solid $buttonSecondColor;
         &:last-child {
@@ -22,54 +22,38 @@
         }
         color: #ffffff;
         font-weight: normal;
-        padding: 3px 6px;
 
-        &:hover{
-          background-color: $buttonSecondColor;
+        &.sorting, &.sorting_asc, &.sorting_desc {
+          cursor: pointer;
+          &:hover {
+            background-color: $buttonSecondColor;
+          }
+          &:before {
+            margin-right: 0.5em;
+          }
         }
 
         &.sorting_asc, &.sorting_desc {
           background-color: $buttonFirstActiveColor;
         }
-        &.buttons.sorting_disabled {
-          cursor: default;
-        }
-        text-align: right;
-        &.sorting:after {
+        &.sorting:before {
           display: inline-block;
           content: "\f0dc";
           font-family: FontAwesome;
         }
-        &.sorting_asc:after {
+        &.sorting_asc:before {
           display: inline-block;
           content: "\f160";
           font-family: FontAwesome;
         }
-        &.sorting_desc:after {
+        &.sorting_desc:before {
           display: inline-block;
           content: "\f161";
           font-family: FontAwesome;
         }
       }
       > tbody > tr {
-        &.odd {
-          background-color: #F8F8F8;
-        }
-
-        &.even {
-          background-color: #EBEBEB;;
-        }
-
-        &.warning{
-          background-color: lighten($selectColor,10%);
-        }
-
-        &:hover{
-          background-color: $selectColor;
-        }
         > td {
-          padding: 4px;
-
           &.buttons {
             text-align: right;
             white-space: nowrap;
@@ -77,23 +61,13 @@
             padding: 0;
             > div.button-navigation {
               display: inline-block;
-              > button {
-                font-size: 0; // for vis-ui <=0.1.79 generating unwanted visible button labels
-                &:before {
-                  display: inline-block;
-                  font-size: $uiFontSize;
-                  padding: 3px 3px 2px 4px;
-                }
-                &.button {
-                  padding: 0;   // undo global .button padding
-                }
-              }
-              .button {
-                border-right-width: 0;
-              }
-              .button:last-child {
-                border-right-width: 1px;
-              }
+            }
+            .button {
+              padding: 3px 3px 2px 4px;
+              border-right-width: 0;
+            }
+            .button:last-child {
+              border-right-width: 1px;
             }
           }
 
@@ -111,7 +85,6 @@
     }
 
     > .dataTables_info {
-      font-size: $uiFontSize;
       margin-top: 8px;
       text-align: center;
       border-radius: 7px;

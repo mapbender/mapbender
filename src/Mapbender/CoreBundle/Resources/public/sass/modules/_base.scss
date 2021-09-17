@@ -38,12 +38,18 @@ hr {
   margin:0;
   padding: 0;
 }
+h1, h2 {
+  margin-bottom: 15px;
+}
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: 1em;
   &:first-child {
     margin-top: 0;
   }
-  padding: 0;
+  table thead & {
+    // Avoid margins inside table cells
+    margin: 0;
+    line-height: 1.5;
+  }
 }
 
 a {
@@ -53,7 +59,10 @@ a {
     color:inherit;
   }
 }
-p{margin:0;}
+
+.clickable {
+  cursor: pointer;
+}
 
 .popup, .sideContent {
   table {
@@ -68,4 +77,22 @@ p{margin:0;}
       border: none;
     }
   }
+}
+
+.flex-fill {
+  flex-grow: 1;
+}
+
+.overlay-fill {
+  position: relative;
+  flex-grow: 1;
+  display: inline-flex;
+  flex-direction: column;
+}
+
+body.desktop-template .mobile-only {
+  display: none;
+}
+body.mobile-template .desktop-only {
+  display: none;
 }

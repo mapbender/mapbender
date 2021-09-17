@@ -1,7 +1,6 @@
-    <div>
-        <div class="left">{{ form_row(form.configuration.maximized) }}</div>
-        <div class="left">{{ form_row(form.configuration.fixed) }}</div>
-        <div class="clearContainer"></div>
+    <div class="form-group no-gutters">
+        {{ form_widget(form.configuration.maximized, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.fixed, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
     {{ form_rest(form.configuration) }}

@@ -5,209 +5,153 @@
 @import "modules/layout";
 @import "modules/popup";
 @import "modules/input";
-@import "modules/button";
-@import "modules/seperator";
-@import "modules/container";
-@import "modules/tabcontainer";
-@import "modules/checkbox";
-@import "modules/radiobutton";
 @import "modules/dropdown";
 @import "modules/table";
-@import "modules/popup_dialog";
 @import "element/mbslider";
 
-
-$bannerHeight: 170px;
-$contentPaneWidth: 800px;
-$navWidth: 200px;
-$pageWidth: $contentPaneWidth + $navWidth;
-
 body {
-  background-image:url($imageBasePath + '/body.png');
+  background-color: #e8e8e8;
+  font-weight: 300;
+}
+// Use lighter 400 font-weight by default for implicitly "bold" elements
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, b, strong, label, th {
+  font-weight: 400;
 }
 
-.navigation, .accountBar {
-  color: $middleFontColor;
+h1, .h1 {
+  font-size: 2.675rem;
+}
+h2, .h2 {
+  font-size: 2rem;
+}
+h3, .h3 {
+  font-size: 1.72rem;
+}
+h4, .h4, .tabContainer > ul {
+  font-size: 1.35rem;
 }
 
-.navigation {
-  .navItem {
-    > a {
-      display: block;
-      @include transition(color 0.3s linear);
-      // separate text from built-in icon
-      &:before{margin-right:5px;}
+.navigationBar {
+  .nav {
+    font-weight: bold;
+  }
+  .navbar-nav>li>a {
+    color: lighten($darkFontColor, 30%);
+    background-color: transparent;
+  }
+  .navbar-toggle {
+    border-color: lighten($darkFontColor, 30%);
+    .icon-bar {
+      background-color: lighten($darkFontColor, 30%);
     }
-    &:hover, &:focus {
-      color: darken($middleFontColor, 12%);
+  }
+  .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
+    color: inherit;
+    background-color: #eee;
+  }
+  &, & .dropdown-menu {
+    background-color: rgba(255, 255, 255, 1);
+    border-color: #e7e7e7;
+  }
+  box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
+  .dropdown-menu>li>a, .dropdown-menu>.active>a {
+    color: inherit;
+  }
+
+  .navbar-brand {
+    // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
+    padding-top: 5px;
+    padding-bottom: 5px;
+    // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
+    // see https://stackoverflow.com/a/7310398
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
     }
-    &.activeItem {
-      > a:before {
-        color: $ciColor;
-      }
-      color: darken($middleFontColor, 24%);
-      &:hover, &:focus {
-        color: darken($middleFontColor, 36%);
-      }
-    }
+  }
+  .logo {
+    max-width: 120px;
+    max-height: 100%;
+  }
+  .navbar-brand>img.logo, .navbar-brand-name {
+    display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
+  }
+  .navbar-brand-name {
+    font-weight: 400;
+    vertical-align: middle;
+    margin-left: 0.25em;
+  }
+}
+
+.content-head {
+  margin-bottom: 4rem;
+  > h1:last-child {
+    margin: 0;
   }
 }
 
 div.contentTitle {
-  // remove h1 margin, put it on the containing div instead
-  margin-bottom: 2rem;
   > h1 {
     margin: 0;
   }
   // @todo: allow regular paragraph text flow ... everywhere?
-  > p {
+  p {
     margin: 0.5em 0;
   }
+  > p {
+    font-size: 1.5rem;
+  }
 }
 
-
-// ------------------------------------------------------------------------ PAGE
-.page{
-  margin: 0 auto;
-  width:$pageWidth;
+.underlined {
+  display: inline-block;
+  padding-bottom: 10px;
+  border-bottom: solid #079ee0 5px;
 }
-.popupContainer,
+
 .page{
   position:relative;
-  .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-    border-top: none;
-  }
-}
-.iconBig, .iconSmall{
-  &:before {
-    @extend .hover-highlight-effect;
-  }
 }
 
 .notifyjs-corner {
   z-index: 100000 !important;
 }
 
-
-
 // -------------------------------------------------------------------- PAGE TOP
-.head{
-  position: relative;
-  height:$bannerHeight;
-
-  // remove broken head background when the page is smaller than defined width
-  min-width:$pageWidth;
-  border-top:solid 5px darken($firstColor, 10%);
-  background-image:url($headPatternUrl);
-  @include background(linear-gradient(rgba(255,255,255,.1),
-                                      rgba(255,255,255,0)),
-                      url($headPatternUrl));
-  hr{@include absolute('' 0 0 0);}
+.head {
+  margin-bottom: 4rem;
+  // Add padding to compensate for absolute-positioned navbar-fixed-top
+  // See https://getbootstrap.com/docs/3.4/components/#navbar-fixed-top
+  padding-top: 60px;
 }
 
-// If .page follows .head on the same level (manager.html.twig), reposition .page to overlap .head
-.head + .page {
-  margin-top: -$bannerHeight;
-}
-
-.account-bar-wrap {
-  float: right;
-}
 .sitelinks {
   &.list-inline li:not(:first-child):before {
     content: "|";
     margin-left: -5px;
     margin-right: 5px;
   }
-  li {
-    a, a:visited {
-      color: inherit;
-    }
-    a:hover, a:focus {
-      color: $lightFontColor;
-    }
-  }
-}
-.sitelinks, .accountBar {
-  line-height: 2.5;
 }
 
-.accountBar {
-  #accountOpen {
-    cursor: pointer;
-  }
-  padding: 0 ($space/2);
-  background-color: $contentColor;
-  border-bottom-left-radius: $containerBorderRadius;
-  border-bottom-right-radius: $containerBorderRadius;
-  > .accountMenu {
-    height: 2.5em; // Legacy hack: clip to exactly one line-height
-    overflow: hidden;
-    @include transition(all 0.2s ease-in-out);
-
-    &.opened {
-      // Legacy hack: assume exactly three lines of content
-      height: 3 * 2.5em;
-    }
+.list-head {
+  font-size: 1.3rem;
+  .content-box {
+    display: inline-block;
   }
 }
 
-
-
-
-
-
-
-// ------------------------------------------------------------------- PAGE LEFT
-.leftPane{
-  width:$navWidth;
-
-  .navigation {
-    background-color: darken($contentColor, 1%);
-    box-shadow: -1em 0 2em inset darken($contentColor, 10%);
-    border-left:solid 1px $thirdColor;
-    border-bottom:solid 1px $thirdColor;
-    border-bottom-left-radius: $containerBorderRadius;
-    padding: 10px;
-    .navItem {
-      > a {
-        @include transition(color, background-color linear 0.3s);
-        padding: 2px 10px;
-        &:hover, &:focus {
-          background-color: #E0DDDD;
-        }
-      }
-    }
-    .navLevel2, .navLevel3{margin-left:$space/2;}
-  }
-  .logo {
-    max-width: 100%;
-    max-height:120px;
-  }
-  .logoContainer{
-    padding-top: $space;
-    height:$bannerHeight;
-  }
-  .logoContainer, >.navigation {
-    padding-left: $space / 2;
-  }
-}
-
-.leftPane, .rightPane {
-  display: inline-block;
-}
-.rightPane {
-  width: $contentPaneWidth;
-  position: absolute;
-  top: 0;
-  .top {
-    height: $space * 6;
-  }
-}
-
-textarea, input[type=text], input[type=submit], input[type=number], input[type=password],  a.button, button, div.dropdown {
+a.button, button, div.dropdown:not(.bs-dropdown) {
   border-radius: $elementBorderRadius;
 }
+textarea, input[type=text], input[type=number], input[type=password] {
+  border-radius: 8px;
+}
+.input, .dropdown:not(.bs-dropdown) {
+  border-color: transparent;
+}
+
 a.button{
   color: $firstColor;
   &:hover{
@@ -221,58 +165,50 @@ ul.dropdownList{
 }
 
 .tabContainer {
-  .tabs {
-    > .tab {
-      height: 32px;
-      background-color: #ECECEC;
-      padding-top: 5px;
-      &:first-child {
-        border-top-left-radius: $containerBorderRadius;
-      }
-      &:last-child {
-        border-top-right-radius: $containerBorderRadius;
-      }
-      bottom: -1px;
-
-      &:hover, &:focus {
-        padding-top: 5px;
-        bottom: 0;
-        background-color: #f9f9f9;
-        outline: none;
-        box-shadow: 0px -1px 1px #000;
-        &.active {
-        }
-      }
-      &.active {
-        bottom: 0px;
-        height: 35px;
-        margin-bottom: -3px;
-        background-color: #f9f9f9;
-      }
-      margin-right: -1px;
-    }
+  > ul {
+    margin-bottom: 2rem;
   }
+  // Use Layout rules from .nav-pills without using .nav-pills buttonish styling
+  // See https://github.com/twbs/bootstrap/blob/v3.4.1/less/navs.less#L117
+  // Mark active link with an underline instead
+  .nav > li {
+    float: left;
+    > a {
+      padding-left: 0;  // Remove Bootstrap 3 default 15px left / right for underline sizing
+      padding-right: 0;
+      padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
+    }
+    // Pad enclosing li instead of >a for underline sizing; redistribute entire padding right
+    padding-left: 0;
+    padding-right: 30px;
 
-  > .container {
-    border-bottom-left-radius: $containerBorderRadius;
-    border-bottom-right-radius: $containerBorderRadius;
-    border-top-right-radius: $containerBorderRadius;
+    font-weight: bold;
+    color: lighten($darkFontColor, 30%);
+
+    &.active {
+      color: $darkFontColor;
+    }
+    &.active > a {
+      // Trade bottom-padding for border to maintain height
+      padding-bottom: 7px;
+      border-bottom: solid #079ee0 3px;
+    }
   }
 }
 
+.blueTabUnderline {
+  max-width: 67px;
+  height: 3px;
+  background-color: #079ee0;
+}
+
+
 .contentPane {
+  width: 90%;
+  max-width: 80rem;
+
+  margin: 0 auto;
   > .content {
-    min-height: 600px;
-    position: relative;
-    padding: $space;
-    background-color: lighten($contentColor, 2%);
-    @if ($managerContentPatternUrl != "") {
-      background-image: url($managerContentPatternUrl);
-    }
-    border-radius: $containerBorderRadius;
-    .tabContainer {
-      margin-bottom: $space;
-    }
 
     form {
       &:after{
@@ -287,89 +223,76 @@ ul.dropdownList{
       text-align: right;
       margin: $space 0;
     }
+  }
+}
 
-    border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
+.filter-group {
+  th & {
+    margin-bottom: 0;
+    max-width: initial;
+  }
+  label {
+    width: auto;
+    min-width: 80px;
+    margin: 0 0.5em 0 0;
+  }
+  .inputWrapper, >input {
+    width: 200px;
+    max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
+  }
+  .inputWrapper {
+    display: inline-block;
+  }
+  .container-filter & {
+    white-space: nowrap;
+    label {
+      font-weight: inherit;
+      min-width: initial;
+    }
+    .inputWrapper, >input {
+      box-sizing: content-box;
+      padding: 0;
+      height: auto;
+      width: 12em;
+      max-width: initial;
+      border: none;
+      border-radius: 0;
+      border-bottom: 1px solid rgba(0,0,0,0.5);
+      background-color: transparent;
     }
   }
-  .form-container {
-    border: 1px solid #c0c0c0;
-    background-color: #f9f9f9;
-    padding: 20px;
-    .button-group:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .mapbenderVersion{
-    color:$lightFontColor;
-    text-align:right;
-  }
 }
 
-.secureElement.has:before {
-  color: $buttonCriticalSecondColor;
-  font-weight: bold;
+.container-filter {
+  text-align: right;
 }
 
-label[for^="inputFilter"] {
-  width: auto;
-  min-width: 80px;
-  margin: 0 1em 0 0;
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
-}
-
-.listFilterInput{
-  width: 200px;
-  max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
-  // HACK: The proper way to do this is to wrap label + input into a .form-group, or any other div really,
-  //       and put the margin onto the container. This would require changing FOM-generated markup though...
-  margin-bottom: 1.5 * $space;
-  /** FOM templates like to add .left for no particular reason, defeat that */
-  float: none;
-}
-
-#addElmPermission {
-  // Link is outside of element permission markup, but want to display as an ~overlay top right
-  position: relative;
-  top: 30px;
+#listFilterPermission {
   // following (default!) collection add interaction doesn't work for Element permissions, and should also
   // not be displayed
-  & + form .collectionAdd {
+  & ~ * .collectionAdd {
     display: none;
+  }
+  & + form {
+    .collectionAdd, .labelInput.required {
+      display: none;
+    }
   }
 }
 
 .permissionsTable{
-  tr{
-    &.new{
-      .labelInput, .iconGroup, .iconUser{color:green;}
-      background-color: #f0ffed;
-    }
-  }
-  td{
-    .input{display:none;}
-    .iconGroup:before, .iconUser:before{
-      display: inline-block;
-      text-align: center;
-      width: 1.5em;
-    }
-  }
-  .listFilterInput{
-    margin-bottom: 0;
-  }
   .tagbox {
+    display: inline-block;
     font-size: 85%;
     cursor: pointer;
     width: auto;
-    text-align: center;
     padding: 3px .5em;
     margin: 0 .25em;
-    @include noUserSelect;
-    @include border-radius($radius);
+    user-select: none;
+    border-radius: $radius;
+    input {
+      display: none;
+    }
     &.multi {
       background-color:#c1c1c1;
     }
@@ -386,17 +309,89 @@ label[for^="inputFilter"] {
         background-color: #FF702A;
       }
     }
-    input {
-      display: none;
-    }
+  }
+}
+.iconColumn {
+  // .iconColumn contents mix div / a / span elements, but they should all
+  // size and align the same way
+  > * {
+    display: inline-block;
+  }
+  > * + *, .screentypes i:not(:first-child) {
+    margin-left: 0.5em;
   }
 }
 
-.tableGroupsAndUsers{
-  border:{
-    top:solid 3px $firstColor;
-    left:solid 1px $thirdColor;
-    right:solid 1px $thirdColor;
-    bottom:solid 1px $thirdColor;
+.popover {
+  font-size: inherit;
+}
+.popover, .panel-body {
+  .form-group:last-child, .collectionItem:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.popup .table {
+  background-color: white;
+}
+
+.tagbox, .checkWrapper {
+  input {
+    display: none;
+  }
+}
+
+.content-box {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 5px 10px 8px rgba(191, 191, 191, 0.5);
+  .content & {
+    margin-bottom: 2.5rem;
+  }
+}
+.content-box-lg {
+  padding: 30px 40px;
+  @media screen and (max-width: 767px) {
+    padding: 25px;
+  }
+}
+.content-box-md {
+  padding: 15px;
+}
+.clip-text {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+.flashBox{
+  $width:280px;
+
+  padding: ($space/4) ($space/2);
+  text-align: center;
+  width: $width;
+  margin-left: -$width/2;
+  position: absolute;
+  z-index: 1035;  // Must be higher than .navbar-fixed-top's 1030
+  top: 0;
+  left: 50%;
+  @include transition(all 1s ease-in-out);
+  opacity: 1;
+  &.kill {
+    top: -100px;
+    opacity: 0;
+  }
+}
+
+footer {
+  padding-bottom: 2.5rem;
+}
+
+.action-button, .listFilterBoxes .btn {
+  border-radius: 10px;
+  padding: 5px 20px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  i + * {
+    margin-left: 0.5em;
   }
 }

@@ -1,27 +1,27 @@
-<ul class="itemLevel1 list">  
-  <li class="openCloseTitle iconExpand">{{ tilematrixset.identifier }}</li>
-  <li>
-    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.identifier }}</span>
-  </li>
-  <li>
-    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.supportedcrs" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.supportedCrs }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrixset.label.title" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.title }}</span>
-  </li>
-  <li>
-    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</span>
-    <span class="metaText">{{ tilematrixset.abstract }}</span>
-  </li>
-  <li>
-    <ul class="itemLevel2 list closed">
-      <li class="openCloseTitle iconExpandClosed">{{ "mb.wmts.wmtsloader.repo.tilematrixset.matrixes" | trans }}</li>
+<div class="content-toggle-container">
+  <div class="h4 clearfix content-toggle clickable">
+    <i class="pull-right fa fas fa-minus"></i>
+    {{ tilematrixset.identifier }}
+  </div>
+  <div class="content-toggle-target">
+    <table>
+      <tbody>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.identifier" | trans }}:</th><td>{{ tilematrixset.identifier }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.supportedcrs" | trans }}:</th><td>{{ tilematrixset.supportedCrs }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.title" | trans }}:</th><td>{{ tilematrixset.title }}</td></tr>
+        <tr><th>{{ "mb.wmts.wmtsloader.repo.tilematrixset.label.abstract" | trans }}:</th><td>{{ tilematrixset.abstract }}</td></tr>
+      </tbody>
+    </table>
+    <div class="content-toggle-container indent closed">
+      <div class="h4 clearfix content-toggle clickable">
+        <i class="pull-right fa fas fa-plus"></i>
+        {{ 'mb.wmts.wmtsloader.repo.tilematrixset.matrixes' | trans }}
+      </div>
+      <div class="content-toggle-target smallText lighter-headings">
       {% for tilematrix in tilematrixset.tilematrices %}
         {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
       {% endfor %}
-    </ul>
-  </li>
-</ul>
+      </div>
+    </div>
+  </div>
+</div>

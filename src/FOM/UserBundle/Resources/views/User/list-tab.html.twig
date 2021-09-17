@@ -1,0 +1,18 @@
+<div class="row list-head">
+    <div class="col-sm-5 col-xs-12 col-12">
+    {%- if is_granted('CREATE', oids.user) -%}
+        <div class="content-box content-box-md">
+            <a href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
+                <i class="fa fas fa-lg fa-plus"></i>
+                <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
+            </a>
+        </div>
+    {%- endif -%}
+    </div>
+    <div class="col-sm-7 col-xs-12 col-12">
+        {% include 'MapbenderManagerBundle::fragments/filter-container.html.twig' with {filterTargetId: 'listFilterUsers' } %}
+    </div>
+</div>
+<div class="content-box content-box-lg">
+    {%- include 'FOMUserBundle:User:list.html.twig' -%}
+</div>

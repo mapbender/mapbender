@@ -11,6 +11,7 @@ mb:
     print: Imprimir
     refresh: Actualizar
     remove: Remover
+    reset: Reiniciar
     save: Guardar
     search: Buscar
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instancias
       typed:
         singular: '%type% instancia'
+    security: Seguridad
   states:
     active: activo # m.; f.: activa
     inactive: inactivo # m.; f.: inactiva
@@ -37,18 +39,9 @@ mb:
         nolayer: 'No existe feature info de la capa.'
         unknownoption: 'Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.'
         noresult: 'no result'
-      popup:
-        btn:
-          ok: Cerrar
-          print: Imprimir
       class:
         title: FeatureInfo
         description: FeatureInfo
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: diálogo
     aboutdialog:
       content:
         versionprefix: v.
@@ -72,11 +65,6 @@ mb:
         geometry:
           missing: ~
     searchrouter:
-      popup:
-        btn:
-          ok: Buscar
-          cancel: Cerrar
-          reset: Reiniciar
       no_results: 'No results'
       result_counter: 'Results: %count%'
       class:
@@ -96,10 +84,6 @@ mb:
       class:
         title: POI
         description: 'Crear un POI para compartir'
-      tag:
-        poi: poi
-        point: punto
-        interest: interés
       label:
         text: Texto
     basesourceswitcher:
@@ -108,27 +92,16 @@ mb:
       class:
         title: ~
         Description: 'Change the map''s background sources'
-      tag:
-        base: base
-        source: destino
-        switcher: switcher
       form:
         mesage: 'No fuentebase seteada esta definida.'
     legend:
-      nolegend: 'No hay leyenda disponible'
       popup:
         btn:
           ok: Cerrar
       class:
         title: Leyenda
         description: 'La leyenda muestra la leyenda de las capas del mapa'
-      tag:
-        layer: capa
-        legend: leyenda
     ruler:
-      popup:
-        btn:
-          ok: Cerrar
       create_error: 'Regla: Tipo debe ser línea o área.'
       class:
         title: 'Regla Línear/Área'
@@ -144,24 +117,9 @@ mb:
         scale: Escala
         rotation: Rotación
         legend: ~
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'No hay capa activa!'
-      form:
-        required: 'Por favor rellene este campo'
       class:
         title: 'Cliente de Impresión'
         description: 'Renders un diálogo de Impresión'
-      tag:
-        print: imprimir
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -173,21 +131,6 @@ mb:
       tag:
         overview: overview
         map: mapa
-    sketch:
-      circle:
-        radius:
-          label: Radio
-          error: 'Radio no es válido'
-        form:
-          button:
-            'yes': Si
-            cancel: Cancelar
-      class:
-        title: Sketch
-        description: 'Añadir una capa vector en el mapa y habilitar los objetos geometría para dibujar.'
-      tag:
-        sketch: sketch
-        circle: circulo
     metadata:
       popup:
         title: Metadata
@@ -206,8 +149,6 @@ mb:
         position: posición
         button: botón
     layertree:
-      confirm:
-        allremove: '¿Realmente borrar todas las fuentes?'
       popup:
         btn:
           ok: Cerrar
@@ -226,30 +167,15 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Aumento a la capa'
         metadata: Metadata
-        sources: Fuentes
-        deleteallsources: 'Quitar todas las fuentes'
         legend: Leyenda
         kmlexport: 'Exportar Kml'
         dimension_onoff: ~
         dimension: ~
         sourcevisibility_onoff: ~
-        allvisibility_on: ~
       class:
         title: 'Árbol de capa'
         description: 'Árbol de las capas del mapa'
-      tag:
-        layertree: árbolcapas
-        layer: capa
-        tree: árbol
-      contextmenu:
-        nooption: ~
     zoombar:
-      panup: 'Mover arriba'
-      panright: 'Mover derecha'
-      pandown: 'Mover abajo'
-      panleft: 'Mover izquierda'
-      goback: Atrás
-      goforward: Adelante
       zoombybox: 'Acercamiento por recuadro'
       zoombyworld: 'Acercamiento global'
       zoomin: Acercar
@@ -345,8 +271,8 @@ mb:
         label:
           autoopen: Autoabrir
           deactivateonclose: 'Desactivar al cerrar'
-          showoriginal: ~
           onlyvalid: ~
+          highlighting: ~
       printclient:
         label:
           autoopen: Autoabrir
@@ -360,7 +286,6 @@ mb:
         label:
           showbasesources: 'Mostar fuentes bases'
           autoopen: Autoabrir
-          showheader: 'Mostrar encabezado'
           showlayerremove: 'Mostrar quitar capa'
           usetheme: ~
           themes: ~
@@ -368,53 +293,33 @@ mb:
             opened: opened
             activate: ~
             useTheme: ~
-            sourceVisibility: ~
-            allSelected: ~
             label: ~
           hidenottoggleable: ~
           hideselect: ~
           hideinfo: ~
-      redlining:
-        label:
-          auto_activate: ~
-          deactivate_on_close: ~
     htmlelement:
       class:
         title: ~
         description: ~
-      tag:
-        html: html
     entity:
       app:
         screenshotfile:
           error: ~
-    redlining:
+    sketch:
       geometrytype:
         point: ~
         line: ~
         polygon: ~
         rectangle: ~
-        text:
-          title: ~
-          label: ~
-          error:
-            notext: ~
+        circle: Circulo
+        text: ~
+      error:
+        notext: ~
       geometry:
         action:
           remove: ~
           edit: ~
           zoom: ~
-      dialog:
-        btn:
-          cancel: ~
       class:
         title: ~
         description: ~
-      tag:
-        redlining: redlining
-        geometry: geometry
-  geosource:
-    image_error:
-      datails: 'El mapa no puede ser presentado.'
-      exception: 'Excepción: %exception%'
-      statuscode: 'HTTP código de estado'

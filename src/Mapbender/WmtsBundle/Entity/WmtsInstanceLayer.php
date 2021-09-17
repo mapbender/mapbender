@@ -69,6 +69,14 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     protected $tileMatrixSet = "";
 
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->setId(null);
+        }
+    }
+
     /**
      * Set infoformat
      *

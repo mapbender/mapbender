@@ -39,11 +39,12 @@
     }
     a.ui-button {
       // jquerydialogextendjs uses anchors instead of buttons
-      width: auto;            // size to contained glyph
-      display: inline-block;  // allow top / bottom margins to match <button> used for close
       text-decoration: none;
     }
     .ui-button {
+      margin: 0;
+      line-height: 1;
+      vertical-align: initial;
       font-weight: bold;
       opacity: .2;
       &:hover, &:focus {
@@ -66,6 +67,13 @@
         content: "\f063";
       }
     }
+    .ui-button-icon-only {
+      width: 1em;
+      height: 16px;  // not in base theme, must set a height; natural height will be 0 pixels
+      .ui-icon {
+        text-indent: 0;	// not in base theme (base theme uses sprites instead of glyph-based icons)
+      }
+    }
   }
   .ui-dialog-content {
     /** Dialog resizing fix (jumpy scrollbar with tab-navigator in content, width auto-updated (badly) by vis-ui javascript...) */
@@ -77,11 +85,6 @@
     > .mapbender-element-tab-navigator {
       > .ui-tabs-nav {
         background-color: #B6D39E;
-        &.nav-tabs > li > a {
-          // undo Bootstrap .nav-tabs>li>a border rule
-          // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
-          border: none;
-        }
       }
       > .tab-content {
         padding: 0;

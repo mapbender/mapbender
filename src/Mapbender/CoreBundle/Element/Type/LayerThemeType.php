@@ -17,8 +17,6 @@ class LayerThemeType extends AbstractType
         $resolver->setDefaults(array(
             'useTheme' => true,
             'opened' => true,
-            'sourceVisibility' => false,
-            'allSelected' => false,
         ));
     }
 
@@ -40,20 +38,6 @@ class LayerThemeType extends AbstractType
                 'label' => false,
                 'attr' => array(
                     'title' => 'mb.core.admin.layertree.label.theme.opened',
-                ),
-            ))
-            ->add('sourceVisibility', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => false,
-                'attr' => array(
-                    'title' => 'mb.core.admin.layertree.label.theme.sourceVisibility',
-                ),
-            ))
-            ->add('allSelected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => false,
-                'attr' => array(
-                    'title' => 'mb.core.admin.layertree.label.theme.allSelected',
                 ),
             ))
         ;

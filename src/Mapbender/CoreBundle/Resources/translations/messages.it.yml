@@ -7,10 +7,11 @@ mb:
     close: Chiudi
     delete: Elimina
     edit: Modifica
-    filter: Filtrare
+    filter: Filtra
     print: Stampa
     refresh: Aggiorna
     remove: Elimina
+    reset: Resetta
     save: Salva
     search: Cerca
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Istanze
       typed:
         singular: 'Istanza %type%'
+    security: Sicurezza
   states:
     active: attivo     # m.; f.: attiva
     inactive: inattivo # m.; f.: inatttiva
@@ -37,18 +39,9 @@ mb:
         nolayer: 'Nessuna informazione per le feature nel layer'
         unknownoption: 'Option sconosciuta %key% per %namespace%.%widgetname%.'
         noresult: 'nessun risultato'
-      popup:
-        btn:
-          ok: Chiudi
-          print: Stampa
       class:
         title: Informazioni
         description: Informazioni
-      tag:
-        featureinfo: Informazione
-        feature: feature
-        info: informazione
-        dialog: 'finestra di dialogo'
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +89,6 @@ mb:
       class:
         title: POI
         description: 'Crea un POI per la condivisione'
-      tag:
-        poi: poi
-        point: punto
-        interest: interesse
       label:
         text: Text
     basesourceswitcher:
@@ -108,27 +97,16 @@ mb:
       class:
         title: 'Switcher per la risorsa di base'
         Description: 'Cambia la risorsa dello sfondo'
-      tag:
-        base: base
-        source: risorsa
-        switcher: switcher
       form:
         mesage: 'Nessun set per la risorsa di base è definito.'
     legend:
-      nolegend: 'Nessuna legenda disponibile.'
       popup:
         btn:
           ok: Chiudi
       class:
         title: Legenda
         description: 'Mostra la legenda dei layers della mappa'
-      tag:
-        layer: layer
-        legend: legenda
     ruler:
-      popup:
-        btn:
-          ok: Chiudi
       create_error: 'Righello: la tipologia deve essere linea o area.'
       class:
         title: 'Righello per linea/area'
@@ -144,24 +122,9 @@ mb:
         scale: Scala
         rotation: Rotazione
         legend: 'Stampa la legenda'
-      popup:
-        btn:
-          ok: Stampa
-          cancel: Cancella
-      info:
-        noactivelayer: 'Nessun layer attivo!'
-      form:
-        required: 'Per favore compila il campo'
       class:
         title: 'Stampa'
         description: 'Mostra la finestra di stampa'
-      tag:
-        print: Stampa
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Disattiva il frame per la stampa'
         activate: 'Attiva il frame della stampa'
@@ -173,21 +136,6 @@ mb:
       tag:
         overview: panoramica
         map: mappa
-    sketch:
-      circle:
-        radius:
-          label: Raggio
-          error: 'Raggio è invalido'
-        form:
-          button:
-            'yes': Si
-            cancel: Cancella
-      class:
-        title: Sketch
-        description: 'Aggiungi un vettore nella mappa e consenti di disegnare gli oggetti geometrici.'
-      tag:
-        sketch: sketch
-        circle: cerchio
     metadata:
       popup:
         title: Metadata
@@ -206,8 +154,6 @@ mb:
         position: Posizione
         button: Pulsante
     layertree:
-      confirm:
-        allremove: 'Vuoi veramente cancellare tutte le risorse?'
       popup:
         btn:
           ok: Chiudi
@@ -226,30 +172,15 @@ mb:
         opacity: Opacità
         zoomtolayer: 'Fai zoom sul layer'
         metadata: Metadata
-        sources: Risorse
-        deleteallsources: 'Rimuovere tutti le risorse'
         legend: Legenda
         kmlexport: 'esporta KML'
         dimension_onoff: 'On/Off Dimensione'
         dimension: Dimensione
         sourcevisibility_onoff: 'Mostra risorsa'
-        allvisibility_on: 'Mostra tutti i layers'
       class:
         title: 'Layer tree'
         description: 'Tree dei layers della mappa'
-      tag:
-        layertree: 'layer per tree'
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
-      panup: 'Muovi verso l''alto'
-      panright: 'Muovi a destra'
-      pandown: 'Muovi verso il basso'
-      panleft: 'Muovi a sinistra'
-      goback: 'Ritorna indietro'
-      goforward: 'Vai avanti'
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'
       zoomin: Ingrandisci
@@ -345,8 +276,8 @@ mb:
         label:
           autoopen: 'Apertura automatica'
           deactivateonclose: 'Disattiva in chiusura'
-          showoriginal: 'Mostra originale'
           onlyvalid: 'Solo per le feature valide'
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Apertura automatica'
@@ -360,7 +291,6 @@ mb:
         label:
           showbasesources: 'Mostra la risorsa di base'
           autoopen: 'Apertura automatica'
-          showheader: 'Mostra header'
           showlayerremove: 'Mostra i layer rimossi'
           usetheme: 'Layer tematico'
           themes: Temi
@@ -368,56 +298,39 @@ mb:
             opened: aperto
             activate: 'Abilita Aggiunta/Rimozione Layer'
             useTheme: 'Mostra tema'
-            sourceVisibility: 'Tema: visibilità della risorsa'
-            allSelected: 'Tema: visibilità del layer'
             label: 'nome del tema'
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideselect: 'Nascondi la visibilità per le cartelle'
           hideinfo: 'Nascondi info'
-      redlining:
-        label:
-          auto_activate: Auto-attivazione
-          deactivate_on_close: 'Disattiva alla chiusura'
     htmlelement:
       class:
         title: HTML
         description: 'Aggiungi HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: Errore
-    redlining:
+    sketch:
       geometrytype:
         point: Punto
         line: Linea
         polygon: Poligono
         rectangle: Rettangolo
-        text:
-          title: Testo
-          label: Testo
-          error:
-            notext: 'Testo necessario'
+        circle: Cerchio
+        text: Testo
+      error:
+        notext: 'Testo necessario'
       geometry:
         action:
           remove: 'Rimuovi la geometria'
           edit: 'Modifica la geometria'
           zoom: 'Fai zoom sulla geometria'
-      dialog:
-        btn:
-          cancel: Chiudi
       class:
-        title: Redlining
-        description: 'Strumento di Redlining'
-      tag:
-        redlining: redlining
-        geometry: geometria
-  geosource:
-    image_error:
-      datails: 'La mappa non può essere mostrata.'
-      exception: 'Eccezione: %exception%'
-      statuscode: 'HTTP status code'
+        title: ~
+        description: ~
+      admin:
+        auto_activate: Auto-attivazione
+        deactivate_on_close: Disattiva alla chiusura
 
 # Login exceptions
 "Bad credentials.": Credentiali errate.

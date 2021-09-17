@@ -1,0 +1,27 @@
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{%- set list_id = 'listFilterUsers' -%}
+
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
+{% endblock %}
+
+{% block list_actions %}
+{% if create_permission %}
+  <div class="content-box content-box-md">
+    <a href="{{path('fom_user_user_create')}}" title="{{"fom.user.user.index.add_new_user"|trans}}">
+      <i class="fa fas fa-lg fa-plus"></i>
+      <span>{{ 'fom.user.user.index.add_new_user' | trans }}</span>
+    </a>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block manager_content %}
+  {%- set items = users -%}
+  {{- parent() -}}
+<div class="content-box content-box-lg">
+    {%- include 'FOMUserBundle:User:list.html.twig' with {show_groups: is_granted('VIEW', group_oid) } -%}
+</div>
+{% endblock %}
+

@@ -11,6 +11,7 @@ mb:
     print: Imprimir
     refresh: Atualizar
     remove: Remover
+    reset: Postergar
     save: Guardar
     search: Procurar
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instâncias
       typed:
         singular: '%type% instância'
+    security: Segurança
   states:
     active: ativa # m.; f.: ativo
     inactive: inativa # m.; f.: inativo
@@ -37,18 +39,9 @@ mb:
         nolayer: 'Camada de informação não existe.'
         unknownoption: 'Opção desconhecida'
         noresult: 'A visão geral não contem camadas.'
-      popup:
-        btn:
-          ok: Fechar
-          print: Imprimir
       class:
         title: Informação
         description: Informação
-      tag:
-        featureinfo: Informação
-        feature: Objeto
-        info: Info
-        dialog: Diálogo
     aboutdialog:
       content:
         versionprefix: Versão
@@ -96,10 +89,6 @@ mb:
       class:
         title: 'Ponto de encontro (POI)'
         description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
-      tag:
-        poi: 'Ponto de encontro (POI)'
-        point: Ponto
-        interest: Interesse
       label:
         text: ~
     basesourceswitcher:
@@ -108,27 +97,16 @@ mb:
       class:
         title: 'Mudar o segundo plano'
         Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Segundo plano não existe.'
     legend:
-      nolegend: 'Legenda não disponível.'
       popup:
         btn:
           ok: Fechar
       class:
         title: Legenda
         description: 'Mostra a leganda sobre os temas ativos. '
-      tag:
-        layer: Temas
-        legend: Legenda
     ruler:
-      popup:
-        btn:
-          ok: Fechar
       create_error: 'Medição: O tipo de geometria tem que ser linha ou área.'
       class:
         title: 'Medição de linha/área'
@@ -144,24 +122,9 @@ mb:
         scale: Escala
         rotation: Rotação
         legend: 'Imprimir legenda'
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'Nenhuma camada ativa'
-      form:
-        required: 'Por favor, preencha este campo.'
       class:
         title: Impressão
         description: 'Diálogo de Impressão'
-      tag:
-        print: Impressão
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -173,21 +136,6 @@ mb:
       tag:
         overview: 'Visão geral'
         map: 'Mapa (visão geral)'
-    sketch:
-      circle:
-        radius:
-          label: Raio
-          error: 'Raio inválido'
-        form:
-          button:
-            'yes': Assumir
-            cancel: Cancelar
-      class:
-        title: Esboços
-        description: 'Adiciona uma camada de vetor ao mapa, sobre o que pode-se desenhar um objeto geométrico. '
-      tag:
-        sketch: Esboços
-        circle: Círculo
     metadata:
       popup:
         title: Metadados
@@ -206,8 +154,6 @@ mb:
         position: Posição
         button: Button
     layertree:
-      confirm:
-        allremove: 'Limpar todos os serviços?'
       popup:
         btn:
           ok: Fechar
@@ -226,30 +172,15 @@ mb:
         opacity: Dimensão
         zoomtolayer: 'Ampliar em cima de camada'
         metadata: Metadados
-        sources: Origem
-        deleteallsources: 'Tirar todos os serviços'
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'Dimensão ligada/desligada'
         dimension: Dimensão
         sourcevisibility_onoff: 'Visibilidade ligada/desligada'
-        allvisibility_on: 'Mostrar todas as camadas'
       class:
         title: 'Árvore de camadas'
         description: 'Árvore de camadas de mapa'
-      tag:
-        layertree: 'Árvore de camadas'
-        layer: Camada
-        tree: Árvore
-      contextmenu:
-        nooption: ~
     zoombar:
-      panup: 'Mover para cima'
-      panright: 'Mover à direita'
-      pandown: 'Mover para baixo'
-      panleft: 'Mover à esquerda'
-      goback: Voltar
-      goforward: Adiante
       zoombybox: 'Caixa de ampliar'
       zoombyworld: 'Mostrar toda extensão'
       zoomin: Ampliar
@@ -345,8 +276,8 @@ mb:
         label:
           autoopen: 'Abrir automaticamente'
           deactivateonclose: 'Desativar ao fechar'
-          showoriginal: 'Mostrar original'
           onlyvalid: 'Mostrar válido somente'
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Abrir automaticamente'
@@ -360,7 +291,6 @@ mb:
         label:
           showbasesources: 'Mostrar BaseSources'
           autoopen: 'Abrir automaticamente'
-          showheader: 'Mostrar header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Mostrar o tema'
           themes: Temas
@@ -368,53 +298,40 @@ mb:
             opened: 'Tema aberto/fechado'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Camada temática'
-            sourceVisibility: 'Tema: Visibilidade de serviços'
-            allSelected: 'Tema: Visibilidade de camadas'
             label: 'Nome do tema'
           hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
           hideselect: 'Ocultar visibilidade de arquivos'
           hideinfo: 'Ocultar info'
-      redlining:
-        label:
-          auto_activate: ~
-          deactivate_on_close: ~
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Separador
+              accordion: Acordeão
     htmlelement:
       class:
         title: HTML
         description: 'Adicionar HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: 'Ficheiro demasiado grande. O tamanho maximo é %limit% bytes.'
-    redlining:
+    sketch:
       geometrytype:
         point: Punto
         line: Linha
         polygon: Polígono
         rectangle: Retângulo
-        text:
-          title: Texto
-          label: Texto
-          error:
-            notext: ~
+        circle: Circulo
+        text: Texto
+      error:
+        notext: ~
       geometry:
         action:
           remove: 'Tirar geometria'
           edit: 'Editar geometria'
           zoom: 'Ampliar em cima de geometria'
-      dialog:
-        btn:
-          cancel: Fechar
       class:
-        title: Redlining
-        description: 'Ferramenta: Redlining'
-      tag:
-        redlining: redlining
-        geometry: geometria
-  geosource:
-    image_error:
-      datails: 'Não pode mostra o mapa.'
-      exception: 'Exceção: %exception%'
-      statuscode: 'Código de status HTTP'
+        title: ~
+        description: Ferramenta

@@ -1,0 +1,14 @@
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+{%- set title = 'fom.user.login.error_notocken.sorry' -%}
+{%- set pagetitle = 'fom.user.login.error_notocken.password_reset' | trans -%}
+
+{% block extra_links %}
+    {{ parent() }}
+    {% if site_email is defined %}
+    <a class="linkButton" href="mailto:{{site_email}}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.error_notocken.contact' | trans }}</a>
+    {% endif %}
+{% endblock %}
+{% block box_content_main %}
+    <p>{{ 'fom.user.login.error_notocken.no_such_tocken' | trans }}</p>
+    {{ parent() }}
+{% endblock %}

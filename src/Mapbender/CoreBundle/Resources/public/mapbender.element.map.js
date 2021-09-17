@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            srsDefs: [],
             layersets: []
         },
         elementUrl: null,
@@ -17,84 +18,52 @@
         /**
          * Creates the map widget
          */
-        _create: function(){
+        _create: function() {
+            delete this.options.dpi;
             var self = this;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = Mapbender.Model;
-            this.model.init(this);
-            $.extend(this.options, {
-                layerDefs: [],
-                poiIcon: this.options.poiIcon
+            Object.defineProperty(this.options, 'dpi', {
+                get: function() {
+                    return self.detectDpi_();
+                }
             });
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if (!this.options.extents.start && !this.options.extents.max) {
+                throw new Error("Incomplete map configuration: no start extent");
+            }
+            if (!this.options.extents.start) {
+                this.options.extents.start = this.options.extents.max.slice();
+            }
+            if (!this.options.srs) {
+                throw new Error("Invalid map configuration: missing srs");
+            }
+            if (!this.validateSrsOption(this.options.srs)) {
+                throw new Error("Invalid map configuration: srs must use EPSG:<digits> form, not " + this.options.srs);
+            }
+
+            this.model = Mapbender.mapEngine.mapModelFactory(this);
+            // HACK: place the model instance globally at Mapbender.Model
+            if (window.Mapbender.Model) {
+                console.error("Mapbender.Model already set", window.Mapbender.Model);
+                throw new Error("Can't globally reassing window.Mapbender.Model");
+            }
+            window.Mapbender.Model = this.model;
             this.map = this.model.map;
             self._trigger('ready');
         },
         getMapState: function(){
             return this.model.getMapState();
         },
-        sourceById: function(idObject){
-            return this.model.getSource(idObject);
-        },
-        /**
-         *
-         */
-        addSource: function(sourceDef, mangleIds) {
-            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
-            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
-        },
-        /**
-         *
-         */
-        removeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx) {
-                this.model.removeSource(toChangeObj);
-            }
-        },
-        /**
-         *
-         */
-        removeSources: function(keepSources){
-            this.model.removeSources(keepSources);
-        },
-        /**
-         * Triggers an event from the model.
-         * options.name - name of the event,
-         * options.value - parameter in the form of:
-         * options.value.mapquerylayer - for a MapQuery.Layer,
-         * options.value.source - for a source from the model.sourceTree,
-         * options.value.tochange - for a "tochange" object
-         * options.value.changed -  for a "changed" object
-         */
-        fireModelEvent: function(options){
-//            window.console && console.log(options.name, options.value);
-            this._trigger(options.name, null, options.value);
-        },
-        /**
-         * Returns a sourceTree from model.
-         **/
-        getSourceTree: function(){
-            return this.model.sourceTree;
-        },
         /**
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.options.srsDefs;
         },
         /**
          * Reterns the model
          */
         getModel: function(){
             return this.model;
-        },
-        /**
-         * Emulation shim for old-style MapQuery.Map.prototype.center.
-         * See https://github.com/mapbender/mapquery/blob/1.0.2/src/jquery.mapquery.core.js#L298
-         * @param {Object} options
-         * @deprecated
-         */
-        setCenter: function(options){
-            this.getModel().setCenterMapqueryish(options);
         },
         /*
          * Changes the map's projection.
@@ -131,123 +100,22 @@
             this.model.zoomToFullExtent();
         },
         /**
-         * Zooms the map to extent
+         * @param {String} srsName
+         * @return {boolean}
          */
-        zoomToExtent: function(extent, closest){
-            if(typeof closest === 'undefined')
-                closest = true;
-            this.map.olMap.zoomToExtent(extent, closest);
+        validateSrsOption: function(srsName) {
+            return (typeof srsName === 'string') && /^EPSG:\d+$/.test(srsName);
         },
-        /**
-         * Zooms the map to scale
-         * @deprecated
-         */
-        zoomToScale: function(scale, closest) {
-            console.warn("Deprecated zoomToScale call, use engine-independent Model.pickZoomForScale + Model.setZoomLevel");
-            this.map.olMap.zoomToScale.apply(this.map.olMap, arguments);
+        detectDpi_: function() {
+            // Auto-calculate dpi from device pixel ratio, to maintain reasonable canvas quality
+            // see https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
+            // Avoid calculating dpi >= 1.5*96dpi to avoid pushing (Mapproxy) caches into a resolution
+            // with too low label font size.
+            // Also avoid calculating less than 96dpi, to never perform client-side upscaling of Wms images
+            var dpr = window.devicePixelRatio || 1;
+            return 96. * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
         },
-        /**
-         * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
-         * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
-         * @deprecated
-         */
-        setMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
-            this.getModel().replaceInitialMaxExtent(newMaxExtent, newMaxExtentSrs);
-        },
-        /**
-         * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model
-         * @deprecated
-         */
-        setExtent: function() {
-            console.error("mbMap.setExtent called, doesn't do anything, you probably want to call zoomToExtent instead", arguments);
-        },
-        /**
-         * Adds the popup
-         */
-        addPopup: function(popup){
-            this.map.olMap.addPopup(popup);
-        },
-        /**
-         * Removes the popup
-         */
-        removePopup: function(popup){
-            this.map.olMap.removePopup(popup);
-        },
-        /**
-         * Returns the scale list
-         * @deprecated, just get options.scales yourself
-         */
-        scales: function(){
-            return this.options.scales;
-        },
-        /**
-         * Sets opacity to source
-         * @param {spource} source
-         * @param {float} opacity
-         */
-        setOpacity: function(source, opacity){
-            this.model.setOpacity(source, opacity);
-        },
-        /**
-         * Zooms to layer
-         * @param {object} options of form { sourceId: XXX, layerId: XXX }
-         */
-        zoomToLayer: function(options){
-            this.model.zoomToLayer(options);
-        },
-        /**
-         * Turns on the highlight layer at map
-         */
-        highlightOn: function(features, options){
-            this.model.highlightOn(features, options);
-        },
-        /**
-         * Turns off the highlight layer at map
-         */
-        highlightOff: function(features){
-            this.model.highlightOff(features);
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        loadSrs: function(srslist){
-            $.ajax({
-                url: this.elementUrl + 'loadsrs',
-                type: 'POST',
-                data: {
-                    srs: srslist
-                },
-                dataType: 'json',
-                contetnType: 'json',
-                context: this,
-                success: this._loadSrsSuccess,
-                error: this._loadSrsError
-            });
-            return false;
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        _loadSrsSuccess: function(response, textStatus, jqXHR){
-            if(response.data) {
-                for(var i = 0; i < response.data.length; i++) {
-                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
-                    this.model.srsDefs.push(response.data[i]);
-                    this.fireModelEvent({
-                        name: 'srsadded',
-                        value: response.data[i]
-                    });
-                }
-            } else if(response.error) {
-                Mapbender.error(Mapbender.trans(response.error));
-            }
-        },
-        /**
-         * Loads the srs definitions from server
-         */
-        _loadSrsError: function(response){
-            Mapbender.error(Mapbender.trans(response));
-        }
+        _comma_dangle_dummy: null
     });
 
 })(jQuery);

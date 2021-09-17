@@ -1,0 +1,17 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block manager_content %}
+    {%- set list_id = list_id | default('listFilter0') -%}
+    <div class="list-head">
+        <div class="row">
+            <div class="col-sm-5 col-xs-12 col-12">
+                {%- block list_actions -%}{%- endblock -%}
+            </div>
+            {%- if items -%}
+                <div class="col-sm-7 col-xs-12 col-12">
+                {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                </div>
+            {%- endif -%}
+        </div>
+    </div>
+{% endblock %}

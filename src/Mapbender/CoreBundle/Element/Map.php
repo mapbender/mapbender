@@ -3,21 +3,20 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Map element.
  *
  * @author Christian Wygoda
  */
-class Map extends Element implements ConfigMigrationInterface
+class Map extends Element implements MainMapElementInterface, ConfigMigrationInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;
@@ -46,7 +45,6 @@ class Map extends Element implements ConfigMigrationInterface
         /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
             'layersets' => array(),
-            'dpi' => 90.714, // DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'tileSize' => 512,
@@ -54,6 +52,7 @@ class Map extends Element implements ConfigMigrationInterface
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
+            'fixedZoomSteps' => false,
         );
     }
 
@@ -154,86 +153,7 @@ class Map extends Element implements ConfigMigrationInterface
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
-        $querySrs = $request->get('srs');
-        if ($querySrs) {
-            if (!$this->hasSrs($srsConfigs, $querySrs)) {
-                $this->container->get('logger')->error(
-                    'The requested srs ' . $querySrs . ' is not supported by this application.');
-                $querySrs = null;
-            } else {
-                $configuration['targetsrs'] = strtoupper($querySrs);
-            }
-        }
-
-        $pois = $request->get('poi');
-        if ($pois) {
-            $extra['pois'] = array();
-            if (array_key_exists('point', $pois)) {
-                $pois = array($pois);
-            }
-            foreach ($pois as $poi) {
-                $point = explode(',', $poi['point']);
-                $poiConfig  = array(
-                    'x' => floatval($point[0]),
-                    'y' => floatval($point[1]),
-                    'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
-                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
-                );
-                if (!empty($poi['srs'])) {
-                    if (!$this->hasSrs($srsConfigs, $poi['srs'])) {
-                        continue;
-                    }
-                    $poiConfig['srs'] = strtoupper($poi['srs']);
-                    if (empty($configuration['targetsrs'])) {
-                        $configuration['targetsrs'] = $poi['srs'];
-                    }
-                } else {
-                    if (!empty($configuration['targetsrs'])) {
-                        $poiConfig['srs'] = $configuration['targetsrs'];
-                    } else {
-                        $poiConfig['srs'] = $srsConfigs[0]['name'];
-                    }
-                }
-                $extra['pois'][] = $poiConfig;
-            }
-            // bake position and zoom level of single poi into map initialization
-            // setting center and target scale makes the map initialize in the right place client-side
-            if (count($extra['pois']) === 1) {
-                if (isset($extra['pois'][0]['scale'])) {
-                    $configuration['targetscale'] = intval($extra['pois'][0]['scale']);
-                } else {
-                    // fall back to a hopefully reasonable default scale
-                    $configuration['targetscale'] = 2500;
-                }
-            }
-        }
-
-        $bbox = $request->get('bbox');
-        if (!isset($extra['pois']) && $bbox) {
-            $bbox = explode(',', $bbox);
-            if (count($bbox) === 4) {
-                $extra['bbox'] = array(
-                    floatval($bbox[0]),
-                    floatval($bbox[1]),
-                    floatval($bbox[2]),
-                    floatval($bbox[3])
-                );
-            }
-        }
-
-        $center = $request->get('center');
-        $centerArr = $center !== null ? explode(',', $center) : null;
-        if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
-            $configuration['center'] = array_map('floatval', $centerArr);
-            // remove scale potentially set up by POI
-            unset($configuration['targetscale']);
-        }
-
         $configuration['extra'] = $extra;
-        if ($scale = $request->get('scale')) {
-            $configuration['targetscale'] = intval($scale);
-        }
-
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
         } else {
@@ -274,45 +194,6 @@ class Map extends Element implements ConfigMigrationInterface
     public static function getFormTemplate()
     {
         return 'MapbenderManagerBundle:Element:map.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
-    {
-        switch ($action) {
-            case 'loadsrs':
-                $data = $this->loadSrsDefinitions();
-                return new JsonResponse($data);
-            default:
-                throw new NotFoundHttpException('No such action');
-        }
-    }
-
-    /**
-     * Returns proj4js srs definitions from a GET parameter srs
-     * @return array srs definitions
-     */
-    protected function loadSrsDefinitions()
-    {
-        $srsList = $this->container->get('request_stack')->getCurrentRequest()->get("srs", null);
-        $srses   = preg_split("/\s?,\s?/", $srsList);
-        $allsrs  = array();
-        foreach ($srses as $srs) {
-            $parts = preg_split("/\s*\|\s*/", trim($srs));
-            $allsrs[] = array(
-                "name" => $parts[0],
-                "title" => (count($parts) > 0) ? trim($parts[1]) : '',
-            );
-        }
-        $result = $this->getSrsDefinitions($allsrs);
-        if (count($result) > 0) {   // @todo: an incomplete result set should already be an error; not just a completely empty one
-            return array("data" => $result);
-        } else {
-            // @todo: use HTTP status codes, not 'error' subkeys in a 200 OK response :\
-            return array("error" => $this->trans("mb.core.map.srsnotfound", array('%srslist%', $srsList)));
-        }
     }
 
     /**

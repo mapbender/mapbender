@@ -20,10 +20,7 @@
  *   - Ajax promise
  *   - A array of all the above
  *
- * Events available on the element which you can get with .getElement:
- *   - open    - before opening the dialog
- *   - opened  - after the dialog has fully openend
- *   - focus   - after the dialog becomes an focus
+ * Event available on the element which you can get with .$element
  *   - close   - before closing the dialog
  *
  */
@@ -161,7 +158,7 @@
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right iconCancel iconBig"></span>',
+                '      <span class="popupClose right"><i class="fa fas fa-times fa-2x"></i></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
                 '   <div class="popup-body">',
@@ -308,7 +305,8 @@
                 buttonset = $('.popupButtons', this.$element);
 
             $.each(buttons, function(key, conf) {
-                var button = $('<span/>', {
+                var button = $('<button/>', {
+                    type: 'button',
                     text: conf.label
                 });
 
@@ -318,8 +316,7 @@
 
                 if(conf.callback) {
                     button.on('click', function(event) {
-                        conf.callback.call(self, event);
-                        return false;
+                        return conf.callback.call(self, event);
                     });
                 }
                 buttonset.append(button);

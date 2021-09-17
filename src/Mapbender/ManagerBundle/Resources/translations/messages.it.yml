@@ -50,8 +50,7 @@ mb:
         type: Tipo
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
-        no_element_added:
-          '': 'Nessun elemento aggiunto'
+        no_element_added: Nessun elemento aggiunto
       zoombar:
         draggable: Trascinabile
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Sicurezza
-          add_users_groups: 'Aggiungi utenti e gruppi'
           public: accesso pubblico
         save: Salva
         cancel: Cancella
@@ -113,7 +111,6 @@ mb:
           btn:
             export: Esporta
         import:
-          addApplications: Applicazioni
           addAcl: ACLs
           addSources: Risorsa
           btn:
@@ -123,24 +120,18 @@ mb:
           title: 'Titolo URL'
         description: Descrizione
         template: Template
-      applications: Applicazioni
     source:
       serviceurl: 'URL del Servizio'
       username: Nome utente
       password: Password
       load: Carica
     managerbundle:
-      applications: Applicazioni
       new_application: 'Nuova applicazione'
-      sources: Fonti
       add_source: 'Aggiungi fonte'
       add_user_group: 'Aggiungi utenti e gruppi'
       acl_element: 'Acl elemento'
       import_application: Importazione
       export_application: Esportazione
-    element:
-      yaml:
-        message: 'Usa il formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> per descrivere la configurazione dell''elemento.'
     components:
       popup:
         add_element:
@@ -161,12 +152,6 @@ mb:
         delete_user_group:
           title: 'Conferma cancellazione'
           content: 'Cancellare davvero %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     import:
       application:
         failed: 'L''applicazione non può essere importata.'

@@ -2,16 +2,15 @@ $(function() {
     function setRootState(groupId) {
         var root = $("#" + groupId);
         if (!root.length) {
-            root = $('#instanceTableCheckHead th[data-check-identifier="' + groupId + '"] .checkWrapper');
+            root = $('#instanceTableCheckHead th[data-check-identifier="' + groupId + '"]');
         }
-        var rootCb = !root.is('.checkWrapper') && root || $('>input[type=checkbox]', root);
+        var rootCb = root.is('input[type="checkbox"]') && root || $('input[type="checkbox"]', root);
         var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
         var checkboxes = $('input[type="checkbox"]:not(:disabled)', column);
         var rowCount = checkboxes.length;
         var checkedCount = checkboxes.filter(':checked').length;
         rootCb.prop('checked', rowCount === checkedCount);
         rootCb.prop('indeterminate', checkedCount && rowCount !== checkedCount);
-        initCheckbox.call(rootCb);
     }
     // toggle all permissions
     function toggleAllStates(groupId, state, $scope) {
@@ -20,7 +19,6 @@ $(function() {
         $chkScope.find('input[type="checkbox"]:not(:disabled)').each(function() {
             var $chk = $(this);
             $chk.prop('checked', state);
-            initCheckbox.call($chk);
         });
 
         // change root permission state

@@ -27,6 +27,34 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     confirm_form_discard: Änderungen verwerfen?
+    screentype:
+      label: Bildschirmtyp
+      choice:
+        all: Alle
+        mobile: Mobil
+        desktop: Desktop
+    element:
+      screentype:
+        mobile: Auf Mobilgeräten anzeigen
+        desktop: Auf großen Bildschirmen anzeigen
+    sidepane:
+      width: Breite
+      closed: Geschlossen starten
+      align:
+        label: Position
+        choice:
+          left: Links
+          right: Rechts
+    sourceinstance:
+      embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
+      convert_to_reusable: In freie Instanz umwandeln
+      convert_to_bound: In private Instanz umwandeln
+      converted_to_bound: Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt
+      reusable_assigned_to_application: Die freie Instanz wurde der Anwendung hinzugefügt
+      create_reusable: Freie Instanz erzeugen
+      created_reusable: Neue freie Instanz erzeugt
+    application:
+      persistentView: Kartenzustand merken
     admin:
       sources: Datenquellen
       source:
@@ -43,7 +71,7 @@ mb:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
           unreachable: 'Die Datenquelle ist nicht erreichbar'
-        embedded_in_applications: '{0} Diese Datenquelle ist in keiner Applikation eingebunden|{1} Diese Datenquelle ist in einer Applikation eingebunden|]1,Inf[ Diese Datenquelle ist in %count% Applikationen eingebunden'
+        embedded_in_applications: '{0} Diese Datenquelle wird von keiner Anwendung genutzt|{1} Diese Datenquelle wird von einer Anwendung genutzt|]1,Inf[ Diese Datenquelle wird in %count% Anwendungen genutzt'
       map:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
@@ -52,8 +80,7 @@ mb:
         type: Typ
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
-        no_element_added:
-          '': 'Kein Element vorhanden'
+        no_element_added: Kein Element vorhanden
         anchor:
           label: Position
           left-top: Oben links
@@ -78,7 +105,7 @@ mb:
       instance:
         add: 'Instanz hinzufügen'
         show_hide: 'Instanz an/aus'
-        edit: 'Instanz editieren'
+        edit: 'Instanz bearbeiten'
         delete:  
           title: 'Instanz löschen'
           confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'       
@@ -86,7 +113,7 @@ mb:
         no_layer_added: 'Keine Ebene hinzugefügt'
       template: Vorlage
       application:
-        view: 'Anwendung anzeigen'
+        view: Anzeigen
         edit:
           title: 'Anwendung bearbeiten'
           base_data: 'Basisdaten'
@@ -96,7 +123,6 @@ mb:
         custom_css: CSS
         security:
           title: Sicherheit
-          add_users_groups: 'Benutzer/Gruppen hinzufügen'
           public: öffentlicher Zugriff
         save: Speichern
         cancel: Abbrechen
@@ -121,7 +147,6 @@ mb:
           btn:
             export: Exportieren
         import:
-          addApplications: Anwendungen
           addAcl: Acls
           addSources: Quellen
           btn:
@@ -131,34 +156,31 @@ mb:
           title: 'URL Titel'
         description: Beschreibung
         template: Vorlage
-      applications: Anwendungen
+        map_engine_code: Karten-Engine
+        map_engine_code.ol2: OpenLayers 2 (veraltet)
+        map_engine_code.current: OpenLayers 6
     source:
       serviceurl: Dienst-URL
       username: Benutzername
       password: Passwort
       load: Laden
     managerbundle:
-      applications: Anwendungen
       new_application: 'Neue Anwendung'
-      sources: Datenquelle
       add_source: 'Neue Datenquelle'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'
       acl_element: 'Acl Element'
       import_application: Importieren
       export_application: Exportieren
-    element:
-      yaml:
-        message: 'Benutzen Sie das <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Format, um die Elementkonfiguration zu beschreiben.'
     components:
       popup:
         add_element:
           title: 'Element hinzufügen'
         edit_element:
-          title: 'Element editieren'
+          title: 'Element bearbeiten'
         delete_element:
           title: 'Löschen bestätigen'
         add_edit_layerset:
-          title_edit: 'Layerset editieren'
+          title_edit: 'Layerset bearbeiten'
           title_add: 'Layerset hinzufügen'
         delete_layerset:
           title: 'Layerset löschen'
@@ -166,17 +188,9 @@ mb:
           title: 'Datenquelle auswählen'
         delete_instance:
           title: 'Instanz löschen'
-        add_user_group:
-          title: 'Benutzer/Gruppe hinzufügen.'
         delete_user_group:
           title: 'Entfernen bestätigen'
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
-    template:
-      region:
-        tabs:
-          label: Buttons
-        accordion:
-          label: Akkordeon
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden.'

@@ -11,6 +11,7 @@ mb:
     print: Imprimer
     refresh: Mettre à jour
     remove: Supprimer
+    reset: Réinitialiser
     save: Sauvegarder
     search: Rechercher
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instances
       typed:
         singular: 'Instance du %type%'
+    security: Securité
   states:
     active: actif      # m.; f.: active
     inactive: inactif   # m.; f.: inactive
@@ -37,18 +39,9 @@ mb:
         nolayer: 'Impossible d''identifier l''objet.'
         unknownoption: 'Option %key% inconnue ou non prise en charge pour %namespace%.%widgetname%.'
         noresult: 'aucun résultat'
-      popup:
-        btn:
-          ok: Fermer
-          print: Imprimer
       class:
         title: Identifier
         description: Identifier l'objet cliqué sur la carte
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: dialog
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +89,6 @@ mb:
       class:
         title: POI
         description: 'Permet de créer un POI (point d''intérêt) pour le partager'
-      tag:
-        poi: poi
-        point: point
-        interest: interest
       label:
         text: Text
     basesourceswitcher:
@@ -108,27 +97,16 @@ mb:
       class:
         title: 'Sélectionneur de fond de carte'
         Description: 'Permet de sélectionner la couche de fond de la carte.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'Aucun fond de carte n''est défini.'
     legend:
-      nolegend: 'Aucune légende n''est disponible.'
       popup:
         btn:
           ok: Fermer
       class:
         title: Légende
         description: 'Affiche la légende de la carte'
-      tag:
-        layer: layer
-        legend: legend
     ruler:
-      popup:
-        btn:
-          ok: Fermer
       create_error: 'Mesurer: Le type doit être une ligne ou un polygone.'
       class:
         title: 'Mesure linéaire ou surfacique'
@@ -144,24 +122,9 @@ mb:
         scale: Échelle
         rotation: Rotation
         legend: 'Imprimer la légende'
-      popup:
-        btn:
-          ok: Imprimer
-          cancel: Annuler
-      info:
-        noactivelayer: 'Aucune couche n''est activée!'
-      form:
-        required: 'Ce champ est obligatoire'
       class:
         title: 'Client d''impression'
         description: 'Affiche une fenêtre d''impression. Permet d''exporter en format PDF'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Désactiver le cadre de l''impression'
         activate: 'Activer le cadre de l''impression'
@@ -173,21 +136,6 @@ mb:
       tag:
         overview: overview
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Rayon
-          error: 'Le rayon est invalide'
-        form:
-          button:
-            'yes': 'Oui'
-            cancel: Annuler
-      class:
-        title: Esquisse
-        description: 'Ajoute une couche vectorielle à la carte et permet de dessiner des géométries'
-      tag:
-        sketch: sketch
-        circle: circle
     metadata:
       popup:
         title: Metadonnées
@@ -206,8 +154,6 @@ mb:
         position: position
         button: button
     layertree:
-      confirm:
-        allremove: 'Voulez-vous vraiment supprimer toutes les sources?'
       popup:
         btn:
           ok: Fermer
@@ -226,30 +172,15 @@ mb:
         opacity: Opacité
         zoomtolayer: ~
         metadata: Metadonnées
-        sources: Sources
-        deleteallsources: 'Supprimer toutes les sources'
         legend: Légende
         kmlexport: 'Exporter en KML'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Afficher les sources'
-        allvisibility_on: 'Afficher toutes les couches'
       class:
         title: 'Arborescence des couches'
         description: 'Arborescence des couches de la carte'
-      tag:
-        layertree: layertree
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: ~
     zoombar:
-      panup: 'Déplacer vers le haut'
-      panright: 'Déplacer vers la droite'
-      pandown: 'Déplacer vers le bas'
-      panleft: 'Déplacer vers la gauche'
-      goback: 'Avancer'
-      goforward: 'Reculer'
       zoombybox: 'Zoomer sur la boite'
       zoombyworld: 'Zoomer sur l''étendue globale'
       zoomin: ~
@@ -345,8 +276,8 @@ mb:
         label:
           autoopen: ~
           deactivateonclose: ~
-          showoriginal: ~
           onlyvalid: ~
+          highlighting: ~
       printclient:
         label:
           autoopen: ~
@@ -360,7 +291,6 @@ mb:
         label:
           showbasesources: 'Afficher les fonds de carte'
           autoopen: Autoopen
-          showheader: 'Afficher l''entête'
           showlayerremove: 'Afficher l''option de supression de couche'
           usetheme: 'Couche thématique'
           themes: Themes
@@ -368,54 +298,49 @@ mb:
             opened: ouvert
             activate: 'Permettre la suppression/l''ajout de couches'
             useTheme: 'Afficher le thème'
-            sourceVisibility: 'Thème: visibilité de la source'
-            allSelected: 'Thème: visibilité de la source'
             label: 'nom du thème'
           hidenottoggleable: 'Ne pas afficher les couches non-basculables'
           hideselect: 'Ne pas afficher la visiblité pour les dossiers'
           hideinfo: 'Ne pas afficher l''information'
-      redlining:
-        label:
-          auto_activate: ~
-          deactivate_on_close: 'Désactiver à la fermeture'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Onglets
+              accordion: Accordéon
     htmlelement:
       class:
         title: HTML
         description: 'Ajouter du code HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: Erreur
-    redlining:
+    sketch:
       geometrytype:
         point: Point
         line: Ligne
         polygon: Polygone
         rectangle: Rectangle
-        text:
-          title: Texte
-          label: Texte
+        circle: Cercle
+        text: Texte
       geometry:
         action:
           remove: 'Supprimer la géométrie'
           edit: 'Modifier la géometrie'
           zoom: 'Zoomer sur la géométrie'
-      dialog:
-        btn:
-          cancel: Fermer
       class:
         title: Annotation
         description: 'Outil d''annotation'
-      tag:
-        redlining: redlining
-        geometry: geometry
-  geosource:
-    image_error:
-      datails: 'La carte ne peut pas être affichée.'
-      exception: 'Exception: %exception%'
-      statuscode: 'Code de statut HTTP'
+      admin:
+        auto_activate: ~
+        deactivate_on_close: Désactiver à la fermeture
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Annotation
+
 
 # Login exceptions
 "Bad credentials.": 'Le mot de passe ou le nom d''utilisateur est invalide'

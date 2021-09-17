@@ -1,0 +1,7 @@
+{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{% use "MapbenderManagerBundle::fragments/blocklist.html.twig" %}
+{% block manager_content %}
+  {{- parent() -}}
+  {%- set list_id = list_id | default('listFilter0') -%}
+  {{- block('blocklist_main') -}}
+{% endblock %}

@@ -1,20 +1,14 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
-use Mapbender\CoreBundle\Controller\ApplicationController;
-use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Collection of servicy behaviors related to application
+ * Legacy remnant
  *
- * This class is getting gradually dissolved into a collection of true services that can be replugged and extended
- * via DI.
  * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
  * For client-facing configuration emission @see \Mapbender\CoreBundle\Component\Presenter\Application\ConfigService
  * For Yaml application permissions setup @see \Mapbender\CoreBundle\Component\YamlApplicationImporter
@@ -26,159 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Application
 {
-    /**
-     * @var ContainerInterface $container The container
-     */
-    protected $container;
-
-    /**
-     * @var Template $template The application template class
-     */
-    protected $template;
-
-    /**
-     * @var Element[][] $element lists by region
-     */
-    protected $elements;
-
-    /**
-     * @var Entity
-     */
-    protected $entity;
-
-    /**
-     * @param ContainerInterface $container
-     * @param Entity $entity
-     */
-    public function __construct(ContainerInterface $container, Entity $entity)
-    {
-        $this->container = $container;
-        $this->entity    = $entity;
-    }
-
-    /**
-     * Get the configuration entity.
-     *
-     * @return Entity $entity
-     */
-    public function getEntity()
-    {
-        return $this->entity;
-    }
-
-    /**
-     * Get the application ID
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->entity->getId();
-    }
-
-    /**
-     * Get the application slug
-     *
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->entity->getSlug();
-    }
-
-    /**
-     * Get the application title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->entity->getTitle();
-    }
-
-    /**
-     * Get the application description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->entity->getDescription();
-    }
-
-    /**
-     * @return ConfigService
-     */
-    private function getConfigService()
-    {
-        /** @var ConfigService $presenter */
-        $presenter = $this->container->get('mapbender.presenter.application.config.service');
-        return $presenter;
-    }
-
-    /**
-     * Get the Application configuration (application, elements, layers) as a json-encoded string.
-     *
-     * @return string Configuration as JSON string
-     * @deprecated This method is only called from (copies of) the mobile.html.twig application template
-     *     In modern Mapbender templates, Application configuration is loaded by a separate Ajax route,
-     *     completely independent of the twig template. Simply removing the script fragment that ends up
-     *     calling this method from your twig template will automatically switch to Ajax config loading,
-     *     doesn't require writing any replacement logic, and removes the warning.
-     * @see ApplicationController::configurationAction()
-     */
-    public function getConfiguration()
-    {
-        @trigger_error("Deprecated: Inlining Application configuration data into your template is unnecessary. "
-                     . "Please remove the 'Mapbender.configuration = {{ application.configuration | raw }};' script "
-                     . "fragment from your Application twig template.", E_USER_DEPRECATED);
-        $configService = $this->getConfigService();
-        $configuration = $configService->getConfiguration($this->entity);
-        return json_encode((object)$configuration);
-    }
-
-    /**
-     * Get template object
-     *
-     * @return Template
-     */
-    public function getTemplate()
-    {
-        if (!$this->template) {
-            $template       = $this->entity->getTemplate();
-            $this->template = new $template($this->container, $this);
-        }
-        return $this->template;
-    }
-
-    /**
-     * Get region elements, optionally by region.
-     * This called almost exclusively from twig templates, with or without the region paraemter.
-     *
-     * @param string $regionName deprecated; Region to get elements for. If null, all elements  are returned.
-     * @return Element[][] keyed by region name (string)
-     */
-    public function getElements($regionName = null)
-    {
-        $appService = $this->getService();
-        if ($this->elements === null) {
-            $activeElements = $appService->getActiveElements($this->entity, true);
-            $this->elements = array();
-            foreach ($activeElements as $elementComponent) {
-                $elementRegion = $elementComponent->getEntity()->getRegion();
-                if (!array_key_exists($elementRegion, $this->elements)) {
-                    $this->elements[$elementRegion] = array();
-                }
-                $this->elements[$elementRegion][] = $elementComponent;
-            }
-        }
-        if ($regionName) {
-            return ArrayUtil::getDefault($this->elements, $regionName, array());
-        } else {
-            return $this->elements;
-        }
-    }
-
     /**
      * Returns the public "uploads" directory.
      * NOTE: this has nothing to with applications. Some legacy usages passed in an application
@@ -258,16 +99,6 @@ class Application
         /** @var Request $request */
         $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-    }
-
-    /**
-     * @return ApplicationService
-     */
-    protected function getService()
-    {
-        /** @var ApplicationService $service */
-        $service = $this->container->get('mapbender.presenter.application.service');
-        return $service;
     }
 
     /**

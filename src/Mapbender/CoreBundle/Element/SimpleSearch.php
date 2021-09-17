@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,6 +54,8 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
+            // @todo: add form field
+            'sourceSrs' => 'EPSG:4326',
             'query_ws_replace' => null,
             'result_buffer' => 300,
             'result_minscale' => 1000,
@@ -74,29 +77,22 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
     {
         return array(
             'js'    => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/autocomplete.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
             ),
             'css'   => array(
-                "@MapbenderManagerBundle/Resources/public/sass/element/simple_search.scss"
+                "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:simple_search.json.twig'
-            )
+                'mb.core.simplesearch.error.*',
+            ),
         );
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleHttpRequest(Request $request)
     {
         $configuration = $this->getConfiguration();
-        $request       = $this->container->get('request_stack')->getCurrentRequest();
         $q             = $request->get('term', '');
         $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
-        $kernel        = $this->container->get('kernel');
 
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {
@@ -131,7 +127,7 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         }
 
         // In dev environment, add query URL as response header for easier debugging
-        if ($kernel->isDebug()) {
+        if ($this->container->getParameter('kernel.debug')) {
             $response->headers->set('X-Mapbender-SimpleSearch-URL', $url);
         }
 

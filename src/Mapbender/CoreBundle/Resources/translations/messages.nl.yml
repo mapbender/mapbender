@@ -11,6 +11,7 @@ mb:
     print: Printen
     refresh: Bijwerken
     remove: Verwijderen
+    reset: Wissen
     save: Bewaar
     search: Zoek
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Instanties
       typed:
         singular: '%type% instantie'
+    security: Beveiliging
   states:
     active: actief
     inactive: inactief
@@ -37,17 +39,9 @@ mb:
         nolayer: 'Object-informatie laag bestaat niet.'
         unknownoption: 'Onbekende of onverwerkbare optie %key% voor %namespace%.%widgetname%.'
         noresult: 'geen resultaat'
-      popup:
-        btn:
-          ok: Sluit
       class:
         title: 'Object informatie'
         description: 'Object informatie'
-      tag:
-        featureinfo: 'Object informatie'
-        feature: Object
-        info: info
-        dialog: dialoog
     aboutdialog:
       content:
         versionprefix: v.
@@ -95,10 +89,6 @@ mb:
       class:
         title: POI
         description: 'Maak een bijzondere plaats (POI) aan om te delen'
-      tag:
-        poi: poi
-        point: punt
-        interest: bijzonder
       label:
         text: Tekst
     basesourceswitcher:
@@ -107,27 +97,16 @@ mb:
       class:
         title: 'Achtergrond-bron wisselaar'
         Description: 'Wijzig de achtergrond-bronnen'
-      tag:
-        base: Basis
-        source: Bron
-        switcher: Wisselaar
       form:
         mesage: 'Geen basis-bron set is gedefinieerd.'
     legend:
-      nolegend: 'Geen legenda beschikbaar'
       popup:
         btn:
           ok: Sluit
       class:
         title: Legenda
         description: 'Toon de legenda van de kaartlagen'
-      tag:
-        layer: laag
-        legend: legenda
     ruler:
-      popup:
-        btn:
-          ok: Sluit
       create_error: 'Liniaal: Type moet lijn of vlak zijn.'
       class:
         title: 'Lijn/Vlak lineaal'
@@ -143,24 +122,9 @@ mb:
         scale: Schaal
         rotation: Roteren
         legend: Legenda
-      popup:
-        btn:
-          ok: Print
-          cancel: Annuleren
-      info:
-        noactivelayer: 'Geen actieve laag!'
-      form:
-        required: 'Verplicht invoerveld'
       class:
         title: 'Printen'
         description: 'Toont Print dialoog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Deactiveer Print Venster'
         activate: 'Activeer Print Venster'
@@ -172,21 +136,6 @@ mb:
       tag:
         overview: overzicht
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Straal
-          error: 'Straal is niet valide'
-        form:
-          button:
-            'yes': Ja
-            cancel: Annuleren
-      class:
-        title: Schets
-        description: 'Voegt een vector-laag toe aan de kaart waarop geometrische objecten getekend kunnen worden.'
-      tag:
-        sketch: schets
-        circle: cirkel
     metadata:
       popup:
         title: Metadata
@@ -205,8 +154,6 @@ mb:
         position: positie
         button: knop
     layertree:
-      confirm:
-        allremove: 'Wilt u werkelijk alle bronnen verwijderen?'
       popup:
         btn:
           ok: Sluit
@@ -225,30 +172,15 @@ mb:
         opacity: Doorzichtigheid
         zoomtolayer: 'Zoom naar laag'
         metadata: Metadata
-        sources: Bronnen
-        deleteallsources: 'Verwijder alle bronnen'
         legend: Legenda
         kmlexport: 'Kml export'
         dimension_onoff: 'Dimensie Aan/Uit'
         dimension: Dimensie
         sourcevisibility_onoff: 'Toon Bronnen'
-        allvisibility_on: 'Toon alle Lagen'
       class:
         title: 'Lagenboom'
         description: 'Mappen-structuur (LayerTree) van kaartlagen'
-      tag:
-        layertree: Lagenboom
-        layer: laag
-        tree: boom
-      contextmenu:
-        nooption: 'Laag heeft geen contekst menu optie'
     zoombar:
-      panup: 'schuif omhoog'
-      panright: 'schuif naar rechts'
-      pandown: 'schuif omlaag'
-      panleft: 'schuif naar links'
-      goback: 'ga terug'
-      goforward: 'ga vooruit'
       zoombybox: 'zoom in via rechthoek'
       zoombyworld: 'zoom uit'
       zoomin: 'zoom in'
@@ -344,8 +276,8 @@ mb:
         label:
           autoopen: 'Automatisch openen'
           deactivateonclose: 'Deactiveer bij sluiten'
-          showoriginal: 'Laat origineel zien'
           onlyvalid: 'Alleen geldig'
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Automatisch openen'
@@ -359,7 +291,6 @@ mb:
         label:
           showbasesources: 'Toon basis-bronnen'
           autoopen: 'Automatisch openen'
-          showheader: 'Toon koptekst'
           showlayerremove: 'Toon verwijder-laag knop'
           usetheme: 'Gebruik thema'
           themes: Themas
@@ -367,54 +298,41 @@ mb:
             opened: geopend
             activate: 'Voeg activatie-knop toe'
             useTheme: 'Gebruik thema'
-            sourceVisibility: 'Thema: bron-zichtbaarheid'
-            allSelected: 'Thema: alles geselecteerd'
             label: 'thema naam'
           hidenottoggleable: 'Verberg niet-schakelbaar'
           hideselect: 'Verberg kiesbaar'
           hideinfo: 'Verberg info'
-      redlining:
-        label:
-          auto_activate: Automatisch geactiveerd
-          deactivate_on_close: 'Deactiveer bij sluiten'
     htmlelement:
       class:
-        title: Titel
-        description: Beschrijving
-      tag:
-        html: HTML
+        title: ~
+        description: ~
     entity:
       app:
         screenshotfile:
           error: Fout
-    redlining:
+    sketch:
       geometrytype:
         point: Punt
         line: Lijn
         polygon: Polygoon
         rectangle: Rechthoek
-        text:
-          title: Titel
-          label: Tekst
+        circle: Cirkel
+        text: Tekst
       geometry:
         action:
           remove: 'Verwijder geometrie'
           edit: 'Bewerk geometrie'
           zoom: 'Zoom naar geometrie'
-      dialog:
-        btn:
-          cancel: Sluiten
       class:
         title: Tekenen
-        description: 'Tekentool (Redlining)'
-      tag:
-        redlining: tekenen
-        geometry: geometrie
-  geosource:
-    image_error:
-      datails: 'De kaart kan niet getoond worden.'
-      exception: 'Foutmelding: %exception%'
-      statuscode: 'HTTP status code'
+        description: Tekentool
+      admin:
+        auto_activate: Automatisch geactiveerd
+        deactivate_on_close: Deactiveer bij sluiten
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Tekenen
 
 # Login exceptions
 "Bad credentials.": Ongeldige inloggegevens.

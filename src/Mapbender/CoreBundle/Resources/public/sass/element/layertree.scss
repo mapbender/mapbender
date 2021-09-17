@@ -1,42 +1,25 @@
 .mb-element-layertree{
   user-select: none;
+  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   .leave {
     // for absolute menu positioning
     position: relative;
-    margin-left: 1em;
+  }
+  .leave .leave, .themeContainer .leave {
+    margin-left: 1.28em;
   }
 
-  .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper, .checkWrapper.selectedWrapper {
+  .selectedWrapper, .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
     // keep constant size to prevent visual "jump" on icon glyph change and neatly
     // align icons across rows
     text-align:center;
     flex: 0 0 1em;
     -ms-flex: 0 0 1em;
-    // pre-flex
-    width: 1em;
-  }
-  .checkWrapper {
-    margin-left: 5px;
-  }
-  .checkWrapper.sourceVisibilityWrapper {
-    margin-left: 2px;
-  }
-
-  .iconFolder{
-    display:none;
-  }
-  .placeholder{
-    display:block;
-    &:before{
-      content: "\f096";
-      font-family: 'FontAwesome';
-      visibility: hidden;
-    }
+    width: 1em; // pre-flex
+    margin-right: 0.28em;
   }
   .leaveContainer {
     display: flex;
-    height: 21px;       // must set height explicitly for IE11
-    line-height: 21px;  // line-height should equal height (note: dashed line trickery depends on this value)
   }
   .layer-title {
     flex: 1 1 auto;
@@ -44,115 +27,49 @@
     white-space: nowrap;
     overflow-x: hidden;
   }
-  .leave.state-deselected {
-    .layer-title {
-      opacity: 0.7;
-    }
-  }
-  .leave.state-outofscale {
+  .leave.state-outofscale, .leave.state-outofbounds {
     .layer-title {
       opacity: 0.5;
     }
   }
   .themeContainer{
-    border-left:dotted 1px black;
-    margin-bottom:1px; // Fix for Firefox
-    // elements with childrens
-    & > .leaveContainer{
-      .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
-    }
-    .leaveContainer{
-      margin-left:-6px;
-      margin-top:1px; // Fix for Firefox
-    }
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
   }
   .serviceContainer, .groupContainer{
-    border-left:dotted 1px black;
-    margin-bottom:1px; // Fix for Firefox
-
-    // elements with childrens
-    & > .leaveContainer{
-      .iconFolder{display:block;}
-      .layer-title{@extend .subTitle;}
-    }
-
     // show only layers which are toggled
     .layers{display:none;}
     &.showLeaves > .layers{display:block;}
 
-    .leave{
-      &:before{
-        content:'';
-        display: block;
-        height:5px;
-        width:5px;
-        border-top:dotted 1px black;
-        @include absolute(10px '' '' -10px);
-      }
-    }
-    .leave.groupContainer:before {
-      left: -13px;    // ~= font size
-    }
-    .leaveContainer{
-      margin-left:-6px;
-      margin-top:1px; // Fix for Firefox
-      .layer-menu-btn{
-        margin-left: 4px;
-        &:before{
-          content: '\f0c9';
-          font-family: 'FontAwesome';
-        }
-      }
-    }
   }
-  .checkWrapper.sourceVisibilityWrapper:before{
-    content: "\f10c";
-    font-family: 'FontAwesome';
+  .leave:not(.state-error) .error-icon-wrapper,
+  .leave:not(.state-loading) .loading-icon-wrapper {
+    display: none;
   }
-  .checkWrapper.sourceVisibilityWrapper.iconCheckboxActive:before{
-    content: "\f05d" !important;
-    font-family: 'FontAwesome';
+  .error-icon-wrapper, .leave.state-error .layer-title {
+    color: $errorColor;
   }
-  [data-state="loading"]{
-    @include opacity(.7);
-    @extend .iconActivity;
-    &:before{
-      font-family: 'FontAwesome';
-      -webkit-animation:spin 1s linear infinite;
-      -moz-animation:spin 1s linear infinite;
-      animation:spin 1s linear infinite;
-      @include absolute('' $space '' '');
-    }
+  .leave.state-loading {
+    opacity: 0.75;
   }
-  [data-state="error"]{
-    @extend .iconWarning;
-    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
-    &:before{
-      font-family: 'FontAwesome';
-      color:$errorColor;
-      @include absolute('' $space '' '');
-    }
+  .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
+    margin-left: 4px;
   }
-  >ul{padding-left: 6px;}
 }
 
 $layer-slider-bar-height: 5px;
 .layer-menu {
+  color: #222;
   position: absolute;
   right: 0;
   top: 1.5em;
   background-color: white;
   padding: $space / 4;
-  opacity: 1;
 
   z-index: 45;
   // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
   width: 140px;
   border: solid 1px $thirdColor;
-  text-align: right;
   cursor: default;
   @include border-radius($radius);
   // arrow icon
@@ -188,25 +105,9 @@ $layer-slider-bar-height: 5px;
       width: 30px;
       height: 16px;
       line-height: 16px;
-      background-color: $ciColor;
-      font-size: 12px;
+      background-color: $sliderHandleBackgroundColor;
       text-align: center;
       @include border-radius(4px);
-    }
-  }
-}
-
-/*
-* Only if layer tree is integrated in side pane content (not as tab or accordion)
-*/
-.sideContent {
-  > .mb-element-layertree {
-    .leave {
-      &[data-state="loading"], &[data-state="error"] {
-        &:before {
-          @include absolute('' $space+16px '' '');
-        }
-      }
     }
   }
 }

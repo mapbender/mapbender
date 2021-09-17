@@ -16,23 +16,21 @@
         z-index: 1;
         position: relative;
       }
-      &.current > a{
-        background-color:  #47791f;
-      }
+      @extend .buttonCore;
       > a {
-        border-radius: 0px;
-        @extend .button;
-        float: left;
-        > span.close {
-          font-size: 0;
-          display: inline-block;
-          margin-left: 6px;
-          margin-right: -4px;
-          &:after {
-            font-family: FontAwesome;
-            font-size: 13px;
-            content: "\f00d";
-          }
+        @extend .buttonColors;
+        padding: ($space/4) ($space/2);
+        // undo Bootstrap .nav-tabs>li>a border rules
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        border: none;
+        border-radius: 0;
+        // undo Bootstrap .nav-tabs>li>a margin-right rule
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        margin-right: 0;
+        // undo Bootstrap focus outline rule
+        // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
+        &:focus {
+          outline: none;
         }
       }
     }

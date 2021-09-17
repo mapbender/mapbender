@@ -52,14 +52,6 @@ class HtmlFormType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        return 'html';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getParent()
     {
         return 'Symfony\Component\Form\Extension\Core\Type\TextareaType';

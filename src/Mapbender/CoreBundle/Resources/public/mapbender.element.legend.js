@@ -35,7 +35,7 @@
          */
         _setup: function(mbMap) {
             this.mbMap = mbMap;
-            $(document).one('mbmapsourceloadend', $.proxy(this.onMapLoaded, this));
+            this.onMapLoaded();
             this._trigger('ready');
         },
 
@@ -49,9 +49,15 @@
             if (this.useDialog_ && this.options.autoOpen) {
                 this.open();
             }
+            var rerenderOn = [
+                'mbmapsourceadded',
+                'mbmapsourcechanged',
+                'mbmapsourcemoved',
+                'mbmapsourcesreordered',
+                'mbmapsourcelayerremoved'
+            ];
 
-            $(document)
-                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved mbmapsourcesreordered', $.proxy(this.onMapLayerChanges, this))
+            $(document).bind(rerenderOn.join(' '), $.proxy(this.onMapLayerChanges, this));
         },
 
         /**

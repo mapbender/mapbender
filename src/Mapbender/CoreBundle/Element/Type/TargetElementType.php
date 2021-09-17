@@ -46,19 +46,6 @@ class TargetElementType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        // NOTE: alias is no longer used inside Mapbender, but is maintained
-        //       for compatibility with a multitude of custom project elements.
-        //       To minimize issues on planned / future Symfony upgrades, newly written
-        //       code should use the FQCN, instead of the alias name, to reference
-        //       this type,
-        return 'target_element';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getParent()
     {
         return 'Symfony\Bridge\Doctrine\Form\Type\EntityType';
@@ -150,7 +137,7 @@ class TargetElementType extends AbstractType
     {
         $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
-        if (!empty($options['element_class']) && is_a('Mapbender\CoreBundle\Element\Map', $options['element_class'], true)) {
+        if (!empty($options['element_class']) && is_a($options['element_class'], 'Mapbender\Component\Element\MainMapElementInterface', true)) {
             $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
             $builder->addEventSubscriber($elementSubscriber);
         }

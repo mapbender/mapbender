@@ -1,4 +1,4 @@
-<ul class="itemLevel{{itemLevel}} list {% if itemLevel > 1 %}closed{% endif %}">
+<ul class="list {% if itemLevel > 1 %}closed{% endif %}">
 {% for item in items %}
   {% if item.subitems is defined and item.subitems|length > 0 %}
     {% for subitem in item.subitems %}

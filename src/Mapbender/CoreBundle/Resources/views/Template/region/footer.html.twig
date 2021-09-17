@@ -1,0 +1,5 @@
+{% extends 'MapbenderCoreBundle:Template:region/toolbar.html.twig' %}
+{% block region_wrapper %}
+  {% set alignment_class = alignment_class | default('itemsRight') %}
+  {{ parent() }}
+{% endblock %}

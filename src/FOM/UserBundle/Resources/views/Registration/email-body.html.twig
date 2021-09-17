@@ -1,0 +1,2 @@
+{{'fom.user.registration.email_body_html'| trans(
+{'%user_username%': user.username,'%url%': url('fom_user_registration_confirm', { 'token': user.registrationtoken })})|raw }}

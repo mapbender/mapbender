@@ -43,7 +43,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @ORM\Column(type="object", nullable=true)
      */
     protected $latlonBounds;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -326,7 +326,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 
     /**
      * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
-     * This is used by the *EntityHandler machinery frontend config generation.
+     * This is used in frontend config generation.
      *
      * @return BoundingBox[]
      */

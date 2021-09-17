@@ -1,39 +1,11 @@
 @import "libs/variables";
+// extend / replace some variables with mobile-specific values
+@import "bundles/mapbendermobile/sass/theme/variables.scss";
 @import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
-@import "modules/checkbox";
-@import "modules/dropdown";
+@import "theme/mapbender3";
 
-.olControlZoom {
-  display: none;
-}
-
-
-/* ---------------------------------------------------------------- VARIABLES */
-
-// the holy colors
-$ciColor:#0066BA; // blue
-$ciColor2:#CCC; // gray
-$ciColor3:#134271 ; // blue
-$ciColor4:#fff ; // white*/
-
-/* --------------------------------------------------------------- COMPONENTS */
-/* --------------------------------------------------------------------- BASE */
-@import "modules/base";
-/* --------------------------------------------------------------------- TEXT */
-@import "modules/text";
-@import "modules/button";
-
-fieldset{
-  padding:$space;
-
-  legend{
-    @extend .subTitle;
-    margin:0px !important;
-    padding:0 5px 0 5px;
-  }
-}
 /* ------------------------------------------------------------------- BUTTON */
 .button{
   @include box-shadow(0 0 6px rgba(0,0,0,0.1),
@@ -52,9 +24,6 @@ fieldset{
     }
   }
 }
-.linkButton {
-  &:hover, &:active{color:$ciColor;};
-}
 /* ----------------------------------------------------------------- DROPDOWN */
 .dropdown {
   .dropdownList{
@@ -63,17 +32,9 @@ fieldset{
   }
   @include border-radius($radius);
 }
-/* -------------------------------------------------------------------- INPUT */
-@import "modules/input";
-.input, .dropdown {
-  font-size: 1.35rem;
-}
-/* ------------------------------------------------------------------- LAYOUT */
-@import "modules/layout";
 /* -------------------------------------------------------------------- POPUP */
-@import "modules/popup";   // from /bundles/mapbendercore
 .overlay{
-  @include noUserSelect();
+  user-select: none;
   @include transition(opacity 0.4s ease-in-out);
 }
 
@@ -92,97 +53,41 @@ fieldset{
   }
 }
 
-/* ---------------------------------------------------------------- SEPERATOR */
-.seperator{
-  border:none;
-  border-bottom:dashed 1px darken(#fff, 30%);
-}
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer{
-  $tabPopHeight:3px;
-  $tabHeight:34px;
-
   .tab{
-    margin-right:3px;
-    color:$middleFontColor;
-    background-color:$contentColor;
-    cursor:pointer;
-    position:relative;
-    bottom:-$tabPopHeight*2;
-    height:$tabHeight;
-    z-index:10;
-    border:{
-      left:solid 1px $thirdColor;
-      top:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-    }
-    float:left;
-    padding:3px 10px 3px 10px;
-    @extend .smallText;
     @include box-shadow(1px 0px 2px rgba(0, 0, 0, 0.1),
                         inset 1px 0px 2px #fff);
     @include transition(all 0.2s ease-in-out);
-    @include noUserSelect();
 
     &:first-child{@include border-top-left-radius($radius);}
 
     &:hover{
       background-color:#fff;
-      bottom:-$tabPopHeight;
     }
 
     &.active{
-      cursor:default;
-      color:$darkFontColor;
-      bottom:-$tabPopHeight;
-      height:$tabHeight;
-      z-index: 30;
-      background-color:$contentColor;
       @include box-shadow(1px 0px 1px rgba(0, 0, 0, 0.1));
+      // Undo container border overlapping hack on active tab (our container has no border)
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
   }
-  .container{
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-    background-color:$contentColor;
-    border:{
-      top:solid 3px $firstColor;
-      left:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-      bottom:solid 1px $thirdColor;
-    }
+  .container {
+    padding:0;
+    border:none;
     @include border-bottom-radius($radius);
     @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
 
-    &.active{display:block;}
   }
 }
 .tabContainerAlt{
   .tab{
-    display: inline-block;
-    @extend .button;
-
     &.active{
-      cursor:default;
       background-color:darken(#6fb536, 10%);
-      color:$lightFontColor;
       @include box-shadow(0 0 6px rgba(0,0,0,0.1),
                         inset 0 -10px 10px darken(#5fa229, 8%));
     }
-  }
-  .container{
-    border-top:dashed 1px $thirdColor;
-    margin-top:$space;
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-
-    &.active{display:block;}
   }
 }
 
@@ -196,42 +101,27 @@ fieldset{
 
 
 /* ------------------------------------------------------------------ TOOLBAR */
-.toolBar{
-  z-index: 4;
-  padding:$space/2 $space/2 $space/4 $space/2;
-  background-color: $ciColor4;
+.toolBar {
   border-top: 3px solid $ciColor2;
-  color: $darkFontColor;
-  line-height: normal;
 
-  label{
-    font-weight: normal;
+  .iconBig {
+    // Make big button icons even bigger (default is 160%)
+    font-size: 230%;
   }
+
   &.itemsCenter{
     text-align:center;
   }
-  &.bottom{
-    @include absolute('' 0 0 0);
+  &.bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
-  .iconBig {
-    color: $ciColor;
-  }
-  > .toolBarItem{
-    &:hover {
-      color: fade-out($darkFontColor, 0.3);
-      .iconBig {
-        color: fade-out($ciColor, 0.3);
-      }
-    }
-  }
-}
-.toolBarItem{
-  display: inline-block;
-  margin: 0 $space/4;
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane{
   background-color: $ciColor4;
+  color: $darkFontColor;
   z-index:10;
   height: 100%;
   min-height: 100%;
@@ -245,6 +135,9 @@ fieldset{
     color: $ciColor3;
     border-bottom: solid 5px $ciColor;
   }
+  .contentTitle, .mobileClose {
+    font-size: 2rem;
+  }
   // @todo: it's called .active
   &[data-state="opened"]{
     opacity: 1;
@@ -257,13 +150,9 @@ fieldset{
   overflow:auto;
   -webkit-overflow-scrolling: touch;
   overflow-y: scroll;
+  clear: both;
 }
 .mobileClose{
-  font-style: normal;
-  font-size: 28px;
-  color: darken($ciColor2, 20%);
-  // @todo: DO NOT extend from icon classes. Put icons into the markup.
-  @extend .iconCancel;
   float: right;
 }
 /* ------------------------------------------------------------------ CONTENT */
@@ -275,13 +164,10 @@ fieldset{
 .contentPane{@include absolute(0 0 0 0);}
 
 /* ------------------------------------------------------------ MOBILE SPLASH */
-.splashScreenWrapper{
+.splashScreenWrapper {
+  background-color: rgba($ciColor4, .7);
   z-index: 12;
-  display: none;
-  background-color: rgba(255,255,255,.7);
   @include absolute(0 0 0 0);
-
-  &[data-state="active"]{display: block;}
 }
 .splashScreen{
   margin:0 auto;
@@ -297,208 +183,63 @@ fieldset{
     height: auto;
     width: auto\9; /* ie8 */
   }
-  // @todo: [template BC break] the application title is an h1, not a paragraph
-  p.app-title {
-    font-size:$fontSize*2;
-    line-height:$fontSize*2;
-    text-align:center;
+  .app-title {
+    text-align: center;
+    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   }
-  // @todo: remove, not in template. Looks ~like a close button positioning attempt, but a little off.
-  // Custom templates that add splash screen content should also add all required css rules themselves
-  i{
-    color: $ciColor3;
-    font-size: 2em;
-    font-style: normal;
-    @include absolute((-$space/2) (-$space/2) '' '');
+  .app-title:last-child {
+    margin-bottom: 0;
+  }
+  .app-title:first-child {
+    margin-top: 0;
   }
 }
 
 
+// Misc element checkbox coloring
+.mb-element-layertree .selectedWrapper, .mb-element-basesourceswitcher .state-check {
+  color: lighten($ciColor3, 5%);
+}
 
-
-
-
-
-
-
-
-/* ------------------------------------------------------ BASESOURCE SWITCHER */
-.mb-element-basesourceswitcher{
-  li{
-    padding:$space/2;
-    display:block;
-    font-size: 14px;
-    color: $middleFontColor !important;
-    margin: 0;
-    border: none;
-    border-radius: 0px;
-
-    &:nth-child(1n){background-color: $ciColor4;}
-    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
-
-    @extend .iconOk;
-    @extend .labelCheck;
-    &:before{
-      font-size: 20px;
-      color:lighten($ciColor3, 60%);;
-      @include absolute('' $space/2 '' '');
-    }
-
-    &[data-state="active"]{
-      &:before{
-        color:lighten($ciColor3, 5%);
-      }
-    }
+// Nice big fonts in layer selection
+body.mobile-template {
+  .mb-element-layertree, .mb-element-basesourceswitcher {
+    font-size: 2rem;
+    line-height: 2.2;
   }
 }
-/* ---------------------------------------------------------------- COPYRIGHT */
-.mb-element-copyright{
-  @include opacity(0.6);
-}
-.mb-element-copyright-link {
-  cursor:pointer;
-  color:$lightFontColor;
-  text-decoration:none;
-}
-.mb-element-copyright-dialog{display: none;}
-/* -------------------------------------------------------------- FEATUREINFO */
-.mb-element-featureinfo{
-  .container{
-    display:block;
-    background-color: $ciColor4;
-    padding:0;
-    border:none;
-  }
-  td{padding-right: $space;}
-}
-/* -------------------------------------------------------------- FEATUREINFO */
 .mb-element-zoombar{
   z-index: 4;
   &.right-top{@include absolute($space $space '' '');}
   &.left-top{@include absolute($space '' '' $space);}
   &.left-bottom{@include absolute('' '' $space*4 $space/2);}
   &.right-bottom{@include absolute('' $space/2 $space*4 '');}
-  div.iconBig {
-    display: block;
-  }
 }
-.contentPane{
-    > .mb-element.mb-element-zoombar{
-        > ul.toolPane{
-          border: 2px solid $ciColor2;
-          padding:$space/2;
-          color:$ciColor3;
-          .iconBig {
-            color: $ciColor;
-            &[title]:hover {
-              color: fade-out($ciColor, 0.3);
-            }
-          }
-          background-color: $ciColor4;
-          li .iconBig {
-            margin: 0;
-          }
-          li.zoomSlider .iconBig {
-            margin: $space / 2 auto;
-          }
-        }
-    }
-}
-
-.iconBig {
-  font-size: 30px;
-  height: auto;
-  line-height: 100%;
-  &:before {
-    font-size: inherit;
-  }
-}
-
 /* ---------------------------------------------------------------- LAYERTREE */
 .mb-element-layertree{
   .layers{
-    padding-left: 0px;
     .serviceContainer {
-      color: $darkFontColor;
-      border: none !important;
-
-      &:nth-child(1n) {
-        background-color: $ciColor4;
-      }
       &:nth-child(2n) {
         background-color: lighten($ciColor2, 15%);
       }
     }
   }
-  .leaveContainer {
-    height: auto;
-    line-height: normal;
-    flex-direction: row-reverse;
-    padding: $space/2;
+  .selectedWrapper {
+    // indent away from edge of background
+    margin-left: 0.5em;
   }
-  .checkWrapper {
-    height: initial;
-    width: auto;
+
+  .iconRemove, .iconFolder, .featureInfoWrapper {
+    display:none;
   }
-  .iconCheckbox, .iconCheckboxActive {
-    @extend .iconOk;
-    font-size: 20px;
-    color:lighten($ciColor3, 60%);
-  }
-  .layer-title{
-    font-size: 14px;
-    color: $middleFontColor !important;
-  }
-  .iconCheckboxActive{color:lighten($ciColor3, 5%);}
-  .checkboxDisabled:before{display:none;}
-  .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
   .serviceContainer, .groupContainer{
     .layers{display:none;}
   }
 }
-/* ---------------------------------------------------------------------- MAP */
-.contentPane{
-  .mb-element-map{
-    width:100%;
-    height:100%;
-    z-index: 1;
-    @include absolute(0 0 0 0);
-  }
-}
-/* ------------------------------------------------------------- SCALEDISPLAY */
-.contentPane{
-  .mb-element-scaledisplay{
-    padding:$space/4 $space/2;
-    @include frontendContainerStyle();
-  }
-}
-.toolBar{
-  .mb-element-scaleline{
-    position: relative;
-    bottom:5px;
-    padding-bottom:5px;
-    .scaleBorder{border-color:$lightFontColor}
-  }
-}
 /* ------------------------------------------------------------ SIMPLE SEARCH */
-.autocompleteWrapper{width:100%;}
-.autocompleteList li {
-  padding:$space/2;
-  display:block;
-  font-size: 14px;
-  &:nth-child(1n){background-color: $ciColor4;}
-  &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
-}
-
-/* ------------------------------------------------------------ GPS BUTTON ACTIVE */
-.toolBarItemActive .mb-gpsButton {
-  &:before {
-    color: #333;
+.mb-element-simplesearch {
+  .autocompleteList li {
+    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
   }
 }
 
-/* ------------------------------------------------------------ BACKGROUND-SWITCHER */
-
-.mb-element-basesourceswitcher li {
-    text-align: left;
-}

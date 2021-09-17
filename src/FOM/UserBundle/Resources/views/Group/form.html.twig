@@ -1,0 +1,42 @@
+{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{%- set return_url = path('fom_user_security_index', {_fragment: 'tabGroups'}) -%}
+
+{% block js %}
+  {{parent()}}
+  <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/user-control.js') }}"></script>
+{% endblock %}
+
+{% block tab_headers %}
+    {{- tab_macros.tab_header('BaseData', 'fom.user.group.container.base_data', 'active') -}}{#- #tabBaseData -#}
+    {{- tab_macros.tab_header('Users', 'fom.user.group.container.users') -}}{#- #tabUsers -#}
+{% endblock %}
+{% block tab_containers %}
+    <div{{ tab_macros.tab_content_attributes('BaseData', 'active') }}>{#- #containerBaseData -#}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+    </div>
+    <div{{ tab_macros.tab_content_attributes('Users') }}>{#- #containerUsers -#}
+        {% if form.users|length %}
+          {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
+          <table id="listFilterUsers" class="table">
+            <thead>
+              <tr class="doNotFilter">
+                <th>Name</th>
+                <th class="text-right"><span id="selectedUsersGroups">{{group.users | length}}</span> {{ 'fom.user.group.container.users_of_selected' | trans ({'%users_count%': form.users|length }) }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in form.users %}
+                <tr class="filterItem">
+                  <td colspan="2">
+                      {{ form_widget(user) }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>{{"fom.user.group.container.no_user_exists"|trans}}</p>
+        {% endif %}
+    </div>
+{% endblock %}

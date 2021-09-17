@@ -50,8 +50,7 @@ mb:
         type: Tipo
         add: 'Añadir un nuevo elemento a'
         show_hide: 'Cambiar mostrar/ocultar el elemento'
-        no_element_added:
-          '': 'No añadido elemento'
+        no_element_added: No añadido elemento
       zoombar:
         draggable: Mobible
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Seguridad
-          add_users_groups: 'Add users and groups'
           public: Acceso público
         save: Guardar
         cancel: Cancelar
@@ -113,7 +111,6 @@ mb:
           btn:
             export: Exportar
         import:
-          addApplications: Aplicaciones
           addAcl: ACLs
           addSources: Fuentes
           btn:
@@ -123,24 +120,18 @@ mb:
           title: 'URL Title'
         description: Description
         template: Plantilla
-      applications: Aplicaciones
     source:
       serviceurl: 'Servicio URL'
       username: Usuario
       password: Clave
       load: Cargar
     managerbundle:
-      applications: Aplicaciones
       new_application: 'Nueva aplicación'
-      sources: Fuentes
       add_source: 'Añadir fuentes'
       add_user_group: 'Añadir usuarios y grupos'
       acl_element: 'Elemento Acl'
       import_application: Importar
       export_application: Exportar
-    element:
-      yaml:
-        message: ~
     components:
       popup:
         add_element:
@@ -161,12 +152,6 @@ mb:
         delete_user_group:
           title: 'Confirmar eliminar'
           content: 'Realmente eliminar %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     import:
       application:
         failed: 'La aplicación no puede ser importada.'

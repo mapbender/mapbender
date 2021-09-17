@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter;
 
+use Mapbender\CoreBundle\Component\Source\SourceInstanceInformationInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -15,7 +16,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
  * Base class for atm the only shipping concrete implementation: @see WmsSourceService
  *
  */
-abstract class SourceService
+abstract class SourceService implements SourceInstanceInformationInterface
 {
     /** @var UrlProcessor */
     protected $urlProcessor;
@@ -36,6 +37,11 @@ abstract class SourceService
     abstract public function getTypeCode();
 
 
+    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    {
+        return $sourceInstance->getEnabled();
+    }
+
     /**
      * @param SourceInstance $sourceInstance
      * @return mixed[]
@@ -49,7 +55,6 @@ abstract class SourceService
             'title'         => $sourceInstance->getTitle(),
             'configuration' => $innerConfig,
             'id'            => strval($sourceInstance->getId()),
-            'origId'        => strval($sourceInstance->getId()),
         );
         return $wrappedConfig;
     }
@@ -123,7 +128,6 @@ abstract class SourceService
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
-        $configuration['status'] = 'ok';    // for initial layertree visual; 'error' can only be produced client-side
         return $configuration;
     }
 
@@ -157,7 +161,7 @@ abstract class SourceService
      * @see TypeDirectoryService::getAssets()
      *
      * @param Application $application
-     * @param string $type must be 'js' or 'trans'
+     * @param string $type must be 'js'
      * @return string[]
      */
     abstract public function getAssets(Application $application, $type);

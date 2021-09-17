@@ -50,8 +50,7 @@ mb:
         type: Type
         add: 'Voeg een nieuw element toe'
         show_hide: 'Wissel toon/verberg element'
-        no_element_added:
-          '': 'Geen element toegevoegd'
+        no_element_added: Geen element toegevoegd
       zoombar:
         draggable: Versleepbaar
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title:  Beveiliging
-          add_users_groups: 'Voeg gebruikers en groepen toe'
           public: Publieke toegang
         save: Bewaar
         cancel: Annuleren
@@ -113,7 +111,6 @@ mb:
           btn:
             export: 'Exporteer'
         import:
-          addApplications: 'Toepassingen'
           addAcl: 'Toegangs-restricties (ACLs)'
           addSources: 'Bronnen'
           btn:
@@ -123,24 +120,18 @@ mb:
           title: 'URL Titel'
         description: Beschrijving
         template: Sjabloon
-      applications: Applicaties
     source:
       serviceurl: 'Service URL'
       username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
     managerbundle:
-      applications: Applicaties
       new_application: 'Nieuwe applicatie'
-      sources: Bronnen
       add_source: 'Voeg bron toe'
       add_user_group: 'Voeg gebruikers en groepen toe'
       acl_element: 'Toegangs-restrictie (ACL) element'
       import_application: 'Importeer'
       export_application: 'Exporteer'
-    element:
-      yaml:
-        message: 'Gebruik <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
     components:
       popup:
         add_element:
@@ -161,12 +152,6 @@ mb:
         delete_user_group:
           title: 'Bevestig verwijderen'
           content: '%userGroup% echt verwijderen?'
-    template:
-      region:
-        tabs:
-          label: Tabs
-        accordion:
-          label: Accordion
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'

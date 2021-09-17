@@ -143,6 +143,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return new Box(0, $targetHeight, $targetWidth, 0);
     }
 
+    protected function getJobExtent($jobData)
+    {
+        $box = parent::getJobExtent($jobData);
+        // Print only: extend on rotation
+        if (isset($jobData['rotation']) && intval($jobData['rotation'])) {
+            $box = $box->getExpandedForRotation(floatval($jobData['rotation']));
+        }
+        return $box;
+    }
+
     /**
      * @param array $templateData
      * @param array $jobData
@@ -199,17 +209,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         $tplidx = $pdf->importPage(1);
-        $hasTransparentBg = $this->checkPdfBackground($pdf);
-        if (!$hasTransparentBg){
-            $pdf->useTemplate($tplidx);
-        }
+        $pdf->useTemplate($tplidx);
         $this->addMapImage($pdf, $mapImageName, $templateData);
         unlink($mapImageName);
 
-        if ($hasTransparentBg) {
-            $pdf->useTemplate($tplidx);
-        }
-
+        // @todo: reimplement "transparent background pdf" logic? (purpose / testability unknown)
         $this->afterMainMap($pdf, $templateData, $jobData);
 
         return $pdf;
@@ -476,7 +480,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             // in either dimension
             $cropWidth = min($srcSize[0], $destSize[0] - $x);
             $cropHeight = min($srcSize[1], $destSize[1] - $y);
-            $northarrow = $this->cropImage($rotatedImage, $x, $y, $cropWidth, $cropHeight);
+            $northarrow = $this->cropImage($rotatedImage, $x, $y, $cropWidth, $cropHeight, true);
         }
         $this->addImageToPdfRegion($pdf, $northarrow, $region);
         return true;
@@ -714,20 +718,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     public static function dotsToMm($dots, $dpi)
     {
         return $dots * 25.4 / $dpi;
-    }
-
-    private function checkPdfBackground($pdf) {
-        $pdfArray = (array) $pdf;
-        $pdfFile = $pdfArray['currentFilename'];
-        $pdfSubArray = (array) $pdfArray['parsers'][$pdfFile];
-        $prefix = chr(0) . '*' . chr(0);
-        $pdfSubArray2 = $pdfSubArray[$prefix . '_root'][1][1];
-
-        if (sizeof($pdfSubArray2) > 0 && !array_key_exists('/Outlines', $pdfSubArray2)) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

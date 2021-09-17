@@ -1,0 +1,152 @@
+fom:
+  user:
+    registration:
+      email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, clic <a href="%url%">aqui</a>.</p>'
+      done:
+        title: Registro
+        congratulations: Felicitaciones!
+        account_activated: 'Tu cuenta ha sido satisfactoriamente activada y esta lista para usarla.'
+        back_to_login: 'Regresar al login'
+      form:
+        title: Registro
+        choose_password: 'Escoger clave'
+        confirm_password: 'Confirmar clave'
+        email: Email
+        back_to_login: 'Regresar al login'
+        register: Registrar
+      email_subject: 'Tu registro'
+      send:
+        title: Registro
+        account_created: "Tu cuenta ha sido creada. Un email con tu codigo de activación\n            y enlace ha sido enviado a la dirección proveída."
+        back_to_login: 'Regresar al login'
+      email_body_text: 'Hola %user_username%, Acabas de registrarte. Para concluir con el registro, favor, llama en tu navegador el enlace %url%.'
+    group:
+      index:
+        groups: Grupos
+        add_new_group: 'Añadir nuevo grupo'
+        title: Título
+        description: Descripción
+        edit_group: 'Editar grupo'
+        delete_group: 'Borrar grupo'
+        no_groups_available: 'No disponibilidad de grupos.'
+      form:
+        edit_group: 'Editar Grupo'
+        new_group: 'Nuevo Grupo'
+      container:
+        base_data: 'Dato base'
+        users: Usuarios
+        users_of_selected: 'usuarios de %users_count% seleccionados'
+        no_user_exists: 'No existe usuario.'
+    login:
+      error_notocken:
+        password_reset: 'Reiniciar clave'
+        sorry: 'Lo siento!'
+        no_such_tocken: 'El token no se encuentra. Si piensas que es un error, favor contacta al admnistrador del sitio.'
+        contact: 'Contacto administrador'
+        back_to_login: 'Regresar al login'
+      login:
+        title: Login
+        username: Usuario
+        password: Clave
+        register: Registrar
+        forgot_password: 'Clave olvidada'
+        login: Login
+      error_tockenexp:
+        title: 'Clave Reiniciada'
+        sorry: 'Lo siento!'
+        registration_token_expired: 'Tu token de registro ha expirado. Desafortunadamente, tienes que solicitar un nuevo token.'
+        request_new_token: 'Solicitar nuevo token'
+        back_to_login: 'Regresar al login'
+    user:
+      index:
+        title: Usuarios
+        add_new_user: 'Añadir nuevo usuario'
+        name: Nombre
+        email: E-Mail
+        groups: Grupos
+        edit_user: 'Editar usuario'
+        contact_user: 'Contactar usuario via e-mail'
+        edit_group: 'Editar gupo'
+        delete_user: 'Borrar usuario'
+        no_users_available: 'Usuarios no habilitados.'
+      form:
+        edit_user: 'Editar Usuario'
+        new_user: 'Nuevo Usuario'
+      container:
+        base_data: 'Dato base'
+        profile: Perfil
+        groups: Grupos
+        security: Seguridad
+        choose_password: 'Escoge clave'
+        confirm_password: 'Confirma clave'
+        name: Nombre
+        users_of_selected: 'grupos de %users_count% seleccionados'
+        no_groups_defined: No hay grupos definidos
+        username: Usuario
+        description: Description
+        activated: activated
+    acl:
+      index:
+        access_control_lists: 'Lista de Control de Acceso Globales'
+        name: Nombre
+        class: Clase
+        edit: Editar
+      required: 'Campos requeridos son marcados con etiquetas oscuras, mientras que campos opcionales tienen etiquetas claras.'
+      edit:
+        edit_class_acl: 'Editar Class ACL para %name%'
+      groups_users:
+        name: Nombre
+        no_goups_users: 'No están definidos grupos y usuarios.'
+    password:
+      email_body_html: "&lt;p&gt;Hola %user_username%,&lt;/p&gt;&lt;p&gt;Has solicitado una nueva clave.\n&lt;br /&gt;Favor clic &lt;a href=\"%url%\"&gt;aqui&lt;/a&gt;."
+      request_error_no_user: 'Usuario no puede ser encontrado.'
+      done:
+        password_reset: 'Reiniciar Clave'
+        congratulations: Felicitaciones!
+        password_been_reset: 'Clave satisfactoriamente reiniciada.'
+        back_to_login: 'Regresar al login'
+      reset:
+        title: 'Reiniciar clave'
+        btn: 'Reiniciar clave'
+      form:
+        message: 'To reset your password please provide your username or your e-mail address.'
+        title: 'Clave olvidada'
+        username_email: 'Usuario o Email'
+        back_to_login: 'Regresar al login'
+        require_password: 'Clave requerida'
+      email_subject: 'Clave olvidada'
+      send:
+        title: 'Reiniciar Clave'
+        email_been_sent: 'Un email con su codigo de reinicio y enlace ha sido enviado a la dirección proveída.'
+        back_to_login: 'Regresar al login'
+      request:
+        user_inactive: 'Este usuario esta inactivo. Favor activelo primero.'
+      email_body_text: 'Hola %user_username%, Has solicitado una nueva clave. Llama en tu navegado al link "%url%".'
+    userbundle:
+      user_control: 'Control de usuario'
+      users: Usuarios
+      new_user: 'Nuevo usuario'
+      groups: Grupos
+      new_group: 'Nuevo grupo'
+      classes:
+        acls: ACLs
+        users: Usuarios
+        groups: grupos
+      roles:
+        super_admin: 'Puede administrar todo (super admin)'
+        user_admin: 'Puede administrar usuarios y grupos'
+IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
+form:
+  profile:
+    basic:
+      # @todo: all sub-entries
+      firstname: ~
+      lastName: ~
+      notes: ~
+      phone: ~
+      organizationName: ~
+      organizationRole: ~
+      street: ~
+      zipCode: ~
+      city: ~
+      country: ~

@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Featureinfo element
@@ -46,7 +47,16 @@ class FeatureInfo extends Element
         if (empty($config['maxCount']) || $config['maxCount'] < 0) {
             $config['maxCount'] = $defaults['maxCount'];
         }
-        return $config;
+        /** @var EngineInterface $templating */
+        $templating = $this->container->get('templating');
+        $iframeScripts = array(
+            $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js'),
+        );
+        if (!empty($config['highlighting'])) {
+            $iframeScripts[] = $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js');
+        }
+        $config['iframeInjection'] = implode("\n\n", $iframeScripts);
+        return $config + $defaults;
     }
 
     /**
@@ -58,13 +68,15 @@ class FeatureInfo extends Element
             "autoActivate" => false,
             "deactivateOnClose" => true,
             "printResult" => false,
-            "showOriginal" => false,
             "onlyValid" => false,
             "displayType" => 'tabs',
             "target" => null,
             "width" => 700,
             "height" => 500,
             "maxCount" => 100,
+            'highlighting' => false,
+            'featureColorDefault' => '#ffa500',
+            'featureColorHover' => '#ff0000',
         );
     }
 
@@ -98,7 +110,7 @@ class FeatureInfo extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:featureinfo.json.twig',
+                'mb.core.featureinfo.error.*',
             ),
         );
     }

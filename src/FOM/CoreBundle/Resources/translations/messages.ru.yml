@@ -1,0 +1,12 @@
+fom:
+  core:
+    components:
+      popup:
+        delete_user_group:
+          title: 'Подтвердите удаление'
+          content: 'Действительно удалить%userGroup%?'
+          btn:
+            cancel: Отменить
+            ok: Ок
+    fields:
+      no_user_group_defined: 'Группа пользователя не установлена'

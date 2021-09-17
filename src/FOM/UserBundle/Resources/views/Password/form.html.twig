@@ -1,0 +1,8 @@
+{% extends "MapbenderCoreBundle:Login:form_box.html.twig" %}
+{%- set title = 'fom.user.password.form.title' | trans -%}
+{%- set submit_text = 'fom.user.password.form.require_password' -%}
+
+{% block box_content_main %}
+    <p>{{ 'fom.user.password.form.message' | trans }}</p>
+    {{ parent() }}
+{% endblock %}

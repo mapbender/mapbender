@@ -38,6 +38,20 @@ class BaseElementFactory
     }
 
     /**
+     * Inserts completely missing entries in Element configuration using default values.
+     *
+     * @param Element $element
+     * @param string|null $componentClassName
+     */
+    public function addConfigurationDefaults(Element $element, $componentClassName = null)
+    {
+        $componentClassName = $componentClassName ?: $this->getComponentClass($element);
+        if (ClassUtil::exists($componentClassName)) {
+            $element->setConfiguration($element->getConfiguration() + $componentClassName::getDefaultConfiguration());
+        }
+    }
+
+    /**
      * Updates legacy values in Element's $configuration attribute (YAML applications, old database installs) to
      * current standards.
      * By default also implicitly update legacy 'class' property values.

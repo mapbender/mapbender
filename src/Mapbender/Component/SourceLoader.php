@@ -4,7 +4,6 @@
 namespace Mapbender\Component;
 
 
-use Mapbender\Component\Loader\SourceLoaderResponse;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -45,7 +44,7 @@ abstract class SourceLoader
 
     /**
      * @param HttpOriginInterface $origin
-     * @return SourceLoaderResponse
+     * @return Source
      * @throws XmlParseException
      * @throws InvalidUrlException
      */
@@ -54,7 +53,7 @@ abstract class SourceLoader
         $response = $this->getResponse($origin);
         $source = $this->parseResponseContent($response->getContent());
         $this->updateOrigin($source, $origin);
-        return new SourceLoaderResponse($source);
+        return $source;
     }
 
     /**

@@ -11,6 +11,7 @@ mb:
     print: Yazdır
     refresh: Güncelle
     remove: Kaldır
+    reset: Sıfırla
     save: Kaydet
     search: Ara
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: ~ # @todo
       typed:
         singular: ~ # @todo (embed %type% placeholder)
+    security: Güvenlik
   states:
     active: aktif
     inactive: etkisiz
@@ -37,17 +39,9 @@ mb:
         nolayer: 'Detay bilgisi katmanı bulunamadı.'
         unknownoption: '% Namespace%.% Widgetname% için bilinmeyen veya işlenmemiş seçenek %key%.'
         noresult: 'Sonuç bulunamadı'
-      popup:
-        btn:
-          ok: 'Kapat'
       class:
         title: 'Detay bilgisi'
         description: 'Detay bilgisi'
-      tag:
-        featureinfo: 'Detay bilgisi'
-        feature: 'Detay'
-        info: 'Bilgi'
-        dialog: 'İletişim'
     aboutdialog:
       content:
         versionprefix: v.
@@ -95,10 +89,6 @@ mb:
       class:
         title: 'İlgi noktası (POI)'
         description: 'Paylaşmak için İlgi noktası (POI) oluştur'
-      tag:
-        poi: 'İlgi noktası (POI)'
-        point: 'Nokta'
-        interest: 'İlgi'
       label:
         text: 'Metin'
     basesourceswitcher:
@@ -107,27 +97,16 @@ mb:
       class:
         title: 'Altlık değiştirici'
         Description: 'Haritanın altlık kaynağını değiştirin.'
-      tag:
-        base: 'Altlık'
-        source: 'Kaynak'
-        switcher: 'Değiştirici (Switcher)'
       form:
         mesage: 'Altlık kaynağı ayarı tanımlanmadı.'
     legend:
-      nolegend: 'Lejant'
       popup:
         btn:
           ok: 'Kapat'
       class:
         title: 'Lejant'
         description: 'Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir'
-      tag:
-        layer: 'Katman'
-        legend: 'Lejant'
     ruler:
-      popup:
-        btn:
-          ok: 'Kapat'
       create_error: 'İpucu: Tip hat veya bölge olmalıdır.'
       class:
         title: 'Hat/KapalıAlan Ölçümü'
@@ -143,24 +122,9 @@ mb:
         scale: 'Ölçek'
         rotation: 'Dönüklük'
         legend: 'Lejant yazdır'
-      popup:
-        btn:
-          ok: 'Yazdır'
-          cancel: 'Vazgeç'
-      info:
-        noactivelayer: 'Etkin katman yok!'
-      form:
-        required: 'Lütfen bu alanı doldurun'
       class:
         title: 'Yazıcı istemcisi'
         description: 'Yazdır penceresi gösterir'
-      tag:
-        print: 'Yazdır'
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Yazdırılan Alan Çerçevesini Devre Dışı Bırak'
         activate: 'Yazdırılan Alan Çerçevesini Etkinleştir'
@@ -172,21 +136,6 @@ mb:
       tag:
         overview: 'Genel görünüm'
         map: 'Harita'
-    sketch:
-      circle:
-        radius:
-          label: 'Yarıçap'
-          error: 'Yarıçap geçerli değil'
-        form:
-          button:
-            'yes': 'Evet'
-            cancel: 'Vazgeç'
-      class:
-        title: 'Kroki'
-        description: 'Haritaya bir vektör katmanı ekler ve geometrik şekiller çizilmesini sağlar.'
-      tag:
-        sketch: 'Kroki'
-        circle: 'Çember'
     metadata:
       popup:
         title: 'Üstveri (MetaData)'
@@ -205,8 +154,6 @@ mb:
         position: 'Konum'
         button: 'Buton'
     layertree:
-      confirm:
-        allremove: 'Bütün kaynaklar silinsin mi?'
       popup:
         btn:
           ok: 'Kapat'
@@ -225,30 +172,15 @@ mb:
         opacity: 'Opaklık'
         zoomtolayer: 'Katmana yakınlaştır'
         metadata: ' Üstveri (Metadata)'
-        sources: 'Kaynaklar'
-        deleteallsources: 'Tüm kaynakları kaldır'
         legend: 'Lejant'
         kmlexport: 'KML formatında dışa aktar (Export)'
         dimension_onoff: 'Boyutlar Açık/Kapalı'
         dimension: 'Boyut'
         sourcevisibility_onoff: 'Kaynaklari göster'
-        allvisibility_on: 'Bütün Katmanlari göster'
       class:
         title: 'Katman ağacı'
         description: 'Haritanın katman ağacı'
-      tag:
-        layertree: 'Katman ağacı'
-        layer: 'Katman'
-        tree: 'Ağaç'
-      contextmenu:
-        nooption: 'Katmanın menü seçeneği yok'
     zoombar:
-      panup: 'Kaydır'
-      panright: 'Sağa kaydır'
-      pandown: 'Aşağı kaydır'
-      panleft: 'Sola kaydırıldı'
-      goback: 'Geri dön'
-      goforward: 'İleri git'
       zoombybox: 'Çizilen alana yakınlaştır'
       zoombyworld: 'Tüm dünyayı göster'
       zoomin: 'Yakınlaştır'
@@ -345,8 +277,8 @@ mb:
         label:
           autoopen: 'Otomatik aç'
           deactivateonclose: 'Kapandığında devre dışı bırak'
-          showoriginal: 'Orjinali göster'
           onlyvalid: 'Sadece geçerli olan'
+          highlighting: ~
       printclient:
         label:
           autoopen: 'Otomatik aç'
@@ -360,7 +292,6 @@ mb:
         label:
           showbasesources: 'Altlık kaynaklarını göster'
           autoopen: 'Otomatik aç'
-          showheader: 'Başlığı göster'
           showlayerremove: 'Katman kaldır aracını göster'
           usetheme: 'Tematik katman'
           themes: 'Temalar'
@@ -368,52 +299,45 @@ mb:
             opened: 'Açıldı'
             activate: 'Katman ekle/kaldır aracını ekler'
             useTheme: 'Temaları göster'
-            sourceVisibility: 'Kaynak görünürlüğü'
-            allSelected: 'Katman görünürlüğü'
             label: 'Tema isimleri'
           hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
           hideselect: 'Klasöri kullanarak gizle'
           hideinfo: 'Bilgileri gizle'
-      redlining:
-        label:
-          auto_activate: 'Otomatik etkinleştir'
-          deactivate_on_close: 'Kapandığında devre dışı bırak'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Sekmeler
+              accordion: Akordiyon
     htmlelement:
       class:
         title: 'HTML'
         description: 'HTML kodu ekle'
-      tag:
-        html: 'HTML'
     entity:
       app:
         screenshotfile:
           error: 'Hata'
-    redlining:
+    sketch:
       geometrytype:
         point: 'Nokta'
         line: 'Hat'
         polygon: 'Çokgen'
         rectangle: 'Dikdörtgen'
-        text:
-          title: 'Metin'
-          label: 'Metin'
+        circle: Çember
+        text: 'Metin'
       geometry:
         action:
           remove: 'Geometriyi kaldır'
           edit: 'Geometriyi düzenle'
           zoom: 'Geometriye yakınlaştır'
-      dialog:
-        btn:
-          cancel: 'Kapat'
       class:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
-      tag:
-        redlining: 'İşaretleme'
-        geometry: 'Geometri'
-  geosource:
-    image_error:
-      datails: 'Harita Görüntülenemiyor.'
-      exception: 'Kural-dışı: %exception%'
-      statuscode: 'HTTP durum kodu'
-
+      admin:
+        auto_activate: Otomatik etkinleştir
+        deactivate_on_close: Kapandığında devre dışı bırak
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: İşaretleme

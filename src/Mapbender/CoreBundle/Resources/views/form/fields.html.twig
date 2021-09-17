@@ -151,50 +151,40 @@
 {%- endif -%}
 {%- endblock choice_widget_collapsed -%}
 
-{% block checkbox_widget %}
-  {% spaceless %}
-    {# @todo: remove .left (float) if rendered via form_row, keep it if rendered otherwise...? #}
-    {% set _wrapperClass = 'checkWrapper iconCheckbox left' %}
-    {% if checked %}
-      {% set _wrapperClass = _wrapperClass~' iconCheckboxActive' %}
-    {% endif %}
-    {% if disabled %}
-      {% set _wrapperClass = _wrapperClass~' checkboxDisabled' %}
-    {% endif %}
-    <div class="{{ _wrapperClass }}" data-icon="iconCheckbox">
-      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    </div>
-  {% endspaceless %}
-{% endblock checkbox_widget %}
-
-
 {%- block form_label -%}
   {%- if 'checkbox' in form.vars.block_prefixes -%}
-    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelCheck') | trim}) -%}
+    {{- block('bs3_checkbox_label') -}}
   {%- else -%}
     {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
+    {{- block('div_form_label') -}}
   {%- endif -%}
-  {{- block('div_form_label') -}}
 {% endblock form_label %}
 
+{%- block checkbox_widget -%}
+  {{- block('bs3_checkbox_widget') -}}
+{%- endblock -%}
+{%- block checkbox_label -%}
+  {{- block('bs3_checkbox_label') -}}
+{%- endblock -%}
+
 {% block checkbox_row %}
-<div>
-  {{- form_widget(form) -}}
-  {{- form_label(form) -}}
-</div>
+  <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
+    {{- block('checkbox_widget') -}}
+    {{- block('form_errors_inline') -}}
+  </div>
 {% endblock checkbox_row %}
 
 {% block form_row %}
   {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
     <div class="collectionItem clear">
       {%- if form.parent.vars.allow_delete -%}
-        <span class="collectionRemove hover-highlight-effect"><i class="fa fa-fw fa-times"></i></span>
+        <span class="collectionRemove hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></span>
       {%- endif -%}
       {# No label for collection item #}
       {{ form_widget(form) }}
     </div>
   {%- else -%}
-    <div>
+    <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}
       {{- form_widget(form) -}}
       {{- block('form_errors_inline') -}}
@@ -216,16 +206,22 @@
 
 {% block acl_widget %}
   {% spaceless %}
-
-    {% set prototype = form_widget(form.ace.vars.prototype) %}
-    <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidden{% endif %}">
+  <div class="ace-collection" {{ block('widget_container_attributes') }}>
+    {%- if form.vars.allow_add -%}
+    <div class="form-group text-right">
+        <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
+            <i class="fa fas fa-2x fa-plus"></i>
+        </span>
+    </div>
+    {%- endif -%}
+    {% set prototype = form_widget(form.vars.prototype) %}
+    <table id="listFilterPermission" class="permissionsTable table table-bordered {% if not (form | length) %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
-            <label for="inputFilterPermission" class="labelInput left">{{"fom.core.fields.filter"|trans}}</label>
-            <input id="inputFilterPermission" type="text" class="input left listFilterInput"/>
+            {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterPermission'} %}
           </th>
-          {% for child in form.ace.vars.prototype %}
+          {% for child in form.vars.prototype %}
             {% if child.vars.attr.class is defined %}
               <th>
                 <div data-perm-type="{{ child.vars.attr.class }}" class="tagbox {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
@@ -236,16 +232,16 @@
         </tr>
       </thead>
       <tbody>
-        {% for ace in form.ace %}
+        {% for ace in form %}
           {{ form_widget(ace) }}
         {% endfor %}
       </tbody>
     </table>
 
-    {% if form.ace|length == 0 %}
-      <p id="permissionsDescription" class="description">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
+    {% if not (form | length) %}
+      <p id="permissionsDescription">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
     {% endif %}
-    <div class="clearContainer"></div>
+  </div>
   {% endspaceless %}
 {% endblock %}
 
@@ -260,25 +256,22 @@
 {% endblock tagbox_widget %}
 
 {% block ace_widget %}
-  {% spaceless %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ form['sid'].vars.value }}">
-      {% for child in form %}
+    {%- set _sid_value = form.sid.vars.value -%}
+    {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
+    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
+      <td>
+        <i class="userType fa fas {{ form.sid.vars.value|slice(0, 1) == "u" ? 'fa-user' : 'fa-group' }}"></i>&nbsp;
+        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ _sid_label }}</span>
+          {{ form_row(form.sid) }}
+      </td>
+
+      {%- for child in form if child != (form.sid) -%}
         <td>
-          {% if 'text' in child.vars.block_prefixes %}
-              <div class="{% if child.vars.value|slice(0, 1) == "u" %}iconUser {% else %} iconGroup{% endif %} userType">
-              <span class="labelInput">{{ child.vars.value|slice(2)|split(':')|first }}</span>
-            </div>
             {{ form_widget(child) }}
-          {% else %}
-              {% if child.vars.attr.class is defined %}
-                {{ form_widget(child) }}
-              {% endif %}
-          {% endif %}
         </td>
-      {% endfor %}
+      {%- endfor -%}
       <td class="iconColumn">
-        <span class="iconRemove removeUserGroup hover-highlight-effect"></span>
+        <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
       </td>
     </tr>
-  {% endspaceless %}
 {% endblock %}

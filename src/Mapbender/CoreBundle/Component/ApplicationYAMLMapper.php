@@ -112,7 +112,14 @@ class ApplicationYAMLMapper
         if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
-
+        
+        if (isset($definition['mapEngineCode'])) {
+            $application->setMapEngineCode($definition['mapEngineCode']);
+        }
+        if (isset($definition['persistentView'])) {
+            $application->setPersistentView($definition['persistentView']);
+        }
+ 
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
@@ -144,6 +151,7 @@ class ApplicationYAMLMapper
             $application->addLayerset($layerset);
         }
         $application->setSource(Application::SOURCE_YAML);
+        Application::postLoadStatic($application);
         return $application;
     }
 

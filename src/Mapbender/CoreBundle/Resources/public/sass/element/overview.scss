@@ -1,49 +1,63 @@
 .mb-element-overview {
-  -webkit-user-select: none; /* Chrome all / Safari all */
-  -moz-user-select: none; /* Firefox all */
-  -ms-user-select: none; /* IE 10+ */
-  user-select: none; /* Likely future */
+  user-select: none;
 
   .toggleOverview {
-    $buttonFirstColor: #6fb536;
-    $buttonSecondColor: #5fa229;
-
     padding: 0 6px;
-    color: $lightFontColor;
-    background-color: $buttonFirstColor;
-
-    @extend .iconClose;
-    @extend .buttonCore;
-    @include border-radius($radius);
+    cursor: pointer;
+    border-radius: $radius;
+    font-size: 0.85rem;
   }
 
   .olMap, .ol-overviewmap-map {
     background-color: white;
-    @include transition(width .2s linear);
+    @include transition(all .2s linear);
     .ol-viewport, .olMapViewport {
       border: 1px solid $thirdColor;
     }
   }
-  &.closed {
-    .olMap {
-      width: 0 !important;
+  .ol-overviewmap {
+    button {
+      // OL4: renders a toggle button, which we delegate to for visibility
+      //      toggling, but we don't want to show it
+      width: 0;
+      padding: 0;
+      border: 0;
+      font-size: 0;
+      overflow-x: hidden;
     }
-    .toggleOverview {
-      @extend .iconOpen;
+    // prevent weird vertical displacement of map relative to toggle button
+    font-size: 0;
+    line-height: 0;
+  }
+  &.closed {
+    .olMap, .ol-overviewmap-map {
+      width: 0 !important;
+      height: 0;
+      opacity: 0;
+      border: 0;
     }
   }
-
+  .toggleOverview {
+    position: absolute;
+  }
   &.right-top .toggleOverview {
-    @include absolute(0 '' '' -25px);
+    top: 0;
+    left: -25px;
   }
   &.left-top .toggleOverview {
-    @include absolute(0 -25px '' '');
+    top: 0;
+    right: -25px;
   }
   &.right-bottom .toggleOverview {
-    @include absolute('' '' 0 -25px);
+    bottom: 0;
+    left: -25px;
   }
   &.left-bottom .toggleOverview {
-    @include absolute('' -25px 0 '');
+    bottom: 0;
+    right: -25px;
+  }
+  .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
+    vertical-align: bottom;
   }
 }
 
@@ -54,6 +68,5 @@
 }
 
 .olControlOverviewMapRectReplacement {
-  @extend .iconTarget;
   cursor: move;
 }

@@ -58,14 +58,45 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         currentActiveLayer: null,
         autoDisabled: null,
         recreateOnSrsSwitch: true,
-        destroyLayers: function() {
-            Mapbender.Source.prototype.destroyLayers.call(this);
+        destroyLayers: function(olMap) {
+            Mapbender.Source.prototype.destroyLayers.call(this, olMap);
             this.currentActiveLayer = null;
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
-        createNativeLayers: function(srsName) {
+        /**
+         * @return {SourceSettings}
+         */
+        getSettings: function() {
+            var diff = Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+                selectedIds: []
+            });
+            // Use a (single-item) layer id list
+            if (this.getSelected()) {
+                diff.selectedIds.push(this.id);
+            }
+            return diff;
+        },
+        /**
+         * @param {SourceSettingsDiff|null} diff
+         */
+        applySettingsDiff: function(diff) {
+            var fakeRootLayer = this.configuration.children[0];
+            if (diff.activate || diff.deactivate) {
+                fakeRootLayer.options.treeOptions.selected = !!(diff.activate || []).length;
+            }
+        },
+        getSelected: function() {
+            var fakeRootLayer = this.configuration.children[0];
+            return fakeRootLayer && fakeRootLayer.options.treeOptions.selected || false;
+        },
+        /**
+         * @param {String} srsName
+         * @param {Object} [mapOptions]
+         * @return {Array<Object>}
+         */
+        createNativeLayers: function(srsName, mapOptions) {
             var compatibleLayer = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!compatibleLayer) {
@@ -95,15 +126,29 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, srsName);
             return [olLayer];
         },
-        _getNativeLayerOptions: function(matrixSet, layer, srsName) {
+        updateEngine: function() {
+            var fakeRootLayer = this.configuration.children[0];
+            var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
+            var engine = Mapbender.mapEngine;
+            var rootVisibility = fakeRootLayer.state.visibility;
+            var targetVisibility = !!layerIdent && rootVisibility && this.getActive();
+            var olLayer = this.getNativeLayer(0);
+            if (!olLayer) {
+                return;
+            }
+            engine.setLayerVisibility(olLayer, targetVisibility);
+        },
+        _getNativeLayerBaseOptions: function(layer, srsName) {
+            var matrixSet = layer.getMatrixSet();
             var self = this;
 
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
-                label: layer.options.title,
+                name: layer.options.title,
                 url: layer.options.tileUrls,
                 format: layer.options.format,
+                style: layer.options.style,
                 serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                     return self._getMatrixResolution(tileMatrix, srsName);
                 })
@@ -146,46 +191,30 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return null;
         },
-        getLayerParameters: function(stateMap) {
-            if (this.currentActiveLayer) {
-                return {
-                    layers: [this.currentActiveLayer.options.identifier],
-                    infolayers: [],
-                    styles: []
-                };
-            } else {
-                return {
-                    layers: [],
-                    infolayers: [],
-                    styles: []
-                };
-            }
+        getFeatureInfoLayers: function() {
+            console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
+            return [];
         },
-        checkLayerParameterChanges: function(layerParams) {
-            if (this.currentActiveLayer) {
-                var activeIdentifier = this.currentActiveLayer.options.identifier;
-                return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
-            } else {
-                return !!(layerParams.layers && layerParams.layers.length);
-            }
-        },
-        getPointFeatureInfoUrl: function(x, y, maxCount) {
-            // not implemented
-            return null;
-        },
-        getMultiLayerPrintConfig: function(bounds, scale, projection) {
-            var layerDef = this._selectCompatibleLayer(projection.projCode);
+        /**
+         * @param {*} bounds
+         * @param {Number} scale
+         * @param {String} srsName
+         * @return {Array<Object>}
+         */
+        getPrintConfigs: function(bounds, scale, srsName) {
+            var layerDef = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!fakeRootLayer.state.visibility || !layerDef) {
                 return [];
             }
-            var matrix = this._getMatrix(layerDef, scale, projection);
+            var matrix = this._getMatrix(layerDef, scale, srsName);
+            var commonOptions = this._getPrintBaseOptions();
             return [
-                {
+                Object.assign({}, commonOptions, {
                     url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
-                    matrix: $.extend({}, matrix),
-                    resolution: this._getMatrixResolution(matrix, projection.projCode)
-                }
+                    matrix: Object.assign({}, matrix),
+                    resolution: this._getMatrixResolution(matrix, srsName)
+                })
             ];
         },
         getLayerById: function(id) {
@@ -200,32 +229,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 }
             }
             return foundLayer;
-        },
-        supportsMetadata: function() {
-            return false;
-        },
-        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
-            var bboxMap;
-            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
-            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
-            if (this.currentActiveLayer && (inheritParent_ || inheritSource_)) {
-                bboxMap = this._reduceBboxMap(this.currentActiveLayer.options.bbox);
-                if (bboxMap) {
-                    return bboxMap;
-                }
-            }
-            var fakeRootLayerId = this.configuration.children[0].options.id;
-            if ((!layerId || layerId === fakeRootLayerId) && (inheritParent_ || inheritSource_)) {
-                // root layer doesn't have bbox config
-                // just find something..
-                for (var i = 0; i < this.configuration.layers.length; ++i) {
-                    bboxMap = this._reduceBboxMap(this.configuration.layers[i].options.bbox);
-                    if (bboxMap) {
-                        return bboxMap;
-                    }
-                }
-            }
-            return Mapbender.Source.prototype.getLayerExtentConfigMap.apply(this, arguments);
         },
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layerId_;
@@ -245,17 +248,18 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         /**
          * @param {WmtsTmsBaseSourceLayer} layer
          * @param {number} scale
-         * @param {OpenLayers.Projection} projection
+         * @param {string} srsName
          * @return {WmtsTileMatrix}
          */
-        _getMatrix: function(layer, scale, projection) {
-            var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
+        _getMatrix: function(layer, scale, srsName) {
+            var units = Mapbender.mapEngine.getProjectionUnits(srsName);
+            var resolution = OpenLayers.Util.getResolutionFromScale(scale, units);
             var matrixSet = layer.getMatrixSet();
             var scaleDelta = Number.POSITIVE_INFINITY;
             var closestMatrix = null;
             for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
                 var matrix = matrixSet.tilematrices[i];
-                var matrixRes = this._getMatrixResolution(matrix, projection.projCode);
+                var matrixRes = this._getMatrixResolution(matrix, srsName);
                 var resRatio = matrixRes / resolution;
                 var matrixScaleDelta = Math.abs(resRatio - 1);
                 if (matrixScaleDelta < scaleDelta) {
@@ -279,6 +283,14 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
         getMatrixSet: function() {
             return this.source.getMatrixSetByIdent(this.options.tilematrixset);
         },
+        getSelected: function() {
+            var rootLayer = this.source.getRootLayer();
+            return rootLayer.options.treeOptions.selected;
+        },
+        hasBounds: function() {
+            var currentActive = this.source.currentActiveLayer;
+            return !!currentActive && Mapbender.SourceLayer.prototype.hasBounds.call(currentActive);
+        },
         isInScale: function(scale) {
             // HACK: always return true
             // @todo: implement properly
@@ -293,7 +305,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
             }
             var extent_;
             if (srsName !== 'EPSG:4326') {
-                extent_ = Mapbender.Model._transformExtent(extent, srsName, 'EPSG:4326');
+                extent_ = Mapbender.mapEngine.transformBounds(extent, srsName, 'EPSG:4326');
             } else {
                 extent_ = extent;
             }
@@ -304,31 +316,5 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
     Mapbender.SourceLayer.typeMap['tms'] = WmtsTmsBaseSourceLayer;
 }());
 
-
-
-/**
- * Base class for TMS and WMTS geosources
- */
-Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
-    applyTreeOptions: function(source, layerOptionsMap) {
-        var layerKeys = Object.keys(layerOptionsMap);
-        for (var i = 0; i < layerKeys.length; ++i) {
-            var layerId = layerKeys[i];
-            if (source.configuration.children[0].options.id === layerId) {
-                var layerOptions = layerOptionsMap[layerId];
-                var treeOptions = ((layerOptions.options || {}).treeOptions || {});
-                if (treeOptions.selected === true && source.autoDisabled) {
-                    delete treeOptions.selected;
-                }
-                break;
-            }
-        }
-        Mapbender.Geo.SourceHandler.applyTreeOptions.call(this, source, layerOptionsMap);
-    }
-});
-(function() {
-    Mapbender.source['wmts'] = Mapbender.Geo.SourceTmsWmtsCommon;
-    Mapbender.source['tms'] = Mapbender.Geo.SourceTmsWmtsCommon;
-}());
 
 

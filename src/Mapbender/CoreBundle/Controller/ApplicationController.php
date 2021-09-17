@@ -4,12 +4,12 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
-use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
@@ -17,6 +17,7 @@ use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,7 +137,6 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
-        $appComponent = new Application($this->container, $appEntity);
         $useCache = $this->isProduction();
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
@@ -147,7 +147,7 @@ class ApplicationController extends ApplicationControllerBase
             $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
-                $content = $appComponent->getTemplate()->render();
+                $content = $this->renderApplication($appEntity);
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache($cacheFile, true);
@@ -156,8 +156,27 @@ class ApplicationController extends ApplicationControllerBase
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($appComponent->getTemplate()->render(), 200, $headers);
+            return new Response($this->renderApplication($appEntity), 200, $headers);
         }
+    }
+
+    /**
+     * @param ApplicationEntity $application
+     * @return string
+     */
+    protected function renderApplication(ApplicationEntity $application)
+    {
+        /** @var string|Template $templateCls */
+        $templateCls = $application->getTemplate();
+        /** @var Template $templateObj */
+        $templateObj = new $templateCls();
+        $twigTemplate = $templateObj->getTwigTemplate();
+        $vars = array_replace($templateObj->getTemplateVars($application), array(
+            'application' => $application,
+            'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
+            'body_class' => $templateObj->getBodyClass($application),
+        ));
+        return $this->renderView($twigTemplate, $vars);
     }
 
     /**
@@ -220,32 +239,15 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Metadata action.
      *
-     * @Route("/application/{slug}/metadata")
-     * @param Request $request
-     * @param string $slug
+     * @Route("/application/metadata/{instance}/{layerId}")
+     * @param SourceInstance $instance
+     * @param string $layerId
      * @return Response
-     * @todo: param sourceId is required => it should be part of the route
-     * @todo: param layerName is required => it should be part of the route
      */
-    public function metadataAction(Request $request, $slug)
+    public function metadataAction(SourceInstance $instance, $layerId)
     {
-        $sourceId = $request->get("sourceId", null);
-        if (!strlen($sourceId)) {
-            throw new BadRequestHttpException();
-        }
         // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
         // @todo: give Yaml applications a proper object repository and make this work
-        $application = $this->requireApplication($slug);
-        $instance = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        if (!$instance || !$application) {
-            throw new NotFoundHttpException();
-        }
-        /** @var SourceInstance $instance */
-        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $application);
-        }
-
-        $layerId = $request->query->get('layerId', null);
         $metadata  = $instance->getMetadata();
         if (!$metadata) {
             throw new NotFoundHttpException();
@@ -371,23 +373,20 @@ class ApplicationController extends ApplicationControllerBase
      * Get mime type
      *
      * @param string $type
-     * @return array
+     * @return string
      */
     protected function getMimeType($type)
     {
-        static $types = array(
-            'css'   => 'text/css',
-            'js'    => 'application/javascript',
-            'trans' => 'application/javascript');
-        return $types[$type];
-    }
-
-    /**
-     * @return string
-     */
-    protected function getKernelEnvironment()
-    {
-        return $this->container->get('kernel')->getEnvironment();
+        switch ($type) {
+            case 'js':
+            case 'trans':
+                return 'application/javascript';
+            case 'css':
+                return 'text/css';
+            default:
+                // Uh-oh
+                return null;
+        }
     }
 
     /**
@@ -395,6 +394,22 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function isProduction()
     {
-        return $this->getKernelEnvironment() == "prod";
+        return !$this->getParameter('kernel.debug');
+    }
+
+    /**
+     * @param ApplicationEntity $application
+     * @return string|null
+     */
+    protected function getPublicUploadsBaseUrl(ApplicationEntity $application)
+    {
+        $ulm = $this->getUploadsManager();
+        $slug = $application->getSlug();
+        try {
+            $ulm->getSubdirectoryPath($slug, true);
+            return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
+        } catch (IOException $e) {
+            return null;
+        }
     }
 }

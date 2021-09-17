@@ -1,23 +1,20 @@
 {% macro requestinformation(requestinformation, title) %}
-  <div class="labelText">{{ title }}:</div>
-  <ul class="list">
-    {% if requestinformation.httpGetRestful %}
-    <li>
-      <span class="labelText">GET Restful:</span>
-      <span class="metaText">{{ requestinformation.httpGetRestful }}</span>
-    </li>
-    {% endif %}
-    {% if requestinformation.httpGetKvp %}
-    <li>
-      <span class="labelText">GET KVP:</span>
-      <span class="metaText">{{ requestinformation.httpGetKvp }}</span>
-    </li>
-    {% endif %}
-    {% if requestinformation.httpPost %}
-    <li>
-      <span class="labelText">POST:</span>
-      <span class="metaText">{{ requestinformation.httpPost }}</span>
-    </li>
-    {% endif %}
-  </ul>
+<tr><th colspan="2">{{ title }}:</th></tr>
+<tr>
+  <td colspan="2">
+    <table class="indent">
+      <tbody>
+      {%- if requestinformation.httpGetRestful -%}
+        <tr><th>GET Restful:</th><td>{{ requestinformation.httpGetRestful }}</td></tr>
+      {%- endif -%}
+      {%- if requestinformation.httpGetKvp -%}
+        <tr><th>GET KVP:</th><td>{{ requestinformation.httpGetKvp }}</td></tr>
+      {%- endif -%}
+      {%- if requestinformation.httpPost -%}
+        <tr><th>POST:</th><td>{{ requestinformation.httpPost }}</td></tr>
+      {%- endif -%}
+      </tbody>
+    </table>
+  </td>
+</tr>
 {% endmacro %}

@@ -1,19 +1,5 @@
 $(function() {
-    $('.extendedGroup').on("click", '.on-off', function(e) {
-        var $target = $(e.target);
-        if ($target.hasClass('checkWrapper') || $target.is('input[type="checkbox"]')) {
-            return;
-        }
-        var $this = $(this);
-        if ($this.hasClass('active')) {
-            $this.removeClass('active');
-            $this.parent().find('#' + $this.attr('id') + '-content').addClass('hidden');
-        } else {
-            $this.addClass('active');
-            $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
-        }
-    });
-    $('.on-off-content[data-diminstconfig]').each(function(idx, item) {
+    $('[data-diminstconfig]').each(function(idx, item) {
         var $this = $(item);
         var originalExtent = $this.attr('data-origextent') || '';
         var $rangesSelector = $('select[name*="[extentRanges]"]', item);

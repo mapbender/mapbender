@@ -26,11 +26,6 @@ class YAMLConfigurationType extends AbstractType
         return 'Symfony\Component\Form\Extension\Core\Type\TextareaType';
     }
 
-    public function getName()
-    {
-        return 'yaml_configuration';
-    }
-
     public function preSubmit(FormEvent $event)
     {
         try {

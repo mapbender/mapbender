@@ -1,4 +1,299 @@
-## dev-release/3.0.7 @ 56e3c6fd8
+## v3.2.5
+* Fix WMS min / max scale not applying correctly with fractional zoom
+* [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))
+* [SimpleSearch]: Fix horizontally clipped search results when placed in toolbar
+* Fix error duplicating application with empty Acl
+* Fix broken alignment / overflowing content of dropdown-style Elements (SrsSelector, ScaleSelector, ApplicationSwitcher) when displaying labels
+* Fix invisible collapsed backed main menu button on small screens
+* Fix site links (imprint etc) not showing in main menu for anonymous users
+* Fix main menu "Applications" link not showing for anonymous users
+* Fix ACL class list overflowing on very small screens
+* Fix translation key appearing verbatim in global ACL class editing title
+* Fix broken layout of Application list interaction buttons on very small screens
+* Fix Application list main title spacing / block sizing on very small screens
+* Fix list filter hiding portions of content inside matching Application / Source list entries
+* Fix list filter conflicts between source and shared instance lists (single page, separate tabs)
+* Fix inconsistent font weight (higher than other content) in backend dialogs
+* Fix availability of Ubuntu font in isolated networks (font now bundled)
+* [ViewManager]: Add intermediate popover step with distinct form fields to improve updating workflow
+* [ViewManager]: Add read-only detail view to allow record inspection without saving privileges
+* [ViewManager]: prevent confusing public <=> private satus changes on update; deliberate status change now requires saving a new record
+* [ViewManager]: default "showDate" (in listings) to false to make more space for long titles (date is always shown in info / update)
+* Update screenshot preview / placeholder styling in Application form to match Application list
+* Increase form field contrast in backend
+* Add login backdrop image customizability via `branding.login_backdrop` parameter (see [PR#1360](https://github.com/mapbender/mapbender/pull/1360))
+
+## v3.2.5-RC2
+* Restructure backend main menu
+  * Avoid sub-menus, use tabbed pages instead
+  * Supply application export interaction as a button in the application instead of standalone page
+  * Supply appliction import link in new application form instead of main menu entry
+  * Remove main menu entries for "New User" / "New Group" (actions available in new main "Security" page in the appropriate tab)
+  * Remove main menu entry for "New Source" (action available in sources listing)
+  * Remove main menu entry for "New Application" (action available in application listing)
+* Replace hardcoded  "Service Source" and "Application" in global ACL control page with appropriate translation
+* Use trashcan icon instead of cross icon for delete interactions in backend, in form theme and in a few frontend areas
+* Brighten up login area backdrop image
+* Fix broken Layertree folder toggling on touch devices ([#1349](https://github.com/mapbender/mapbender/issues/1349)
+
+## v3.2.5-RC1
+* Completely redesigned backend and login areas
+* [Regression] Fix broken Layertree dialog with useTheme after adding source via WmsLoader
+* Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
+* Fix invalid `Content-Type` request header in frontend configuration request ([PR#1345](https://github.com/mapbender/mapbender/pull/1345))
+* Fix PostgreSQL errors saving WMTS source with very long "fees" texts ([#1311](https://github.com/mapbender/mapbender/issues/1311), [PR#1353](https://github.com/mapbender/mapbender/pull/1353))
+* Fix ApplicationSwitcher displaying when referencing (only) deleted or non-granted applications
+* Fix ApplicationSwitcher filtering out current application as if it was not granted ([#1320](https://github.com/mapbender/mapbender/issues/1320))
+* Filter ApplicationSwitcher backend application selection down to editing user's granted applications ([#1321](https://github.com/mapbender/mapbender/issues/1320))
+* Fix invalid table markup and unencoded headers in SearchRouter frontend
+* Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
+* Fix same Wms dimension appearing multiple times in new Wms instance if endorsed by multiple layers
+* Fix invalid empty initial value in (required) export application choice
+* Fix HTML paragraph text flow
+* Fix Print errors / poor resolution on incomplete "quality_levels" configuration ([#1341](https://github.com/mapbender/mapbender/issues/1341))
+* Fix exception rendering PrintClient element with "optional_fields" option set to empty scalar ([#1344](https://github.com/mapbender/mapbender/issues/1344))
+* Fix broken images in application list if screenshot files are missing
+* [FeatureInfo] hide already opened popup if not receiving any displayable content from current map click
+* Fix ImageExport / Print handling of multi-component Openlayers 6 styles (Digitizer labels etc)
+* Fix ImageExport / Print form submit continuing on scripting errors
+* Fix Print not including feature geometries if selection rectangle is (partially) outside the current map viewport
+* Remove map configuration option `dpi` in favor of client-side autodetection (see [PR#1324](https://github.com/mapbender/mapbender/pull/1324))
+* Add configurability for coloring of FeatureInfo highlight geometries ([PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* Add new "View manager" Element (see [PR#1351](https://github.com/mapbender/mapbender/pull/1351))
+* Add new "Share URL" Element (see [PR#1328](https://github.com/mapbender/mapbender/pull/1328))
+* Support resetting source layer settings when using ZoomBar component "zoom_home" (see [PR#1348](https://github.com/mapbender/mapbender/pull/1348))
+* Prevent adding float-only Elements (ZoomBar, Overview) to incompatible regions
+* Suppress "anchor" element configuration field for floatable elements outside of the "content" region
+* [Forms] Fix file type inputs generated via form theme
+* [Forms] Fix custom dropdown select widget not emitting tooltip properly
+* [Forms] Update form theme to emit Bootstrap checkboxes and (margin-providing) form-group containers (see [PR#1343](https://github.com/mapbender/mapbender/pull/1343))
+* [Backend] Fix new application form sometimes missing the security tab header
+* [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
+* [Backend] Fix filter input in Element security dialog not working
+* [Backend] Fix missing redirect to "Layouts" tab after saving Element security
+* [Backend] Redesign source view display
+* [Backend] Redesign vendorspecifics / dimension boxes in WMS instance editing
+* [Framework] Add Controller-based delivery for /components/ urls (package installer independence; see [PR#1352](https://github.com/mapbender/mapbender/pull/1352))
+* [Framework] Fix CSS integration of Bootstrap and icons stylesheets (reference in base template head, do not compile)
+* [Framework] Integrate bootstrap-colorpicker (reduce component installer reliance); pre-provide assets in all templates
+* Misc updates of custom buttons to use Bootstrap .btn (mostly backend)
+* Misc cleanups of Fontawesome 5+ incompatibilities in backend
+* Misc translation fixes
+* Misc legacy CSS cleanups
+
+## v3.2.4
+* Fix poor tiled Wms quality despite best-effort resolution matching (mapproxy vs Map config "scales") on Openlayers 6
+* Fix missing application of configured tileSize on Openlayers 6 with tiled WMS instance
+* Increase precision of default dpi (OGC-recommended 0.28mm² pixels); Replace configured dpi values very close to recommended dpi to exactly recommended dpi
+* Fix empty initial displayed scale in ScaleSelector and ScaleDisplay
+* Fix Wmts not displaying and showing a (miscalculated) out-of-bounds state
+* Fix dialog-based Layertree showing duplicate entries for sources newly added while dialog was closed
+* Fix Layertree Layerset checkboxes not updating on external selection change
+* Fix FeatureInfo visually retaining previously requested data for sources / queryable layers that have been deselected before the current request ([#1268](https://github.com/mapbender/mapbender/issues/1268))
+* Fix FeatureInfo highlight geometries for the same source accumuluating over multiple requests ([#1287](https://github.com/mapbender/mapbender/issues/1287))
+* Fix incomplete caching headers on frontend markup and assets; prevent browser cache from reusing stale data
+* Fix incomplete defaults for SimpleSearch `result_*`
+* Fix broken SimpleSearch marker icon if result_icon_url is webroot-relative and Mapbender is serving from a domain sub-path url
+* Fix SimpleSearch errors when receiving invalid headers ([#1303](https://github.com/mapbender/mapbender/issues/1303))
+* Fix ineffective view grant on Yaml-defined applications for local database groups ([PR#1296](https://github.com/mapbender/mapbender/pull/1296))
+* Fix fragment history not generating an entry for a pure srs change
+* Fix ZoomBar rotation indicator not showing initial non-zero rotation
+* Fix error printing if overview element exists but started closed, and was never opened
+* Fix PrintClient broken nested tab container layout (queue mode active and placed in tabs-style sidepane)
+* Fix Wms dimension range editing rounding errors in instance backend
+* Fix Wms dimension range rounding errors in DimensionsHandler frontend ([#1293](https://github.com/mapbender/mapbender/issues/1293))
+* Reduce Wms dimension value rounding errors in Layertree context menu (precision still subject to slider width)
+* Fix Wms instance layer style editing ([#1314](https://github.com/mapbender/mapbender/issues/1314))
+* Fix shared instances not included in DimensionsHandler instance selection ([#1284](https://github.com/mapbender/mapbender/issues/1284))
+* Fix broken enforcement of dimension exclusivity in DimensionsHandler form
+* Fix DimensionsHandler trying to control random dimension on source with multiple dimensions
+* Prefer maximum value of configured range as the (not directly editable) Wms dimension default
+* Remove unreasonable default button tooltip "button"
+* Split multi-purpose Button Element into ControlButton and LinkButton ([#571](https://github.com/mapbender/mapbender/issues/571), [PR#1294](https://github.com/mapbender/mapbender/pull/1294))
+* Fix PrintClient frontend settings form bypassing / conflicting with form theme
+* Fix Layertree backend form bypassing / conflicting with form theme
+* Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
+* Improve Element access check performance, fix system integration ([PR#1297](https://github.com/mapbender/mapbender/pull/1297))
+* Give reasonable (target dependent) titles to ControlButton Elements with empty / omitted titles (see [PR#1316](https://github.com/mapbender/mapbender/pull/1316))
+* Fix locale-locking of Yaml applications on import to database ([#931](https://github.com/mapbender/mapbender/issues/931))
+* Element titles are now optional in both Yaml applications and DB-/backend-maintained applications; effective default titles are shown in title field placeholder
+* Allow suppressing entire types of Element via configuration (see [PR#1317](https://github.com/mapbender/mapbender/pull/1317))
+* Add option to make view parameters and (partial) layerset, source and layer settings persistent across user sessions (see [PR#1304](https://github.com/mapbender/mapbender/pull/1304)
+* Add ApplicationSwitcher Element to jump between applications maintaining current map location (see [PR#1307](https://github.com/mapbender/mapbender/pull/1307))
+* Add ResetView Element to undo navigation / source layer changes without page reload ([PR#1300](https://github.com/mapbender/mapbender/pull/1300))
+* Add ZoomBar component `zoom_home` to restore initial center / scale / SRS / rotation
+* Add Map configuration option `fixedZoomSteps` (disables fractional zoom; see [PR#1312](https://github.com/mapbender/mapbender/pull/1312))
+* [Backend] Fix account menu and sitelinks alignment vs top of page
+* [Framework] Fix broken layout of fallback element form (used if Element returns empty value from getFormTemplate)
+* [Framework] Fix support for ConfigMigrationInterface modifying Element class
+* [Framework] Fix Symfony debug mode class loader exceptions when checking Element class existance
+* [Framework] Fix misc form control font color inconsistencies
+* [Framework] Fix TargetElementType offering all elements if all elements are not targettable
+* [Framework] Fix errors if Element configuration form type does not accept / declare an `application` option, even if it isn't used by the form type
+* [Framework] Fix functional links (with `href="#"`) opening a new Application tab in frontend
+* [Framework] Fix CSS conflicts of custom tab containers vs Bootstrap `.container
+* [Framework] Fix (Digitizer et al) external select2 usages depending on (abandoned) robloach/component-installer
+* [Framework] Fix vis-ui.js usages depending on (abandoned) robloach/component-installer ([PR#1306](https://github.com/mapbender/mapbender/pull/1306))
+* [Framework] Fix internal Font Awesome usage depending on (abandoned) robloach/component-installer
+* [Framework] Add mbconfiguringsource event (after source object is functional, but before native layers have been created)
+* Drop (wholly redundant) Kernel registration of SensioDistributionBundle (undeclared dependency)
+* Drop doctrine/doctrine-migrations-bundle package integration ([PR#1305](https://github.com/mapbender/mapbender/pull/1305))
+* Drop incompatible / no longer supported Wmc Element code (WmcList, WmcEditor, WmcLoader)
+* Misc functional testing support
+
+## v3.2.3
+NOTE: This version extends the database schema and will require running a `doctrine:schema:update`
+
+* Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
+* Fix duplicated owner of cloned application
+* Fix broken mb-action / "declarative" link processing in applications using WMTS instances
+* Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
+* Fix missing handling of configurable sidepane width (3.1.0.5 regression)
+* Fix missing handling of configurable sidepane "align" (left or right; 3.1.0.5 regression)
+* Fix visible content overflow / no scrolling in "tabs"-Type sidepane ([#1269](https://github.com/mapbender/mapbender/issues/1269))
+* Fix initial visible flash of closed sidepane (only works with explicitly configured width)
+* Fix errors on ImageExport / Print with (valid) feature styles missing `image` property
+* Fix backend element list interaction tooltips on Yaml applications copied into db
+* Fix errors editing map element after deleting a previously assigned layerset
+* Fix error getting FeatureInfo response on current map engine from an instance configured with option `proxy`
+* Fix missing overview map in print
+* Fix displayed print area corner coordinate ordering ([#1280](https://github.com/mapbender/mapbender/issues/1280))
+* Fix errors editing SimpleSearch Elements based on configurations suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+* Fix SimpleSearch not evaluating any `result_*` values suggested by user documentation ([PR#1290](https://github.com/mapbender/mapbender/pull/1290))
+* Fix missing backend form field for SimpleSearch `sourceSrs` setting ([#1278](https://github.com/mapbender/mapbender/issues/1278))
+* Fix BaseSourceSwitcher highlighting menu items that are not controlling exactly the initially active subset of controllable sources
+* Fix broken PrintClient settings layout with option `legend` disabled
+* Fix styling differences (label line break) between SrsSelector and ScaleSelector
+* Fix visible overflow / missing scrollbar in unstyled sidepane if content exceeds available height
+* Fix login form appearing in place of Element form or Layerset title form on session expiration; go to full-window login page instead
+* [SearchRouter]: Replace manual `type` configuration with auto-detection
+* [SearchRouter]: remove remnant `timeoutFactor` option unused since v3.0.8.1
+* [Framework] Fix broken form theme visualization of "disabled" input state
+* [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
+* [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
+* Show WMS layer abstract in metadata (Layertree context menu; [PR#1256](https://github.com/mapbender/mapbender/pull/1256/files))
+* Add responsive display filtering for individual Elements and entire Element containers (sidepane / toolbars)
+  * Yaml application definitions may specify a `screenType` in any Element definition, and in the `regionProperties` of the targetted container.  
+    Value may be one of `all`, `mobile` or `desktop`.
+  * NOTE: Responsive filtering is *not* supported when using legacy Openlayers 2 map engine
+* Added built-in support for displaying and highlighting geometries embedded in FeatureInfo html; see [PR#1270](https://github.com/mapbender/mapbender/pull/1270) for markup requirements
+* Support shareable application URL including basic view parameters center, scale, rotation, CRS ([PR#1291](https://github.com/mapbender/mapbender/pull/1291))
+* Added missing editing capabilities for sidepane width / position / initial state in database applications (previously only controllable via `regionProperties` in Yaml applications)
+* Immediately save modified sidepane type and other region settings (mirrors immediate save behaviour on Element reordering)
+* Replace custom sidepane formatting type widget with a simple dropdown
+* Resolved misc conflicts with Bootstrap script and Bootstrap form theme
+* The entire [mapbender/fom package](https://github.com/mapbender/fom) has been merged back into Mapbender
+* Renamed "Redlining" Element to "Sketch" ([PR#1279](https://github.com/mapbender/mapbender/pull/1279))
+* [Backend] changed standard editing icon from pencil to a gear
+* Fix typos and outdated information in `mapbender:database:upgrade` command help ([PR#1265](https://github.com/mapbender/mapbender/pull/1265))
+* Fix focused Bootstrap input highlighting not respecting error state
+* Fix .mapbender-element-result-table (Digitizer et al) table header text alignment in sortable columns
+
+## 3.2.2
+* Fix map ignoring configured Wms image format on Openlayers 6
+* Fix missing POI label popup on Openlayers 6
+* Fix Layertree visualization of Wms "out of scale" / "out of bounds" layer state for deselected layers
+* Fix Layertree visualization of Wms "out of scale" / "out of bounds" layer state for root / group layers
+* Fix Wms layer minScale / maxScale inheritance
+* Fix initial Legend on sources added by WmsLoader
+* Fix Legend dialog changing z index on Layertree interactions
+* Fix print / export ignoring icon scale in Openlayers 6 styles ([PR#1252](https://github.com/mapbender/mapbender/pull/1252))
+* Fix OL6 map ignoring URL parameter `scale` and scale from POI
+* Fix OL2 initial map scale when passing url parameter `srs`
+* Fix SearchRouter form initialization on empty configuration
+* Fix empty "themes" configuration on Layertree after import / duplication
+* Fix broken instance ordering after deleting a bound instance from a layerset with mixed bound / reusable instances
+* Fix error when moving instance between layersets multiple times before reloading page
+* Fix print north arrow background transparency against map (or any templates where the background isn't white; [PR#1254](https://github.com/mapbender/mapbender/pull/1254))
+* Fix Map form showing selected layersets not in currently configured order
+* Fix positioning errors on jquery ui dialog resize in Fullscreen template
+* Fix application entity not available in HTMLElement twig, breaking documentation example usage
+* Fix multiple multiple SimpleSearch elements all sharing one randomly chosen server request url ([#1240](https://github.com/mapbender/mapbender/issues/1240))
+* Limit initial print scale to keep selection rectangle inside visible map viewport
+* Layertree: Remove confusing extra visualization for manually deselected layer; layer titles will only be lightened if layer is out of scale / out of bounds, or currently loading
+* Add missing shared instances support in BaseSourceSwitcher
+* [Framework] fix OL6 `centerXy` implementation changing zoom when called without any zoom / scale related options
+* [Framework] Fix print with Openlayers 6 feature styles containing array-type colors
+* Prefer initial image formats with transparency support when creating new Wms instance
+* Add misc helper selectors for functional testing support
+
+## 3.2.1
+* [Regression] Fix print of tunneled WMS
+* [Regression] Fix missing scale-limited WMS layers in ImageExport
+* Fix design inconsistencies LayerTree vs BaseSourceSwitcher in mobile
+* Fix design inconsistencies LayerTree vs BaseSourceSwitcher in desktop sidepane
+* Fix inaccessible BaseSourceSwitcher groups in bottom toolbar
+* Fix BaseSourceSwitcher / SrsSelector / ScaleSelector dropouts from toolbar getting covered by sidepane
+* Fix vertical misalignment of toolbar button labels
+* Fix interaction icon layout in user list
+* Fix Element form label sizing and alignment
+* Fix console errors trying to focus popup on close
+* Fix missing clickable mouse cursor indications on parts of the ZoomBar
+* Fix missing clickable mouse cursor indications on Redlining feature interactions
+* Fix invalid empty initial value of required Application selection in export
+* Fix support for very low ScaleBar minWidth option values on Openlayers 6
+* Layertree: do not display layers that are deselected and cannot be selected
+
+## 3.2.0
+* Fix ScaleBar minWidth option on Openlayers 6
+* Fix feautreinfo repeated queries with open dialog and "showOriginal" option
+* Implement missing initial map center override with "center" url param or pois
+* Fix broken Layerset tab activation after creating new layerset
+* Fix missing legends for WmsLoader instances
+* Fix schema validation error on reusable source instance entity relations
+* Fix Layertree margins with mixed layer / "theme" nestings
+* Fix visual collapse of custom dropdown widget with empty display value
+* Fix misalignment in user privileges matrix display
+* Fix layout errors in Element security with empty assigned user / group list
+* Update default logo (frontend + backend)
+
+## 3.2.0-RC3
+* Fix FeatureInfo errors with `showOriginal` option
+* Fix FeatureInfo breaking WmsLoader popup translations
+* Fix broken instance ordering after adding a mix of shared and bound instances to the same layerset
+* Fix mbmapclick event data (FeatureInfo, CoordinatesUtility etc) on mobile ([PR#1243](https://github.com/mapbender/mapbender/pull/1243))
+* Fix ScaleSelector text alignment
+* Fix error when deleting Wmts source with instances
+* Fix error when using a new Wmts instance without explicitly saving its instance form first
+
+## 3.2.0-RC2
+* Fix Ruler displaying too few intermediate line segment measures
+* Fix FeatureInfo only displaying single service response with `showOriginal`=false
+* Fix Layertree layer title coloring regression
+* Fix ScaleBar coloring in toolbar
+* Fix inconsistency of toolbar button colors and hover effects vs ZoomBar in mobile template
+* Fix vertically misaligned checkmarks in user / group selection list when assigning access privileges
+* Fix ImageExport + Print edge-case error (viewport / min/max scale dependent) calculating label resolution params
+* Fix SimpleSearch layout when used in toolbar
+
+## 3.2.0-RC1 (Changelog WIP)
+* Add configurable per-Application engine code (OpenLayers 2 or OpenLayers 6)
+* Added reusable source instances; configure once, share between many applications
+* Ruler: display polygon area in-place as a polygon label
+* SimpleSearch: remove requirement on (current) map CRS being equal to server data CRS
+* ZoomBar: add step-wise rotation and north arrow
+* Redlining: add circle drawing tool
+* Redlining: support labels on every type of feature
+* Print: fix incompatibilities with PHP 7.4
+* Wmts: fix configuration generation error on PHP 7.4
+
+### Layouting changes
+* Properly flow multiple map overlaying Elements in the same corner ("Anchor")
+
+### Removed functionality
+* ZoomBar: legacy incremental panning arrows
+* ZoomBar: legacy "zoom_box" navigation workflow
+* Ruler: "immediate" option (now always behaves as if immediate is on)
+* ScaleBar: simultaneous dual-unit display
+* Layertree "hidenottoggleable" option; superseded by instance layer settings
+* "Classic" template
+* Legacy (buggy) "Responsive" template
+* SuggestMap element, WmcLoader / WmcList / WmcEditor elements
+#### Technical removals
+* Layer attribute emulation for legacy `mqlid` and `ollid` properties
+* Client-side Source property `origId`
+
+## dev-release/3.0.7 @ 616a1259e
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -35,7 +330,7 @@
 - Fix PrintClient frontend settings form bypassing / conflicting with form theme
 - Fix Layertree backend form bypassing / conflicting with form theme
 - Fix newly created Layertree backend form unable to configure themes (only worked on cloned Layertree Element; [#1330](https://github.com/mapbender/mapbender/issues/1330))
-- Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311]((https://github.com/mapbender/mapbender/issues/1311))
+- Fix errors when loading Wmts with long `<ows:Fees>` content on PostgreSQL ([#1311](https://github.com/mapbender/mapbender/issues/1311))
 - Fix errors when accessing yaml applications referencing elements that do not exist in the current codebase
 - Fix PostgreSQL errors saving WMTS source with very long "fees" texts ([#1311](https://github.com/mapbender/mapbender/issues/1311), [PR#1353](https://github.com/mapbender/mapbender/pull/1353))
 - [SearchRouter]: Replace manual `type` configuration with auto-detection

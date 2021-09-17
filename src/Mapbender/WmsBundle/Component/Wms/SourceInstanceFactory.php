@@ -51,6 +51,8 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         if ($this->defaultLayerOrder) {
             $instance->setLayerOrder($this->defaultLayerOrder);
         }
+        // avoid persistence errors (non-nullable column)
+        $instance->setWeight(0);
         return $instance;
     }
 

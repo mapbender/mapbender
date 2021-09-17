@@ -1,4 +1,6 @@
 {% extends 'MapbenderCoreBundle::index.html.twig' %}
+{%- set title = title | default(fom.server_name) -%}
+{%- set pagetitle = pagetitle | default(fom.server_name ~ ': ' ~ title) -%}
 {% block mobilejs %}
   {%- set scaleFactor = scaleFactor | default(1) -%}
   {{ parent() }}
@@ -18,23 +20,39 @@
   {% endblock %}
 {% block content %}
   <div class="authWrapper">
-    <div class="head">
-      <hr class="dekoSeperator">
+    {%- set backdrop = asset(login_backdrop_asset()) -%}
+    {%- set hq_backdrop = login_backdrop_asset_hq() ? asset(login_backdrop_asset_hq()) : null -%}
+    <div class="container-login-img">
     </div>
+    <style>
+      .container-login-img {
+        background-image: url("{{ asset(login_backdrop_asset())}}");
+      }
+      {%- if login_backdrop_asset_hq() -%}
+        @media screen and (min-width: 1921px) {
+          .container-login-img {
+            background-image: url("{{ asset(login_backdrop_asset_hq()) }}");
+          }
+        }
+      {%- endif -%}
+    </style>
+
     <div class="login-wrapper">
-      <div class="logoContainer">
-        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
-                                                                 src="{{ asset(fom.server_logo) }}"/></a>
-      </div>
-      {% block box_content %}{% endblock %}
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
-      <ul class="sitelinks list-inline text-right">
+      <ul class="sitelinks list-inline">
         {% for sitelink in sitelinks %}
           <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
         {% endfor %}
       </ul>
       {% endif %}
+      <div class="logoContainer">
+        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+                                                                 src="{{ asset(fom.server_logo) }}"></a>
+      </div>
+      <div class="loginBox">
+      {% block box_content %}{% endblock %}
+      </div>
     </div>
   </div>
 {% endblock %}

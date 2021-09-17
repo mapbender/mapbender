@@ -1,0 +1,26 @@
+{%- block blocklist_main -%}
+    {%- set list_id = list_id | default('listFilter0') -%}
+    {%- if items -%}
+    <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
+      {%- for item in items -%}
+        <li class="filterItem content-box content-box-lg">
+        {% block boxlist_item_content -%}
+          <h2 class="contentTitle">
+              {%- block item_title -%}{%- endblock -%}
+          </h2>
+          <div>
+              {%- block item_content_main -%}{%- endblock -%}
+          </div>
+          <div class="btn-toolbar pull-right">
+              {%- block item_interactions -%}{%- endblock -%}
+          </div>
+          <div class="clearfix"></div>
+        {%- endblock -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+    {%- endif -%}
+    <p class="{{ items ? ' hidden' : ''}}">
+        {%- block boxlist_placeholder_content -%}{%- endblock -%}
+    </p>
+{%- endblock -%}

@@ -3,52 +3,67 @@
     $.widget("mapbender.mbScalebar", {
         options: {
         },
-        scalebar: null,
+        mbMap: null,
 
         /**
          * Creates the scale bar
          */
         _create: function() {
-            if(!Mapbender.checkTarget("mbScalebar", this.options.target)){
-                return;
-            }
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbScalebar", self.options.target);
+            });
         },
 
         /**
          * Initializes the scale bar
          */
         _setup: function() {
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-
-            $(this.element).addClass(this.options.anchor);
-            var scalebarOptions = {
+            switch (Mapbender.mapEngine.code) {
+                default:
+                    this._setupOl4();
+                    break;
+                case 'ol2':
+                    this._setupOl2();
+                    break;
+            }
+            this._trigger('ready');
+        },
+        _setupOl4: function() {
+            var control = new ol.control.ScaleLine({
+                target: this.element.attr('id'),
+                minWidth: '' + Math.max(1, parseInt(this.options.maxWidth) / 3),
+                geodesic: true,
+                units: this.options.units === 'ml' ? 'imperial' : 'metric'
+            });
+            this.mbMap.getModel().olMap.addControl(control);
+        },
+        _setupOl2: function() {
+            var controlOptions = {
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,
                 geodesic: true,
-                topOutUnits: "km",
-                topInUnits: "m",
-                bottomOutUnits: "mi",
-                bottomInUnits: "ft"
+                // Disable simultaneous dual-display. Use only "bottom" units.
+                topOutUnits: '',
+                topInUnits: ''
             };
-            this.scalebar = new OpenLayers.Control.ScaleLine(scalebarOptions);
+            switch (this.options.units) {
+                default:
+                case 'km':
+                    controlOptions.bottomOutUnits = 'km';
+                    controlOptions.bottomInUnits = 'm';
+                    break;
+                case 'ml':
+                    controlOptions.bottomOutUnits = 'mi';
+                    controlOptions.bottomInUnits = 'ft';
+                    break;
+            }
 
-            mbMap.map.olMap.addControl(this.scalebar);
-            if($.inArray("km", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineTop').css({display: 'none'});
-            }
-            if($.inArray("ml", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineBottom').css({display: 'none'});
-            }
-            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
-            this._trigger('ready');
-        },
-        /**
-         * Cahnges the scale bar srs
-         */
-        _changeSrs: function(event, srs) {
-            this.scalebar.update();
+            var control = new OpenLayers.Control.ScaleLine(controlOptions);
+            this.mbMap.getModel().map.olMap.addControl(control);
         }
     });
 

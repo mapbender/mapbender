@@ -1,0 +1,9 @@
+{% extends 'MapbenderCoreBundle:Template:region/toolbar.html.twig' %}
+{% block item_list_body %}
+    <li class="toolBarItem logoContainer text-nowrap">
+      {% block logo %}
+        <img class="logo" src="{{ asset(fom.server_logo) }}"/><span class="project-name">{{ fom.server_name }}</span>
+      {% endblock %}
+    </li>
+    {{ parent() }}
+{% endblock %}

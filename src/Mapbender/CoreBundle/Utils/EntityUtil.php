@@ -4,25 +4,14 @@ namespace Mapbender\CoreBundle\Utils;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\StringUtil;
 use ReflectionClass;
-use ReflectionProperty;
 
 /**
  * @author Paul Schmidt
  */
 class EntityUtil
 {
-    const GET        = 'get';
-    const SET        = 'set';
-    const ADD        = 'add';
-    const HAS        = 'has';
-    const IS         = 'is';
-    const GETTER     = 'getter';
-    const SETTER     = 'setter';
-    const TOSET      = 'toset';
-    const HAS_METHOD = 'hasMethod';
-    const IS_METHOD  = 'isMethod';
-
     /**
      * Returns an unique value for an unique field.
      *
@@ -97,50 +86,27 @@ class EntityUtil
     }
 
     /**
-     * Returns a "getter" method name for an property equal to Doctrine conventions.
-     * @param mixed $entity object or class
-     * @param string $propertyName
-     * @return string
-     */
-    public static function getSetter($entity, $propertyName)
-    {
-        $temp = 'set' . strtolower(str_replace('_', '', $propertyName));
-        foreach (get_class_methods(self::getRealClass($entity)) as $method) {
-            if (strtolower($method) === $temp) {
-                return $method;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param      $entity
-     * @param null $filter
-     * @return \ReflectionProperty[]
-     */
-    public static function getProperties($entity, $filter = null)
-    {
-        $filter   = $filter === null ? ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED : $filter;
-        $refClass = new ReflectionClass(self::getRealClass($entity));
-        $props    = $refClass->getProperties($filter);
-        return $props;
-    }
-
-    /**
      * @param                 $fieldName
      * @param ReflectionClass $class
      * @return null|\ReflectionMethod
      */
     public static function getReturnMethod($fieldName, ReflectionClass $class)
     {
-        $method = null;
-        if ($method = self::getMethodName($fieldName, self::GET, $class)) {
-            return $method;
-        } elseif ($method = self::getMethodName($fieldName, self::IS, $class)) {
-            return $method;
-        } elseif ($method = self::getMethodName($fieldName, self::HAS, $class)) {
-            return $method;
+        $prefixes = array(
+            'get',
+            'is',  // for some boolean entity properties
+        );
+        $camelCased = StringUtil::snakeToCamelCase($fieldName, true);
+
+        foreach ($prefixes as $prefix) {
+            $name = $prefix . $camelCased;
+            try {
+                return $class->getMethod($name);
+            } catch (\ReflectionException $e) {
+                // do nothing
+            }
         }
+        return null;
     }
 
     /**
@@ -150,30 +116,10 @@ class EntityUtil
      */
     public static function getSetMethod($fieldName, ReflectionClass $class)
     {
-        $method = null;
-        if ($method = self::getMethodName($fieldName, self::SET, $class)) {
-            return $method;
-        } elseif ($method = self::getMethodName($fieldName, self::ADD, $class)) {
-            return $method;
-        }
-    }
-
-    /**
-     * @param                 $fieldName
-     * @param                 $prefix
-     * @param ReflectionClass $class
-     * @return null|\ReflectionMethod
-     */
-    public static function getMethodName($fieldName, $prefix, ReflectionClass $class)
-    {
-        $methodHash = "";
-        foreach (preg_split("/_/", $fieldName) as $chunk) {
-            $chunk = ucwords($chunk);
-            $methodHash .= $chunk;
-        }
-        if ($class->hasMethod($prefix . $methodHash)) {
-            return $class->getMethod($prefix . $methodHash);
-        } else {
+        $name = 'set' . StringUtil::snakeToCamelCase($fieldName, true);
+        try {
+            return $class->getMethod($name);
+        } catch (\ReflectionException $e) {
             return null;
         }
     }

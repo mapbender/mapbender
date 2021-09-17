@@ -1,6 +1,6 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     <div class="tab-container">
-        <ul class="tabs">
+        <ul>
             <li><a href="{{ '#' ~ id ~ '-settings' }}">{{ 'mb.print.printclient.tab.settings' | trans }}</a></li>
             <li><a href="{{ '#' ~ id ~ '-job-list' }}">{{ 'mb.print.printclient.tab.joblist' | trans }}</a></li>
         </ul>
@@ -8,7 +8,7 @@
             {% include settingsTemplate %}
         </div >
         <div id="{{id ~ '-job-list' }}" class="job-list">
-            <table class="row no-gutters">
+            <table class="row no-gutters table table-striped">
                 <thead>
                 <tr>
                     <th>{{ 'mb.print.printclient.joblist.header.id' | trans }}</th>

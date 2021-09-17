@@ -50,8 +50,7 @@ mb:
         type: Type
         add: 'Ajouter un nouvel élément à'
         show_hide: 'Afficher/Ne pas afficher l''élément'
-        no_element_added:
-          '': 'Aucun élément ajouté'
+        no_element_added: Aucun élément ajouté
       zoombar:
         draggable: Déplaçable
       overview:
@@ -88,7 +87,6 @@ mb:
         custom_css: CSS
         security:
           title: Securité
-          add_users_groups: 'Ajouter des utilisateurs et des groupes'
           public: accès publique
         save: Sauvegarder
         cancel: Annuler
@@ -113,7 +111,6 @@ mb:
           btn:
             export: Exporter
         import:
-          addApplications: Applications
           addAcl: ACLs
           addSources: Sources
           btn:
@@ -123,24 +120,18 @@ mb:
           title: "Titre de l'URL"
         description: Description
         template: Modèle
-      applications: Applications
     source:
       serviceurl: 'URL du service'
       username: 'Nom d''utilisateur'
       password: 'Mot de passe'
       load: Charger
     managerbundle:
-      applications: Applications
       new_application: 'Nouvelle application'
-      sources: Sources
       add_source: 'Ajouter une source'
       add_user_group: 'Ajouter des utilisateurs ou des groupes'
       acl_element: 'Élément ACL'
       import_application: Importer
       export_application: Exporter
-    element:
-      yaml:
-        message: 'Utilisez le format <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> afin de décrire la configuration de l''élément.'
     components:
       popup:
         add_element:
@@ -161,12 +152,6 @@ mb:
         delete_user_group:
           title: 'Confirmez la suppression'
           content: 'Voulez-vous vraiment supprimer %userGroup%?'
-    template:
-      region:
-        tabs:
-          label: Onglets
-        accordion:
-          label: Accordéon
     import:
       application:
         failed: 'Impossible d''importer l''application.'

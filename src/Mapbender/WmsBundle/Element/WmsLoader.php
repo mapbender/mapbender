@@ -6,9 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +52,6 @@ class WmsLoader extends Element
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
             "splitLayers" => false,
-            "useDeclarative" => false
         );
     }
 
@@ -100,7 +98,7 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $assetRefs = array(
+        return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
             ),
@@ -108,14 +106,9 @@ class WmsLoader extends Element
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
             ),
             'trans' => array(
-                'MapbenderWmsBundle:Element:wmsloader.json.twig',
+                'mb.wms.wmsloader.error.*',
             ),
         );
-        $config = $this->entity->getConfiguration();
-        if (!empty($config['useDeclarative'])) {
-            $assetRefs['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js';
-        }
-        return $assetRefs;
     }
 
     /**
@@ -174,12 +167,11 @@ class WmsLoader extends Element
 
     protected function loadWms(Request $request)
     {
-        $wmsSource = $this->getWmsSource($request);
+        $source = $this->getSource($request);
+        $instance = $this->getSourceTypeDirectory()->createInstance($source);
 
-        $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
-        $wmsInstance = $wmsSourceEntityHandler->createInstance();
-        $sourceService = $this->getSourceService($wmsInstance);
-        $layerConfiguration = $sourceService->getConfiguration($wmsInstance);
+        $sourceService = $this->getSourceService($instance);
+        $layerConfiguration = $sourceService->getConfiguration($instance);
         $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
@@ -199,19 +191,15 @@ class WmsLoader extends Element
      * @param Request $request
      * @return WmsSource
      */
-    protected function getWmsSource($request)
+    protected function getSource($request)
     {
-        $requestUrl = $request->get("url");
-        $requestUserName = $request->get("username");
-        $requestPassword = $request->get("password");
-
-        $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
+        $origin = new HttpOriginModel();
+        $origin->setOriginUrl($request->get("url"));
+        $origin->setUsername($request->get("username"));
+        $origin->setPassword($request->get("password"));
         /** @var Importer $importer */
         $importer = $this->container->get('mapbender.importer.source.wms.service');
-        $importerResponse = $importer->evaluateServer($wmsOrigin, false);
-        /** @var WmsSource $source */
-        $source = $importerResponse->getSource();
-        return $source;
+        return $importer->evaluateServer($origin);
     }
 
     protected function splitLayers($layerConfiguration)
@@ -252,14 +240,19 @@ class WmsLoader extends Element
         return $instanceConfigs;
     }
 
+    protected function getSourceTypeDirectory()
+    {
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        return $directory;
+    }
+
     /**
      * @param SourceInstance $instance
      * @return \Mapbender\CoreBundle\Component\Presenter\SourceService|null
      */
     protected function getSourceService($instance)
     {
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        return $directory->getSourceService($instance);
+        return $this->getSourceTypeDirectory()->getSourceService($instance);
     }
 }

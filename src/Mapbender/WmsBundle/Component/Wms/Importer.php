@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -29,6 +30,8 @@ use Symfony\Component\HttpFoundation\Response;
  * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
+ *
+ * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
 class Importer extends RefreshableSourceLoader
 {
@@ -101,13 +104,15 @@ class Importer extends RefreshableSourceLoader
         $this->assignLayerPriorities($target->getRootlayer(), 0);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
+            $application->setUpdated(new \DateTime('now'));
+            $this->entityManager->persist($application);
+        }
 
         foreach ($target->getInstances() as $instance) {
             $this->updateInstance($instance);
-            // @todo reusable source instances: update affected applications without assuming instance => layerset ownership
-            $application = $instance->getLayerset()->getApplication();
-            $application->setUpdated(new \DateTime('now'));
-            $this->entityManager->persist($application);
             $this->entityManager->persist($instance);
         }
     }
@@ -183,9 +188,8 @@ class Importer extends RefreshableSourceLoader
                     $targetSubLayers->removeElement($layerToRemove);
                     $target->getSource()->getLayers()->removeElement($layerToRemove);
                 }
-                $clonedLayer = $this->cloneLayer($subItemNew, $target->getSource());
-                $target->addSublayer($clonedLayer);
-                $this->entityManager->remove($subItemNew);
+                $this->setLayerSourceRecursive($subItemNew, $target->getSource());
+                $target->addSublayer($subItemNew);
             }
         }
     }
@@ -213,29 +217,17 @@ class Importer extends RefreshableSourceLoader
     }
 
     /**
-     * @param WmsLayerSource $toClone
-     * @param WmsSource $newSource
-     * @return WmsLayerSource
+     * @param WmsLayerSource $layer
+     * @param WmsSource $source
      */
-    private function cloneLayer(WmsLayerSource $toClone, WmsSource $newSource)
+    private function setLayerSourceRecursive(WmsLayerSource $layer, WmsSource $source)
     {
-        $cloned = clone $toClone;
-        $this->entityManager->detach($cloned);
-        $cloned->setId(null);
-        $cloned->setSource($newSource);
-        $newSource->getLayers()->add($cloned);
-        $cloned->setKeywords(new ArrayCollection());
-        $this->copyKeywords($cloned, $toClone, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
-        $this->entityManager->persist($cloned);
-
-        $cloned->setSublayer(new ArrayCollection());
-        foreach ($toClone->getSublayer() as $subToClone) {
-            $subCloned = $this->cloneLayer($subToClone, $newSource);
-            $cloned->addSublayer($subCloned);
+        $layer->setSource($source);
+        $source->getLayers()->add($layer);
+        foreach ($layer->getSublayer() as $child) {
+            $this->setLayerSourceRecursive($child, $source);
         }
-        return $cloned;
     }
-
 
     private function updateInstance(WmsInstance $instance)
     {

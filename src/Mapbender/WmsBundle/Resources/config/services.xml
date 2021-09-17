@@ -32,5 +32,9 @@
             <argument>%mapbender.preview.layer_order.wms%</argument>
             <tag name="form.type" />
         </service>
+        <service id="mapbender.init_db_handler.prune_invalid_wms_sources" class="Mapbender\WmsBundle\EventHandler\InitDb\PruneInvalidWmsSourcesHandler">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>

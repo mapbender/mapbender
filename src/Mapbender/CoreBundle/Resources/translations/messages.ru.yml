@@ -11,6 +11,7 @@ mb:
     print: Печать
     refresh: Обновить
     remove: Удалить
+    reset: Сброс
     save: Сохранить
     search: Поиск
   terms:
@@ -28,6 +29,7 @@ mb:
       plural: Экземпля́ры
       typed:
         singular: '%type% экземпляр'
+    security: Безопасность
   states:
     active: активный
     inactive: неактивный
@@ -37,18 +39,9 @@ mb:
         nolayer: 'Не существует функция инфо-слой.'
         unknownoption: 'Неизвестный или необрабатываемый параметр %key% для %namespace%.%widgetname%.'
         noresult: 'Ничего не найдено'
-      popup:
-        btn:
-          ok: Закрыть
-          print: Печать
       class:
         title: Инфосвойства
         description: Инфосвойства
-      tag:
-        featureinfo: Инфосвойства
-        feature: характеристика
-        info: инфо
-        dialog: Раздел
     aboutdialog:
       content:
         versionprefix: v.
@@ -96,10 +89,6 @@ mb:
       class:
         title: POI
         description: 'Создать POI для обмена'
-      tag:
-        poi: poi
-        point: точка
-        interest: интереса
       label:
         text: Текст
     basesourceswitcher:
@@ -108,27 +97,16 @@ mb:
       class:
         title: 'Базовый источник коммутатор'
         Description: 'Изменить фоновые источники  карты '
-      tag:
-        base: Основа
-        source: источник
-        switcher: переключение
       form:
         mesage: 'Нет исходного набора.'
     legend:
-      nolegend: 'Никакая легенда не доступна'
       popup:
         btn:
           ok: Закрыть
       class:
         title: Легенда
         description: 'Легенда показывает легенды слоев карты'
-      tag:
-        layer: слой
-        legend: легенда
     ruler:
-      popup:
-        btn:
-          ok: Закрыть
       create_error: 'Линейка: Тип должен быть линией или областью.'
       class:
         title: Линейка/Зона
@@ -144,24 +122,9 @@ mb:
         scale: Масштаб
         rotation: Вращение
         legend: 'Легенда'
-      popup:
-        btn:
-          ok: Печать
-          cancel: Отмена
-      info:
-        noactivelayer: 'Нет активного слоя!'
-      form:
-        required: 'Пожалуйста, заполните это поле'
       class:
         title: Печать
         description: 'Отображает диалоговое окно печати'
-      tag:
-        print: печать
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: ~
         activate: ~
@@ -173,21 +136,6 @@ mb:
       tag:
         overview: обзор
         map: карта
-    sketch:
-      circle:
-        radius:
-          label: Радиус
-          error: 'Радиус не верный'
-        form:
-          button:
-            'yes': Да
-            cancel: Отмена
-      class:
-        title: Эскиз
-        description: 'Добавление векторного слоя на карте и рисование геометрических объектов.'
-      tag:
-        sketch: эскиз
-        circle: круг
     metadata:
       popup:
         title: Метаданные
@@ -206,8 +154,6 @@ mb:
         position: положение
         button: кнопка
     layertree:
-      confirm:
-        allremove: 'Действительно удалить все источники?'
       popup:
         btn:
           ok: Закрыть
@@ -226,30 +172,15 @@ mb:
         opacity: Прозрачность
         zoomtolayer: 'Масштаб по слоюr'
         metadata: Метаданные
-        sources: Источники
-        deleteallsources: 'Удалить все источники'
         legend: Легенда
         kmlexport: 'Kml экспорт'
         dimension_onoff: 'Вкл/Выкл Измерение'
         dimension: Измерение
         sourcevisibility_onoff: 'Вкл/Выкл Сервисы'
-        allvisibility_on: 'Показать все слой'
       class:
         title: 'Дерево слоев'
         description: 'Дерево слоев карты'
-      tag:
-        layertree: 'дерево слоев'
-        layer: слой
-        tree: дерево
-      contextmenu:
-        nooption: 'Слой не имеет опциий в контекст-меню'
     zoombar:
-      panup: 'Панорама вверх'
-      panright: 'Панорама вправо'
-      pandown: 'Панорама вниз'
-      panleft: 'Панорама влево'
-      goback: Вернуться
-      goforward: Вперед
       zoombybox: Масштаб
       zoombyworld: Кругозор
       zoomin: Приблизить
@@ -345,8 +276,8 @@ mb:
         label:
           autoopen: Авто-открытие
           deactivateonclose: 'Деактивировать при закрытии'
-          showoriginal: 'Показать оригинал'
           onlyvalid: 'Только действительные'
+          highlighting: ~
       printclient:
         label:
           autoopen: Авто-открытие
@@ -360,7 +291,6 @@ mb:
         label:
           showbasesources: 'Показать базу источника'
           autoopen: Авто-открытие
-          showheader: 'Показать заголовок'
           showlayerremove: 'Показать удаление слоя'
           usetheme: 'Тематический слой'
           themes: Темы
@@ -368,56 +298,46 @@ mb:
             opened: 'Вкл/Выкл Рубрику'
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Показать рубрики'
-            sourceVisibility: 'Рубрика: Сервисы'
-            allSelected: 'Рубрика:  Слой'
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'
           hideinfo: 'Скрыть информацию'
-      redlining:
-        label:
-          auto_activate: Автоактивирование
-          deactivate_on_close: 'Деактивировать при закрытии'
+      template:
+        sidepane:
+          type:
+            label: ~
+            choice:
+              tabs: Вкладки
+              accordion: ~
     htmlelement:
       class:
         title: HTML
         description: 'Добавить тэги HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: Ошибка
-    redlining:
+    sketch:
       geometrytype:
         point: Точка
         line: Линия
         polygon: Полигон
         rectangle: Прямоугольник
-        text:
-          title: Текст
-          label: Текст
-          error:
-            notext: 'Text required'
+        circle: Круг
+        text: Текст
+      error:
+        notext: ~
       geometry:
         action:
           remove: 'Удалить геометрию'
           edit: 'Редактировать геометрию'
           zoom: 'Показать геометрию'
-      dialog:
-        btn:
-          cancel: Закрыть
       class:
-        title: Redlining
-        description: 'Redlining инструмент'
-      tag:
-        redlining: redlining
-        geometry: Геометрия
-  geosource:
-    image_error:
-      datails: 'Карта не отображается'
-      exception: 'Ошибка: %exception%'
-      statuscode: HTTP-Код
+        title: ~
+        description: ~
+      admin:
+        auto_activate: Автоактивирование
+        deactivate_on_close: Деактивировать при закрытии
 
 # Login exceptions
 "Bad credentials.": 'Ошибка аутентификации'

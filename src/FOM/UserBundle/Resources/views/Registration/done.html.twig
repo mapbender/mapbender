@@ -1,0 +1,8 @@
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+{%- set title = 'fom.user.registration.done.congratulations' -%}
+{%- set pagetitle = 'fom.user.registration.done.title' | trans -%}
+
+{% block box_content_main %}
+    <p>{{ 'fom.user.registration.done.account_activated' | trans }}</p>
+    {{ parent() }}
+{% endblock %}

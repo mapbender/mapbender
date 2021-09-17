@@ -1,13 +1,9 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 
-/**
- * Sketch Element
- * 
- * @author Paul Schmidt
- */
 class Sketch extends Element
 {
 
@@ -30,9 +26,9 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public function getWidgetName()
     {
-        return 'Mapbender\CoreBundle\Element\Type\SketchAdminType';
+        return 'mapbender.mbSketch';
     }
 
     /**
@@ -42,11 +38,14 @@ class Sketch extends Element
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.sketch.js',
+                '@MapbenderCoreBundle/Resources/public/element/sketch.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
-            'css' => array(),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/element/sketch.scss',
+            ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:sketch.json.twig',
+                'mb.core.sketch.*',
             ),
         );
     }
@@ -58,17 +57,39 @@ class Sketch extends Element
     {
         return array(
             "target" => null,
-            "defaultType" => null,
-            "types" => null,
+            "auto_activate" => false,
+            "deactivate_on_close" => true,
+            "geometrytypes" => array(
+                "point",
+                "line",
+                "polygon",
+                "rectangle",
+                "circle",
+            ),
         );
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public static function getType()
     {
-        return 'mapbender.mbSketch';
+        return 'Mapbender\CoreBundle\Element\Type\SketchAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
+    }
+
+    public function getPublicConfiguration()
+    {
+        return array_replace(parent::getPublicConfiguration(), array(
+            'title' => $this->entity->getTitle() ?: $this->getClassTitle(),
+        ));
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
@@ -79,8 +100,12 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public function render()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'configuration' => $this->getConfiguration(),
+        ));
     }
 }

@@ -35,12 +35,22 @@
         },
 
         _reset: function(event, data) {
-            var projection = (data && data.to) || this.mbMap.getModel().getCurrentProj();
-
+            var units = this.mbMap.getModel().getCurrentProjectionUnits();
+            var isDeg = !units || units === 'degrees' || units === 'dd';
             var numDigits = this.options.numDigits || 0;
-            if (!projection.proj.units || projection.proj.units === 'degrees' || projection.proj.units === 'dd') {
+            if (isDeg) {
                 numDigits += 5;
             }
+            switch (Mapbender.mapEngine.code) {
+                default:
+                    this._resetOl4(numDigits);
+                    break;
+                case 'ol2':
+                    this._resetOl2(numDigits);
+                    break;
+            }
+        },
+        _resetOl2: function(numDigits) {
             var controlOptions = {
                 emptyString: this.options.empty,
                 numDigits: numDigits,
@@ -69,6 +79,39 @@
             }
             this.control = new OpenLayers.Control.MousePosition(controlOptions);
             this.mbMap.map.olMap.addControl(this.control);
+        },
+        _resetOl4: function(numDigits) {
+            var model = this.mbMap.getModel();
+            var template;
+            if (this.options.formatoutput && this.options.displaystring) {
+                // Undocumented / unassignable legacy option combination doing ~template replacement
+                template = this.options.displaystring
+                    .replace("$lon$", "{x}")
+                    .replace("$lat$", "{y}")
+                ;
+            } else {
+                template = [
+                    this.options.prefix,
+                    '{x}',
+                    this.options.separator,
+                    '{y}'
+                    ].join('');
+            }
+            var controlOptions = {
+                coordinateFormat: function(coordinate) {
+                    return ol.coordinate.format(coordinate, template, numDigits);
+                },
+                projection: model.getCurrentProjectionCode(),
+                className: 'inline',
+                target: $('.display-area', this.element).get(0),
+                undefinedHTML: $('<span/>').text(this.options.empty).html()
+            };
+            if (this.control) {
+                model.olMap.removeControl(this.control);
+                this.control = null;
+            }
+            this.control = new ol.control.MousePosition(controlOptions);
+            model.olMap.addControl(this.control);
         }
     });
 

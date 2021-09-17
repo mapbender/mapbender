@@ -127,8 +127,10 @@ class OrderAwareMultipleChoiceType extends ChoiceType
             $form->remove($child->getName());
         }
         foreach ($event->getData() as $selectedValue) {
-            $selectedChoice = $formChildMap[$selectedValue];
-            $form->add($selectedChoice);
+            if (isset($formChildMap[$selectedValue])) {
+                $selectedChoice = $formChildMap[$selectedValue];
+                $form->add($selectedChoice);
+            }
             unset($formChildMap[$selectedValue]);
         }
         // also re-add remaining (not currently selected) choices

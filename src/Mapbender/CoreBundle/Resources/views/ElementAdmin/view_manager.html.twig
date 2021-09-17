@@ -1,0 +1,16 @@
+<div class="extraWideLabelForm">
+    {{ form_rest(form) }}
+    <div class="alert alert-info">{{ 'mb.core.viewManager.admin.adminDeleteHint' | trans }}.</div>
+    <script type="text/javascript">
+        (function($) {
+            var anonSaveCheckbox = document.getElementById({{ form.configuration.allowAnonymousSave.vars.id | json_encode | raw }});
+            var publicEntriesInput = document.getElementById({{ form.configuration.publicEntries.vars.id | json_encode | raw }});
+            var updateCb = function() {
+                var val = $(this).val();
+                $(anonSaveCheckbox).prop('disabled', !val || val === 'ro');
+            };
+            updateCb.call(publicEntriesInput);
+            $(publicEntriesInput).on('change', updateCb);
+        })(jQuery);
+    </script>
+</div>

@@ -1,6 +1,6 @@
 .hidden{display:none;}
-.right{float:right;}
-.left{float:left;}
+.right:not(.popover) {float:right;}
+.left:not(.popover) {float:left;}
 .clear{clear:both;}
 .clearContainer{
   height:0;

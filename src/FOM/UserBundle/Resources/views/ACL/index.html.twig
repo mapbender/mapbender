@@ -1,0 +1,7 @@
+{% extends "MapbenderManagerBundle::layouts/simple.html.twig" %}
+
+{%- set title = 'fom.user.acl.index.access_control_lists' | trans -%}
+
+{% block content_main %}
+  {%- include 'FOMUserBundle:ACL:list.html.twig' -%}
+{% endblock %}

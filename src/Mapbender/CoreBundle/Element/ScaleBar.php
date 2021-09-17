@@ -2,14 +2,14 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 
 /**
- * Map's overview element
- *
  * @author Paul Schmidt
  */
-class ScaleBar extends Element implements FloatableElement
+class ScaleBar extends Element implements ConfigMigrationInterface, FloatableElement
 {
 
     /**
@@ -38,9 +38,7 @@ class ScaleBar extends Element implements FloatableElement
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
-            'units' => array(
-                "km",
-            ),
+            'units' => "km",
         );
     }
 
@@ -101,4 +99,20 @@ class ScaleBar extends Element implements FloatableElement
         ));
     }
 
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $config = $entity->getConfiguration();
+        if (!empty($config['units'])) {
+            // demote legacy multi-units array to scalar
+            if (\is_array($config['units'])) {
+                // use first value
+                $vals = \array_values($config['units']);
+                $config['units'] = $vals[0];
+            }
+        } else {
+            // Drop falsy / empty array values. Defaults will be used automatically.
+            unset($config['units']);
+        }
+        $entity->setConfiguration($config);
+    }
 }

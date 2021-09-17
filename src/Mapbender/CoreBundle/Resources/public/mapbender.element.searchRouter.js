@@ -26,11 +26,11 @@
          * Remove last search results
          */
         removeLastResults: function(){
-            var widget = this;
-            widget._getLayer().removeAllFeatures();
+            if (this.highlightLayer) {
+                this.highlightLayer.clear();
+            }
             this.currentFeature = null;
         },
-
         _setup: function() {
             var widget = this;
             var element = widget.element;
@@ -61,33 +61,30 @@
                     .next('hr').hide();
             }
 
-            element.on('click', '.search-action-buttons a', function(event) {
-                event.preventDefault();
-                var target = $(event.target).attr('href');
-                var targetBase = '#' + widget.element.attr('id') + '/button/';
-                switch(target) {
-                    case (targetBase + 'reset'):
+            element.on('click', '.search-action-buttons [data-action]', function() {
+                switch($(this).attr('data-action')) {
+                    case ('reset'):
                         widget._reset();
                         break;
-                    case (targetBase + 'ok'):
+                    case ('search'):
                         widget._search();
                         break;
                 }
             });
 
+            this.highlightLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
-            routeSelect.trigger('change');
+            this._trigger('ready');
             if (this.options.autoOpen) {
                 this.open();
             }
-            this._trigger('ready');
+            routeSelect.trigger('change');
         },
 
         defaultAction: function(callback){
             this.open(callback);
         },
-
         /**
          * Open popup dialog, when triggered by button; not in sidepane / mobile container
          */
@@ -106,17 +103,17 @@
                         height: this.options.height ? this.options.height : 500,
                         buttons: {
                             'cancel': {
-                                label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),
+                                label: Mapbender.trans('mb.actions.cancel'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: $.proxy(this.close, this)
                             },
                             'reset': {
-                                label: Mapbender.trans('mb.core.searchrouter.popup.btn.reset'),
+                                label: Mapbender.trans('mb.actions.reset'),
                                 cssClass: 'button right',
                                 callback: $.proxy(this._reset, this)
                             },
                             'ok': {
-                                label: Mapbender.trans("mb.core.searchrouter.popup.btn.ok"),
+                                label: Mapbender.trans("mb.actions.search"),
                                 cssClass: 'button right',
                                 callback: $.proxy(this._search, this)
                             }
@@ -164,6 +161,12 @@
             });
 
             $('.search-results', this.element).empty();
+            var route = this.getCurrentRoute();
+            if (Mapbender.mapEngine.code === 'ol2') {
+                this.highlightLayer.getNativeLayer().styleMap = this._createStyleMap(route.results.styleMap);
+            } else {
+                this.featureStyles = this._createStyleMap4(route.results.styleMap);
+            }
         },
 
         /**
@@ -286,7 +289,7 @@
                             geometry: data.geometry,
                             properties: data.properties || {}
                         };
-                        return self.mbMap.model.parseGeoJson(gjInput)[0];
+                        return self.mbMap.model.parseGeoJsonFeature(gjInput);
                     });
                     self._searchResults(features);
                 });
@@ -303,14 +306,14 @@
             }
 
             var headers = currentRoute.results.headers;
+            var $headers = $(document.createElement('tr'));
 
-            var table = $('<table></table>'),
-                thead = $('<thead><tr></tr></thead>').appendTo(table);
+            var table = $('<table></table>');
 
-            for(var header in headers){
-                thead.append($('<th>' + headers[header] + '</th>'));
+            for (var header in headers) {
+                $headers.append($(document.createElement('th')).text(headers[header]));
             }
-
+            table.append($(document.createElement('thead')).append($headers));
             table.append($('<tbody></tbody>'));
 
             container.append(table);
@@ -335,40 +338,36 @@
         /**
          * Rebuilds result table with search result data.
          *
-         * @param {Array} results
+         * @param {Array} features
          */
-        _searchResultsTable: function(results){
+        _searchResultsTable: function(features) {
             var currentRoute = this.getCurrentRoute();
             var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true),
                 self = this;
 
             $('tbody', table).remove();
-            layer.removeAllFeatures();
-            var features = [];
+            this.removeLastResults();
 
-            if(results.length > 0) $('.no-results', this.element).hide();
+            if (features.length > 0) $('.no-results', this.element).hide();
 
-            for (var i = 0; i < results.length; ++i) {
-                var feature = results[i];
+            for (var i = 0; i < features.length; ++i) {
+                var feature = features[i];
                 var row = $('<tr/>');
                 row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
-
-                for (var header in headers) {
-                    var d = feature.data[header];
+                var props = Mapbender.mapEngine.getFeatureProperties(feature);
+                Object.keys(headers).map(function(header) {
+                    var d = props[header];
                     row.append($('<td>' + (d || '') + '</td>'));
-                }
+                });
 
                 tbody.append(row);
-
-                features.push(feature);
             }
 
             table.append(tbody);
-            layer.addFeatures(features);
+            this.highlightLayer.addNativeFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
@@ -378,33 +377,31 @@
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature');
-
-                    if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'temporary');
-                    }
+                    self._highlightFeature(feature, 'temporary');
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature');
-
-                    if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'default');
-                    }
+                    var styleName = feature === this.currentFeature ? 'select' : 'default';
+                    self._highlightFeature(feature, styleName);
                 })
             ;
         },
-
         _highlightFeature: function (feature, style) {
             if (style === 'select') {
-                if (this.currentFeature) {
+                if (this.currentFeature && feature !== this.currentFeature) {
                     this._highlightFeature(this.currentFeature, 'default');
                 }
                 this.currentFeature = feature;
             }
-            if (feature.layer) {
-                feature.layer.drawFeature(feature, style);
+            if (Mapbender.mapEngine.code === 'ol2') {
+                if (feature.layer) {
+                    // use built-in named "renderIntent" mechanism
+                    feature.layer.drawFeature(feature, style);
+                }
+            } else {
+                feature.setStyle(this.featureStyles[style]);
             }
         },
-
         _showResultState: function(results) {
             var widget = this;
             var element = widget.element;
@@ -426,18 +423,38 @@
                 counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
         },
-
-        _createStyleMap: function(styles, options) {
-            var o = _.defaults({}, options, {
-                extendDefault: true,
-                defaultBase: OpenLayers.Feature.Vector.style['default']
-            });
+        _createStyleMap4: function(styles) {
+            function _createSingleStyle(options) {
+                var fill = new ol.style.Fill({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
+                });
+                var stroke = new ol.style.Stroke({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
+                    width: options.strokeWidth || 2
+                });
+                return new ol.style.Style({
+                    image: new ol.style.Circle({
+                        fill: fill,
+                        stroke: stroke,
+                        radius: options.pointRadius || 5
+                    }),
+                    fill: fill,
+                    stroke: stroke
+                });
+            }
+            return {
+                default: _createSingleStyle(styles.default),
+                select: _createSingleStyle(styles.select),
+                temporary: _createSingleStyle(styles.temporary)
+            }
+        },
+        _createStyleMap: function(styles) {
             var s = styles || OpenLayers.Feature.Vector.style;
 
-            _.defaults(s['default'], o.defaultBase);
+            _.defaults(s['default'], OpenLayers.Feature.Vector.style['default']);
 
             return new OpenLayers.StyleMap(s, {
-                extendDefault: o.extendDefault
+                extendDefault: true
             });
         },
 
@@ -448,35 +465,6 @@
          */
         getCurrentRoute: function() {
             return this.selected && this.options.routes[this.selected] || null;
-        },
-
-        /**
-         * Get highlight layer. Will construct one if neccessary.
-         *
-         * @return OpenLayers.Layer.Vector Highlight layer
-         */
-        _getLayer: function(forceRebuild) {
-            var widget = this;
-            var map = this.mbMap.map.olMap;
-            var layer = widget.highlightLayer;
-
-            if(!forceRebuild && layer) {
-                return layer;
-            }
-
-            if(forceRebuild && layer) {
-                map.removeLayer(layer);
-                widget.highlightLayer = null;
-            }
-
-            var route = widget.getCurrentRoute();
-            var styleMap = widget._createStyleMap(route.results.styleMap);
-            layer = widget.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                styleMap: styleMap
-            });
-            map.addLayer(layer);
-
-            return layer;
         },
 
         /**
@@ -525,12 +513,7 @@
         },
         _onSrsChange: function(event, data) {
             if (this.highlightLayer) {
-                (this.highlightLayer.features || []).map(function(feature) {
-                    if (feature.geometry && feature.geometry.transform) {
-                        feature.geometry.transform(data.from, data.to);
-                    }
-                });
-                this.highlightLayer.redraw();
+                this.highlightLayer.retransform(data.from, data.to);
             }
         },
         _getFormValues: function(form) {

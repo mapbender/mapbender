@@ -50,13 +50,6 @@ class CssCompiler extends AssetFactoryBase
     public function compile($inputs, $debug=false)
     {
         $content = $this->concatenateContents($inputs, $debug);
-        // Quite damaging hack for special snowflake mobile template
-        // Pulls imports in front of everything else, including variable (re)definitions
-        // This makes it impossible to @import modules accessing variable definitions after
-        // redefining those variables.
-        // @todo: make mobile template scss work with and without squashing, then disable squashing
-        //        alternatively nuke mobile template completely (Mapbender 3.1?)
-        $content = $this->squashImports($content);
 
         $sass = clone $this->sassFilter;
         $sass->setStyle($debug ? 'nested' : 'compressed');
@@ -68,22 +61,6 @@ class CssCompiler extends AssetFactoryBase
         $assets = new StringAsset($content, $filters, '/', $this->getSourcePath());
         $assets->setTargetPath($this->getTargetPath());
         return $assets->dump();
-    }
-
-    /**
-     * @param $content
-     * @return string
-     */
-    protected function squashImports($content)
-    {
-        preg_match_all('/\@import\s*\".*?;/s', $content, $imports, PREG_SET_ORDER);
-        $imports = array_map(function($item) {
-            return $item[0];
-        }, $imports);
-        $imports = array_unique($imports);
-        $content = preg_replace('/\@import\s*\".*?;/s', '', $content);
-
-        return implode($imports, "\n") . "\n" . $content;
     }
 
     /**
@@ -124,6 +101,8 @@ class CssCompiler extends AssetFactoryBase
             // updates for reliance on robloach/component-installer
             // select2 CSS works fine standalone (no url references) and can be sourced directly from vendor
             '/components/select2/select2-built.css' => '/../vendor/select2/select2/dist/css/select2.css',
+            // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
+            '/components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' => array(),
         );
     }
 }

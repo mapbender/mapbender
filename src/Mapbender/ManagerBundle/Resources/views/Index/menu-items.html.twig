@@ -1,11 +1,22 @@
 {% for item in items %}
-  <li class="navItem{% if item.active %} activeItem{% endif %}">
-    <a class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
+  {%- if item.subroutes -%}
+  <li class="dropdown bs-dropdown">
+    <a href="{{ item.route ? path(item.route) : '#' }}" data-target="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+      {{ item.title|trans }}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {%- if item.route -%}
+      <li>
+        <a href="{{ path(item.route) }}">{{ item.title | trans }}</a>
+      </li>
+      {%- endif %}
+      {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {'items': item.subroutes} %}
+    </ul>
   </li>
-    {%- set items = item.subroutes  -%}
-    {%- if items|length -%}
-      <ul class="navLevel2">
-          {{ include('MapbenderManagerBundle:Index:menu-items.html.twig') }}
-      </ul>
-    {%- endif -%}
+  {%- else -%}
+  <li{% if item.active %} class="active"{% endif %}>
+    <a href="{{ path(item.route) }}">{{ item.title|trans }}</a>
+  </li>
+  {%- endif -%}
 {% endfor %}

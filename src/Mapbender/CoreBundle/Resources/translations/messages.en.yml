@@ -11,6 +11,7 @@ mb:
     print: Print
     refresh: Refresh
     remove: Remove
+    reset: Reset
     save: Save
     search: Search
   terms:
@@ -28,6 +29,13 @@ mb:
       plural: Instances
       typed:
         singular: '%type% instance'
+      reusable:
+        singular: Shared instance
+        plural: Shared instances
+      bound:
+        singular: Bound instance
+        plural: Bound instances
+    security: Security
   states:
     active: active
     inactive: inactive
@@ -37,18 +45,9 @@ mb:
         nolayer: 'No feature info layer exists.'
         unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
         noresult: 'no result'
-      popup:
-        btn:
-          ok: Close
-          print: Print
       class:
         title: FeatureInfo
         description: FeatureInfo
-      tag:
-        featureinfo: featureinfo
-        feature: feature
-        info: info
-        dialog: dialog
     aboutdialog:
       content:
         versionprefix: v.
@@ -71,6 +70,8 @@ mb:
       error:
         geometry:
           missing: The selected entry does not contain a geometry.
+      admin:
+        sourceSrs: Source SRS
     searchrouter:
       popup:
         btn:
@@ -97,10 +98,6 @@ mb:
       class:
         title: POI
         description: 'Create a POI for sharing'
-      tag:
-        poi: poi
-        point: point
-        interest: interest
       label:
         text: Text
     basesourceswitcher:
@@ -109,27 +106,16 @@ mb:
       class:
         title: 'Base source switcher'
         Description: 'Change the map''s background sources.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
       form:
         mesage: 'No basesource set is defined.'
     legend:
-      nolegend: 'No legend available.'
       popup:
         btn:
           ok: Close
       class:
         title: Legend
         description: 'The legend shows the legend of the map''s layers'
-      tag:
-        layer: layer
-        legend: legend
     ruler:
-      popup:
-        btn:
-          ok: Close
       create_error: 'Ruler: Type must be line or area.'
       class:
         title: 'Line/Area Ruler'
@@ -145,24 +131,9 @@ mb:
         scale: Scale
         rotation: Rotation
         legend: 'Print legend'
-      popup:
-        btn:
-          ok: Print
-          cancel: Cancel
-      info:
-        noactivelayer: 'No active layer!'
-      form:
-        required: 'Please fill out this field'
       class:
         title: 'Print client'
         description: 'Renders a Print dialog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
       btn:
         deactivate: 'Deactivate Print Frame'
         activate: 'Activate Print Frame'
@@ -174,21 +145,6 @@ mb:
       tag:
         overview: overview
         map: map
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Radius is not valid'
-        form:
-          button:
-            'yes': 'Yes'
-            cancel: Cancel
-      class:
-        title: Sketch
-        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
-      tag:
-        sketch: sketch
-        circle: circle
     metadata:
       popup:
         title: Metadata
@@ -207,8 +163,6 @@ mb:
         position: position
         button: button
     layertree:
-      confirm:
-        allremove: 'Really all sources delete?'
       popup:
         btn:
           ok: Close
@@ -227,32 +181,19 @@ mb:
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
         metadata: Metadata
-        sources: Sources
-        deleteallsources: 'Remove all sources'
         legend: Legend
         kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
       class:
         title: 'Layer tree'
         description: 'Tree of map''s layers'
-      tag:
-        layertree: layertree
-        layer: layer
-        tree: tree
-      contextmenu:
-        nooption: 'Layer has no context menu option'
     zoombar:
-      panup: 'Pan up'
-      panright: 'Pan right'
-      pandown: 'Pan down'
-      panleft: 'Pan left'
-      goback: 'Go back'
-      goforward: 'Go forward'
       zoombybox: 'Zoom by box'
       zoombyworld: 'Zoom by world'
+      zoom_home: Back to start
+      zoomHomeRestoresLayers: '"Back to start" also resets layer settings'
       zoomin: Zoom in
       zoomout: Zoom out
       class:
@@ -311,6 +252,8 @@ mb:
         mapquery: MapQuery
         openlayers: OpenLayers
       srsnotfound: 'SRS properties for %srslist% are not found'
+      admin:
+        fixedZoomSteps: Fixed zoom steps
     scalebar:
       class:
         title: 'Scale bar'
@@ -339,6 +282,36 @@ mb:
       tag:
         srs: SRS
         selector: selector
+    ShareUrl:
+      class:
+        title: Share URL
+        description: Share current map view via url
+      copied_to_clipboard: URL copied to clipboard
+    viewManager:
+      class:
+        title: View manager
+        description: Saves map states for later restoration
+      saveAsPublic: Save as public
+      recordStatus:
+        public: Public entry
+        private: Private entry
+      confirmDelete: Confirm deletion
+      no_data: No data
+      title: Title
+      date: Date
+      enter_title: Enter title
+      apply: Apply
+      replace: Replace
+      admin:
+        access.none: Do not show
+        access.ro: Read only
+        access.rw: Allow saving
+        access.rwd: Allow saving and deletion
+        publicEntries: Public list
+        privateEntries: Show private list
+        adminDeleteHint: "Note: the administrator can always delete public entries"
+        allowAnonymousSave: Allow saving to anonymous users
+        showDate: Show date
     admin:
       poi:
         label:
@@ -355,8 +328,11 @@ mb:
         label:
           autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
-          showoriginal: 'Show original'
           onlyvalid: 'Only valid'
+          highlighting_group: 'Highlighting'
+          highlighting: 'Highlighting enabled'
+          featureColorDefault: Default color
+          featureColorHover: Hover color
       printclient:
         label:
           autoopen: Auto-open
@@ -371,7 +347,6 @@ mb:
         label:
           showbasesources: 'Show base sources'
           autoopen: Autoopen
-          showheader: 'Show header'
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
@@ -379,53 +354,63 @@ mb:
             opened: opened
             activate: 'Enabling Layer Add / Remove'
             useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
             label: 'theme name'
           hidenottoggleable: 'Hide not toggleable'
           hideselect: 'Hide visibility by folders'
           hideinfo: 'Hide info'
-      redlining:
-        label:
-          auto_activate: Auto-activate
-          deactivate_on_close: 'Deactivate on close'
+      template:
+        sidepane:
+          type:
+            label: Type
+            choice:
+              tabs: Buttons
+              accordion: Accordion
+              unstyled: Unstyled
     htmlelement:
       class:
         title: HTML
         description: 'Add some HTML'
-      tag:
-        html: HTML
     entity:
       app:
         screenshotfile:
           error: Error
-    redlining:
+    sketch:
       geometrytype:
         point: Point
         line: Line
         polygon: Polygon
         rectangle: Rectangle
-        text:
-          title: Text
-          label: Text
-          error:
-            notext: 'Text required'
+        circle: Circle
+        text: Text
+      inputs:
+        label: Label
+      error:
+        notext: 'Text required'
       geometry:
         action:
           remove: 'Remove geometry'
           edit: 'Edit geometry'
           zoom: 'Zoom to geometry'
-      dialog:
-        btn:
-          cancel: Close
+          stop_drawing: Stop drawing
       class:
-        title: Redlining
-        description: 'Redlining tool'
-      tag:
-        redlining: redlining
-        geometry: geometry
-  geosource:
-    image_error:
-      datails: 'The map cannot be displayed.'
-      exception: 'Exception: %exception%'
-      statuscode: 'HTTP status code'
+        title: Sketches
+        description: Drawing tool
+      admin:
+        auto_activate: Auto activate
+        deactivate_on_close: Deactivate on close
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Sketches
+    resetView:
+      class:
+        title: Reset view
+        description: Restores initial map view and source settings
+      admin:
+        resetDynamicSources: Remove dynamically loaded sources
+    applicationSwitcher:
+      class:
+        title: Application switcher
+        description: Switches to another application while maintaining current map position
+      admin:
+        open_in_new_tab: Open in new tab

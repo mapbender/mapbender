@@ -50,21 +50,17 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.usetheme',
             ))
+            ->add('allowReorder', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
+            ))
             ->add('showBaseSource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.showbasesources',
             ))
-            ->add('showHeader', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.layertree.label.showheader',
-            ))
             ->add('hideInfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
-            ))
-            ->add('hideNotToggleable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.layertree.label.hidenottoggleable',
             ))
             ->add('hideSelect', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

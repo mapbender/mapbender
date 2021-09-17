@@ -1,4 +1,4 @@
-.input, .dropdown {
+.input, .dropdown:not(.bs-dropdown) {
   color: $inputForegroundColor;
   border:solid 1px lighten($thirdColor, 15%);
   background-color: $inputBackgroundColor;
@@ -8,10 +8,10 @@
   padding-right: 5px;
 }
 
-.input:not(textarea), .dropdown {
+.input:not(textarea), .dropdown:not(.bs-dropdown) {
   height: $inputHeight;
 }
-.dropdown {
+.dropdown:not(.bs-dropdown) {
   line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
 }
 .input {
@@ -34,15 +34,29 @@ textarea.input {
   }
 }
 
-.inputWrapper, .dropdown {
+.inputWrapper, .dropdown:not(.bs-dropdown) {
   display: inline-block;
   width: 100%;
   position: relative;
 }
+textarea.input {
+   min-height: 150px;
+}
+
 .inputWrapper{
   .input, select {
       width: 100%;
   }
+  .form-horizontal & .checkbox {
+    // Undo default padding-top: 7px and min-height: 27px
+    padding-top: 0;
+    min-height: initial;
+  }
+}
+
+table .checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .validationMsgBox {
   position: absolute;
@@ -55,5 +69,4 @@ textarea.input {
     padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
-
 }

@@ -4,41 +4,87 @@
 @import "modules/text";
 @import "modules/input";
 @import "modules/button";
-@import "modules/seperator";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
-@import "modules/radiobutton";
 @import "modules/dropdown";
 @import "modules/dateselector";
 @import "modules/popup_dialog";
 @import "modules/tab_navigator";
 @import "modules/result_table";
-@import "modules/digitizing_tool_set";
 
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
   display: none;
 }
 
+.contentTitle{
+  padding-bottom: 0.375em;
+  border-bottom:dashed 1px darken(#fff, 30%);
+}
+
+.title {
+  font-size: 1.35rem;
+}
+.labelInput, .inputWrapper, .dropdown:not(.bs-dropdown) {
+  font-size: 0.85rem;
+}
+
+.labelInput, .labelCheck {
+  color: $middleFontColor;
+}
+
+.linkButton, .button, .buttonCore {
+  font-size: 0.85rem;
+}
+.linkButton {
+  &:hover, &:active{color:$ciColor;};
+}
+
 /* ---------------------------------------------------------- TOOLBAR */
-.logoContainer{background-image:url($headPatternUrl);}
+.toolBarColors, .toolBar {
+  background-color: $toolBarBackgroundColor;
+  color: $toolBarFontColor;
+}
+
+.toolbar-button-hover-effect {
+  opacity: $toolBarButtonDefaultOpacity;
+  &:hover {
+    opacity: $toolBarButtonHoverOpacity;
+  }
+}
+
+.labelInput, .labelCheck {
+  font-size: 0.85rem;
+}
+
+.iconBig {
+  font-size: 160%;
+  vertical-align: middle;   // for proper vertical align of following inline element, if any
+  &:before {
+    display: inline-block;
+  }
+}
+span.iconBig {
+  display: inline-block;
+}
+
 .toolBar {
-  @include frontendContainerStyle();
+  opacity: $toolBarOpacity;
+  z-index: 4;
+  user-select: none;
   .toolBarItem {
     padding:5px;
     display: inline-block;
-    text-wrap: avoid;
-    white-space: nowrap;
-    color: fade-out($lightFontColor, .3);
-    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-    // Workaround for dropdown-style Element markup where an (optional) label is rendered OUTSIDE of the
-    // .mb-element node
-    > .labelInput + .mb-element {
+    > span {
+      // amenity for buttons with ".iconBig" icons + labels
+      // inline does not get enough height to wrap contents vertically, inline-block does
       display: inline-block;
-      margin-left: 0.5em;
     }
-    &:hover {
-      color: $lightFontColor;
+    white-space: nowrap;
+    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+    .mb-element {
+      vertical-align: inherit;
+      display: inline-block;
     }
     @include border-radius($radius);
     // spacing between icon and label for buttons and similar elements
@@ -48,96 +94,122 @@
       }
     }
   }
-  .toolBarItemActive, .toolBarItemActive:hover {
-    background-color: $contentColor;
-    color:$firstColor;
+  .mb-button, .mb-aboutButton, .mb-gpsButton {
+    opacity: $toolBarButtonDefaultOpacity;
+    &:hover {
+      opacity: $toolBarButtonHoverOpacity;
+    }
   }
-  margin: 0;
+  .toolBarItemActive {
+    // Invert background and foreground
+    background-color: $toolBarFontColor;
+    color: $toolBarBackgroundColor;
+    .mb-button, .mb-aboutButton, .mb-gpsButton {
+      opacity: $toolBarButtonActiveOpacity;
+    }
+  }
   padding:$space/4 $space/2 $space/4 $space/2;
   border-color: darken($contentColor, 20%);
 
   &.top {
-    .toolBarItem {
-      > label, > span, > a span {
-        margin-bottom: 0;
-      }
-    }
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
-    .toolBarItem{
-      font-size:80%;
-
-      > label{
-        margin-bottom: 0;
-      }
-    }
-
     .dropdownList{
       bottom:0;   // to "drop up"
       margin-bottom: $inputHeight;
     }
   }
-  &.itemsRight{
+
+  .itemsRight {
     text-align:right;
     .toolBarItem{padding-left:$space/4;}
+    .dropdown:not(.numeric) {
+      text-align: left;
+    }
   }
-  &.itemsCenter{
+  .itemsCenter {
     text-align:center;
     .toolBarItem{padding-right:$space/2;}
   }
+  // Undo fixed-pixel line height on body
+  line-height: 1;
+  // Undo Bootstrap global label margin
+  label {
+    margin-bottom: 0;
+  }
+  a.mb-button:hover {
+    text-decoration: none;
+  }
 }
 
-
+// Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
+.toolBarItem {
+  label, .labelInput {
+    display: inline-block;
+    margin-right: 0.5em;
+    vertical-align: inherit;
+    line-height: $inputHeight;
+  }
+  .dropdown:not(.bs-dropdown) {
+    width: auto;
+    vertical-align: inherit;
+  }
+}
 
 
 
 /* --------------------------------------------------------- SIDEPANE */
-.sidePaneTabItem{
-  $buttonFirstColor:#6fb536;
-  $buttonSecondColor:#5fa229;
-
-  display: block !important;
-  padding:($space/4) ($space/2);
-  margin-bottom:5px;
-  color:$lightFontColor;
-  background-color:$buttonFirstColor;
-  text-align: center;
-
-  @extend .iconOpen;
-  @extend .buttonCore;
-}
-.sidePane{
+.sidePane {
+  &.left, &.right {
+    // undo historical float classes
+    float: none;
+  }
+  height: 100%;
   overflow: visible;
   background-color: $contentColor;
-  @if ($contentPatternUrl != "") {
-    background-image: url($contentPatternUrl);
-  }
-  border-top:1px solid darken(white, 30%);
+  width: 350px;
+
   border-bottom:1px solid darken(white, 30%);
-//  @include transition(all 0.4s ease-in-out);
+  .toggleSideBar {
+    font-size: 1.5rem;
+    display: inline-block;
+    padding: 5px;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+  }
 
   // style for the left side pane
-  &.left{border-right:1px solid darken(white, 30%);}
+  &.left {
+    position: absolute;
+    left: 0;
+    border-right:1px solid darken(white, 30%);
+    .toggleSideBar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-left: 100%;
+    }
+  }
 
   // style for the right side pane
-  &.right{border-left:1px solid darken(white, 30%);}
+  &.right {
+    position: absolute;
+    right: 0;
+    border-left:1px solid darken(white, 30%);
+    .toggleSideBar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin-right: 100%;
+    }
+  }
   .sideContent{
     padding:$space;
-    display: none;
-    width: 100%;
     height: 100%;
   }
 }
-.sidePaneOpened{
-  .sideContent{
-    display:block;
-    overflow: auto;
-  }
-  .sidePaneTabItem{@extend .iconClose;}
-}
-
 .metadataDialog{
   .popupContent {
     height: 100%;
@@ -190,16 +262,67 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     word-wrap: break-word;
 }
 
-.templateWrapper {
-  .toolBar a.mb-button {
-    color: inherit;
-  }
-}
-
 .mapbender-popup, .fom-popup {
   label {
     margin-bottom: 0;
     font-weight: normal;
     line-height: inherit;
+  }
+}
+
+.collapse-toggle {
+  background: $buttonFirstColor;
+  color: $lightFontColor;
+}
+
+// Filter Element visibility by "screenType"
+// @see Mapbender/CoreBundle/Extension/ElementMarkupExtension.php
+// @todo: eventually we may need to make the breaking pixel width configurable
+@media screen and (max-width: 1119px) {
+  .hide-screentype-mobile {
+    display: none !important; // Overrule misc display: inline-block and such with !important
+  }
+}
+
+@media screen and (min-width: 1120px) {
+  .hide-screentype-desktop {
+    display: none !important; // Overrule misc display: inline-block and such with !important
+  }
+}
+
+.auto-scroll-v {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.anchored-element-wrap {
+  position: absolute;
+  .element-wrapper {
+    // must be non-inline to stack vertically
+    display: block;
+    > div.mb-element {
+      // must be inline to automatically shrink to real content size, and
+      // align left / right as a whole
+      display: inline-block;
+    }
+    // support "absolute"-positioned content
+    position: relative;
+  }
+  .element-wrapper + .element-wrapper {
+    margin-top: 0.5rem;
+  }
+  &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
+    left: $space * 2;
+    text-align: left;
+  }
+  &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
+    right: $space * 2;
+    text-align: right;
+  }
+  &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
+    top: $space * 2;
+  }
+  &.anchored-element-wrap-lb, &.anchored-element-wrap-rb {
+    bottom: $space;
   }
 }

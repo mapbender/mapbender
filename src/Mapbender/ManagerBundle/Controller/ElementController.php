@@ -15,6 +15,8 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Class ElementController
@@ -195,21 +197,22 @@ class ElementController extends ApplicationControllerBase
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
         $application = $this->requireApplication($slug);
-        $form = $this->createForm('FOM\UserBundle\Form\Type\ACLType', $element, array(
-            'mapped' => false,
-            'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View',
+        $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+            'label' => false,
+        ));
+        $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
+            'object_identity' => ObjectIdentity::fromDomainObject($element),
+            'entry_options' => array(
+                'mask' => MaskBuilder::MASK_VIEW,
             ),
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->beginTransaction();
             try {
-                $aclManager  = $this->getAclManager();
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $aclManager->setObjectACEs($element, $form->get('ace')->getData());
+                $this->getAclManager()->setObjectACEs($element, $form->get('acl')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
@@ -220,6 +223,7 @@ class ElementController extends ApplicationControllerBase
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
+                '_fragment' => 'tabLayout',
             ));
         }
         return $this->render('@MapbenderManager/Element/security.html.twig', array(
@@ -341,16 +345,10 @@ class ElementController extends ApplicationControllerBase
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
 
-        $enabled = $request->get("enabled");
         if (!$element) {
-            return new JsonResponse(array(
-                /** @todo: use http status codes to communicate error conditions */
-                'error' => 'An element with the id "' . $id . '" does not exist.',
-            ));
-
+            throw $this->createNotFoundException();
         } else {
-            $enabled_before = $element->getEnabled();
-            $enabled = $enabled === "true" ? true : false;
+            $enabled = $request->request->get("enabled") === "true";
             $element->setEnabled($enabled);
             $em = $this->getEntityManager();
             $application = $element->getApplication();
@@ -358,17 +356,28 @@ class ElementController extends ApplicationControllerBase
             $em->persist($application);
             $em->persist($element);
             $em->flush();
-            return new JsonResponse(array(
-                'success' => array(         // why?
-                    "id" => $element->getId(),
-                    "type" => "element",
-                    "enabled" => array(
-                        'before' => $enabled_before,
-                        'after' => $enabled,
-                    ),
-                ),
-            ));
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
+    }
+
+    /**
+     * @ManagerRoute("/element/{element}/screentype", methods={"POST"})
+     * @param Request $request
+     * @param Element $element
+     * @return Response
+     */
+    public function screentypeAction(Request $request, Element $element)
+    {
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $newValue = $request->request->get('screenType');
+        $em = $this->getEntityManager();
+        $em->persist($element);
+        $em->persist($application);
+        $application->setUpdated(new \DateTime());
+        $element->setScreenType($newValue);
+        $em->flush();
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

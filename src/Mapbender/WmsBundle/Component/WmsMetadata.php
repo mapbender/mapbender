@@ -80,8 +80,6 @@ class WmsMetadata extends SourceMetadata
         return array(
             'metadata' => array(
                 'sections' => $sectionData,
-                'container' => $this->container ?: static::$CONTAINER_ACCORDION,
-                'contenttype' => 'element',     // for legacy template compatiblity only
             ),
             'prefix' => 'mb.wms.metadata.section.',
         );

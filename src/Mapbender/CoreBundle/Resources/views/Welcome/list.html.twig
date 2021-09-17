@@ -1,73 +1,109 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::layouts/blocklist.html.twig" %}
 
-{% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
+{%- set title = 'mb.terms.application.plural' | trans -%}
 
-{% block js %}
-  {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
+{% block list_actions %}
+{%- if create_permission -%}
+<div class="content-box content-box-md">
+  <a href="{{ path('mapbender_manager_application_new') }}">
+      <i class="fa fas fa-lg fa-plus"></i>
+      <span>{{ 'mb.manager.admin.application.new.title' | trans }}</span>
+  </a>
+</div>
+{%- endif -%}
 {% endblock %}
 
 {% block manager_content %}
+  {%- set items = applications -%}
+  {%- set list_id = 'listFilterApplications' -%}
+  {%- set list_class = 'listFilterApplicationBoxes' -%}
+  {{ parent() }}
+{% endblock %}
 
-  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
-  {% if applications | length > 0 %}
-
-  <label for="inputFilterApplications" class="labelInput">{{ "mb.actions.filter" | trans}}</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
-
-    <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
-      {% for application in applications %}
-        <li class="filterItem">
-          <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
-            <div class="col1">
-              <div class="cell">
+{%- block boxlist_item_content -%}
+{%- set application = item -%}
+          <div class="row">
+            <div class="col-md-2 col-xs-12 col-12">
+              <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
               {%- set _screenshot_src = application_screenshot_path(application) -%}
               {%- if _screenshot_src %}
+                <div class="preview-box">
                   <img src="{{ _screenshot_src }}">
+                </div>
               {% else %}
-                  <span class="fa fas fa-image"></span>
+                <div class="preview-box preview-info">
+                  <div class="placeholder-icon">
+                    <span class="fa fas fa-image"></span>
+                  </div>
+                </div>
               {% endif %}
-              </div>
+              </a>
             </div>
-          </a>
-          <div class="col2 box">
-            <div class="buttonGroup">
-              <a class="iconView hover-highlight-effect" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
+            <div class="col-md-10 col-xs-12 col-12">
+              {{ parent() }}
+            </div>
+          </div>
+{%- endblock -%}
 
+{%- block item_interactions -%}
+              <a class="btn btn-default" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">
+                <i class="fa fas fa-desktop"></i>
+              </a>
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
               {%- if is_granted('CLONE', application) -%}
-                <a class="iconCopy hover-highlight-effect" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"></a>
+                <a class="btn btn-default" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }}">
+                  <i class="fa far fa-copy"></i>
+                </a>
+              {% endif %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+                <a class="btn btn-default" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
+                  <i class="fa fas fa-download"></i>
+                </a>
+              {% endif %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+              <a class="btn btn-default" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
+                <i class="fa fas fa-cog"></i>
+              </a>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a class="iconEdit hover-highlight-effect" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit.title' | trans }} {{ application.title }}"></a>
-              {% endif %}
-
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a href="#" class="{{ application.published ? 'iconPublishActive' : 'iconPublish disabled' }} hover-highlight-effect" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}"
-                   data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"></a>
+                <span class="btn btn-default -fn-toggle-flag {{ application.published ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
+                    data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
+                    data-toggle-flag-icons="fa-eye-slash:fa-eye">
+                    <i class="fa fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                </span>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-                <span class="iconRemove hover-highlight-effect"
+                <span class="btn btn-default -fn-delete"
                       title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-slug="{{ application.slug }}"
-                ></span>
+                ><i class="fa fa-trash-o far fa-trash-alt"></i></span>
               {% endif %}
-            </div>
-            <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
-              {{ application.title }}
-            </a>
-            <span class="smallerText">{{ application.slug }}</span>
-            <div class="description">{{ application.description }}</div>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
-    <div class="clearContainer"></div>
-  {% else %}
-    <span class="description">{{ 'mb.manager.admin.application.no_application' | trans }}</span>
-  {% endif %}
-  <div class="clearContainer"></div>
+{%- endblock -%}
 
-{% endblock %}
+{%- block item_title -%}
+    <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
+      {{ application.title }}
+    </a>
+{%- endblock -%}
+
+{%- block item_content_main -%}
+    <table class="table table-borderless table-condensed">
+      <tbody>
+        <tr>
+          <th>{{ 'mb.manager.admin.application.url.title' | trans }}:</th>
+          <td>{{ item.slug }}</td>
+        </tr>
+        <tr>
+          <th>{{ 'mb.manager.admin.application.description' | trans }}:</th>
+          <td>{{ item.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+{%- endblock -%}
+
+{%- block boxlist_placeholder_content -%}
+{{- 'mb.manager.admin.application.no_application' | trans -}}
+{%- endblock -%}

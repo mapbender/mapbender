@@ -15,6 +15,7 @@ use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -101,8 +102,12 @@ class ImportHandler extends ExchangeHandler
         $importPool = new EntityPool();
         if ($app->getSource() !== Application::SOURCE_YAML) {
             foreach ($app->getLayersets() as $layerset) {
-                foreach ($layerset->getInstances() as $instance) {
+                foreach ($layerset->getInstances(true) as $instance) {
                     $this->markSourceImported($importPool, $instance->getSource());
+                    if (!$instance->getLayerset()) {
+                        // shared instance, do not clone, keep referencing same object
+                        $this->markEntityImported($importPool, $instance);
+                    }
                 }
             }
         } else {
@@ -144,12 +149,16 @@ class ImportHandler extends ExchangeHandler
 
     protected function markSourceImported(EntityPool $targetPool, Source $source)
     {
-        $sourceHelper = EntityHelper::getInstance($this->em, $source);
-        $targetPool->add($source, $sourceHelper->extractIdentifier($source));
         foreach ($source->getLayers() as $layer) {
-            $layerHelper = EntityHelper::getInstance($this->em, $layer);
-            $targetPool->add($layer, $layerHelper->extractIdentifier($layer));
+            $this->markEntityImported($targetPool, $layer);
         }
+        $this->markEntityImported($targetPool, $source);
+    }
+
+    protected function markEntityImported(EntityPool $targetPool, $entity)
+    {
+        $eh = EntityHelper::getInstance($this->em, $entity);
+        $targetPool->add($entity, $eh->extractIdentifier($entity));
     }
 
     /**
@@ -437,6 +446,20 @@ class ImportHandler extends ExchangeHandler
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param ExportDataPool $exportPool
+     * @param $targetClassName
+     * @param array $targetIdent
+     * @return object|null
+     */
+    public function dehydrateExportObject(ExportDataPool $exportPool, $targetClassName, array $targetIdent)
+    {
+        $entityPool = new EntityPool();
+        $importState = new ImportState($this->em, $exportPool->getAllGroupedByClassName(), $entityPool);
+        $this->handleData($importState, $importState->getEntityData($targetClassName, $targetIdent));
+        return $entityPool->get($targetClassName, $targetIdent);
     }
 
     /**

@@ -1,19 +1,9 @@
 .mb-element-printclient {
-
-  display: none;
   overflow: visible;
 
-  .dropdown, .inputWrapper {
-    margin-bottom: $space/2;
-  }
   .button.active {
     background-color: #538e24;
   }
-  .checkWrapper.left {
-    // @todo: undo checkbox float globally
-    float: none;
-  }
-
   .job-list {
     @extend .mapbender-element-result-table;
     max-height: 400px;
@@ -44,29 +34,11 @@
    *
    * http://api.jqueryui.com/tabs/#theming
    */
-  .ui-tabs {
-    @extend .tabContainerAlt;
-    position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-  }
-  .ui-tabs-panel {
-    margin-top: $space / 2;
-  }
-  .ui-tabs .ui-tabs-nav {
-    margin: 0;
-    padding: .2em .2em 0;
-  }
-  .ui-tabs .ui-tabs-nav li {
-    list-style: none;
-    float: left;
-    position: relative;
-    top: 0;
-    margin: 1px .2em 0 0;
-    padding: 0;
-    white-space: nowrap;
+  .btn-group {
+    margin-bottom: $space / 2;
   }
   .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-    float: left;
-    padding: .5em 1em;
     text-decoration: none;
+    outline: none;
   }
 }

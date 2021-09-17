@@ -7,9 +7,6 @@ mb:
           wmsurl: 'Servicio URL'
           wmsuser: User
           wmspass: Password
-        btn:
-          cancel: Cancelar
-          load: Cargar
       error:
         load: 'WMSLoader: las características del wms no pueden ser cargadas!'
       repo:
@@ -17,10 +14,7 @@ mb:
           label:
             formats: Formatos
         view:
-          title:
-            wms: WMS
           label:
-            backtoservicelist: 'Regresar al Listado de Servicio'
             metadata: Metadata
             contact: Contacto
             details: Detalles
@@ -94,8 +88,6 @@ mb:
             srs: SRS
             styles: Estilos
             legendurl: 'Leyenda URL'
-            stylesheeturl: 'Hoja de Estilos URL'
-            styleurl: 'Estilos URL'
             scale: Escala
             min: Min
             max: Max
@@ -131,30 +123,13 @@ mb:
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nombre de las Capas'
             style: Estilo
-        new:
-          label:
-            addservice: 'Agregar Servicio'
-        instancelayer:
-          title:
-            servicerepository: 'Repositorio de Servicio'
-          label:
-            wmsinstancelayers: 'WMS Capa de Instancia'
-          btn:
-            save: Guardar
-        form:
-          label:
-            onlyvalid: 'Only valid'
       class:
         title: 'WMS cargador'
         description: 'Cargar un WMS via getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: cargar
       admin:
         label:
           autoopen: 'Auto abrir'
           splitlayers: 'Partir las capas'
-          declarative: 'Uso declarativo'
     repository:
       parser:
         couldnotparse: 'Could not parse'

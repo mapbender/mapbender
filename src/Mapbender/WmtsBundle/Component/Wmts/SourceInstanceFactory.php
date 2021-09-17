@@ -26,6 +26,8 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
             $instLayer->setSourceInstance($instance);
             $instance->addLayer($instLayer);
         }
+        // avoid persistence errors (non-nullable column)
+        $instance->setWeight(0);
         return $instance;
     }
 

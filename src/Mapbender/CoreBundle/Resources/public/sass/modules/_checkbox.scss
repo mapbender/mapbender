@@ -1,8 +1,14 @@
-.checkWrapper{
+/** Frontend only */
+.checkWrapper {
   cursor:pointer;
-  width:$fontSize;
-  &.checkboxDisabled{@include opacity(0.4);}
+  display: inline-block;
+  &.checkboxDisabled {
+    opacity: .4;
+  }
   input[type="checkbox"] {
     display: none;
+  }
+  & + .labelCheck {
+    margin-left: 0.5em;
   }
 }

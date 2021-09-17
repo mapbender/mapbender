@@ -1,0 +1,151 @@
+fom:
+  user:
+    registration:
+      email_body_html: '<p>Bonjour %user_username%,</p><p>Vous vous êtes récemment inscrit à une instance de Mapbender3. Pour confirmer votre enregistrement, cliquez sur le lien suivant: <a href="%url%">here</a>.</p>'
+      done:
+        title: Inscription
+        congratulations: Félicitations!
+        account_activated: 'Votre compte a été créé avec succès. Connectez-vous.'
+        back_to_login: 'Retour à la connexion'
+      form:
+        title: Inscription
+        choose_password: 'Mot de passe'
+        confirm_password: 'Confirmation du mot de passe'
+        email: Courriel
+        back_to_login: 'Retour à la connexion'
+        register: Inscription
+      email_subject: 'Votre inscription'
+      send:
+        title: Enregistrement
+        account_created: "Votre compte a été créé. Un courriel contenant votre code d''activation et un lien."
+        back_to_login: 'Retour à la connexion'
+      email_body_text: 'Bonjour %user_username%, Vous vous êtes récemment inscrit à une instance de Mapbender3. Pour confirmer votre enregistrement, cliquez sur le lien suivant: %url%.'
+    group:
+      index:
+        groups: Groupes
+        add_new_group: 'Ajouter un nouveau groupe'
+        title: Titre
+        description: Description
+        edit_group: 'Modifier un groupe'
+        delete_group: 'Supprimer un groupe'
+        no_groups_available: 'Aucun groupe n''est disponible.'
+      form:
+        edit_group: 'Modifier un groupe'
+        new_group: 'Nouveau groupe'
+      container:
+        base_data: 'Données de base'
+        users: Utilisateurs
+        users_of_selected: 'utilisateurs de %users_count% selected'
+        no_user_exists: 'Aucun utilisateur existant.'
+    login:
+      error_tockenexp:
+        title: 'Réinitialisation du mot de passe'
+        sorry: Désolé!
+        registration_token_expired: 'La période d''enregistrement de votre ''token'' est expirée. Malheureusement, il faut demander un nouveau ''token''.'
+        request_new_token: 'Demander un nouveau ''token'''
+        back_to_login: 'Retour à la connexion'
+      login:
+        title: Connexion
+        username: Nom d'utilisateur
+        password: Mot de passe
+        register: Register
+        forgot_password: 'Mot de passe oublié'
+        login: Connexion
+      error_notocken:
+        password_reset: 'Réinitialiser le mot de passe'
+        sorry: Désolé!
+        no_such_tocken: 'Aucun ''token'' trouvé. Si vous pensez que c''est une erreur, contactez l''adminisatrateur.'
+        contact: 'Contacter l''administrateur'
+        back_to_login: 'Retour à la connexion'
+    user:
+      index:
+        title: Utilisateurs
+        add_new_user: 'Ajouter un nouvel utilisateur'
+        name: Nom
+        email: Courriel
+        groups: Groupes
+        edit_user: 'Modifier l''utilisateur'
+        contact_user: 'Contacter l''utilisateur par courriel'
+        edit_group: 'Modifier le groupe'
+        delete_user: 'Supprimer l''utilisateur'
+        no_users_available: 'Aucun utilisateur n''est disponible.'
+      form:
+        edit_user: 'Modifier un utilisateur'
+        new_user: 'Nouvel utilisateur'
+      container:
+        base_data: 'Données de base'
+        profile: Profile
+        groups: Groupes
+        security: Securité
+        choose_password: 'Mot de passe'
+        confirm_password: 'Confirmation du mot de passe'
+        name: Nom
+        users_of_selected: 'groupe sur %users_count% sélectionné(s)'
+        no_groups_defined: Aucun groupe n'est défini
+        username: Nom d'utilisateur
+        description: Description
+        activated: Activé
+    acl:
+      index:
+        access_control_lists: 'Listes de contrôle d''accès globale'
+        name: Nom
+        class: Classe
+        edit: Modifier
+      required: 'Les champs requis ont une étiquette foncée alors que les champs optionnels ont une étiquette plus pâle.'
+      edit:
+        edit_class_acl: 'Modifier la classe ACL pour %name%'
+      groups_users:
+        name: Nom
+        no_goups_users: 'No groups and users defined.'
+    password:
+      email_body_html: '<p>Bonjour %user_username%,</p><p>Une requête a été fait afin de réinitialiser votre mot de passe dans une instance de Mapbender3. Cliquez sur le lien suivant pour réinitialiser votre mot de passe: <a href="%url%"> </p>'
+      request_error_no_user: 'Cet utilisateur est introuvable.'
+      done:
+        password_reset: 'Réinitialiser le mot de passe'
+        congratulations: Félicitations!
+        password_been_reset: 'Votre mot de passe a été réinitialisé avec succès.'
+        back_to_login: 'Retour à la connexion'
+      reset:
+        title: 'Réinitialiser le mot de passe'
+        btn: 'Réinitialiser le mot de passe'
+      form:
+        message: 'Pour réinitialiser votre mot de passe, fournissez votre nom d''utilisateur ou courriel.'
+        title: 'Mot de passe oublié'
+        username_email: 'Nom d''utilisateur ou courriel'
+        back_to_login: 'Retour à la connexion'
+        require_password: 'Require password'
+      email_subject: 'Mot de passe oublié'
+      send:
+        title: 'Réinitialiser le mot de passe'
+        email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
+        back_to_login: 'Retour à la connexion'
+      request:
+        user_inactive: 'This user is inactive. Please activate first.'
+      email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender3 account. Please follow this link to change it: "%url%".'
+    userbundle:
+      user_control: 'Contrôle des utilisateurs'
+      users: Utilisateurs
+      new_user: 'Nouvel utilisateur'
+      groups: Groupes
+      new_group: 'Nouveau groupe'
+      classes:
+        acls: ACLs
+        users: Utilisateurs
+        groups: Groupes
+      roles:
+        super_admin: 'Can administrate everything (super admin)'
+        user_admin: 'Can administrate users and groups'
+IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
+form:
+  profile:
+    basic:
+      firstname: 'Prénom'
+      lastName: 'Nom'
+      notes: Notes
+      phone: Téléphone
+      organizationName: Organisation
+      organizationRole: Rôle
+      street: Rue
+      zipCode: 'Code postal'
+      city: Ville
+      country: Pays

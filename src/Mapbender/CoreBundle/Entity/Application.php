@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @UniqueEntity("title")
  * @UniqueEntity("slug")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
@@ -33,6 +33,9 @@ class Application
     const SOURCE_DB = 2;
 
     const MAP_ENGINE_OL2 = 'ol2';
+    /** @deprecated; use MAP_ENGINE_CURRENT */
+    const MAP_ENGINE_OL4 = 'ol4';
+    const MAP_ENGINE_CURRENT = 'current';
 
     /** @var array YAML roles */
     protected $yamlRoles;
@@ -72,6 +75,18 @@ class Application
      * @ORM\Column(length=1024, nullable=false)
      */
     protected $template;
+
+    /**
+     * @ORM\Column(type="string", length=15, nullable=false, options={"default": "ol2"})
+     * @var string|null
+     */
+    protected $map_engine_code = self::MAP_ENGINE_CURRENT;
+
+    /**
+     * @ORM\Column(type="boolean", name="persistent_view", options={"default": false})
+     * @var bool
+     */
+    protected $persistentView = false;
 
     /**
      * @var RegionProperties[]|ArrayCollection
@@ -129,6 +144,7 @@ class Application
         $this->elements         = new ArrayCollection();
         $this->layersets        = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
+        $this->map_engine_code = self::MAP_ENGINE_CURRENT;
     }
 
     /**
@@ -358,15 +374,16 @@ class Application
     /**
      * Read-only informative pseudo-relation
      *
+     * @param bool $includeUnowned
      * @return ArrayCollection|SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances($includeUnowned = false)
     {
         // @todo: figure out if there's an appropriate ORM annotation that can do this without
         //        writing code
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getInstances($includeUnowned) as $instance) {
                 $instances->add($instance);
             }
         }
@@ -626,16 +643,43 @@ class Application
 
     /**
      * Get the map engine code as a string. Currently only 'ol2'...
+     * ... 'ol4' work in progress
      *
      * @return string
      */
     public function getMapEngineCode()
     {
-        // HACK: return constant
-        /**
-         * @todo: provide db column + expose in form
-         */
-        return self::MAP_ENGINE_OL2;
+        return $this->map_engine_code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPersistentView()
+    {
+        return $this->persistentView;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setPersistentView($value)
+    {
+        $this->persistentView = $value;
+    }
+
+    /**
+     * @param string $mapEngineCode
+     * @return $this
+     */
+    public function setMapEngineCode($mapEngineCode)
+    {
+        if ($mapEngineCode === 'ol4') {
+            $mapEngineCode = Application::MAP_ENGINE_CURRENT;
+            @trigger_error("Engine code 'ol4' is deprecated, use {$mapEngineCode} instead", E_USER_DEPRECATED);
+        }
+        $this->map_engine_code = $mapEngineCode;
+        return $this;
     }
 
     /**
@@ -646,5 +690,26 @@ class Application
     public function bumpUpdate(LifecycleEventArgs $args)
     {
         $this->setUpdated(new \DateTime('now'));
+    }
+
+    /**
+     * Static amenity method for Yaml applications which cannot execute ORM PostLoad handlers
+     *
+     * @param Application $application
+     */
+    public static function postLoadStatic(Application $application)
+    {
+        // Rewrite legacy explicit 'ol4' identifier to 'current'
+        if ('ol4' === $application->getMapEngineCode()) {
+            $application->setMapEngineCode(Application::MAP_ENGINE_CURRENT);
+        }
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        $this->postLoadStatic($this);
     }
 }

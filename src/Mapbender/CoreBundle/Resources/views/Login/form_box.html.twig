@@ -1,0 +1,14 @@
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+
+{% block box_content_main %}
+    {{ form_start(form, {'attr': {novalidate: 'novalidate', autocomplete: 'off'}}) }}
+    <div class="form-wrapper">
+        {{ form_widget(form) }}
+    </div>
+    {{ parent() }}
+    <div class="text-center">
+      <input type="submit" class="btn btn-primary btn-lg login-button" value="{{ (submit_text | default('mb.actions.save')) | trans }}" />
+    </div>
+{% endblock %}
+
+

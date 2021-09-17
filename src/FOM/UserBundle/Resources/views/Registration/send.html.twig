@@ -1,0 +1,7 @@
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
+{%- set title = 'fom.user.registration.send.title' | trans -%}
+
+{% block box_content_main %}
+    <p>{{ 'fom.user.registration.send.account_created' | trans }}</p>
+    {{ parent() }}
+{% endblock %}

@@ -41,10 +41,6 @@ class WmsInstanceLayerType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc',
             ))
-            ->add('allowreorder', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
-            ))
             ->add('minScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.minscale',
@@ -96,7 +92,6 @@ class WmsInstanceLayerType extends AbstractType
         $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
         $view['toggle']->vars['checkbox_group'] = 'checkToggleOn';
         $view['allowtoggle']->vars['checkbox_group'] = 'checkToggleAllow';
-        $view['allowreorder']->vars['checkbox_group'] = 'checkRecorderAllow';   // sic (value from templates)
 
         $view['allowtoggle']->vars['columnClass'] = 'odd';
         $view['toggle']->vars['columnClass'] = 'odd';

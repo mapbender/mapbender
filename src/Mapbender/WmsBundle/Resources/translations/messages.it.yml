@@ -7,9 +7,6 @@ mb:
           wmsurl: 'URL del Servizio'
           wmsuser: Utente
           wmspass: Password
-        btn:
-          cancel: Cancella
-          load: Carica
       error:
         load: 'WMSLoader: le WMS capabilities non possono essere caricate!'
       repo:
@@ -17,10 +14,7 @@ mb:
           label:
             formats: Formati
         view:
-          title:
-            wms: WMS
           label:
-            backtoservicelist: 'Torna alla Lista Servizi'
             metadata: Metadati
             contact: Contatto
             details: Dettagli
@@ -97,8 +91,6 @@ mb:
             srs: SRS
             styles: Stili
             legendurl: 'URL della Legenda'
-            stylesheeturl: 'URL dello Stylesheet'
-            styleurl: 'URL dello Stile'
             scale: Scala
             min: Min
             max: Max
@@ -134,30 +126,13 @@ mb:
               description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nome del Layer'
             style: Stile
-        new:
-          label:
-            addservice: 'Aggiungi Servizio'
-        instancelayer:
-          title:
-            servicerepository: 'Repository del Servizio'
-          label:
-            wmsinstancelayers: 'Instanze per layers WMS'
-          btn:
-            save: Salva
-        form:
-          label:
-            onlyvalid: 'solo valido'
       class:
         title: 'loader WMS'
         description: 'Carica un WMS attraverso la getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader
       admin:
         label:
           autoopen: 'Apertura automatica'
           splitlayers: 'Dividi layers'
-          declarative: 'Uso dichiarativo'
     repository:
       parser:
         couldnotparse: 'Non possibile il parse di CapabilitiesDocument'
@@ -189,7 +164,7 @@ mb:
           facsimileTelephone: Facsimile
           electronicMailAddress: Indirizzo di posta elettronica
           address: Indirizzo
-          addressType: 'Tipo di indirizzo' 
+          addressType: 'Tipo di indirizzo'
           addressCity: Città
           addressStateOrProvince: 'Stato o Provincia'
           addressPostCode: 'Codice postale'

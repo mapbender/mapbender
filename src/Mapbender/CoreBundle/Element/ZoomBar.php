@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity;
 
@@ -15,7 +14,7 @@ use Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element implements ConfigMigrationInterface, FloatingElement
+class ZoomBar extends Element implements FloatingElement
 {
 
     /**
@@ -56,11 +55,17 @@ class ZoomBar extends Element implements ConfigMigrationInterface, FloatingEleme
     {
         return array(
             'target' => null,
-            'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
+            'components' => array(
+                "rotation",
+                "zoom_max",
+                'zoom_home',
+                "zoom_in_out",
+                "zoom_slider",
+            ),
             'anchor' => 'left-top',
-            'stepSize' => 50,
-            'stepByPixel' => false,
-            'draggable' => true);
+            'draggable' => true,
+            'zoomHomeRestoresLayers' => false,
+        );
     }
 
     /**
@@ -76,36 +81,24 @@ class ZoomBar extends Element implements ConfigMigrationInterface, FloatingEleme
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public function getFrontendTemplateVars()
     {
-        $defaults = static::getDefaultConfiguration();
-        $config = $entity->getConfiguration();
-        // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
-        // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
-        if (empty($config['stepSize'])) {
-            if (!empty($config['stepsize'])) {
-                $config['stepSize'] = $config['stepsize'];
-            } else {
-                $config['stepSize'] = $defaults['stepSize'];
+        $target = $this->entity->getTargetElement('target');
+        $scales = array();
+        if ($target) {
+            $mapConfig = $target->getConfiguration();
+            if (!empty($mapConfig['scales'])) {
+                $scales = $mapConfig['scales'];
+                asort($scales, SORT_NUMERIC | SORT_REGULAR);
             }
         }
-        if (!isset($config['stepByPixel'])) {
-            if (isset($config['stepbypixel'])) {
-                $config['stepByPixel'] = $config['stepbypixel'];
-            } else {
-                $config['stepByPixel'] = $defaults['stepByPixel'];
-            }
-        }
-        // Fix weird mis-treatment of boolean 'stepByPixel' as string (it's a dropdown!)
-        if ($config['stepByPixel'] === 'false') {
-            $config['stepByPixel'] = false;
-        } else {
-            // coerce all other values (including string "true") to boolean regularly
-            $config['stepByPixel'] = !!$config['stepByPixel'];
-        }
-        unset($config['stepsize']);
-        unset($config['stepbypixel']);
-        $entity->setConfiguration($config);
+        $withDefaults = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
+        return array(
+            'zoom_levels' => $scales,
+            'configuration' => array_replace($withDefaults, array(
+                'components' => $this->filterComponentList($this->entity, $withDefaults['components']),
+            )),
+        );
     }
 
     /**
@@ -118,27 +111,24 @@ class ZoomBar extends Element implements ConfigMigrationInterface, FloatingEleme
         if (in_array('zoom_slider', $componentList) && !in_array('zoom_in_out', $componentList)) {
             $componentList[] = 'zoom_in_out';
         }
+        $componentList = array_values(array_diff($componentList, static::getComponentBlacklist($entity)));
         return $componentList;
     }
 
-    public function getConfiguration()
+    protected static function getComponentBlacklist(Entity\Element $entity)
     {
-        $config = $this->entity->getConfiguration();
-        $config['components'] = static::filterComponentList($this->entity, $config['components']);
-        return $config;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $configuration = $this->getConfiguration();
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(),  array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $configuration,
-        ));
+        $blackList = array();
+        $application = $entity->getApplication();
+        if ($application) {
+            switch ($application->getMapEngineCode()) {
+                case Entity\Application::MAP_ENGINE_OL2:
+                    $blackList[] = 'rotation';
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $blackList;
     }
 
     /**

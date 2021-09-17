@@ -11,19 +11,6 @@ class LayersetAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getName()
-    {
-        // NOTE: alias is no longer used inside Mapbender, but is maintained
-        //       for compatibility with very, very common OverviewAdminType customizations
-        //       To minimize issues on planned / future Symfony upgrades, newly written
-        //       code should use the FQCN, instead of the alias name, to reference
-        //       this type,
-        return 'app_layerset';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getParent()
     {
         return 'Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType';

@@ -15,14 +15,13 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                 );
             case 'js':
                 return array(
-                    '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-                    '/components/vis-ui.js/vis-ui.js-built.js',
-
+                    '@MapbenderManagerBundle/Resources/public/js/bootstrap-modal.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderManagerBundle/Resources/public/js/confirm-delete.js',
+                    '/components/bootstrap/js/bootstrap.js',
                 );
             case 'trans':
                 return array(

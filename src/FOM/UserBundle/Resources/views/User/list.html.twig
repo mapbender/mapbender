@@ -1,0 +1,56 @@
+{% if users %}
+    <table class="table">
+    <thead>
+      <tr>
+        <th>{{ "fom.user.user.index.name" | trans }}</th>
+        <th>{{ "fom.user.user.index.email" | trans }}</th>
+        {% if show_groups %}
+        <th>{{ "fom.user.user.index.groups" | trans }}</th>
+        {% endif %}
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="listFilterUsers">
+      {% for user in users %}
+        <tr class="filterItem">
+          <td>
+            {% if is_granted('EDIT', user) %}
+            <a href="{{ path('fom_user_user_edit', {'id': user.id}) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}">{{ user.username }}</a>
+            {% else %}
+            {{ user.username }}
+            {% endif %}
+          </td>
+          <td><a href="mailto:{{ user.email }}" title="{{ 'fom.user.user.index.contact_user' | trans }}">{{ user.email }}</a></td>
+          {% if show_groups %}
+          <td>
+            <ul class="list-unstyled">
+              {% for group in user.groups %}
+              <li>
+                {% if is_granted('EDIT', group) %}
+                  <a href="{{ path('fom_user_group_edit', { 'id': group.id }) }}" title="{{ 'fom.user.user.index.edit_group' | trans }}">{{ group.title }}</a></li>
+                {% else %}
+                  <span>{{ group.title }}</span>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </td>
+          {% endif %}
+          <td class="iconColumn">
+            {% if is_granted('EDIT', user) %}
+              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fa fas fa-cog"></i></a>
+            {% endif %}
+            {% if user.id != 1 and is_granted('DELETE', user) %}
+              <span class="-fn-delete hover-highlight-effect"
+                title="{{"fom.user.user.index.delete_user" | trans}}"
+                data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
+                data-id="{{ user.id }}"
+              ><i class="fa fas fa-times"></i></span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>{{"fom.user.user.index.no_users_available"|trans}}</p>
+{% endif %}

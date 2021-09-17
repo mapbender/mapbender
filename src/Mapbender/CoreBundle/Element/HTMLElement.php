@@ -62,6 +62,7 @@ class HTMLElement extends Element
         return array(
             'configuration' => $config,
             'tagName' => $tagName,
+            'application' => $this->entity->getApplication(),
         );
     }
 
@@ -83,6 +84,11 @@ class HTMLElement extends Element
             $logger->warning($message . ", suppressing content", $this->getConfiguration());
             return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
         }
+    }
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:htmlelement.html.twig';
     }
 
     /**

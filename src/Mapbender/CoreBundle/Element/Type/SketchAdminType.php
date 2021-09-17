@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -22,29 +23,33 @@ class SketchAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $types = array(
-            "circle" => "circle",
-        );
         $builder
             ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'required' => false,
             ))
-            // @todo: redundant, remove
-            ->add('defaultType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                "required" => true,
-                'choices_as_values' => true,
-                "choices" => $types,
+            ->add('auto_activate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.sketch.admin.auto_activate',
             ))
-            // @todo: redundant, remove
-            ->add('types', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ->add('deactivate_on_close', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.sketch.admin.deactivate_on_close',
+            ))
+            ->add('geometrytypes', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
-                "choices" => $types,
+                'multiple' => true,
+                'choices' => array(
+                    'mb.core.sketch.geometrytype.point' => 'point',
+                    'mb.core.sketch.geometrytype.line' => 'line',
+                    'mb.core.sketch.geometrytype.polygon' => 'polygon',
+                    'mb.core.sketch.geometrytype.rectangle' => 'rectangle',
+                    'mb.core.sketch.geometrytype.circle' => 'circle',
+                    'mb.core.sketch.geometrytype.text' => 'text',
+                ),
                 'choices_as_values' => true,
-                "multiple" => true,
             ))
         ;
     }
-
 }

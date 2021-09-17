@@ -11,11 +11,9 @@ namespace Mapbender\CoreBundle\Component\ElementBase;
 interface EditableInterface extends AddableInterface
 {
     /**
-     * Should return the element configuration form type for backend configuration. Acceptable values are
-     * * fully qualified service id (string)
-     * * fully qualified PHP class name (string)
-     * * Any object implementing Symfony FormTypeInterface (this also includes AbstractType children)
-     * * null for a fallback Yaml textarea
+     * Should return the element configuration form type for backend configuration. Form type
+     * must be indicated by fully qualified class name. Returning null or another falsy value
+     * will prevent backend configuration.
      *
      * @return string|null
      */

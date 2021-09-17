@@ -1,0 +1,41 @@
+{% if (users|length > 0) or (groups|length > 0) %}
+  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroupsAndUsers'} %}
+
+  <table id="listFilterGroupsAndUsers" class="table table-bordered">
+    <thead>
+      <tr class="doNotFilter">
+        <th>{{ "fom.user.acl.groups_users.name"|trans }} </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr class="filterItem">
+          <td>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" data-label="{{ user.getUsername }}"
+                       value="u:{{ user.getUsername }}{{ user.getClass is defined ? (':'~user.getClass()) : '' }}" />
+                <i class="fa fas fa-user"></i>&nbsp;{{ user.getUsername }}
+              </label>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      {% for group in groups %}
+        <tr class="filterItem">
+          <td>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" data-label="{{ group.getTitle() }}"
+                       value="r:{{ group.getRole() }}" />
+                <i class="fa fas fa-group"></i>&nbsp;{{ group.getTitle() }}
+              </label>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>{{"fom.user.acl.groups_users.no_goups_users"|trans}}</p>
+{% endif %}

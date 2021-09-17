@@ -19,11 +19,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SourceInstanceSelectorType extends RelatedObjectChoiceType implements DataTransformerInterface
 {
-    public function getName()
-    {
-        return 'application_source_instance_selector';
-    }
-
     /**
      * @inheritdoc
      */
@@ -68,7 +63,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         $instances = array();
         /** @var Application $parentObject */
         foreach ($parentObject->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getCombinedInstances() as $instance) {
                 $instances[$instance->getId()] = $instance;
             }
         }
@@ -103,7 +98,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     {
         $map = array();
         foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
+            foreach ($layerset->getCombinedInstances() as $instance) {
                 $map[$instance->getId()] = $layerset;
             }
         }

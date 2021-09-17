@@ -1,190 +1,100 @@
-// ------------------------------------------------------------- SERVICES
-.listFilterServiceBoxes{
-  $col1Width: 60px;
-
-  .col1 {
-    width: $col1Width;
-    padding: $space/4;
-
-    .icon {
-        // undo built-in cursor: pointer on .icon*
-        cursor: default;
-    }
-  }
-}
-
 // --------------------------------------------------------- VIEW SERVICE
+.content-toggle-container {
+  &.closed >.content-toggle-target {
+    display: none;
+  }
+  .content-toggle {
+    // Prevent undesired double-click => select all behaviour on quick toggles
+    user-select: none;
+  }
+  >.content-toggle i {
+    line-height: inherit;
+  }
+}
 .serviceContainer{
-  .labelText{float:left;}
-  .metaText{@extend .smallText;}
-  margin-bottom:$space;
-}
-.serviceMetaContainer {
-  $padding: 5px;
-  .labelText {
-    float: none;
-  }
-  .metaText {
-    line-height: 16px;
-    margin-bottom: 5px;
-    text-align: justify;
-    padding-bottom: $padding;
-  }
-
-  .metaUrl {
-    word-wrap: break-word;
-
-  }
-}
-
-.serviceContactContainer{
-  $labelWidth:90px;
-
-  .labelText{width:$labelWidth; }
-  .metaText{margin-left:$labelWidth + $space/2; }
-}
-.serviceServiceContainer {
-  $labeText:85px;
-
-  .list, li{clear:both;}
-  .list{
-    border-left:dashed 1px darken(#fff, 20%);
-    margin-bottom:$space/2;
-    li{margin-left:$space;}
-
-    // no margin for labeltext lists ...
-    ul.left li{
-      margin-left:0;
-      // ... and metatext below lists
-      .metaText{margin-left:0;}
+  tbody th {
+    font-weight: bold;
+    vertical-align: top;
+    &:first-child {
+      width: 1%;
+      white-space: nowrap;
+      padding-right: 0.5em;
     }
   }
-  .list.closed {
-    li.openCloseTitle~li {
-      display: none;
+  td {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  table {
+    margin-bottom: 1em;
+  }
+  .indent {
+    margin-left: 1em;
+  }
+  table.lighter-headings {
+    tbody th {
+      font-weight: 600;
     }
   }
-  .labelText{
-    width:$labeText;
-    margin-right:$space/2;
+  .list {
+    margin-left: 1.5em;
   }
-  li.openCloseTitle {
-    cursor:pointer;
-    margin-left: -5px;  // push ~halfway on top of the border-left
-    &:before {
-      margin-right: .5em;
-    }
-    &~li {
-      margin-left: 1em;
-    }
-  }
-  .metaText{
-    display: block;
-    margin-left:$labeText + $space/2;
-    word-wrap: break-word;
+  .list, .list table, .indent table {
+    margin-bottom: 0.5em;
   }
 }
+
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
-  .origin-url {
-      display: inline-block;
-      max-width: 60%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      vertical-align: middle;
-      white-space: nowrap;
+  // Supported extended nesting on .panel-heading for WMS dimensions
+  .panel-default .panel-heading {
+    background-color: #efefef;
   }
-
+  .panel-default>.panel-heading {
+    background-color: #f5f5f5;    // = .panel-default
+  }
   .extendedGroup {
-    .on-off{
-      border: solid 1px darken($contentColor,55%);
-      background-color:darken($contentColor,25%);
-      &.active {
-        background-color:darken($contentColor,35%);
-      }
-      &:hover {
-        background-color:darken($contentColor,20%);
-        &.active {
-          background-color:darken($contentColor,30%);
-        }
-      }
+    .labelInput {width:90px;}
+    .inputWrapper, div.dropdown {
+      width:200px;
     }
-    .blockgroup {
-      .labelInput{width:80px;}
-      .inputWrapper, div.dropdown {
-        width:200px;
-      }
-      .collectionItem .collectionRemove {
-        left: #{80px + $space + 200px};
-      }
-    }
-    .on-off-content{
-      background-color: darken($contentColor, 9%);
-      .collectionItem:last-child {
-        margin-bottom: 0;
-      }
-    }
-    .form-horizontal {
-      padding: $space/2 $space/2 $space/2 $space/2;
-    }
-    .on-off-title {
-      padding: 0 $space/2 0 $space/2;
-      .labelCheck {
-        margin-bottom: 0;
-      }
-    }
-    .blockgroup {
-      margin-bottom: 1em;
+    .collectionItem .collectionRemove {
+      left: #{90px + $space + 200px};
     }
     .mb-slider{margin-top: $space/2;}
+    .form-group .checkbox {
+      margin-top: 0;
+    }
+  }
+  .extendedGroup .panel-body, .popover {
+    .form-group {
+      margin-bottom: 0.35em;
+    }
   }
 }
 
 .instanceTable{
   margin-top:$space;
-  margin-bottom:$space;
-  .checkWrapper.left {
-    /** @todo: remove float from checkbox_widget block globally */
-    float: none;
+  .checkboxColumn{
+    text-align:center;
   }
-
-  .checkboxColumn{text-align:center;}
   .odd{background-color:darken($contentColor, 6%);}
 
   &.table {
-    background-color: lighten($contentColor, 2%);
     tbody tr td {
       line-height: $inputHeight;
-    }
-    > tbody > tr > td, > thead > tr > th {
-      padding-left: 0;
-      padding-right: 8px;
-      &.checkboxColumn {
-        width: 1%;
-        padding-left: 4px;
-        padding-right: 4px;
-      }
     }
     .titleColumn {
       width: 260px;
     }
-    .itemType {
-      cursor:ns-resize;
-    }
   }
-
-  tbody{
-    .checkboxColumn {
-      .checkWrapper {
-        display: inline-block;
-      }
-    }
+  td.itemType {
+    cursor:ns-resize;
   }
-  .level0 .itemType{margin-left:4px;}
-  .level1 .itemType{margin-left:10px;}
-  .level2 .itemType{margin-left:16px;}
-  .level3 .itemType{margin-left:22px;}
-  .level4 .itemType{margin-left:28px;}
+  .level1 .itemType{margin-left: 0.4em;}
+  .level2 .itemType{margin-left: 0.8em;}
+  .level3 .itemType{margin-left: 1.2em;}
+  .level4 .itemType{margin-left: 1.6em;}
   .dummy{display:none;}
 }
 .infoMsgBox {

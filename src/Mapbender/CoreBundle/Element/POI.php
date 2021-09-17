@@ -70,7 +70,7 @@ class POI extends Element
                 '@MapbenderCoreBundle/Resources/public/sass/element/poi.scss',
             ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:poi.json.twig',
+                'mb.core.poi.popup.*',
             ),
         );
     }

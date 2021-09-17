@@ -17,7 +17,6 @@ class ApplicationType extends AbstractType
             'maxFileSize' => 2097152,
             'screenshotHeight' => 200,
             'screenshotWidth' => 200,
-            'include_acl' => true,
         ));
     }
 
@@ -77,6 +76,20 @@ class ApplicationType extends AbstractType
             ->add('removeScreenShot', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
             ))
+            ->add('map_engine_code', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'choices' => array(
+                    'mb.manager.admin.application.map_engine_code.current' => Application::MAP_ENGINE_CURRENT,
+                    'mb.manager.admin.application.map_engine_code.ol2' => Application::MAP_ENGINE_OL2,
+                ),
+                'choices_as_values' => true,
+                'label' => 'mb.manager.admin.application.map_engine_code',
+                'required' => true,
+                'empty_data' => Application::MAP_ENGINE_OL2,
+            ))
+            ->add('persistentView', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.manager.application.persistentView',
+            ))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))
@@ -91,17 +104,5 @@ class ApplicationType extends AbstractType
         $builder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
             'application' => $application,
         ));
-
-        if ($options['include_acl']) {
-            $builder
-                ->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-                    'mapped' => false,
-                    'data' => $options['data'],
-                    'create_standard_permissions' => true,
-                    'standard_anon_access' => false,
-                    'permissions' => 'standard::object',
-                ))
-            ;
-        }
     }
 }

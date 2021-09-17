@@ -32,31 +32,7 @@ class JsCompiler extends AssetFactoryBase
      */
     public function compile($inputs, $configSlug, $debug)
     {
-        $content = $this->concatenateContents($inputs, $debug);
-        if ($configSlug) {
-            $content .= $this->renderAppLoader($configSlug);
-        }
-        return $content;
-    }
-
-    /**
-     * Returns JavaScript code with final client-side application initialization.
-     * This should be the very last bit, following all other JavaScript definitions
-     * and initializations.
-     * @param string $slug
-     * @return string
-     */
-    protected function renderAppLoader($slug)
-    {
-        $viewParams = array(
-            'slug' => $slug,
-            // fake an application entity (legacy twig)
-            'application' => array(
-                'slug' => $slug,
-            ),
-        );
-        $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
-        return $this->templateEngine->render($appLoaderTemplate, $viewParams);
+        return $this->concatenateContents($inputs, $debug);
     }
 
     protected function getMigratedReferencesMapping()
@@ -96,6 +72,8 @@ class JsCompiler extends AssetFactoryBase
                 '/../vendor/mapbender/vis-ui.js/src/js/elements/tab.navigator.js',
                 '/../vendor/mapbender/vis-ui.js/src/js/jquery.form.generator.js',
             ),
+            // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
+            '/components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' => array(),
         );
     }
 }

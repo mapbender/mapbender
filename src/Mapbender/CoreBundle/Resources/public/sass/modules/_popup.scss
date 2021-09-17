@@ -1,7 +1,6 @@
 .overlay{
   background:url($imageBasePath + '/overlay.png');
-  @include opacity(0);
-  //@include transition(opacity 0.4s ease-in-out);
+  opacity: 0;
 }
 
 .popupHead {
@@ -14,8 +13,8 @@
   padding: $space 0 $space/2 0;
 }
 .popup .popupButtons {
-  .button{
-    margin-left:3px;
+  .button, .btn {
+    margin-left: 0.5em;
   }
 }
 .fom-popup {
@@ -92,9 +91,6 @@
   }
   z-index:9999;
   background-color:#f4f4f4;
-  @if ($contentPatternUrl != "") {
-    background-image:url($contentPatternUrl);
-  }
   border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;
@@ -105,9 +101,12 @@
 .popupContainer.ui-draggable, .popup.ui-draggable {
   .popupHead {
     cursor:move;
+    .popupClose {
+      cursor: pointer;
+    }
   }
   &.ui-draggable-dragging {
-    @include opacity(0.6);
+    opacity: 0.6;
   }
 }
 
@@ -147,8 +146,12 @@
       }
     }
     .overlay{
-      @include opacity(0.9);
-      @include fixed(0 0 0 0);
+      opacity: 0.9;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
   }
 }
@@ -173,3 +176,40 @@
   @include absolute(70px 0 $space*3 0);
 }
 
+// Backport Bootstrap 4 modal-dialg-scroll to BS3
+// See https://getbootstrap.com/docs/4.3/components/modal/#scrolling-long-content
+.modal-dialog {
+  // Replace pixel margins with rem margins for compatibility
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.modal-dialog-scrollable {
+  display: flex;
+  max-height: calc(100% - 1rem);
+  .modal-content {
+    max-height: calc(100vh - 1rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .modal-body {
+    overflow-y: auto;
+    flex: 1 1 auto;
+  }
+  .modal-header, .modal-footer {
+    flex-shrink: 0;
+  }
+}
+@media (min-width: 576px) {
+  .modal-dialog {
+    margin-top: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+  .modal-dialog-scrollable {
+    max-height: calc(100% - 3.5rem);
+    .modal-content {
+      max-height: calc(100vh - 3.5rem);
+    }
+  }
+}

@@ -184,10 +184,6 @@
             };
             var activateCandidateNames = [this.options.action, 'defaultAction', 'open', 'activate'];
             var deactivateCandidateNames = [this.options.deactivate, 'close', 'deactivate'];
-            if (this.targetWidget.element.hasClass('mb-element-sketch')) {
-                activateCandidateNames.unshift('_open');
-                deactivateCandidateNames.unshift('_close');
-            }
             var activateCandidates = this._extractCallableMethods(
                 targetWidget, activateCandidateNames);
             var deactivateCandidates = this._extractCallableMethods(
@@ -272,8 +268,10 @@
                     if (typeof targetOptions.type !== 'undefined') {
                         // Layertree, FeatureInfo
                         isDialog = targetOptions.type === 'dialog';
-                    } else if (typeof targetOptions.displayType !== 'undefined') {
+                    } else if (typeof targetOptions.elementType !== 'undefined') {
                         // Legend
+                        isDialog = targetOptions.elementType === 'dialog';
+                    } else if (typeof targetOptions.displayType !== 'undefined') {
                         isDialog = targetOptions.displayType === 'dialog';
                     }
                     state = isDialog;

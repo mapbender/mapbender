@@ -1,5 +1,6 @@
 
 .mb-element-scaleline{
+  position: relative; // to wrap absolute
   text-align: center;
   display: inline-block;
   .scaleBorder{
@@ -9,15 +10,19 @@
       bottom:solid 2px $firstColor;
     }
     height:5px;
-    @include absolute('' 0 0 0);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 
 .toolBar{
   .mb-element-scaleline{
-    position: relative;
     bottom:5px;
     padding-bottom:5px;
-    .scaleBorder{border-color:$lightFontColor}
+    .scaleBorder {
+      border-color: $toolBarFontColor;
+    }
   }
 }

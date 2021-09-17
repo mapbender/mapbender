@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\VendorSpecific;
+use Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -108,6 +109,30 @@ class WmsInstance extends SourceInstance
         $this->layers     = new ArrayCollection();
         $this->dimensions = array();
         $this->vendorspecifics = array();
+    }
+
+    private function __getLayersRecursive(WmsInstanceLayer $layer)
+    {
+        /** @var WmsInstanceLayer $layer */
+        $sublayers = $layer->getSublayer()->getValues();
+        $sublayerlists = array_merge(array($sublayers), array_map(array($this, '__getLayersRecursive'), $sublayers));
+        return \call_user_func_array('\array_merge', $sublayerlists);
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->setId(null);
+            $rootLayer = clone $this->getRootlayer();
+            $rootLayer->setSourceInstance($this);
+            $clonedLayers = array($rootLayer);
+            foreach ($this->__getLayersRecursive($rootLayer) as $extraLayer) {
+                /** @var WmsInstanceLayer $extraLayer */
+                $extraLayer->setSourceInstance($this);
+                $clonedLayers[] = $extraLayer;
+            }
+            $this->setLayers(new ArrayCollection($clonedLayers));
+        }
     }
 
     /**
@@ -466,14 +491,47 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * Picks a reasonable first choice of GetMap image format for the given Source.
+     * Picks (in order)
+     * 1) png variants (robust transparency support)
+     * 2) gif (high probability of transparency support)
+     * 3) (giving up) first format parsed from source capabilities
+     *
      * @param WmsSource $source
+     * @return string|null
+     * @todo: this belongs in the (only recently added) {@see SourceInstanceFactory}
+     */
+    protected function getDefaultGetMapFormat(WmsSource $source)
+    {
+        $formats = $source->getGetMap()->getFormats();
+        if (!$formats) {
+            // NOTE: this will implicitly trigger Openlayers default format (image/png)
+            //       in the frontend
+            return null;
+        }
+        foreach ($formats as $format) {
+            // NOTE: also matches png8, png24, png32
+            if (preg_match('#^image/png#', $format)) {
+                return $format;
+            }
+        }
+        foreach ($formats as $format) {
+            if (preg_match('#^image/gif#', $format)) {
+                return $format;
+            }
+        }
+        // none of our preferences matches => return first declared format
+        return $formats[0];
+    }
+
+    /**
+     * @param WmsSource $source
+     * @todo: this belongs in the (only recently added) {@see SourceInstanceFactory}
      */
     public function populateFromSource(WmsSource $source)
     {
         $this->setTitle($source->getTitle());
-        if ($getMapFormats = $source->getGetMap()->getFormats()) {
-            $this->setFormat($getMapFormats[0]);
-        }
+        $this->setFormat($this->getDefaultGetMapFormat($source));
         if ($source->getGetFeatureInfo() && $featureInfoFormats = $source->getGetFeatureInfo()->getFormats()) {
             $this->setInfoformat($featureInfoFormats[0]);
         }
