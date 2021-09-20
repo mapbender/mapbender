@@ -298,7 +298,6 @@ NOTE: This version extends the database schema and will require running a `doctr
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
 - Fix duplicated owner of cloned application
-- Fix error duplicating application with empty Acl
 - Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 - Fix backend element list interaction tooltips on Yaml applications copied into db
 - Fix frontend sidepane accordion header text alignment
