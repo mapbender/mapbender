@@ -1,3 +1,100 @@
+## v3.2.8
+* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
+* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
+
+## v3.2.7
+* Fix shared instance Wms requests not running over tunnel if protected by basic auth
+* Fix v3.2.6 regression in stacking layout of multiple floating elements placed in the same corner
+* Fix source opacity changes not getting persisted / restored if page is reloaded after opacity change but before moving map / toggling affected layer
+* Fix completely empty footer rendering a visible block in fullscreen template ([#1332](https://github.com/mapbender/mapbender/issues/1332))
+* Fix missing vertical margins on multi-row "Buttons"-type sidepane headers
+* [Map] fix initialization error when using customized title for primary srs ([#1379](https://github.com/mapbender/mapbender/issues/1379))
+* [SimpleSearch] fix default for `sourceSrs` (EPSG:4326) setting not applying as intended in older database applications
+* [PrintClient] Fix initial flash of unstyled tab headers / tab containers if element visible on page load and queue mode is active
+* [BaseSourceSwitcher] Fix missing visual sync with Layertree updates / restored map state ([#1322]((https://github.com/mapbender/mapbender/issues/1322))
+* [Sketch] Use proper stop icon instead of ~pause icon on "Stop drawing" button
+* [ViewManager] Fix confusing frontend behaviour for anonymous users (who cannot have private entries). Suppress element entirely if public entry list is off.
+* [ViewManager] Allow reapplying state entry also by clicking on its title
+* [ViewManager] Visually mark most recently applied state entry
+* [Backend] Fix instance active toggle state not displaying correctly for reusable instance assignments
+* [Backend] Fix errors editing any Element with a map target if current Application contains pure canonical Element classes (e.g. standalone DataManager 2.0)
+* [ImageExport / Print] Fix missing output of temporary POI icons and Digitizer feature icons
+* Fix errors if Yaml applications omit certain "regionProperties" definitions
+* Support moving certain toolbar / footer elements into foldout menus (see [PR#1380](https://github.com/mapbender/mapbender/pull/1380))
+* Resolve Symfony 4 incompatibilities in controllers and console commands
+* Resolve Symfony 4 incompatibilities in all remaining Elements
+  * BaseSourceSwitcher
+  * Copyright
+  * ImageExport
+  * Layertree
+  * Legend
+  * Overview
+  * PrintClient
+  * Ruler
+  * SearchRouter
+  * SimpleSearch
+  * SrsSelector
+  * Sketch
+* Resolve misc doctrine deprecations
+* Resolve extension configuration deprecations
+* Resolve owsproxy deprecations
+* Add missing (previously implicit) doctrine/doctrine-bundle dependency
+* Optimize Symfony container build parameters
+
+## v3.2.6
+* [Overview] Fix initially closed overview map showing max extent when opening for the first time
+* [Layertree] Prefer root layer title over instance title when displaying source metadata via context menu
+* [FeatureInfo] Prefer root layer title over instance title for tab headers
+* Fix missing colorpicker assets in frontend if installed in a sub-path URL ([PR#1371](https://github.com/mapbender/mapbender/pull/1371))
+* Fix no effect of sidepane "align" setting (left / right) in FullscreenAlternative template
+* Fix pileup of separate application HTML cache files for anonymous users
+* Automatically amend "px" to unit-less manual sidepane width setting
+* [Backend] Fix "Cancel" in ACL editing not returning to security index page
+* [Backend] Fix limited users editing their own profile getting redirected to "access denied" page on successful save
+* [Backend] Fix limited users landing on "access denied" page when clicking "Cancel" when editing their own profile
+* [Backend] Fix successful ACL editing save not returning to sercurity index page
+* [Backend] Fix missing validation error message when attempting to save Layerset with duplicated title
+
+## v3.2.6-RC1
+* Fix broken Application editing page after submitting Element form with validation errors (e.g. HTMLElement content syntax errors)
+* Fix display of validation errors in login
+* Fix Button "target" option offering uncontrollable targets (Elements positioned in sidepane, floating ZoomBar etc)
+* Fix frontend dynamic html dependant on user getting cached and reused for anonymous users (session not started)
+* Fix missing colorpicker assets / broken FeatureInfo backend form if installed in a sub-path URL
+* Fix wrong initial value display of custom dropdown with uninitialzed data
+* Fix custom choice field placeholders not getting translated
+* [Layertree] Fix source selections reverting to outdated state after reactivating a deactivated Layerset / Theme
+* [Layertree] Fix touch event handling issues (by removing usage of custom checkbox widget)
+* [Layertree] Fix opened layer menu becoming inaccessible while source is loading
+* [HTMLElement] Fix twig variable "entity" not available as documented
+* [ScaleBar] Fix non-constant sizing when placed in a toolbar
+* [POI] Fix line break encoding (verbatim "<br />") in newly generated POI links with multi-line labels
+* [POI] Fix incosistent styling of the two opened popups
+* [DimensionsHandler] Fix rendering an empty block if no controllable dimensions configured
+* [ViewManager] Fix missing translation value placeholder tooltip on details button
+* SimpleSearch: avoid result list off-screen overflow (auto-adjust list direction depending on Element position vs window size)
+* Add support for Yaml application definitions to `mapbender:application:import` command
+* Add support for reading entire directories to `mapbender:application:import` command
+* Add automatic fix for incomplete / broken Element "weight" column values to `mapbender:database:init` command
+* Switch most Mapbender Elements to new Symfony-4-compatible Element API (see [PR#1368](https://github.com/mapbender/mapbender/pull/1368))
+* [Backend] Fix user with no relevant privileges seeing the "Security" main menu item (403 on click; [#1363](https://github.com/mapbender/mapbender/issues/1363))
+* [Backend] Fix Application editing screenshot preview overflow on narrow screens
+* [Backend] Fix (visual) backend form order of ControlButton to prevent clipping of "target" dropdown
+* [Backend] Fix layout of Element / Layerset tables with empty content
+* Removed unused POI option "tooltip"
+* Removed legacy / broken Selenium + PhantomJS tests
+* Resolved misc Symfony 4 incompatibilites in console commands, service definitions and form types
+* Resolved FA5+ incompatibility in custom dropdown
+* [Framework] Add new infrastructure for Symfony 4-compatible Elements (see [PR#1367](https://github.com/mapbender/mapbender/pull/1367))
+* [Framework] Fix unhandled errors on image resource request failure when preloading icon assets
+* [Framework] Support suppressing sidepane tab buttons / accordion headers for Elements that render nothing
+* Deprecated CoreBundle\Component\Element
+  * prefer writing Element PHP code for [new service-type Element infrastructure](https://github.com/mapbender/mapbender/pull/1367)
+* Deprecated TargetElementType
+  * prefer using new MapTargetType if you must inject the Map Element id into another Element's configuration
+  * prefer using new ControlTargetType for generic non-Map targetting
+* Deprecated fixture-based Application import into db (prefer e.g. `app/console mapbender:application:import app/config/applications`)
+
 ## v3.2.5
 * Fix WMS min / max scale not applying correctly with fractional zoom
 * [SimpleSearch]: extend labeling for GeoJSON / particularly OSM data (multiple attributes, nested attribute structure; see [PR#1361](https://github.com/mapbender/mapbender/pull/1361))

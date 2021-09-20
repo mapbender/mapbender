@@ -3,20 +3,9 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ScaleBarAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
@@ -24,11 +13,7 @@ class ScaleBarAdminType extends AbstractType
     {
         // @todo: add missing field labels
         $builder
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             // @todo: should be an optional positive integer
             ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType')
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
@@ -37,7 +22,6 @@ class ScaleBarAdminType extends AbstractType
                     'kilometer' => 'km',
                     'mile' => 'ml',
                 ),
-                'choices_as_values' => true,
             ))
         ;
     }

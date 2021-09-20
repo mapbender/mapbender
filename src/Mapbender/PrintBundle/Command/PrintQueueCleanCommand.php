@@ -8,15 +8,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
 {
+
     protected function configure()
     {
         $this
             ->setDescription("Purge old jobs from the print queue (database + files)")
-            ->setName('mapbender:print:queue:clean')
             ->addArgument('age', InputArgument::OPTIONAL, "Cutoff age in days", 20)
             ->addOption('remove-dangling-files', 'gc', InputOption::VALUE_NONE, "Delete locally found but unreferenced files")
         ;
@@ -30,15 +29,13 @@ class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
         }
         $output->writeln('Print queue clean process started.');
         $countDeleted = 0;
-        /** @var Filesystem $fs */
-        $fs = $this->getContainer()->get('filesystem');
         $cutoffDate = new \DateTime("-{$minDays} days");
         foreach ($this->repository->findOlderThan($cutoffDate) as $entity) {
             $pdfPath = $this->getJobStoragePath($entity);
-            if ($fs->exists($pdfPath)) {
+            if ($this->filesystem->exists($pdfPath)) {
                 $output->writeln("Deleting file {$pdfPath} from job #{$entity->getId()}");
                 // NOTE: this will throw if deletion fails (privileges issues etc)
-                $fs->remove($pdfPath);
+                $this->filesystem->remove($pdfPath);
             } else {
                 $output->writeln("File {$pdfPath} from job #{$entity->getId()} is missing");
             }

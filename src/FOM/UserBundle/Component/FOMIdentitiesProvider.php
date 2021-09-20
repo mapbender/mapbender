@@ -2,11 +2,11 @@
 
 namespace FOM\UserBundle\Component;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use FOM\UserBundle\Component\Ldap;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 /**
@@ -15,38 +15,38 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
  */
 class FOMIdentitiesProvider implements IdentitiesProviderInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var ManagerRegistry */
+    protected $doctrineRegistry;
     /** @var Ldap\UserProvider */
     protected $ldapUserIdentitiesProvider;
     /** @var string */
     protected $userEntityClass;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ManagerRegistry $doctrineRegistry,
+                                Ldap\UserProvider $ldapUserProvider,
+                                $userEntityClass)
+
     {
-        $this->container = $container;
-        $this->ldapUserIdentitiesProvider = $container->get('fom.ldap_user_identities_provider');
-        $this->userEntityClass = $container->getParameter('fom.user_entity');
+        $this->doctrineRegistry = $doctrineRegistry;
+        $this->ldapUserIdentitiesProvider = $ldapUserProvider;
+        $this->userEntityClass = $userEntityClass;
     }
 
     /**
-     * @return \Doctrine\Bundle\DoctrineBundle\Registry
+     * @return ManagerRegistry
      */
-    protected function getDoctrine()
+    final protected function getDoctrine()
     {
-        return $this->container->get('doctrine');
+        return $this->doctrineRegistry;
     }
 
     /**
-     * @param $entityName
-     * @return EntityRepository
+     * @param string $entityName
+     * @return ObjectRepository
      */
     protected function getRepository($entityName)
     {
-        return $this->getDoctrine()->getRepository($entityName);
+        return $this->doctrineRegistry->getRepository($entityName);
     }
 
     /**
@@ -95,10 +95,10 @@ class FOMIdentitiesProvider implements IdentitiesProviderInterface
     }
 
     /**
-     * @return EntityRepository
+     * @return ObjectRepository
      */
     public function getUserRepository()
     {
-        return $this->getDoctrine()->getRepository($this->userEntityClass);
+        return $this->doctrineRegistry->getRepository($this->userEntityClass);
     }
 }

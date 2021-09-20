@@ -2,24 +2,17 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\DBAL\DBALException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Controller\WelcomeController;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
-use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\ManagerBundle\Component\Exception\ImportException;
-use Mapbender\ManagerBundle\Component\ExportHandler;
-use Mapbender\ManagerBundle\Component\ExportJob;
-use Mapbender\ManagerBundle\Component\ImportHandler;
-use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -28,14 +21,14 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Mapbender application management
@@ -45,8 +38,31 @@ use Symfony\Component\Yaml\Yaml;
  * @author  Paul Schmitd <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends WelcomeController
+class ApplicationController extends ApplicationControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+    /** @var TranslatorInterface */
+    protected $translator;
+    /** @var AclManager */
+    protected $aclManager;
+    /** @var UploadsManager */
+    protected $uploadsManager;
+    protected $enableResponsiveElements;
+
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                TranslatorInterface $translator,
+                                AclManager $aclManager,
+                                UploadsManager $uploadsManager,
+                                $enableResponsiveElements)
+    {
+        $this->aclProvider = $aclProvider;
+        $this->translator = $translator;
+        $this->aclManager = $aclManager;
+        $this->uploadsManager = $uploadsManager;
+        $this->enableResponsiveElements = $enableResponsiveElements;
+    }
+
     /**
      * Render a list of applications the current logged in user has access to.
      *
@@ -56,7 +72,7 @@ class ApplicationController extends WelcomeController
      */
     public function indexAction(Request $request)
     {
-        return $this->listAction($request);
+        return $this->redirectToRoute('mapbender_core_welcome_list');
     }
 
     /**
@@ -77,7 +93,7 @@ class ApplicationController extends WelcomeController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
+                $appDirectory = $this->uploadsManager->getSubdirectoryPath($application->getSlug(), true);
             } catch (IOException $e) {
                 $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
                 return $this->redirectToRoute('mapbender_manager_application_index');
@@ -89,7 +105,7 @@ class ApplicationController extends WelcomeController
             $em->persist($application);
             $em->flush();
             if ($form->has('acl')) {
-                $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
+                $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
             }
             $scFile = $form->get('screenshotFile')->getData();
 
@@ -119,158 +135,6 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Export application as json (direct link)
-     * @ManagerRoute("/application/{slug}/export", methods={"GET"})
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function exportdirectAction(Request $request, $slug)
-    {
-        $application = $this->requireApplication($slug, false);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $data = $this->getApplicationExporter()->exportApplication($application);
-        $fileName = "{$application->getSlug()}.json";
-        return new JsonResponse($data, 200, array(
-            'Content-disposition' => "attachment; filename={$fileName}",
-        ));
-    }
-
-
-    /**
-     * Returns serialized application.
-     *
-     * @ManagerRoute("/application/export", methods={"GET", "POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function exportAction(Request $request)
-    {
-        $expHandler = $this->getApplicationExporter();
-        $job = new ExportJob();
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ExportJobType', $job, array(
-            'application' => $this->getExportableApplications(),
-            'attr' => array(
-                'target' => '_blank',
-            ),
-        ));
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $expHandler->exportApplication($job->getApplication());
-            switch ($job->getFormat()) {
-                case ExportJob::FORMAT_JSON:
-                    return new JsonResponse($data, 200, array(
-                        'Content-disposition' => 'attachment; filename=export.json',
-                    ));
-                    break;
-                case ExportJob::FORMAT_YAML:
-                    $content = Yaml::dump($data, 20);
-                    return new Response($content, 200, array(
-                        'Content-Type'        => 'text/plain',
-                        'Content-disposition' => 'attachment; filename=export.yaml',
-                    ));
-                    break;
-                default:
-                    throw new BadRequestHttpException("mb.manager.controller.application.method_not_supported");
-            }
-
-        } else {
-            return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
-                'form' => $form->createView(),
-                'submit_text' => 'mb.manager.admin.application.export.btn.export',
-                'title' => $this->getTranslator()->trans('mb.manager.managerbundle.export_application'),
-                'return_path' => 'mapbender_manager_application_index',
-            ));
-        }
-    }
-
-    /**
-     * Imports serialized application.
-     *
-     * @ManagerRoute("/application/import", methods={"GET", "POST"})
-     * @param Request $request
-     * @return Response
-     * @throws DBALException
-     */
-    public function importAction(Request $request)
-    {
-        $applicationOid = new ObjectIdentity('class', get_class(new Application()));
-        $this->denyAccessUnlessGranted('CREATE', $applicationOid);
-        $impHandler = $this->getApplicationImporter();
-        $job = new ImportJob();
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ImportJobType', $job);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $job->getImportFile();
-            $em = $this->getEntityManager();
-            $em->beginTransaction();
-            $currentUserSid = UserSecurityIdentity::fromToken($this->getUserToken());
-            try {
-                $data = $impHandler->parseImportData($file);
-                $applications = $impHandler->importApplicationData($data);
-                foreach ($applications as $app) {
-                    $impHandler->addOwner($app, $currentUserSid);
-                }
-                $em->commit();
-                return $this->redirectToRoute('mapbender_manager_application_index');
-            } catch (ImportException $e) {
-                $em->rollback();
-                $message = $this->translate('mb.manager.import.application.failed') . " " . $e->getMessage();
-                $this->addFlash('error', $message);
-                // fall through to re-rendering form
-            }
-        }
-        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
-            'form' => $form->createView(),
-            'submit_text' => 'mb.manager.admin.application.import.btn.import',
-            'title' => $this->getTranslator()->trans('mb.manager.managerbundle.import_application'),
-            'return_path' => 'mapbender_manager_application_index'
-        ));
-    }
-
-    /**
-     * Copies an application
-     *
-     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
-     * @param string $slug
-     * @return Response
-     * @throws DBALException
-     */
-    public function copyDirectlyAction($slug)
-    {
-        $sourceApplication = $this->requireApplication($slug, true);
-        $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
-        $applicationOid = new ObjectIdentity('class', get_class(new Application()));
-        $this->denyAccessUnlessGranted('CREATE', $applicationOid);
-
-        $impHandler = $this->getApplicationImporter();
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
-        try {
-            $clonedApp = $impHandler->duplicateApplication($sourceApplication);
-            $impHandler->addOwner($clonedApp, UserSecurityIdentity::fromToken($this->getUserToken()));
-
-            $em->commit();
-            if ($this->isGranted('EDIT', $clonedApp)) {
-                // Redirect to edit view of imported application
-                // @todo: distinct message for successful duplication?
-                $this->addFlash('success', $this->translate('mb.application.create.success'));
-                return $this->redirectToRoute('mapbender_manager_application_edit', array(
-                    'slug' => $clonedApp->getSlug(),
-                ));
-            } else {
-                return $this->redirectToRoute('mapbender_manager_application_index');
-            }
-        } catch (ImportException $e) {
-            $em->rollback();
-            $this->addFlash('error', $e->getMessage());
-            return $this->forward('MapbenderManagerBundle:Application:index');
-        }
-    }
-
-    /**
      * Edit application
      *
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
@@ -281,7 +145,7 @@ class ApplicationController extends WelcomeController
      */
     public function editAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
         $oldSlug          = $application->getSlug();
@@ -299,11 +163,10 @@ class ApplicationController extends WelcomeController
             $em->flush();
 
             try {
-                $ulm = $this->getUploadsManager();
                 if ($oldSlug !== $application->getSlug()) {
-                    $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
+                    $uploadPath = $this->uploadsManager->renameSubdirectory($oldSlug, $application->getSlug(), true);
                 } else {
-                    $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
+                    $uploadPath = $this->uploadsManager->getSubdirectoryPath($application->getSlug(), true);
                 }
                 $scFile = $form->get('screenshotFile')->getData();
                 if ($scFile && !$form->get('removeScreenShot')->getData()) {
@@ -313,7 +176,7 @@ class ApplicationController extends WelcomeController
                 $em->persist($application);
                 $em->flush();
                 if ($form->has('acl')) {
-                    $this->getAclManager()->setObjectACEs($application, $form->get('acl')->getData());
+                    $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
                 }
                 $em->commit();
                 $this->addFlash('success', $this->translate('mb.application.save.success'));
@@ -329,18 +192,18 @@ class ApplicationController extends WelcomeController
             }
         }
 
+        /** @var string|Template $templateClass */
         $templateClass = $application->getTemplate();
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
-        $allowScreenTypesGlobal = $this->getParameter('mapbender.responsive.elements');
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'regions'             => $templateClass::getRegions(),
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
             // Allow screenType filtering only on current map engine
-            'allow_screentypes' => $allowScreenTypesGlobal && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
+            'allow_screentypes' => $this->enableResponsiveElements && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
         ));
     }
 
@@ -354,7 +217,7 @@ class ApplicationController extends WelcomeController
      */
     public function toggleStateAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
         $em = $this->getEntityManager();
@@ -376,17 +239,17 @@ class ApplicationController extends WelcomeController
      */
     public function deleteAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
 
         try {
             $em = $this->getEntityManager();
             $em->beginTransaction();
-            $this->getAclProvider()->deleteAcl(ObjectIdentity::fromDomainObject($application));
+            $this->aclProvider->deleteAcl(ObjectIdentity::fromDomainObject($application));
             $em->remove($application);
             $em->flush();
             $em->commit();
-            $this->getUploadsManager()->removeSubdirectory($slug);
+            $this->uploadsManager->removeSubdirectory($slug);
             $this->addFlash('success', $this->translate('mb.application.remove.success'));
         } catch (IOException $e) {
             $this->addFlash('error', $this->translate('mb.application.failure.remove.directory'));
@@ -409,7 +272,7 @@ class ApplicationController extends WelcomeController
      */
     public function editLayersetAction(Request $request, $slug, $layersetId = null)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId, $application);
@@ -429,8 +292,9 @@ class ApplicationController extends WelcomeController
                 $em->flush();
                 $this->addFlash('success', $this->translate('mb.layerset.create.success'));
             } else {
-                // @todo: use form error translations directly; also support message for empty title
-                $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
+                foreach ($form->getErrors(false, true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
@@ -453,7 +317,7 @@ class ApplicationController extends WelcomeController
      */
     public function confirmDeleteLayersetAction($slug, $layersetId)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset = $this->requireLayerset($layersetId, $application);
         return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
@@ -472,7 +336,7 @@ class ApplicationController extends WelcomeController
      */
     public function deleteLayersetAction(Request $request, $slug, $layersetId)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
         $em = $this->getEntityManager();
         try {
@@ -506,22 +370,24 @@ class ApplicationController extends WelcomeController
      */
     public function listSourcesAction($slug, $layersetId)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
         $sourceOid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $sourceOid);
 
         $layerset = $this->requireLayerset($layersetId, $application);
-        $sources = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
+        $sources = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));
+        /** @var SourceInstanceRepository $instanceRepository */
+        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
 
         return $this->render('@MapbenderManager/Application/list-source.html.twig', array(
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $sources,
-            'reusable_instances' => $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+            'reusable_instances' => $instanceRepository->findReusableInstances(array(), array(
                 'title' => 'ASC',
                 'id' => 'ASC',
             )),
@@ -580,54 +446,6 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Add a new SourceInstance to the Layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add", methods={"GET"})
-     *
-     * @param Request $request
-     * @param string $slug of Application
-     * @param int $layersetId
-     * @param int $sourceId
-     * @return Response
-     */
-    public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
-    {
-        $entityManager = $this->getEntityManager();
-        $application = $this->getDbApplicationRepository()->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if ($application) {
-            $this->denyAccessUnlessGranted('EDIT', $application);
-        } else {
-            throw $this->createNotFoundException();
-        }
-        $layerset = $this->requireLayerset($layersetId, $application);
-        /** @var Source|null $source */
-        $source = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        $newInstance = $directory->createInstance($source);
-        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
-            /** @var SourceInstanceAssignment $otherAssignment */
-            $otherAssignment->setWeight($index + 1);
-            $entityManager->persist($otherAssignment);
-        }
-
-        $newInstance->setWeight(0);
-        $newInstance->setLayerset($layerset);
-        $layerset->getInstances()->add($newInstance);
-
-        $entityManager->persist($application);
-        $application->setUpdated(new \DateTime('now'));
-
-        $entityManager->flush();
-        $this->addFlash('success', $this->translate('mb.source.instance.create.success'));
-        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
-            "slug" => $slug,
-            "instanceId" => $newInstance->getId(),
-        ));
-    }
-
-    /**
      * @ManagerRoute("/instance/{instance}/attach/{layerset}")
      * @param Request $request
      * @param Layerset $layerset
@@ -681,7 +499,7 @@ class ApplicationController extends WelcomeController
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
         $em = $this->getEntityManager();
-        $application = $this->getDbApplicationRepository()->findOneBy(array(
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {
@@ -751,6 +569,8 @@ class ApplicationController extends WelcomeController
     public function updateregionpropertiesAction(Request $request, Application $application, $regionName)
     {
         $this->denyAccessUnlessGranted('EDIT', $application);
+        // Provided by AbstractController
+        /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
         /** @var FormFactoryInterface $factory */
         $factory = $this->get('form.factory');
         $formBuilder = $factory->createNamedBuilder('application', 'Symfony\Component\Form\Extension\Core\Type\FormType', $application);
@@ -822,7 +642,7 @@ class ApplicationController extends WelcomeController
      */
     protected function createRegionProperties(Application $application)
     {
-        /** @var Template::class $templateClass */
+        /** @var string|Template $templateClass */
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
 
@@ -849,42 +669,7 @@ class ApplicationController extends WelcomeController
      */
     protected function translate($key)
     {
-        return $this->getTranslator()->trans($key);
-    }
-
-    /**
-     * @return ImportHandler
-     */
-    protected function getApplicationImporter()
-    {
-        /** @var ImportHandler $service */
-        $service = $this->get('mapbender.application_importer.service');
-        return $service;
-    }
-
-    /**
-     * @return ExportHandler
-     */
-    protected function getApplicationExporter()
-    {
-        /** @var ExportHandler $service */
-        $service = $this->get('mapbender.application_exporter.service');
-        return $service;
-    }
-
-    /**
-     * @return Application[]
-     */
-    protected function getExportableApplications()
-    {
-        $em = $this->getEntityManager();
-        $allowed = array();
-        foreach ($em->getRepository('Mapbender\CoreBundle\Entity\Application')->findAll() as $application) {
-            if ($this->isGranted('EDIT', $application)) {
-                $allowed[] = $application;
-            }
-        }
-        return $allowed;
+        return $this->translator->trans($key);
     }
 
     /**
@@ -892,8 +677,26 @@ class ApplicationController extends WelcomeController
      */
     protected function getUserToken()
     {
+        // Provided by AbstractController
+        /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
         /** @var TokenStorageInterface $tokenStorage */
         $tokenStorage = $this->get('security.token_storage');
         return $tokenStorage->getToken();
+    }
+
+    /**
+     * @param string $slug
+     * @return Application
+     */
+    protected function requireDbApplication($slug)
+    {
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        if (!$application) {
+            throw $this->createNotFoundException("No such application");
+        }
+        return $application;
     }
 }

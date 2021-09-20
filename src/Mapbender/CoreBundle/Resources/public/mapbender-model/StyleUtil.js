@@ -76,7 +76,7 @@ window.Mapbender.StyleUtil = (function() {
         },
         _fixAssetPath: function(url) {
             var urlOut = url.replace(stripAssetUrlRxp, '$2');
-            if (urlOut === url) {
+            if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
                 console.warn("Asset path could not be resolved to local bundles reference", url);
                 return false;
             } else {

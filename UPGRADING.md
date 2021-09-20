@@ -1,3 +1,32 @@
+## v3.2.6
+### Element API changes
+In preparation for making Mapbender compatible with Symfony 4,
+a [new Symfony-4-compatible Element PHP API](https://github.com/mapbender/mapbender/pull/1367)
+has been introduced. Many elements have already been ported to this new
+API. PHP child classes of the updated Elements will most likely break
+and need some adjustments. Please see the linked PR for guidance.
+
+### Doctrine fixtures for production data
+Fixture-based production database setup has been deprecated and
+will break on Mapbender 3.3 / Symfony 4.
+Quote: ["Fixtures are used to load a “fake” set of data into a database that can then be used for testing or to help give you some interesting data while you’re developing your application"](https://symfony.com/doc/current/bundles/DoctrineFixturesBundle/index.html).
+
+#### Initial Application import
+Avoid using `app/console doctrine:fixtures:load --fixtures=mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Application/`
+in scripts. Replace with `app/console mapbender:application:import app/config/applications`.
+
+#### Seeding mb_core_srs table
+Avoid using `app/console doctrine:fixtures:load --fixtures=mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/`
+in scripts. Replace with `app/console mapbender:database:init`.
+
+### Global application config modification
+It's not longer legal for Elements to perfrom unconstrained
+rewriting of the full application configuration (`updateAppConfig` PHP method).
+
+Use client-side script to inspect other elements. Handle
+client-side script events to make final adjustments during
+initialization.
+
 ## 3.0.8.5-RC1
 ### Relative urls in CSS depending on entry script
 Relative URLs in generated application css now always use the correct base path, independent of the presence of the

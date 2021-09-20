@@ -3,8 +3,8 @@
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
-use Mapbender\CoreBundle\Component\Element as Element;
-use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
@@ -12,10 +12,10 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -25,10 +25,8 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  */
 class ConfigService
 {
-    /** @var ContainerInterface */
-    protected $container;
-    /** @var ApplicationService */
-    protected $basePresenter;
+    /** @var ElementFilter */
+    protected $elementFilter;
     /** @var ApplicationDataService */
     protected $cacheService;
     /** @var TypeDirectoryService */
@@ -36,13 +34,33 @@ class ConfigService
     /** @var UrlProcessor */
     protected $urlProcessor;
 
-    public function __construct(ContainerInterface $container)
+    /** @var UrlGeneratorInterface */
+    protected $router;
+    /** @var LoggerInterface */
+    protected $logger;
+    /** @var bool */
+    protected $debug;
+    /** @var string */
+    protected $assetBaseUrl;
+
+
+    public function __construct(ElementFilter $elementFilter,
+                                ApplicationDataService $cacheService,
+                                TypeDirectoryService $sourceTypeDirectory,
+                                UrlProcessor $urlProcessor,
+                                UrlGeneratorInterface $router,
+                                LoggerInterface $logger,
+                                PackageInterface $baseUrlPackage,
+                                $debug)
     {
-        $this->container = $container;
-        $this->basePresenter = $container->get('mapbender.presenter.application.service');
-        $this->cacheService = $container->get('mapbender.presenter.application.cache');
-        $this->sourceTypeDirectory = $container->get('mapbender.source.typedirectory.service');
-        $this->urlProcessor = $container->get('mapbender.source.url_processor.service');
+        $this->elementFilter = $elementFilter;
+        $this->cacheService = $cacheService;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->urlProcessor = $urlProcessor;
+        $this->router = $router;
+        $this->logger = $logger;
+        $this->assetBaseUrl = $baseUrlPackage->getUrl(null);
+        $this->debug = $debug;
     }
 
     /**
@@ -51,24 +69,14 @@ class ConfigService
      */
     public function getConfiguration(Application $entity)
     {
-        $activeElements = $this->basePresenter->getActiveElements($entity);
+        /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
+        $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
-
-        // Let (active, visible) Elements update the Application config
-        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
-        // visible state of the frontend.
-        $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($activeElements as $elementComponent) {
-            if ($elementComponent instanceof BoundConfigMutator) {
-                $configAfterElements = $elementComponent->updateAppConfig($configBeforeElement);
-                $configBeforeElement = $configAfterElements;
-            }
-        }
-        return $configAfterElements;
+        return $configuration;
     }
 
     public function getBaseConfiguration(Application $entity)
@@ -78,7 +86,7 @@ class ConfigService
             'urls'          => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
-            'debug' => ($this->container->getParameter('kernel.debug')),
+            'debug' => $this->debug,
             'mapEngineCode' => $entity->getMapEngineCode(),
             'persistentView' => $entity->getPersistentView(),
         );
@@ -93,14 +101,13 @@ class ConfigService
     public function getUrls(Application $entity)
     {
         $config        = array('slug' => $entity->getSlug());
-        $router        = $this->getRouter();
 
         $urls = array(
-            'base' => $router->getContext()->getBaseUrl(),
-            'asset'    => $this->container->get('assets.packages')->getUrl(null),
-            'element'  => $router->generate('mapbender_core_application_element', $config),
-            'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
-            'config'   => $router->generate('mapbender_core_application_configuration', $config),
+            'base' => $this->router->getContext()->getBaseUrl(),
+            'asset' => $this->assetBaseUrl,
+            'element' => $this->router->generate('mapbender_core_application_element', $config),
+            'proxy' => $this->urlProcessor->getProxyBaseUrl(),
+            'config' => $this->router->generate('mapbender_core_application_configuration', $config),
         );
 
         return $urls;
@@ -154,16 +161,27 @@ class ConfigService
     }
 
     /**
-     * @param Element[] $elements Element Components
+     * @param Entity\Element[] $elements
      * @return mixed[]
      */
-    public static function getElementConfiguration($elements)
+    protected function getElementConfiguration($elements)
     {
         $elementConfig = array();
         foreach ($elements as $element) {
-            $elementConfig[$element->getId()] = array(
-                'init'          => $element->getWidgetName(),
-                'configuration' => $element->getPublicConfiguration());
+            $handler = $this->elementFilter->getInventory()->getFrontendHandler($element);
+            if ($handler) {
+                try {
+                    $values = array(
+                        'init' => $handler->getWidgetName($element),
+                        'configuration' => $handler->getClientConfiguration($element),
+                    );
+                } catch (ElementErrorException $e) {
+                    // for frontend presentation, incomplete / invalid elements are silently suppressed
+                    // => do nothing
+                    continue;
+                }
+                $elementConfig[$element->getId()] = $values;
+            }
         }
         return $elementConfig;
     }
@@ -178,16 +196,6 @@ class ConfigService
     {
         // delegate to directory
         return $this->sourceTypeDirectory->getSourceService($sourceInstance);
-    }
-
-    /**
-     * @return UrlGeneratorInterface
-     */
-    protected function getRouter()
-    {
-        /** @var UrlGeneratorInterface $router */
-        $router = $this->container->get('router');
-        return $router;
     }
 
     /**
@@ -209,22 +217,10 @@ class ConfigService
     }
 
     /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-        return $logger;
-    }
-
-    /**
      * @return ApplicationDataService
      */
     public function getCacheService()
     {
-        /** @var ApplicationDataService $cacheService */
-        $cacheService = $this->container->get('mapbender.presenter.application.cache');
-        return $cacheService;
+        return $this->cacheService;
     }
 }

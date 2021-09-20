@@ -19,12 +19,11 @@
          */
         _create: function() {
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
-            this.htmlContainer = $('> .legends', this.element);
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbLegend", self.options.target);
+                Mapbender.checkTarget("mbLegend");
             });
         },
 
@@ -68,7 +67,7 @@
         onMapLayerChanges: function(e) {
             var html = this.render();
 
-            this.htmlContainer.html(html);
+            this.element.html(html);
         },
 
         /**
@@ -173,9 +172,7 @@
          * @param layer
          */
         createLegendContainer: function(layer) {
-            return $('<ul/>')
-                .addClass('ebene1')
-            ;
+            return $(document.createElement('ul')).addClass('list-unstyled');
         },
         _createSourceHtml: function(sourceData) {
             var visibleChildLayers = sourceData.children;
@@ -275,7 +272,7 @@
         getPopupOptions: function() {
             var self = this;
             return {
-                title: this.element.attr('title'),
+                title: this.element.attr('data-title'),
                 draggable: true,
                 resizable: true,
                 modal: false,

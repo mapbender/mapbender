@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ScreentypeType extends AbstractType
@@ -26,11 +25,5 @@ class ScreentypeType extends AbstractType
             'required' => false,
             'placeholder' => false,
         ));
-
-        if (Kernel::MAJOR_VERSION < 3) {
-            $resolver->setDefaults(array(
-                'choices_as_values' => true,
-            ));
-        }
     }
 }

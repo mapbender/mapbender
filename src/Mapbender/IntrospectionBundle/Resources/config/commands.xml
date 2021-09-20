@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Mapbender\IntrospectionBundle\Command\ElementClassesCommand"
+                 class="Mapbender\IntrospectionBundle\Command\ElementClassesCommand">
+            <tag name="console.command" command="mapbender:inspect:element:classes" />
+            <argument type="service" id="kernel" />
+            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.manager.element_form_factory.service" />
+        </service>
+        <service id="Mapbender\IntrospectionBundle\Command\SourcesCommand"
+                 class="Mapbender\IntrospectionBundle\Command\SourcesCommand">
+            <tag name="console.command" command="mapbender:inspect:source:usage" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="Mapbender\IntrospectionBundle\Command\TranslationGetCommand"
+                 class="Mapbender\IntrospectionBundle\Command\TranslationGetCommand">
+            <tag name="console.command" command="translation:get" />
+            <argument type="service" id="translator" />
+        </service>
+        <service id="Mapbender\IntrospectionBundle\Command\TranslationInspectCommand"
+                 class="Mapbender\IntrospectionBundle\Command\TranslationInspectCommand">
+            <tag name="console.command" command="mapbender:inspect:translations" />
+            <argument type="service" id="translator" />
+        </service>
+        <service id="Mapbender\IntrospectionBundle\Command\InspectTranslationTwigsCommand"
+                 class="Mapbender\IntrospectionBundle\Command\InspectTranslationTwigsCommand">
+            <tag name="console.command" command="mapbender:inspect:translation:twigs" />
+            <argument type="service" id="twig.loader" />
+            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.element_entity_factory" />
+            <argument>%kernel.bundles%</argument>
+        </service>
+    </services>
+</container>

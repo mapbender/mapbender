@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="mapbender.wms.command.add_source" class="Mapbender\WmsBundle\Command\SourceAddCommand">
+            <tag name="console.command" command="mapbender:wms:add" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+        <service id="mapbender.wms.command.show_source" class="Mapbender\WmsBundle\Command\SourceShowCommand">
+            <tag name="console.command" command="mapbender:wms:show" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+        <service id="mapbender.wms.command.parse_url" class="Mapbender\WmsBundle\Command\UrlParseCommand">
+            <tag name="console.command" command="mapbender:wms:parse:url" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+        <service id="mapbender.wms.command.reload_url" class="Mapbender\WmsBundle\Command\UrlReloadCommand">
+            <tag name="console.command" command="mapbender:wms:reload:url" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+        <service id="mapbender.wms.command.reload_file" class="Mapbender\WmsBundle\Command\FileReloadCommand">
+            <tag name="console.command" command="mapbender:wms:reload:file" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+        <service id="mapbender.wms.command.validate_url" class="Mapbender\WmsBundle\Command\UrlValidateCommand">
+            <tag name="console.command" command="mapbender:wms:validate:url" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+        </service>
+    </services>
+</container>

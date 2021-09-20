@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\DataTransformerInterface;
 

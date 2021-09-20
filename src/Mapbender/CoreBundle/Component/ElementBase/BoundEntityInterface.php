@@ -7,6 +7,10 @@ namespace Mapbender\CoreBundle\Component\ElementBase;
  * Interface for Element components that are bound to an Element entity in their constructors.
  * Currently, this is every Mapbender Element.
  * Long-term, we want to be able to support unbound, service-style handling of elements.
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @todo 3.3: remove this interface
  */
 interface BoundEntityInterface
 {

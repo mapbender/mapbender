@@ -2,14 +2,13 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 
-/**
- * Class GpsPosition
- * @package Mapbender\CoreBundle\Element
- */
-class GpsPosition extends BaseButton implements ConfigMigrationInterface
+class GpsPosition extends ButtonLike implements ConfigMigrationInterface
 {
 
     /**
@@ -28,24 +27,21 @@ class GpsPosition extends BaseButton implements ConfigMigrationInterface
         return "mb.core.gpsposition.class.description";
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js'    => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.gpsPosition.js',
-                // Uncomment to enable Geolocation API mock
-                // '@MapbenderCoreBundle/Resources/public/GeolocationMock.js',
-            ),
-            'css'   => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss',
-            ),
-            'trans' => array(
-                'mb.core.gpsposition.*',
-            ),
+        $required = parent::getRequiredAssets($element) + array(
+            'js' => array(),
+            'trans' => array(),
         );
+        $required['js'] = array_merge($required['js'], array(
+            '@MapbenderCoreBundle/Resources/public/mapbender.element.gpsPosition.js',
+            // Uncomment to enable Geolocation API mock
+            // '@MapbenderCoreBundle/Resources/public/GeolocationMock.js',
+        ));
+        $required['trans'] = array_merge($required['trans'], array(
+            'mb.core.gpsposition.*',
+        ));
+        return $required;
     }
 
     /**
@@ -75,28 +71,18 @@ class GpsPosition extends BaseButton implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbGpsPosition';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:gpsposition.html.twig';
-    }
+        $view = new TemplateView('MapbenderCoreBundle:Element:gpsposition.html.twig');
+        $this->initializeView($view, $element);
+        $view->attributes['class'] = 'mb-button mb-gpsButton';
+        return $view;
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $configuration = $this->getConfiguration();
-        return $this->container->get('templating')
-            ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    'configuration' => $configuration,
-                    'title' => $this->getTitle(),
-        ));
     }
 
     /**

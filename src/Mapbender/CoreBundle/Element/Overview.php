@@ -1,8 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ImportAwareInterface;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -10,7 +13,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class Overview extends Element implements FloatingElement
+class Overview extends AbstractElementService implements FloatingElement, ImportAwareInterface
 {
 
     /**
@@ -35,9 +38,7 @@ class Overview extends Element implements FloatingElement
     public static function getDefaultConfiguration()
     {
         return array(
-            'title' => 'Overview',
             'layerset' => null,
-            'target' => null,
             'width' => 200,
             'height' => 100,
             'anchor' => 'right-top',
@@ -49,17 +50,7 @@ class Overview extends Element implements FloatingElement
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $configuration = parent::getConfiguration();
-        $configuration['target'] = strval($configuration['target']);
-        return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbOverview';
     }
@@ -75,7 +66,7 @@ class Overview extends Element implements FloatingElement
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -90,22 +81,15 @@ class Overview extends Element implements FloatingElement
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:overview.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')->render(
-            $this->getFrontendTemplatePath(), array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:overview.html.twig');
+        $view->attributes['class'] = 'mb-element-overview';
+        $config = $element->getConfiguration();
+        if (empty($config['maximized'])) {
+            $view->attributes['class'] .= ' closed';
+        }
+        return $view;
     }
 
     /**
@@ -116,18 +100,16 @@ class Overview extends Element implements FloatingElement
         return 'MapbenderManagerBundle:Element:overview.html.twig';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper)
     {
+        $configuration = $element->getConfiguration();
         if (isset($configuration['layerset'])) {
             $configuration['layerset'] = $mapper->getIdentFromMapper(
                 'Mapbender\CoreBundle\Entity\Layerset',
                 $configuration['layerset'],
                 true
             );
+            $element->setConfiguration($configuration);
         }
-        return $configuration;
     }
 }

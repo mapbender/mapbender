@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="mapbender.renderer.element_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer">
+            <argument type="service" id="templating" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument>%mapbender.responsive.elements%</argument>
+            <argument>%kernel.debug%</argument>
+        </service>
+        <service id="mapbender.renderer.application_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer">
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="mapbender.renderer.element_markup" />
+            <argument type="service" id="templating" />
+            <argument>%mapbender.responsive.containers%</argument>
+        </service>
+        <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">
+            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="security.authorization_checker" />
+        </service>
+        <service id="mapbender.element_entity_factory" class="Mapbender\FrameworkBundle\Component\ElementEntityFactory">
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="translator" />
+        </service>
+        <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
+            <argument type="service" id="mapbender.element_shim_factory.container" />
+        </service>
+        <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
+        <service id="mapbender.element_shim_factory.container" alias="service_container" />
+    </services>
+</container>

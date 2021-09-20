@@ -4,6 +4,7 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Base;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSources;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
@@ -13,23 +14,29 @@ use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItemList;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\JsonFormatting;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\YamlFormatting;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
 
-class SourcesCommand extends ContainerAwareCommand
+class SourcesCommand extends Command
 {
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
     protected $buckets = array();
     protected $bucketBy = 'application';
 
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+        parent::__construct(null);
+    }
+
     protected function configure()
     {
-        $this->setName('mapbender:inspect:source:usage');
         $this->addOption('by-app', null, InputOption::VALUE_NONE, 'Group by application (default)');
         $this->addOption('by-source', null, InputOption::VALUE_NONE, 'Group by source');
         $this->addOption('unused-only', null, InputOption::VALUE_NONE, 'Display only unused sources');
@@ -154,7 +161,7 @@ class SourcesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $collector = new Collector($this->getContainer());
+        $collector = new Collector($this->managerRegistry);
         if ($this->bucketBy == 'application') {
             $result = $this->buildAppTree($collector);
 
@@ -168,7 +175,7 @@ class SourcesCommand extends ContainerAwareCommand
         $outputFormat = $input->getOption('format');
         if ($outputFormat == 'table') {
             if (!$input->getOption('unused-only')) {
-                $this->renderTable($output, $result['tableHeaders'], $mainList->toGrid());
+                $this->renderTable($input, $output, $result['tableHeaders'], $mainList->toGrid());
             }
             if (!$input->getOption('no-unused')) {
                 $this->displayUnusedSources($output, $result['unusedSources']);
@@ -253,49 +260,14 @@ class SourcesCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Source[] $sources
-     * @return string[][]
-     */
-    protected function sourcesToArray($sources)
-    {
-        $rv = array();
-        foreach ($sources as $source) {
-            $rv[] = array(
-                'id' => strval($source->getId()),
-                'name' => strval($source->getTitle()),
-            );
-        }
-        return $rv;
-    }
-
-    /**
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @param string[] $headers
      * @param string[][] $rows
      */
-    protected function renderTable(OutputInterface $output, $headers, $rows)
+    protected function renderTable(InputInterface $input, OutputInterface $output, $headers, $rows)
     {
-        if (class_exists('Symfony\Component\Console\Helper\TableHelper')) {
-            $th = $this->getTableHelper();
-            $th->setHeaders($headers);
-            $th->setRows($rows);
-            $th->render($output);
-        } else {
-            $symfonyVersion = Kernel::VERSION;
-            throw new \RuntimeException("Table rendering support gone in Symfony $symfonyVersion");
-        }
-    }
-
-    /**
-     * @return TableHelper
-     * @todo: this will be gone in Symfony 3.0
-     */
-    protected function getTableHelper()
-    {
-        /** @var TableHelper $table */
-        $table = $this->getHelper('table');
-        $table->setCellRowFormat('%s');
-        $table->setCellHeaderFormat('%s');
-        return $table;
+        $symfonyStyle = new SymfonyStyle($input, $output);
+        $symfonyStyle->table($headers, $rows);
     }
 }

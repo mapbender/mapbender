@@ -25,14 +25,17 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.element.hide();
+            var queryParams = Mapbender.Util.getUrlQueryParams(window.location.href);
             Mapbender.declarative = Mapbender.declarative || {};
             Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
-            if (this.options.wms_url) {
-                this.loadWms(this.options.wms_url);
+            if (queryParams.wms_url) {
+                // Fold top-level "VERSION=" and "SERVICE=" onto url (case insensitive)
+                var wmsUrl = this._fixWmsUrl(queryParams.wms_url, queryParams);
+                this.loadWms(wmsUrl);
             }
 
-            if (this.options.wms_id && this.options.wms_id !== '') {
-                this._getInstances(this.options.wms_id);
+            if (queryParams.wms_id) {
+                this._getInstances(queryParams.wms_id);
             }
             if (this.options.autoOpen) {
                 this.open();
@@ -47,7 +50,7 @@
             if(!this.popup || !this.popup.$element){
                 this.element.show();
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
+                    title: self.element.attr('data-title'),
                     draggable: true,
                     modal: false,
                     closeOnESC: false,
@@ -259,6 +262,21 @@
             if (!activateAll && matchedNames.length !== names.length) {
                 console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
             }
+        },
+        _fixWmsUrl: function(baseUrl, defaultParams) {
+            var extraParams = {};
+            var extraParamNames = ['VERSION', 'SERVICE', 'REQUEST'];
+            var existingParams = Mapbender.Util.getUrlQueryParams(baseUrl);
+            var existingParamNames = Object.keys(existingParams).map(function(name) {
+                return name.toUpperCase();
+            });
+            Object.keys(defaultParams).forEach(function(prop) {
+                var ucName = prop.toUpperCase();
+                if (-1 !== extraParamNames.indexOf(ucName) && -1 === existingParamNames.indexOf(ucName)) {
+                    extraParams[ucName] = defaultParams[prop];
+                }
+            });
+            return Mapbender.Util.replaceUrlParams(baseUrl, extraParams, true);
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));

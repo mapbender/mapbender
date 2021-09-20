@@ -9,37 +9,49 @@
      {%- endif -%}
 >
   <div class="sideContent">
-    {% if region_props.name == 'tabs' %}
+  {%- if region_props.name in ['tabs', 'accordion'] -%}
+      {%- set _visible = [] -%}
+      {%- for element in elements -%}
+        {%- set element_content = element_markup(element) -%}
+        {%- if element_content -%}
+            {%- set _visible = _visible | merge([{element: element, content: element_content}]) -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- if region_props.name == 'tabs' -%}
       <div class="tabContainerAlt">
         <ul class="tabs">
-          {% for element in elements %}
+          {%- for element_info in _visible -%}
+            {%- set element = element_info.element -%}
             <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">{{ element.title | trans }}</li>
-          {% endfor %}
+          {%- endfor -%}
         </ul>
-          {% for element in elements %}
-            <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
-                {{ element_markup(element) | raw }}
-            </div>
-          {% endfor %}
+        {%- for element_info in _visible -%}
+          {%- set element = element_info.element -%}
+          <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
+            {{ element_info.content | raw }}
+        </div>
+        {%- endfor -%}
       </div>
     {% elseif region_props.name == 'accordion' %}
       <div class="accordionContainer">
-        {% for element in elements %}
+        {%- for element_info in _visible -%}
+          {%- set element = element_info.element -%}
           <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}"><div>{{ element.title | trans }}</div></div>
           <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
               <div class="accordion-cell">
                   <div class="accordion-wrapper">
-                      {{ element_markup(element) | raw }}
+                      {{ element_info.content | raw }}
                   </div>
               </div>
           </div>
-          {% endfor %}
+        {%- endfor -%}
       </div>
-    {% else %}
+    {%- endif -%}
+  {%- else -%}
         <div class="auto-scroll-v">
             {{ region_content(application, region_name) | raw }}
         </div>
-    {% endif %}
+  {% endif %}
   </div>
   <span class="toggleSideBar collapse-toggle"><i class="fa fas fa-bars"></i></span>
 </div>

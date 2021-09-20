@@ -39,7 +39,6 @@ class SourceInstanceLayerSelectorType extends AbstractType
             'choices' => function (Options $options) use ($self) {
                 return $self->getOptionGroups($options['application']);
             },
-            'choices_as_values' => true,
             'placeholder' => null,
             'required' => true,
         ));

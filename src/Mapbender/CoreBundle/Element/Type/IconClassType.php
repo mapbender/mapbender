@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IconClassType extends AbstractType
@@ -54,10 +55,14 @@ class IconClassType extends AbstractType
         asort($icons);
 
         $resolver->setDefaults(array(
-            // @todo: provide placeholder translations
-            'placeholder' => 'Choose an option',
+            'placeholder' => function(Options $options) {
+                if ($options['required']) {
+                    return 'mb.form.choice_required';
+                } else {
+                    return 'mb.form.choice_optional';
+                }
+            },
             'choices' => array_flip($icons),
-            'choices_as_values' => true,
         ));
     }
 }

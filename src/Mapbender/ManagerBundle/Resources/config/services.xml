@@ -15,11 +15,9 @@
     </parameters>
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
+            <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="form.factory" />
-            <argument type="service" id="mapbender.element_inventory.service" />
-            <argument type="service" id="service_container" />
             <argument type="service" id="form.registry" />
-            <argument type="service" id="mapbender.twig.element_class" />
             <argument>%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.twig.manager.element" class="Mapbender\ManagerBundle\Extension\Twig\ElementExtension">
@@ -36,7 +34,7 @@
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
-        <service class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
+        <service id="mapbender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
             <tag name="form.type" />
             <argument>%kernel.bundles%</argument>
         </service>
@@ -44,15 +42,20 @@
             <tag name="form.type" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
-        <service class="Mapbender\ManagerBundle\Form\Type\ApplicationChoiceType">
+        <service id="mapbender.form_type.application_choice" class="Mapbender\ManagerBundle\Form\Type\ApplicationChoiceType">
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
+        <service id="mapbender.form_type.source_selection" class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
             <tag name="form.type" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+        </service>
+        <service id="mapbendeer.form_type.control_target" class="Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
     </services>
 </container>

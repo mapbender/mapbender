@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbRuler", {
         options: {
-            target: null,
             type: 'line',
             precision: 2
         },
@@ -19,10 +18,10 @@
             if(this.options.type !== 'line' && this.options.type !== 'area'){
                 throw Mapbender.trans("mb.core.ruler.create_error");
             }
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbRuler", self.options.target);
+                Mapbender.checkTarget('mbRuler');
             });
         },
         _createControl4: function() {
@@ -195,7 +194,7 @@
             this._reset();
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     modal: false,
                     draggable: true,
                     resizable: true,

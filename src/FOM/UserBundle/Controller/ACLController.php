@@ -5,25 +5,26 @@ namespace FOM\UserBundle\Controller;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
 use FOM\ManagerBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Translation\TranslatorInterface;
 
-class ACLController extends UserControllerBase
+class ACLController extends AbstractController
 {
-    /**
-     * @Route("/acl")
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $oid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
-        $this->denyAccessUnlessGranted('EDIT', $oid);
+    /** @var AclManager */
+    protected $aclManager;
+    /** @var AssignableSecurityIdentityFilter */
+    protected $sidFilter;
+    protected $aclClasses;
 
-        return $this->render('@FOMUser/ACL/index.html.twig', array(
-            'classes' => $this->getACLClasses(),
-        ));
+    public function __construct(AclManager $aclManager,
+                                AssignableSecurityIdentityFilter $sidFilter,
+                                array $aclClasses)
+    {
+        $this->aclManager = $aclManager;
+        $this->sidFilter = $sidFilter;
+        $this->aclClasses = $aclClasses;
     }
 
     /**
@@ -39,8 +40,8 @@ class ACLController extends UserControllerBase
         $this->denyAccessUnlessGranted('EDIT', $oid);
 
         $class = $request->query->get('class');
-        $acl_classes = $this->getACLClasses();
-        if(!array_key_exists($class, $acl_classes)) {
+
+        if(!array_key_exists($class, $this->aclClasses)) {
             throw $this->createNotFoundException('No manageable class given.');
         }
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
@@ -55,22 +56,20 @@ class ACLController extends UserControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var AclManager $aclManager */
-            $aclManager = $this->get('fom.acl.manager');
-            $aclManager->setClassACEs($class, $form->get('acl')->getData());
+            $this->aclManager->setClassACEs($class, $form->get('acl')->getData());
 
-            return $this->redirectToRoute('fom_user_acl_index');
+            return $this->redirectToRoute('fom_user_security_index', array(
+                '_fragment' => 'tabAcl',
+            ));
         } elseif ($form->isSubmitted()) {
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
 
-        $translator = $this->getTranslator();
+
         return $this->render('@FOMUser/ACL/edit.html.twig', array(
             'class' => $class,
             'form' => $form->createView(),
-            'title' => $translator->trans('fom.user.acl.edit.edit_class_acl', array(
-                '%name%' => $translator->trans($acl_classes[$class]),
-            ))
+            'acl_class' => $this->aclClasses[$class],
         ));
     }
 
@@ -80,25 +79,9 @@ class ACLController extends UserControllerBase
      */
     public function overviewAction()
     {
-        /** @var AssignableSecurityIdentityFilter $filter */
-        $filter = $this->get('fom.acl_assignment_filter');
-        $users = $filter->getAssignableUsers();
-        $groups = $filter->getAssignableGroups();
-
         return $this->render('@FOMUser/ACL/groups-and-users.html.twig', array(
-            'groups' => $groups,
-            'users' => $users,
+            'groups' => $this->sidFilter->getAssignableGroups(),
+            'users' => $this->sidFilter->getAssignableUsers(),
         ));
     }
-
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        /** @var TranslatorInterface $translator */
-        $translator = $this->get('translator');
-        return $translator;
-    }
-
 }

@@ -1,11 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Transport\HttpTransportInterface;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -13,8 +15,19 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @author Christian Wygoda
  */
-class SimpleSearch extends Element implements ConfigMigrationInterface
+class SimpleSearch extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
+    /** @var HttpTransportInterface */
+    protected $httpTransport;
+    protected $isDebug;
+
+    public function __construct(HttpTransportInterface $httpTransport,
+                                $isDebug = false)
+    {
+        $this->httpTransport = $httpTransport;
+        $this->isDebug = $isDebug;
+    }
+
     public static function getClassTitle()
     {
         return 'mb.core.simplesearch.class.title';
@@ -35,7 +48,7 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         return 'MapbenderCoreBundle:ElementAdmin:simple_search.html.twig';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbSimpleSearch';
     }
@@ -54,7 +67,6 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             'geom_attribute'  => 'geom',
             'geom_format'     => 'WKT',
             'delay'           => 300,
-            // @todo: add form field
             'sourceSrs' => 'EPSG:4326',
             'query_ws_replace' => null,
             'result_buffer' => 300,
@@ -65,15 +77,33 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:simple_search.html.twig';
+        $view = new TemplateView('MapbenderCoreBundle:Element:simple_search.html.twig');
+        $view->attributes['class'] = 'mb-element-simplesearch';
+        $config = $element->getConfiguration();
+        if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
+            $view->attributes['title'] = $element->getTitle();
+        }
+        $view->variables['delay'] = $config['delay'];
+        return $view;
+    }
+
+    public function getClientConfiguration(Element $element)
+    {
+        $config = parent::getClientConfiguration($element);
+        // Hide internal query url (may include basic auth credentials)
+        unset($config['url']);
+        if (empty($config['sourceSrs'])) {
+            $config['sourceSrs'] = $this->getDefaultConfiguration()['sourceSrs'];
+        }
+        return $config;
     }
 
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js'    => array(
@@ -87,10 +117,13 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
             ),
         );
     }
-
-    public function handleHttpRequest(Request $request)
+    public function getHttpHandler(Element $element)
     {
-        $configuration = $this->getConfiguration();
+        return $this;
+    }
+    public function handleRequest(Element $element, Request $request)
+    {
+        $configuration = $element->getConfiguration();
         $q             = $request->get('term', '');
         $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
 
@@ -106,9 +139,7 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         $url = $configuration['query_url'];
         $url .= (false === strpos($url, '?') ? '?' : '&');
         $url .= $configuration['query_key'] . '=' . sprintf($qf, $q);
-        /** @var HttpTransportInterface $transport */
-        $transport = $this->container->get('mapbender.http_transport.service');
-        $response = $transport->getUrl($url);
+        $response = $this->httpTransport->getUrl($url);
 
         // prepare a valid json null encoding before testing for errors (encode clears json_last_error_msg!)
         $validJsonNull = json_encode('null');
@@ -127,14 +158,14 @@ class SimpleSearch extends Element implements ConfigMigrationInterface
         }
 
         // In dev environment, add query URL as response header for easier debugging
-        if ($this->container->getParameter('kernel.debug')) {
+        if ($this->isDebug) {
             $response->headers->set('X-Mapbender-SimpleSearch-URL', $url);
         }
 
         return $response;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration();
         if (!empty($config['result']) && \is_array($config['result'])) {

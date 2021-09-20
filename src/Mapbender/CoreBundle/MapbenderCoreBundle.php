@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobal
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -64,34 +65,6 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getElements()
     {
         return array(
-            'Mapbender\CoreBundle\Element\AboutDialog',
-            'Mapbender\CoreBundle\Element\ActivityIndicator',
-            'Mapbender\CoreBundle\Element\ApplicationSwitcher',
-            'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
-            'Mapbender\CoreBundle\Element\ControlButton',
-            'Mapbender\CoreBundle\Element\CoordinatesDisplay',
-            'Mapbender\CoreBundle\Element\Copyright',
-            'Mapbender\CoreBundle\Element\FeatureInfo',
-            'Mapbender\CoreBundle\Element\GpsPosition',
-            'Mapbender\CoreBundle\Element\HTMLElement',
-            'Mapbender\CoreBundle\Element\Layertree',
-            'Mapbender\CoreBundle\Element\Legend',
-            'Mapbender\CoreBundle\Element\LinkButton',
-            'Mapbender\CoreBundle\Element\ViewManager',
-            'Mapbender\CoreBundle\Element\Map',
-            'Mapbender\CoreBundle\Element\Overview',
-            'Mapbender\CoreBundle\Element\POI',
-            'Mapbender\CoreBundle\Element\ResetView',
-            'Mapbender\CoreBundle\Element\Ruler',
-            'Mapbender\CoreBundle\Element\ScaleBar',
-            'Mapbender\CoreBundle\Element\ScaleDisplay',
-            'Mapbender\CoreBundle\Element\ScaleSelector',
-            'Mapbender\CoreBundle\Element\SearchRouter',
-            'Mapbender\CoreBundle\Element\ShareUrl',
-            'Mapbender\CoreBundle\Element\SimpleSearch',
-            'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\ZoomBar',
-            'Mapbender\CoreBundle\Element\Sketch',
         );
     }
 
@@ -114,9 +87,12 @@ class MapbenderCoreBundle extends MapbenderBundle
         foreach ($this->getConfigs() as $configName) {
             if (preg_match('#\.xml$#', $configName)) {
                 $xmlLoader->load($configName);
+                $resourcePath = $xmlLoader->getLocator()->locate($configName);
             } else {
                 $yamlLoader->load($configName);
+                $resourcePath = $yamlLoader->getLocator()->locate($configName);
             }
+            $container->addResource(new FileResource($resourcePath));
         }
     }
 
@@ -128,9 +104,12 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'security.xml',
             'services.xml',
+            'controllers.xml',
+            'commands.xml',
             'mapbender.yml',
             'constraints.yml',
             'formTypes.yml',
+            'elements.xml',
         );
     }
 

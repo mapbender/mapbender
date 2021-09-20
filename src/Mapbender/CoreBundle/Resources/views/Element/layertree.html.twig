@@ -1,11 +1,9 @@
-<div id="{{ id }}" class="mb-element mb-element-layertree hidden" data-title="{{ title |trans }}">
   <ul class="layers" >
       <li class="-fn-theme-template themeContainer hidden toggleable">
         <div class="leaveContainer">
           <span class="-fn-toggle-children iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
-          <div class="checkWrapper iconCheckbox sourceVisibilityWrapper" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans  }}">
-            <input class="layer-selected checkbox" type="checkbox" name="sourceVisibility" checked="checked">
-          </div>
+          <span class="-fn-toggle-theme sourceVisibilityWrapper" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans  }}"
+                data-icon-on="iconCheckboxActive" data-icon-off="iconCheckbox"></span>
           <span class="layer-title"></span>
         </div>
         <ul class="layers"></ul>
@@ -13,12 +11,10 @@
       <li class="-fn-template hidden leave showLeaves">
         <div class="leaveContainer">
           <span class="-fn-toggle-children iconFolder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
-          <div class="checkWrapper iconCheckbox selectedWrapper" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans  }}">
-            <input class="layer-selected checkbox" type="checkbox" name="selected">
-          </div>
-          <div class="checkWrapper featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" data-icon-on="iconInfoActive" data-icon-off="iconInfo">
-            <input class="layer-info checkbox" type="checkbox" name="info"/>
-          </div>
+          <span class="selectedWrapper -fn-toggle-layer" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}"
+                data-icon-on="iconCheckboxActive" data-icon-off="iconCheckbox"></span>
+          <span class="featureInfoWrapper -fn-toggle-info" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}"
+                data-icon-on="iconInfoActive" data-icon-off="iconInfo"></span>
           <span class="layer-title"></span>
           <span class="error-icon-wrapper"><i class="fa fas fa-exclamation-triangle"></i></span>
           <span class="loading-icon-wrapper"><i class="fa fas fa-spinner fa-spin"></i></span>
@@ -37,10 +33,7 @@
               {% endif %}
               {% if 'dimension' in configuration.menu %}
                   <div class="layer-control-dimensions layer-control-root-only">
-                      <div class="layer-dimension-checkbox checkWrapper conCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
-                        <input type="checkbox" />
-                      </div>
-                      <span class="layer-dimension-title" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+                      <div class="checkbox"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
                       <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
                         <div class="layer-dimension-handle layer-slider-handle"></div>
                       </div>
@@ -64,4 +57,3 @@
         <ul class="layers"></ul>
       </li>
   </ul>
-</div>

@@ -2,12 +2,10 @@
 
 namespace FOM\UserBundle\Controller;
 
+use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,23 +16,31 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Paul Schmidt
  */
 
-class RegistrationController extends UserControllerBase
+class RegistrationController extends AbstractEmailProcessController
 {
-    /**
-     * Check if self registration is allowed.
-     *
-     * setContainer is called after controller creation is used to deny access to controller if self registration has
-     * been disabled.
-     * @param ContainerInterface $container
-     * @throws AccessDeniedHttpException
-     */
-    public function setContainer(ContainerInterface $container = NULL)
+    /** @var UserHelperService */
+    protected $userHelper;
+
+    protected $enableRegistration;
+    protected $maxTokenAge;
+    protected $groupTitles;
+
+    public function __construct(\Swift_Mailer $mailer,
+                                UserHelperService $userHelper,
+                                $userEntityClass,
+                                $emailFromAddress,
+                                $emailFromName,
+                                $enableRegistration,
+                                $maxTokenAge,
+                                array $groupTitles,
+                                $isDebug)
     {
-        parent::setContainer($container);
-        if (!$this->getEmailFromAdress()) {
-            $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
-        }
-        if (!$this->container->getParameter('fom_user.selfregister')) {
+        parent::__construct($mailer, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
+        $this->userHelper = $userHelper;
+        $this->enableRegistration = $enableRegistration;
+        $this->groupTitles = $groupTitles;
+        $this->maxTokenAge = $maxTokenAge;
+        if (!$this->enableRegistration) {
             $this->debug404("Registration disabled by configuration");
         }
     }
@@ -59,7 +65,7 @@ class RegistrationController extends UserControllerBase
      */
     public function formAction(Request $request)
     {
-        $userClass = $this->getUserEntityClass();
+        $userClass = $this->userEntityClass;
         /** @var User $user */
         $user = new $userClass();
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserRegistrationType', $user);
@@ -67,14 +73,14 @@ class RegistrationController extends UserControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $helperService = $this->getUserHelper();
-            $helperService->setPassword($user, $user->getPassword());
+
+            $this->userHelper->setPassword($user, $user->getPassword());
 
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
 
             $groupRepository = $this->getDoctrine()->getRepository('FOMUserBundle:Group');
-            foreach($this->container->getParameter('fom_user.self_registration_groups') as $groupTitle) {
+            foreach ($this->groupTitles as $groupTitle) {
                 /** @var Group|null $group */
                 $group = $groupRepository->findOneBy(array(
                     'title' => $groupTitle,
@@ -82,14 +88,8 @@ class RegistrationController extends UserControllerBase
                 if ($group) {
                     $user->addGroup($group);
                 } else {
-                    $msg = sprintf('Self-registration group "%s" not found for user "%s"',
-                        $groupTitle,
-                        $user->getUsername());
-                    /** @var LoggerInterface $logger */
-                    $logger = $this->get('logger');
-                    $logger->error($msg);
+                    @trigger_error("WARNING: Self-registration group '{$groupTitle}' not found for user '{$user->getUsername()}'", E_USER_DEPRECATED);
                 }
-
             }
 
             $this->sendEmail($user);
@@ -98,7 +98,7 @@ class RegistrationController extends UserControllerBase
             $em->persist($user);
             $em->flush();
 
-            $helperService->giveOwnRights($user);
+            $this->userHelper->giveOwnRights($user);
 
             return $this->redirectToRoute('fom_user_registration_send');
         }
@@ -120,14 +120,11 @@ class RegistrationController extends UserControllerBase
         $user = $this->getUserFromRegistrationToken($request);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
-        /** @var User $user */
-        // Check token age
-        $max_registration_age = $this->container->getParameter("fom_user.max_registration_time");
-        if(!$this->checkTimeInterval($user->getRegistrationTime(), $max_registration_age)) {
+        if(!$this->checkTimeInterval($user->getRegistrationTime(), $this->maxTokenAge)) {
             return $this->tokenExpired($user);
         }
 
@@ -152,7 +149,7 @@ class RegistrationController extends UserControllerBase
         $user = $this->getUserFromRegistrationToken($request);
         if(!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
@@ -184,11 +181,7 @@ class RegistrationController extends UserControllerBase
      */
     protected function sendEmail($user)
     {
-       $fromName = $this->container->getParameter("fom_user.mail_from_name");
-       $fromEmail = $this->getEmailFromAdress();
-       $mailFrom = array($fromEmail => $fromName);
-       /** @var \Swift_Mailer $mailer */
-       $mailer = $this->get('mailer');
+       $mailFrom = array($this->emailFromAddress => $this->emailFromName);
        $text = $this->renderView('FOMUserBundle:Registration:email-body.text.twig', array("user" => $user));
        $html = $this->renderView('FOMUserBundle:Registration:email-body.html.twig', array("user" => $user));
        $message = new \Swift_Message();
@@ -200,7 +193,7 @@ class RegistrationController extends UserControllerBase
            ->addPart($html, 'text/html')
        ;
 
-       $mailer->send($message);
+       $this->mailer->send($message);
     }
 
     /**

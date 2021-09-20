@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: 'Il tuo layerset di livelli è stato creato.'
-      failure:
-        unique.title: 'Il titolo Layerset è già utilizzato.'
     remove:
       success: 'Il tuo Layerset è stato cancellato.'
       failure: 'Il tuo Layerset non può essere cancellato.'

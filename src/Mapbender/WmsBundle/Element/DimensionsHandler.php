@@ -2,16 +2,17 @@
 
 namespace Mapbender\WmsBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\WmsBundle\Component\DimensionInst;
 
 /**
  * Dimensions handler
  * @author Paul Schmidt
  */
-class DimensionsHandler extends Element implements ConfigMigrationInterface
+class DimensionsHandler extends AbstractElementService implements ConfigMigrationInterface
 {
 
     /**
@@ -46,7 +47,7 @@ class DimensionsHandler extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbDimensionsHandler';
     }
@@ -54,7 +55,7 @@ class DimensionsHandler extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -84,38 +85,42 @@ class DimensionsHandler extends Element implements ConfigMigrationInterface
         return 'MapbenderWmsBundle:ElementAdmin:dimensionshandler.html.twig';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
+        $dimensionsets = $this->formatDimensionLabels($element);
+        if (!$dimensionsets) {
+            return false;
+        }
 
-        if (in_array($this->entity->getRegion(), array('toolbar', 'footer'))) {
-            return "MapbenderWmsBundle:Element:dimensionshandler.toolbar{$suffix}";
+        if (preg_match('#(toolbar|footer)#', $element->getRegion())) {
+            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.toolbar.html.twig');
+            $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
         } else {
-            return "MapbenderWmsBundle:Element:dimensionshandler{$suffix}";
+            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.html.twig');
         }
+        $view->attributes['class'] = 'mb-element-dimensionshandler';
+        $view->variables['dimensionsets'] = $dimensionsets;
+        return $view;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
+    protected function formatDimensionLabels(Element $element)
     {
-        $configuration = parent::getConfiguration();
-        foreach ($configuration['dimensionsets'] as $setKey => $setConfig) {
-            $templateDimensionName = null;
-            foreach ($setConfig['group'] as $targetDimension) {
-                $templateDimensionName = \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
-                break;
+        $dimensionsets = array();
+        foreach ($element->getConfiguration()['dimensionsets'] as $setId => $setConfig) {
+            if (!empty($setConfig['title'])) {
+                $dimensionsets[$setId] = $setConfig['title'];
+            } else {
+                $dimensionsets[$setId] = null;  // Uh-oh!
+                foreach ($setConfig['group'] as $targetDimension) {
+                    $dimensionsets[$setId] = \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
+                    break;
+                }
             }
-            $configuration['dimensionsets'][$setKey]['dimension'] = array(
-                // dimension.name is used in template only
-                // @todo: update / santitize template variable access expectations
-                'name' => $templateDimensionName,
-            );
         }
-        return $configuration;
+        return $dimensionsets;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration();
         $dimensionsets = array();

@@ -57,14 +57,7 @@ class SidepaneSettingsType extends AbstractType implements EventSubscriberInterf
             ),
             'label' => 'mb.manager.sidepane.width',
         ));
-        if (Kernel::MAJOR_VERSION <= 3) {
-            $choiceDefaults = array(
-                'choices_as_values' => true,
-            );
-        } else {
-            $choiceDefaults = array();
-        }
-        $builder->add('align', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceDefaults + array(
+        $builder->add('align', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'required' => false,
             'choices' => array(
                 'mb.manager.sidepane.align.choice.left' => 'left',

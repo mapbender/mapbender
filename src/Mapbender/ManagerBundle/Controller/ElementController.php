@@ -4,9 +4,10 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
-use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Form\FormInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class ElementController
@@ -30,6 +32,30 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ElementController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
+    /** @var ElementInventoryService */
+    protected $inventory;
+    /** @var ElementEntityFactory */
+    protected $factory;
+    /** @var ElementFormFactory */
+    protected $elementFormFactory;
+    /** @var AclManager */
+    protected $aclManager;
+
+    public function __construct(TranslatorInterface $translator,
+                                ElementInventoryService $inventory,
+                                ElementEntityFactory $factory,
+                                ElementFormFactory $elementFormFactory,
+                                AclManager $aclManager)
+    {
+        $this->translator = $translator;
+        $this->inventory = $inventory;
+        $this->factory = $factory;
+        $this->elementFormFactory = $elementFormFactory;
+        $this->aclManager = $aclManager;
+    }
+
     /**
      * Show element class selection
      *
@@ -40,21 +66,11 @@ class ElementController extends ApplicationControllerBase
      */
     public function selectAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
-        $template    = $application->getTemplate();
+        $application = $this->requireDbApplication($slug);
         $region      = $request->get('region');
 
-        /** @var ElementInventoryService $inventoryService */
-        $inventoryService = $this->container->get('mapbender.element_inventory.service');
-        $classNames = $inventoryService->getActiveInventory();
+        $classNames = $this->inventory->getActiveInventory();
 
-        // Dirty hack for deprecated Responsive template
-        if (method_exists($template, 'getElementWhitelist')) {
-            $regionWhitelist = $template::getElementWhitelist();
-            $classNames = array_intersect(array_values($regionWhitelist[$region]), $classNames);
-        }
-
-        $trans      = $this->container->get('translator');
         $elements   = array();
 
         /** @var MinimalInterface|string $elementClassName */
@@ -62,11 +78,12 @@ class ElementController extends ApplicationControllerBase
             if (!$this->checkRegionCompatibility($elementClassName, $region)) {
                 continue;
             }
-            $title = $trans->trans($elementClassName::getClassTitle());
+            // Translate before sorting for properly localized order
+            $title = $this->translator->trans($elementClassName::getClassTitle());
             $elements[$title] = array(
                 'class' => $elementClassName,
                 'title' => $title,
-                'description' => $trans->trans($elementClassName::getClassDescription()),
+                'description' => $this->translator->trans($elementClassName::getClassDescription()),
             );
         }
 
@@ -100,13 +117,12 @@ class ElementController extends ApplicationControllerBase
      */
     public function newAction(Request $request, $slug)
     {
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $class = $request->query->get('class');
         $region = $request->query->get('region');
 
-        $element = $this->getFactory()->newEntity($class, $region, $application);
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
+        $element = $this->factory->newEntity($class, $region, $application);
+        $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -150,8 +166,7 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
-        $formFactory = $this->getFormFactory();
-        $formInfo = $formFactory->getConfigurationForm($element);
+        $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
@@ -194,9 +209,9 @@ class ElementController extends ApplicationControllerBase
         }
 
         $entityManager = $this->getEntityManager();
-        $entityManager->detach($element); // prevent element from being stored with default config/stored again
+        $entityManager->clear(Element::class); // prevent element from being stored with default config/stored again
 
-        $application = $this->requireApplication($slug);
+        $application = $this->requireDbApplication($slug);
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
             'label' => false,
         ));
@@ -212,7 +227,7 @@ class ElementController extends ApplicationControllerBase
             try {
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $this->getAclManager()->setObjectACEs($element, $form->get('acl')->getData());
+                $this->aclManager->setObjectACEs($element, $form->get('acl')->getData());
                 $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
@@ -381,32 +396,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @return ElementFactory
-     */
-    protected function getFactory()
-    {
-        /** @var ElementFactory $service */
-        $service = $this->get('mapbender.element_factory.service');
-        return $service;
-    }
-
-    /**
-     * @return ElementFormFactory
-     */
-    protected function getFormFactory()
-    {
-        /** @var ElementFormFactory $service */
-        $service = $this->get('mapbender.manager.element_form_factory.service');
-        return $service;
-    }
-
-    /**
      * @return EntityRepository
      */
     protected function getRepository()
     {
         /** @var EntityRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('MapbenderCoreBundle:Element');
+        $repository = $this->getDoctrine()->getRepository(Element::class);
         return $repository;
     }
 }

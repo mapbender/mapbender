@@ -220,7 +220,7 @@
                         widget._handleGeolocationError(gle);
                     }, { enableHighAccuracy: true, maximumAge: 0 });
 
-                    $(widget.element).parent().addClass("toolBarItemActive");
+                    $(widget.element).addClass("toolBarItemActive");
                 } else {
                     Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
                 }
@@ -235,7 +235,7 @@
                 this.geolocationProvider_.clearWatch(this.observer);
                 this.observer = null;
             }
-            $(this.element).parent().removeClass("toolBarItemActive");
+            $(this.element).removeClass("toolBarItemActive");
             this.layer.hide();
         },
 

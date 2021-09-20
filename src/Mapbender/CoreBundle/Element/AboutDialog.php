@@ -1,13 +1,23 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\Component\Element\ButtonLike;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-/**
- *
- */
-class AboutDialog extends BaseButton
+class AboutDialog extends ButtonLike implements ElementHttpHandlerInterface
 {
+    /** @var EngineInterface */
+    protected $templateEngine;
+
+    public function __construct(EngineInterface $templateEngine)
+    {
+        $this->templateEngine = $templateEngine;
+    }
 
     /**
      * @inheritdoc
@@ -28,16 +38,15 @@ class AboutDialog extends BaseButton
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/about_dialog.scss',
-            ),
+        $required = parent::getRequiredAssets($element) + array(
+            'js' => array(),
         );
+        $required['js'] = array_merge($required['js'], array(
+            '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
+        ));
+        return $required;
     }
 
     /**
@@ -63,42 +72,32 @@ class AboutDialog extends BaseButton
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbAboutDialog';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:about_dialog.html.twig';
+        $view = new TemplateView('MapbenderCoreBundle:Element:about_dialog.html.twig');
+        $this->initializeView($view, $element);
+        $view->attributes['class'] = 'mb-button mb-aboutButton';
+        return $view;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getHttpHandler(Element $element)
     {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(),
-                    array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        return $this; // :)
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
+    public function handleRequest(Element $element, Request $request)
     {
-        $response = new Response();
+        $action = $request->attributes->get('action');
         switch ($action) {
             case 'content':
-                $about = $this->container->get('templating')
-                    ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
-                $response->setContent($about);
-                return $response;
+                return $this->templateEngine->renderResponse('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
+            default:
+                throw new BadRequestHttpException("Unsupported action {$action}");
         }
     }
-
 }

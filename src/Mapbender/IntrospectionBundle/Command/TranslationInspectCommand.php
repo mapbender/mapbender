@@ -10,13 +10,6 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 
 class TranslationInspectCommand extends AbstractTranslationCommand
 {
-    public function configure()
-    {
-        $this
-            ->setName('mapbender:inspect:translations')
-        ;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $catalogs = $this->getCatalogs($this->allCatalogNames);
@@ -87,7 +80,7 @@ class TranslationInspectCommand extends AbstractTranslationCommand
                     $scanTranslation = $scanMessages[$key];
                     if ($scanTranslation === $referenceTranslation) {
                         if (!$headerPrinted) {
-                            $output->writeln("Catalog {$scanCatalog->getLocale()} repeates messages from {$referenceCatalog->getLocale()}:");
+                            $output->writeln("Catalog {$scanCatalog->getLocale()} repeats messages from {$referenceCatalog->getLocale()}:");
                             $headerPrinted = true;
                         }
                         $output->writeln("   {$key} : " . print_r($referenceTranslation, true));

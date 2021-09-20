@@ -2,11 +2,9 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -35,24 +33,23 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Christian Wygoda
  * @author Paul Schmidt
  */
-class PasswordController extends UserControllerBase
+class PasswordController extends AbstractEmailProcessController
 {
-    /**
-     * Check if password reset is allowed.
-     *
-     * setContainer is called after controller creation is used to deny access to controller if password reset has
-     * been disabled.
-     * @param ContainerInterface $container
-     * @throws AccessDeniedHttpException
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        parent::setContainer($container);
+    protected $enableReset;
+    protected $maxTokenAge;
 
-        if (!$this->getEmailFromAdress()) {
-            $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
-        }
-        if (!$this->container->getParameter('fom_user.reset_password')) {
+    public function __construct(\Swift_Mailer $mailer,
+                                $userEntityClass,
+                                $emailFromName,
+                                $emailFromAddress,
+                                $enableReset,
+                                $maxTokenAge,
+                                $isDebug)
+    {
+        parent::__construct($mailer, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        $this->enableReset = $enableReset;
+        $this->maxTokenAge = $maxTokenAge;
+        if (!$this->enableReset) {
             $this->debug404("Password reset disabled by configuration");
         }
     }
@@ -122,7 +119,7 @@ class PasswordController extends UserControllerBase
         $user = $this->getUserFromResetToken($request);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
@@ -143,12 +140,11 @@ class PasswordController extends UserControllerBase
         $user = $this->getUserFromResetToken($request);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
-                'site_email' => $this->getEmailFromAdress(),
+                'site_email' => $this->emailFromAddress,
             ));
         }
 
-        $max_token_age = $this->container->getParameter("fom_user.max_reset_time");
-        if (!$this->checkTimeInterval($user->getResetTime(), $max_token_age)) {
+        if (!$this->checkTimeInterval($user->getResetTime(), $this->maxTokenAge)) {
             return $this->tokenExpired($user);
         }
 
@@ -191,11 +187,7 @@ class PasswordController extends UserControllerBase
         $user->setResetTime(new \DateTime());
 
         //send email
-        $fromName = $this->getEmailFromAdress();
-        $fromEmail = $this->getEmailFromAdress();
-        $mailFrom = array($fromEmail => $fromName);
-        /** @var \Swift_Mailer $mailer */
-        $mailer = $this->get('mailer');
+        $mailFrom = array($this->emailFromAddress => $this->emailFromName);
 
         $text = $this->renderView('@FOMUser/Password/email-body.text.twig', array("user" => $user));
         $html = $this->renderView('@FOMUser/Password/email-body.html.twig', array("user" => $user));
@@ -207,7 +199,7 @@ class PasswordController extends UserControllerBase
             ->setBody($text)
             ->addPart($html, 'text/html')
         ;
-        $mailer->send($message);
+        $this->mailer->send($message);
 
         $em = $this->getEntityManager();
         $em->flush();

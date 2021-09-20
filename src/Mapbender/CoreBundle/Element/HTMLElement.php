@@ -2,14 +2,14 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Psr\Log\LoggerInterface;
-use Twig\Error\Error;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * HTMLElement.
  */
-class HTMLElement extends Element
+class HTMLElement extends AbstractElementService
 {
     public static function getClassTitle()
     {
@@ -21,10 +21,15 @@ class HTMLElement extends Element
         return 'mb.core.htmlelement.class.description';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         // no script constructor
         return false;
+    }
+
+    public function getRequiredAssets(Element $element)
+    {
+        return array();
     }
 
     /**
@@ -46,54 +51,29 @@ class HTMLElement extends Element
         );
     }
 
-    public function getFrontendTemplateVars()
+    public function getView(Element $element)
     {
-        $config = $this->entity->getConfiguration();
+        $config = $element->getConfiguration();
+        $view = new TemplateView('MapbenderCoreBundle:Element:htmlelement.html.twig');
+        $view->attributes['class'] = 'mb-element-htmlelement';
+        $view->attributes['data-title'] = $element->getTitle();
+
         if (!empty($config['classes'])) {
-            $cssClassNames = array_map('trim', explode(' ', $config['classes']));
-        } else {
-            $cssClassNames = array();
+            $view->attributes['class'] .= rtrim(' ' . $config['classes']);
         }
-        if (in_array('html-element-inline', $cssClassNames)) {
-            $tagName = 'span';
-        } else {
-            $tagName = 'div';
-        }
-        return array(
-            'configuration' => $config,
-            'tagName' => $tagName,
-            'application' => $this->entity->getApplication(),
-        );
+        $view->variables['content'] = $config['content'];
+        /** @see https://doc.mapbender.org/en/functions/misc/html.html for twig variable expectations */
+        $view->variables['application'] = $element->getApplication();
+        $view->variables['entity'] = $element;
+        return $view;
     }
 
-    /**
-     * Render markup.
-     * Because the entire template is user-configurable, we add some error handling here.
-     *
-     * @return string
-     */
-    public function render()
+    public function getClientConfiguration(Element $element)
     {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-
-        try {
-            return parent::render();
-        } catch (Error $e) {
-            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
-            $logger->warning($message . ", suppressing content", $this->getConfiguration());
-            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
-        }
+        // Nothing. No script.
+        return array();
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return 'MapbenderCoreBundle:Element:htmlelement.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getFormTemplate()
     {
         return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';

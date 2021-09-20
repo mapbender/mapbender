@@ -6,21 +6,27 @@ namespace Mapbender\CoreBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use FOM\UserBundle\Component\UserHelperService;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Console\Command\Command;
 
-abstract class AbstractUserCommand extends ContainerAwareCommand
+abstract class AbstractUserCommand extends Command
 {
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+        parent::__construct(null);
+    }
+
     /**
      * @return EntityManagerInterface
      */
     protected function getEntityManager()
     {
-        /** @var RegistryInterface $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
         /** @var EntityManagerInterface $manager */
-        $manager = $doctrine->getManager();
+        $manager = $this->managerRegistry->getManager();
         return $manager;
     }
 
@@ -30,27 +36,7 @@ abstract class AbstractUserCommand extends ContainerAwareCommand
     protected function getRepository()
     {
         /** @var EntityRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('FOMUserBundle:User');
+        $repository = $this->managerRegistry->getRepository('FOMUserBundle:User');
         return $repository;
-    }
-
-    /**
-     * @return EntityRepository
-     */
-    protected function getGroupRepository()
-    {
-        /** @var EntityRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('FOMUserBundle:Group');
-        return $repository;
-    }
-
-    /**
-     * @return UserHelperService
-     */
-    protected function getUserHelper()
-    {
-        /** @var UserHelperService $helperService */
-        $helperService = $this->getContainer()->get('fom.user_helper.service');
-        return $helperService;
     }
 }

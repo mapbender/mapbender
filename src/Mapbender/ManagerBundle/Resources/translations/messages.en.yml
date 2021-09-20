@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: Your layerset has been created.
-      failure:
-        unique.title: Layerset title is already used.
     remove:
       success: Your layerset has been deleted.
       failure: Your layerset can't be deleted.
@@ -33,6 +31,15 @@ mb:
         all: Any
         mobile: Mobile
         desktop: Desktop
+    toolbar:
+      alignment:
+        label: Alignment
+        choice:
+          left: Left
+          right: Right
+          center: Center
+      generate_button_menu: Generate menu for buttons
+      menu_label: Menu label
     element:
       screentype:
         mobile: Show on mobile screens

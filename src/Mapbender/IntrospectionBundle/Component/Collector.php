@@ -3,25 +3,24 @@
 
 namespace Mapbender\IntrospectionBundle\Component;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Application;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Collector
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
 
     /** @var WorkingSet|null */
     protected $defaultWorkingSet;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->container = $container;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -69,17 +68,7 @@ class Collector
      */
     protected function getEntityRepository($name)
     {
-        return $this->getDoctrine()->getRepository($name);
-    }
-
-    /**
-     * @return Registry
-     */
-    protected function getDoctrine()
-    {
-        /** @var Registry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
-        return $doctrine;
+        return $this->managerRegistry->getRepository($name);
     }
 
     /**
@@ -112,13 +101,5 @@ class Collector
     protected function getLayersets()
     {
         return $this->getEntityRepository('MapbenderCoreBundle:Layerset')->findAll();
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->container;
     }
 }

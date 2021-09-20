@@ -42,7 +42,11 @@
   $width: 200px;
 
   .screenshot-wrapper {
-    margin-top: 29px; // HACK: same as line-height of first label in application base data...
+    margin-bottom: 15px;  // = .form-group
+    @media (min-width: 992px) {
+      margin-top: 29px; // HACK: same as line-height of first label in application base data...
+      margin-bottom: 0;
+    }
     .btn {
       vertical-align: top;
       margin-left: 0.5em;
@@ -139,7 +143,10 @@
 
 .layersetTable{
   .titleColumn {
-    width: 99%;
+    width: 89%;
+  }
+  .typeColumn {
+    width: 10%;
   }
 }
 

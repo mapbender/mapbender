@@ -40,7 +40,6 @@ class DimensionSetDimensionChoiceType extends AbstractType
                     'data-config' => json_encode($inst->getConfiguration()),
                 );
             },
-            'choices_as_values' => true,
         ));
     }
 

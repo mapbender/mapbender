@@ -2,16 +2,16 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ImportAwareInterface;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
- * Map's overview element
- *
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends Element
+class BaseSourceSwitcher extends AbstractElementService implements ImportAwareInterface
 {
 
     /**
@@ -37,7 +37,6 @@ class BaseSourceSwitcher extends Element
     {
         return array(
             'tooltip' => static::getClassTitle(),
-            'target' => null,
             'instancesets' => array(),
         );
     }
@@ -45,7 +44,7 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbBaseSourceSwitcher';
     }
@@ -69,7 +68,7 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -84,7 +83,7 @@ class BaseSourceSwitcher extends Element
         );
     }
 
-    protected function mergeGroups(Entity\Element $element)
+    protected function mergeGroups(Element $element)
     {
         $rawConf = $element->getConfiguration();
         $itemsOut = array();
@@ -125,46 +124,34 @@ class BaseSourceSwitcher extends Element
         return $itemsOut;
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:basesourceswitcher.html.twig';
-    }
+        $view = new TemplateView('MapbenderCoreBundle:Element:basesourceswitcher.html.twig');
+        $view->attributes['class'] = 'mb-element-basesourceswitcher';
+        if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
+            $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle();
+        }
 
-    public function getFrontendTemplateVars()
-    {
-        $rawConf = $this->entity->getConfiguration();
-        return array(
-            'id' => $this->entity->getId(),
-            'title' => $this->entity->getTitle(),
-            'configuration' => $rawConf + array(
-                'groups' => $this->mergeGroups($this->entity),
+        $view->variables = array(
+            'configuration' => array(
+                'groups' => $this->mergeGroups($element),
             ),
         );
+        return $view;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $template = $this->getFrontendTemplatePath();
-        $vars = $this->getFrontendTemplateVars();
-        return $this->container->get('templating')->render($template, $vars);
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper)
     {
-        foreach ($configuration['instancesets'] as $key => &$instanceset) {
-            foreach ($instanceset['instances'] as &$instance) {
-                if ($instance) {
-                    $instance =
-                        $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instance, true);
+        $configuration = $element->getConfiguration();
+        foreach ($configuration['instancesets'] as $setId => $instanceset) {
+            foreach ($instanceset['instances'] as $k => $instanceId) {
+                if ($instanceId) {
+                    $newId = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instanceId, true);
+                    $configuration['instancesets'][$setId][$k] = $newId;
                 }
             }
         }
-        return $configuration;
+        $element->setConfiguration($configuration);
     }
 }

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mapbender.element.ViewManager.http_handler.class">Mapbender\CoreBundle\Element\ViewManagerHttpHandler</parameter>
+        <parameter key="mapbender.element.ApplicationSwitcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
+    </parameters>
+    <services>
+        <service id="mapbender.element.Map" class="Mapbender\CoreBundle\Element\Map">
+            <tag name="mapbender.element" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="mapbender.element.HTMLElement" class="Mapbender\CoreBundle\Element\HTMLElement">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ControlButton" class="Mapbender\CoreBundle\Element\ControlButton">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ResetView" class="Mapbender\CoreBundle\Element\ResetView">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.LinkButton" class="Mapbender\CoreBundle\Element\LinkButton">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ShareUrl" class="Mapbender\CoreBundle\Element\ShareUrl">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ActivityIndicator" class="Mapbender\CoreBundle\Element\ActivityIndicator">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.BaseSourceSwitcher" class="Mapbender\CoreBundle\Element\BaseSourceSwitcher">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.CoordinatesDisplay" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.Copyright" class="Mapbender\CoreBundle\Element\Copyright">
+            <tag name="mapbender.element" />
+            <argument type="service" id="templating" />
+        </service>
+        <service id="mapbender.element.Layertree" class="Mapbender\CoreBundle\Element\Layertree">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.Legend" class="Mapbender\CoreBundle\Element\Legend">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.Overview" class="Mapbender\CoreBundle\Element\Overview">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.Ruler" class="Mapbender\CoreBundle\Element\Ruler">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ScaleDisplay" class="Mapbender\CoreBundle\Element\ScaleDisplay">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ScaleBar" class="Mapbender\CoreBundle\Element\ScaleBar">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.SearchRouter" class="Mapbender\CoreBundle\Element\SearchRouter">
+            <tag name="mapbender.element" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+        <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
+            <tag name="mapbender.element" />
+            <argument type="service" id="mapbender.http_transport.service" />
+            <argument>%kernel.debug%</argument>
+        </service>
+        <service id="mapbender.element.SrsSelector" class="Mapbender\CoreBundle\Element\SrsSelector">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ZoomBar" class="Mapbender\CoreBundle\Element\ZoomBar">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ScaleSelector" class="Mapbender\CoreBundle\Element\ScaleSelector">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.ViewManager" class="Mapbender\CoreBundle\Element\ViewManager">
+            <tag name="mapbender.element" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="mb.element.ViewManager.http_handler" />
+        </service>
+        <service id="mb.element.ViewManager.http_handler" class="%mapbender.element.ViewManager.http_handler.class%">
+            <argument type="service" id="templating" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="security.token_storage" />
+        </service>
+        <service id="mapbender.element.ApplicationSwitcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
+            <tag name="mapbender.element" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.element.ApplicationSwitcher.http_handler" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
+        <service id="mapbender.element.ApplicationSwitcher.http_handler" class="%mapbender.element.ApplicationSwitcher.http_handler.class%">
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
+        <service id="mapbender.element.AboutDialog" class="Mapbender\CoreBundle\Element\AboutDialog">
+            <tag name="mapbender.element" />
+            <argument type="service" id="templating" />
+        </service>
+        <service id="mapbender.element.GpsPosition" class="Mapbender\CoreBundle\Element\GpsPosition">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.FeatureInfo" class="Mapbender\CoreBundle\Element\FeatureInfo">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.POI" class="Mapbender\CoreBundle\Element\POI">
+            <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.Sketch" class="Mapbender\CoreBundle\Element\Sketch">
+            <tag name="mapbender.element" replaces="Mapbender\CoreBundle\Element\Redlining" />
+        </service>
+    </services>
+</container>

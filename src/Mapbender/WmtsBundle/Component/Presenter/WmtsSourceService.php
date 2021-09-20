@@ -169,11 +169,11 @@ class WmtsSourceService extends SourceService
     {
         // TODO check if layers support info
         return array(
-            "info" => $instanceLayer->getInfo(),
+            "info" => $instanceLayer->getInfoformat() && $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
             "toggle" => false,
             "allow" => array(
-                "info" => $instanceLayer->getAllowinfo(),
+                "info" => $instanceLayer->getInfoformat() && $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
                 "toggle" => false,
                 "reorder" => null,

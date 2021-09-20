@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -26,19 +27,19 @@ class ApplicationYAMLMapper
     protected $logger;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
-    /** @var ElementFactory */
+    /** @var ElementEntityFactory */
     protected $elementFactory;
     /** @var array[] */
     protected $definitions;
 
     /**
      * @param array[] $definitions
-     * @param ElementFactory $elementFactory
+     * @param ElementEntityFactory $elementFactory
      * @param SourceInstanceFactory $sourceInstanceFactory
      * @param LoggerInterface|null $logger
      */
     public function __construct($definitions,
-                                ElementFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
+                                ElementEntityFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
                                 LoggerInterface $logger = null)
     {
         $this->definitions = $definitions;
@@ -78,14 +79,18 @@ class ApplicationYAMLMapper
         if (!array_key_exists($slug, $this->definitions)) {
             return null;
         }
-        $application = $this->createApplication($this->definitions[$slug]);
-        $application->setId($slug);
-        $application->setSlug($slug);
+        $application = $this->createApplication($this->definitions[$slug], $slug);
         return $application;
     }
 
-    protected function createApplication($definition)
+    /**
+     * @param mixed[] $definition
+     * @param string $slug
+     * @return Application
+     */
+    public function createApplication(array $definition, $slug)
     {
+
         $timestamp = filemtime($definition['__filename__']);
         unset($definition['__filename__']);
         if (!array_key_exists('title', $definition)) {
@@ -93,6 +98,8 @@ class ApplicationYAMLMapper
         }
 
         $application = new Application();
+        $application->setId($slug);
+        $application->setSlug($slug);
         $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
                 ->setTitle(isset($definition['title'])?$definition['title']:'')
@@ -123,15 +130,8 @@ class ApplicationYAMLMapper
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
-        if (array_key_exists('regionProperties', $definition)) {
-            foreach ($definition['regionProperties'] as $index => $regProps) {
-                $regionProperties = new RegionProperties();
-                $regionProperties->setId($application->getSlug() . ':' . $index);
-                $regionProperties->setName($regProps['name']);
-                $regionProperties->setProperties($regProps['properties']);
-                $regionProperties->setApplication($application);
-                $application->addRegionProperties($regionProperties);
-            }
+        if (!empty($definition['regionProperties'])) {
+            $this->parseRegionProperties($application, $definition['regionProperties']);
         }
         if (!empty($definition['elements'])) {
             $collection = new YamlElementCollection($this->elementFactory, $application, $definition['elements'], $this->logger);
@@ -170,5 +170,38 @@ class ApplicationYAMLMapper
         $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $layersetDefinition);
         $layerset->setInstances($instanceCollection);
         return $layerset;
+    }
+
+    protected function parseRegionProperties(Application $application, array $defs)
+    {
+        $regions = array();
+        foreach ($defs as $k => $spec) {
+            // NOTE: cannot detect based on "name", because Fullscreen sidepane
+            // actually has a "name" property (=type accordion/tabs/unstyled)
+            if (\array_key_exists('properties', $spec)) {
+                $regionName = $spec['name'];
+                $props = $spec['properties'];
+            } else {
+                $regionName = $k;
+                $props = $spec;
+            }
+            if (\is_numeric($regionName)) {
+                throw new \LogicException("Invalid region name {$regionName} in regionProperties definition for application {$application->getSlug()}");
+            }
+            if (\in_array($regionName, $regions)) {
+                throw new \LogicException("Invalid repeated regionProperties definition of region {$regionName} in application {$application->getSlug()}");
+            }
+            if (!$props) {
+                continue;
+            }
+            $regions[] = $regionName;
+
+            $regionProperties = new RegionProperties();
+            $regionProperties->setId($application->getSlug() . ':' . $regionName);
+            $regionProperties->setName($regionName);
+            $regionProperties->setProperties($props);
+            $regionProperties->setApplication($application);
+            $application->addRegionProperties($regionProperties);
+        }
     }
 }

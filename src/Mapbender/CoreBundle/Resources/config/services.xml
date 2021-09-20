@@ -8,7 +8,6 @@
         <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
-        <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
         <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
@@ -17,7 +16,6 @@
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
-        <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
@@ -53,18 +51,12 @@
         <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
         <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
         <parameter key="assetic.filter.sass.timeout">null</parameter>
-        <!-- Element related -->
-        <parameter key="mb.element.application_switcher.http_handler.class">Mapbender\CoreBundle\Element\ApplicationSwitcherHttpHandler</parameter>
-        <parameter key="mb.element.view_manager.http_handler.class">Mapbender\CoreBundle\Element\ViewManagerHttpHandler</parameter>
     </parameters>
 
     <services>
-        <service id="mapbender" class="Mapbender\CoreBundle\Mapbender">
-            <argument type="service" id="service_container" />
-        </service>
         <service id="mapbender.application.yaml_entity_repository" class="%mapbender.application.yaml_entity_repository.class%" lazy="true">
             <argument>%applications%</argument>
-            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
@@ -75,18 +67,22 @@
         </service>
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.element_inventory.service" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
-        <service class="Mapbender\CoreBundle\Extension\BrandingExtension">
+        <service id="mapbender.twig.form" class="Mapbender\CoreBundle\Extension\FormExtension">
+            <tag name="twig.extension"/>
+        </service>
+        <service id="mapbender.twig.branding" class="Mapbender\CoreBundle\Extension\BrandingExtension">
             <tag name="twig.extension"/>
             <argument>%branding.login_backdrop%</argument>
         </service>
         <service id="mapbender.twig.element_markup" class="Mapbender\CoreBundle\Extension\ElementMarkupExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.presenter.application.service" />
-            <argument type="service" id="templating" />
-            <argument>%mapbender.responsive.elements%</argument>
-            <argument>%mapbender.responsive.containers%</argument>
+            <argument type="service" id="mapbender.renderer.element_markup" />
+        </service>
+        <service id="mapbender.twig.application_content" class="Mapbender\CoreBundle\Extension\ApplicationContentExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.renderer.application_markup" />
             <argument>%kernel.debug%</argument>
         </service>
 
@@ -95,15 +91,11 @@
             <argument>%mapbender.sitelinks%</argument>
         </service>
 
-        <service class="Mapbender\CoreBundle\Element\Type\TargetElementType">
+        <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.twig.element_class" />
-        </service>
-
-        <service class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
-            <tag name="form.type" />
+            <argument type="service" id="mapbender.element_filter" />
         </service>
 
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
@@ -170,19 +162,18 @@
         </service>
 
         <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
-            <argument>%owsproxy.proxy%</argument>
-            <argument type="service" id="logger" />
+            <argument type="service" id="owsproxy.http_foundation_client" />
         </service>
 
-        <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
-            <argument type="service" id="mapbender.element_factory.service" />
-            <argument type="service" id="mapbender.uploads_manager.service" />
-            <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="mapbender.twig.element_class" />
-        </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="mapbender.presenter.application.cache" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="mapbender.source.url_processor.service" />
+            <argument type="service" id="router" />
+            <argument type="service" id="logger" />
+            <argument type="service" id="assets._default_package" />
+            <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
         </service>
@@ -192,11 +183,6 @@
             <argument type="service" id="mapbender.source.instancetunnel.service" />
             <argument>%owsproxy.baseroute%</argument>
         </service>
-        <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
-            <argument type="service" id="mapbender.element_inventory.service" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="service_container" />
-        </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
             <argument type="service" id="filesystem" />
             <argument>%kernel.root_dir%/../web</argument>
@@ -204,7 +190,7 @@
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.acl.provider" />
@@ -244,9 +230,9 @@
             <argument type="service" id="mapbender.asset_compiler.css" />
             <argument type="service" id="mapbender.asset_compiler.js" />
             <argument type="service" id="mapbender.asset_compiler.translations" />
-            <argument type="service" id="mapbender.presenter.application.service" />
+            <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
-            <argument type="service" id="mapbender.element_factory.service" />
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
@@ -258,14 +244,11 @@
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- NOTE: base Element class availability is not an argument, but added via compiler passes; this is not configurable -->
             <argument>%mapbender.disabled_elements%</argument>
+            <argument type="service" id="mapbender.element_shim_factory" />
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />
-        </service>
-        <service id="mapbender.command.init_db" class="Mapbender\CoreBundle\Command\InitDbCommand">
-            <tag name="console.command" command="mapbender:database:init" />
-            <argument type="service" id="event_dispatcher" />
         </service>
         <service id="mapbender.init_db_handler.prune_global_element_grants" class="Mapbender\CoreBundle\EventHandler\InitDb\PruneGlobalElementGrantHandler">
             <argument type="service" id="security.acl.provider" on-invalid="null" />
@@ -275,17 +258,9 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="kernel.event_subscriber" />
         </service>
-
-        <!-- Element related -->
-        <service id="mb.element.view_manager.http_handler" class="%mb.element.view_manager.http_handler.class%">
-            <argument type="service" id="templating" />
+        <service id="mapbender.init_db_handler.fix_element_weights" class="Mapbender\CoreBundle\EventHandler\InitDb\FixElementWeightsHandler">
+            <tag name="kernel.event_subscriber" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="security.token_storage" />
-        </service>
-        <service id="mb.element.application_switcher.http_handler" class="%mb.element.application_switcher.http_handler.class%">
-            <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.application.yaml_entity_repository" />
         </service>
     </services>
 </container>

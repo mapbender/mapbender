@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: L'ensemble de couches a été créée.
-      failure:
-        unique.title: Le titre de l'ensemble de couches existe déjà.
     remove:
       success: L'ensemble de couches a été supprimé.
       failure: L'ensemble de couches ne peut pas être supprimé.

@@ -1,8 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * Coordinates display
@@ -12,7 +14,7 @@ use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
  * @author Paul Schmidt
  * @author Christian Wygoda
  */
-class CoordinatesDisplay extends Element implements FloatableElement
+class CoordinatesDisplay extends AbstractElementService implements FloatableElement
 {
 
     /**
@@ -42,7 +44,7 @@ class CoordinatesDisplay extends Element implements FloatableElement
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -73,27 +75,21 @@ class CoordinatesDisplay extends Element implements FloatableElement
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbCoordinatesDisplay';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:coordinatesdisplay.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(),
-                    array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        $view = new TemplateView('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig');
+        $view->attributes['class'] = 'mb-element-coordsdisplay';
+        $config = $element->getConfiguration();
+        $view->variables['label'] = $config['label']
+            ? ($element->getTitle() ?: $this->getClassTitle())
+            : false
+        ;
+        return $view;
     }
 
     /**

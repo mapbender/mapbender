@@ -3,7 +3,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Mapbender\ManagerBundle\Extension\Twig\MenuExtension;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,8 +16,16 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Christian Wygoda
   */
-class IndexController extends Controller
+class IndexController extends AbstractController
 {
+    /** @var string */
+    protected $defaultRoute;
+
+    public function __construct(MenuExtension $menuExtension)
+    {
+        $this->defaultRoute = $menuExtension->getDefaultRoute();
+    }
+
     /**
      * Simply redirect to the applications list.
      *
@@ -26,10 +34,7 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        /** @var MenuExtension $menuExtension */
-        $menuExtension = $this->get('mapbender.twig.manager.menu');
-        $defaultRoute = $menuExtension->getDefaultRoute();
-        return $this->redirectToRoute($defaultRoute);
+        return $this->redirectToRoute($this->defaultRoute);
     }
 }
 

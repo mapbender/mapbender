@@ -6,7 +6,7 @@ $(function(){
         toggle_(true);
     });
 
-    $('#footer').on('click', '.mb-button', function(e) {
+    $('.toolBar').on('click', '.mb-button', function(e) {
         var $button = $(this);
         var button = $button.data('mapbenderMbButton');
         var buttonOptions = button.options;
@@ -16,7 +16,7 @@ $(function(){
             return;
         }
         // HACK: prevent button from ever gaining a visual highlight
-        $button.parent('.toolBarItem').removeClass('toolBarItemActive');
+        $button.removeClass('toolBarItemActive');
 
         e.stopImmediatePropagation();
 

@@ -25,7 +25,6 @@ class WmtsInstanceLayerMatrixSetType extends AbstractType
             'choices' => function(Options $options) use ($self) {
                 return $self->getChoices($options['instance_layer']);
             },
-            'choices_as_values' => true,
         ));
     }
 

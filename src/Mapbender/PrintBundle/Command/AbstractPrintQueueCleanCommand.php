@@ -6,7 +6,6 @@ namespace Mapbender\PrintBundle\Command;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 abstract class AbstractPrintQueueCleanCommand extends AbstractPrintQueueCommand
@@ -48,15 +47,13 @@ abstract class AbstractPrintQueueCleanCommand extends AbstractPrintQueueCommand
 
     protected function removeDanglingFiles(OutputInterface $output)
     {
-        /** @var Filesystem $fs */
-        $fs = $this->getContainer()->get('filesystem');
         $names = $this->findDanglingFiles();
         $this->showDanglingFiles($output, $names);
         if ($names) {
             $nDeleted = 0;
             foreach ($names as $name) {
                 try {
-                    $fs->remove($name);
+                    $this->filesystem->remove($name);
                     ++$nDeleted;
                     $output->writeln("Deleted {$name}", OutputInterface::VERBOSITY_NORMAL);
                 } catch (IOException $e) {

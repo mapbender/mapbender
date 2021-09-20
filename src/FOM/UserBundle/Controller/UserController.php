@@ -3,6 +3,8 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Component\AclManager;
+use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,9 +12,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User management controller
@@ -21,40 +23,29 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class UserController extends UserControllerBase
 {
-    /**
-     * Renders user list.
-     *
-     * @ManagerRoute("/user", methods={"GET"})
-     * @return Response
-     */
-    public function indexAction()
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+    /** @var UserHelperService */
+    protected $userHelper;
+    /** @var AclManager */
+    protected $aclManager;
+
+    protected $profileEntityClass;
+    protected $profileTemplate;
+
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                UserHelperService $userHelper,
+                                AclManager $aclManager,
+                                $userEntityClass,
+                                $profileEntityClass,
+                                $profileTemplate)
     {
-        $users = $this->getUserRepository()->findAll();
-        $allowed_users = array();
-
-        // Bulk-prefetch ACLs for all User entities into AclProvider's internal cache
-        $oids = array();
-        foreach ($users as $index => $user) {
-            $oids[] = ObjectIdentity::fromDomainObject($user);
-        }
-        $this->getAclManager()->getACLs($oids);
-
-        foreach ($users as $index => $user) {
-            if ($this->isGranted('VIEW', $user)) {
-                $allowed_users[] = $user;
-            }
-        }
-
-        $oid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\User');
-
-        return $this->render('@FOMUser/User/index.html.twig', array(
-            'users'             => $allowed_users,
-            'oid' => $oid,
-            // @todo: remove create_permission template variable
-            'group_oid' => new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group'),
-            'create_permission' => $this->isGranted('CREATE', $oid),
-            'title' => $this->translate('fom.user.user.index.title'),
-        ));
+        parent::__construct($userEntityClass);
+        $this->aclProvider = $aclProvider;
+        $this->userHelper = $userHelper;
+        $this->aclManager = $aclManager;
+        $this->profileEntityClass = $profileEntityClass;
+        $this->profileTemplate = $profileTemplate;
     }
 
     /**
@@ -65,7 +56,7 @@ class UserController extends UserControllerBase
      */
     public function createAction(Request $request)
     {
-        $userClass = $this->getUserEntityClass();
+        $userClass = $this->userEntityClass;
         $oid = new ObjectIdentity('class', $userClass);
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
@@ -101,7 +92,7 @@ class UserController extends UserControllerBase
     protected function userActionCommon(Request $request, User $user)
     {
         $isNew = !$user->getId();
-        $profileClass = $this->getProfileEntityClass();
+        $profileClass = $this->profileEntityClass;
         if ($profileClass) {
             if ($isNew) {
                 $profile = new $profileClass();
@@ -118,21 +109,26 @@ class UserController extends UserControllerBase
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
             'group_permission' => $groupPermission,
         ));
+
         if ($ownerGranted) {
             $aclOptions = array();
             if ($user->getId()) {
                 $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
             } else {
-                $aclOptions['data'] = array(
-                    array(
-                        'sid' => UserSecurityIdentity::fromToken($this->getUserToken()),
-                        'mask' => MaskBuilder::MASK_OWNER,
-                    ),
-                );
+                $currentUser = $this->getUser();
+                if ($currentUser && ($currentUser instanceof UserInterface)) {
+                    $aclOptions['data'] = array(
+                        array(
+                            'sid' => UserSecurityIdentity::fromAccount($currentUser),
+                            'mask' => MaskBuilder::MASK_OWNER,
+                        ),
+                    );
+                }
             }
 
             $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
         }
+        $securityIndexGranted = $this->isGranted('VIEW', new ObjectIdentity('class', 'FOM\UserBundle\Entity\User'));
 
         $form->handleRequest($request);
 
@@ -154,14 +150,14 @@ class UserController extends UserControllerBase
                         $em->flush();
                     }
                     $aces = $form->get('acl')->getData();
-                    $this->getAclManager()->setObjectACEs($user, $aces);
+                    $this->aclManager->setObjectACEs($user, $aces);
                 }
 
                 $em->flush();
 
                 if ($isNew) {
                     // Make sure, the new user has VIEW & EDIT permissions
-                    $this->getUserHelper()->giveOwnRights($user);
+                    $this->userHelper->giveOwnRights($user);
                 }
 
                 $em->commit();
@@ -171,15 +167,21 @@ class UserController extends UserControllerBase
             }
             $this->addFlash('success', 'The user has been saved.');
 
-            return $this->redirectToRoute('fom_user_security_index', array(
-                '_fragment' => 'tabUsers',
-            ));
+            // Do not redirect to security index if access will be denied
+            if ($securityIndexGranted) {
+                return $this->redirectToRoute('fom_user_security_index', array(
+                    '_fragment' => 'tabUsers',
+                ));
+            }
         }
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user'             => $user,
             'form'             => $form->createView(),
-            'profile_template' => $this->getProfileTemplate(),
-            'title' => $this->translate($isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user'),
+            'profile_template' => $this->profileTemplate,
+            'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
+            'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
+                '_fragment' => 'tabUsers'
+            )),
         ));
     }
 
@@ -203,18 +205,17 @@ class UserController extends UserControllerBase
         }
 
         $this->denyAccessUnlessGranted('DELETE', $user);
-        $aclProvider = $this->getAclProvider();
 
         $em = $this->getEntityManager();
         $em->beginTransaction();
 
         try {
-            if ($aclProvider instanceof MutableAclProvider) {
+            if (($this->aclProvider) instanceof MutableAclProvider) {
                 $sid = UserSecurityIdentity::fromAccount($user);
-                $aclProvider->deleteSecurityIdentity($sid);
+                $this->aclProvider->deleteSecurityIdentity($sid);
             }
             $oid = ObjectIdentity::fromDomainObject($user);
-            $aclProvider->deleteAcl($oid);
+            $this->aclProvider->deleteAcl($oid);
 
             $em->remove($user);
             if ($user->getProfile()) {
@@ -229,22 +230,6 @@ class UserController extends UserControllerBase
         }
 
         return new Response();
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getProfileEntityClass()
-    {
-        return $this->getParameter('fom_user.profile_entity');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getProfileTemplate()
-    {
-        return $this->getParameter('fom_user.profile_template');
     }
 
     /**
@@ -264,15 +249,5 @@ class UserController extends UserControllerBase
             $em->persist($profile);
         }
         $em->persist($user);
-    }
-
-    /**
-     * @return TokenInterface|null
-     */
-    protected function getUserToken()
-    {
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this->get('security.token_storage');
-        return $tokenStorage->getToken();
     }
 }

@@ -1,16 +1,17 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * The Legend class shows legends of the map's layers.
  *
  * @author Paul Schmidt
  */
-class Legend extends Element implements ConfigMigrationInterface
+class Legend extends AbstractElementService implements ConfigMigrationInterface
 {
 
     /**
@@ -32,7 +33,7 @@ class Legend extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -53,8 +54,6 @@ class Legend extends Element implements ConfigMigrationInterface
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
-            "elementType" => null,
             "autoOpen" => true,
             "showSourceTitle" => true,
             "showLayerTitle" => true,
@@ -73,26 +72,17 @@ class Legend extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbLegend';
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:legend.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $this->getConfiguration(),
-        ));
+        $view = new StaticView('');
+        $view->attributes['class'] = 'mb-element-legend';
+        $view->attributes['data-title'] = $element->getTitle();
+        return $view;
     }
 
     /**
@@ -103,7 +93,7 @@ class Legend extends Element implements ConfigMigrationInterface
         return 'MapbenderCoreBundle:ElementAdmin:legend.html.twig';
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration() ?: array();
         if (!isset($config['showGroupedLayerTitle'])) {

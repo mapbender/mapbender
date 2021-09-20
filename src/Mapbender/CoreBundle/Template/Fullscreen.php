@@ -20,11 +20,11 @@ class Fullscreen extends Template
     {
         return array(
             'sidepane' => array(
-                'tabs' => array(
-                    'name' => 'tabs',
-                ),
                 'accordion' => array(
                     'name' => 'accordion',
+                ),
+                'tabs' => array(
+                    'name' => 'tabs',
                 ),
             ),
         );
@@ -116,9 +116,28 @@ class Fullscreen extends Template
                 return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
             case 'toolbar':
             case 'footer':
-            return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
+                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
             default:
                 return null;
+        }
+    }
+
+    public static function getRegionPropertiesDefaults($regionName)
+    {
+        switch ($regionName) {
+            case 'toolbar':
+            case 'footer':
+                return array(
+                    'item_alignment' => 'right',
+                    'generate_button_menu' => false,
+                );
+            case 'sidepane':
+                return array(
+                    'name' => 'accordion',
+                    'align' => 'left',
+                );
+            default:
+                return parent::getRegionPropertiesDefaults($regionName);
         }
     }
 }

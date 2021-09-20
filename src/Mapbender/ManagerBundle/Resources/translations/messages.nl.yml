@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: Uw lagenset is aangemaakt.
-      failure:
-        unique.title: Lagenset titel is reeds in gebruik.
     remove:
       success: Uw lagenset is verwijderd.
       failure: Uw lagenset kon niet verwijderd worden.

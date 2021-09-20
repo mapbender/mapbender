@@ -8,6 +8,10 @@ use Mapbender\CoreBundle\Entity;
 
 /**
  * Minimal Element with a bound entity.
+ *
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @todo 3.3: remove this interface
  */
 abstract class MinimalBound implements BoundEntityInterface
 {
@@ -20,9 +24,9 @@ abstract class MinimalBound implements BoundEntityInterface
     }
 
     /**
-     * Must return getEntity()->getId()
-     * May be invoked magically from certain element twig templates.
+     * Returns $this->entity->getId()
      * @return string
+     * @deprecated
      */
     final public function getId()
     {
@@ -30,11 +34,11 @@ abstract class MinimalBound implements BoundEntityInterface
     }
 
     /**
-     * Override hook. Default implementation is ->getEntity()->getTitle()
-     * May be invoked magically from certain element twig templates.
+     * Returns $this->entity->getTitle()
      * @return string
+     * @deprecated
      */
-    public function getTitle()
+    final public function getTitle()
     {
         return $this->entity->getTitle();
     }

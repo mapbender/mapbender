@@ -1,5 +1,7 @@
 (function($) {
+    // @todo v3.3: Remove this file
     var Autocomplete = function(input, options){
+        console.error('DEPRECATED: Custom FOM Autocomplete widget is abandoned and will be removed in v3.3. Use jQueryUI autocomplete instead.');
         var self = this;
         this.input = $(input);
         for(var name in options){

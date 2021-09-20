@@ -2,7 +2,9 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use FOM\ManagerBundle\Configuration\Route;
@@ -10,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
@@ -18,25 +21,14 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  *
  * @author Christian Wygoda
  */
-class GroupController extends UserControllerBase
+class GroupController extends AbstractController
 {
-    /**
-     * Renders group list.
-     *
-     * @Route("/group", methods={"GET"})
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $oid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
-        $repository = $this->getEntityManager()->getRepository('FOM\UserBundle\Entity\Group');
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
 
-        return $this->render('@FOMUser/Group/index.html.twig', array(
-            'groups' => $repository->findAll(),
-            'create_permission' => $this->isGranted('CREATE', $oid),
-            'title' => $this->translate('fom.user.group.index.groups'),
-        ));
+    public function __construct(MutableAclProviderInterface $aclProvider)
+    {
+        $this->aclProvider = $aclProvider;
     }
 
     /**
@@ -62,7 +54,7 @@ class GroupController extends UserControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($group);
 
             // See method documentation for Doctrine weirdness
@@ -72,16 +64,14 @@ class GroupController extends UserControllerBase
 
             $em->flush();
 
-            // creating the ACL
-            $aclProvider = $this->getAclProvider();
             $objectIdentity = ObjectIdentity::fromDomainObject($group);
-            $acl = $aclProvider->createAcl($objectIdentity);
+            $acl = $this->aclProvider->createAcl($objectIdentity);
 
             // retrieving the security identity of the currently logged-in user
             $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
 
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-            $aclProvider->updateAcl($acl);
+            $this->aclProvider->updateAcl($acl);
 
             $this->addFlash('success', 'The group has been saved.');
 
@@ -93,7 +83,7 @@ class GroupController extends UserControllerBase
         return $this->render('@FOMUser/Group/form.html.twig', array(
             'group' => $group,
             'form' => $form->createView(),
-            'title' => $this->translate('fom.user.group.form.new_group'),
+            'title' => 'fom.user.group.form.new_group',
         ));
     }
 
@@ -105,13 +95,15 @@ class GroupController extends UserControllerBase
      */
     public function editAction(Request $request, $id)
     {
-        $em = $this->getEntityManager();
         /** @var Group|null $group */
-        $group = $em->getRepository('FOMUserBundle:Group')->find($id);
+        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
         if (!$group) {
             throw new NotFoundHttpException('The group does not exist');
         }
         $this->denyAccessUnlessGranted('EDIT', $group);
+
+        /** @var EntityManagerInterface $em $em */
+        $em = $this->getDoctrine()->getManagerForClass(Group::class);
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
 
@@ -138,7 +130,7 @@ class GroupController extends UserControllerBase
         return $this->render('@FOMUser/Group/form.html.twig', array(
             'group' => $group,
             'form' => $form->createView(),
-            'title' => $this->translate('fom.user.group.form.edit_group'),
+            'title' => 'fom.user.group.form.edit_group',
         ));
     }
 
@@ -150,28 +142,27 @@ class GroupController extends UserControllerBase
     public function deleteAction($id)
     {
         /** @var Group|null $group */
-        $group = $this->getDoctrine()->getRepository('FOMUserBundle:Group')
-            ->find($id);
+        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
 
         if($group === null) {
             throw new NotFoundHttpException('The group does not exist');
         }
         // ACL access check
         $this->denyAccessUnlessGranted('DELETE', $group);
-        $aclProvider = $this->getAclProvider();
-        $em = $this->getEntityManager();
+        /** @var EntityManagerInterface $em $em */
+        $em = $this->getDoctrine()->getManagerForClass(Group::class);
         $em->beginTransaction();
 
         try {
-            if ($aclProvider instanceof MutableAclProvider) {
+            if (($this->aclProvider) instanceof MutableAclProvider) {
                 $sid = new RoleSecurityIdentity($group->getRole());
-                $aclProvider->deleteSecurityIdentity($sid);
+                $this->aclProvider->deleteSecurityIdentity($sid);
             }
 
             $em->remove($group);
 
             $oid = ObjectIdentity::fromDomainObject($group);
-            $aclProvider->deleteAcl($oid);
+            $this->aclProvider->deleteAcl($oid);
 
             $em->flush();
             $em->commit();

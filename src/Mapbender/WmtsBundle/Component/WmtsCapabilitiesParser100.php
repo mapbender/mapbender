@@ -47,21 +47,21 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $wmtssource->setType(WmtsSource::TYPE_WMTS);
         $root       = $this->doc->documentElement;
 
-        $wmtssource->setVersion($this->getValue("./@version", $root));
-        $serviceIdentEl = $this->getValue("./ows:ServiceIdentification", $root);
+        $wmtssource->setVersion($this->getValue("./@version"));
+        $serviceIdentEl = $this->getValue("./ows:ServiceIdentification");
         if ($serviceIdentEl) {
             $this->parseServiceIdentification($wmtssource, $serviceIdentEl);
         }
-        $serverProviderEl = $this->getValue("./ows:ServiceProvider", $root);
+        $serverProviderEl = $this->getValue("./ows:ServiceProvider");
         if ($serverProviderEl) {
             $this->parseServiceProvider($wmtssource, $serverProviderEl);
         }
-        $operationsMetadata = $this->getValue("./ows:OperationsMetadata", $root);
+        $operationsMetadata = $this->getValue("./ows:OperationsMetadata");
         if ($operationsMetadata) {
-            $this->parseCapabilityRequest($wmtssource, $this->getValue("./ows:OperationsMetadata", $root));
+            $this->parseCapabilityRequest($wmtssource, $this->getValue("./ows:OperationsMetadata"));
         }
 
-        $layerElms = $this->xpath->query("./wmts:Contents/wmts:Layer", $root);
+        $layerElms = $this->xpath->query("./wmts:Contents/wmts:Layer");
         foreach ($layerElms as $layerEl) {
             $layer = new WmtsLayerSource();
             $layer->setSource($wmtssource);

@@ -27,11 +27,11 @@
                 }
             });
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            if (!this.options.extents.start && !this.options.extents.max) {
+            if (!this.options.extent_start && !this.options.extent_max) {
                 throw new Error("Incomplete map configuration: no start extent");
             }
-            if (!this.options.extents.start) {
-                this.options.extents.start = this.options.extents.max.slice();
+            if (!this.options.extent_start) {
+                this.options.extent_start = this.options.extent_max.slice();
             }
             if (!this.options.srs) {
                 throw new Error("Invalid map configuration: missing srs");

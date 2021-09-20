@@ -81,7 +81,6 @@ class ApplicationType extends AbstractType
                     'mb.manager.admin.application.map_engine_code.current' => Application::MAP_ENGINE_CURRENT,
                     'mb.manager.admin.application.map_engine_code.ol2' => Application::MAP_ENGINE_OL2,
                 ),
-                'choices_as_values' => true,
                 'label' => 'mb.manager.admin.application.map_engine_code',
                 'required' => true,
                 'empty_data' => Application::MAP_ENGINE_OL2,

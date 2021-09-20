@@ -12,7 +12,6 @@ class UserListCommand extends AbstractUserCommand
 {
     protected function configure()
     {
-        $this->setName('mapbender:user:list');
         $this->setHelp('List all users stored in the database');
     }
 

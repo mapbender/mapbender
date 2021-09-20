@@ -79,14 +79,17 @@
   // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  .sidePane & {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
 }
 
 .tabContainerAlt{
   position: relative;
   > .tabs {
+    list-style: none;
     border-bottom: dashed 1px $thirdColor;
     padding-bottom: $space;
     margin-bottom: $space;
@@ -94,6 +97,7 @@
   .tab {
     display: inline-block;
     @extend .button;
+    margin: 0 0.25em 0.25em 0;
 
     &.active{
       cursor:default;

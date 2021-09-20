@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GpsPositionAdminType extends AbstractType
 {
@@ -17,17 +16,6 @@ class GpsPositionAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-            'average'     => 1,
-        ));
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -35,11 +23,7 @@ class GpsPositionAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
             ))
-            ->add('target',  'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

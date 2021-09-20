@@ -36,7 +36,6 @@ class VendorSpecificType extends AbstractType
                     VS::TYPE_VS_USER => VS::TYPE_VS_USER,
                     VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP,
                 ),
-                'choices_as_values' => true,
             ))
             ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,

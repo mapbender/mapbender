@@ -11,7 +11,10 @@ use Mapbender\CoreBundle\Component\ElementBase\EditableInterface;
  * When writing / updating Elements, only implement methods from this interface, and optionally
  * @see ElementHttpHandlerInterface.
  *
- * @todo: separate further by frontend / backend concerns
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @see \Mapbender\Component\Element\AbstractElementService
+ * @see \Mapbender\Component\Element\ElementServiceInterface
+ * @todo 3.3: remove this interface
  */
 interface ElementInterface extends IAssetDependent, EditableInterface
 {

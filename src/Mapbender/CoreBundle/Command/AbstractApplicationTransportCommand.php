@@ -8,12 +8,28 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ImportHandler;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 
-abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
+abstract class AbstractApplicationTransportCommand extends Command
 {
+    /** @var EntityManagerInterface */
+    protected $defaultEntityManager;
+    /** @var ImportHandler */
+    protected $importHandler;
+    /** @var ApplicationYAMLMapper */
+    protected $yamlRepository;
+
+    public function __construct(EntityManagerInterface $defaultEntityManager,
+                                ImportHandler $importHandler,
+                                ApplicationYAMLMapper $yamlRepository)
+    {
+        parent::__construct(null);
+        $this->defaultEntityManager = $defaultEntityManager;
+        $this->importHandler = $importHandler;
+        $this->yamlRepository = $yamlRepository;
+    }
+
     /**
      * @return EntityRepository
      */
@@ -23,24 +39,11 @@ abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param string $slug
-     * @return Application|null
-     */
-    protected function getYamlApplication($slug)
-    {
-        /** @var ApplicationYAMLMapper $repository */
-        $repository = $this->getContainer()->get('mapbender.application.yaml_entity_repository');
-        return $repository->getApplication($slug);
-    }
-
-    /**
      * @return EntityManagerInterface
      */
     protected function getDefaultEntityManager()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
-        return $em;
+        return $this->defaultEntityManager;
     }
 
     /**
@@ -48,9 +51,7 @@ abstract class AbstractApplicationTransportCommand extends ContainerAwareCommand
      */
     protected function getApplicationImporter()
     {
-        /** @var ImportHandler $service */
-        $service = $this->getContainer()->get('mapbender.application_importer.service');
-        return $service;
+        return $this->importHandler;
     }
 
     /**

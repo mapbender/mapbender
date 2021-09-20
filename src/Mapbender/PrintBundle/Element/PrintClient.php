@@ -3,11 +3,13 @@
 namespace Mapbender\PrintBundle\Element;
 
 use Doctrine\Common\Collections\Collection;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
@@ -17,6 +19,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -25,8 +28,44 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  *
  */
-class PrintClient extends Element implements ConfigMigrationInterface
+class PrintClient extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+    /** @var UrlProcessor */
+    protected $sourceUrlProcessor;
+    /** @var OdgParser */
+    protected $odgParser;
+    /** @var PrintServiceBridge */
+    protected $bridgeService;
+    /** @var string|null */
+    protected $memoryLimit;
+    /** @var boolean */
+    protected $enableQueue;
+
+    public function __construct(UrlGeneratorInterface $urlGenerator,
+                                FormFactoryInterface $formFactory,
+                                TokenStorageInterface $tokenStorage,
+                                UrlProcessor $sourceUrlProcessor,
+                                OdgParser $odgParser,
+                                /** @todo: elminate bridge service */
+                                PrintServiceBridge $bridgeService,
+                                $memoryLimit,
+                                $enableQueue)
+    {
+        $this->urlGenerator = $urlGenerator;
+        $this->formFactory = $formFactory;
+        $this->tokenStorage = $tokenStorage;
+        $this->sourceUrlProcessor = $sourceUrlProcessor;
+        $this->odgParser = $odgParser;
+        $this->bridgeService = $bridgeService;
+        $this->memoryLimit = $memoryLimit;
+        $this->enableQueue = $enableQueue;
+    }
 
     /**
      * @inheritdoc
@@ -47,7 +86,7 @@ class PrintClient extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         $assets = array(
             'js' => array(
@@ -65,7 +104,7 @@ class PrintClient extends Element implements ConfigMigrationInterface
                 'mb.print.imageexport.info.*',
             ),
         );
-        if ($this->entity->getApplication()->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
+        if ($element->getApplication()->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
             array_unshift($assets['js'], '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js');
         }
         return $assets;
@@ -77,7 +116,6 @@ class PrintClient extends Element implements ConfigMigrationInterface
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             "templates" => array(
                 array(
                     'template' => "a4portrait",
@@ -159,61 +197,66 @@ class PrintClient extends Element implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbPrintClient';
     }
 
-    public function getPublicConfiguration()
+    public function getClientConfiguration(Element $element)
     {
-        return $this->entity->getConfiguration() + array(
-            'type' => 'dialog',
+        return $element->getConfiguration() + array(
             // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
             'locale' => \locale_get_default(),
         );
     }
 
-    /**
-     * @return string
-     */
-    protected function getSubmitAction()
+    public function getView(Element $element)
     {
-        if ($this->isQueueModeEnabled()) {
-            return PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE;
-        } else {
-            return 'print';
-        }
-    }
+        $config = $element->getConfiguration();
+        $queueMode = !empty($config['renderMode']) && $config['renderMode'] === 'queued';
 
-    public function getFrontendTemplateVars()
-    {
-        $config = $this->entity->getConfiguration() + array(
-            'required_fields_first' => false,
-            'type' => 'dialog',
-        );
-        $router = $this->container->get('router');
-        $submitUrl = $router->generate('mapbender_core_application_element', array(
-            'slug' => $this->entity->getApplication()->getSlug(),
-            'id' => $this->entity->getId(),
-            'action' => $this->getSubmitAction(),
+        if ($queueMode) {
+            $template = 'MapbenderPrintBundle:Element:printclient-queued.html.twig';
+        } else {
+            $template = 'MapbenderPrintBundle:Element:printclient.html.twig';
+        }
+        $view = new TemplateView($template);
+        $view->attributes['class'] = 'mb-element-printclient';
+        $view->attributes['data-title'] = $element->getTitle();
+
+        $submitUrl = $this->urlGenerator->generate('mapbender_core_application_element', array(
+            'slug' => $element->getApplication()->getSlug(),
+            'id' => $element->getId(),
+            'action' => $queueMode ? PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE : 'print',
         ));
-        $vars = array(
-            'configuration' => $config,     // for legacy custom templates only
+        $view->variables = array(
             'submitUrl' => $submitUrl,
             'settingsTemplate' => $this->getSettingsTemplate(),
-            'settingsForm' => $this->getSettingsForm()->createView(),
+            'settingsForm' => $this->getSettingsForm($element)->createView(),
+            // for legacy custom templates only
+            'id' => $element->getId(),
+            'title' => $element->getTitle(),
+            'configuration' => $config + array(
+                'required_fields_first' => false,
+                'type' => 'dialog',
+            ),
         );
-        if ($this->isQueueModeEnabled()) {
-            $submitFrameName = $this->getSubmitFrameName();
-            return $vars + array(
+        if ($queueMode) {
+            /**
+             * Generate an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
+             * @todo: this would be more convenient to have on the template level, so all Elements could share a single
+             */
+            $submitFrameName = "submit-frame-{$element->getId()}";
+            $view->variables += array(
                 'formTarget' => $submitFrameName,
                 'submitFrameName' => $submitFrameName,
             );
         } else {
-            return $vars + array(
+            $view->variables += array(
                 'formTarget' => '_blank',
             );
         }
+        return $view;
     }
 
     protected function getSettingsTemplate()
@@ -226,12 +269,10 @@ class PrintClient extends Element implements ConfigMigrationInterface
         return 'Mapbender\PrintBundle\Form\PrintClientSettingsType';
     }
 
-    protected function getSettingsForm()
+    protected function getSettingsForm(Element $element)
     {
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = $this->container->get('form.factory');
         $formType = $this->getSettingsFormType();
-        $config = $this->entity->getConfiguration();
+        $config = $element->getConfiguration();
         $options = array(
             'templates' => ArrayUtil::getDefault($config, 'templates', array()),
             'required_fields_first' => ArrayUtil::getDefault($config, 'required_fields_first', false),
@@ -248,45 +289,41 @@ class PrintClient extends Element implements ConfigMigrationInterface
         );
 
         // NOTE: null name prevents generation of nested property paths
-        return $formFactory->createNamed(null, $formType, $data, $options);
-    }
-
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        if ($this->isQueueModeEnabled()) {
-            return "MapbenderPrintBundle:Element:printclient-queued.html.twig";
-        } else {
-            return "MapbenderPrintBundle:Element:printclient.html.twig";
-        }
+        return $this->formFactory->createNamed(null, $formType, $data, $options);
     }
 
     /**
+     * @param Element $element
      * @return string
      */
-    protected function generateFilename()
+    protected function generateFilename(Element $element)
     {
-        $configuration = $this->entity->getConfiguration();
+        $configuration = $element->getConfiguration();
         $prefix = ArrayUtil::getDefault($configuration, 'file_prefix', null);
         $prefix = $prefix ?: ArrayUtil::getDefault($this->getDefaultConfiguration(), 'file_prefix', null);
         $prefix = $prefix ?: 'mapbender_print';
         return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
-    public function handleHttpRequest(Request $request)
+    public function getHttpHandler(Element $element)
+    {
+        return $this;
+    }
+
+    public function handleRequest(Element $element, Request $request)
     {
         $action = $request->attributes->get('action');
-        $bridgeService = $this->getServiceBridge();
-        $configuration = $this->entity->getConfiguration();
+        $configuration = $element->getConfiguration();
         switch ($action) {
             case 'print':
                 $rawData = $this->extractRequestData($request);
                 $jobData = $this->preparePrintData($rawData, $configuration);
 
                 $this->checkMemoryLimit();
-                $pdfBody = $bridgeService->dumpPrint($jobData);
+                $pdfBody = $this->bridgeService->dumpPrint($jobData);
 
                 $displayInline = true;
-                $filename = $this->generateFilename();
+                $filename = $this->generateFilename($element);
 
                 $response = new Response($pdfBody, 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
@@ -297,36 +334,28 @@ class PrintClient extends Element implements ConfigMigrationInterface
 
             case 'getTemplateSize':
                 $template = $request->get('template');
-                /** @var OdgParser $odgParser */
-                $odgParser = $this->container->get('mapbender.print.template_parser.service');
-                $size = $odgParser->getMapSize($template);
+                $size = $this->odgParser->getMapSize($template);
 
                 return new Response($size);
 
-            default:
-                $response = $bridgeService->handleHttpRequest($request, $this->entity);
-                if ($response) {
-                    return $response;
-                }
-                $queuePlugin = $this->getActiveQueuePlugin();
-                if ($queuePlugin && $action === PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE) {
+            case PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE:
+                if (!empty($configuration['renderMode']) && $configuration['renderMode'] === 'queued') {
+                    $queuePlugin = $this->bridgeService->getPluginHost()->getPlugin('print-queue');
                     $rawData = $this->extractRequestData($request);
                     $jobData = $this->preparePrintData($rawData, $configuration);
-                    $queuePlugin->putJob($jobData, $this->generateFilename());
+                    $queuePlugin->putJob($jobData, $this->generateFilename($element));
                     return new Response('', 204);
+                } else {
+                    throw new NotFoundHttpException();
                 }
-                throw new NotFoundHttpException();
+            default:
+                $response = $this->bridgeService->handleHttpRequest($request, $element);
+                if ($response) {
+                    return $response;
+                } else {
+                    throw new NotFoundHttpException();
+                }
         }
-    }
-
-    /**
-     * @return PrintServiceBridge
-     */
-    protected function getServiceBridge()
-    {
-        /** @var PrintServiceBridge $bridgeService */
-        $bridgeService = $this->container->get('mapbender.print_service_bridge.service');
-        return $bridgeService;
     }
 
     /**
@@ -361,10 +390,9 @@ class PrintClient extends Element implements ConfigMigrationInterface
      */
     protected function preparePrintData($data, $configuration)
     {
-        $urlProcessor = $this->getUrlProcessor();
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
-                $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
+                $updatedUrl = $this->sourceUrlProcessor->getInternalUrl($layerDef['url']);
                 if (!empty($configuration['replace_pattern'])) {
                     $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
                 }
@@ -386,9 +414,8 @@ class PrintClient extends Element implements ConfigMigrationInterface
     protected function prepareOverview($overviewDef)
     {
         if (!empty($overviewDef['layers'])) {
-            $urlProcessor = $this->getUrlProcessor();
             foreach ($overviewDef['layers'] as $index => $url) {
-                $overviewDef['layers'][$index] = $urlProcessor->getInternalUrl($url);
+                $overviewDef['layers'][$index] = $this->sourceUrlProcessor->getInternalUrl($url);
             }
         }
         return $overviewDef;
@@ -429,7 +456,6 @@ class PrintClient extends Element implements ConfigMigrationInterface
      */
     protected function prepareLegends($legendDefs)
     {
-        $urlProcessor = $this->getUrlProcessor();
         $legendDefsOut = array();
         foreach ($legendDefs as $ix => $imageList) {
             $legendDefsOut[$ix] = array();
@@ -442,12 +468,12 @@ class PrintClient extends Element implements ConfigMigrationInterface
                     // * layerName
                     // * parentNames (string[])
                     $legendDefsOut[$ix][$imageListKey] = array_replace($sourceLegendData, array(
-                        'url' => $urlProcessor->getInternalUrl($sourceLegendData['url']),
+                        'url' => $this->sourceUrlProcessor->getInternalUrl($sourceLegendData['url']),
                     ));
                 } else {
                     // Old style title => url mapping. May go out of order depending on browser's and PHP's
                     // JSON processing
-                    $internalUrl = $urlProcessor->getInternalUrl($sourceLegendData);
+                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($sourceLegendData);
                     $legendDefsOut[$ix][$imageListKey] = $internalUrl;
                 }
             }
@@ -470,9 +496,7 @@ class PrintClient extends Element implements ConfigMigrationInterface
             ),
         );
         $fomGroups = array();
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = $tokenStorage->getToken();
+        $token = $this->tokenStorage->getToken();
         if ($token && !$token instanceof AnonymousToken) {
             $user = $token->getUser();
             // getUser's return value can be a lot of different things
@@ -536,58 +560,6 @@ class PrintClient extends Element implements ConfigMigrationInterface
     }
 
     /**
-     * Returns the queue plugin service ONLY IF
-     * 1) enabled by global container parameter
-     * and
-     * 2) registerd in the plugin host
-     * and
-     * 3) queued job processing is enabled by current Element configuration
-     *
-     * @return PrintQueuePlugin|null
-     */
-    protected function getActiveQueuePlugin()
-    {
-        if (!$this->container->getParameter('mapbender.print.queueable')) {
-            return null;
-        }
-        $config = $this->entity->getConfiguration();
-        if (empty($config['renderMode']) || $config['renderMode'] != 'queued') {
-            return null;
-        }
-        /** @var PrintQueuePlugin|null $queuePlugin */
-        $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
-        return $queuePlugin;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isQueueModeEnabled()
-    {
-        return !!$this->getActiveQueuePlugin();
-    }
-
-    /**
-     * @return UrlProcessor
-     */
-    protected function getUrlProcessor()
-    {
-        /** @var UrlProcessor $service */
-        $service = $this->container->get('mapbender.source.url_processor.service');
-        return $service;
-    }
-
-    /**
-     * Generates an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
-     * @todo: this would be more convenient to have on the template level, so all Elements could share a single
-     *        frame.
-     */
-    protected function getSubmitFrameName()
-    {
-        return "submit-frame-{$this->entity->getId()}";
-    }
-
-    /**
      * @param $url
      * @param $pattern
      * @param $dpi
@@ -621,14 +593,13 @@ class PrintClient extends Element implements ConfigMigrationInterface
      */
     protected function checkMemoryLimit()
     {
-        $parameter = $this->container->getParameter('mapbender.print.memory_limit');
         // ignore null values as documented
-        if ($parameter) {
-            MemoryUtil::increaseMemoryLimit($parameter);
+        if ($this->memoryLimit) {
+            MemoryUtil::increaseMemoryLimit($this->memoryLimit);
         }
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $values = $entity->getConfiguration();
         if ($values && !empty($values['scales'])) {

@@ -26,7 +26,7 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
             'slug' => $slug,
         ));
         if (!$application) {
-            $application = $this->getYamlApplication($slug);
+            $application = $this->yamlRepository->getApplication($slug);
         }
         if (!$application) {
             throw new \RuntimeException("No application with slug {$slug}");

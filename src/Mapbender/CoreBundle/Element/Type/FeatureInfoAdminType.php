@@ -3,21 +3,9 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FeatureInfoAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-            'maxCount' => 100,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
@@ -30,7 +18,6 @@ class FeatureInfoAdminType extends AbstractType
                     'Tabs' => 'tabs',
                     'Accordion' => 'accordion',
                 ),
-                'choices_as_values' => true,
             ))
             ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -45,11 +32,7 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))

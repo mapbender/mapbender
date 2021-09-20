@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PrintQueueNextCommand extends AbstractPrintQueueCommand
+class PrintQueueNextCommand extends AbstractPrintQueueExecutionCommand
 {
     /**
      * @inheritdoc
@@ -15,7 +15,6 @@ class PrintQueueNextCommand extends AbstractPrintQueueCommand
     {
         $this
             ->setDescription("Run queued print jobs")
-            ->setName('mapbender:print:queue:next')
             ->addOption('max-jobs', null, InputOption::VALUE_REQUIRED,
                         'Limit to processing <n> maximum jobs before exiting (default 1; use 0 for unlimited)', 1)
             ->addOption('max-time', null, InputOption::VALUE_REQUIRED,

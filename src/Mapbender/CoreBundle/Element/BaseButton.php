@@ -4,23 +4,23 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Mapbender\Component\Element\ButtonLike;
 use Mapbender\CoreBundle\Component\Element;
 
+/**
+ * @deprecated switch to service type-elements ASAP for Symfony 4+ compatibility
+ * @todo 3.3: remove this class
+ */
 abstract class BaseButton extends Element
 {
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:button.html.twig';
+        return ButtonLike::getFormTemplate();
     }
 
     public static function getDefaultConfiguration()
     {
-        return array(
-            /** @see \Mapbender\CoreBundle\Element\Type\BaseButtonAdminType::buildForm */
-            'label' => true,
-            'tooltip' => null,
-            'icon' => null,
-        );
+        return ButtonLike::getDefaultConfiguration();
     }
 
     public function getAssets()

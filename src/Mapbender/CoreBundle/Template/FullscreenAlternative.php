@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Template;
 
 
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Template FullscreenAlternative
@@ -20,29 +21,35 @@ class FullscreenAlternative extends Fullscreen
         return 'Fullscreen alternative';
     }
 
-    public function getRegionTemplateVars(Application $application, $regionName)
+    public function getRegionClasses(Application $application, $regionName)
     {
-        $vars = parent::getRegionTemplateVars($application, $regionName);
         switch ($regionName) {
             default:
-                return $vars;
-            case 'toolbar':
-                return array_replace($vars, array(
-                    'alignment_class' => 'itemsLeft',
-                ));
+                return parent::getRegionClasses($application, $regionName);
+            case 'sidepane':
+                $props = $this->extractRegionProperties($application, $regionName);
+                $classes = array(ArrayUtil::getDefault($props, 'align') ?: 'right');
+                if (!empty($props['closed'])) {
+                    $classes[] = 'closed';
+                }
+                return $classes;
         }
     }
 
-    public function getRegionClasses(Application $application, $regionName)
+    public static function getRegionPropertiesDefaults($regionName)
     {
-        $classes = parent::getRegionClasses($application, $regionName);
-        if ($regionName === 'sidepane') {
-            $removeIndex = array_search('left', $classes, true);
-            if ($removeIndex !== false) {
-                unset($classes[$removeIndex]);
-            }
-            $classes[] = 'right';
+        switch ($regionName) {
+            case 'toolbar':
+            case 'footer':
+                return \array_replace(parent::getRegionPropertiesDefaults($regionName), array(
+                    'item_alignment' => 'left',
+                ));
+            case 'sidepane':
+                return \array_replace(parent::getRegionPropertiesDefaults($regionName), array(
+                    'align' => 'right',
+                ));
+            default:
+                return parent::getRegionPropertiesDefaults($regionName);
         }
-        return $classes;
     }
 }

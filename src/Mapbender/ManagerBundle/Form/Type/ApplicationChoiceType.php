@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -45,9 +44,6 @@ class ApplicationChoiceType extends AbstractType
             },
             'required_grant' => null,
         ));
-        if (Kernel::MAJOR_VERSION < 3) {
-            $resolver->setDefault('choices_as_values', true);
-        }
     }
 
     /**

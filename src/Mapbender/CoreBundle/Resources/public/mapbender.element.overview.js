@@ -3,7 +3,6 @@
     $.widget("mapbender.mbOverview", {
         options: {
             layerset: 0,
-            target: null,
             width: 200,
             height: 100,
             anchor: 'right-top',
@@ -19,28 +18,26 @@
          */
         _create: function(){
             this._updateToggleIcon(this.options.maximized);
-            if(!Mapbender.checkTarget("mbOverview", this.options.target)){
-                return;
-            }
             var lsId = this.options.layerset;
             var layerset = Mapbender.layersets.filter(function(x) {
                 return ('' + lsId) === ('' + x.id);
             })[0];
             this.sources_ = layerset && layerset.children.slice().reverse() || [];
 
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget('mbOverview');
+            });
         },
 
         /**
          * Initializes the overview
          */
         _setup: function() {
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-
-            this.element.addClass(this.options.anchor);
-            if (!this.options.maximized) {
-                this.element.addClass("closed");
-            } else if (!this.element.hasClass('closed')) {
+            if (!this.element.hasClass('closed')) {
                 // if we start closed, wait with initialization until opened
                 this._initOverview();
             }
@@ -105,7 +102,12 @@
                 .width(this.options.width)
                 .height(this.options.height)
             ;
-            this.overview.ovmap_.updateSize();
+
+            var self = this;
+            this.overview.getOverviewMap().updateSize();
+            window.setTimeout(function() {
+                self.overview.render();
+            });
         },
         _initAsOl2Control: function(layers) {
             this.overview = this._createOverviewControl(layers);
@@ -286,14 +288,15 @@
         }
         ,
         _changeSrs4: function(event, data) {
-            var properties = this.overview.ovmap_.getProperties();
+            var ovMap = this.overview.getOverviewMap();
+            var properties = ovMap.getProperties();
             properties.view = new ol.View({
               projection: data.to,
               center: this.mbMap.model.olMap.getView().getCenter(),
               extent: this.mbMap.model.getMaxExtent(),
               resolution: this.mbMap.model.olMap.getView().getResolution()
             });
-            this.overview.ovmap_.setProperties(properties);
+            ovMap.setProperties(properties);
         }
     });
 

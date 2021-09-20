@@ -16,8 +16,6 @@ mb:
   layerset:
     create:
       success: 'Katman oluşturuldu.'
-      failure:
-        unique.title: 'Bu Katman-ismi zaten var.'
     remove:
       success: 'Katman silindi.'
       failure: 'Katman silinemiyor.'

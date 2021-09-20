@@ -2,9 +2,8 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
-use Mapbender\Component\ClassUtil;
-use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,15 +13,15 @@ use Twig\TwigFunction;
 class ElementExtension extends AbstractExtension
 {
 
-    /** @var ElementInventoryService */
-    protected $inventoryService;
+    /** @var ElementFilter */
+    protected $elementFilter;
 
     /**
-     * @param ElementInventoryService $inventoryService
+     * @param ElementFilter $elementFilter
      */
-    public function __construct(ElementInventoryService $inventoryService)
+    public function __construct(ElementFilter $elementFilter)
     {
-        $this->inventoryService = $inventoryService;
+        $this->elementFilter = $elementFilter;
     }
 
     /**
@@ -53,14 +52,7 @@ class ElementExtension extends AbstractExtension
      */
     public function element_class_title($element)
     {
-        $initialClass = $element->getClass();
-        $adjustedClass = $this->inventoryService->getAdjustedElementClassName($initialClass);
-        if (ClassUtil::exists($adjustedClass)) {
-            /** @var string|\Mapbender\CoreBundle\Component\Element $adjustedClass */
-            return $adjustedClass::getClassTitle();
-        } else {
-            return null;
-        }
+        return $this->elementFilter->getClassTitle($element);
     }
 
     /**
@@ -82,17 +74,11 @@ class ElementExtension extends AbstractExtension
      */
     public function element_default_title($element)
     {
-        if ($element->getClass() && \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\ControlButton', true)) {
-            $target = $element->getTargetElement();
-            if ($target && $target !== $element) {
-                return $this->element_title($target);
-            }
-        }
-        return $this->element_class_title($element);
+        return $this->elementFilter->getDefaultTitle($element);
     }
 
     public function is_typeof_element_disabled(Element $element)
     {
-        return $this->inventoryService->isTypeOfElementDisabled($element);
+        return $this->elementFilter->isDisabledType($element);
     }
 }

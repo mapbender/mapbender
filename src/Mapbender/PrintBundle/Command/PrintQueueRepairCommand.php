@@ -13,7 +13,6 @@ class PrintQueueRepairCommand extends AbstractPrintQueueCommand
     {
         $this
             ->setDescription("Reset hung / crashed queued print jobs so they can be executed again")
-            ->setName('mapbender:print:queue:repair')
         ;
     }
 

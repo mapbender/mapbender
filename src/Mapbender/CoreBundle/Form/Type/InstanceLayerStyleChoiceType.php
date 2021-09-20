@@ -37,9 +37,5 @@ class InstanceLayerStyleChoiceType extends AbstractType
                 return $styleOpt;
             },
         ));
-        // Symfony 2 only
-        if ($resolver->hasDefault('choices_as_values')) {
-            $resolver->setDefault('choices_as_values', true);
-        }
     }
 }

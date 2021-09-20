@@ -2,30 +2,23 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\Component\Application\TemplateAssetDependencyInterface;
-use Mapbender\CoreBundle\Asset\ApplicationAssetService;
-use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
-use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Component\UploadsManager;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
-use Mapbender\ManagerBundle\Template\LoginTemplate;
-use Mapbender\ManagerBundle\Template\ManagerTemplate;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Application controller.
@@ -37,93 +30,30 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ApplicationController extends ApplicationControllerBase
 {
+    /** @var TranslatorInterface */
+    protected $translator;
+    /** @var ApplicationYAMLMapper */
+    protected $yamlRepository;
+    /** @var ElementInventoryService */
+    protected $elementInventory;
+    /** @var UploadsManager */
+    protected $uploadsManager;
+    protected $fileCacheDirectory;
+    protected $isDebug;
 
-    /**
-     * @return ConfigService
-     */
-    private function getConfigService()
+    public function __construct(TranslatorInterface $translator,
+                                ApplicationYAMLMapper $yamlRepository,
+                                ElementInventoryService $elementInventory,
+                                UploadsManager $uploadsManager,
+                                $fileCacheDirectory,
+                                $isDebug)
     {
-        /** @var ConfigService $presenter */
-        $presenter = $this->get('mapbender.presenter.application.config.service');
-        return $presenter;
-    }
-
-    /**
-     * Asset controller.
-     *
-     * Dumps the assets for the given application and type. These are up to
-     * date and this controller will be used during development mode.
-     *
-     * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
-     * @param Request $request
-     * @param string $slug of Application
-     * @param string $type one of 'css', 'js' or 'trans'
-     * @return Response
-     */
-    public function assetsAction(Request $request, $slug, $type)
-    {
-        $isProduction = $this->isProduction();
-        $cacheFile = $this->getCachedAssetPath($request, $slug, $type);
-        if ($source = $this->getManagerAssetDependencies($slug)) {
-            // @todo: TBD more reasonable criteria of backend / login asset cachability
-            $appModificationTs = intval(ceil($this->getParameter('container.compilation_timestamp_float')));
-        } else {
-            $source = $this->getApplicationEntity($slug);
-            $appModificationTs = $source->getUpdated()->getTimestamp();
-        }
-        $headers = array(
-            'Content-Type' => $this->getMimeType($type),
-            'Cache-Control' => 'max-age=0, must-revalidate, private',
-        );
-
-        $useCached = $isProduction && file_exists($cacheFile);
-        if ($useCached && $appModificationTs < filectime($cacheFile)) {
-            $response = new BinaryFileResponse($cacheFile, 200, $headers);
-            // allow file timestamp to be read again correctly for 'Last-Modified' header
-            clearstatcache($cacheFile, true);
-            $response->isNotModified($request);
-            return $response;
-        }
-        /** @var ApplicationAssetService $assetService */
-        $assetService = $this->container->get('mapbender.application_asset.service');
-        if ($source instanceof ApplicationEntity) {
-            $content = $assetService->getAssetContent($source, $type);
-        } else {
-            $content = $assetService->getTemplateAssetContent($source, $type);
-        }
-
-        if ($isProduction) {
-            file_put_contents($cacheFile, $content);
-            return new BinaryFileResponse($cacheFile, 200, $headers);
-        } else {
-            return new Response($content, 200, $headers);
-        }
-    }
-
-    /**
-     * Element action controller.
-     *
-     * Passes the request to
-     * the element's handleHttpRequest.
-     * @Route("/application/{slug}/element/{id}/{action}",
-     *     defaults={ "id" = null, "action" = null },
-     *     requirements={ "action" = ".+" })
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @param string $action
-     * @return Response
-     */
-    public function elementAction(Request $request, $slug, $id, $action)
-    {
-        $application = $this->getApplicationEntity($slug);
-        /** @var ApplicationService $appService */
-        $appService = $this->get('mapbender.presenter.application.service');
-        $elementComponent = $appService->getSingleElementComponent($application, $id);
-        if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
-            throw new NotFoundHttpException();
-        }
-        return $elementComponent->handleHttpRequest($request);
+        $this->translator = $translator;
+        $this->yamlRepository = $yamlRepository;
+        $this->elementInventory = $elementInventory;
+        $this->uploadsManager = $uploadsManager;
+        $this->fileCacheDirectory = $fileCacheDirectory;
+        $this->isDebug = $isDebug;
     }
 
     /**
@@ -137,14 +67,13 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
-        $useCache = $this->isProduction();
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
-        if ($useCache) {
-            // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-            $cacheFile = $this->getCachedAssetPath($request, $slug . "-" . session_id(), "html");
+
+        if (!$this->isDebug) {
+            $cacheFile = $this->getCachePath($request, $slug);
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
@@ -161,10 +90,10 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @param ApplicationEntity $application
+     * @param Application $application
      * @return string
      */
-    protected function renderApplication(ApplicationEntity $application)
+    protected function renderApplication(Application $application)
     {
         /** @var string|Template $templateCls */
         $templateCls = $application->getTemplate();
@@ -181,59 +110,22 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * @param string $slug
-     * @return ApplicationEntity
+     * @return Application
      * @throws NotFoundHttpException
      * @throws AccessDeniedException
      */
     private function getApplicationEntity($slug)
     {
-        $application = $this->requireApplication($slug, true);
+        /** @var Application|null $application */
+        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+            'slug' => $slug,
+        ));
+        $application = $application ?: $this->yamlRepository->getApplication($slug);
+        if (!$application) {
+            throw new NotFoundHttpException();
+        }
         $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
-    }
-
-    /**
-     * @param string $slug
-     * @return TemplateAssetDependencyInterface|null
-     */
-    private function getManagerAssetDependencies($slug)
-    {
-        switch ($slug) {
-            case 'manager':
-                return new ManagerTemplate();
-            case 'mb3-login':
-                return new LoginTemplate();
-            default:
-                return null;
-        }
-    }
-
-    /**
-     *
-     * @Route("/application/{slug}/config")
-     * @param string $slug
-     * @return Response
-     */
-    public function configurationAction($slug)
-    {
-        $applicationEntity = $this->getApplicationEntity($slug);
-        $configService = $this->getConfigService();
-        $cacheService = $configService->getCacheService();
-        $cacheKeyPath = array('config.json');
-        $cachable = !!$this->container->getParameter('cachable.mapbender.application.config');
-        if ($cachable) {
-            $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
-        } else {
-            $response = false;
-        }
-        if (!$cachable || !$response) {
-            $freshConfig = $configService->getConfiguration($applicationEntity);
-            $response = new JsonResponse($freshConfig);
-            if ($cachable) {
-                $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
-            }
-        }
-        return $response;
     }
 
     /**
@@ -261,153 +153,41 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * Get SourceInstances via tunnel
-     * @see InstanceTunnelService
-     *
-     * @Route("/application/{slug}/instance/{instanceId}/tunnel")
      * @param Request $request
      * @param string $slug
-     * @param string $instanceId
-     * @return Response
-     */
-    public function instanceTunnelAction(Request $request, $slug, $instanceId)
-    {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
-        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
-        if (!$requestType) {
-            throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
-        }
-        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
-        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
-            return new Response($url);
-        }
-
-        if (!$url) {
-            throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
-        }
-
-        return $instanceTunnel->getUrl($url);
-    }
-
-    /**
-     * Get a layer's legend image via tunnel
-     * @see InstanceTunnelService
-     *
-     * @Route("/application/{slug}/instance/{instanceId}/tunnel/legend/{layerId}")
-     * @param Request $request
-     * @param string $slug
-     * @param string $instanceId
-     * @param string $layerId
-     * @return Response
-     */
-    public function instanceTunnelLegendAction(Request $request, $slug, $instanceId, $layerId)
-    {
-        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
-        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
-        if (!$url) {
-            throw $this->createNotFoundException();
-        }
-        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
-            return new Response($url);
-        } else {
-            return $instanceTunnel->getUrl($url);
-        }
-    }
-
-    /**
-     * @param string $instanceId
-     * @param string $applicationSlug
-     * @return \Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint
-     */
-    protected function getGrantedTunnelEndpoint($instanceId, $applicationSlug)
-    {
-        /** @var SourceInstance|null $instance */
-        $instance = $this->getDoctrine()
-            ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
-        if (!$instance) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        // Deny forged cross-requests to an instance that doesn't belong to this application
-        $application = $instance->getLayerset()->getApplication();
-        if ($application->getSlug() !== $applicationSlug) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $application);
-        }
-        /** @var InstanceTunnelService $tunnelService */
-        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
-        return $tunnelService->makeEndpoint($instance);
-    }
-
-    /**
-     * @param Request $request
-     * @param string $slug
-     * @param string $type
      * @return string
      */
-    protected function getCachedAssetPath(Request $request, $slug, $type)
+    protected function getCachePath(Request $request, $slug)
     {
-        $localeDependent = array(
-            'html',
-            'trans',
-        );
-        if (in_array($type, $localeDependent)) {
-            $extension = $this->getTranslator()->getLocale() . ".{$type}";
+        // Output depends on locale and base url => bake into cache key
+        // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
+        $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
+        $locale = $this->translator->getLocale();
+        // Output also depends on user (granted elements may vary)
+        $user = $this->getUser();
+        $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
+        // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
+        if ($isAnon) {
+            $userMarker = 'anon';
         } else {
-            $extension = $type;
+            $request->getSession()->start();
+            $userMarker = $request->getSession()->getId();
         }
-        $baseUrlDependent = array(
-            'html',
-            'css',
-        );
-        if (in_array($type, $baseUrlDependent)) {
-            // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
-            $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-            $extension = "{$baseUrlHash}.{$extension}";
-        }
-        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$extension}";
+
+        $name = "{$slug}-{$userMarker}.min.{$baseUrlHash}.{$locale}.html";
+        return $this->fileCacheDirectory . "/{$name}";
     }
 
     /**
-     * Get mime type
-     *
-     * @param string $type
-     * @return string
-     */
-    protected function getMimeType($type)
-    {
-        switch ($type) {
-            case 'js':
-            case 'trans':
-                return 'application/javascript';
-            case 'css':
-                return 'text/css';
-            default:
-                // Uh-oh
-                return null;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isProduction()
-    {
-        return !$this->getParameter('kernel.debug');
-    }
-
-    /**
-     * @param ApplicationEntity $application
+     * @param Application $application
      * @return string|null
      */
-    protected function getPublicUploadsBaseUrl(ApplicationEntity $application)
+    protected function getPublicUploadsBaseUrl(Application $application)
     {
-        $ulm = $this->getUploadsManager();
         $slug = $application->getSlug();
         try {
-            $ulm->getSubdirectoryPath($slug, true);
-            return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
+            $this->uploadsManager->getSubdirectoryPath($slug, true);
+            return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
         } catch (IOException $e) {
             return null;
         }

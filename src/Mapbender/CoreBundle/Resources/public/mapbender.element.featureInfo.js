@@ -8,7 +8,6 @@
             displayType: 'tabs',
             printResult: false,
             onlyValid: false,
-            iframeInjection: null,
             highlighting: false,
             featureColorDefault: '#ffa500',
             featureColorHover: 'ff0000',
@@ -29,10 +28,10 @@
             header: null,
             content: null
         },
-
-
+        iframeScriptContent_: '',
 
         _create: function() {
+            this.iframeScriptContent_ = $('.-js-iframe-script-template[data-script]', this.element).remove().attr('data-script');
             this.mobilePane = this.element.closest('.mobilePane');
             this.template = {
                 header: $('.js-header', this.element).remove(),
@@ -157,14 +156,9 @@
                 });
             });
         },
-        _getTabTitle: function(source) {
-            // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
-            //  title of the root layer. This should be made consistent one way or the other.
-            return source.configuration.title;
-        },
         _setInfo: function(source, url) {
             var self = this;
-            var layerTitle = this._getTabTitle(source);
+            var layerTitle = source.getTitle();
             var ajaxOptions = {
                 url: url
             };
@@ -257,7 +251,7 @@
                         modal: false,
                         closeOnESC: false,
                         detachOnClose: false,
-                        content: widget.element.removeClass('hidden'),
+                        content: this.element,
                         resizable: true,
                         cssClass: 'featureinfoDialog',
                         width: options.width,
@@ -484,7 +478,7 @@
                 // Highlighting support (generate source-scoped feature ids)
                 ['var sourceId = "', sourceId, '";'].join(''),
                 ['var elementId = ', JSON.stringify(this.element.attr('id')) , ';'].join(''),
-                this.options.iframeInjection,
+                this.iframeScriptContent_,
                 '</script>'
             ];
             return parts.join('');

@@ -7,6 +7,12 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 
+/**
+ * @method QueuedPrintJob[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method QueuedPrintJob[] findAll()
+ * @method QueuedPrintJob|null find($id, $lockMode = null, $lockVersion = null)
+ * @method QueuedPrintJob|null findOneBy(array $criteria, array $orderBy = null)
+ */
 class QueuedPrintJobRepository extends EntityRepository
 {
     /**
@@ -43,47 +49,5 @@ class QueuedPrintJobRepository extends EntityRepository
             ->andWhere(Criteria::expr()->neq('started', null))
         ;
         return $this->matching($criteria)->getValues();
-    }
-
-    // remaining methods are only for better introspection via concrete return type annotations
-
-    /**
-     * @inheritdoc
-     * @return QueuedPrintJob|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
-    {
-        /** @var QueuedPrintJob|null $result */
-        $result = parent::find($id, $lockMode, $lockVersion);
-        return $result;
-    }
-
-    /**
-     * @inheritdoc
-     * @return QueuedPrintJob[]
-     */
-    public function findAll()
-    {
-        return parent::findAll();
-    }
-
-    /**
-     * @inheritdoc
-     * @return QueuedPrintJob[]
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
-    {
-        return parent::findBy($criteria, $orderBy, $limit, $offset);
-    }
-
-    /**
-     * @inheritdoc
-     * @return QueuedPrintJob|null
-     */
-    public function findOneBy(array $criteria, array $orderBy = null)
-    {
-        /** @var QueuedPrintJob|null $result */
-        $result = parent::findOneBy($criteria, $orderBy);
-        return $result;
     }
 }

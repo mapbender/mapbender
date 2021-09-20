@@ -5,14 +5,15 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=5.4.30",
+        "php": ">=5.5",
         "ext-dom": "*",
         "ext-gd": "*",
-        "symfony/symfony": "^2.4|^3",
+        "symfony/symfony": "^3 || ^4",
         "symfony/security-acl": "~2.8 || ~3.0",
         "twig/extensions": "1.x",
-        "doctrine/orm": "^2.2.3",
+        "doctrine/orm": "^2.5.2",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "doctrine/doctrine-bundle": "^1.12",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
         "sensio/generator-bundle": "^2 || ^3",
 
@@ -25,10 +26,10 @@
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "wheregroup/doctrine-dbal-shims": "^1",
-        "wheregroup/assetic-filter-sassc": "^0.0.1",
+        "wheregroup/assetic-filter-sassc": "^0.0",
         "wheregroup/sassc-binaries": "^0.0.1",
 
-        "mapbender/owsproxy": "^3.0.6.2",
+        "mapbender/owsproxy": "^3.1.6",
 
         "datatables/datatables": "^1.10.16",
         "components/bootstrap": "^3 || ^4",

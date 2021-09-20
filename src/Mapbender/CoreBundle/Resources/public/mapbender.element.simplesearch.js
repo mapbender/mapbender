@@ -2,14 +2,13 @@
 
 $.widget('mapbender.mbSimpleSearch', {
     options: {
-        url: null,
         /** one of 'WKT', 'GeoJSON' */
+        geom_format: null,
         token_regex: null,
         token_regex_in: null,
         token_regex_out: null,
         label_attribute: null,
         geom_attribute: null,
-        geom_format: null,
         result_buffer: null,
         result_minscale: null,
         result_maxscale: null,
@@ -26,10 +25,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
     _create: function() {
         this.iconUrl_ = this.options.result_icon_url || null;
-        if (this.element.closest('.toolBar.bottom').length) {
-            /** @see https://api.jqueryui.com/autocomplete/#option-position */
-            this.acPosition_ = {my: 'left bottom', at: 'left top', collision: 'none'};
-        }
+        this.acPosition_ = this.initializeAutocompletePosition_()
         if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
             // Local, asset-relative
             var parts = [
@@ -43,6 +39,39 @@ $.widget('mapbender.mbSimpleSearch', {
             self.mbMap = mbMap;
             self._setup();
         });
+    },
+    initializeAutocompletePosition_: function() {
+        /** @see https://api.jqueryui.com/autocomplete/#option-position */
+        var vertical = this.element.closest('.toolBar.bottom').length ? 'up' : 'down';
+        var horizontal = 'right';
+        if (this.element.closest('.toolBar').length) {
+            var windowWidth = $('html').get(0).clientWidth;
+            var node = this.element.get(0);
+            var ownWidth = node.clientWidth;
+            var distanceLeft = 0;
+            do {
+                distanceLeft += node.offsetLeft;
+                node = node.offsetParent;
+            } while (node);
+            var distanceRight = windowWidth - distanceLeft - ownWidth;
+            if (windowWidth && distanceRight >= windowWidth / 2) {
+                horizontal = 'right';
+            } else {
+                horizontal = 'left';
+            }
+        }
+
+        switch ([horizontal, vertical].join('-')) {
+            default:
+            case 'right-down':
+                return undefined;
+            case 'right-up':
+                return {my: 'left bottom', at: 'left top', collision: 'none'};
+            case 'left-down':
+                return {my: 'right top', at: 'right bottom', collision: 'none'};
+            case 'left-up':
+                return {my: 'right bottom', at: 'right top', collision: 'none'};
+        }
     },
     _setup: function() {
         var self = this;

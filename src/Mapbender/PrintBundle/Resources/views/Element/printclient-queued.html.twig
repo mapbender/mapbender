@@ -1,8 +1,7 @@
-<div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     <div class="tab-container">
-        <ul>
-            <li><a href="{{ '#' ~ id ~ '-settings' }}">{{ 'mb.print.printclient.tab.settings' | trans }}</a></li>
-            <li><a href="{{ '#' ~ id ~ '-job-list' }}">{{ 'mb.print.printclient.tab.joblist' | trans }}</a></li>
+        <ul class="btn-group btn-group-sm list-unstyled">
+            <li class="btn btn-default active"><a href="{{ '#' ~ id ~ '-settings' }}">{{ 'mb.print.printclient.tab.settings' | trans }}</a></li>
+            <li class="btn btn-default"><a href="{{ '#' ~ id ~ '-job-list' }}">{{ 'mb.print.printclient.tab.joblist' | trans }}</a></li>
         </ul>
         <div id="{{id ~ '-settings' }}" class="print-form">
             {% include settingsTemplate %}
@@ -24,4 +23,3 @@
         </div>
         <iframe class="hidden" name="{{ submitFrameName }}"></iframe>
     </div>
-</div>

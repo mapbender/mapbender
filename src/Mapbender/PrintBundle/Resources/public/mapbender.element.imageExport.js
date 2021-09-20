@@ -13,7 +13,7 @@
         _create: function(){
             this.$form = $('form', this.element);
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self.map = mbMap;   // legacy
                 self._setup();
@@ -30,15 +30,14 @@
         },
         open: function(callback){
             this.callback = callback ? callback : null;
-            var self = this;
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup({
-                    title: self.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     draggable: true,
                     header: true,
                     modal: false,
                     closeOnESC: false,
-                    content: self.element,
+                    content: this.element,
                     width: 250,
                     scrollable: false
                 });
@@ -356,8 +355,9 @@
          * @private
          */
         _fixAssetPath: function(url) {
+            // @todo: fold copy&paste vs Mapbender.StyleUtil
             var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
-            if (urlOut === url) {
+            if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
                 console.warn("Asset path could not be resolved to local bundles reference", url);
                 return false;
             } else {

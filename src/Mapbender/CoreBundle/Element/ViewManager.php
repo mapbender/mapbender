@@ -3,15 +3,31 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpFoundation\Request;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
-class ViewManager extends Element
+class ViewManager extends AbstractElementService
 {
     const ACCESS_READONLY = 'ro';
     const ACCESS_READWRITE = 'rw';
     const ACCESS_READWRITEDELETE = 'rwd';
+
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
+    /** @var ViewManagerHttpHandler */
+    protected $httpHandler;
+
+    public function __construct(TokenStorageInterface $tokenStorage,
+                                ViewManagerHttpHandler $httpHandler)
+    {
+        $this->httpHandler = $httpHandler;
+        $this->tokenStorage = $tokenStorage;
+    }
 
     public static function getClassTitle()
     {
@@ -23,17 +39,12 @@ class ViewManager extends Element
         return 'mb.core.viewManager.class.description';
     }
 
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbViewManager';
     }
 
-    public function getFrontendTemplatePath()
-    {
-        return 'MapbenderCoreBundle:Element:view_manager.html.twig';
-    }
-
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -68,30 +79,30 @@ class ViewManager extends Element
         );
     }
 
-    public function getFrontendTemplateVars()
+    public function getView(Element $element)
     {
-        $config = $this->entity->getConfiguration() + $this->getDefaultConfiguration();
-        $grants = $this->getHttpHandler()->getGrantsVariables($config);
+        $token = $this->tokenStorage->getToken();
+        if (!$token || ($token instanceof AnonymousToken)) {
+            $config = $element->getConfiguration() + $this->getDefaultConfiguration();
+            if (empty($config['publicEntries'])) {
+                // No access to public entries; private entries undefined for anons
+                // => suppress markup entirely
+                return false;
+            }
+        }
 
-        return array(
-            'grants' => $grants,
-        );
-    }
-
-    public function handleHttpRequest(Request $request)
-    {
-        // Extend with defaults
-        $this->entity->setConfiguration($this->entity->getConfiguration() + $this->getDefaultConfiguration());
-        return $this->getHttpHandler()->handleHttpRequest($this->entity, $request);
+        $view = new TemplateView('MapbenderCoreBundle:Element:view_manager.html.twig');
+        $view->attributes['class'] = 'mb-element-viewmanager';
+        $view->variables['grants'] = $this->httpHandler->getGrantsVariables($element->getConfiguration());
+        return $view;
     }
 
     /**
+     * @param Element $element
      * @return ViewManagerHttpHandler
      */
-    public function getHttpHandler()
+    public function getHttpHandler(Element $element)
     {
-        /** @var ViewManagerHttpHandler $handler */
-        $handler = $this->container->get('mb.element.view_manager.http_handler');
-        return $handler;
+        return $this->httpHandler;
     }
 }

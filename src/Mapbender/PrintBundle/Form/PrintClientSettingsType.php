@@ -8,7 +8,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrintClientSettingsType extends AbstractType
@@ -28,9 +27,6 @@ class PrintClientSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $baseChoiceOptions = Kernel::MAJOR_VERSION >= 3 ? array() : array(
-            'choices_as_values' => true,
-        );
         $templateChoices = array();
         foreach ($options['templates'] as $templateOption) {
             $templateChoices[$templateOption['label']] = $templateOption['template'];
@@ -57,13 +53,13 @@ class PrintClientSettingsType extends AbstractType
                 'mapped' => false,
                 'property_path' => 'extra',
             ))
-            ->add('template', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
+            ->add('template', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $templateChoices,
                 'label' => 'mb.core.printclient.label.template',
             ))
         ;
         if (count($qualityChoices) > 1) {
-            $builder->add('quality', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
+            $builder->add('quality', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $qualityChoices,
                 'label' => 'mb.core.printclient.label.quality',
             ));
@@ -74,7 +70,7 @@ class PrintClientSettingsType extends AbstractType
             ));
         }
         $builder
-            ->add('scale_select', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $baseChoiceOptions + array(
+            ->add('scale_select', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $scaleChoices,
                 'label' => 'mb.core.printclient.label.scale',
             ))

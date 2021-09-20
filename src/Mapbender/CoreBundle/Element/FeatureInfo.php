@@ -2,8 +2,10 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\Templating\EngineInterface;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * Featureinfo element
@@ -12,9 +14,8 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @author Christian Wygoda
  */
-class FeatureInfo extends Element
+class FeatureInfo extends AbstractElementService
 {
-
     /**
      * @inheritdoc
      */
@@ -34,10 +35,11 @@ class FeatureInfo extends Element
     /**
      * @inheritdoc
      */
-    public function getPublicConfiguration()
+    public function getClientConfiguration(Element $element)
     {
-        $config = $this->entity->getConfiguration();
+        $config = $element->getConfiguration();
         $defaults = self::getDefaultConfiguration();
+        // Amend config values with null defaults to working values
         if (empty($config['width'])) {
             $config['width'] = $defaults['width'];
         }
@@ -47,15 +49,6 @@ class FeatureInfo extends Element
         if (empty($config['maxCount']) || $config['maxCount'] < 0) {
             $config['maxCount'] = $defaults['maxCount'];
         }
-        /** @var EngineInterface $templating */
-        $templating = $this->container->get('templating');
-        $iframeScripts = array(
-            $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js'),
-        );
-        if (!empty($config['highlighting'])) {
-            $iframeScripts[] = $templating->render('@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js');
-        }
-        $config['iframeInjection'] = implode("\n\n", $iframeScripts);
         return $config + $defaults;
     }
 
@@ -83,7 +76,7 @@ class FeatureInfo extends Element
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbFeatureInfo';
     }
@@ -99,7 +92,7 @@ class FeatureInfo extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -115,23 +108,20 @@ class FeatureInfo extends Element
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
+    public function getView(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:featureinfo.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $configuration = parent::getConfiguration();
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    'configuration' => $configuration,
-                    'title' => $this->getTitle(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:featureinfo.html.twig');
+        $view->attributes['class'] = 'mb-element-featureinfo';
+        $view->attributes['data-title'] = $element->getTitle();
+        $config = $element->getConfiguration() ?: array();
+        $view->variables['displayType'] = ArrayUtil::getDefault($config, 'displayType', 'tabs');
+        $view->variables['iframe_scripts'] = array(
+            '@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js',
+        );
+        if (!empty($config['highlighting'])) {
+            $view->variables['iframe_scripts'][] = '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js';
+        }
+        return $view;
     }
 
     /**

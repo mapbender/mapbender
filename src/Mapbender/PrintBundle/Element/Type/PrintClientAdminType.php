@@ -5,7 +5,6 @@ use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrintClientAdminType extends AbstractType
 {
@@ -23,24 +22,9 @@ class PrintClientAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'required' => false,
-            ))
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
@@ -56,7 +40,6 @@ class PrintClientAdminType extends AbstractType
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
                 ),
-                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
             $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
@@ -65,7 +48,6 @@ class PrintClientAdminType extends AbstractType
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
                 ),
-                'choices_as_values' => true,
                 'label' => 'mb.print.admin.printclient.queueAccess.label',
             ));
         }

@@ -23,4 +23,15 @@
       }
     }
   }
+  .recall-marker {
+    opacity: 0;
+  }
+  // Remove padding to make room for .recall-marker
+  // Defeat highly specific Bootstrap 3 .table rule
+  .table>tbody>tr>td.name-cell {
+    padding-left: 0;
+  }
+  .name-cell {
+    cursor: pointer;
+  }
 }

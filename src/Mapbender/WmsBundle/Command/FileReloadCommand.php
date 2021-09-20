@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Console command mapbender:wms:reload:file
+ */
 class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
 {
 

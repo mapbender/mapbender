@@ -6,6 +6,8 @@ use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -14,16 +16,14 @@ use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  *  Mapbender repository controller
@@ -36,6 +36,22 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class RepositoryController extends ApplicationControllerBase
 {
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+    /** @var TranslatorInterface */
+    protected $translator;
+    /** @var TypeDirectoryService */
+    protected $typeDirectory;
+
+    public function __construct(MutableAclProviderInterface $aclProvider,
+                                TranslatorInterface $translator,
+                                TypeDirectoryService $typeDirectory)
+    {
+        $this->aclProvider = $aclProvider;
+        $this->translator = $translator;
+        $this->typeDirectory = $typeDirectory;
+    }
+
     /**
      * Renders the layer service repository.
      *
@@ -60,20 +76,21 @@ class RepositoryController extends ApplicationControllerBase
         // User that added the source to the system, but not editable in any way.
         // => On listings ALWAYS check grants on oids for sources, nothing else works as expected
         if ($this->isGranted('EDIT', $oid)) {
-            $typeDirectory = $this->getTypeDirectory();
             foreach ($sources as $source) {
-                if ($typeDirectory->getRefreshSupport($source)) {
+                if ($this->typeDirectory->getRefreshSupport($source)) {
                     $reloadableIds[] = $source->getId();
                 }
             }
         }
-        $sharedInstances = $this->getSourceInstanceRepository()->findReusableInstances(array(), array(
+        /** @var SourceInstanceRepository $instanceRepository */
+        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
+
+        $sharedInstances = $instanceRepository->findReusableInstances(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));
 
         return $this->render('@MapbenderManager/Repository/index.html.twig', array(
-            'title' => $this->getTranslator()->trans('mb.manager.admin.sources'),
             'sources' => $sources,
             'reloadableIds' => $reloadableIds,
             'shared_instances' => $sharedInstances,
@@ -98,9 +115,8 @@ class RepositoryController extends ApplicationControllerBase
         if ($form->isSubmitted() && $form->isValid()) {
             $sourceType = $form->get('type')->getData();
 
-            $directory = $this->getTypeDirectory();
             try {
-                $loader = $directory->getSourceLoaderByType($sourceType);
+                $loader = $this->typeDirectory->getSourceLoaderByType($sourceType);
                 $source = $loader->evaluateServer($form->getData());
 
                 $this->setAliasForDuplicate($source);
@@ -119,13 +135,13 @@ class RepositoryController extends ApplicationControllerBase
                 ));
             } catch (\Exception $e) {
                 $importerResponse = null;
-                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
+                $form->addError(new FormError($this->translator->trans($e->getMessage())));
             }
         }
 
         return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'title' => $this->getTranslator()->trans('mb.manager.admin.source.new.add'),
+            'title' => $this->translator->trans('mb.manager.admin.source.new.add'),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));
@@ -202,10 +218,8 @@ class RepositoryController extends ApplicationControllerBase
         }
         // capture ACL and entity updates in a single transaction
         $em->beginTransaction();
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider = $this->get('security.acl.provider');
         $oid         = ObjectIdentity::fromDomainObject($source);
-        $aclProvider->deleteAcl($oid);
+        $this->aclProvider->deleteAcl($oid);
 
         $dtNow = new \DateTime('now');
         foreach ($affectedApplications as $affectedApplication) {
@@ -240,7 +254,7 @@ class RepositoryController extends ApplicationControllerBase
             $this->denyAccessUnlessGranted('EDIT', $oid);
             throw $this->createNotFoundException();
         }
-        $canUpdate = $this->getTypeDirectory()->getRefreshSupport($source);
+        $canUpdate = $this->typeDirectory->getRefreshSupport($source);
         if (!$canUpdate) {
             throw $this->createNotFoundException();
         }
@@ -254,7 +268,7 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         /** @var RefreshableSourceLoader $loader */
-        $loader = $this->getTypeDirectory()->getSourceLoaderByType($source->getType());
+        $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
         $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
@@ -276,13 +290,13 @@ class RepositoryController extends ApplicationControllerBase
                 ));
             } catch (\Exception $e) {
                 $em->rollback();
-                $form->addError(new FormError($this->getTranslator()->trans($e->getMessage())));
+                $form->addError(new FormError($this->translator->trans($e->getMessage())));
             }
         }
 
         return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
             'form' => $form->createView(),
-            'title' => $this->getTranslator()->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
+            'title' => $this->translator->trans('mb.manager.admin.source.update') . " ({$source->getTypeLabel()})",
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));
@@ -329,7 +343,7 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
-        $factory = $this->getTypeDirectory()->getInstanceFactory($instance->getSource());
+        $factory = $this->typeDirectory->getInstanceFactory($instance->getSource());
         $form = $this->createForm($factory->getFormType($instance), $instance);
 
         $form->handleRequest($request);
@@ -402,8 +416,8 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function instanceWeightAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $instanceRepository = $this->getSourceInstanceRepository();
-        $instance = $instanceRepository->find($instanceId);
+        /** @var SourceInstance|null $instance */
+        $instance = $this->getDoctrine()->getRepository(SourceInstance::class)->find($instanceId);
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
@@ -534,16 +548,6 @@ class RepositoryController extends ApplicationControllerBase
         return $this->toggleInstanceEnabledCommon($request, $layerset, $assignment);
     }
 
-    /**
-     * @return TypeDirectoryService
-     */
-    protected function getTypeDirectory()
-    {
-        /** @var TypeDirectoryService $service */
-        $service = $this->get('mapbender.source.typedirectory.service');
-        return $service;
-    }
-
     protected function setAliasForDuplicate(Source $source)
     {
         $wmsWithSameTitle = $this->getDoctrine()
@@ -561,14 +565,22 @@ class RepositoryController extends ApplicationControllerBase
      */
     protected function initializeAccessControl($entity)
     {
-        /** @var MutableAclProviderInterface $aclProvider */
-        $aclProvider    = $this->get('security.acl.provider');
         $objectIdentity = ObjectIdentity::fromDomainObject($entity);
-        $acl            = $aclProvider->createAcl($objectIdentity);
+        $acl = $this->aclProvider->createAcl($objectIdentity);
 
         $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
 
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-        $aclProvider->updateAcl($acl);
+        $this->aclProvider->updateAcl($acl);
+    }
+
+    /**
+     * @return ApplicationRepository
+     */
+    protected function getDbApplicationRepository()
+    {
+        /** @var ApplicationRepository $repository */
+        $repository = $this->getDoctrine()->getRepository(Application::class);
+        return $repository;
     }
 }

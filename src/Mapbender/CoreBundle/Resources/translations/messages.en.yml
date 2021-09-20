@@ -36,6 +36,9 @@ mb:
         singular: Bound instance
         plural: Bound instances
     security: Security
+  form:
+    choice_required: Choose one
+    choice_optional: None
   states:
     active: active
     inactive: inactive
@@ -302,6 +305,7 @@ mb:
       enter_title: Enter title
       apply: Apply
       replace: Replace
+      details: Show details
       admin:
         access.none: Do not show
         access.ro: Read only
@@ -414,3 +418,5 @@ mb:
         description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
+  template:
+    toolbar_menu_tooltip: Toggle menu

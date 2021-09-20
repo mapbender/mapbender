@@ -1,8 +1,9 @@
 
-.mb-element-scaleline{
-  position: relative; // to wrap absolute
-  text-align: center;
-  display: inline-block;
+.mb-element-scaleline {
+  .control-wrapper {
+    text-align: center;
+    display: inline-block;
+  }
   .scaleBorder{
     border:{
       left:solid 2px $firstColor;
@@ -10,17 +11,12 @@
       bottom:solid 2px $firstColor;
     }
     height:5px;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
   }
 }
 
-.toolBar{
-  .mb-element-scaleline{
-    bottom:5px;
-    padding-bottom:5px;
+.toolBar {
+  .mb-element-scaleline {
+    text-align: center;
     .scaleBorder {
       border-color: $toolBarFontColor;
     }

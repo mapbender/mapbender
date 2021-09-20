@@ -35,13 +35,12 @@
     </div>
     {{ form_row(form.title) }}
     {{ form_row(form.configuration.target) }}
-    {{ form_row(form.configuration.type) }}
     {{ form_row(form.configuration.menu) }}
     <div class="form-group no-gutters">
         {{ form_widget(form.configuration.hideSelect, {'label_attr': {'class': 'checkbox-inline'}}) }}
         {{ form_widget(form.configuration.hideInfo, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_row(form.configuration.useTheme) }}
     </div>
-    {{ form_row(form.configuration.useTheme) }}
     {% if form.configuration.themes is defined %}
         {{ form_row(form.configuration.themes) }}
         <script type="text/javascript">

@@ -13,9 +13,17 @@ class Configuration implements ConfigurationInterface {
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('fom_user');
+    public function getConfigTreeBuilder()
+    {
+        $rootName = 'fom_user';
+        $treeBuilder = new TreeBuilder($rootName);
+        if (\method_exists($treeBuilder, 'getRootNode')) {
+            // Symfony >= 4.1+
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // Deprecated on Symfony 4, error on Symfony 5
+            $rootNode = $treeBuilder->root($rootName);
+        }
 
         $rootNode
             ->children()

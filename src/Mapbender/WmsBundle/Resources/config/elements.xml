@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="mapbender.element.WmsLoader" class="Mapbender\WmsBundle\Element\WmsLoader">
+            <tag name="mapbender.element" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="mapbender.importer.source.wms.service" />
+            <argument>%wmsloader.example_url%</argument>
+        </service>
+        <service id="mapbender.element.DimensionsHandler" class="Mapbender\WmsBundle\Element\DimensionsHandler">
+            <tag name="mapbender.element" />
+        </service>
+    </services>
+</container>

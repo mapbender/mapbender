@@ -34,7 +34,7 @@
         },
         _setupOl4: function() {
             var control = new ol.control.ScaleLine({
-                target: this.element.attr('id'),
+                target: $('.control-container', this.element).get(0),
                 minWidth: '' + Math.max(1, parseInt(this.options.maxWidth) / 3),
                 geodesic: true,
                 units: this.options.units === 'ml' ? 'imperial' : 'metric'
@@ -43,7 +43,7 @@
         },
         _setupOl2: function() {
             var controlOptions = {
-                div: $(this.element).get(0),
+                div: $('.control-container', this.element).get(0),
                 maxWidth: this.options.maxWidth,
                 geodesic: true,
                 // Disable simultaneous dual-display. Use only "bottom" units.

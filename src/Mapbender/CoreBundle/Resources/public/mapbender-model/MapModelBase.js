@@ -62,7 +62,7 @@ window.Mapbender.MapModelBase = (function() {
             this._poiOptions = [];
         }
         this.initialViewParams = this._getInitialViewParams(mapOptions);
-        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
+        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extent_max);
         this.sourceTree = this.getConfiguredSources_();
         this.configuredSettings_ = Object.assign({}, this.getCurrentSourceSettings(), {
             viewParams: this._getConfiguredViewParams(mapOptions)
@@ -267,6 +267,10 @@ window.Mapbender.MapModelBase = (function() {
         setSourceVisibility: function(source, state) {
             this.controlLayer(source.getRootLayer(), state);
         },
+        setSourceOpacity: function(source, opacity) {
+            source.setOpacity(opacity);
+            this.triggerSourceChanged_(source);
+        },
         /**
          * Reevaluates source's treeOptions and other settings and reapplies effective parameters.
          * This should be used if a sources internal configuration structure has been updated "manually".
@@ -410,7 +414,9 @@ window.Mapbender.MapModelBase = (function() {
                 'sloff',
                 'lson',
                 'lsoff',
-                'sop'
+                'sop',
+                'wms_id',
+                'wms_url'
             ]);
         },
         processUrlParams: function() {
@@ -919,7 +925,7 @@ window.Mapbender.MapModelBase = (function() {
          * @private
          */
         _getConfiguredViewParams: function(mapOptions) {
-            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.start);
+            var startExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extent_start);
             startExtent = Mapbender.mapEngine.transformBounds(startExtent, mapOptions.srs, mapOptions.srs);
             var viewportSize = this.getCurrentViewportSize();
             var resolution = this._getExtentResolution(startExtent, viewportSize.width, viewportSize.height);

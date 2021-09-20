@@ -3,12 +3,12 @@
   .component + .component {
     margin-top: 0.7rem;
   }
-  &.right-top, &.right-bottom {
+  .anchored-element-wrap-rt &, .anchored-element-wrap-rb & {
     .move-icon-wrap {
       text-align: right;
     }
   }
-  &.left-top, &.left-bottom {
+  .anchored-element-wrap-lt &, .anchored-element-wrap-lb & {
     .move-icon-wrap {
       text-align: left;
     }

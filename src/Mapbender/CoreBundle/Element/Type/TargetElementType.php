@@ -7,8 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Element\EventListener\TargetElementSubscriber;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Component;
-use Mapbender\CoreBundle\Extension\ElementExtension;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,6 +23,13 @@ use Symfony\Component\Translation\TranslatorInterface;
  * controlling a functional Element like a FeatureInfo).
  *
  * @see EntityType
+ *
+ * @depreacted for multi-purpose overengineering and problematic usage of EntityType; prefer new, more
+ * specialized type as appropriate:
+ * @see \Mapbender\ManagerBundle\Form\Type\Element\MapTargetType
+ * @see \Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType
+ *
+ * @todo 3.3: remove this class (+ tagged form.type service definition)
  */
 class TargetElementType extends AbstractType
 {
@@ -31,16 +37,16 @@ class TargetElementType extends AbstractType
     protected $repository;
     /** @var TranslatorInterface */
     protected $translator;
-    /** @var ElementExtension */
-    protected $elementExtension;
+    /** @var ElementFilter */
+    protected $elementFilter;
 
     public function __construct(TranslatorInterface $translator,
                                 EntityManagerInterface $entityManager,
-                                ElementExtension $elementExtension)
+                                ElementFilter $elementFilter)
     {
         $this->translator = $translator;
         $this->repository = $entityManager->getRepository('Mapbender\CoreBundle\Entity\Element');
-        $this->elementExtension = $elementExtension;
+        $this->elementFilter = $elementFilter;
     }
 
     /**
@@ -60,13 +66,13 @@ class TargetElementType extends AbstractType
             'class' => 'Mapbender\CoreBundle\Entity\Element',
         );
         $type = $this;
-        $elementExt = $this->elementExtension;
+        $elementFilter = $this->elementFilter;
         $resolver->setDefaults($fixedParentOptions + array(
             'application' => null,
             'element_class' => null,
             'class' => 'Mapbender\CoreBundle\Entity\Element',
-            'choice_label' => function($element) use ($elementExt) {
-                return $element->getTitle() ?: $elementExt->element_default_title($element);
+            'choice_label' => function($element) use ($elementFilter) {
+                return $element->getTitle() ?: $elementFilter->getDefaultTitle($element);
             },
             // @todo: provide placeholder translations
             'placeholder' => 'Choose an option',
@@ -109,10 +115,15 @@ class TargetElementType extends AbstractType
         } else {
             $elementIds = array();
             foreach ($application->getElements() as $elementEntity) {
-                /** @var Component\Element|string $elementComponentClass */
                 $elementComponentClass = $elementEntity->getClass();
                 if (ClassUtil::exists($elementComponentClass)) {
-                    if ($elementComponentClass::$ext_api) {
+                    $r = new \ReflectionClass($elementComponentClass);
+                    if ($r->hasProperty('ext_api') && $r->getProperty('ext_api')->isStatic()) {
+                        /** @var \Mapbender\CoreBundle\Component\Element|string $elementComponentClass */
+                        if ($elementComponentClass::$ext_api) {
+                            $elementIds[] = $elementEntity->getId();
+                        }
+                    } else {
                         $elementIds[] = $elementEntity->getId();
                     }
                 }
@@ -137,7 +148,9 @@ class TargetElementType extends AbstractType
     {
         $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
+        /** @todo Sf4: remove this path */
         if (!empty($options['element_class']) && is_a($options['element_class'], 'Mapbender\Component\Element\MainMapElementInterface', true)) {
+            @trigger_error("DEPRECATED: using TargetElementType to select Map element. This will be an error in v3.3. Use Mapbender\ManagerBundle\Form\Type\Element\MapTargetType instead.", E_USER_DEPRECATED);
             $elementSubscriber = new TargetElementSubscriber($options['application'], $options['element_class']);
             $builder->addEventSubscriber($elementSubscriber);
         }

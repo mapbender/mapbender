@@ -56,6 +56,7 @@
             });
             $('.-fn-tool-off', this.element).on('click', function() {
                 self._deactivateControl();
+                $(this).prop('disabled', true);
             });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);

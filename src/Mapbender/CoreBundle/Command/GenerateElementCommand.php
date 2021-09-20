@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,15 +13,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @deprecated should be removed in release/3.0.7
  */
-class GenerateElementCommand extends ContainerAwareCommand {
+class GenerateElementCommand extends Command
+{
+    /** @var ElementGenerator */
     private $generator;
 
-    protected function getGenerator() {
-        if($this->generator === null) {
-            $this->generator = new ElementGenerator();
-        }
-        return $this->generator;
+    public function __construct()
+    {
+        $this->generator = new ElementGenerator();
+        parent::__construct(null);
     }
+
     protected function configure() {
         $this->setDefinition(array(
                 new InputArgument('bundle', InputArgument::REQUIRED, 'The bundle namespace of the Element to create'),
@@ -37,7 +39,6 @@ The <info>mapbender:generate:element</info> command generates a new Mapbender el
 The generated Element class will be Vendor\HelloBundle\Element\MyElement.
 EOT
             )
-            ->setName('mapbender:generate:element')
             ->setDescription('Generates a Mapbender element');
     }
 
@@ -84,8 +85,7 @@ EOT
             throw new \RuntimeException(sprintf('Bundle directory "%s" does not exist.', $bundleDir));
         }
 
-        $files = $this->getGenerator()->create($this->getContainer(),
-            $bundle, $bundleDir, $bundleNamespace, $className, $type);
+        $files = $this->generator->create($bundle, $bundleDir, $bundleNamespace, $className, $type);
 
         $output->writeln('<comment>Summary of actions</comment>');
         $output->writeln(sprintf('- Your element %s\Element\%s has been created.', $bundle, $className));

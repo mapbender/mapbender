@@ -2,20 +2,21 @@
 
     $.widget("mapbender.mbSrsSelector", {
         options: {
-            target: null
         },
         $select: null,
         mbMap: null,
-        _create: function(){
-            if(!Mapbender.checkTarget("mbSrsSelector", this.options.target)){
-                return;
-            }
+        _create: function() {
+            var self = this;
             this.$select = $('select', this.element);
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget('mbSrsSelector');
+            });
         },
         _setup: function(){
             var self = this;
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             var allSrs = this.mbMap.getAllSrs();
             for(var i = 0; i < allSrs.length; i++){
                 this._addSrsOption(this.$select, allSrs[i]);

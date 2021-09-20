@@ -2,24 +2,34 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\MainMapElementInterface;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Map element.
  *
  * @author Christian Wygoda
  */
-class Map extends Element implements MainMapElementInterface, ConfigMigrationInterface
+class Map extends AbstractElementService
+    implements MainMapElementInterface, ConfigMigrationInterface, ImportAwareInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;
+
+    /** @var \Doctrine\Persistence\ObjectRepository */
+    protected $srsRepository;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+    }
 
     /**
      * @inheritdoc
@@ -48,9 +58,8 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'tileSize' => 512,
-            'extents' => array(
-                'max' => array(0, 40, 20, 60),
-                'start' => array(5, 45, 15, 55)),
+            'extent_max' => array(0, 40, 20, 60),
+            'extent_start' => array(5, 45, 15, 55),
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
             'fixedZoomSteps' => false,
         );
@@ -59,125 +68,85 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbMap';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
+    public function getView(Element $element)
+    {
+        $view = new StaticView('');
+        $view->attributes['class'] = 'mb-element-map';
+
+        return $view;
+    }
+
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js',
             ),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/map.scss',
+            )
+        );
     }
 
     /**
      * Returns a list of all configured SRSes, producing an array with 'name' and 'title' for each
+     * @param Element $element
      * @return string[][]
      */
-    protected function buildSrsConfigs()
+    protected function buildSrsConfigs(Element $element)
     {
-        $allSrs = array();
-        $configuration = $this->entity->getConfiguration();
+        $customTitles = array();
+        $configuration = $element->getConfiguration();
         $mainSrsParts  = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
-        $configuration["srs"] = $mainSrsParts[0];
-        $allSrs[] = array(
-            "name" => $mainSrsParts[0],
-            "title" => (count($mainSrsParts) > 1) ? trim($mainSrsParts[1]) : '',
-        );
-        $allSrsNames[] = $allSrs[0]['name'];
-
-        if (!empty($configuration["otherSrs"])) {
-            $otherSrs = array();
-            if (is_array($configuration["otherSrs"])) {
-                $otherSrsConfigs = $configuration["otherSrs"];
-            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
-                $otherSrsConfigs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
-            } else {
-                // @todo: this should be an error
-                $otherSrsConfigs = array();
+        $defaultSrsName = $mainSrsParts[0];
+        $configuration['srs'] = $defaultSrsName;
+        if (!empty($mainSrsParts[1])) {
+            $customTitles[$mainSrsParts[0]] = $mainSrsParts[1];
+        }
+        $srsNames = array($defaultSrsName);
+        if (!empty($configuration['otherSrs'])) {
+            $otherSrsConfigs = $configuration['otherSrs'];
+            if (\is_string($otherSrsConfigs)) {
+                $otherSrsConfigs = preg_split('/\s*,\s*/', trim($otherSrsConfigs));
             }
+
             foreach ($otherSrsConfigs as $srs) {
                 $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
-                // @todo: non-unique srses should be an error
-                if (!\in_array($otherSrsParts[0], $allSrsNames)) {
-                    $otherSrs[] = array(
-                        "name" => $otherSrsParts[0],
-                        "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
-                    );
-                    $allSrsNames[] = $otherSrsParts;
+                if ($otherSrsParts[0] !== $defaultSrsName) {
+                    $srsNames[] = $otherSrsParts[0];
+                    if (!empty($otherSrsParts[1])) {
+                        $customTitles[$otherSrsParts[0]] = $otherSrsParts[1];
+                    }
                 }
             }
-            // Sort (already unique) entries via array_unique, the only sensible sorting method in PHP (no reference semantics).
-            // @todo: there should be no sorting at all
-            $allSrs = array_merge($allSrs, array_unique($otherSrs, SORT_REGULAR));
         }
-        $allSrs = array_unique($allSrs, SORT_REGULAR);
-        return $this->getSrsDefinitions($allSrs);
-    }
-
-    /**
-     * Checks if the SRS with $name appears in the list of configured SRSes
-     *
-     * @param string[][] $srsConfigs
-     * @param string $name
-     * @return bool
-     */
-    protected function hasSrs($srsConfigs, $name)
-    {
-        foreach ($srsConfigs as $srsConfig) {
-            if (strtoupper($srsConfig['name']) === strtoupper($name)) {
-                return true;
+        $defs = $this->getSrsDefinitions($srsNames);
+        foreach ($defs as $i => $def) {
+            if (!empty($customTitles[$def['name']])) {
+                $defs[$i]['title'] = $customTitles[$def['name']];
             }
         }
-        return false;
+        return array(
+            'srs' => $defaultSrsName,
+            'srsDefs' => $defs,
+        );
     }
 
     /**
-     * @inheritdoc
+     * @param Element $element
+     * @return array
      */
-    public function getConfiguration()
+    public function getClientConfiguration(Element $element)
     {
-        $defaultConfiguration = $this->getDefaultConfiguration();
-        $configuration        = parent::getConfiguration();
-        $extra                = array();
-
-        $srsConfigs = $this->buildSrsConfigs();
-        $configuration['srs'] = $srsConfigs[0]['name'];
-        $configuration["srsDefs"] = $srsConfigs;
-        /** @var Request $request */
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-
-        $configuration['extra'] = $extra;
-        if (!isset($configuration["tileSize"])) {
-            $configuration["tileSize"] = $defaultConfiguration["tileSize"];
-        } else {
-            $configuration["tileSize"] = max(self::MINIMUM_TILE_SIZE, $configuration["tileSize"]);
-        }
-
-        return $configuration;
-    }
-
-    public function getPublicConfiguration()
-    {
-        $conf = $this->getConfiguration();
-        if ($conf['scales']) {
-            $conf['scales'] = array_values(array_map('intval', $conf['scales']));
-        }
+        $conf = $element->getConfiguration();
+        $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
+        $conf = $this->buildSrsConfigs($element) + $conf;
         return $conf;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return "MapbenderCoreBundle:Element:map{$suffix}";
     }
 
     /**
@@ -198,67 +167,40 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
 
     /**
      * Returns proj4js srs definitions from srs names
-     * @param array[] $srsSpecs arrays with 'name' and 'title' keys
-     * @return string[][] each entry with keys 'name' (code), 'title' (display label) and 'definition' (proj4 compatible)
+     * @param string[] $names
+     * @return string[][]
      */
-    protected function getSrsDefinitions(array $srsSpecs)
+    protected function getSrsDefinitions(array $names)
     {
-        $titleMap = array_column($srsSpecs, 'title', 'name');
-        /** @var EntityManagerInterface $em */
-        $em = $this->container->get("doctrine")->getManager();
         /** @var SRS[] $srses */
-        $srses = $em->getRepository('MapbenderCoreBundle:SRS')->findBy(array(
-            'name' => array_keys($titleMap),
+        $srses = $this->srsRepository->findBy(array(
+            'name' => $names,
         ));
-        /** @var SRS[] $rowMap */
-        $rowMap = array();
+        $defs = array();
         foreach ($srses as $srs) {
-            $rowMap[$srs->getName()] = $srs;
-        }
-        $result = array();
-        // Database response may return in random order. Produce results maintaining order of input $srsSpecs.
-        foreach (array_keys($titleMap) as $srsName) {
-            if (!empty($rowMap[$srsName])) {
-                $result[] = array(
-                    'name' => $rowMap[$srsName]->getName(),
-                    'title' => $titleMap[$srsName] ?: $rowMap[$srsName]->getTitle(),
-                    'definition' => $rowMap[$srsName]->getDefinition(),
-                );
-            }
-            // @todo: unsupporteded SRS should be an error
-        }
-        return $result;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
-    {
-        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
-            $configuration['extents'] = array(
-                'start' => $configuration['extent_start'],
-                'max' => $configuration['extent_max']
+            $defs[] = array(
+                'name' => $srs->getName(),
+                'title' => $srs->getTitle(),
+                'definition' => $srs->getDefinition(),
             );
-            unset($configuration['extent_start']);
-            unset($configuration['extent_max']);
         }
-        if (is_string($configuration['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
-        }
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
-        }
-
-        if (key_exists('layersets', $configuration)) {
-            foreach ($configuration['layersets'] as &$layerset) {
-                $layerset = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $layerset);
-            }
-        }
-        return $configuration;
+        return $defs;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public function onImport(Element $element, Mapper $mapper)
+    {
+        $configuration = $element->getConfiguration();
+        if (!empty($configuration['layersets'])) {
+            $newIds = array();
+            foreach ($configuration['layersets'] as $oldId) {
+                $newIds[] = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $oldId);
+            }
+            $configuration['layersets'] = $newIds;
+            $element->setConfiguration($configuration);
+        }
+    }
+
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration();
         if (isset($config['layerset']) && !isset($config['layersets'])) {
@@ -266,6 +208,30 @@ class Map extends Element implements MainMapElementInterface, ConfigMigrationInt
             $config['layersets'] = (array)$config['layerset'];
         }
         unset($config['layerset']);
+
+        if (!empty($config['extents']['start'])) {
+            $config['extent_start'] = $config['extents']['start'];
+        }
+        if (!empty($config['extents']['max'])) {
+            $config['extent_max'] = $config['extents']['max'];
+        }
+        unset($config['extents']);
+
+        $defaults = static::getDefaultConfiguration();
+        $config += array(
+            'otherSrs' => $defaults['otherSrs'],
+            'scales' => $defaults['scales'],
+            'tileSize' => $defaults['tileSize'],
+        );
+
+        if (is_string($config['otherSrs'])) {
+            $config['otherSrs'] = explode(',', $config['otherSrs']);
+        }
+        if (is_string($config['scales'])) {
+            $config['scales'] = explode(',', $config['scales']);
+        }
+        $config['scales'] = array_values(array_map('intval', $config['scales']));
+
         $entity->setConfiguration($config);
     }
 }

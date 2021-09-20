@@ -4,39 +4,25 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ControlButtonAdminType extends AbstractType
+class ControlButtonAdminType extends BaseButtonAdminType
 {
-    public function getParent()
-    {
-        return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     /**
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType', array(
+                'constraints' => array(new NotBlank()),
+                'placeholder' => 'mb.form.choice_required',
+            ))
             ->add('group', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))
-            ->add('target', 'Mapbender\CoreBundle\Element\Type\TargetElementType', array(
-                'application' => $options['application'],
-                'required' => true,
-                'constraints' => array(new NotBlank()),
-            ))
         ;
+        parent::buildForm($builder, $options);
     }
 }

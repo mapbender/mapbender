@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- see https://symfony.com/doc/4.4/console/commands_as_services.html -->
+        <service id="mapbender.command.application_import" class="Mapbender\CoreBundle\Command\ApplicationImportCommand">
+            <tag name="console.command" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application_importer.service" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument>%mapbender.strict.static_app.element_configuration%</argument>
+        </service>
+        <service id="mapbender.command.application_export" class="Mapbender\CoreBundle\Command\ApplicationExportCommand">
+            <tag name="console.command" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application_importer.service" />
+            <argument type="service" id="mapbender.application_exporter.service" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
+        <service id="mapbender.command.application_clone" class="Mapbender\CoreBundle\Command\ApplicationCloneCommand">
+            <tag name="console.command" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="mapbender.application_importer.service" />
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+        </service>
+        <service id="mapbender.command.init_db" class="Mapbender\CoreBundle\Command\InitDbCommand">
+            <tag name="console.command" command="mapbender:database:init" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+        <service id="Mapbender\CoreBundle\Command\VersionCommand"
+                 class="Mapbender\CoreBundle\Command\VersionCommand">
+            <tag name="console.command" command="mapbender:version" />
+            <argument>%mapbender.branding.name%</argument>
+            <argument>%mapbender.version%</argument>
+            <argument>%branding.project_name%</argument>
+            <argument>%branding.project_version%</argument>
+        </service>
+        <service id="Mapbender\CoreBundle\Command\SourceRewriteHostCommand"
+                 class="Mapbender\CoreBundle\Command\SourceRewriteHostCommand">
+            <tag name="console.command" command="mapbender:source:rewrite:host" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="Mapbender\CoreBundle\Command\DatabaseUpgradeCommand"
+                 class="Mapbender\CoreBundle\Command\DatabaseUpgradeCommand">
+            <tag name="console.command" command="mapbender:database:upgrade" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="Mapbender\CoreBundle\Command\UserListCommand"
+                 class="Mapbender\CoreBundle\Command\UserListCommand">
+            <tag name="console.command" command="mapbender:user:list" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="Mapbender\CoreBundle\Command\UserCreateCommand"
+                 class="Mapbender\CoreBundle\Command\UserCreateCommand">
+            <tag name="console.command" command="mapbender:user:create" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="fom.user_helper.service" />
+        </service>
+        <service id="Mapbender\CoreBundle\Command\ConfigCheckCommand"
+                 class="Mapbender\CoreBundle\Command\ConfigCheckCommand">
+            <tag name="console.command" command="mapbender:config:check" />
+            <argument type="service" id="doctrine" />
+            <argument>%kernel.root_dir%</argument>
+        </service>
+        <service id="Mapbender\CoreBundle\Command\GenerateElementCommand"
+                 class="Mapbender\CoreBundle\Command\GenerateElementCommand">
+            <tag name="console.command" command="mapbender:generate:element" />
+        </service>
+    </services>
+</container>

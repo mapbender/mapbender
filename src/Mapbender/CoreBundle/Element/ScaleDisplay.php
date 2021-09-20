@@ -1,13 +1,16 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * @author Paul Schmidt
  */
-class ScaleDisplay extends Element implements FloatableElement
+class ScaleDisplay extends AbstractElementService implements FloatableElement
 {
 
     /**
@@ -35,6 +38,7 @@ class ScaleDisplay extends Element implements FloatableElement
             'title' => 'Scale Display',
             'target' => null,
             'unitPrefix' => false,
+            /** @todo: fix this default value (1: nobody wants the '='; 2: translation) */
             'scalePrefix' => 'Scale = ',
             'anchor' => 'right-bottom',
         );
@@ -43,7 +47,7 @@ class ScaleDisplay extends Element implements FloatableElement
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbScaledisplay';
     }
@@ -67,7 +71,7 @@ class ScaleDisplay extends Element implements FloatableElement
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -79,22 +83,15 @@ class ScaleDisplay extends Element implements FloatableElement
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return 'MapbenderCoreBundle:Element:scaledisplay.html.twig';
-    }
-
     /**
      * @inheritdoc
      */
-    public function render()
+    public function getView(Element $element)
     {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:scaledisplay.html.twig');
+        $view->attributes['class'] = 'mb-element-scaledisplay';
+        $config = $element->getConfiguration() ?: array();
+        $view->variables['scalePrefix'] = ArrayUtil::getDefault($config, 'scalePrefix', $this->getDefaultConfiguration()['scalePrefix']);
+        return $view;
     }
-
 }

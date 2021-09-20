@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -30,10 +29,5 @@ class SidepaneTypeType extends AbstractType
                 'mb.core.admin.template.sidepane.type.choice.unstyled' => '',
             ),
         ));
-        if (Kernel::MAJOR_VERSION < 3) {
-            $resolver->setDefaults(array(
-                'choices_as_values' => true,
-            ));
-        }
     }
 }

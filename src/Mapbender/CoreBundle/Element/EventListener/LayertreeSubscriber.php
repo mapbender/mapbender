@@ -4,26 +4,13 @@ namespace Mapbender\CoreBundle\Element\EventListener;
 
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
-/**
- *
- */
 class LayertreeSubscriber implements EventSubscriberInterface
 {
-    /** @var Application */
-    private $application;
-
-    /**
-     * @param Application $application
-     */
-    public function __construct($application)
-    {
-        $this->application = $application;
-    }
-
     /**
      * @inheritdoc
      */
@@ -42,13 +29,16 @@ class LayertreeSubscriber implements EventSubscriberInterface
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm();
-        $themesAll = $this->getThemes($event->getForm()->get('target')->getData());
+        /** @var Element $element */
+        $element = $form->getParent()->getParent()->getData();
+        $configData = $form->getParent()->getData();
+        $themesAll = $this->getThemes($element->getApplication(), $event->getData());
         $themesData = $this->checkDataThemes(
             $themesAll,
-            isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array()
+            !empty($configData["themes"]) ? $configData["themes"] : array()
         );
         if ($themesData) {
-            $form->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            $form->getParent()->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'label' => 'mb.core.admin.layertree.label.themes',
                 'data' => $themesData,
                 'required' => false,
@@ -57,20 +47,20 @@ class LayertreeSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function getThemes($mapId)
+    private function getThemes(Application $application, $mapId)
     {
         if (!$mapId) {
             return array();
         }
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('id', $mapId));
-        $mapEl = $this->application->getElements()->matching($criteria)->first();
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('id', \intval($mapId)));
+        $mapEl = $application->getElements()->matching($criteria)->first();
         if (!$mapEl) {
             return array();
         }
         $themes = array();
         if ($mapEl) {
             $config = $mapEl->getConfiguration();
-            foreach ($this->application->getLayersets() as $layerset) {
+            foreach ($application->getLayersets() as $layerset) {
                 $sets = array_key_exists('layersets', $config) ? $config['layersets'] : array($config['layerset']);
                 if (in_array($layerset->getId(), $sets)) {
                     $themes[] = array(

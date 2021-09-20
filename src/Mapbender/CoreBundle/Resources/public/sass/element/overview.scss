@@ -40,19 +40,19 @@
   .toggleOverview {
     position: absolute;
   }
-  &.right-top .toggleOverview {
+  .anchored-element-wrap-rt  & .toggleOverview {
     top: 0;
     left: -25px;
   }
-  &.left-top .toggleOverview {
+  .anchored-element-wrap-lt & .toggleOverview {
     top: 0;
     right: -25px;
   }
-  &.right-bottom .toggleOverview {
+  .anchored-element-wrap-rb & .toggleOverview {
     bottom: 0;
     left: -25px;
   }
-  &.left-bottom .toggleOverview {
+  .anchored-element-wrap-lb & .toggleOverview {
     bottom: 0;
     right: -25px;
   }

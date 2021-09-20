@@ -30,7 +30,6 @@ class LayerTreeMenuType extends AbstractType
         $resolver->setDefaults(array(
             'choices' => $this->exposedChoices,
             'multiple' => true,
-            'choices_as_values' => true,
             'attr' => array(
                 'size' => count($this->exposedChoices),
             ),

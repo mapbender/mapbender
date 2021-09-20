@@ -4,31 +4,17 @@
  See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
 #}
 
-{% use "bootstrap_3_layout.html.twig" with checkbox_widget as bs3_checkbox_widget, checkbox_label as bs3_checkbox_label %}
+{% use "bootstrap_3_layout.html.twig" with
+  checkbox_widget as bs3_checkbox_widget,
+  checkbox_label as bs3_checkbox_label,
+  form_errors as bs3_errors
+%}
 {% use "form_div_layout.html.twig" with choice_widget_collapsed as symfony_choice_widget_collapsed %}
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="alert alert-danger">
-            <ul>
-            {% for error in errors %}
-                <li>{{ error.message }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock -%}
-
-{%- block form_errors_inline -%}
-{%- if errors|length > 0 -%}
-  <span class="validationMsgBox smallText">
-    {%- for error in errors -%}
-      {{ error.message }}
-    {%- endfor -%}
-  </span>
-{%- endif -%}
-{%- endblock form_errors_inline %}
+  {{- block('bs3_errors') -}}
+{%- endblock form_errors -%}
 
 {%- block form_widget_simple -%}
   {%- if type is not defined or type not in ['file', 'hidden'] -%}
@@ -93,14 +79,23 @@
 {% endblock choice_widget_expanded_sortable %}
 
 {%- block choice_widget_collapsed_selected_value -%}
-  {% for choice in options %}
-    {%- if choice is iterable -%}
-      {%- set options = choice -%}
-      {{- block('choice_widget_collapsed_selected_value') -}}
-    {%- elseif choice is selectedchoice(value) -%}
-      {{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}
+  {#- Initially displayed value == exactly the text of the option initially marked with selected="selected" -#}
+  {#- see https://github.com/symfony/symfony/blob/3.4/src/Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig#L55 -#}
+  {%- if placeholder is not none and value is empty and not placeholder_in_choices -%}
+    {%- if translation_domain is same as(false) or placeholder == '' -%}
+      {{- placeholder -}}
+    {%- else -%}
+      {{- placeholder | trans({}, translation_domain) -}}
     {%- endif -%}
-  {% endfor %}
+  {%- else -%}
+    {%- set _selected = get_value_choice(preferred_choices, value) | default(get_value_choice(choices, value)) -%}
+    {%- set _selected = _selected | default(first_choice(preferred_choices)) | default(first_choice(choices)) -%}
+    {%- if _selected -%}
+      {{ choice_translation_domain is same as(false) ? _selected.label : _selected.label|trans({}, choice_translation_domain) }}
+    {%- elseif placeholder -%}
+      {{ placeholder }}
+    {%- endif -%}
+  {%- endif -%}
 {%- endblock -%}
 
 {%- block hiddendropdown_option_display -%}
@@ -128,12 +123,7 @@
     {%- set attr = attr | merge({'class': ('hiddenDropdown ' ~ (attr.class | default (''))) | trim}) -%}
     {{- block('symfony_choice_widget_collapsed') -}}
     <div class="dropdownValue iconDown">
-      {%- if placeholder is not none and value == '' -%}
-        {{ placeholder }}
-      {%- else -%}
-        {%- set options = preferred_choices|merge(choices) -%}
-        {{ block('choice_widget_collapsed_selected_value') }}
-      {%- endif -%}
+      {{ block('choice_widget_collapsed_selected_value') }}
     </div>
     <ul class="dropdownList">
       {%- if placeholder is not none -%}
@@ -170,7 +160,7 @@
 {% block checkbox_row %}
   <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
     {{- block('checkbox_widget') -}}
-    {{- block('form_errors_inline') -}}
+    {{- form_errors(form) -}}
   </div>
 {% endblock checkbox_row %}
 
@@ -187,7 +177,7 @@
     <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}
       {{- form_widget(form) -}}
-      {{- block('form_errors_inline') -}}
+      {{- form_errors(form) -}}
     </div>
   {%- endif -%}
 {% endblock form_row %}

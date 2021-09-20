@@ -3,8 +3,8 @@
 
 namespace Mapbender\PrintBundle\Command;
 
-use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,28 +17,26 @@ use Symfony\Component\Yaml\Yaml;
  * @author    Rolf Neuberger <rolf.neuberger@wheregroup.com>
  * @copyright 2017 by WhereGroup GmbH & Co. KG
  */
-class RunJobCommand extends ContainerAwareCommand
+class RunJobCommand extends Command
 {
+    /** @var PrintServiceInterface */
+    protected $printService;
+
+    public function __construct(PrintServiceInterface $printService)
+    {
+        $this->printService = $printService;
+        parent::__construct(null);
+    }
+
     /**
      * @inheritdoc
      */
     protected function configure()
     {
         $this->setDescription("Run a print job from a dumped job definition json or yaml")
-            ->setName('mapbender:print:runJob')
             ->addArgument('inputFile', InputArgument::REQUIRED, 'JSON or YAML job file to load ("-" for stdin)')
             ->addArgument('outputFile', InputArgument::REQUIRED, 'Output PDF file path')
         ;
-    }
-
-    /**
-     * @return PrintServiceBridge
-     */
-    protected function getPrintServiceBridge()
-    {
-        /** @var PrintServiceBridge $bridgeService */
-        $bridgeService = $this->getContainer()->get('mapbender.print_service_bridge.service');
-        return $bridgeService;
     }
 
     /**
@@ -48,7 +46,7 @@ class RunJobCommand extends ContainerAwareCommand
     {
         $jobArray = $this->getJobArray($input->getArgument('inputFile'));
 
-        $outputBody = $this->getPrintServiceBridge()->dumpPrint($jobArray);
+        $outputBody = $this->printService->dumpPrint($jobArray);
 
         $outputFileName= $input->getArgument('outputFile');
         file_put_contents($outputFileName, $outputBody);

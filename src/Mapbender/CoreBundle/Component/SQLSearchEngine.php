@@ -47,8 +47,6 @@ class SQLSearchEngine
         if (is_object($properties)) {
             $properties = get_object_vars($properties);
         }
-        // First, get DBAL connection service, either given one or default one
-        /** @var Connection $connection */
         $connection     = $this->getConnection($config);
         $qb             = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
@@ -111,8 +109,6 @@ class SQLSearchEngine
      */
     public function search($config, $data, $srs, $extent)
     {
-        // First, get DBAL connection service, either given one or default one
-
         $options = $config['class_options'];
         $connection     = $this->getConnection($config);
         $qb             = $connection->createQueryBuilder();
@@ -182,7 +178,7 @@ class SQLSearchEngine
     protected function getConnection($config)
     {
         $connectionName = $config['class_options']['connection'] ?: 'default';
-        return $this->container->get('doctrine.dbal.' . $connectionName . '_connection');
+        return $this->container->get('doctrine')->getConnection($connectionName);
     }
 
     /**

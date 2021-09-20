@@ -33,10 +33,15 @@ class WmsMetadata extends SourceMetadata
     public function getData(SourceInstance $instance, $itemId = null)
     {
         /** @var WmsInstance $instance */
+        $root = $instance->getRootlayer();
+        $title = $root
+            ? $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $instance->getSource()->getTitle()
+            : $instance->getSource()->getTitle()
+        ;
         $src = $instance->getSource();
         $sectionData = array();
         $sectionData[] = $this->formatSection(static::$SECTION_COMMON, array(
-            'title' => $this->formatAlternatives($src->getTitle(), $instance->getTitle()),
+            'title' => $title,
             'name' => strval($src->getName()),
             'version' => strval($src->getVersion()),
             'originUrl' => strval($src->getOriginUrl()),
@@ -94,7 +99,7 @@ class WmsMetadata extends SourceMetadata
         $layer_items = array();
         $sourceItem = $layer->getSourceItem();
         $layer_items[] = array("name" => strval($sourceItem->getName()));
-        $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
+        $layer_items[] = array("title" => $layer->getTitle() ?: $layer->getSourceItem()->getTitle());
         $layer_items[] = array("abstract" =>  strval($sourceItem->getAbstract()));
         $bbox = $sourceItem->getLatlonBounds(true);
         if ($bbox) {

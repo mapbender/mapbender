@@ -36,6 +36,9 @@ mb:
         singular: Private Instanz
         plural: Private Instanzen
     security: Sicherheit
+  form:
+    choice_required: Auswahl erforderlich
+    choice_optional: Nichts ausgewählt
   states:
     active: aktiv
     inactive: inaktiv
@@ -303,6 +306,7 @@ mb:
       enter_title: Titel eingeben
       apply: Abrufen
       replace: Überschreiben
+      details: Details anzeigen
       admin:
         access.none: Nicht anzeigen
         access.ro: Nur lesen
@@ -415,6 +419,8 @@ mb:
         description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
       admin:
         open_in_new_tab: In neuem Tab öffnen
+  template:
+    toolbar_menu_tooltip: Menü öffnen
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

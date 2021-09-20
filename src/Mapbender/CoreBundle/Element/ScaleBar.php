@@ -1,15 +1,17 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
-use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * @author Paul Schmidt
  */
-class ScaleBar extends Element implements ConfigMigrationInterface, FloatableElement
+class ScaleBar extends AbstractElementService implements ConfigMigrationInterface, FloatableElement
 {
 
     /**
@@ -45,7 +47,7 @@ class ScaleBar extends Element implements ConfigMigrationInterface, FloatableEle
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
+    public function getWidgetName(Element $element)
     {
         return 'mapbender.mbScalebar';
     }
@@ -69,7 +71,7 @@ class ScaleBar extends Element implements ConfigMigrationInterface, FloatableEle
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -81,25 +83,21 @@ class ScaleBar extends Element implements ConfigMigrationInterface, FloatableEle
         );
     }
 
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return 'MapbenderCoreBundle:Element:scalebar.html.twig';
-    }
-
     /**
      * @inheritdoc
      */
-    public function render()
+    public function getView(Element $element)
     {
-        return $this->container->get('templating')
-                ->render($this->getFrontendTemplatePath(), array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration(),
-        ));
+        $view = new TemplateView('MapbenderCoreBundle:Element:scalebar.html.twig');
+        // @todo: fix template to include a text display area that doesn't require CSS positioning / sizing hacks
+        $view->attributes['class'] = 'mb-element-scaleline smallText';
+        $config = $element->getConfiguration() ?: array();
+        $maxWidth = \intval(ArrayUtil::getDefault($config, 'maxWidth', null) ?: $this->getDefaultConfiguration()['maxWidth']);
+        $view->attributes['style'] = "width: auto; min-width: {$maxWidth}px;";
+        return $view;
     }
 
-    public static function updateEntityConfig(Entity\Element $entity)
+    public static function updateEntityConfig(Element $entity)
     {
         $config = $entity->getConfiguration();
         if (!empty($config['units'])) {
