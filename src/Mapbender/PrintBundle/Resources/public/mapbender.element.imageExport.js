@@ -178,16 +178,7 @@
         _filterFeature: function(feature) {
             // onScreen throws an error if geometry is not populated, see
             // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
-
-            var notOnScreen = function(feature) {
-                try {
-                    return !feature.onScreen(true);
-                } catch(e) {
-                    return true;
-                }
-            };
-
-            if (!feature.geometry || notOnScreen(feature)) {
+            if (!feature.geometry || !feature.onScreen(true)) {
                 return false;
             }
             return true;
