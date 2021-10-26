@@ -22,7 +22,7 @@
 
 {% block form_main2 %}
   <div class="extendedGroup">
-    {% if form.dimensions %}
+    {% if form.dimensions is defined %}
       <div class="panel panel-default content-toggle-container closed">
         <div class="panel-heading content-toggle clickable clearfix">
           <i class="fa fa-lg fas fa-plus pull-right"></i>
