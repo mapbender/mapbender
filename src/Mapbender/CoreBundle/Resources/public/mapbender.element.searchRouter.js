@@ -350,6 +350,8 @@
 
             if (features.length > 0) $('.no-results', this.element).hide();
 
+            this.highlightLayer.addNativeFeatures(features);
+
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
@@ -362,10 +364,10 @@
                 });
 
                 tbody.append(row);
+                this._highlightFeature(feature, 'default');
             }
 
             table.append(tbody);
-            this.highlightLayer.addNativeFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
