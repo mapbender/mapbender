@@ -14,21 +14,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class RootAccountVoter implements VoterInterface
 {
-    public function supportsAttribute($attribute)
-    {
-        return true;
-    }
-
-    public function supportsClass($class)
-    {
-        return true;
-    }
-
-    function vote(TokenInterface $token, $object, array $attributes)
+    function vote(TokenInterface $token, $subject, array $attributes)
     {
         $user = $token->getUser();
-
-        if(is_object($user) && get_class($user) === 'FOM\UserBundle\Entity\User' && $user->getId() === 1) {
+        if ($user && \is_object($user) && \method_exists($user, 'isAdmin') && $user->isAdmin()) {
             return VoterInterface::ACCESS_GRANTED;
         }
 

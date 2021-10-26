@@ -1,3 +1,8 @@
+## dev-release/3.2 @ 5e3e3814f
+* Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
+* Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
+* Enable external links in feature info HTML
+
 ## v3.2.8
 * Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
 * Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS

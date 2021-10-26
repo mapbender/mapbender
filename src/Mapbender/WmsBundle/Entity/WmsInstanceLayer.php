@@ -513,6 +513,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
+        $this->setPriority($layerSource->getPriority());
 
         $queryable = !!$layerSource->getQueryable();
         $this->setInfo($queryable);
