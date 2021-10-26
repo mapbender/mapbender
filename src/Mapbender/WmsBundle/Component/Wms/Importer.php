@@ -100,7 +100,6 @@ class Importer extends RefreshableSourceLoader
         $target->setContact($contact);
 
         $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
-        $this->assignLayerPriorities($target->getRootlayer(), 0);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
         /** @var ApplicationRepository $applicationRepository */
@@ -263,7 +262,6 @@ class Importer extends RefreshableSourceLoader
         } else {
             $this->updateInstanceLayer($instanceRoot);
         }
-        $this->assignLayerPriorities($instanceRoot, 0);
     }
 
     /**
@@ -272,7 +270,8 @@ class Importer extends RefreshableSourceLoader
      */
     protected function updateInstanceLayerChildren(WmsInstanceLayer $target, $sourceChildren)
     {
-        // reorder source layers already configured in instance to respect previous subset layer ordering
+        // Maintain configured min / max scale and layertree settings
+        // Ordering will be reset to source ordering
         $commonChildSources = new ArrayCollection();
         $commonChildInstances = new ArrayCollection();
         foreach ($target->getSublayer() as $instanceChild) {
@@ -281,12 +280,12 @@ class Importer extends RefreshableSourceLoader
             $commonChildInstances->add($instanceChild);
         }
         $target->setSublayer(new ArrayCollection());
-        $nextReorderedSource = 0;
         foreach ($sourceChildren as $sourceChild) {
             $instanceChildIndex = $commonChildSources->indexOf($sourceChild);
             if ($instanceChildIndex !== false) {
-                $target->addSublayer($commonChildInstances[$nextReorderedSource]);
-                ++$nextReorderedSource;
+                $matchedInstanceLayer = $commonChildInstances[$instanceChildIndex];
+                $matchedInstanceLayer->setPriority($sourceChild->getPriority());
+                $target->addSublayer($matchedInstanceLayer);
             } else {
                 $instance = $target->getSourceInstance();
                 $sublayerInstance = new WmsInstanceLayer();
