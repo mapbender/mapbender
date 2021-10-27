@@ -12,45 +12,42 @@
             this._trigger('ready');
         },
         
-        /**
-         * Default action for mapbender element
-         */
-        defaultAction: function(callback){
-            this.open(callback);
-        },
         open: function(callback) {
             var widget = this;
             var options = widget.options;
             var element = widget.element;
             var width = options.popupWidth ? options.popupWidth : 350;
             var height = options.popupHeight ? options.popupHeight : 350;
+            this.callback = callback ? callback : null;
 
-            widget.callback = callback ? callback : null;
-            if(!widget.popup || !widget.popup.$element){
-                widget.popup = new Mapbender.Popup2({
-                    title: element.attr('data-title'),
-                    modal:               true,
-                    closeOnOutsideClick: true,
-                    content:             [ $.ajax({url: widget.elementUrl + 'content'})],
-                    width:               width,
-                    height:              height,
-                    buttons:             {
-                        'ok': {
-                            label: 'OK',
-                            cssClass: 'button right',
-                            callback: function(){
-                                this.close();
+            if (!this.popup) {
+                $.ajax({url: this.elementUrl + 'content'}).then(function(response) {
+                    widget.popup = new Mapbender.Popup2({
+                        title: element.attr('data-title'),
+                        modal:               true,
+                        detachOnClose: false,
+                        closeOnOutsideClick: true,
+                        content: response,
+                        width:               width,
+                        height:              height,
+                        buttons:             {
+                            'ok': {
+                                label: 'OK',
+                                cssClass: 'button right popupClose'
                             }
                         }
-                    }
+                    });
+                    widget.popup.$element.on('close', function() {
+                        widget.close();
+                    });
                 });
             } else {
-                widget.popup.open();
+                this.popup.$element.show();
             }
         },
         close: function(){
             if(this.popup){
-                this.popup.close();
+                this.popup.$element.hide();
             }
             if (this.callback) {
                 (this.callback)();

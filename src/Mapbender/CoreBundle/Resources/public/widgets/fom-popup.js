@@ -70,6 +70,11 @@
         // focused on popup click
         self.$element.on("click", $.proxy(self.focus, self));
 
+        this.$element.on('click', '.popupClose', function(evt) {
+            evt.stopPropagation();
+            self.close();
+        });
+
         // Open if required
         if(this.options.autoOpen) {
             this.open();
@@ -117,7 +122,6 @@
             closeOnESC: true,
             detachOnClose: true,
             closeOnOutsideClick: false,
-            closeOnPopupCloseClick: true,
             destroyOnClose: false,
             modal: true,
 
@@ -414,28 +418,6 @@
             }
 
             this.options.closeOnESC = state;
-        },
-
-
-        /**
-         * Set or get closeOnPopupCloseClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnPopupCloseClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnPopupCloseClick;
-            }
-
-            if(state){
-                $('.popupClose', this.$element.get(0)).on('click', $.proxy(this.close, this));
-                $('.popupClose', this.$element.get(0)).removeClass('hidden');
-            }else{
-                $('.popupClose', this.$element.get(0)).off('click');
-                $('.popupClose', this.$element.get(0)).addClass('hidden');
-            }
-
-            this.options.closeOnPopupCloseClick = state;
         },
 
         /**
