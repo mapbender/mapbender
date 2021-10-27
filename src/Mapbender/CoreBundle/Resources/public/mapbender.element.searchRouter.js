@@ -187,6 +187,7 @@
             var $input = $(input);
 
             $input.autocomplete({
+                appendTo: $input.closest('.form-group'),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
                 search: function(event) {

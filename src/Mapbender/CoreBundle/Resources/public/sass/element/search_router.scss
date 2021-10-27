@@ -1,7 +1,6 @@
 .mb-element-searchrouter {
-
+  font-size: $fontSize - 2;
   .search-results {
-    font-size: 11px;
     overflow: auto;
     table {
       thead {
@@ -20,25 +19,5 @@
   }
   .search-action-buttons, .result-counter {
     margin-bottom: 5px;
-  }
-}
-
-.search-router.ui-autocomplete {
-  z-index: 20000;
-  background-color: #FFF;
-  cursor: pointer;
-  line-height: 1.8;
-  max-height: 200px;
-  overflow: auto;
-  border: solid 1px lighten($thirdColor, 15%);
-  font-size: $fontSize - 2;
-
-  li {
-    padding-left: 5px;
-    opacity: 0.8;
-    &:hover, &.ui-state-focus {
-      opacity: 1;
-      background-color: $contentColor;
-    }
   }
 }

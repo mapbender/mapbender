@@ -123,9 +123,6 @@ $.widget('mapbender.mbSimpleSearch', {
             select: function(event, ui) {
                 // Adapt data format
                 self._onAutocompleteSelected(event, {data: ui.item});
-            },
-            classes: {
-                'ui-autocomplete': 'ui-autocomplete autocompleteList'
             }
         });
         // On manual submit (enter key, submit button), trigger autocomplete manually
