@@ -306,7 +306,7 @@
             var headers = currentRoute.results.headers;
             var $headers = $(document.createElement('tr'));
 
-            var table = $('<table></table>');
+            var table = $(document.createElement('table')).addClass('table table-condensed table-striped table-hover');
 
             for (var header in headers) {
                 $headers.append($(document.createElement('th')).text(headers[header]));
