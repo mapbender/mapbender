@@ -53,6 +53,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            $(document).trigger('mapbender.elementdeactivated', {widget: this, sender: this, active: false});
         },
         _destroy: $.noop
     });
