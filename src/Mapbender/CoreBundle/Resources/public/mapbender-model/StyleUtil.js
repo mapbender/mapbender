@@ -15,8 +15,8 @@ window.Mapbender.StyleUtil = (function() {
             var alphaRule = this._resolveSvgDefault(style, opacityProp);
             var components = this._parseCssColor(colorRule);
             if (components.length < 4) {
-                var parsedAlpha = alphaRule && parseFloat(alphaRule);
-                if (alphaRule && !isNaN(parsedAlpha)) {
+                var parsedAlpha = parseFloat(alphaRule);
+                if (!isNaN(parsedAlpha)) {
                     components.push(parsedAlpha);
                 } else {
                     components.push(1.0);

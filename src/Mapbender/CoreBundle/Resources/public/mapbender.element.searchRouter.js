@@ -187,6 +187,7 @@
             var $input = $(input);
 
             $input.autocomplete({
+                appendTo: $input.closest('.form-group'),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
                 search: function(event) {
@@ -306,7 +307,7 @@
             var headers = currentRoute.results.headers;
             var $headers = $(document.createElement('tr'));
 
-            var table = $('<table></table>');
+            var table = $(document.createElement('table')).addClass('table table-condensed table-striped table-hover');
 
             for (var header in headers) {
                 $headers.append($(document.createElement('th')).text(headers[header]));
@@ -350,6 +351,8 @@
 
             if (features.length > 0) $('.no-results', this.element).hide();
 
+            this.highlightLayer.addNativeFeatures(features);
+
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
@@ -362,10 +365,10 @@
                 });
 
                 tbody.append(row);
+                this._highlightFeature(feature, 'default');
             }
 
             table.append(tbody);
-            this.highlightLayer.addNativeFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {

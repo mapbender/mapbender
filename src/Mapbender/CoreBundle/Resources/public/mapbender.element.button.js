@@ -260,24 +260,14 @@
             }
             if (this._initializeTarget() && this.targetWidget.options) {
                 var targetOptions = this.targetWidget.options;
-                var state = targetOptions.autoActivate;         // FeatureInfo style
-                state = state || targetOptions.autoStart;       // GpsPosition style
-                // Copyright, Legend, Layertree, WmsLoader all use have this option
-                if (targetOptions.autoOpen) {
-                    var isDialog = true;        // WmsLoader: always a dialog
-                    if (typeof targetOptions.type !== 'undefined') {
-                        // Layertree, FeatureInfo
-                        isDialog = targetOptions.type === 'dialog';
-                    } else if (typeof targetOptions.elementType !== 'undefined') {
-                        // Legend
-                        isDialog = targetOptions.elementType === 'dialog';
-                    } else if (typeof targetOptions.displayType !== 'undefined') {
-                        isDialog = targetOptions.displayType === 'dialog';
-                    }
-                    state = isDialog;
-                }
-                if (targetOptions.auto_activate) {              // Redlining
-                    state = targetOptions.display_type === 'dialog';
+                var state = targetOptions.autoActivate   // FeatureInfo style
+                         || targetOptions.autoStart     // GpsPosition style
+                         || targetOptions.autoOpen      // Copyright / Legend / Layertree / WmsLoader style
+                         || targetOptions.auto_activate // Sketch / Redlining style
+                ;
+                if (state) {
+                    var isDialog = !!this.targetWidget.element.closest('.contentPane').length;
+                    state = state && isDialog;
                 }
                 this._setActive(!!state);
             }

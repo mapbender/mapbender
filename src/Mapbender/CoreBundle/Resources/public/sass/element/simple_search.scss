@@ -1,62 +1,16 @@
 .mb-element-simplesearch {
-  .autocompleteWrapper, .autocompleteList {
-    background-color: #FFF;
-    color: #858585;
-  }
   .autocompleteWrapper {
     position: relative;
-    input {
-      background-color: inherit;
-    }
-    /* position: relative; */
-    .autocompleteList {
-      position: absolute; // do not expand DOM size when showing items
-      display: none;  // suppress border; will be shown via script when populated
-      border: solid 1px #c8c8c8;
-      z-index: 20000;
+    .ui-autocomplete {
       min-width: 100%;
       width: auto;
-
-      li {
-        cursor: pointer;
-        padding-left: 5px;
-        padding-right: 5px;
-        line-height: $inputHeight;
-        display: block;
-
-        &:hover {
-          background-color: #f9f9f9;
-        }
-      }
-    }
-  }
-}
-
-.sidePane .mb-element-simplesearch {
-  .autocompleteList {
-    max-width: 100%;
-  }
-}
-
-.toolBar .mb-element-simplesearch {
-  .autocompleteList {
-    max-height: 250px;
-    overflow-y: hidden;
-    li {
-      text-align: left;
     }
   }
 }
 
 .mobilePane .mb-element-simplesearch {
   .autocompleteWrapper {
-    width:100%;
-  }
-  .autocompleteList li {
-    padding:$space/2;
-    display:block;
-    line-height: 2.5;
-    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
+    width: 100%;
   }
 }
 
