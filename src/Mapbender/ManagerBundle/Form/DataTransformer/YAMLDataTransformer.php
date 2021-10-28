@@ -28,8 +28,7 @@ class YAMLDataTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        $dumper = new Dumper();
-        $dumper->setIndentation(2);
+        $dumper = new Dumper(2);
         return $dumper->dump($value, $this->levelsBeforeInline, 0, true);
     }
 
