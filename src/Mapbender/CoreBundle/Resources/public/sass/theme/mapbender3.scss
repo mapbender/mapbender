@@ -362,3 +362,35 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     bottom: $space;
   }
 }
+
+.ui-autocomplete {
+  background-color: #fff;
+  border: solid 1px lighten($thirdColor, 15%);   // same as .input
+  position: absolute; // do not expand DOM size when showing items
+  z-index: 20000; // ~replacement for .ui-front
+
+  line-height: 1.5;
+  li {
+    padding: 5px 5px;
+    cursor: pointer;
+    display: block;
+    opacity: 0.8;
+    &:hover {
+      opacity: 1;
+      background-color: $contentColor;
+    }
+  }
+  .toolBar & {
+    max-height: 250px;
+    overflow-y: hidden;
+    text-align: left;
+  }
+  .sidePane & {
+    max-width: 100%;
+  }
+  .mobilePane & {
+    li {
+      padding: $space / 2;
+    }
+  }
+}

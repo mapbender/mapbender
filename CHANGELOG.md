@@ -14,11 +14,16 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ 279ae5469
+## dev-release/3.2 @ 6a8324591
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
 * Fix WMS with no dimensions showing "Dimensions" block in instance editing
-* Enable external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
+* Fix cross-domain external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
+* [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6
+* [SearchRouter] fix deliberate 0 opacity style settings not working
+* [ApplicationSwitcher] fix visually truncated / horizontally scrolling target application titles
+* Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
+* Fix visual state of Button controlling Copyright element
 * Improve support for custom user entities in root account voter
 
 ## v3.2.8
