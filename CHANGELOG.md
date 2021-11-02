@@ -1,18 +1,16 @@
-## dev-release/3.2 @ 6a8324591
+## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
+* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
+* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
 * Fix WMS with no dimensions showing "Dimensions" block in instance editing
 * Fix cross-domain external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
-* [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6
+* [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6 ([#1386](https://github.com/mapbender/mapbender/issues/1386))
 * [SearchRouter] fix deliberate 0 opacity style settings not working
 * [ApplicationSwitcher] fix visually truncated / horizontally scrolling target application titles
 * Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
 * Fix visual state of Button controlling Copyright element
 * Improve support for custom user entities in root account voter
-
-## v3.2.8
-* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
-* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
 
 ## v3.2.7
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
