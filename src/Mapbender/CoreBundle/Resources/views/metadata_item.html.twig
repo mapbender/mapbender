@@ -1,13 +1,5 @@
 <ul class="list {% if itemLevel > 1 %}closed{% endif %}">
-{% for item in items %}
-  {% if item.subitems is defined and item.subitems|length > 0 %}
-    {% for subitem in item.subitems %}
-    <li>
-      {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': subitem, 'itemLevel': itemLevel + 1 }%}
-    </li>
-    {% endfor %}
-  {% else %}
-    {% for key,val in item %}
+  {%- for key, val in items -%}{%- if key != 'subitems' -%}
     {% set vt=prefix~section.title~'.'~key %}
     <li>
         <div class="labelText">{{ vt | trans}}:</div>
@@ -20,7 +12,12 @@
         {% endif %}
         <div class="clearContainer"></div>
     </li>
-    {% endfor %}
-  {% endif %}
-{% endfor %}
+  {%- endif -%}{%- endfor -%}
+  {%- if items.subitems is defined -%}
+  {%- for subitem in items.subitems -%}
+      <li>
+        {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': subitem, 'itemLevel': itemLevel + 1 }%}
+      </li>
+  {%- endfor -%}
+  {%- endif -%}
 </ul>

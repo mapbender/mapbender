@@ -96,24 +96,25 @@ class WmsMetadata extends SourceMetadata
      */
     private function prepareLayers($layer)
     {
-        $layer_items = array();
         $sourceItem = $layer->getSourceItem();
-        $layer_items[] = array("name" => strval($sourceItem->getName()));
-        $layer_items[] = array("title" => $layer->getTitle() ?: $layer->getSourceItem()->getTitle());
-        $layer_items[] = array("abstract" =>  strval($sourceItem->getAbstract()));
+        $layerData = array(
+            'name' => $sourceItem->getName(),
+            'title' => $layer->getTitle() ?: $layer->getSourceItem()->getTitle(),
+            'abstract' => $sourceItem->getAbstract(),
+        );
         $bbox = $sourceItem->getLatlonBounds(true);
         if ($bbox) {
-            $layer_items[] = array("bbox" => $this->formatBbox($bbox));
+            $layerData['bbox'] = $this->formatBbox($bbox);
         }
-        $layer_items[] = array("srs" => implode(', ', $layer->getSourceItem()->getSrs(true)));
+        $layerData['srs'] = implode(', ', $layer->getSourceItem()->getSrs(true));
+
         if($layer->getSublayer()->count() > 0){
-            $sublayers = array();
+            $layerData['subitems'] = array();
             foreach($layer->getSublayer() as $sublayer){
-                $sublayers[] = $this->prepareLayers($sublayer);
+                $layerData['subitems'][] = $this->prepareLayers($sublayer);
             }
-            $layer_items[] = array(SourceMetadata::$SECTION_SUBITEMS => $sublayers);
         }
-        return $layer_items;
+        return $layerData;
     }
 
     /**

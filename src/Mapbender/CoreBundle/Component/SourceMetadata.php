@@ -139,7 +139,6 @@ abstract class SourceMetadata
      * through trans for a label. The value is displayed directly.
      *
      * @todo: [template BC break] drop label translation key prefixing, it makes translation usage searches impossible
-     * @todo: [template BC break] drop item array nesting. This serves no purpose. PHP preserves array order, always.
      *
      * @param $title
      * @param $items
@@ -147,24 +146,10 @@ abstract class SourceMetadata
      */
     protected function formatSection($title, $items)
     {
-        $data = array(
+        return array(
             'title' => $title,
-            'items' => array(),
+            'items' => $items,
         );
-        foreach ($items as $key => $item) {
-            if (is_array($item)) {
-                if (!is_numeric($key)) {
-                    throw new \InvalidArgumentException("Cannot have a string key on an array-style item");
-                }
-                $data['items'][] = $item;
-            } else {
-                if (is_numeric($key)) {
-                    throw new \InvalidArgumentException("Cannot have a numeric key on a scalar-style item");
-                }
-                $data['items'][] = array($key => $item);
-            }
-        }
-        return $data;
     }
 
     abstract public function getTemplate();
