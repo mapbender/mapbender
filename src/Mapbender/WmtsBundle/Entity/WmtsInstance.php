@@ -167,12 +167,4 @@ class WmtsInstance extends SourceInstance
     {
         return $this->getTitle() ?: $this->getSource()->getTitle();
     }
-
-    /**
-     * @return null
-     */
-    public function getMetadata()
-    {
-        return null;
-    }
 }

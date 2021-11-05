@@ -164,14 +164,6 @@ abstract class SourceInstance extends SourceInstanceAssignment
     abstract public function getDisplayTitle();
 
     /**
-     *
-     * @return SourceMetadata|null
-     * @deprecated metadata rendering is doable and should be done purely in twig
-     * @see \Mapbender\CoreBundle\Controller\ApplicationController::metadataAction()
-     */
-    abstract public function getMetadata();
-
-    /**
      * @return string
      */
     public function __toString()

@@ -144,11 +144,10 @@ class ApplicationController extends ApplicationControllerBase
         $startLayerInstance = $instance->getLayers()->matching($layerCriteria)->first() ?: null;
         // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
         // @todo: give Yaml applications a proper object repository and make this work
-        $metadata  = $instance->getMetadata();
-        if (!$metadata) {
+        $template = $instance->getSource()->getViewTemplate(true);
+        if (!$template) {
             throw new NotFoundHttpException();
         }
-        $template = $metadata->getTemplate();
         $content = $this->renderView($template, array(
             'instance' => $instance,
             'source' => $instance->getSource(),

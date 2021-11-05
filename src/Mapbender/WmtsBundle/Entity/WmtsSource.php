@@ -508,8 +508,12 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
         }
     }
 
-    public function getViewTemplate()
+    public function getViewTemplate($frontend = false)
     {
-        return '@MapbenderWmts/Repository/view.html.twig';
+        if ($frontend) {
+            return null;
+        } else {
+            return '@MapbenderWmts/Repository/view.html.twig';
+        }
     }
 }
