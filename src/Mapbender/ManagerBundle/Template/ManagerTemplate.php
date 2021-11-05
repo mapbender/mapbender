@@ -17,6 +17,7 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                 return array(
                     '@MapbenderManagerBundle/Resources/public/js/bootstrap-modal.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/content-toggle.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',

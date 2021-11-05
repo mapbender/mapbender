@@ -30,16 +30,6 @@ $(function() {
         ($navLink.length && $navLink || $activeTabHeader).click();
     }
 
-    $(document).on('click', '.content-toggle-container > .content-toggle', function(){
-        var $cnt = $(this).parent();
-        $cnt.toggleClass('closed');
-        var state = !$cnt.hasClass('closed');
-        $('>.content-toggle i', $cnt)
-            .toggleClass('fa-plus', !state)
-            .toggleClass('fa-minus', state)
-        ;
-    });
-
     $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
