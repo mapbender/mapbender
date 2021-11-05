@@ -480,6 +480,12 @@ class WmsInstance extends SourceInstance
         return $this->layers->removeElement($layers);
     }
 
+    public function getDisplayTitle()
+    {
+        $root = $this->getRootlayer();
+        return $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $this->getTitle() ?: $this->getSource()->getTitle();
+    }
+
     /**
      * @return WmsMetadata
      * @deprecated metadata rendering is doable and should be done purely in twig

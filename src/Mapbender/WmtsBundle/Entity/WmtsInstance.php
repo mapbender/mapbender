@@ -163,6 +163,11 @@ class WmtsInstance extends SourceInstance
         $this->layers->removeElement($layer);
     }
 
+    public function getDisplayTitle()
+    {
+        return $this->getTitle() ?: $this->getSource()->getTitle();
+    }
+
     /**
      * @return null
      */

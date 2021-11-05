@@ -159,6 +159,11 @@ abstract class SourceInstance extends SourceInstanceAssignment
     abstract public function getLayers();
 
     /**
+     * @return string
+     */
+    abstract public function getDisplayTitle();
+
+    /**
      *
      * @return SourceMetadata|null
      * @deprecated metadata rendering is doable and should be done purely in twig
