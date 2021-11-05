@@ -141,38 +141,13 @@ mb:
       section:
         common:
           _title: Common
-          title: Title
-          name: Name
-          version: Version
-          originUrl: 'Origin Url'
-          description: Description
-          onlineResource: OnlineResource
-          exceptionFormats: 'Exception formats'
         useconditions:
           _title: 'Terms of use'
-          fees: Fees
-          accessconstraints: 'Access constraints'
         contact:
           _title: Contact
-          person: Person
-          position: Position
-          organization: Organization
-          voiceTelephone: Telephone
-          facsimileTelephone: Facsimile
-          electronicMailAddress: Email
-          address: Address
-          addressType: 'Address type'
-          addressCity: City
-          addressStateOrProvince: 'State or province'
-          addressPostCode: 'Post code'
-          addressCountry: Country
         items:
           _title: Layer
-          title: Title
-          name: Name
-          abstract: Abstracto
-          srs: SRS
-          bbox: BoundingBox
+          name: Nombre
     repo:
       instance:
         label:

@@ -144,38 +144,13 @@ mb:
       section:
         common:
           _title: Comune
-          title: Titolo
-          name: Nome
-          version: Versione
-          originUrl: 'Origine Url'
-          description: Descrizione
-          onlineResource: Resource online
-          exceptionFormats: Eccezione dovuta ai formati
         useconditions:
           _title: 'Condizioni d''uso'
-          fees: Costi
-          accessconstraints: 'Vincoli di accesso'
         contact:
           _title: Contatti
-          person: Persona
-          position: Posizione
-          organization: Organizzazione
-          voiceTelephone: Telefono
-          facsimileTelephone: Facsimile
-          electronicMailAddress: Indirizzo di posta elettronica
-          address: Indirizzo
-          addressType: 'Tipo di indirizzo'
-          addressCity: Città
-          addressStateOrProvince: 'Stato o Provincia'
-          addressPostCode: 'Codice postale'
-          addressCountry: Nazione
         items:
           _title: Layer
-          title: Titolo
           name: Nome
-          abstract: Abstract
-          srs: SRS
-          bbox: BoundingBox
     repo:
       instance:
         label:
