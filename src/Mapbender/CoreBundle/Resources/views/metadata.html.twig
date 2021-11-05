@@ -23,7 +23,7 @@
         <div id="accordion-layers" class="accordion">{{ 'mb.wms.metadata.section.items._title' | trans }}</div>
         <div id="container-layers" class="container-accordion">
             <div class="accordion-cell">
-                {%- include 'MapbenderCoreBundle::metadata_item.html.twig' with {section: {title: 'items'}, items: metadata.sections[0].items, itemLevel: 1} -%}
+                {%- include 'MapbenderWmsBundle::frontend/instancelayer.html.twig' with {layer: startLayerInstance, itemLevel: 1} -%}
             </div>
         </div>
     </div>

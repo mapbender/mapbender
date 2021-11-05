@@ -154,5 +154,4 @@ abstract class SourceMetadata
 
     abstract public function getTemplate();
 
-    abstract public function getData(SourceInstance $sourceInstance, $itemId = null);
 }

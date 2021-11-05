@@ -2,9 +2,9 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -138,17 +138,21 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function metadataAction(SourceInstance $instance, $layerId)
     {
+        $layerCriteria = Criteria::create()
+            ->where(Criteria::expr()->eq('id', $layerId))
+        ;
+        $startLayerInstance = $instance->getLayers()->matching($layerCriteria)->first() ?: null;
         // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
         // @todo: give Yaml applications a proper object repository and make this work
         $metadata  = $instance->getMetadata();
         if (!$metadata) {
             throw new NotFoundHttpException();
         }
-        $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
         $template = $metadata->getTemplate();
-        $content = $this->renderView($template, $metadata->getData($instance, $layerId) + array(
+        $content = $this->renderView($template, array(
             'instance' => $instance,
             'source' => $instance->getSource(),
+            'startLayerInstance' => $startLayerInstance,
         ));
         return  new Response($content, 200, array(
             'Content-Type' => 'text/html',
