@@ -146,7 +146,10 @@ class ApplicationController extends ApplicationControllerBase
         }
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
         $template = $metadata->getTemplate();
-        $content = $this->renderView($template, $metadata->getData($instance, $layerId));
+        $content = $this->renderView($template, $metadata->getData($instance, $layerId) + array(
+            'instance' => $instance,
+            'source' => $instance->getSource(),
+        ));
         return  new Response($content, 200, array(
             'Content-Type' => 'text/html',
         ));

@@ -40,37 +40,6 @@ class WmsMetadata extends SourceMetadata
         ;
         $src = $instance->getSource();
         $sectionData = array();
-        $sectionData[] = $this->formatSection(static::$SECTION_COMMON, array(
-            'title' => $title,
-            'name' => strval($src->getName()),
-            'version' => strval($src->getVersion()),
-            'originUrl' => strval($src->getOriginUrl()),
-            'description' => strval($src->getDescription()),
-            'onlineResource' => strval($src->getOnlineResource()),
-            'exceptionFormats' => implode(",", $src->getExceptionFormats()),
-        ));
-
-        $sectionData[] = $this->formatSection(static::$SECTION_USECONDITIONS, array(
-            'fees' => strval($src->getFees()),
-            'accessconstraints' => strval($src->getAccessConstraints()),
-        ));
-
-        if (($contact = $src->getContact())) {
-            $sectionData[] = $this->formatSection(static::$SECTION_CONTACT, array(
-                'person' => strval($contact->getPerson()),
-                'position' => strval($contact->getPosition()),
-                'organization' => strval($contact->getOrganization()),
-                'voiceTelephone' => strval($contact->getVoiceTelephone()),
-                'facsimileTelephone' => strval($contact->getFacsimileTelephone()),
-                'electronicMailAddress' => strval($contact->getElectronicMailAddress()),
-                'address' => strval($contact->getAddress()),
-                'addressType' => strval($contact->getAddressType()),
-                'addressCity' => strval($contact->getAddressCity()),
-                'addressStateOrProvince' => strval($contact->getAddressStateOrProvince()),
-                'addressPostCode' => strval($contact->getAddressPostCode()),
-                'addressCountry' => strval($contact->getAddressCountry()),
-            ));
-        }
 
         # add items metadata
         if ($itemId) {
