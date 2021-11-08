@@ -1,10 +1,12 @@
 {#- @todo: resolve copy&paste this template vs Repository/layer.htm.twig -#}
-<div class="content-toggle-container{% if itemLevel > 1 %} closed{% endif %}">
-  <div class="h4 clearfix content-toggle clickable">
-    <i class="pull-right fa fas {{ itemLevel > 1 ? 'fa-plus' : 'fa-minus'}}"></i>
+<div{%- if itemLevel > 1 %} class="content-toggle-container closed"{%- endif -%}>
+  <div class="h4 clearfix{%- if itemLevel > 1 %} content-toggle clickable{%- endif -%}">
+    {%- if itemLevel > 1 -%}
+      <i class="pull-right fa fas fa-plus"></i>
+    {%- endif -%}
     {{ layer.title | default(layer.sourceitem.title) }}
   </div>
-  <div class="content-toggle-target">
+  <div{%- if itemLevel > 1 %} class="content-toggle-target"{%- endif -%}>
     <table>
       <tbody>
         <tr><th>{{"mb.wms.wmsloader.repo.layer.label.title" | trans }}:</th><td>{{ layer.title | default(layer.sourceitem.title) }}</td></tr>
