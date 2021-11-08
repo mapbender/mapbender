@@ -52,12 +52,19 @@
       {%- if layer.fixedHeight -%}
         <tr><th>{{"mb.wms.wmsloader.repo.layer.label.fixedheight" | trans }}:</th><td>{{ layer.fixedHeight }}</td></tr>
       {%- endif -%}
-      {%- if layer.latlonBounds or layer.boundingBoxes -%}
-        {{- macros.start_subsection('mb.wms.wmsloader.repo.layer.label.boundingbox' | trans) -}}
-          {%- for bbox in ([layer.latlonBounds] | filter(v => v)) | merge(layer.boundingBoxes) -%}
-          <tr><th>{{ bbox.srs }}</th><td>{{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</td></tr>
-          {%- endfor -%}
-        {{- macros.end_subsection() -}}
+      {%- if show_all_bboxes | default(true)-%}
+          {%- if layer.latlonBounds or layer.boundingBoxes -%}
+            {{- macros.start_subsection('mb.wms.wmsloader.repo.layer.label.boundingbox' | trans) -}}
+              {%- for bbox in ([layer.latlonBounds] | filter(v => v)) | merge(layer.boundingBoxes) -%}
+              <tr><th>{{ bbox.srs }}</th><td>{{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</td></tr>
+              {%- endfor -%}
+            {{- macros.end_subsection() -}}
+          {%- endif -%}
+      {%- elseif layer.latlonBounds -%}
+        <tr>
+            <th>{{ 'mb.wms.wmsloader.repo.layer.label.boundingbox' | trans }}</th>
+            <td>{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</td>
+        </tr>
       {%- endif -%}
       {%- if layer.srs -%}
         <tr>
