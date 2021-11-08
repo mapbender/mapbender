@@ -161,7 +161,7 @@
   </table>
   <div class="indent">
     {% for sublayer in layer.sublayer %}
-        {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': sublayer, 'itemLevel': itemLevel + 1 }%}
+        {% include _self with {'layer': sublayer, 'itemLevel': itemLevel + 1 }%}
     {% endfor %}
   </div>
   </div>
