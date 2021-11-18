@@ -8,6 +8,7 @@
         "php": ">=5.5",
         "ext-dom": "*",
         "ext-gd": "*",
+        "ext-curl": "*",
         "symfony/symfony": "^3 || ^4",
         "symfony/security-acl": "~2.8 || ~3.0",
         "symfony/acl-bundle": "^1 || ^2",
@@ -42,15 +43,18 @@
         "mapbender/mapquery": "1.x"
     },
     "provide": {
-        "mapbender/fom": "3.3"
+        "mapbender/fom": "3.3",
+        "mapbender/owsproxy": "3.3.99"
     },
     "replace": {
         "debugteam/bootstrap-colorpicker": "1.*",
+        "mapbender/owsproxy": "3.3.*",
         "mapbender/fom": "*"
     },
     "autoload": {
         "psr-4": {
             "Mapbender\\": "src/Mapbender",
+            "OwsProxy3\\": "src/OwsProxy3",
             "FOM\\": "src/FOM"
         }
     },
