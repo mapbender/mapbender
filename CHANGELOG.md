@@ -1,3 +1,7 @@
+## dev-release/3.2 @ 4bc3e7781
+* [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
+* Fix misc Twig 2 incompatibilies
+
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
