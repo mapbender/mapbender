@@ -42,15 +42,18 @@
         "mapbender/mapquery": "1.x"
     },
     "provide": {
-        "mapbender/fom": "3.3"
+        "mapbender/fom": "3.3",
+        "mapbender/owsproxy": "3.3.99"
     },
     "replace": {
         "debugteam/bootstrap-colorpicker": "1.*",
+        "mapbender/owsproxy": "3.3.*",
         "mapbender/fom": "*"
     },
     "autoload": {
         "psr-4": {
             "Mapbender\\": "src/Mapbender",
+            "OwsProxy3\\": "src/OwsProxy3",
             "FOM\\": "src/FOM"
         }
     },
