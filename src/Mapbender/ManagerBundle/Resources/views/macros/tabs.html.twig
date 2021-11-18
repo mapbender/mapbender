@@ -1,0 +1,16 @@
+{%- macro tab_header_id(idSuffix) -%}
+{{- 'tab' ~ (idSuffix | first | upper) ~ (idSuffix | slice(1)) -}}
+{%- endmacro -%}
+{%- macro tab_container_id(idSuffix) -%}
+{{- 'container' ~ (idSuffix | first | upper) ~ (idSuffix | slice(1)) -}}
+{%- endmacro -%}
+{%- macro tab_header(idSuffix, text, class='') -%}
+    {%- set _target_id = _self.tab_container_id(idSuffix) -%}
+    <li id="{{ _self.tab_header_id(idSuffix) }}" class="{{ (' ' ~ class) | trim(side='right') }}" role="presentation" >
+        <a href="#{{ _target_id }}" aria-controls="{{ _target_id }}" role="tab" data-toggle="tab">{{ text | trans }}</a>
+    </li>
+{%- endmacro -%}
+{%- macro tab_content_attributes(idSuffix, class='', box=true) -%}
+{{' '}}id="{{ _self.tab_container_id(idSuffix) }}" class="tab-pane{{ box ? ' content-box content-box-lg' : ''}}{{ (' ' ~ class) | trim(side='right')}}" role="tabpanel"
+{%- endmacro -%}
+

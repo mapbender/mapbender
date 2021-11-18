@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
@@ -34,11 +35,6 @@ abstract class SourceInstance extends SourceInstanceAssignment
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $basesource = false;
-
-    /**
-     * @var Source
-     */
-    protected $source;
 
     /**
      * @var ReusableSourceInstanceAssignment[]|Collection
@@ -94,7 +90,7 @@ abstract class SourceInstance extends SourceInstanceAssignment
      */
     public function getType()
     {
-        return $this->source->getType();
+        return $this->getSource()->getType();
     }
 
     /**
@@ -154,7 +150,7 @@ abstract class SourceInstance extends SourceInstanceAssignment
     abstract public function getSource();
 
     /**
-     * @return SourceInstanceItem[]|Collection
+     * @return SourceInstanceItem[]|ArrayCollection
      */
     abstract public function getLayers();
 

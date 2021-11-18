@@ -136,9 +136,10 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
         }
 
         // Build query URL
-        $url = $configuration['query_url'];
-        $url .= (false === strpos($url, '?') ? '?' : '&');
-        $url .= $configuration['query_key'] . '=' . sprintf($qf, $q);
+        $params = array(
+            $configuration['query_key'] => sprintf($qf, $q),
+        );
+        $url = \OwsProxy3\CoreBundle\Component\Utils::appendQueryParams($configuration['query_url'], $params);
         $response = $this->httpTransport->getUrl($url);
 
         // prepare a valid json null encoding before testing for errors (encode clears json_last_error_msg!)

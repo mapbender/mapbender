@@ -22,6 +22,7 @@ class WmtsInstance extends SourceInstance
     protected $source;
 
     /**
+     * @var WmtsInstanceLayer[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="WmtsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      */
@@ -124,12 +125,12 @@ class WmtsInstance extends SourceInstance
     /**
      * Set wmtssource
      *
-     * @param WmtsSource $wmtssource
+     * @param WmtsSource $source
      * @return $this
      */
-    public function setSource($wmtssource = null)
+    public function setSource($source = null)
     {
-        $this->source = $wmtssource;
+        $this->source = $source;
         return $this;
     }
 
