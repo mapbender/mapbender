@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ 2d22ddbc5
+## dev-staging/3.3 @ af0966f6d
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
 * Fix WMS with no dimensions showing "Dimensions" block in instance editing
@@ -8,9 +8,11 @@
 * [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6
 * [SearchRouter] fix deliberate 0 opacity style settings not working
 * [ApplicationSwitcher] fix visually truncated / horizontally scrolling target application titles
+* [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
 * Fix visual state of Button controlling Copyright element
 * Improve support for custom user entities in root account voter
+* Fix misc Twig 2 incompatibilies
 
 ## v3.3.0RC1
 * Complete Symfony 4 support
