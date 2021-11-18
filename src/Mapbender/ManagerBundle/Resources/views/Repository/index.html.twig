@@ -1,5 +1,7 @@
 {% extends 'MapbenderManagerBundle::layouts/tabbed.html.twig' %}
 {%- set title = 'mb.manager.admin.sources' | trans -%}
+{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
