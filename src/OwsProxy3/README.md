@@ -1,53 +1,67 @@
 # OWS Proxy
+Proxy-aware http client for Mapbender.
 
- Can be used to relay requests and results form clients to servers that are otherwise not directly accessible to the client.
- 
 ## Features
+* Forwards client requests via Mapbender server to support displaying intranet-only resources (Wms images etc)
+* Hash-based request spoofing  protection; only forward requests to target URLs signed / allowed by Mapbender server
+* Configurable proxy client; can reach resources only accessible via another proxy server 
 
-* Proxy access is secured by checking a signature on the target URL (signing service provided by Mapbender)
-* Prohibits to communicate with not verified URL's
-* Allows to use server proxies
-* Uses a HTTP proxy to work in tightly secured environments
-* Logs proxy calls for billing
+![Sequence diagram](http://plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/mapbender/mapbender/staging/3.3/src/OwsProxy3/communication.puml)
 
-## Configuration
+# Configuration
+
+## Parameters
+Owsproxy evaluates the following single configuration parameter (shown value is the default):
+```yaml
+# http user agent for outgoing requests (string)
+owsproxy.useragent: OWSProxy3
+```
+
+## Extension configuration
 
 The configuration is done in `app/config/config.yml` at `ows_proxy3_core` section.
 
-### Options
-
-#### Proxy
-
-
-Proxy option allows to communicate services via custom proxy server.
-The option needs some own configurations:
-
-* `host`: Proxy server host name. If set to `null`, OwsProxy works without proxy.
-* `port`: Proxy server port number.
-* `timeout`: Give up if OwsProxy doesn't retrieve response from given proxy in `number` seconds.  Default: 60 seconds. 
-* `connecttimeout`: Give up if OwsProxy doesn't reach `host` in ` number` seconds. Default: 30 seconds.
-* `user`:  Proxy server user name. Default: `null`.
-* `password`: Proxy server password for proxy server. Default: `null`.
-* `noproxy`:  Exclude hosts from connecting through proxy server. Default: `null`. Hostnames and IP's can be given as an YAML array.
-* `checkssl`: Checks SSL. Default: false
-
-### Configuration example
-
+Owsproxy evaluates the extension configuration node `ows_proxy3_core`.
+The defaults are:
 ```yaml
 ows_proxy3_core:
-    logging: true               
-    obfuscate_client_ip: true 
-    proxy:                
-        connecttimeout: 30    
-        timeout: 60           
-        host: localhost            
-        port: 8080                 
-        noproxy:               
-            - localhost           
-            - 127.0.0.1           
+    # external proxy to pass outgoing requests over (array sub-node)
+    proxy:
+        # hostname / ip (string or null)
+        host: ~
+        # port (integer or null)
+        port: ~
+        # connect timeout in seconds (integer or null for default)
+        connecttimeout: 30
+        # response timeout in seconds (integer or null for default)
+        timeout: 60
+        # basicauth credentials (both string or null)
+        user: ~
+        password: ~
+        # enforce HTTPS certificate validity check (boolean)
+        checkssl: true
+        # proxy client exclusion list (list of strings or null)
+        # Use host names or ip addresses
+        noproxy: ~
 ```
 
+Setting a non-empty `proxy`.`host` value makes Owsproxy act as a proxy client itself, passing
+applicable outgoing requests over the configured `host`:`port`, optionally with basicauth credentials
+`user`:`password`.
 
-##  Sequence diagram
+A null `proxy`.`host` setting disables proxy client functionality (client request forwarding is
+retained).
 
-![Sequence diagram](http://plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/mapbender/mapbender/staging/3.3/src/OwsProxy3/communication.puml)
+## Note for *nix servers
+On *nix systems it's preferrable to configure external proxies via [libcurl environment variables](https://curl.haxx.se/libcurl/c/libcurl-env.html),
+and leaving Owsproxy's `host` setting empty.
+Always make sure to provide environment variables in in both your user profile (for console commands / general sanity) and
+to the web server serving the Mapbender / Owsproxy requests.
+
+Owsproxy's own proxy client functionality should be regarded as a workaround
+for systems where the libcurl environment cannot be set easily, or at all.
+
+Libcurl's external proxy handling is more robust and more flexible
+than Owsproxy. In particular, `NO_PROXY`, in addition to Owsproxy's `noproxy` setting, also supports domain
+name suffixes and IP block ranges; it also supports configuring separate external proxies per protocol (i.e. http
+vs https). Owsproxy's own implementation can only only exlude based on full domain names and full ip addresses.
