@@ -37,7 +37,6 @@
         "datatables/datatables": "^1.10.16",
         "components/bootstrap": "^3 || ^4",
         "components/jqueryui": "^1",
-        "debugteam/bootstrap-colorpicker": "^1",
 
         "mapbender/openlayers6-es5": "~0.3 || ^1",
         "mapbender/mapquery": "1.x"
@@ -47,7 +46,6 @@
         "mapbender/owsproxy": "3.3.99"
     },
     "replace": {
-        "debugteam/bootstrap-colorpicker": "1.*",
         "mapbender/owsproxy": "3.3.*",
         "mapbender/fom": "*"
     },
