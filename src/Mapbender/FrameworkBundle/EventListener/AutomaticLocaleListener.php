@@ -31,7 +31,7 @@ class AutomaticLocaleListener
                 $parts = explode(';', $language);   // Split off "q=" weighting factor
                 if ($parts[0] && \preg_match('#^(de|en|es|fr|it|tr|ru)#i', $parts[0])) {
                     try {
-                        $request->setLocale($parts[0]);
+                        $request->setLocale(strtolower(substr($parts[0], 0, 2)));
                     } catch (\Symfony\Polyfill\Intl\Icu\Exception\MethodNotImplementedException $e) {
                         // ignore
                     }
