@@ -24,6 +24,14 @@ class Mobile extends Template
         );
     }
 
+    public function getSassVariablesAssets(Application $application)
+    {
+        return array(
+            '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+            '@MapbenderMobileBundle/Resources/public/sass/theme/variables.scss',
+        );
+    }
+
     public function getAssets($type)
     {
         switch ($type) {

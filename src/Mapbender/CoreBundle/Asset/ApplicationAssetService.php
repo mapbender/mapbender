@@ -112,9 +112,12 @@ class ApplicationAssetService
      */
     public function collectAssetReferences(Application $application, $type)
     {
-        $referenceLists = array(
-            $this->getBaseAssetReferences($type),
-        );
+        $referenceLists = array();
+        if ($type === 'css') {
+            $template = $this->getDummyTemplateComponent($application);
+            $referenceLists[] = $template->getSassVariablesAssets($application);
+        }
+        $referenceLists[] = $this->getBaseAssetReferences($type);
         if ($type === 'js') {
             $referenceLists[] = array(
                 '@MapbenderCoreBundle/Resources/public/init/frontend.js',
