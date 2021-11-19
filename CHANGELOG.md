@@ -1,9 +1,10 @@
-## dev-staging/3.3 @ c295a7c15
+## dev-staging/3.3 @ 3e99e7b4d
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
 * Fix WMS with no dimensions showing "Dimensions" block in instance editing
 * Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
 * Fix cross-domain external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
+* Fix invisible map overlay elements in mobile template
 * Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
 * [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6
 * [SearchRouter] fix deliberate 0 opacity style settings not working
