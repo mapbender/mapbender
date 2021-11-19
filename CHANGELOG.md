@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ 278f56a20
+## dev-staging/3.3 @ c295a7c15
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
 * Fix WMS with no dimensions showing "Dimensions" block in instance editing
@@ -12,6 +12,8 @@
 * Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
 * Fix visual state of Button controlling Copyright element
 * Improve support for custom user entities in root account voter
+* Improve customizability of Sass variables in application templates (see [PR#1393](https://github.com/mapbender/mapbender/pull/1393))
+* Use browser language preference for translation target language (see [PR#1394](https://github.com/mapbender/mapbender/pull/1394))
 * Reintegrated previously separate [Owsproxy](https://github.com/mapbender/owsproxy3) codebase (see [PR#1392](https://github.com/mapbender/mapbender/pull/1392))
 * Fix misc Twig 2 incompatibilies
 
