@@ -149,37 +149,6 @@ body {
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
-.map-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  display: flex;
-  .map-overlay-column {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    div.toolBar {
-      flex: 0;
-    }
-    div.sidePane {
-      flex: 1;
-    }
-    div.toolBar {
-      position: initial;
-    }
-  }
-}
-
-.map-overlay, .map-overlay-column, .overlay-fill {
-  pointer-events: none;
-}
-.overlay-fill > *, .toolBar {
-  pointer-events: initial;
-}
-
 .collapse-toggle {
   color: #444;
   background: #ccc;

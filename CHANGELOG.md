@@ -26,7 +26,8 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ 4bc3e7781
+## dev-release/3.2 @ 676ff6ded
+* Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix misc Twig 2 incompatibilies
 
