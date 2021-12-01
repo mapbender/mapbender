@@ -1,7 +1,8 @@
-## dev-release/3.2 @ 676ff6ded
+## dev-release/3.2 @ 09e759375
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix misc Twig 2 incompatibilies
+* Fix error saving user on PHP 8
 
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))

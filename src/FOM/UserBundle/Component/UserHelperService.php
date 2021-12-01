@@ -5,7 +5,6 @@ namespace FOM\UserBundle\Component;
 
 
 use FOM\UserBundle\Entity\User;
-use FOM\UserBundle\Util\PasswordUtil;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -53,7 +52,7 @@ class UserHelperService
     {
         $encoder = $this->encoderFactory->getEncoder($user);
 
-        $salt = PasswordUtil::generateSalt(15);
+        $salt = $this->generateSalt(32);
 
         $encryptedPassword = $encoder->encodePassword($password, $salt);
 
@@ -61,6 +60,26 @@ class UserHelperService
             ->setPassword($encryptedPassword)
             ->setSalt($salt)
         ;
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function generateSalt($length)
+    {
+        if ($length <= 0) {
+            throw new \InvalidArgumentException("Invalid $length " . \var_export($length, true));
+        }
+        $salt = '';
+        while ($length) {
+            $chunk = min($length, 40);
+            // Use password_hash to generate secure random salt
+            // Strip insecure (~constant) algorithm prefix
+            $salt .= substr(\password_hash('', PASSWORD_DEFAULT), -$chunk);
+            $length -= $chunk;
+        }
+        return $salt;
     }
 
     /**
