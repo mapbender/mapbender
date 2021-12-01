@@ -1,3 +1,6 @@
+## dev-staging/3.3 @ 141e2c49a
+* Fix error saving user on PHP 8
+
 ## v3.3.0RC2
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
