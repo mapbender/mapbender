@@ -1,3 +1,6 @@
+## dev-staging/3.3 @ 141e2c49a
+* Fix error saving user on PHP 8
+
 ## v3.3.0RC2
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
@@ -27,10 +30,11 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ 676ff6ded
+## dev-release/3.2 @ 09e759375
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix misc Twig 2 incompatibilies
+* Fix error saving user on PHP 8
 
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
