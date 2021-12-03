@@ -1,9 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Utils;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Mapbender\Component\StringUtil;
 use ReflectionClass;
 
