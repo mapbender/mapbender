@@ -1,5 +1,8 @@
-## dev-staging/3.3 @ 141e2c49a
+## dev-staging/3.3 @ 42a8938fd
 * Fix error saving user on PHP 8
+* Fix misc errors on doctrine/orm >= 2.8
+* Allow installation of doctrine/doctrine-bundle 2.x
+* Remove abandoned twig/extensions requirement; allow installation of twig 2.x
 
 ## v3.3.0RC2
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
