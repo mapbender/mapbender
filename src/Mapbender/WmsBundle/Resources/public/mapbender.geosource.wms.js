@@ -173,6 +173,8 @@ window.Mapbender.WmsSource = (function() {
             return newLayers || newStyles;
         },
         getPointFeatureInfoUrl: function(x, y, maxCount) {
+            // deduct toolbar height in order to ensure right click position for feature Info Request
+            y = y-$("#toolbar").innerHeight();
             var olLayer = this.getNativeLayer(0);
             if (!(olLayer && olLayer.getVisibility())) {
                 return false;
