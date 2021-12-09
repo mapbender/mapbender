@@ -271,7 +271,7 @@ class WmcEditor extends WmcBase
                         ->find($wmc->getId());
                     /** @var Form $form */
                     $form = $this->container->get("form.factory")->create('Mapbender\WmcBundle\Form\Type\WmcType', $wmc);
-                    $form->submit($request);
+                    $form->handleRequest($request);
                     if (!$form->isValid()) {
                         return new JsonResponse(array(
                             "error" => $this->trans("mb.wmc.error.wmcnotfound", array(
