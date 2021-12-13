@@ -1,0 +1,35 @@
+{%- macro source_meta(source) -%}
+<table class="table table-borderless table-condensed">
+    <tbody>
+      <tr>
+          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
+          <td>{{ source.type }} {{ source.version }}</td>
+      </tr>
+      <tr>
+          <th>URL:</th>
+          <td>{{ source.getOriginUrl() }}</td>
+      </tr>
+      {%- if source.description -%}
+      <tr>
+          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
+          <td>{{ source.description }}</td>
+      </tr>
+      {%- endif -%}
+  </tbody>
+</table>
+{%- endmacro -%}
+{%- macro start_subsection(section_title) -%}
+{%- if section_title -%}
+<tr><th colspan="2">{{ section_title }}:</th></tr>
+{%- endif -%}
+<tr>
+  <td colspan="2">
+    <table class="indent lighter-headings">
+      <tbody>
+{%- endmacro -%}
+{%- macro end_subsection() -%}
+      </tbody>
+    </table>
+  </td>
+</tr>
+{%- endmacro -%}

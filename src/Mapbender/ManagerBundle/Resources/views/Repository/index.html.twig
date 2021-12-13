@@ -12,28 +12,6 @@
   {{- tab_macros.tab_header('SharedInstances', 'mb.terms.sourceinstance.reusable.plural') -}}
 {% endblock tab_headers %}
 
-{%- macro source_meta(source) -%}
-<table class="table table-borderless table-condensed">
-    <tbody>
-      <tr>
-          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-          <td>{{ source.type }} {{ source.version }}</td>
-      </tr>
-      <tr>
-          <th>URL:</th>
-          <td>{{ source.getOriginUrl() }}</td>
-      </tr>
-      {%- if source.description -%}
-      <tr>
-          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
-          <td>{{ source.description }}</td>
-      </tr>
-      {%- endif -%}
-  </tbody>
-</table>
-{%- endmacro -%}
-{%- import _self as source_macros -%}
-
 {% block tab_containers %}
     <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
         {%- set items = sources -%}
@@ -65,6 +43,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
+                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item) -}}
             {%- endblock -%}
 
@@ -128,6 +107,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
+                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item.source) -}}
             {%- endblock -%}
 

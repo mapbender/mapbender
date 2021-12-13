@@ -1,19 +1,4 @@
-{%- macro start_subsection(section_title) -%}
-{%- if section_title -%}
-<tr><th colspan="2">{{ section_title }}:</th></tr>
-{%- endif -%}
-<tr>
-  <td colspan="2">
-    <table class="indent lighter-headings">
-      <tbody>
-{%- endmacro -%}
-{%- macro end_subsection() -%}
-      </tbody>
-    </table>
-  </td>
-</tr>
-{%- endmacro -%}
-{%- import _self as macros -%}
+{%- import 'MapbenderManagerBundle::macros/source.html.twig' as macros -%}
 
 <div{%- if itemLevel > 1 %} class="content-toggle-container closed"{%- endif -%}>
   <div class="h4 clearfix{%- if itemLevel > 1 %} content-toggle clickable{%- endif -%}">
