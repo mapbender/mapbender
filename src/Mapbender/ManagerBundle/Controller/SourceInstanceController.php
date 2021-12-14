@@ -128,6 +128,7 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     public function createsharedAction(Request $request, Source $source)
     {
+        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
         // @todo: only act on post
         $em = $this->getDoctrine()->getManager();
         $instance = $this->typeDirectory->createInstance($source);

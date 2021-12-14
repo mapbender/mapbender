@@ -33,9 +33,10 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ 09e759375
+## dev-release/3.2 @ 8ff06da05
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
+* Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
 * Fix misc Twig 2 incompatibilies
 * Fix error saving user on PHP 8
 
