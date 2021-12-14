@@ -96,6 +96,7 @@ class RepositoryController extends ApplicationControllerBase
             'shared_instances' => $sharedInstances,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -332,6 +333,11 @@ class RepositoryController extends ApplicationControllerBase
             $application = $layerset->getApplication();
         }
         /** @var Application|null $application */
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        } else {
+            $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
+        }
         if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
         }
@@ -342,7 +348,6 @@ class RepositoryController extends ApplicationControllerBase
             })->first();
         }
 
-        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
         $factory = $this->typeDirectory->getInstanceFactory($instance->getSource());
         $form = $this->createForm($factory->getFormType($instance), $instance);
 
