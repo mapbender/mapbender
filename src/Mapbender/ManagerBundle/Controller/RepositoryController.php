@@ -174,8 +174,7 @@ class RepositoryController extends ApplicationControllerBase
             'source' => $source,
             'applications' => $related,
             'title' => $source->getType() . ' ' . $source->getTitle(),
-            'wms' => $source,   // HACK: source name in legacy templates
-            'wmts' => $source,  // HACK: source name in legacy templates
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -370,6 +369,7 @@ class RepositoryController extends ApplicationControllerBase
             "form" => $form->createView(),
             "instance" => $form->getData(),
             'layerset' => $layerset,
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -381,6 +381,7 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function promotetosharedinstanceAction(Request $request, SourceInstance $instance)
     {
+        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
         $layerset = $instance->getLayerset();
         if (!$layerset) {
             throw new \LogicException("Instance is already shared");
