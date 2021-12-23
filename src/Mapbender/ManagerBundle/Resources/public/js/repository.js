@@ -1,16 +1,16 @@
 $(function() {
-    function setRootState(groupId) {
-        var root = $("#" + groupId);
-        if (!root.length) {
-            root = $('#instanceTableCheckHead th[data-check-identifier="' + groupId + '"]');
-        }
-        var rootCb = root.is('input[type="checkbox"]') && root || $('input[type="checkbox"]', root);
-        var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + groupId + "]");
+    function getRootCheckbox($table, groupId) {
+        var root = $('thead th[data-check-identifier="' + groupId + '"]', $table);
+        return root.is('input[type="checkbox"]') && root || $('input[type="checkbox"]', root);
+    }
+    function setRootState($table, groupId) {
+        var rootCb = getRootCheckbox($table, groupId);
+        var column = $('tbody [data-check-identifier="' + groupId + '"]', $table);
         var checkboxes = $('input[type="checkbox"]:not(:disabled)', column);
         var rowCount = checkboxes.length;
         var checkedCount = checkboxes.filter(':checked').length;
-        rootCb.prop('checked', rowCount === checkedCount);
-        rootCb.prop('indeterminate', checkedCount && rowCount !== checkedCount);
+        rootCb.prop('checked', rowCount && rowCount === checkedCount);
+        rootCb.prop('indeterminate', rowCount && checkedCount && rowCount !== checkedCount);
     }
     // toggle all permissions
     function toggleAllStates(groupId, state, $scope) {
@@ -22,13 +22,18 @@ $(function() {
         });
 
         // change root permission state
-        setRootState(groupId);
+        setRootState($scope.closest('table'), groupId);
     }
-    $("#instanceTableCheckHead .checkboxColumn[data-check-identifier]").each(function() {
+    $(".instanceTable thead .checkboxColumn[data-check-identifier]").each(function() {
         var $this = $(this);
         var $table = $this.closest('table');
         var groupId = $this.attr("data-check-identifier");
-        setRootState(groupId);
+        var rowCbs =  $('tbody [data-check-identifier="' + groupId + '"] input[type="checkbox"]:not(:disabled)', $table);
+        if (!rowCbs.length) {
+            getRootCheckbox($table, groupId).prop('checked', false).prop('disabled', true);
+        }
+
+        setRootState($table, groupId);
         var $cb = $('input[type="checkbox"]', this);
         $cb.on('change', function() {
             var state = $(this).prop('checked');
@@ -36,9 +41,11 @@ $(function() {
         });
     });
 
-    $('#instanceTable tbody').on("change", '[data-check-identifier] input[type="checkbox"]', function() {
-        var groupId = $(this).closest('[data-check-identifier]').attr('data-check-identifier');
-        setRootState(groupId);
+    $('.instanceTable tbody').on("change", '[data-check-identifier] input[type="checkbox"]', function() {
+        var $cb = $(this);
+        var $table = $cb.closest('table');
+        var groupId = $cb.closest('[data-check-identifier]').attr('data-check-identifier');
+        setRootState($table, groupId);
     });
     function resetLayerPriority() {
         $('tr:not(.dummy) .layer-priority input[type="hidden"]', $('.instanceTable tbody')).each(function(idx, item) {
@@ -96,7 +103,7 @@ $(function() {
         });
     });
 
-    $("#instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
+    $(".instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
         var $target = $(this);
         var $row = $target.closest('tr');
         var $table = $row.closest('table');

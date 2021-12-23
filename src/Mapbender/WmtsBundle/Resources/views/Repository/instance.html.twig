@@ -21,7 +21,7 @@
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th></th>
         </tr>
-        <tr id="instanceTableCheckHead">
+        <tr>
           <th colspan="3"></th>
           {{ form_row(_proto.active, {'tagName': 'th'}) }}
           {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
@@ -31,7 +31,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="instanceTableCheckBody">
+      <tbody>
         {% for form in form.layers %}
         {% include "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig"  with {'form': form }%}
         {% endfor %}
