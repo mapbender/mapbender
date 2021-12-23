@@ -1,7 +1,9 @@
-## dev-release/3.2 @ 6ca58f46e
+## dev-release/3.2 @ 8ce27698d
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
+* Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * Fix instance editing errors after reloading a Wms source with new dimensions
+* Fix disabled "batch" selection checkboxes in instance editing table header ([#1388](https://github.com/mapbender/mapbender/issues/1388))
 * Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
 * Fix misc Twig 2 incompatibilies
 * Fix error saving user on PHP 8
