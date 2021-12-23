@@ -45,7 +45,7 @@
                   : path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': assignment.instance.id})
               ,
               '_edit_url': _is_reusable
-                  ? path("mapbender_manager_repository_unowned_instance_scoped", {"instanceId": instance.id, "layerset": layerset })
+                  ? (edit_shared_instances ? path("mapbender_manager_repository_unowned_instance_scoped", {"instanceId": instance.id, "layerset": layerset }) : null)
                   : path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})
                   ,
               '_delete_url': _is_reusable
@@ -73,11 +73,10 @@
                        data-url="{{ _toggle_url }}">
                     <i class="fa fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </span>
-                  {#- this comment eats whitespace -#}
+                  {%- if _edit_url -%}
                   <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
-                  {%- if _delete_url -%}
-                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
                   {%- endif -%}
+                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
                 </td>
               </tr>
             {%- endwith -%}{%- endwith -%}

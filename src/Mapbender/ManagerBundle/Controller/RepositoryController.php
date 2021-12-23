@@ -96,6 +96,7 @@ class RepositoryController extends ApplicationControllerBase
             'shared_instances' => $sharedInstances,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -173,8 +174,7 @@ class RepositoryController extends ApplicationControllerBase
             'source' => $source,
             'applications' => $related,
             'title' => $source->getType() . ' ' . $source->getTitle(),
-            'wms' => $source,   // HACK: source name in legacy templates
-            'wmts' => $source,  // HACK: source name in legacy templates
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -332,6 +332,11 @@ class RepositoryController extends ApplicationControllerBase
             $application = $layerset->getApplication();
         }
         /** @var Application|null $application */
+        if ($application) {
+            $this->denyAccessUnlessGranted('EDIT', $application);
+        } else {
+            $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
+        }
         if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
         }
@@ -342,7 +347,6 @@ class RepositoryController extends ApplicationControllerBase
             })->first();
         }
 
-        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
         $factory = $this->typeDirectory->getInstanceFactory($instance->getSource());
         $form = $this->createForm($factory->getFormType($instance), $instance);
 
@@ -365,6 +369,7 @@ class RepositoryController extends ApplicationControllerBase
             "form" => $form->createView(),
             "instance" => $form->getData(),
             'layerset' => $layerset,
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -376,6 +381,7 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function promotetosharedinstanceAction(Request $request, SourceInstance $instance)
     {
+        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
         $layerset = $instance->getLayerset();
         if (!$layerset) {
             throw new \LogicException("Instance is already shared");
