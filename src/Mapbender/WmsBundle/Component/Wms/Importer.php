@@ -17,6 +17,7 @@ use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -344,7 +345,7 @@ class Importer extends RefreshableSourceLoader
                 }
             }
             if (!$newDimension) {
-                $newDimension = clone $sourceDimension;
+                $newDimension = DimensionInst::fromDimension($sourceDimension);
             }
             $dimensions[] = $newDimension;
         }
