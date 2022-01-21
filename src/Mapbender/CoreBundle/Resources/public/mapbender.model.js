@@ -157,9 +157,13 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         });
     },
     _onMapClick: function(event) {
-        var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
-        var x = event.x || event.xy.x; // on mobile devices, coordinates are returned as properties of the `xy`-Object only
-        var y = event.y || event.xy.y;
+        var mapRect = this.olMap.div.getBoundingClientRect();
+        // on mobile devices, coordinates are returned as properties of the `xy`-Object only
+        var x = (event.x || event.xy.x || 0) - mapRect.x - (window.scrollX || window.pageXOffset || 0);
+        var y = (event.y || event.xy.y || 0) - mapRect.y - (window.scrollY || window.pageYOffset || 0);
+
+        var clickLonLat = this.olMap.getLonLatFromViewPortPx({x: x, y: y});
+
         $(this.mbMap.element).trigger('mbmapclick', {
             mbMap: this.mbMap,
             pixel: [x, y],
