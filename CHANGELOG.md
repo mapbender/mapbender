@@ -1,4 +1,4 @@
-## dev-release/3.0.7 @ 56e3c6fd8
+## dev-release/3.0.7 @ c3881757a
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -54,6 +54,7 @@
 - [Backend] Fix new application form sometimes missing the security tab header
 - [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 - [Backend] Fix filter input in Element security dialog not working
+- [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
