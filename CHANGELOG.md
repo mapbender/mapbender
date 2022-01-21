@@ -1,4 +1,4 @@
-## dev-release/3.2 @ 8ce27698d
+## dev-release/3.2 @ c12f8809a
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
@@ -7,6 +7,7 @@
 * Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
 * Fix misc Twig 2 incompatibilies
 * Fix error saving user on PHP 8
+* [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
@@ -410,7 +411,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 56e3c6fd8
+## dev-release/3.0.7 @ c3881757a
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
@@ -466,6 +467,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Backend] Fix new application form sometimes missing the security tab header
 - [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 - [Backend] Fix filter input in Element security dialog not working
+- [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs
