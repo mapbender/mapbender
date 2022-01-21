@@ -1,4 +1,4 @@
-## dev-release/3.2 @ 8ce27698d
+## dev-release/3.2 @ c12f8809a
 * Fix invisible map overlay elements in mobile template
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
@@ -7,6 +7,7 @@
 * Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
 * Fix misc Twig 2 incompatibilies
 * Fix error saving user on PHP 8
+* [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
