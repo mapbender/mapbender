@@ -162,12 +162,6 @@ body {
   }
   background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
   color: #222;
-  // Make Legend and maybe other images visible against inverted background
-  img {
-    background: rgba(192, 192, 192, 0.85);
-    padding: $radius;
-    border-radius: $radius;
-  }
 }
 
 html .accordionContainer .accordion {
