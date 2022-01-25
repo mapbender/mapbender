@@ -228,6 +228,9 @@
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('.-fn-toggle-info', $li).remove();
             }
+            if (!this._filterMenu(layer).length) {
+                $('.layer-menu-btn', $li).remove();
+            }
             if (layer.children && layer.children.length) {
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
@@ -256,9 +259,6 @@
                 .attr('title', layer.options.title)
                 .text(layer.options.title)
             ;
-            if (!this._filterMenu(layer).length) {
-                $('.layer-menu-btn', $li).remove();
-            }
 
             return $li;
         },
