@@ -121,4 +121,12 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
             $element->setConfiguration($configuration);
         }
     }
+
+    public function getClientConfiguration(Element $element)
+    {
+        $config = parent::getClientConfiguration($element) + array('menu' => array());
+        // Force menu to a list of strings (= JavaScript Array, never Object)
+        $config['menu'] = \array_values($config['menu']);
+        return $config;
+    }
 }

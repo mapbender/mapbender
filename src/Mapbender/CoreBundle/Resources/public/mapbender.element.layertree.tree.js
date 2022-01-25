@@ -256,6 +256,9 @@
                 .attr('title', layer.options.title)
                 .text(layer.options.title)
             ;
+            if (!this._filterMenu(layer).length) {
+                $('.layer-menu-btn', $li).remove();
+            }
 
             return $li;
         },
@@ -477,6 +480,27 @@
                 this._initMenu($layerNode);
             }
             return false;
+        },
+        _filterMenu: function(layer) {
+            var enabled = this.options.menu;
+            var supported = ['layerremove'];
+            if (layer.options.metadataUrl) {
+                supported.push('metadata');
+            }
+            // opacity + dimension are only available on root layer
+            if (!layer.getParent()) {
+                supported.push('opacity');
+                if ((layer.source.configuration.options.dimensions || []).length) {
+                    supported.push('dimension');
+                }
+            }
+            if (layer.hasBounds()) {
+                supported.push('zoomtolayer');
+            }
+
+            return supported.filter(function(name) {
+                return -1 !== enabled.indexOf(name);
+            });
         },
         _initDimensionsMenu: function($element, menu, dims, source) {
             var self = this;

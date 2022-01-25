@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use FOM\UserBundle\EventListener\UserProfileListener;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("email")
  * @ORM\Table(name="fom_user")
  */
-class User extends AbstractUser implements AdvancedUserInterface
+class User extends AbstractUser implements AdvancedUserInterface, EquatableInterface
 {
     /**
      * @ORM\Column(type="string", nullable=false, length=255, unique=true)
@@ -67,6 +69,13 @@ class User extends AbstractUser implements AdvancedUserInterface
     public function __construct()
     {
         $this->groups = new ArrayCollection();
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        // Avoid automatic implicit logout after modifying group assignments or profile information
+        // see https://github.com/symfony/symfony/issues/35501
+        return $user->getUsername() === $this->getUsername();
     }
 
     /**
