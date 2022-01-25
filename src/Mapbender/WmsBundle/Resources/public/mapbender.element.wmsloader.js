@@ -106,25 +106,28 @@
             var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
             var sourceUrl = elm.attr('mb-url') || elm.attr('href');
+            var customParams = this.parseCustomParams(elm);
 
-            if (mergeSource && this.mergeDeclarative(elm, sourceUrl, layerNamesToActivate)) {
-                // Merged successfully to existing source, we're done
-                return false;
+            var source = mergeSource && this.mergeDeclarative(elm, sourceUrl, layerNamesToActivate);
+            if (source && typeof (source.addParams) === 'function') {
+                source.addParams(customParams);
+            } else {
+                this.loadWms(sourceUrl, {
+                    layers: layerNamesToActivate,
+                    // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
+                    keepOtherLayerStates: false
+                }).then(function(source) {
+                    if (typeof (source.addParams) === 'function') {
+                        source.addParams(customParams);
+                    }
+                });
             }
-            // No merge allowed or merge allowed but no merge candidate found.
-            // => load as an entirely new source
-            this.loadWms(sourceUrl, {
-                layers: layerNamesToActivate,
-                // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
-                keepOtherLayerStates: false
-            });
-            return false;
         },
         /**
          * @param {jQuery} $link
          * @param {string} sourceUrl
          * @param {Array<string>|false} layerNamesToActivate
-         * @return {boolean} to indicate if a merge target was found and processed
+         * @return {(Mapbender.Source)|null} to indicate if a merge target was found and processed
          */
         mergeDeclarative: function($link, sourceUrl, layerNamesToActivate) {
             // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
@@ -136,9 +139,8 @@
                 this.activateLayersByName(mergeCandidate, layerNamesToActivate, keepCurrentActive);
                 // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
                 //       attributes and config params matter. We leave the source alone completely.
-                return true;    // indicate merge target found, merging performed
             }
-            return false;       // indicate no merge target, no merging performed
+            return mergeCandidate;
         },
         /**
          * @param {String} url
@@ -148,18 +150,17 @@
          */
         loadWms: function (url, options) {
             var self = this;
-            $.ajax({
+            return $.ajax({
                 url: self.elementUrl + 'loadWms',
                 data: {
                     url: url
                 },
                 dataType: 'json',
-                success: function(data, textStatus, jqXHR){
-                    self._addSources(data, options || {});
-                },
                 error: function(jqXHR, textStatus, errorThrown){
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
                 }
+            }).then(function(data) {
+                return self._addSources(data, options || {});
             });
         },
         _getInstances: function(scvIds) {
@@ -192,6 +193,7 @@
         _addSources: function(sourceDefs, options) {
             var keepStates = options.keepOtherLayerStates || (typeof (options.keepOtherLayerStates) === 'undefined');
             var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
+            var source;
             for (var i = 0; i < sourceDefs.length; ++i) {
                 var sourceDef = sourceDefs[i];
                 var sourceId = srcIdPrefix + '-' + (this.loadedSourcesCount++);
@@ -201,8 +203,9 @@
                 sourceDef.wmsloader = true;
                 this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
-                this.mbMap.model.addSourceFromConfig(sourceDef);
+                source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
+            return source || null;
         },
         /**
          * Locates an already loaded source with an equivalent base url, returns that source object or null
@@ -277,6 +280,22 @@
                 }
             });
             return Mapbender.Util.replaceUrlParams(baseUrl, extraParams, true);
+        },
+        /**
+         * @param {jQuery} $element
+         * @return {Object<String, String>}
+         */
+        parseCustomParams: function($element) {
+            var customParams = {};
+            ($element.attr('mb-add-vendor-specific') || '').split(/[&?]/).forEach(function(assignment) {
+                var match = assignment && assignment.match(/^(.*?)(?:=(.*))?$/);
+                if (match && match[1]) {
+                    var key = decodeURIComponent(match[1]);
+                    var val = match[2] && decodeURIComponent(match[2]) || key;
+                    customParams[key] = val;
+                }
+            });
+            return customParams;
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
