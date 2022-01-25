@@ -1,8 +1,17 @@
-## dev-staging/3.3 @ 42a8938fd
+## dev-staging/3.3 @ 3f4a2a5df
 * Fix error saving user on PHP 8
+* Fix undesired automatic logout when editing group assignments
 * Fix misc errors on doctrine/orm >= 2.8
-* Allow installation of doctrine/doctrine-bundle 2.x
+* Fix instance editing errors after reloading a Wms source with new dimensions
+* Fix disabled "batch" selection checkboxes in instance editing table header ([#1388](https://github.com/mapbender/mapbender/issues/1388))
+* Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
+* [Layertree] suppress context menu button for layers with no available context menu actions
+* [Legend] fix opaque grey image backgrounds when placed in sidepane
+* Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
+* [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* Fix misc Twig 2 incompatibilies
 * Remove abandoned twig/extensions requirement; allow installation of twig 2.x
+* Allow installation of doctrine/doctrine-bundle 2.x
 
 ## v3.3.0RC2
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
