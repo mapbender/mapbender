@@ -387,8 +387,12 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
         var self = this;
+        var gjf = this._geojsonFormat;
         var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
-        var dumpGeometry = this._geojsonFormat.writeGeometryObject.bind(this._geojsonFormat);
+        var dumpGeometry = function(geometry) {
+            var geometry_ = (geometry instanceof ol.geom.Circle) ? ol.geom.Polygon.fromCircle(geometry, 128) : geometry;
+            return gjf.writeGeometryObject(geometry_);
+        };
         var layerStyleFn = layer.getStyleFunction();
         var featuresDump = [];
         for (var i = 0; i < features.length; ++i) {
@@ -398,14 +402,11 @@ window.Mapbender.MapModelOl4 = (function() {
             if (!Array.isArray(styles)) {
                 styles = [styles];
             }
-            var baseGeometry = feature.getGeometry();
             var baseFeatureDump = dumpFeature(feature);
             var components = styles.map(function(style) {
                 var featureDump = Object.assign({}, baseFeatureDump);
                 var geom = (style.getGeometryFunction())(feature);
-                if (geom !== baseGeometry) {
-                    featureDump.geometry = dumpGeometry(geom);
-                }
+                featureDump.geometry = dumpGeometry(geom);
                 if (includeStyle) {
                     featureDump.style = self._dumpSvgStyle(style);
                 }
