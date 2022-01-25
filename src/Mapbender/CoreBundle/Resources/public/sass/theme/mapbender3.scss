@@ -364,6 +364,10 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 
 .anchored-element-wrap {
   position: absolute;
+  pointer-events: none;
+  .mb-element {
+    pointer-events: auto;
+  }
   .element-wrapper {
     // must be non-inline to stack vertically
     display: block;
