@@ -95,11 +95,14 @@ class CurlClientCommon extends BaseClient
     protected static function parseResponseHeaders($rawHeaders)
     {
         $headers = array();
-        foreach (\preg_split('#\\r?\\n#', $rawHeaders) as $i => $line) {
+        foreach (\preg_split('#\\r?\\n#', $rawHeaders) as $line) {
             $line = trim($line);
             if ($line) {
-                if ($i === 0 && !\preg_match('#^[\w\d\-_]+:#', $line)) {
+                if (!\preg_match('#^[\w\d\-_]+:#', $line)) {
                     // = status line ~ "HTTP/1.1 200 OK"
+                    // For redirected response, curl will concatenate multiple blocks of headers
+                    // ignore everything except the last one
+                    $headers = array();
                     continue;
                 }
                 $parts = \preg_split('#:\s*#', $line, 2);
