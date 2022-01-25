@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ 3f4a2a5df
+## dev-staging/3.3 @ f2fee2a10
 * Fix error saving user on PHP 8
 * Fix undesired automatic logout when editing group assignments
 * Fix misc errors on doctrine/orm >= 2.8
@@ -9,6 +9,7 @@
 * [Legend] fix opaque grey image backgrounds when placed in sidepane
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* Fix error processing redirected response
 * Fix misc Twig 2 incompatibilies
 * Remove abandoned twig/extensions requirement; allow installation of twig 2.x
 * Allow installation of doctrine/doctrine-bundle 2.x
