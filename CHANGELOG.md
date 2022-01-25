@@ -1,5 +1,8 @@
-## dev-release/3.2 @ c12f8809a
+## dev-release/3.2 @ 198ea0fd5
 * Fix invisible map overlay elements in mobile template
+* Fix undesired automatic logout when editing group assignments
+* [Layertree] suppress context menu button for layers with no available context menu actions
+* [Legend] fix opaque grey image backgrounds when placed in sidepane
 * [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * Fix instance editing errors after reloading a Wms source with new dimensions
