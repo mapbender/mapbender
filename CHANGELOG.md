@@ -1,13 +1,16 @@
-## dev-staging/3.3 @ f2fee2a10
+## dev-staging/3.3 @ e7cd313bc
 * Fix error saving user on PHP 8
 * Fix undesired automatic logout when editing group assignments
 * Fix misc errors on doctrine/orm >= 2.8
 * Fix instance editing errors after reloading a Wms source with new dimensions
 * Fix disabled "batch" selection checkboxes in instance editing table header ([#1388](https://github.com/mapbender/mapbender/issues/1388))
 * Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
+* [Print] [ImageExport] fix circle geometries from Sketch element not showing ([#1403](https://github.com/mapbender/mapbender/issues/1403))
 * [Layertree] suppress context menu button for layers with no available context menu actions
-* [Legend] fix opaque grey image backgrounds when placed in sidepane
+* [Legend] fix opaque grey image backgrounds when placed in sidepane ([#1318](https://github.com/mapbender/mapbender/issues/1318))
+* [Legend] fix missing space between consecutive images
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
+* Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
 * [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 * Fix error processing redirected response
 * Fix misc Twig 2 incompatibilies
