@@ -1,4 +1,5 @@
-## dev-release/3.2 @ b738fb629
+## dev-release/3.2 @ 58ccdba97
+* Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template
 * Fix undesired automatic logout when editing group assignments
 * [Print] [ImageExport] fix circle geometries from Sketch element not showing ([#1403](https://github.com/mapbender/mapbender/issues/1403))
