@@ -269,14 +269,31 @@ window.Mapbender.MapModelOl4 = (function() {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
         var bounds = this._getBufferedFeatureBounds(feature, options);
         var view = this.olMap.getView();
-        var zoom0 = Math.floor(view.getZoomForResolution(view.getResolutionForExtent(bounds)));
-        var zoom = this._adjustZoom(zoom0, options);
-        var zoomNow = this.getCurrentZoomLevel();
-        var viewExtent = view.calculateExtent();
+        var padding = this.getMapPadding_();
+        var sizeFull = this.olMap.getSize();
+        var sizeLimited = [
+            Math.max(0, sizeFull[0] - padding[1] - padding[3]),
+            Math.max(0, sizeFull[1] - padding[0] - padding[2])
+        ];
+
+        /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L1001 */
+        var viewCenter = this.getCenterWithoutPadding_(padding);
+        var viewExtent = ol.extent.getForViewAndSize(viewCenter, view.getResolution(), view.getRotation(), sizeLimited);
         var featureInView = ol.extent.containsExtent(viewExtent, bounds);
-        if (center_ || zoom !== zoomNow || !featureInView) {
-            view.setCenter(ol.extent.getCenter(bounds));
-            this.setZoomLevel(zoom, false);
+        if (center_ || !featureInView) {
+            var fitOptions = {
+                padding: padding
+            };
+            if (options && options.minScale) {
+                fitOptions.minResolution = this.scaleToResolution(options.minScale);
+            }
+            view.fit(bounds, fitOptions);
+        }
+        if (options && options.maxScale && options.maxScale >= (options.minScale || 0)) {
+            var maxResolution = this.scaleToResolution(options.maxScale);
+            if (view.getResolution() >= maxResolution) {
+                view.setResolution(maxResolution);
+            }
         }
     },
     /**
@@ -773,6 +790,47 @@ window.Mapbender.MapModelOl4 = (function() {
             viewOptions.constrainResolution = !!mapOptions.fixedZoomSteps;
 
             return viewOptions;
+        },
+        /**
+         * @return {Array<number>}
+         * @private
+         */
+        getMapPadding_: function() {
+            var viewRect = this.olMap.getViewport().getBoundingClientRect();
+            // Padding order is top, right, bottom, left, compatible with ol.View fit method
+            /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L83 */
+            var padding = [0, 0, 0, 0];
+            var others = $('.sidePane, .toolBar').get();
+            for (var i = 0; i < others.length; ++i) {
+                var otherRect = others[i].getBoundingClientRect();
+                if (otherRect.width >= 0.5 * viewRect.width) {
+                    if (otherRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
+                        // Top
+                        padding[0] = Math.max(otherRect.bottom - viewRect.top, padding[0], 0);
+                    } else {
+                        // Bottom
+                        padding[2] = Math.max(viewRect.bottom - otherRect.top, padding[2], 0);
+                    }
+                }
+                if (otherRect.height >= 0.5 * viewRect.height) {
+                    if (otherRect.left <= viewRect.left + 0.5 * viewRect.width) {
+                        // Left
+                        padding[3] = Math.max(otherRect.right - viewRect.left, padding[3], 0);
+                    } else {
+                        // Right
+                        padding[1] = Math.max(viewRect.right - otherRect.left, padding[1], 0);
+                    }
+                }
+            }
+            return padding;
+        },
+        getCenterWithoutPadding_: function(padding) {
+            var center = this.olMap.getView().getCenter().slice();
+            var resolution = this.olMap.getView().getResolution();
+            var padding_ = padding || this.getMapPadding_();
+            center[0] += resolution * 0.5 * (padding_[3] - padding_[1]);
+            center[1] -= resolution * 0.5 * (padding_[0] - padding_[2]);
+            return center;
         }
     });
 
