@@ -1,4 +1,4 @@
-## dev-release/3.2 @ 58ccdba97
+## dev-release/3.2 @ 550dcd0cb
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template
 * Fix undesired automatic logout when editing group assignments
@@ -15,6 +15,8 @@
 * Fix misc Twig 2 incompatibilies
 * Fix error saving user on PHP 8
 * [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* [Framework] Fix centerXy / zoomToFeature / panToFeature methods not buffering for overlapping sidepane / toolbars
+* [Framework] Fix zoomToFeature method not checking if feature is fully contained in current extent
 
 ## v3.2.8
 * Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
