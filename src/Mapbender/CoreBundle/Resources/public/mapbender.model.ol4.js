@@ -253,8 +253,9 @@ window.Mapbender.MapModelOl4 = (function() {
                 }
             }
         }
+        var adjustedCenter = this.adjustCenterForPadding_([x, y], this.getMapPadding_(), -1.0);
         var view = this.olMap.getView();
-        view.setCenter([x, y]);
+        view.setCenter(adjustedCenter);
         if (resolution !== null) {
             view.setResolution(resolution);
         }
@@ -294,26 +295,6 @@ window.Mapbender.MapModelOl4 = (function() {
             if (view.getResolution() >= maxResolution) {
                 view.setResolution(maxResolution);
             }
-        }
-    },
-    /**
-     * @param {ol.Feature} feature
-     * @param {Object} [options]
-     * @param {number=} options.buffer in meters
-     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
-     *      just keeps feature in view
-     */
-    panToFeature: function(feature, options) {
-        var center_ = !options || (options.center || typeof options.center === 'undefined');
-        // default to zero buffering
-        var bufferOptions = Object.assign({buffer: 0}, options);
-        var bounds = this._getBufferedFeatureBounds(feature, bufferOptions);
-
-        var view = this.olMap.getView();
-        var viewExtent = view.calculateExtent();
-        var featureInView = ol.extent.intersects(viewExtent, bounds);
-        if (center_ || !featureInView) {
-            view.setCenter(ol.extent.getCenter(bounds));
         }
     },
     setZoomLevel: function(level, allowTransitionEffect) {
@@ -825,12 +806,16 @@ window.Mapbender.MapModelOl4 = (function() {
             return padding;
         },
         getCenterWithoutPadding_: function(padding) {
-            var center = this.olMap.getView().getCenter().slice();
+            return this.adjustCenterForPadding_(this.olMap.getView().getCenter(), padding);
+        },
+        adjustCenterForPadding_: function(center, padding, factor) {
             var resolution = this.olMap.getView().getResolution();
             var padding_ = padding || this.getMapPadding_();
-            center[0] += resolution * 0.5 * (padding_[3] - padding_[1]);
-            center[1] -= resolution * 0.5 * (padding_[0] - padding_[2]);
-            return center;
+            var factor_ = factor || 1.0;
+            return [
+                center[0] + resolution * factor_ * 0.5 * (padding_[3] - padding_[1]),
+                center[1] - resolution * factor_ * 0.5 * (padding_[0] - padding_[2])
+            ];
         }
     });
 

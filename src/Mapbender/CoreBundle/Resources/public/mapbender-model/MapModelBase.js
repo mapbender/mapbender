@@ -227,6 +227,22 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
+         * @param {OpenLayers.Feature.Vector|ol.Feature} feature
+         * @param {Object} [options]
+         * @param {number=} options.buffer in meters
+         * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+         *      just keeps feature in view
+         */
+        panToFeature: function(feature, options) {
+            var scale = this.getCurrentScale(false);
+            // default to zero buffering
+            var ztfOptions = Object.assign({buffer: 0}, options, {
+                minScale: scale,
+                maxScale: scale
+            });
+            this.zoomToFeature(feature, ztfOptions);
+        },
+        /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
          * engine-agnostic
