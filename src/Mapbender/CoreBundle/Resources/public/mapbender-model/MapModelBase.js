@@ -718,7 +718,7 @@ window.Mapbender.MapModelBase = (function() {
                     zoom = Math.max(zoomNow, minZoom);
                 }
             }
-            return zoom;
+            return Math.min(this._getMaxZoomLevel(), zoom);
         },
         /**
          * @return {mmDimension}
