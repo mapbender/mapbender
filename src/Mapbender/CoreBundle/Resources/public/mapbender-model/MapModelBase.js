@@ -891,11 +891,11 @@ window.Mapbender.MapModelBase = (function() {
             var bufferAbs = (options || {}).buffer;
             var bufferFactor = (options || {}).ratio;
             if (typeof bufferAbs === 'undefined'){
-                bufferAbs = 100;
+                bufferAbs = 120;
             }
             if (typeof bufferFactor === 'undefined') {
                 if (bufferAbs !== 0) {
-                    bufferFactor = 1.5;
+                    bufferFactor = 1.25;
                 } else {
                     bufferFactor = 1.0;
                 }
