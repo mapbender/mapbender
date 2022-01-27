@@ -273,7 +273,7 @@ window.Mapbender.MapModelOl4 = (function() {
         var zoom = this._adjustZoom(zoom0, options);
         var zoomNow = this.getCurrentZoomLevel();
         var viewExtent = view.calculateExtent();
-        var featureInView = ol.extent.intersects(viewExtent, bounds);
+        var featureInView = ol.extent.containsExtent(viewExtent, bounds);
         if (center_ || zoom !== zoomNow || !featureInView) {
             view.setCenter(ol.extent.getCenter(bounds));
             this.setZoomLevel(zoom, false);
