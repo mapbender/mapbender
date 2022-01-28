@@ -75,6 +75,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {Number} [ratio] extension factor applied AFTER absolute buffer
      * @property {Number} [minScale]
      * @property {Number} [maxScale]
+     * @property {Boolean} [ignorePadding]
      */
 
     map: null,
@@ -381,25 +382,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (center_ || zoom !== zoomNow || !featureInView) {
             var centerLl = bounds.getCenterLonLat();
             this.map.olMap.setCenter(centerLl, zoom);
-        }
-    },
-    /**
-     * @param {OpenLayers.Feature.Vector} feature
-     * @param {Object} [options]
-     * @param {number=} options.buffer in meters
-     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
-     *      just keeps feature in view
-     */
-    panToFeature: function(feature, options) {
-        var center_ = !options || (options.center || typeof options.center === 'undefined');
-        // default to zero buffering
-        var bufferOptions = Object.assign({buffer: 0}, options);
-        var bounds = this._getBufferedFeatureBounds(feature, bufferOptions);
-
-        var featureInView = this.olMap.getExtent().containsBounds(bounds);
-        if (center_ || !featureInView) {
-            var centerLl = bounds.getCenterLonLat();
-            this.map.olMap.setCenter(centerLl);
         }
     },
     setZoomLevel: function(level, allowTransitionEffect) {

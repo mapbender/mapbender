@@ -227,6 +227,22 @@ window.Mapbender.MapModelBase = (function() {
             }
         },
         /**
+         * @param {OpenLayers.Feature.Vector|ol.Feature} feature
+         * @param {Object} [options]
+         * @param {number=} options.buffer in meters
+         * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+         *      just keeps feature in view
+         */
+        panToFeature: function(feature, options) {
+            var scale = this.getCurrentScale(false);
+            // default to zero buffering
+            var ztfOptions = Object.assign({buffer: 0}, options, {
+                minScale: scale,
+                maxScale: scale
+            });
+            this.zoomToFeature(feature, ztfOptions);
+        },
+        /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
          * engine-agnostic
@@ -718,7 +734,7 @@ window.Mapbender.MapModelBase = (function() {
                     zoom = Math.max(zoomNow, minZoom);
                 }
             }
-            return zoom;
+            return Math.min(this._getMaxZoomLevel(), zoom);
         },
         /**
          * @return {mmDimension}
@@ -810,7 +826,9 @@ window.Mapbender.MapModelBase = (function() {
             if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
                 this.setViewRotation(options.rotation);
             }
-            var centerOptions = {};
+            var centerOptions = {
+                ignorePadding: true
+            };
             var center = options.center;
             if (options.scale) {
                 centerOptions.minScale = options.scale;
@@ -891,11 +909,11 @@ window.Mapbender.MapModelBase = (function() {
             var bufferAbs = (options || {}).buffer;
             var bufferFactor = (options || {}).ratio;
             if (typeof bufferAbs === 'undefined'){
-                bufferAbs = 100;
+                bufferAbs = 120;
             }
             if (typeof bufferFactor === 'undefined') {
                 if (bufferAbs !== 0) {
-                    bufferFactor = 1.5;
+                    bufferFactor = 1.25;
                 } else {
                     bufferFactor = 1.0;
                 }
