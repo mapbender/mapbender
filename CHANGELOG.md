@@ -12,7 +12,10 @@
 * [Legend] fix missing space between consecutive images
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
+* Fix SRS switch changing map scale if fractional zoom is enabled
 * [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* [Framework] Fix centerXy / zoomToFeature / panToFeature methods not buffering for overlapping sidepane / toolbars
+* [Framework] Fix zoomToFeature method not checking if feature is fully contained in current extent
 * Fix error processing redirected response
 * Fix misc Twig 2 incompatibilies
 * Remove abandoned twig/extensions requirement; allow installation of twig 2.x
