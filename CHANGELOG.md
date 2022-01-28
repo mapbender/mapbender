@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ 6dbe19380
+## dev-staging/3.3 @ 9599aeda3
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix error saving user on PHP 8
 * Fix undesired automatic logout when editing group assignments
