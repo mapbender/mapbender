@@ -236,7 +236,9 @@ window.Mapbender.MapModelOl4 = (function() {
      */
     centerXy: function(x, y, options) {
         var feature = new ol.Feature(new ol.geom.Point([x, y]));
-        var ztfOptions = Object.assign({}, options);
+        var ztfOptions = Object.assign({}, options, {
+            buffer: 0
+        });
         if (typeof (options || {}).zoom === 'number') {
             var fixedScale = this._getScales()[this._clampZoomLevel(options.zoom)];
             ztfOptions.minScale = fixedScale;
