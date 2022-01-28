@@ -522,7 +522,7 @@ window.Mapbender.MapModelOl4 = (function() {
         // Going back and forth between SRSs, there is extreme drift in the
         // calculated values. Always start from the configured maxExtent.
         var newMaxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsNameTo);
-        var zoomLevel = this.getCurrentZoomLevel();
+        var zoomLevel = this.getCurrentZoomLevel(false);
 
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
