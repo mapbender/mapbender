@@ -826,7 +826,9 @@ window.Mapbender.MapModelBase = (function() {
             if (typeof (options.rotation) !== 'undefined' && Mapbender.mapEngine.supportsRotation()) {
                 this.setViewRotation(options.rotation);
             }
-            var centerOptions = {};
+            var centerOptions = {
+                ignorePadding: true
+            };
             var center = options.center;
             if (options.scale) {
                 centerOptions.minScale = options.scale;

@@ -75,6 +75,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {Number} [ratio] extension factor applied AFTER absolute buffer
      * @property {Number} [minScale]
      * @property {Number} [maxScale]
+     * @preopery {boolean} [ignorePadding]
      */
 
     map: null,

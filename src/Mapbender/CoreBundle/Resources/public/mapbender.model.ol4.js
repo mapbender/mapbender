@@ -231,34 +231,19 @@ window.Mapbender.MapModelOl4 = (function() {
      * @param {Object} [options]
      * @param {Number} [options.minScale]
      * @param {Number} [options.maxScale]
-     * @param {Number|String} [options.zoom]
+     * @param {Number} [options.zoom]
+     * @param {boolean} [options.ignorePadding]
      */
     centerXy: function(x, y, options) {
-        var resolution = null;
-        var zoomOption = (options || {}).zoom;
-        if (typeof zoomOption === 'number') {
-            resolution = this.olMap.getView().getResolutionForZoom(zoomOption);
-        } else {
-            var resNow = this.olMap.getView().getResolution();
-            if (typeof ((options || {}).minScale) === 'number') {
-                var minRes = this.scaleToResolution(options.minScale);
-                if (resNow < minRes) {
-                    resolution = minRes;
-                }
-            }
-            if (typeof ((options || {}).maxScale) === 'number') {
-                var maxRes = this.scaleToResolution(options.maxScale);
-                if (resNow > maxRes) {
-                    resolution = maxRes;
-                }
-            }
+        var feature = new ol.Feature(new ol.geom.Point([x, y]));
+        var ztfOptions = Object.assign({}, options);
+        if (typeof (options || {}).zoom === 'number') {
+            var fixedScale = this._getScales()[this._clampZoomLevel(options.zoom)];
+            ztfOptions.minScale = fixedScale;
+            ztfOptions.maxScale = fixedScale;
+            delete ztfOptions.zoom;
         }
-        var adjustedCenter = this.adjustCenterForPadding_([x, y], this.getMapPadding_(), -1.0);
-        var view = this.olMap.getView();
-        view.setCenter(adjustedCenter);
-        if (resolution !== null) {
-            view.setResolution(resolution);
-        }
+        this.zoomToFeature(feature, ztfOptions);
     },
     /**
      * @param {ol.Feature} feature
@@ -270,7 +255,7 @@ window.Mapbender.MapModelOl4 = (function() {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
         var bounds = this._getBufferedFeatureBounds(feature, options);
         var view = this.olMap.getView();
-        var padding = this.getMapPadding_();
+        var padding = !(options || {}).ignorePadding && this.getMapPadding_() || [0, 0, 0, 0];
         var sizeFull = this.olMap.getSize();
         var sizeLimited = [
             Math.max(0, sizeFull[0] - padding[1] - padding[3]),
