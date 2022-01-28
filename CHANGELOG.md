@@ -1,4 +1,4 @@
-## dev-release/3.2 @ 9ba4e7343
+## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template
 * Fix undesired automatic logout when editing group assignments
