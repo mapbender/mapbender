@@ -1,4 +1,4 @@
-## dev-staging/3.3 @ 9599aeda3
+## dev-staging/3.3 @ af85f383b
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix error saving user on PHP 8
 * Fix undesired automatic logout when editing group assignments
@@ -10,6 +10,7 @@
 * [Layertree] suppress context menu button for layers with no available context menu actions
 * [Legend] fix opaque grey image backgrounds when placed in sidepane ([#1318](https://github.com/mapbender/mapbender/issues/1318))
 * [Legend] fix missing space between consecutive images
+* Fix PHP 8 incompatibility
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
 * Fix SRS switch changing map scale if fractional zoom is enabled
@@ -17,6 +18,7 @@
 * [Framework] Fix centerXy / zoomToFeature / panToFeature methods not buffering for overlapping sidepane / toolbars
 * [Framework] Fix zoomToFeature method not checking if feature is fully contained in current extent
 * Fix error processing redirected response
+* Fix PHP 8 incompatibilites in print and Ldap components
 * Fix misc Twig 2 incompatibilies
 * Remove abandoned twig/extensions requirement; allow installation of twig 2.x
 * Allow installation of doctrine/doctrine-bundle 2.x
