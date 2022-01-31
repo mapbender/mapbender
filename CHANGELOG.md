@@ -10,7 +10,6 @@
 * [Layertree] suppress context menu button for layers with no available context menu actions
 * [Legend] fix opaque grey image backgrounds when placed in sidepane ([#1318](https://github.com/mapbender/mapbender/issues/1318))
 * [Legend] fix missing space between consecutive images
-* Fix PHP 8 incompatibility
 * Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
 * Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
 * Fix SRS switch changing map scale if fractional zoom is enabled
