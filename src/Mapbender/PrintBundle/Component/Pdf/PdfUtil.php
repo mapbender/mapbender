@@ -51,7 +51,7 @@ class PdfUtil
      */
     public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
-        if (is_resource($gdResOrPath)) {
+        if (!\is_string($gdResOrPath)) {
             // FPDF library can embed files, but not gd resources
             $imageName = $this->makeTempFile();
             imagepng($gdResOrPath, $imageName);
