@@ -331,8 +331,43 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   overflow-y: auto;
 }
 
+.map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  .map-overlay-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    div.toolBar {
+      flex: 0;
+    }
+    div.sidePane {
+      flex: 1;
+    }
+    div.toolBar {
+      position: initial;
+    }
+  }
+}
+
+.map-overlay, .map-overlay-column, .overlay-fill {
+  pointer-events: none;
+}
+.overlay-fill > *, .toolBar {
+  pointer-events: initial;
+}
+
 .anchored-element-wrap {
   position: absolute;
+  pointer-events: none;
+  .mb-element {
+    pointer-events: auto;
+  }
   .element-wrapper {
     // must be non-inline to stack vertically
     display: block;
@@ -360,5 +395,37 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   }
   &.anchored-element-wrap-lb, &.anchored-element-wrap-rb {
     bottom: $space;
+  }
+}
+
+.ui-autocomplete {
+  background-color: #fff;
+  border: solid 1px lighten($thirdColor, 15%);   // same as .input
+  position: absolute; // do not expand DOM size when showing items
+  z-index: 20000; // ~replacement for .ui-front
+
+  line-height: 1.5;
+  li {
+    padding: 5px 5px;
+    cursor: pointer;
+    display: block;
+    opacity: 0.8;
+    &:hover {
+      opacity: 1;
+      background-color: $contentColor;
+    }
+  }
+  .toolBar & {
+    max-height: 250px;
+    overflow-y: hidden;
+    text-align: left;
+  }
+  .sidePane & {
+    max-width: 100%;
+  }
+  .mobilePane & {
+    li {
+      padding: $space / 2;
+    }
   }
 }

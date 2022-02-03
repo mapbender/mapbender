@@ -205,7 +205,7 @@
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     var script = self._getInjectionScript(source.id);
-                    var iframe = $('<iframe sandbox="allow-scripts allow-popups">');
+                    var iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox">');
                     iframe.attr("srcdoc",script+data);
                     self._addContent(source, layerTitle, iframe);
                     break;

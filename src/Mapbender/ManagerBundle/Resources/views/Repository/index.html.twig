@@ -1,5 +1,7 @@
 {% extends 'MapbenderManagerBundle::layouts/tabbed.html.twig' %}
 {%- set title = 'mb.manager.admin.sources' | trans -%}
+{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
@@ -9,28 +11,6 @@
   {{- tab_macros.tab_header('Sources', 'mb.manager.admin.sources', 'active') -}}
   {{- tab_macros.tab_header('SharedInstances', 'mb.terms.sourceinstance.reusable.plural') -}}
 {% endblock tab_headers %}
-
-{%- macro source_meta(source) -%}
-<table class="table table-borderless table-condensed">
-    <tbody>
-      <tr>
-          <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-          <td>{{ source.type }} {{ source.version }}</td>
-      </tr>
-      <tr>
-          <th>URL:</th>
-          <td>{{ source.getOriginUrl() }}</td>
-      </tr>
-      {%- if source.description -%}
-      <tr>
-          <th>{{ 'mb.wms.wmsloader.repo.view.label.abstract' | trans }}:</th>
-          <td>{{ source.description }}</td>
-      </tr>
-      {%- endif -%}
-  </tbody>
-</table>
-{%- endmacro -%}
-{%- import _self as source_macros -%}
 
 {% block tab_containers %}
     <div{{ tab_macros.tab_content_attributes('Sources', 'active', false) }}>
@@ -63,6 +43,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
+                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item) -}}
             {%- endblock -%}
 
@@ -108,16 +89,16 @@
         </div>
         {% embed 'MapbenderManagerBundle::fragments/blocklist.html.twig' %}
             {%- block item_interactions -%}
+                <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
+                  ><i class="fa fa-desktop"></i></a>
+                {%- if edit_shared_instances -%}
                           <a class="btn btn-default" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                             ><i class="fa fa-cog"></i></a>
-                          <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
-                            ><i class="fa fa-desktop"></i></a>
-                        {% if is_granted('DELETE', oid) %}
                           <a class="btn btn-default -fn-delete" href="#"
                               data-url="{{ path('mapbender_manager_sourceinstance_delete', {'instance': item}) }}"
                               title="{{"mb.actions.delete"|trans}}"
                               ><i class="fa fa-trash-o far fa-trash-alt"></i></a>
-                        {% endif %}
+                {%- endif -%}
             {%- endblock -%}
 
             {%- block boxlist_item_content -%}
@@ -126,6 +107,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
+                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item.source) -}}
             {%- endblock -%}
 

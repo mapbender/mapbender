@@ -19,6 +19,7 @@
                 var slugs = response.concat([Mapbender.configuration.application.slug]);
                 self._filterGranted(slugs);
             });
+            this._updateDropoutDirection();
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
@@ -28,6 +29,9 @@
             var self = this;
             this.element.on('change', 'select', function() {
                 self._switchApplication($(this).val());
+            });
+            window.addEventListener('resize', function() {
+                self._updateDropoutDirection();
             });
         },
         _filterGranted: function(slugs) {
@@ -57,6 +61,32 @@
                 window.open(targetUrl);
             } else {
                 window.location.href = targetUrl;
+            }
+        },
+        _updateDropoutDirection: function() {
+            if (this.element.closest('.toolBar').length) {
+                var windowWidth = $('html').get(0).clientWidth;
+                var node = this.element.get(0);
+                var ownWidth = node.clientWidth;
+                var distanceLeft = 0;
+                do {
+                    distanceLeft += node.offsetLeft;
+                    node = node.offsetParent;
+                } while (node);
+                var distanceRight = windowWidth - distanceLeft - ownWidth;
+                if (windowWidth && distanceRight >= windowWidth / 2) {
+                    // Extend dropout list into free space to the right
+                    $('.dropdownList', this.element).css({
+                        left: 0,
+                        right: ''
+                    });
+                } else {
+                    // Extend dropout list into free space to the left
+                    $('.dropdownList', this.element).css({
+                        left: '',
+                        right: 0
+                    });
+                }
             }
         },
         __dummy__: null

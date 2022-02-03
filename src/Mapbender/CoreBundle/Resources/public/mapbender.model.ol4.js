@@ -231,33 +231,21 @@ window.Mapbender.MapModelOl4 = (function() {
      * @param {Object} [options]
      * @param {Number} [options.minScale]
      * @param {Number} [options.maxScale]
-     * @param {Number|String} [options.zoom]
+     * @param {Number} [options.zoom]
+     * @param {boolean} [options.ignorePadding]
      */
     centerXy: function(x, y, options) {
-        var resolution = null;
-        var zoomOption = (options || {}).zoom;
-        if (typeof zoomOption === 'number') {
-            resolution = this.olMap.getView().getResolutionForZoom(zoomOption);
-        } else {
-            var resNow = this.olMap.getView().getResolution();
-            if (typeof ((options || {}).minScale) === 'number') {
-                var minRes = this.scaleToResolution(options.minScale);
-                if (resNow < minRes) {
-                    resolution = minRes;
-                }
-            }
-            if (typeof ((options || {}).maxScale) === 'number') {
-                var maxRes = this.scaleToResolution(options.maxScale);
-                if (resNow > maxRes) {
-                    resolution = maxRes;
-                }
-            }
+        var feature = new ol.Feature(new ol.geom.Point([x, y]));
+        var ztfOptions = Object.assign({}, options, {
+            buffer: 0
+        });
+        if (typeof (options || {}).zoom === 'number') {
+            var fixedScale = this._getScales()[this._clampZoomLevel(options.zoom)];
+            ztfOptions.minScale = fixedScale;
+            ztfOptions.maxScale = fixedScale;
+            delete ztfOptions.zoom;
         }
-        var view = this.olMap.getView();
-        view.setCenter([x, y]);
-        if (resolution !== null) {
-            view.setResolution(resolution);
-        }
+        this.zoomToFeature(feature, ztfOptions);
     },
     /**
      * @param {ol.Feature} feature
@@ -269,34 +257,31 @@ window.Mapbender.MapModelOl4 = (function() {
         var center_ = !options || (options.center || typeof options.center === 'undefined');
         var bounds = this._getBufferedFeatureBounds(feature, options);
         var view = this.olMap.getView();
-        var zoom0 = Math.floor(view.getZoomForResolution(view.getResolutionForExtent(bounds)));
-        var zoom = this._adjustZoom(zoom0, options);
-        var zoomNow = this.getCurrentZoomLevel();
-        var viewExtent = view.calculateExtent();
-        var featureInView = ol.extent.intersects(viewExtent, bounds);
-        if (center_ || zoom !== zoomNow || !featureInView) {
-            view.setCenter(ol.extent.getCenter(bounds));
-            this.setZoomLevel(zoom, false);
-        }
-    },
-    /**
-     * @param {ol.Feature} feature
-     * @param {Object} [options]
-     * @param {number=} options.buffer in meters
-     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
-     *      just keeps feature in view
-     */
-    panToFeature: function(feature, options) {
-        var center_ = !options || (options.center || typeof options.center === 'undefined');
-        // default to zero buffering
-        var bufferOptions = Object.assign({buffer: 0}, options);
-        var bounds = this._getBufferedFeatureBounds(feature, bufferOptions);
+        var padding = !(options || {}).ignorePadding && this.getMapPadding_() || [0, 0, 0, 0];
+        var sizeFull = this.olMap.getSize();
+        var sizeLimited = [
+            Math.max(0, sizeFull[0] - padding[1] - padding[3]),
+            Math.max(0, sizeFull[1] - padding[0] - padding[2])
+        ];
 
-        var view = this.olMap.getView();
-        var viewExtent = view.calculateExtent();
-        var featureInView = ol.extent.intersects(viewExtent, bounds);
+        /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L1001 */
+        var viewCenter = this.getCenterWithoutPadding_(padding);
+        var viewExtent = ol.extent.getForViewAndSize(viewCenter, view.getResolution(), view.getRotation(), sizeLimited);
+        var featureInView = ol.extent.containsExtent(viewExtent, bounds);
         if (center_ || !featureInView) {
-            view.setCenter(ol.extent.getCenter(bounds));
+            var fitOptions = {
+                padding: padding
+            };
+            if (options && options.minScale) {
+                fitOptions.minResolution = this.scaleToResolution(options.minScale);
+            }
+            view.fit(bounds, fitOptions);
+        }
+        if (options && options.maxScale && options.maxScale >= (options.minScale || 0)) {
+            var maxResolution = this.scaleToResolution(options.maxScale);
+            if (view.getResolution() >= maxResolution) {
+                view.setResolution(maxResolution);
+            }
         }
     },
     setZoomLevel: function(level, allowTransitionEffect) {
@@ -387,8 +372,12 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
         var self = this;
+        var gjf = this._geojsonFormat;
         var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
-        var dumpGeometry = this._geojsonFormat.writeGeometryObject.bind(this._geojsonFormat);
+        var dumpGeometry = function(geometry) {
+            var geometry_ = (geometry instanceof ol.geom.Circle) ? ol.geom.Polygon.fromCircle(geometry, 128) : geometry;
+            return gjf.writeGeometryObject(geometry_);
+        };
         var layerStyleFn = layer.getStyleFunction();
         var featuresDump = [];
         for (var i = 0; i < features.length; ++i) {
@@ -398,14 +387,11 @@ window.Mapbender.MapModelOl4 = (function() {
             if (!Array.isArray(styles)) {
                 styles = [styles];
             }
-            var baseGeometry = feature.getGeometry();
             var baseFeatureDump = dumpFeature(feature);
             var components = styles.map(function(style) {
                 var featureDump = Object.assign({}, baseFeatureDump);
                 var geom = (style.getGeometryFunction())(feature);
-                if (geom !== baseGeometry) {
-                    featureDump.geometry = dumpGeometry(geom);
-                }
+                featureDump.geometry = dumpGeometry(geom);
                 if (includeStyle) {
                     featureDump.style = self._dumpSvgStyle(style);
                 }
@@ -523,7 +509,7 @@ window.Mapbender.MapModelOl4 = (function() {
         // Going back and forth between SRSs, there is extreme drift in the
         // calculated values. Always start from the configured maxExtent.
         var newMaxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsNameTo);
-        var zoomLevel = this.getCurrentZoomLevel();
+        var zoomLevel = this.getCurrentZoomLevel(false);
 
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
@@ -772,6 +758,51 @@ window.Mapbender.MapModelOl4 = (function() {
             viewOptions.constrainResolution = !!mapOptions.fixedZoomSteps;
 
             return viewOptions;
+        },
+        /**
+         * @return {Array<number>}
+         * @private
+         */
+        getMapPadding_: function() {
+            var viewRect = this.olMap.getViewport().getBoundingClientRect();
+            // Padding order is top, right, bottom, left, compatible with ol.View fit method
+            /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L83 */
+            var padding = [0, 0, 0, 0];
+            var others = $('.sidePane, .toolBar').get();
+            for (var i = 0; i < others.length; ++i) {
+                var otherRect = others[i].getBoundingClientRect();
+                if (otherRect.width >= 0.5 * viewRect.width) {
+                    if (otherRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
+                        // Top
+                        padding[0] = Math.max(otherRect.bottom - viewRect.top, padding[0], 0);
+                    } else {
+                        // Bottom
+                        padding[2] = Math.max(viewRect.bottom - otherRect.top, padding[2], 0);
+                    }
+                }
+                if (otherRect.height >= 0.5 * viewRect.height) {
+                    if (otherRect.left <= viewRect.left + 0.5 * viewRect.width) {
+                        // Left
+                        padding[3] = Math.max(otherRect.right - viewRect.left, padding[3], 0);
+                    } else {
+                        // Right
+                        padding[1] = Math.max(viewRect.right - otherRect.left, padding[1], 0);
+                    }
+                }
+            }
+            return padding;
+        },
+        getCenterWithoutPadding_: function(padding) {
+            return this.adjustCenterForPadding_(this.olMap.getView().getCenter(), padding);
+        },
+        adjustCenterForPadding_: function(center, padding, factor) {
+            var resolution = this.olMap.getView().getResolution();
+            var padding_ = padding || this.getMapPadding_();
+            var factor_ = factor || 1.0;
+            return [
+                center[0] + resolution * factor_ * 0.5 * (padding_[3] - padding_[1]),
+                center[1] - resolution * factor_ * 0.5 * (padding_[0] - padding_[2])
+            ];
         }
     });
 

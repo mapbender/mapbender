@@ -1,6 +1,37 @@
+## v3.2.9
+* Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
+* Fix invisible map overlay elements in mobile template
+* Fix undesired automatic logout when editing group assignments
+* [Print] [ImageExport] fix circle geometries from Sketch element not showing ([#1403](https://github.com/mapbender/mapbender/issues/1403))
+* [Layertree] suppress context menu button for layers with no available context menu actions
+* [Legend] fix opaque grey image backgrounds when placed in sidepane ([#1318](https://github.com/mapbender/mapbender/issues/1318))
+* [Legend] fix missing space between consecutive images
+* [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
+* Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
+* Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
+* Fix SRS switch changing map scale if fractional zoom is enabled
+* Fix instance editing errors after reloading a Wms source with new dimensions
+* Fix disabled "batch" selection checkboxes in instance editing table header ([#1388](https://github.com/mapbender/mapbender/issues/1388))
+* Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
+* Fix misc Twig 2 incompatibilies
+* Fix error saving user on PHP 8
+* [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* [Framework] Fix centerXy / zoomToFeature / panToFeature methods not buffering for overlapping sidepane / toolbars
+* [Framework] Fix zoomToFeature method not checking if feature is fully contained in current extent
+
 ## v3.2.8
+* Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
 * Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
 * Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
+* Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
+* Fix WMS with no dimensions showing "Dimensions" block in instance editing
+* Fix cross-domain external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
+* [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6 ([#1386](https://github.com/mapbender/mapbender/issues/1386))
+* [SearchRouter] fix deliberate 0 opacity style settings not working
+* [ApplicationSwitcher] fix visually truncated / horizontally scrolling target application titles
+* Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
+* Fix visual state of Button controlling Copyright element
+* Improve support for custom user entities in root account voter
 
 ## v3.2.7
 * Fix shared instance Wms requests not running over tunnel if protected by basic auth
@@ -390,11 +421,12 @@ NOTE: This version extends the database schema and will require running a `doctr
 * Layer attribute emulation for legacy `mqlid` and `ollid` properties
 * Client-side Source property `origId`
 
-## dev-release/3.0.7 @ 616a1259e
+## dev-release/3.0.7 @ c3881757a
 - Fix broken mb-action / "declarative" link processing in applications using WMTS instances
 - Fix broken handling of Element-level grants ("roles") in Yaml-defined applications
 - Ignore (potentially inverted) non-lonlat bounding boxes; fixes [#1264](https://github.com/mapbender/mapbender/issues/1264)
 - Fix duplicated owner of cloned application
+- Fix error duplicating application with empty Acl
 - Fix inconsistent "published" vs anonymous view grants logic for database applications ([#1326](https://github.com/mapbender/mapbender/issues/1326), [PR#1347](https://github.com/mapbender/mapbender/pull/1347))
 - Fix backend element list interaction tooltips on Yaml applications copied into db
 - Fix frontend sidepane accordion header text alignment
@@ -445,6 +477,7 @@ NOTE: This version extends the database schema and will require running a `doctr
 - [Backend] Fix new application form sometimes missing the security tab header
 - [Backend] Fix source view sometimes showing "Contact" tab header but no content for it
 - [Backend] Fix filter input in Element security dialog not working
+- [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
 - [Framework] Fix broken form theme visualization of "disabled" input state
 - [Framework] Fix broken form theme handling of [form labels set to false for suppression](https://symfony.com/doc/3.4/reference/forms/types/text.html#label)
 - [Framework] Fix incomplete form theme displays of red asterisks on labels for required inputs

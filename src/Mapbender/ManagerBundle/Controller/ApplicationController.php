@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
@@ -131,6 +132,7 @@ class ApplicationController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 
@@ -204,6 +206,7 @@ class ApplicationController extends ApplicationControllerBase
             'template_name'       => $templateClass::getTitle(),
             // Allow screenType filtering only on current map engine
             'allow_screentypes' => $this->enableResponsiveElements && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
+            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
 

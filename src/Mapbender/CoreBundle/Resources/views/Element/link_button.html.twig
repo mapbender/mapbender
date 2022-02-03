@@ -2,7 +2,7 @@
   {% if icon %}
     <span class="iconBig {{ icon }}"></span>
   {% endif %}
-  {% if label %}
+  {% if show_label or not icon %}
   <span{% if icon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ label|trans }}</span>
   {% endif %}
 </a>

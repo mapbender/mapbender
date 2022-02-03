@@ -1,6 +1,10 @@
 {% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
+{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+
 {% block heading %}
-    <a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>
+    {%- if edit_shared_instances -%}
+        <a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>
+    {%- endif -%}
     {{ parent() }}
     <div class="clear"></div>
 {% endblock heading %}

@@ -22,7 +22,7 @@
 
 {% block form_main2 %}
   <div class="extendedGroup">
-    {% if form.dimensions %}
+    {% if form.dimensions is defined %}
       <div class="panel panel-default content-toggle-container closed">
         <div class="panel-heading content-toggle clickable clearfix">
           <i class="fa fa-lg fas fa-plus pull-right"></i>
@@ -81,7 +81,7 @@
           <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th></th>
         </tr>
-        <tr id="instanceTableCheckHead">
+        <tr>
           <th colspan="4"></th>
           {{ form_row(_proto.active, {'tagName': 'th'}) }}
           {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
@@ -93,7 +93,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="instanceTableCheckBody">
+      <tbody>
         {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer, 'level': 0 }%}
         <tr class="dummy">
           <td colspan="20"></td>

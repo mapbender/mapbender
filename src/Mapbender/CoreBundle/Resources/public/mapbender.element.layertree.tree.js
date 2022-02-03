@@ -228,6 +228,9 @@
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('.-fn-toggle-info', $li).remove();
             }
+            if (!this._filterMenu(layer).length) {
+                $('.layer-menu-btn', $li).remove();
+            }
             if (layer.children && layer.children.length) {
                 if (layer.getParent()) {
                     $li.addClass("groupContainer");
@@ -478,6 +481,27 @@
             }
             return false;
         },
+        _filterMenu: function(layer) {
+            var enabled = this.options.menu;
+            var supported = ['layerremove'];
+            if (layer.options.metadataUrl) {
+                supported.push('metadata');
+            }
+            // opacity + dimension are only available on root layer
+            if (!layer.getParent()) {
+                supported.push('opacity');
+                if ((layer.source.configuration.options.dimensions || []).length) {
+                    supported.push('dimension');
+                }
+            }
+            if (layer.hasBounds()) {
+                supported.push('zoomtolayer');
+            }
+
+            return supported.filter(function(name) {
+                return -1 !== enabled.indexOf(name);
+            });
+        },
         _initDimensionsMenu: function($element, menu, dims, source) {
             var self = this;
             var dimData = $element.data('dimensions') || {};
@@ -616,8 +640,8 @@
                         resizable: true,
                         draggable: true,
                         closeOnESC: false,
+                        detachOnClose: false,
                         content: [self.element.show()],
-                        destroyOnClose: true,
                         width: 350,
                         height: 500,
                         cssClass: 'customLayertree',

@@ -2,5 +2,12 @@
     .dropdown {
         min-width: 9em;
     }
+    .toolBar & {
+        .dropdownList {
+            width: auto;
+            min-width: 100%;
+            max-width: 75vw;
+            overflow-x: hidden;
+        }
+    }
 }
-

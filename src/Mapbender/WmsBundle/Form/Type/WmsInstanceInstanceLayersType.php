@@ -78,7 +78,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
             ))
-            ->add('dimensions', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+        ;
+        if ($source->getDimensions()) {
+            $builder->add('dimensions', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\DimensionInstType',
                 'allow_add' => false,
@@ -88,7 +90,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                     'by_reference' => false,
                 ),
                 'label' => false,
-            ))
+            ));
+        }
+        $builder
             ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
