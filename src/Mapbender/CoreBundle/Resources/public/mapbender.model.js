@@ -157,6 +157,23 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         });
     },
     _onMapClick: function(event) {
+        var offsetX = 0, offsetY = 0;
+        var element = Mapbender.Model.olMap.div;
+
+        do {
+            offsetY += element.offsetTop;
+            offsetX += element.offsetLeft;
+            element = element.offsetParent;
+        } while (element);
+
+        if (event.x){
+            event.x -= offsetX;
+            event.y -= offsetY;
+        }else{
+            event.xy.x -= offsetX;
+            event.xy.y -= offsetY;
+        }
+
         var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
         var x = event.x || event.xy.x; // on mobile devices, coordinates are returned as properties of the `xy`-Object only
         var y = event.y || event.xy.y;
