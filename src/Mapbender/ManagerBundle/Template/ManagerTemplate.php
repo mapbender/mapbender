@@ -11,12 +11,15 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
         switch ($type) {
             case 'css':
                 return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+                    '@MapbenderManagerBundle/Resources/public/sass/manager/variables.scss',
                     '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
                 );
             case 'js':
                 return array(
                     '@MapbenderManagerBundle/Resources/public/js/bootstrap-modal.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/content-toggle.js',
                     '@MapbenderManagerBundle/Resources/public/components.js',
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',

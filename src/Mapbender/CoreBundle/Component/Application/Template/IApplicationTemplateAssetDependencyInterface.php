@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Component\Application\Template;
 
 
+use Mapbender\CoreBundle\Entity\Application;
+
 interface IApplicationTemplateAssetDependencyInterface
 {
     /**
@@ -27,6 +29,14 @@ interface IApplicationTemplateAssetDependencyInterface
      * @return string[]
      */
     public function getAssets($type);
+
+    /**
+     * Should return a list of file references containing sass variables definitions
+     *
+     * @param Application $application
+     * @return string[]
+     */
+    public function getSassVariablesAssets(Application $application);
 
     /**
      * Should return 'late' assets, to be loaded at the very end, particularly after all Element assets.

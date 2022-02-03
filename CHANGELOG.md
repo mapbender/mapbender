@@ -1,3 +1,56 @@
+## v3.3.0
+* Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
+* Fix error saving user on PHP 8
+* Fix undesired automatic logout when editing group assignments
+* Fix misc errors on doctrine/orm >= 2.8
+* Fix instance editing errors after reloading a Wms source with new dimensions
+* Fix disabled "batch" selection checkboxes in instance editing table header ([#1388](https://github.com/mapbender/mapbender/issues/1388))
+* Fix inconsistent grants checks when editing shared instances (requires global Source editing); suppress links to denied shared instance interactions
+* [Print] [ImageExport] fix circle geometries from Sketch element not showing ([#1403](https://github.com/mapbender/mapbender/issues/1403))
+* [Layertree] suppress context menu button for layers with no available context menu actions
+* [Legend] fix opaque grey image backgrounds when placed in sidepane ([#1318](https://github.com/mapbender/mapbender/issues/1318))
+* [Legend] fix missing space between consecutive images
+* Fix Link label always showing, ignoring configuration setting ([#1383](https://github.com/mapbender/mapbender/issues/1381))
+* Fix floating overlay elements blocking mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
+* Fix SRS switch changing map scale if fractional zoom is enabled
+* [Framework] Fix `mbmapclick` event coordinates if map does not cover the entire viewport
+* [Framework] Fix centerXy / zoomToFeature / panToFeature methods not buffering for overlapping sidepane / toolbars
+* [Framework] Fix zoomToFeature method not checking if feature is fully contained in current extent
+* Fix error processing redirected response
+* Fix PHP 8 incompatibilites in print and Ldap components
+* Fix misc Twig 2 incompatibilies
+* Remove abandoned twig/extensions requirement; allow installation of twig 2.x
+* Allow installation of doctrine/doctrine-bundle 2.x
+
+## v3.3.0RC2
+* Fix layertree events no longer handled after closing / reopening dialog ([#1382](https://github.com/mapbender/mapbender/issues/1382))
+* Fix WMS source (and related instance) layer order when reloading a source with added layers ([#1370](https://github.com/mapbender/mapbender/issues/1370))
+* Fix WMS with no dimensions showing "Dimensions" block in instance editing
+* Fix contact update error on WMS source reload ([#1381](https://github.com/mapbender/mapbender/issues/1381))
+* Fix cross-domain external links in feature info HTML ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1378](https://github.com/mapbender/mapbender/pull/1378))
+* Fix invisible map overlay elements in mobile template
+* Fix incompatibility with updated or system-native sass >=3.3.0 in backend CSS
+* [SearchRouter] fix result features showing in engine default style before table hover on Openlayers 6
+* [SearchRouter] fix deliberate 0 opacity style settings not working
+* [ApplicationSwitcher] fix visually truncated / horizontally scrolling target application titles
+* [SimpleSearch] Fix internal URL encoding for multiple terms / terms with international characters ([#1391](https://github.com/mapbender/mapbender/issues/1391))
+* Fix inconsistent / outdated autocomplete styling SearchRouter vs SimpleSearch
+* Fix visual state of Button controlling Copyright element
+* Improve support for custom user entities in root account voter
+* Improve customizability of Sass variables in application templates (see [PR#1393](https://github.com/mapbender/mapbender/pull/1393))
+* Use browser language preference for translation target language (see [PR#1394](https://github.com/mapbender/mapbender/pull/1394))
+* Reintegrated previously separate [Owsproxy](https://github.com/mapbender/owsproxy3) codebase (see [PR#1392](https://github.com/mapbender/mapbender/pull/1392))
+* Fix misc Twig 2 incompatibilies
+
+## v3.3.0RC1
+* Complete Symfony 4 support
+* Removed `mapbender:generate:element` command (code incompatible with Symfony 4; produced PHP code incompatible with Mapbender)
+* Replaced unmaintained kriswallsmith/assetic dependency with assetic/framework
+* Removed fixture facades for Application import / EPSG updates.
+* Dependency on sensio/framework-extra-bundle (+ bundle initialization) moved from starter to Mapbender
+
+NOTE: the minimum compatible PHP version is now 7.2.
+
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template

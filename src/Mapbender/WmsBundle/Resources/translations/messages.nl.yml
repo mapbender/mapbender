@@ -141,38 +141,13 @@ mb:
       section:
         common:
           _title: Algemeen
-          title: Title
-          name: Name
-          version: Versie
-          originUrl: 'Oorsprong URL'
-          description: Beschrijving
-          onlineResource: OnlineResource
-          exceptionFormats: 'Exceptie formaten'
         useconditions:
           _title: 'Gerbuiksvoorwaarden'
-          fees: Tarieven
-          accessconstraints: 'Toegangs beperkingen'
         contact:
           _title: Contact
-          person: Persoon
-          position: Functie
-          organization: Organisatie
-          voiceTelephone: Telefoon
-          facsimileTelephone: Faxnummer
-          electronicMailAddress: Email
-          address: Adres
-          addressType: 'Adres-type'
-          addressCity: Plaats
-          addressStateOrProvince: 'Staat of Provincie'
-          addressPostCode: 'Postcode'
-          addressCountry: Land
         items:
           _title: Laag
-          title: Titel
           name: Naam
-          abstract: Abstract
-          srs: Projectie (SRS)
-          bbox: Gebied (BoundingBox)
     repo:
       instance:
         label:

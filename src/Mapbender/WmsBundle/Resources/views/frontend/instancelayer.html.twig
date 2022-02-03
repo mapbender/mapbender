@@ -1,0 +1,34 @@
+{#- @todo: resolve copy&paste this template vs Repository/layer.htm.twig -#}
+<div{%- if itemLevel > 1 %} class="content-toggle-container closed"{%- endif -%}>
+  <div class="h4 clearfix{%- if itemLevel > 1 %} content-toggle clickable{%- endif -%}">
+    {%- if itemLevel > 1 -%}
+      <i class="pull-right fa fas fa-plus"></i>
+    {%- endif -%}
+    {{ layer.title | default(layer.sourceitem.title) }}
+  </div>
+  <div{%- if itemLevel > 1 %} class="content-toggle-target"{%- endif -%}>
+    <table>
+      <tbody>
+        <tr><th>{{"mb.wms.wmsloader.repo.layer.label.title" | trans }}:</th><td>{{ layer.title | default(layer.sourceitem.title) }}</td></tr>
+        {%- if layer.sourceitem.name | length -%}
+          <tr><th>{{ 'mb.wms.metadata.section.items.name' | trans }}:</th><td>{{ layer.sourceitem.name }}</td></tr>
+        {%- endif -%}
+        {%- if layer.sourceitem.abstract -%}
+          <tr><th>{{"mb.wms.wmsloader.repo.layer.label.abstract" | trans }}:</th><td>{{ layer.sourceitem.abstract }}</td></tr>
+        {%- endif -%}
+        {%- if layer.sourceitem.latlonBounds -%}
+        {%- set _bbox = layer.sourceitem.latlonBounds -%}
+        <tr>
+          <th>{{ 'mb.wms.wmsloader.repo.layer.label.boundingbox' | trans }}:</th>
+          <td>{{ _bbox.srs }} {{ _bbox.minx }}, {{ _bbox.miny }}, {{ _bbox.maxx }}, {{ _bbox.maxy }}</td>
+        </tr>
+      {%- endif -%}
+      </tbody>
+    </table>
+    <div class="indent">
+      {% for sublayer in layer.sublayer %}
+        {% include _self with {'layer': sublayer, 'itemLevel': itemLevel + 1 }%}
+      {% endfor %}
+    </div>
+  </div>
+</div>

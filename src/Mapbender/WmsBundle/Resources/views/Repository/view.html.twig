@@ -1,7 +1,7 @@
 {% extends "MapbenderManagerBundle:Repository:source/view.html.twig" %}
 
 {% block metadata_content %}
-  {% include 'MapbenderWmsBundle:Repository:source/view-metadata.html.twig' %}
+  {%- include 'MapbenderWmsBundle:Repository:source/view-metadata.html.twig' with {'show_constraints': true } -%}
 {% endblock metadata_content %}
 {% block details_content %}
   {% include 'MapbenderWmsBundle:Repository:source/view-details.html.twig' %}

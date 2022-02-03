@@ -23,7 +23,9 @@ class Client
     /** @var string|null */
     protected $bindPassword;
 
-    /** @var resource */
+    // NOTE: Connection type changed from resource => object in PHP8.1.
+    // See https://www.php.net/manual/en/function.ldap-connect.php
+    /** @var resource|\LDAP\Connection */
     protected $connection;
 
     /**
@@ -53,7 +55,7 @@ class Client
      */
     public function bind()
     {
-        if ($this->connection === null && $this->host) {
+        if (!$this->connection && $this->host) {
             $dsn = "ldap://{$this->host}:{$this->port}";
             $this->connection = @ldap_connect($dsn);
             if (!$this->connection) {
@@ -66,7 +68,7 @@ class Client
                 throw new BindException("Can't bind to {$dsn} as '" . print_r($this->bindDn, true) . ": " . ldap_error($this->connection));
             }
         }
-        return \is_resource($this->connection);
+        return !!$this->connection;
     }
 
     /**

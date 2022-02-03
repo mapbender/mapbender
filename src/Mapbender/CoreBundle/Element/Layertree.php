@@ -51,6 +51,8 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
         $assets = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
+                // For nested layer toggling in source view
+                '@MapbenderCoreBundle/Resources/public/widgets/content-toggle.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.layertree.tree.js',
             ),

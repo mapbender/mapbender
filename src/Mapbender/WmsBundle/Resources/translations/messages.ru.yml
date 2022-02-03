@@ -148,38 +148,13 @@ mb:
       section:
         common:
           _title: общий
-          title: Название
-          name: Имя
-          version: версия
-          originUrl: 'Оригинал URL'
-          description: описание
-          onlineResource: 'Интернет ресурс'
-          exceptionFormats: 'Исключение форматы'
         useconditions:
           _title: 'условия использования'
-          fees: сборы
-          accessconstraints: 'ограничения доступа'
         contact:
           _title: контакт
-          person: Человек
-          position: позиция
-          organization: организация
-          voiceTelephone: телефон
-          facsimileTelephone: Телефакс
-          electronicMailAddress: E-mail
-          address: адрес
-          addressType: 'тип адреса'
-          addressCity: Город
-          addressStateOrProvince: 'штат или провинция'
-          addressPostCode: 'Почтовый индекс'
-          addressCountry: страна
         items:
           _title: Слой
-          title: название
           name: Имя
-          abstract: Абстрактный
-          srs: SRS
-          bbox: BoundingBox
     repo:
       instance:
         label:

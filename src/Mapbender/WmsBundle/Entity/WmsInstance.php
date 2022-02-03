@@ -480,14 +480,10 @@ class WmsInstance extends SourceInstance
         return $this->layers->removeElement($layers);
     }
 
-    /**
-     * @return WmsMetadata
-     * @deprecated metadata rendering is doable and should be done purely in twig
-     * @see \Mapbender\CoreBundle\Controller\ApplicationController::metadataAction()
-     */
-    public function getMetadata()
+    public function getDisplayTitle()
     {
-        return new WmsMetadata();
+        $root = $this->getRootlayer();
+        return $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $this->getTitle() ?: $this->getSource()->getTitle();
     }
 
     /**

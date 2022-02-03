@@ -8,6 +8,8 @@ class LoginTemplate extends ManagerTemplate
         switch ($type) {
             case 'css':
                 return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+                    '@MapbenderManagerBundle/Resources/public/sass/manager/variables.scss',
                     '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss',
                 );
             case 'trans':

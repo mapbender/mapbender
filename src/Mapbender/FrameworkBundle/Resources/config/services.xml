@@ -3,7 +3,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services
         https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mapbender.automatic_locale">true</parameter>
+    </parameters>
     <services>
+        <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
+            <!-- exceed priority 100 of LocaleListener
+                 see Note in https://symfony.com/doc/3.4/translation/locale.html -->
+            <tag name="kernel.event_listener" event="kernel.request" priority="120" />
+            <argument>%mapbender.automatic_locale%</argument>
+        </service>
         <service id="mapbender.renderer.element_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer">
             <argument type="service" id="templating" />
             <argument type="service" id="translator" />

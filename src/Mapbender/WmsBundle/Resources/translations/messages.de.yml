@@ -144,38 +144,13 @@ mb:
       section:
         common:
           _title: Allgemein
-          title: Titel
-          name: Name
-          version: Version
-          originUrl: Ursprungs-URL
-          description: Beschreibung
-          onlineResource: OnlineResource
-          exceptionFormats: Ausnahmeformate
         contact:
           _title: Kontakt
-          person: Person
-          position: Position
-          organization: Organization
-          voiceTelephone: Telefon
-          facsimileTelephone: Fax
-          electronicMailAddress: E-Mail
-          address: Adresse
-          addressType: Adresstyp
-          addressCity: Stadt
-          addressStateOrProvince: Bundesland
-          addressPostCode: PLZ
-          addressCountry: Staat
         items:
           _title: Ebene
-          title: Titel
           name: Name
-          abstract: Beschreibung
-          srs: SRS
-          bbox: BoundingBox
         useconditions:
           _title: Nutzungsbedingungen
-          fees: Gebühren
-          accessconstraints: Zugangsbeschränkungen
       popup:
         title: Metadaten
     repo:

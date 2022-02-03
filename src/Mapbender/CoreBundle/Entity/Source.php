@@ -228,7 +228,7 @@ abstract class Source implements MutableHttpOriginInterface
     /**
      * @return string
      */
-    abstract public function getViewTemplate();
+    abstract public function getViewTemplate($frontend = false);
 
     /**
      * @ORM\PostLoad()

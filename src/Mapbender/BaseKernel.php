@@ -84,6 +84,7 @@ abstract class BaseKernel extends Kernel
         $bundles = array(
             // Standard Symfony2 bundles
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new \Symfony\Bundle\AclBundle\AclBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \Symfony\Bundle\MonologBundle\MonologBundle(),
@@ -98,7 +99,6 @@ abstract class BaseKernel extends Kernel
         $environment = $this->getEnvironment();
         if ($environment == 'dev' || strpos($environment, 'test') === 0) {
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 
         return $bundles;

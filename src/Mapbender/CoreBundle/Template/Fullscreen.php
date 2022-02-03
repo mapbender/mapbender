@@ -65,6 +65,14 @@ class Fullscreen extends Template
         return $classes;
     }
 
+    public function getSassVariablesAssets(Application $application)
+    {
+        return array(
+            '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+            '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen_variables.scss',
+        );
+    }
+
     /**
      * @inheritdoc
      */

@@ -111,7 +111,7 @@
             <argument>%mapbender.print.temp_dir%</argument>
         </service>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.print.service" />
             <argument type="service" id="mapbender.print_plugin_host.service" />
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">

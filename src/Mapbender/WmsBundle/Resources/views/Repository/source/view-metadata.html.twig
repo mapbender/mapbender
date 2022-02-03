@@ -3,6 +3,8 @@
 {{- parent() -}}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.onlineresource" | trans }}:</th><td>{{ source.onlineResource }}</td></tr>
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.exceptionformats" | trans }}:</th><td>{{ source.exceptionFormats | join(', ') }}</td></tr>
+{%- if show_constraints -%}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees }}</td></tr>
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints }}</td></tr>
+{%- endif -%}
 {%- endblock -%}

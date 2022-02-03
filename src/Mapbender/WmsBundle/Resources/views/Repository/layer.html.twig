@@ -1,11 +1,13 @@
 {%- import 'MapbenderManagerBundle::macros/source.html.twig' as macros -%}
 
-<div class="content-toggle-container{% if itemLevel > 1 %} closed{% endif %}">
-  <div class="h4 clearfix content-toggle clickable">
-    <i class="pull-right fa fas {{ itemLevel > 1 ? 'fa-plus' : 'fa-minus'}}"></i>
+<div{%- if itemLevel > 1 %} class="content-toggle-container closed"{%- endif -%}>
+  <div class="h4 clearfix{%- if itemLevel > 1 %} content-toggle clickable{%- endif -%}">
+    {%- if itemLevel > 1 -%}
+    <i class="pull-right fa fas fa-plus"></i>
+    {%- endif -%}
     {{ layer.title }}
   </div>
-  <div class="content-toggle-target">
+  <div{%- if itemLevel > 1 %} class="content-toggle-target"{%- endif -%}>
   <table>
     <tbody>
       {%- if layer.name -%}
@@ -35,12 +37,19 @@
       {%- if layer.fixedHeight -%}
         <tr><th>{{"mb.wms.wmsloader.repo.layer.label.fixedheight" | trans }}:</th><td>{{ layer.fixedHeight }}</td></tr>
       {%- endif -%}
-      {%- if layer.latlonBounds or layer.boundingBoxes -%}
-        {{- macros.start_subsection('mb.wms.wmsloader.repo.layer.label.boundingbox' | trans) -}}
-          {%- for bbox in ([layer.latlonBounds] | filter(v => v)) | merge(layer.boundingBoxes) -%}
-          <tr><th>{{ bbox.srs }}</th><td>{{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</td></tr>
-          {%- endfor -%}
-        {{- macros.end_subsection() -}}
+      {%- if show_all_bboxes | default(true)-%}
+          {%- if layer.latlonBounds or layer.boundingBoxes -%}
+            {{- macros.start_subsection('mb.wms.wmsloader.repo.layer.label.boundingbox' | trans) -}}
+              {%- for bbox in ([layer.latlonBounds] | filter(v => v)) | merge(layer.boundingBoxes) -%}
+              <tr><th>{{ bbox.srs }}</th><td>{{ bbox.minx }}, {{ bbox.miny }}, {{ bbox.maxx }}, {{ bbox.maxy }}</td></tr>
+              {%- endfor -%}
+            {{- macros.end_subsection() -}}
+          {%- endif -%}
+      {%- elseif layer.latlonBounds -%}
+        <tr>
+            <th>{{ 'mb.wms.wmsloader.repo.layer.label.boundingbox' | trans }}</th>
+            <td>{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</td>
+        </tr>
       {%- endif -%}
       {%- if layer.srs -%}
         <tr>
