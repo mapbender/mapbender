@@ -51,6 +51,7 @@
         <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
         <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
         <parameter key="assetic.filter.sass.timeout">null</parameter>
+        <parameter key="mapbender.force_engine">null</parameter>
     </parameters>
 
     <services>
