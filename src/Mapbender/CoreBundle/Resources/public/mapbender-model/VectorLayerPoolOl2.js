@@ -36,4 +36,5 @@ window.Mapbender.VectorLayerPoolOl2 = (function() {
             this.olMap.addLayer(layerBridge.getNativeLayer());
         }
     });
+    return VectorLayerPoolOl2;
 }());

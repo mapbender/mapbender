@@ -39,6 +39,7 @@ class ApplicationController extends ApplicationControllerBase
     /** @var UploadsManager */
     protected $uploadsManager;
     protected $fileCacheDirectory;
+    protected $forcedMapEngine;
     protected $isDebug;
 
     public function __construct(TranslatorInterface $translator,
@@ -46,6 +47,7 @@ class ApplicationController extends ApplicationControllerBase
                                 ElementInventoryService $elementInventory,
                                 UploadsManager $uploadsManager,
                                 $fileCacheDirectory,
+                                $forcedMapEngine,
                                 $isDebug)
     {
         $this->translator = $translator;
@@ -53,6 +55,7 @@ class ApplicationController extends ApplicationControllerBase
         $this->elementInventory = $elementInventory;
         $this->uploadsManager = $uploadsManager;
         $this->fileCacheDirectory = $fileCacheDirectory;
+        $this->forcedMapEngine = $forcedMapEngine;
         $this->isDebug = $isDebug;
     }
 
@@ -67,13 +70,17 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
+        if ($this->forcedMapEngine) {
+            $appEntity->setMapEngineCode($this->forcedMapEngine);
+        }
+
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
         );
 
         if (!$this->isDebug) {
-            $cacheFile = $this->getCachePath($request, $slug);
+            $cacheFile = $this->getCachePath($request, $appEntity);
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
@@ -160,10 +167,10 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * @param Request $request
-     * @param string $slug
+     * @param Application $application
      * @return string
      */
-    protected function getCachePath(Request $request, $slug)
+    protected function getCachePath(Request $request, Application $application)
     {
         // Output depends on locale and base url => bake into cache key
         // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
@@ -180,7 +187,7 @@ class ApplicationController extends ApplicationControllerBase
             $userMarker = $request->getSession()->getId();
         }
 
-        $name = "{$slug}-{$userMarker}.min.{$baseUrlHash}.{$locale}.html";
+        $name = "{$application->getSlug()}.{$locale}.{$userMarker}.{$baseUrlHash}.{$application->getMapEngineCode()}.html";
         return $this->fileCacheDirectory . "/{$name}";
     }
 

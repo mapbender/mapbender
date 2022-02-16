@@ -34,6 +34,10 @@
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
+        <service id="mapbender.form_type.application" class="Mapbender\ManagerBundle\Form\Type\ApplicationType">
+            <tag name="form.type" />
+            <argument>%mapbender.force_engine%</argument>
+        </service>
         <service id="mapbender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
             <tag name="form.type" />
             <argument>%kernel.bundles%</argument>

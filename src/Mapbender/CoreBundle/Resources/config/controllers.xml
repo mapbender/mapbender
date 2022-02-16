@@ -11,6 +11,7 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%kernel.cache_dir%</argument>
+            <argument>%mapbender.force_engine%</argument>
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
@@ -49,6 +50,7 @@
                  public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
+            <argument>%mapbender.force_engine%</argument>
             <argument>%cachable.mapbender.application.config%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\AssetsController"
@@ -59,6 +61,7 @@
             <argument type="service" id="mapbender.application_asset.service" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
+            <argument>%mapbender.force_engine%</argument>
             <argument>%kernel.debug%</argument>
         </service>
     </services>
