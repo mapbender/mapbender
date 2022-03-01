@@ -157,19 +157,27 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             });
         });
     },
-    _onMapClick: function(event) {
+    /**
+     * @param {MouseEvent} event
+     * @return {mmClickData}
+     */
+    locateClickEvent: function(event) {
         var mapRect = this.olMap.div.getBoundingClientRect();
         // on mobile devices, coordinates are returned as properties of the `xy`-Object only
         var x = (event.x || event.xy.x || 0) - mapRect.x - (window.scrollX || window.pageXOffset || 0);
         var y = (event.y || event.xy.y || 0) - mapRect.y - (window.scrollY || window.pageYOffset || 0);
 
         var clickLonLat = this.olMap.getLonLatFromViewPortPx({x: x, y: y});
-
-        $(this.mbMap.element).trigger('mbmapclick', {
-            mbMap: this.mbMap,
+        return {
             pixel: [x, y],
             coordinate: [clickLonLat.lon, clickLonLat.lat]
-        });
+        };
+    },
+    _onMapClick: function(event) {
+        var location = this.locateClickEvent(event);
+        $(this.mbMap.element).trigger('mbmapclick', Object.assign(location, {
+            mbMap: this.mbMap
+        }));
     },
     /**
      * @param {OpenLayers.Map} olMap

@@ -294,6 +294,17 @@ window.Mapbender.MapModelOl4 = (function() {
             }
         }
     },
+    /**
+     * @param {MouseEvent} event
+     * @return {mmClickData}
+     */
+    locateClickEvent: function(event) {
+        var pixel = this.olMap.getEventPixel(event);
+        return {
+            pixel: pixel,
+            coordinate: this.olMap.getCoordinateFromPixel(pixel)
+        };
+    },
     _getFractionalZoomLevel: function() {
         return this.olMap.getView().getZoom();
     },
