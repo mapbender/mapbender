@@ -205,7 +205,7 @@ class ApplicationController extends ApplicationControllerBase
             'form'                => $form->createView(),
             'template_name'       => $templateClass::getTitle(),
             // Allow screenType filtering only on current map engine
-            'allow_screentypes' => $this->enableResponsiveElements && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
+            'allow_screentypes' => $this->enableResponsiveElements,
             'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
