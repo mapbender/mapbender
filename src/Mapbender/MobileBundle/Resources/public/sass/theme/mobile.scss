@@ -29,27 +29,6 @@
   }
   @include border-radius($radius);
 }
-/* -------------------------------------------------------------------- POPUP */
-.overlay{
-  user-select: none;
-  @include transition(opacity 0.4s ease-in-out);
-}
-
-.popup{
-  @include transition(margin 0.4s ease-in-out);
-  @include border-radius($radius);
-  @include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.9),
-                      inset 0px 0px 2px #fff);
-}
-.popupContainer{
-  .popup{
-    margin-left: 0;
-  }
-  &.modal{
-    padding: 0;
-  }
-}
-
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer{
   .tab{
