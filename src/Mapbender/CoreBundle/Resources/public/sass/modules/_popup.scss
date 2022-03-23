@@ -130,15 +130,25 @@
   position: absolute;
   font-size: 16px;
   right: -.135em;
-  bottom: -8px;
+  bottom: -0.32em;
   cursor: se-resize;
 
   &:before{
     @include transform(rotate(45deg));
-    font-family: FontAwesome;
+    font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     content: "\f054";
     display: block;
   }
+}
+
+.popup .ui-resizable-se {
+  // Overrule jqueryui .ui-icon
+  text-indent: 0;
+  background: none;
+  width: auto;
+  height: auto;
+  // Overrule global fixed-pixel line height :\
+  line-height: 1;
 }
 .popupScroll{
   overflow: auto;
