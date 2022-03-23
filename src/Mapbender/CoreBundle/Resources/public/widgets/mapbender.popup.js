@@ -28,18 +28,6 @@
     var counter = 0;
     var currentZindex = 10000;
     var currentModal_ = null;
-    var container_ = null;
-
-    function initContainer_() {
-        if (!container_) {
-            container_ = document.body;
-            var positionRule = $(container_).css('position');
-            if (!positionRule || positionRule === 'static') {
-                $(container_).css('position', 'relative');
-            }
-        }
-        return container_;
-    }
 
     /**
      * Popup constructor.
@@ -92,6 +80,7 @@
             'template', 'modal',
             'header', 'closeButton',
             'buttons',
+            'container',
             'content',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick', 'closeOnESC',
@@ -171,6 +160,7 @@
                 '  </div>'
                 ].join("\n"),
 
+            container: '.map-overlay .overlay-fill',
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
@@ -230,7 +220,7 @@
                 currentModal_ = this;
             }
 
-            var container = initContainer_();
+            var container = this.getContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
                     this.$modalWrap.prepend(this.$element);
@@ -240,7 +230,7 @@
                 }
             }
             if (this.options.draggable) {
-                var containment = (this.options.modal && this.$modalWrap) || $('body');
+                var containment = (this.options.modal && this.$modalWrap) || container;
                 this.$element.draggable({
                     handle: $('.popupHead', this.$element),
                     containment: containment
@@ -434,7 +424,24 @@
                 this.$element.addClass(cssClass);
             }
             this.options.cssClass = cssClass;
-        }
+        },
+        getContainer_: function() {
+            if (!this.container_) {
+                if (typeof (this.options.container) === 'string') {
+                    this.container_ = $(this.options.container).get(0) || document.body;
+                } else {
+                    if (typeof (this.options.container.nodeType) !== 'undefined') {
+                        this.container_ = this.options.container;
+                    } else {
+                        // Hope for jQuery object, fail if it isn't, fall back to body if
+                        // it's empty
+                        this.container_ = this.options.container.get(0) || document.body;
+                    }
+                }
+            }
+            return this.container_;
+        },
+        __dummy__: null
     };
 
     window.Mapbender = window.Mapbender || {};
