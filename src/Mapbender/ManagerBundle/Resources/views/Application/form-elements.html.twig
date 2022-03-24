@@ -33,7 +33,7 @@
         <thead>
           <tr>
             <th colspan="1">
-              <h3 class="subTitle">{{ region | capitalize }}</h3>
+              <h3 class="subTitle">{{ application_region_title(application, region) | trans }}</h3>
             </th>
             <th colspan="2" class="iconColumn regionProperties" data-url="{{ path('mapbender_manager_application_updateregionproperties', {'application': application.id, 'regionName': region }) }}">
               {% if form.regionProperties[region] is defined %}
@@ -45,7 +45,7 @@
             <th class="titleColumn">{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="typeColumn">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
-              <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"><i class="fa fas fa-plus"></i></a>
+              <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="hover-highlight-effect addElement" title="{{'mb.manager.admin.element.add'|trans}}"><i class="fa fas fa-plus"></i></a>
             </th>
           </tr>
         </thead>

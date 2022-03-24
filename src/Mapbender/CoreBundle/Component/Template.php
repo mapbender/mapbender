@@ -53,6 +53,22 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
         }
     }
 
+    public static function getRegionTitle($regionName)
+    {
+        switch ($regionName) {
+            default:
+                return \ucfirst($regionName);
+            case 'sidepane':
+                return 'mb.template.region.sidepane';
+            case 'toolbar':
+                return 'mb.template.region.toolbar';
+            case 'footer':
+                return 'mb.template.region.footer';
+            case 'content':
+                return 'mb.template.region.content';
+        }
+    }
+
     public function getRegionTemplateVars(Application $application, $regionName)
     {
         switch ($regionName) {
