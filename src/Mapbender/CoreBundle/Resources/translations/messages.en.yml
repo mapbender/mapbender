@@ -420,3 +420,8 @@ mb:
         open_in_new_tab: Open in new tab
   template:
     toolbar_menu_tooltip: Toggle menu
+    region:
+      toolbar: Obere Werkzeugleiste
+      footer: Fußzeile
+      sidepane: Sidepane
+      content: Kartenbereich
