@@ -164,6 +164,7 @@
                 case 'destroyOnClose':
                 case 'detachOnClose':
                 case 'closeOnOutsideClick':
+                case 'container':
                     if (typeof value === 'undefined') {
                         return this.options[key];
                     } else {
