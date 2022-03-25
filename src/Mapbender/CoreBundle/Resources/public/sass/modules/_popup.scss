@@ -1,12 +1,14 @@
-.popupHead {
-  .popupTitle {
-    font-size: 1.35rem;
-  }
+.popup .popupHead {
+  font-size: 1.2rem;
   border-bottom:dashed 1px darken(#fff, 30%);
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
+  .popupSubTitle {
+    font-size: 70%;
+  }
 }
+
 .popup .popupButtons {
   .button, .btn {
     margin-left: 0.5em;
@@ -49,9 +51,6 @@
   }
 }
 
-.popupSubTitle{
-  @extend .smallText;
-}
 .fom-popup {
   .popupContent {
     padding:0 20px;
