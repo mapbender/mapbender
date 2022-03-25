@@ -110,7 +110,6 @@
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
 
-            header: true,
             closeButton: true,
 
             autoOpen: true,

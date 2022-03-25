@@ -78,7 +78,7 @@
 
         var staticOptions = [
             'template', 'modal',
-            'header', 'closeButton',
+            'closeButton',
             'buttons',
             'container',
             'content',
