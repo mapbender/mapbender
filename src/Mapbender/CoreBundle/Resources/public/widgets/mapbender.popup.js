@@ -294,24 +294,33 @@
         addButtons: function(buttons) {
             var self = this,
                 buttonset = $('.popupButtons', this.$element);
+            var buttons_ = Array.isArray(buttons) && buttons || Object.values(buttons || {});
+            for (var i = 0; i < buttons_.length; ++i) {
 
-            $.each(buttons, function(key, conf) {
-                var button = $('<button/>', {
-                    type: 'button',
-                    text: conf.label
-                });
-
-                if(conf.cssClass) {
-                    button.addClass(conf.cssClass);
-                }
-
-                if(conf.callback) {
-                    button.on('click', function(event) {
-                        return conf.callback.call(self, event);
+                var button;
+                if (typeof buttons_[i].nodeType !== 'undefined') {
+                    button = buttons_[i];
+                } else {
+                    var conf = buttons_[i];
+                    button = $('<button/>', {
+                        type: 'button',
+                        text: conf.label
                     });
+
+                    if(conf.cssClass) {
+                        button.addClass(conf.cssClass);
+                    }
+
+                    if(conf.callback) {
+                        button.on('click', (function(conf) {
+                            return function(event) {
+                                return conf.callback.call(self, event);
+                            }
+                        }(conf)));
+                    }
                 }
                 buttonset.append(button);
-            });
+            }
             buttonset.parent().toggleClass('hidden', !buttonset.children().length);
         },
 
