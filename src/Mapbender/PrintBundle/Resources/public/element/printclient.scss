@@ -1,5 +1,4 @@
 .mb-element-printclient {
-  overflow: visible;
 
   .button.active {
     background-color: #538e24;
@@ -20,6 +19,12 @@
   }
   .popup & .job-list {
     max-height: 400px;
+  }
+  .popup & .print-frame-toggle-wrap {
+    display: none;
+  }
+  .print-form .form-group:last-child {
+    margin-bottom: 0;
   }
 
   // jquery-ui tab styling

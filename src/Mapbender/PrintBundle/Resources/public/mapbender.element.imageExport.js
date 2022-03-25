@@ -9,9 +9,17 @@
         options: {},
         map: null,
         $form: null,
+        useDialog_: null,
 
         _create: function(){
-            this.$form = $('form', this.element);
+            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
+            if (this.useDialog_) {
+                this.popup = this.initPopup_();
+                this.$form = this.popup.$element;
+            } else {
+                this.$form = $('form', this.element);
+                $('.popupClose', this.element).remove();
+            }
             var self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
@@ -28,9 +36,36 @@
         defaultAction: function(callback){
             this.open(callback);
         },
+        initPopup_: function() {
+            var buttons = $('.-js-form-buttons', this.element).remove().children().get();
+            var $form = $('form', this.element);
+            var content = $(document.createElement('div'))
+                .append($('.-js-popup-content', this.element).get(0) || $form.children())
+                .attr('class', this.element.attr('class'))
+                .get(0)
+            ;
+            var options = this.getPopupOptions();
+            options.buttons = buttons;
+            options.content = content;
+            options.tagName = 'form';
+            options.cssClass = (options.cssClass && [options.cssClass] || []).concat('hidden').join(' ');
+            var popup = new Mapbender.Popup(options);
+            console.log("Popup options", options);
+            var self = this;
+            popup.$element.on('close', function() {
+                self.close();
+                return false;
+            });
+            popup.$element.attr('action', $form.attr('action'));
+            popup.$element.attr('method', $form.attr('method'));
+            popup.$element.attr('target', $form.attr('target'));
+            return popup;
+        },
         getPopupOptions: function() {
             return {
                 title: this.element.attr('data-title'),
+                detachOnClose: false,
+                destroyOnClose: false,
                 draggable: true,
                 modal: false,
                 closeOnESC: false,
@@ -41,15 +76,13 @@
         },
         open: function(callback){
             this.callback = callback || null;
-            if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup(this.getPopupOptions());
-                this.popup.$element.one('close', $.proxy(this.close, this));
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.removeClass('hidden');
             }
         },
         close: function(){
-            if (this.popup) {
-                this.popup.close();
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.addClass('hidden');
             }
             if (this.callback) {
                 (this.callback)();
@@ -143,16 +176,6 @@
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-        },
-        /**
-         * Injects data AND submits form
-         * @param {Object} jobData
-         * @private
-         * @deprecated distinctly use _injectJobData and regular form submit events
-         */
-        _submitJob: function(jobData) {
-            this._injectJobData(jobData);
-            $('input[type="submit"]', this.$form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export

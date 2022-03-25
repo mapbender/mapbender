@@ -26,7 +26,6 @@
         overwriteTemplates: false,
         digitizerData: null,
         jobList: null,
-        useDialog_: null,
         $selectionFrameToggle: null,
         // buffer for ajax-loaded 'getTemplateSize' requests
         // we generally don't want to keep reloading size information
@@ -50,7 +49,7 @@
         },
         _setup: function(){
             var self = this;
-            var $jobList = $('.job-list', this.element);
+            var $jobList = $('.job-list', this.popup && this.popup.$element || this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if ($jobList.length) {
                 this._initJobList($jobList);
@@ -71,10 +70,7 @@
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
-            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
-            this.$selectionFrameToggle.toggleClass('hidden', this.useDialog_);
-            $('.popupClose', this.element).toggleClass('hidden', !this.useDialog_);
             $('button[type="submit"], input[type="submit"]', this.$form).toggleClass('hidden', !this.useDialog_);
             this.$selectionFrameToggle.on('click', function() {
                 var $button = $(this);
@@ -104,13 +100,9 @@
                     .concat('customPrintDialog').join(' ')
             });
         },
-        open: function(callback){
-            this.callback = callback || null;
+        open: function(callback) {
+            this._superApply(arguments);
             if (this.useDialog_) {
-                if(!this.popup || !this.popup.$element){
-                    this._superApply(arguments);
-                    this.popup.$element.one('close', $.proxy(this.close, this));
-                }
                 this.activate();
             }
         },
@@ -674,7 +666,7 @@
                 return false;
             }
             var proceed = this._super(evt);
-            var $tabs = $('.tab-container', this.element);
+            var $tabs = $('.tab-container', this.popup && this.popup.$element || this.element);
             if (proceed && $tabs.length) {
                 // switch to queue display tab on successful submit
                 window.setTimeout(function() {
@@ -781,7 +773,7 @@
             this.open();
         },
         _overwriteTemplateSelect: function(templates) {
-            var templateSelect = $('select[name=template]', this.element);
+            var templateSelect = $('select[name=template]', this.$form);
             var templateList = templateSelect.siblings(".dropdownList");
             var valueContainer = templateSelect.siblings(".dropdownValue");
 
@@ -837,7 +829,7 @@
                 locale: this.options.locale || window.navigator.language
             };
             var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
-            $('.tab-container', this.element).tabs({
+            $jobListPanel.closest('.tab-container').tabs({
                 active: 0,
                 classes: {
                     "ui-tabs-active": "active"
