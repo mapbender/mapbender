@@ -5,15 +5,16 @@
     background-color: #538e24;
   }
   .job-list {
-    @extend .mapbender-element-result-table;
     display: none;  // Will be overruled by inline style once jQueryUI tab widget takes over
     overflow-y: auto;
     table {
       td.interface {
-        >a, >.-fn-delete {
+        text-align: right;
+        .btn, .loading {
           margin-right: 0.25em;
-          color: inherit;
-          font-weight: 600;
+        }
+        :last-child {
+          margin-right: 0;
         }
       }
     }
