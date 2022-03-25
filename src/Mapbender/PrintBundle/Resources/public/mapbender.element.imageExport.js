@@ -50,7 +50,6 @@
             options.tagName = 'form';
             options.cssClass = (options.cssClass && [options.cssClass] || []).concat('hidden').join(' ');
             var popup = new Mapbender.Popup(options);
-            console.log("Popup options", options);
             var self = this;
             popup.$element.on('close', function() {
                 self.close();
