@@ -25,7 +25,6 @@
  *
  */
 (function($) {
-    var counter = 0;
     var currentZindex = 10000;
     var currentModal_ = null;
 
@@ -47,8 +46,10 @@
         }
 
         // Create DOM element
-        this.$element = $(this.options.template)
-            .attr('id', 'mbpopup-' + counter++);
+        this.$element = $(document.createElement(this.options.tagName));
+        this.$element.addClass('popup mapbender-popup');
+        this.$element.append(this.options.template);
+
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
         }
@@ -77,6 +78,7 @@
         this.addButtons(this.options.buttons || []);
 
         var staticOptions = [
+            'tagName',
             'template', 'modal',
             'header', 'closeButton',
             'buttons',
@@ -142,8 +144,8 @@
          * @type {Object}
          */
         defaults: {
+            tagName: 'div',
             template: [
-                '  <div class="popup mapbender-popup">',
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
@@ -156,8 +158,7 @@
                 '   <div class="footer row no-gutters">',
                 '       <div class="popupButtons"></div>',
                 '       <div class="clear"></div>',
-                '   </div>',
-                '  </div>'
+                '   </div>'
                 ].join("\n"),
 
             container: null,
