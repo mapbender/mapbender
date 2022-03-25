@@ -150,6 +150,7 @@ $.widget("mapbender.mbPrintClientJobList", {
 
         if (row.downloadUrl) {
             var $a = $('<a />')
+                .addClass('btn btn-default btn-sm')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
@@ -158,7 +159,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             $a.append($icon);
             parts.push($a.get(0).outerHTML);
         } else {
-            parts.push('<span><i class="fa fa-cog fa-spin"></i></span>');
+            parts.push('<span class="loading"><i class="fa fa-cog fa-spin"></i></span>');
         }
         if (row.deleteUrl) {
             var deleteTitle = row.downloadUrl
@@ -167,6 +168,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             ;
             var $deleteSpan = $('<span />')
                 .addClass('-fn-delete')
+                .addClass('btn btn-default btn-sm')
                 .attr('data-url', row.deleteUrl)
                 .attr('data-id', row.id)
                 .attr('title', Mapbender.trans(deleteTitle))
