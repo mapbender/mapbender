@@ -96,22 +96,19 @@
                 self._onSrsChanged();
             });
         },
-
+        getPopupOptions: function() {
+            var options = this._superApply(arguments);
+            return Object.assign(options, {
+                width: 400,
+                cssClass: (options.cssClass && [options.cssClass] || [])
+                    .concat('customPrintDialog').join(' ')
+            });
+        },
         open: function(callback){
-            this.callback = callback ? callback : null;
+            this.callback = callback || null;
             if (this.useDialog_) {
                 if(!this.popup || !this.popup.$element){
-                    this.popup = new Mapbender.Popup({
-                            title: this.element.attr('data-title'),
-                            draggable: true,
-                            header: true,
-                            modal: false,
-                            closeOnESC: false,
-                            content: this.element,
-                            width: 400,
-                            scrollable: false,
-                            cssClass: 'customPrintDialog'
-                        });
+                    this._superApply(arguments);
                     this.popup.$element.one('close', $.proxy(this.close, this));
                 }
                 this.activate();
