@@ -104,7 +104,7 @@
                 '    <div class="clearContainer"></div>',
                 '  </div>'].join("\n"),
 
-            container: '.map-overlay .overlay-fill',
+            container: document.body,
             // Is popup draggable (showHeader must be true)
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
