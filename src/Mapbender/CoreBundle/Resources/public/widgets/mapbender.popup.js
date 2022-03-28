@@ -160,7 +160,7 @@
                 '  </div>'
                 ].join("\n"),
 
-            container: '.map-overlay .overlay-fill',
+            container: document.body,
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
