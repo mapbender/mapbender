@@ -44,6 +44,11 @@
                 if (typeof method === 'function') {
                     method.call(elementWidget);
                 }
+                $(document).trigger(state && 'mapbender.elementactivated' || 'mapbender.elementdeactivated', {
+                    sender: null,
+                    widget: elementWidget,
+                    active: state
+                });
             });
         });
     }
