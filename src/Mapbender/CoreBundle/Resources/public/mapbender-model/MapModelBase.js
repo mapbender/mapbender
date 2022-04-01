@@ -909,7 +909,7 @@ window.Mapbender.MapModelBase = (function() {
             var bufferAbs = (options || {}).buffer;
             var bufferFactor = (options || {}).ratio;
             if (typeof bufferAbs === 'undefined'){
-                bufferAbs = 120;
+                bufferAbs = 80;
             }
             if (typeof bufferFactor === 'undefined') {
                 if (bufferAbs !== 0) {
