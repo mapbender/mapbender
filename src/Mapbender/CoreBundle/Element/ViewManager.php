@@ -82,8 +82,8 @@ class ViewManager extends AbstractElementService
     public function getView(Element $element)
     {
         $token = $this->tokenStorage->getToken();
+        $config = $element->getConfiguration() + $this->getDefaultConfiguration();
         if (!$token || ($token instanceof AnonymousToken)) {
-            $config = $element->getConfiguration() + $this->getDefaultConfiguration();
             if (empty($config['publicEntries'])) {
                 // No access to public entries; private entries undefined for anons
                 // => suppress markup entirely
@@ -93,7 +93,8 @@ class ViewManager extends AbstractElementService
 
         $view = new TemplateView('MapbenderCoreBundle:Element:view_manager.html.twig');
         $view->attributes['class'] = 'mb-element-viewmanager';
-        $view->variables['grants'] = $this->httpHandler->getGrantsVariables($element->getConfiguration());
+        $view->variables['grants'] = $this->httpHandler->getGrantsVariables($config);
+        $view->variables['showDate'] = $config['showDate'];
         return $view;
     }
 
