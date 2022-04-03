@@ -58,7 +58,8 @@
             });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
-                self._apply(self._decodeDiff(this));
+                var settings = self._extractLinkSettings(this);
+                self._apply(settings);
                 var $marker = $('.recall-marker', $(this).closest('tr'));
                 $('.recall-marker', self.element).not($marker).css({opacity: ''});
                 $marker.css({opacity: '1'});
@@ -104,7 +105,7 @@
             ;
         },
         _updateLinkUrl: function(link) {
-            var settings = this._decodeDiff(link)
+            var settings = this._extractLinkSettings(link);
             var params = this.mbMap.getModel().encodeSettingsDiff(settings);
             var hash = this.mbMap.getModel().encodeViewParams(settings.viewParams);
             var url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, ''), hash].join('#');
@@ -261,17 +262,29 @@
         },
         /**
          * @param {Element} node
-         * @return {mmMapSettingsDiff}
-         * @private
+         * @return {}
          */
-        _decodeDiff: function(node) {
+        _extractLinkSettings: function(node) {
             var raw = JSON.parse($(node).attr('data-diff'));
-            // unravel viewParams from scalar string => Object
-            var diff = {
+            return this._normalizeSettingsDiff(this._decodeLinkSettingsDiff(raw));
+        },
+        /**
+         * @param {Object} raw
+         * @return {mmMapSettingsDiff}
+         */
+        _decodeLinkSettingsDiff: function(raw) {
+            return {
                 viewParams: this.mbMap.getModel().decodeViewParams(raw.viewParams),
                 sources: raw.sources || [],
                 layersets: raw.layersets || []
             };
+        },
+        /**
+         * @param {mmMapSettingsDiff} diff
+         * @return {mmMapSettingsDiff}
+         * @private
+         */
+        _normalizeSettingsDiff: function(diff) {
             // Fix stringified numbers
             diff.sources = diff.sources.map(function(entry) {
                 if (typeof (entry.opacity) === 'string') {
