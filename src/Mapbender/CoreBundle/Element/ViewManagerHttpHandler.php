@@ -250,7 +250,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $grantsVariables = $this->getGrantsVariables($element->getConfiguration());
         switch ($operation) {
             default:
-                false;
+                return false;
             case 'deletePublic':
                 return $grantsVariables['deletePublic'];
             case 'savePublic':
