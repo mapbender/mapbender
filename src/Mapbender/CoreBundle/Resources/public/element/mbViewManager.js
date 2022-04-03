@@ -194,32 +194,35 @@
             };
         },
         _openUpdateOrInfo: function($row, recordId) {
-            this._closePopovers();
-            var $popover = $(document.createElement('div'))
-                .addClass('popover bottom')
-                .append($(document.createElement('div')).addClass('arrow'))
-            ;
+            var $content = $(document.createElement('div'));
             var isUpdate = !!recordId;
             if (isUpdate) {
-                $popover.append(this.updateContent);
+                $content.append(this.updateContent);
             } else {
-                $popover.append(this.infoContent);
+                $content.append(this.infoContent);
             }
-            $('input[name="title"]', $popover).val($row.attr('data-title'));
-            $('input[name="mtime"]', $popover).val($row.attr('data-mtime'));
+            $('input[name="title"]', $content).val($row.attr('data-title'));
+            $('input[name="mtime"]', $content).val($row.attr('data-mtime'));
             var statusText = $row.attr('data-visibility-group') === 'public'
                 ? Mapbender.trans('mb.core.viewManager.recordStatus.public')
                 : Mapbender.trans('mb.core.viewManager.recordStatus.private')
             ;
-            $('.-js-record-status', $popover).text(statusText);
-            $('.-js-update-content-anchor', $row).append($popover);
-
+            $('.-js-record-status', $content).text(statusText);
+            this._showRecordForm($row, $content, recordId);
+        },
+        _showRecordForm: function($targetRow, $content, recordId) {
+            this._closePopovers();
+            $content
+                .addClass('popover bottom')
+                .prepend($(document.createElement('div')).addClass('arrow'))
+            ;
+            $('.-js-update-content-anchor', $targetRow).append($content);
             var self = this;
-            $popover.on('click', '.-fn-update', function() {
-                self._replace($row, $popover, recordId);
+            $content.on('click', '.-fn-update', function() {
+                self._replace($targetRow, $content, recordId);
             });
-            $popover.on('click', '.-fn-close', function() {
-                $popover.remove();
+            $content.on('click', '.-fn-close', function() {
+                $content.remove();
             });
         },
         _confirm: function($row, content) {
