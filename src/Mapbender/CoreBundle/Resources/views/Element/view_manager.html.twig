@@ -45,7 +45,9 @@
                 </div>
             </div>
             {%- endif -%}
+            {%- if showPublicPrivateState -%}
             <p class="-js-record-status"></p>
+            {%- endif -%}
         </div>
         <div class="text-nowrap text-right">
             <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>

@@ -95,6 +95,7 @@ class ViewManager extends AbstractElementService
         $view->attributes['class'] = 'mb-element-viewmanager';
         $view->variables['grants'] = $this->httpHandler->getGrantsVariables($config);
         $view->variables['showDate'] = $config['showDate'];
+        $view->variables['showPublicPrivateState'] = !empty($config['privateEntries']);
         return $view;
     }
 
