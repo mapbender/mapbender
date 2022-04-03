@@ -11,7 +11,7 @@
     </thead>
     <tbody>
         {%- for record in records -%}
-            {% include 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig' with {'record': record} %}
+            {% include row_template with {'record': record} %}
         {%- endfor -%}
         <tr class="placeholder-row">
             <td colspan="4" class="text-center">&ndash; {{ 'mb.core.viewManager.no_data' | trans }} &ndash;</td>

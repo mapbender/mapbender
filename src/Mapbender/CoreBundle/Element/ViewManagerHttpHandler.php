@@ -71,6 +71,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             'showDate' => $config['showDate'],
             'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($config),
+            'row_template' => $this->getRowTemplate(),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
         return new Response($content);
@@ -146,7 +147,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($element->getConfiguration()),
         );
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', $vars);
+        $content = $this->templating->render($this->getRowTemplate(), $vars);
         return new Response($content);
     }
 
@@ -258,5 +259,10 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             case 'savePrivate':
                 return $grantsVariables['savePrivate'];
         }
+    }
+
+    protected function getRowTemplate()
+    {
+        return 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig';
     }
 }
