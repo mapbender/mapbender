@@ -158,7 +158,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             throw new BadRequestHttpException("Missing id");
         }
         /** @var ViewManagerState|null $record */
-        $record = $records = $this->getRepository()->find($id);
+        $record = $this->getRepository()->find($id);
         if ($record) {
             if (!$this->isAdmin()) {
                 if (!$record->getUserId() && !$this->checkGrant($element, 'deletePublic')) {
