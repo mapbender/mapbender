@@ -3,7 +3,8 @@
     data-id="{{ record.id }}"
     data-title="{{ record.title }}"
     data-mtime="{{ record.mtime | date(dateFormat) }}">
-    <td class="name-cell"><i class="recall-marker fa fas fa-fw fa-angle-double-right"></i>{{ record.title }}</td>
+    <td class="-js-forward-to-apply"><i class="recall-marker fa fas fa-fw fa-angle-double-right"></i></td>
+    <td class="name-cell -js-forward-to-apply">{{ record.title }}</td>
     {%- if showDate -%}
     <td class="text-nowrap">{{ record.mtime | date(dateFormat) }}</td>
     {%- endif -%}

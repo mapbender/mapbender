@@ -67,7 +67,7 @@
                     $marker.animate({opacity: '0'});
                 });
             });
-            this.element.on('click', 'tr .name-cell', function() {
+            this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
             });
             this.element.on('click', '.-fn-delete', function() {
