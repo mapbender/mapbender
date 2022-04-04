@@ -28,6 +28,9 @@
   }
   // Remove padding to make room for .recall-marker
   // Defeat highly specific Bootstrap 3 .table rule
+  td.compact, th.compact {
+    width: 1%;
+  }
   .table>tbody>tr>td.name-cell {
     padding-left: 0;
   }
