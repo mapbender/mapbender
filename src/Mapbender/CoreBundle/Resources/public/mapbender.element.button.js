@@ -283,13 +283,7 @@
             this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
-                // Inform other control buttons (and whoever else is listening) that the
-                // target Element has just been activated
-                $(document).trigger('mapbender.elementactivated', {
-                    widget: this.targetWidget,
-                    sender: this,
-                    active: true
-                });
+                this.notifyActivation_(this.targetWidget, true);
             }
             this._super();
         },
@@ -305,15 +299,25 @@
             this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
-                // Inform other control buttons (and whoever else is listening) that the
-                // target Element has just been deactivated
-                $(document).trigger('mapbender.elementdeactivated', {
-                    widget: this.targetWidget,
-                    sender: this,
-                    active: false
-                });
             }
             this._super();
-        }
+        },
+        reset: function() {
+            var targetWidget = this._initializeTarget();
+            var rv = this._superApply(arguments);
+            if (targetWidget) {
+                this.notifyActivation_(targetWidget, false);
+            }
+            return rv;
+        },
+        notifyActivation_: function(targetWidget, state) {
+            var name = state ? 'mapbender.elementactivated' : 'mapbender.elementdeactivated';
+            $(document).trigger(name, {
+                widget: targetWidget,
+                sender: this,
+                active: !!state
+            });
+        },
+        __dummy__: null
     });
 })(jQuery);
