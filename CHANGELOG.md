@@ -1,7 +1,10 @@
-## dev-release/3.2 @ c11113e62
+## dev-release/3.2 @ 1f70e31b2
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
+* Fix broken resizable popup styling for projects using jqueryui css
+* Fix window starting to scroll when dragging popups over screen edges
+* Fix local login not available via menu navigation for SSO users
 
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
