@@ -644,8 +644,20 @@ window.Mapbender.MapModelOl4 = (function() {
                 style['strokeWidth'] = stroke.getWidth();
                 var lineDash = stroke.getLineDash() || 'solid';
                 if (Array.isArray(lineDash)) {
-                    // HACK: drop array-style dash to avoid errors in backend rendering.
-                    lineDash = 'solid'
+                    switch (lineDash.length) {
+                        default:
+                            lineDash = 'solid';
+                            break;
+                        case 2:
+                            lineDash = (lineDash[0] < lineDash[1] && 'dot')
+                                || (lineDash[1] === lineDash[1] && 'dash')
+                                || 'longdash'
+                            ;
+                            break;
+                        case 4:
+                            lineDash = lineDash[2] >= 6 * lineDash[0] && 'longdashdot' || 'dashdot';
+                            break;
+                    }
                 }
                 style['strokeDashstyle'] = lineDash;
             }
