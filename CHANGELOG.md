@@ -1,3 +1,8 @@
+## dev-release/3.2 @ c11113e62
+* Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
+* Fix false-positive html validation error if input is empty
+* Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
+
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template
