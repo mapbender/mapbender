@@ -251,23 +251,23 @@ class LayerRendererGeoJson extends LayerRenderer
             'y' => 0.0,
         );
         $style = $this->getFeatureStyle($geometry);
-        if ($this->checkLineStyleVisibility($canvas, $style)) {
-            $transformedCoordSets = array();
-            foreach ($geometry['coordinates'] as $lineString) {
-                $transformedLineCoords = array();
-                foreach ($lineString as $j => $coord) {
-                    $transformedCoord = $canvas->featureTransform->transformPair($coord);
-                    // OpenLayers quirk: line label is anchored to first point of line.
-                    // Proper MultiLine visual TBD...
-                    if (!$j) {
-                        $centroidSums['x'] += $transformedCoord[0];
-                        $centroidSums['y'] += $transformedCoord[1];
-                        ++$nCentroidPoints;
-                    }
-                    $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
+        $transformedCoordSets = array();
+        foreach ($geometry['coordinates'] as $lineString) {
+            $transformedLineCoords = array();
+            foreach ($lineString as $j => $coord) {
+                $transformedCoord = $canvas->featureTransform->transformPair($coord);
+                // OpenLayers quirk: line label is anchored to first point of line.
+                // Proper MultiLine visual TBD...
+                if (!$j) {
+                    $centroidSums['x'] += $transformedCoord[0];
+                    $centroidSums['y'] += $transformedCoord[1];
+                    ++$nCentroidPoints;
                 }
-                $transformedCoordSets[] = $transformedLineCoords;
+                $transformedLineCoords[] = $transformedCoord;
             }
+            $transformedCoordSets[] = $transformedLineCoords;
+        }
+        if ($this->checkLineStyleVisibility($canvas, $style)) {
             $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
         if ($nCentroidPoints && !empty($style['label'])) {
