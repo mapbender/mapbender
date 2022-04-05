@@ -17,7 +17,11 @@ class HtmlConstraintValidator extends ConstraintValidator
             $dom = new \DOMDocument;
             $dom->loadHTML($value);
         } catch (\Exception $e) {
-            $this->context->addViolation('html.invalid');
+            // Ignore DOMDocument complaining about empty value
+            // see https://www.php.net/manual/en/domdocument.loadhtml.php
+            if ($value) {
+                $this->context->addViolation('html.invalid');
+            }
         }
     }
 }
