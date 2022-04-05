@@ -7,6 +7,7 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
 use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
+use Mapbender\PrintBundle\Util\CoordUtil;
 use Mapbender\PrintBundle\Util\GdUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
@@ -175,11 +176,7 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiPolygon($canvas, $geometry)
     {
-        $nPoints = 0;
-        $centroidSums = array(
-            'x' => 0.0,
-            'y' => 0.0,
-        );
+        $ringCenters = array();
 
         $style = $this->getFeatureStyle($geometry);
         $transformedRings = array();
@@ -192,20 +189,15 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
 
                 $transformedRing = array();
-                foreach ($ring as $j => $c) {
-                    $transformedPoint = $canvas->featureTransform->transformPair($c);
-                    // NOTE: GeoJSON always repeats the first point at the end. To get a proper centroid,
-                    //       we throw away the first occurence.
-                    // Only include the first ring (=outer boundary) in centroid. Ignore interior rings (~=donut cutouts)
-                    if ($j && !$ringIx) {
-                        $centroidSums['x'] += $transformedPoint[0];
-                        $centroidSums['y'] += $transformedPoint[1];
-                        ++$nPoints;
-                    }
-                    $transformedRing[] = $transformedPoint;
+                foreach ($ring as $c) {
+                    $transformedRing[] = $canvas->featureTransform->transformPair($c);
                 }
                 $bounds->addPoints($transformedRing);
                 $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
+                // Only include the first ring (=outer boundary) in centroid. Ignore interior rings (~=donut cutouts)
+                if (!$ringIx) {
+                    $ringCenters[] = CoordUtil::getRingCentroid($transformedRing);
+                }
             }
         }
         if (!$bounds->isEmpty() && $style['fillOpacity'] > 0) {
@@ -228,11 +220,8 @@ class LayerRendererGeoJson extends LayerRenderer
             $this->drawLineSetsInternal($canvas, $style, $lineCoordSets, true, $bounds);
         }
         if (!$bounds->isEmpty() && !empty($style['label'])) {
-            $centroid = array(
-                $centroidSums['x'] / $nPoints,
-                $centroidSums['y'] / $nPoints,
-            );
-            $this->drawFeatureLabel($canvas, $style, $style['label'], $centroid);
+            $anchor = CoordUtil::getAverage($ringCenters);
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $anchor);
         }
     }
 
