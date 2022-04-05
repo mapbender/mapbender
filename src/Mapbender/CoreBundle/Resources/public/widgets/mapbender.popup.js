@@ -80,7 +80,7 @@
         var staticOptions = [
             'tagName',
             'template', 'modal',
-            'closeButton',
+            'header', 'closeButton',
             'buttons',
             'container',
             'content',
