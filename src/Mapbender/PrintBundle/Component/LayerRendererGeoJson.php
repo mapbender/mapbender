@@ -196,7 +196,8 @@ class LayerRendererGeoJson extends LayerRenderer
                     $transformedPoint = $canvas->featureTransform->transformPair($c);
                     // NOTE: GeoJSON always repeats the first point at the end. To get a proper centroid,
                     //       we throw away the first occurence.
-                    if ($j) {
+                    // Only include the first ring (=outer boundary) in centroid. Ignore interior rings (~=donut cutouts)
+                    if ($j && !$ringIx) {
                         $centroidSums['x'] += $transformedPoint[0];
                         $centroidSums['y'] += $transformedPoint[1];
                         ++$nPoints;
