@@ -256,9 +256,9 @@ class LayerRendererGeoJson extends LayerRenderer
             $transformedLineCoords = array();
             foreach ($lineString as $j => $coord) {
                 $transformedCoord = $canvas->featureTransform->transformPair($coord);
-                // OpenLayers quirk: line label is anchored to first point of line.
+                // OpenLayers quirk: line label is anchored to ~center vertex of line.
                 // Proper MultiLine visual TBD...
-                if (!$j) {
+                if ($j == floor(count($lineString) / 2)) {
                     $centroidSums['x'] += $transformedCoord[0];
                     $centroidSums['y'] += $transformedCoord[1];
                     ++$nCentroidPoints;
