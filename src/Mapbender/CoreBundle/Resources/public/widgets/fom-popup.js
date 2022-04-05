@@ -104,7 +104,7 @@
                 '    <div class="clearContainer"></div>',
                 '  </div>'].join("\n"),
 
-            container: document.body,
+            container: null,
             // Is popup draggable (showHeader must be true)
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
@@ -206,7 +206,8 @@
             }
             var draggableOptions = this.options.draggable && !this.options.modal && {
                 handle: $('.popupHead', this.$element).get(0),
-                containment: container_
+                containment: this.options.container && container_ || false,
+                scroll: false
             };
             if (this.modalWrapper_) {
                 $(this.modalWrapper_).appendTo(document.body);
@@ -559,8 +560,8 @@
             return $modalWrap.get(0);
         },
         getContainer_: function() {
-            if (typeof (this.options.container) === 'string') {
-                return $(this.options.container).get(0) || document.body;
+            if (!this.options.container || typeof (this.options.container) === 'string') {
+                return this.options.container && $(this.options.container).get(0) || document.body;
             } else {
                 if (typeof (this.options.container.nodeType) !== 'undefined') {
                     return this.options.container;
