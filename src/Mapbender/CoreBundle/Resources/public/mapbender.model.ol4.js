@@ -668,9 +668,25 @@ window.Mapbender.MapModelOl4 = (function() {
             Object.assign(style,
                 this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity')
             );
+            var font = olTextStyle.getFont();
             if (stroke) {
                 this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
                 style['labelOutlineWidth'] = stroke.getWidth();
+            }
+            if (font) {
+                var fontParts = font.split(/\s+/);
+                if (/^bold|regular|italic$/.test(fontParts[0] || '')) {
+                    style['fontWeight'] = fontParts[0];
+                    fontParts.splice(0, 1);
+                }
+                if (/^\d+\w+$/.test(fontParts[0] || '')) {
+                    style['fontSize'] = fontParts[0];
+                    fontParts.splice(0, 1);
+                }
+                var fontFamily = fontParts.join(' ');
+                if (fontFamily) {
+                    style['fontFamily'] = fontFamily;
+                }
             }
             var align = (olTextStyle.getTextAlign() || '')[0] || 'c';
             var baseline = (olTextStyle.getTextBaseline() || '')[0] || 'm';

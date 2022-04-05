@@ -592,8 +592,9 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function getLabelFontSize(ExportCanvas $canvas, $style)
     {
-        // @todo: extract font size from style? (not alyays popuplated; empty for 'Redlining' labeled points)
-        return floatval(10 * $canvas->featureTransform->lineScale);
+        $fontSizeRule = !empty($style['fontSize']) ? $style['fontSize'] : '10px';
+        $fontSize = \floatval(\preg_replace('#[^\d]*$#', '', $fontSizeRule)) ?: 10;
+        return floatval($fontSize * $canvas->featureTransform->lineScale);
     }
 
     /**
@@ -604,8 +605,16 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function getLabelFont($style)
     {
-        // @todo: extract explicit font setting from style, check existance of ttf, fall back to default if no such file
-        return "{$this->fontPath}/OpenSans-Bold.ttf";
+        // @todo: check existance of ttf, fall back to default if no such file
+        $fontWeightRule = !empty($style['fontWeight']) ? $style['fontWeight'] : 'regular';
+        // @todo: undo capitalization of file name!
+        $suffix = \ucfirst($fontWeightRule);
+        if (\file_exists("{$this->fontPath}/OpenSans-{$suffix}.ttf")) {
+            return "{$this->fontPath}/OpenSans-{$suffix}.ttf";
+        } else {
+            // Hope for the best
+            return "{$this->fontPath}/OpenSans-Regular.ttf";
+        }
     }
 
     /**
