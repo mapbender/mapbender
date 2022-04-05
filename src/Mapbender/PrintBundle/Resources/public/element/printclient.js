@@ -473,6 +473,7 @@
                 rotate: true,
                 translateFeature: true,
                 stretch: false,
+                layers: [this.layer],
                 scale: false
             });
             interaction.on('rotating', /** @this {ol.interaction.Transform} */ function(data) {
