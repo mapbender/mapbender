@@ -109,7 +109,6 @@
             if (this.useDialog_) {
                 if(!this.popup || !this.popup.$element){
                     this._superApply(arguments);
-                    this.popup.$element.one('close', $.proxy(this.close, this));
                 }
                 this.activate();
             }
