@@ -1,11 +1,11 @@
-## dev-release/3.2 @ 53898c220
+## dev-release/3.2 @ 77c9da4bf
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
 * Fix broken resizable popup styling for projects using jqueryui css
 * Fix window starting to scroll when dragging popups over screen edges
 * Fix local login not available via menu navigation for SSO users
-* Fix print selection interactions running on clicked non-print features while print is open
+* Fix print selection interactions running on clicked non-print features while print is open ([#1412](https://github.com/mapbender/mapbender/issues/1412))
 * Fix image export / print line labels not rendering at all or rendering with wrong color if combined with icon markers
 * Improve image export / print reproduction of feature label font sizes and weights
 * Improve image export / print reproduction of line dash patterns
