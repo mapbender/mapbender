@@ -7,6 +7,7 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
 use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
+use Mapbender\PrintBundle\Util\CoordUtil;
 use Mapbender\PrintBundle\Util\GdUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
@@ -175,11 +176,7 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiPolygon($canvas, $geometry)
     {
-        $nPoints = 0;
-        $centroidSums = array(
-            'x' => 0.0,
-            'y' => 0.0,
-        );
+        $ringCenters = array();
 
         $style = $this->getFeatureStyle($geometry);
         $transformedRings = array();
@@ -192,19 +189,15 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
 
                 $transformedRing = array();
-                foreach ($ring as $j => $c) {
-                    $transformedPoint = $canvas->featureTransform->transformPair($c);
-                    // NOTE: GeoJSON always repeats the first point at the end. To get a proper centroid,
-                    //       we throw away the first occurence.
-                    if ($j) {
-                        $centroidSums['x'] += $transformedPoint[0];
-                        $centroidSums['y'] += $transformedPoint[1];
-                        ++$nPoints;
-                    }
-                    $transformedRing[] = $transformedPoint;
+                foreach ($ring as $c) {
+                    $transformedRing[] = $canvas->featureTransform->transformPair($c);
                 }
                 $bounds->addPoints($transformedRing);
                 $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
+                // Only include the first ring (=outer boundary) in centroid. Ignore interior rings (~=donut cutouts)
+                if (!$ringIx) {
+                    $ringCenters[] = CoordUtil::getRingCentroid($transformedRing);
+                }
             }
         }
         if (!$bounds->isEmpty() && $style['fillOpacity'] > 0) {
@@ -227,11 +220,8 @@ class LayerRendererGeoJson extends LayerRenderer
             $this->drawLineSetsInternal($canvas, $style, $lineCoordSets, true, $bounds);
         }
         if (!$bounds->isEmpty() && !empty($style['label'])) {
-            $centroid = array(
-                $centroidSums['x'] / $nPoints,
-                $centroidSums['y'] / $nPoints,
-            );
-            $this->drawFeatureLabel($canvas, $style, $style['label'], $centroid);
+            $anchor = CoordUtil::getAverage($ringCenters);
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $anchor);
         }
     }
 
@@ -261,23 +251,23 @@ class LayerRendererGeoJson extends LayerRenderer
             'y' => 0.0,
         );
         $style = $this->getFeatureStyle($geometry);
-        if ($this->checkLineStyleVisibility($canvas, $style)) {
-            $transformedCoordSets = array();
-            foreach ($geometry['coordinates'] as $lineString) {
-                $transformedLineCoords = array();
-                foreach ($lineString as $j => $coord) {
-                    $transformedCoord = $canvas->featureTransform->transformPair($coord);
-                    // OpenLayers quirk: line label is anchored to first point of line.
-                    // Proper MultiLine visual TBD...
-                    if (!$j) {
-                        $centroidSums['x'] += $transformedCoord[0];
-                        $centroidSums['y'] += $transformedCoord[1];
-                        ++$nCentroidPoints;
-                    }
-                    $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
+        $transformedCoordSets = array();
+        foreach ($geometry['coordinates'] as $lineString) {
+            $transformedLineCoords = array();
+            foreach ($lineString as $j => $coord) {
+                $transformedCoord = $canvas->featureTransform->transformPair($coord);
+                // OpenLayers quirk: line label is anchored to ~center vertex of line.
+                // Proper MultiLine visual TBD...
+                if ($j == floor(count($lineString) / 2)) {
+                    $centroidSums['x'] += $transformedCoord[0];
+                    $centroidSums['y'] += $transformedCoord[1];
+                    ++$nCentroidPoints;
                 }
-                $transformedCoordSets[] = $transformedLineCoords;
+                $transformedLineCoords[] = $transformedCoord;
             }
+            $transformedCoordSets[] = $transformedLineCoords;
+        }
+        if ($this->checkLineStyleVisibility($canvas, $style)) {
             $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
         if ($nCentroidPoints && !empty($style['label'])) {
@@ -591,8 +581,9 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function getLabelFontSize(ExportCanvas $canvas, $style)
     {
-        // @todo: extract font size from style? (not alyays popuplated; empty for 'Redlining' labeled points)
-        return floatval(10 * $canvas->featureTransform->lineScale);
+        $fontSizeRule = !empty($style['fontSize']) ? $style['fontSize'] : '10px';
+        $fontSize = \floatval(\preg_replace('#[^\d]*$#', '', $fontSizeRule)) ?: 10;
+        return floatval($fontSize * $canvas->featureTransform->lineScale);
     }
 
     /**
@@ -603,8 +594,16 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function getLabelFont($style)
     {
-        // @todo: extract explicit font setting from style, check existance of ttf, fall back to default if no such file
-        return "{$this->fontPath}/OpenSans-Bold.ttf";
+        // @todo: check existance of ttf, fall back to default if no such file
+        $fontWeightRule = !empty($style['fontWeight']) ? $style['fontWeight'] : 'regular';
+        // @todo: undo capitalization of file name!
+        $suffix = \ucfirst($fontWeightRule);
+        if (\file_exists("{$this->fontPath}/OpenSans-{$suffix}.ttf")) {
+            return "{$this->fontPath}/OpenSans-{$suffix}.ttf";
+        } else {
+            // Hope for the best
+            return "{$this->fontPath}/OpenSans-Regular.ttf";
+        }
     }
 
     /**

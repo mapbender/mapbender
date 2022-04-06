@@ -98,6 +98,7 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
     {
         $child = $target->getConfig()->getFormFactory()->createNamedBuilder($name, 'Symfony\Component\Form\Extension\Core\Type\HiddenType', null, array(
             'auto_initialize' => false,
+            'label' => false,
         ));
         $child->addModelTransformer(new IntegerToLocalizedStringTransformer());
         $target->add($child->getForm(), 'Symfony\Component\Form\Extension\Core\Type\HiddenType');

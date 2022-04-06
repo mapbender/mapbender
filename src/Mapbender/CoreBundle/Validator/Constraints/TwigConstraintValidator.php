@@ -21,15 +21,16 @@ class TwigConstraintValidator extends ConstraintValidator
     }
 
     /**
-     * @param string $twigString
+     * @param string $value
      * @param Constraint $constraint
      */
-    public function validate($twigString, Constraint $constraint)
+    public function validate($value, Constraint $constraint)
     {
         try {
-            $this->twig->parse($this->twig->tokenize($twigString));
+            $source = new \Twig\Source($value, 'input');
+            $this->twig->parse($this->twig->tokenize($source));
         } catch (Error $e) {
-            $this->context->addViolation($constraint->message);
+            $this->context->addViolation('twig.invalid');
             $this->context->addViolation($e->getMessage());
         }
     }

@@ -294,6 +294,17 @@ window.Mapbender.MapModelOl4 = (function() {
             }
         }
     },
+    /**
+     * @param {MouseEvent} event
+     * @return {mmClickData}
+     */
+    locateClickEvent: function(event) {
+        var pixel = this.olMap.getEventPixel(event);
+        return {
+            pixel: pixel,
+            coordinate: this.olMap.getCoordinateFromPixel(pixel)
+        };
+    },
     _getFractionalZoomLevel: function() {
         return this.olMap.getView().getZoom();
     },
@@ -633,8 +644,20 @@ window.Mapbender.MapModelOl4 = (function() {
                 style['strokeWidth'] = stroke.getWidth();
                 var lineDash = stroke.getLineDash() || 'solid';
                 if (Array.isArray(lineDash)) {
-                    // HACK: drop array-style dash to avoid errors in backend rendering.
-                    lineDash = 'solid'
+                    switch (lineDash.length) {
+                        default:
+                            lineDash = 'solid';
+                            break;
+                        case 2:
+                            lineDash = (lineDash[0] < lineDash[1] && 'dot')
+                                || (lineDash[1] === lineDash[1] && 'dash')
+                                || 'longdash'
+                            ;
+                            break;
+                        case 4:
+                            lineDash = lineDash[2] >= 6 * lineDash[0] && 'longdashdot' || 'dashdot';
+                            break;
+                    }
                 }
                 style['strokeDashstyle'] = lineDash;
             }
@@ -657,9 +680,25 @@ window.Mapbender.MapModelOl4 = (function() {
             Object.assign(style,
                 this._extractColor(olTextStyle.getFill().getColor(), 'fontColor', 'fontOpacity')
             );
+            var font = olTextStyle.getFont();
             if (stroke) {
                 this._extractColor(stroke.getColor(), 'labelOutlineColor', 'labelOutlineOpacity')
                 style['labelOutlineWidth'] = stroke.getWidth();
+            }
+            if (font) {
+                var fontParts = font.split(/\s+/);
+                if (/^bold|regular|italic$/.test(fontParts[0] || '')) {
+                    style['fontWeight'] = fontParts[0];
+                    fontParts.splice(0, 1);
+                }
+                if (/^\d+\w+$/.test(fontParts[0] || '')) {
+                    style['fontSize'] = fontParts[0];
+                    fontParts.splice(0, 1);
+                }
+                var fontFamily = fontParts.join(' ');
+                if (fontFamily) {
+                    style['fontFamily'] = fontFamily;
+                }
             }
             var align = (olTextStyle.getTextAlign() || '')[0] || 'c';
             var baseline = (olTextStyle.getTextBaseline() || '')[0] || 'm';
