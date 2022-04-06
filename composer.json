@@ -71,7 +71,7 @@
             "dev-release/3.0.6": "3.0.6.x-dev",
             "dev-release/3.0.7": "3.0.8.x-dev",
             "dev-release/3.2": "3.2.x-dev",
-            "dev-staging/3.3": "3.3.x-dev"
+            "dev-master": "3.3.x-dev"
         }
     }
 }
