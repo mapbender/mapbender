@@ -13,7 +13,8 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
-use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
+use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
+use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\Utils\MemoryUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,8 +41,10 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     protected $sourceUrlProcessor;
     /** @var OdgParser */
     protected $odgParser;
-    /** @var PrintServiceBridge */
-    protected $bridgeService;
+    /** @var PrintServiceInterface */
+    protected $printService;
+    /** @var PrintPluginHost */
+    protected $pluginRegistry;
     /** @var string|null */
     protected $memoryLimit;
     /** @var boolean */
@@ -53,7 +56,8 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                                 UrlProcessor $sourceUrlProcessor,
                                 OdgParser $odgParser,
                                 /** @todo: elminate bridge service */
-                                PrintServiceBridge $bridgeService,
+                                PrintServiceInterface $printService,
+                                PrintPluginHost $pluginRegistry,
                                 $memoryLimit,
                                 $enableQueue)
     {
@@ -62,7 +66,8 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         $this->tokenStorage = $tokenStorage;
         $this->sourceUrlProcessor = $sourceUrlProcessor;
         $this->odgParser = $odgParser;
-        $this->bridgeService = $bridgeService;
+        $this->printService = $printService;
+        $this->pluginRegistry = $pluginRegistry;
         $this->memoryLimit = $memoryLimit;
         $this->enableQueue = $enableQueue;
     }
@@ -320,7 +325,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 $jobData = $this->preparePrintData($rawData, $configuration);
 
                 $this->checkMemoryLimit();
-                $pdfBody = $this->bridgeService->dumpPrint($jobData);
+                $pdfBody = $this->printService->dumpPrint($jobData);
 
                 $displayInline = true;
                 $filename = $this->generateFilename($element);
@@ -340,7 +345,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
 
             case PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE:
                 if (!empty($configuration['renderMode']) && $configuration['renderMode'] === 'queued') {
-                    $queuePlugin = $this->bridgeService->getPluginHost()->getPlugin('print-queue');
+                    $queuePlugin = $this->pluginRegistry->getPlugin('print-queue');
                     $rawData = $this->extractRequestData($request);
                     $jobData = $this->preparePrintData($rawData, $configuration);
                     $queuePlugin->putJob($jobData, $this->generateFilename($element));
@@ -349,7 +354,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                     throw new NotFoundHttpException();
                 }
             default:
-                $response = $this->bridgeService->handleHttpRequest($request, $element);
+                $response = $this->pluginRegistry->handleHttpRequest($request, $element);
                 if ($response) {
                     return $response;
                 } else {

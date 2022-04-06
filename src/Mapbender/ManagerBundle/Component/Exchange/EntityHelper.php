@@ -4,9 +4,9 @@
 namespace Mapbender\ManagerBundle\Component\Exchange;
 
 
-use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\MappingException;
 
 class EntityHelper extends AbstractObjectHelper
 {

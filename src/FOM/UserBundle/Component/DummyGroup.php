@@ -4,15 +4,13 @@
 namespace FOM\UserBundle\Component;
 
 
-use Symfony\Component\Security\Core\Role\RoleInterface;
+use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * Unpersisted display-only version of Group entity
  */
-class DummyGroup implements RoleInterface
+class DummyGroup extends Role
 {
-    /** @var string */
-    protected $role;
     /** @var string */
     protected $title;
 
@@ -22,16 +20,8 @@ class DummyGroup implements RoleInterface
      */
     public function __construct($role, $title)
     {
-        $this->role = $role;
+        parent::__construct($role);
         $this->title = $title;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getRole()
-    {
-        return $this->role;
     }
 
     /**

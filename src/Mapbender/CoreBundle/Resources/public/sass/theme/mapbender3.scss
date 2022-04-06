@@ -257,35 +257,35 @@ ul.toolBar, .toolBar > ul {
       height: 100%;
     }
   }
-}
-.metadataDialog .popupContent .contentItem {
-  height: 100%;
-}
-
-.metadataContainer{
-  $labeText:85px;
-
-  .list, li{clear:both;}
-  .list{
-    border:dashed 1px darken(#fff, 20%);
-    margin-bottom:$space/2;
-    li{margin-left:$space;}
-
-    // no margin for labeltext lists ...
-    ul.left li{
-      margin-left:0px;
-      // ... and metatext below lists
-      .metaText{margin-left:0px;}
+  .content-toggle-container {
+    &.closed >.content-toggle-target {
+      display: none;
+    }
+    .content-toggle {
+      // Prevent undesired double-click => select all behaviour on quick toggles
+      user-select: none;
+    }
+    >.content-toggle i {
+      line-height: inherit;
     }
   }
-  .labelText{
-    width:$labeText;
-    margin-right:$space/2;
-    display: inline-block;
+
+  table {
+    margin-bottom: 1em;
+    tbody th:first-child {
+      // Minimize and equalize header widths
+      width: 1%;
+      white-space: nowrap;
+      padding-right: 0.5em;
+    }
   }
-  .metaText{
-    display: inline-block;
-    word-wrap: break-word;
+  .indent {
+    margin-left: 1em;
+  }
+  table.lighter-headings {
+    tbody th {
+      font-weight: 600;
+    }
   }
 }
 

@@ -1,0 +1,34 @@
+@startuml
+
+
+box "Client"
+	participant Browser
+end box
+
+box "Mapbender server"
+	participant "Url preprocessor"
+	participant OwsProxy
+end box
+
+box "External service"
+	participant GeoServer
+end box
+
+group Backend
+    "Url preprocessor" -> Browser: Rewrite URL, add signature hash\nhttp://mapbender.server/owsproxy?\n signature=HASH&\n url=http://wms.server/path
+end
+
+group Frontend
+  Browser -> OwsProxy: Get service data
+  activate OwsProxy
+  OwsProxy -> GeoServer: Get service data
+  deactivate OwsProxy
+  activate GeoServer
+  GeoServer -> OwsProxy: Service response
+  deactivate GeoServer
+  activate OwsProxy
+  OwsProxy -> Browser: Forward response
+  deactivate OwsProxy
+end
+
+@enduml

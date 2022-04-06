@@ -8,17 +8,20 @@
         "php": ">=5.5",
         "ext-dom": "*",
         "ext-gd": "*",
+        "ext-curl": "*",
         "symfony/symfony": "^3 || ^4",
         "symfony/security-acl": "~2.8 || ~3.0",
-        "twig/extensions": "1.x",
+        "symfony/acl-bundle": "^1 || ^2",
+        "twig/twig": "^1.43 || ^2.13",
         "doctrine/orm": "^2.5.2",
-        "doctrine/doctrine-fixtures-bundle": "^2.3",
-        "doctrine/doctrine-bundle": "^1.12",
+        "doctrine/doctrine-bundle": "^1.12 || ^2",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
-        "sensio/generator-bundle": "^2 || ^3",
+        "sensio/framework-extra-bundle": "^3 || ^4 || ^5 || ^6",
 
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2",
+
+        "assetic/framework": "^2.0",
 
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "^1.3",
@@ -29,26 +32,27 @@
         "wheregroup/assetic-filter-sassc": "^0.0",
         "wheregroup/sassc-binaries": "^0.0.1",
 
-        "mapbender/owsproxy": "^3.1.6",
+        "mapbender/owsproxy": "^3.1.8",
 
         "datatables/datatables": "^1.10.16",
         "components/bootstrap": "^3 || ^4",
         "components/jqueryui": "^1",
-        "debugteam/bootstrap-colorpicker": "^1",
 
         "mapbender/openlayers6-es5": "~0.3 || ^1",
         "mapbender/mapquery": "1.x"
     },
     "provide": {
-        "mapbender/fom": "3.3"
+        "mapbender/fom": "3.3",
+        "mapbender/owsproxy": "3.3.99"
     },
     "replace": {
-        "debugteam/bootstrap-colorpicker": "1.*",
+        "mapbender/owsproxy": "3.3.*",
         "mapbender/fom": "*"
     },
     "autoload": {
         "psr-4": {
             "Mapbender\\": "src/Mapbender",
+            "OwsProxy3\\": "src/OwsProxy3",
             "FOM\\": "src/FOM"
         }
     },

@@ -142,38 +142,13 @@ mb:
       section:
         common:
           _title: Commun
-          title: Titre
-          name: Nom
-          version: Version
-          originUrl: 'URL d''origine'
-          description: Description
-          onlineResource: OnlineResource
-          exceptionFormats: 'Formats d''exceptions'
         useconditions:
           _title: 'Conditions d''utilisation'
-          fees: Frais
-          accessconstraints: 'Contraintes d''accès'
         contact:
           _title: Contact
-          person: Personne
-          position: Position
-          organization: Organisation
-          voiceTelephone: Téléphone
-          facsimileTelephone: Fax
-          electronicMailAddress: Courriel
-          address: Adresse
-          addressType: 'Type d''adresse'
-          addressCity: Ville
-          addressStateOrProvince: 'État ou province'
-          addressPostCode: 'Code postal'
-          addressCountry: Pays
         items:
           _title: Couche
-          title: Titre
           name: Nom
-          abstract: Résumé
-          srs: SRS
-          bbox: BoundingBox
     repo:
       instance:
         label:

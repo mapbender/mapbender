@@ -991,8 +991,12 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
         return $this;
     }
 
-    public function getViewTemplate()
+    public function getViewTemplate($frontend = false)
     {
-        return '@MapbenderWms/Repository/view.html.twig';
+        if ($frontend) {
+            return 'MapbenderWmsBundle::frontend/instance.html.twig';
+        } else {
+            return 'MapbenderWmsBundle:Repository:view.html.twig';
+        }
     }
 }

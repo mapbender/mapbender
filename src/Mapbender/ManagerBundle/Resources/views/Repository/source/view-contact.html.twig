@@ -5,7 +5,11 @@
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</th><td>{{ contact.position }}</td></tr>
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</th><td>{{ contact.voiceTelephone }}</td></tr>
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</th><td>{{ contact.facsimileTelephone }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</th><td>{{ contact.electronicMailAddress }}</td></tr>
+    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</th><td>
+        {%- if contact.electronicMailAddress -%}
+          <a href="mailto:{{ contact.electronicMailAddress}}">{{ contact.electronicMailAddress }}</a>
+        {%- endif -%}
+    </td></tr>
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</th><td>{{ contact.address }}</td></tr>
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</th><td>{{ contact.addressType }}</td></tr>
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</th><td>{{ contact.addressCity }}</td></tr>

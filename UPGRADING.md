@@ -1,3 +1,32 @@
+## v3.3.x
+### Removed Component\Application
+This legacy class contained exclusively static utility methods
+which required passing in the full Symfony service container.
+
+Remaining usages must be update to use the [UploadsManager service (id `mapbender.uploads_manager.service`)](https://github.com/mapbender/mapbender/blob/v3.2.4/src/Mapbender/CoreBundle/Component/UploadsManager.php) instead.
+
+See [previous implementation of Component\Application](https://github.com/mapbender/mapbender/blob/v3.2.6/src/Mapbender/CoreBundle/Component/Application.php) for working
+replacement code using the service.
+
+### Element API migration
+The rebasing of all shipping elements to [the new Symfony-4-compatible Element API](https://github.com/mapbender/mapbender/pull/1367)
+has been completed. PHP child classes of any shipping Mapbender Element will break and require some updates.
+
+### Component installer changes
+[The abandoned robloach/component-installer package](https://packagist.org/packages/robloach/component-installer)
+has been removed, and partially superseded by [code in Mapbender Starter](https://github.com/mapbender/mapbender-starter/pull/98).
+Any asset reference from Element or Template PHP classes to a precompiled file
+(e.g. "...-built.css") should be expected to break. Replace these
+asset references with the concrete source file path(s).
+
+Prefer sourcing asset files from the vendor tree instead of web/components
+(one exception: the datatables component is currently only available
+from web/components, not inside vendor).
+
+### Bundle registration changes
+SensioFrameworkExtraBundle is now registered in Mapbender's BaseKernel.
+You will see errors if your application kernel attempts to register it again separately.
+
 ## v3.2.6
 ### Element API changes
 In preparation for making Mapbender compatible with Symfony 4,

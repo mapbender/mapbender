@@ -2,7 +2,6 @@
 
 namespace FOM\UserBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\Role\RoleInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -16,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="fom_group")
  * @ORM\MappedSuperclass()
  */
-class Group implements RoleInterface
+class Group
 {
     /**
      * @ORM\Id

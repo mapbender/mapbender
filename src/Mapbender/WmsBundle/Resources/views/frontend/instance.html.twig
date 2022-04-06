@@ -1,0 +1,29 @@
+    <div class="accordionContainer">
+        <div id="accordion-general" class="accordion active">{{ 'mb.wms.metadata.section.common._title' | trans }}</div>
+        <div id="container-general" class="container-accordion active">
+            <div class="accordion-cell">
+                {%- include 'MapbenderWmsBundle:Repository:source/view-metadata.html.twig' with {'show_constraints': false} -%}
+            </div>
+        </div>
+        <div id="accordion-usage" class="accordion">{{ 'mb.wms.metadata.section.useconditions._title' | trans }}</div>
+        <div id="container-usage" class="container-accordion">
+            <div class="accordion-cell">
+                <table class="table table-borderless table-condensed">
+                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees }}</td></tr>
+                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints }}</td></tr>
+                </table>
+            </div>
+        </div>
+        <div id="accordion-contact" class="accordion">{{ 'mb.wms.metadata.section.contact._title' | trans }}</div>
+        <div id="container-contact" class="container-accordion">
+            <div class="accordion-cell">
+                {%- include 'MapbenderManagerBundle:Repository:source/view-contact.html.twig' with {'contact' : source.contact} -%}
+            </div>
+        </div>
+        <div id="accordion-layers" class="accordion">{{ 'mb.wms.metadata.section.items._title' | trans }}</div>
+        <div id="container-layers" class="container-accordion">
+            <div class="accordion-cell">
+                {%- include 'MapbenderWmsBundle::frontend/instancelayer.html.twig' with {layer: startLayerInstance, itemLevel: 1} -%}
+            </div>
+        </div>
+    </div>

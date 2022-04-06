@@ -63,9 +63,5 @@
             <argument type="service" id="doctrine" />
             <argument>%kernel.root_dir%</argument>
         </service>
-        <service id="Mapbender\CoreBundle\Command\GenerateElementCommand"
-                 class="Mapbender\CoreBundle\Command\GenerateElementCommand">
-            <tag name="console.command" command="mapbender:generate:element" />
-        </service>
     </services>
 </container>
