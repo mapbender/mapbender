@@ -161,7 +161,7 @@
                 '   </div>'
                 ].join("\n"),
 
-            container: document.body,
+            container: null,
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
@@ -231,10 +231,11 @@
                 }
             }
             if (this.options.draggable) {
-                var containment = (this.options.modal && this.$modalWrap) || container;
+                var containment = (this.options.modal && this.$modalWrap) || this.options.container && container || false;
                 this.$element.draggable({
                     handle: $('.popupHead', this.$element),
-                    containment: containment
+                    containment: containment,
+                    scroll: false
                 });
             }
             this.focus();
@@ -437,8 +438,8 @@
         },
         getContainer_: function() {
             if (!this.container_) {
-                if (typeof (this.options.container) === 'string') {
-                    this.container_ = $(this.options.container).get(0) || document.body;
+                if (!this.options.container || typeof (this.options.container) === 'string') {
+                    this.container_ = this.options.container || $(this.options.container).get(0) || document.body;
                 } else {
                     if (typeof (this.options.container.nodeType) !== 'undefined') {
                         this.container_ = this.options.container;
