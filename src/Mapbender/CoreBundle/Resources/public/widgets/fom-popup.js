@@ -85,16 +85,12 @@
         // Reference to the created popup
         $element: null,
 
-        // Containing element
-        $container: $('body'),
-
         /**
          * Default options
          * @type {Object}
          */
         defaults: {
             template: [
-                '<div class="popupContainer fom-popup-container">',
                 '  <div class="popup fom-popup">',
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
@@ -106,10 +102,9 @@
                 '    </div>',
                 '    <div class="popupButtons"></div>',
                 '    <div class="clearContainer"></div>',
-                '  </div>',
-                '  <div class="overlay"></div>',
-                '</div>'].join("\n"),
+                '  </div>'].join("\n"),
 
+            container: null,
             // Is popup draggable (showHeader must be true)
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
@@ -164,23 +159,13 @@
                     }
                 break;
 
+                case 'modal':
                 case 'closeButton':
-                    if(undefined === value) {
-                        return this.options[key];
-                    }
-                break;
-
-                // Some simple setter/getter options
                 case 'destroyOnClose':
-                    if(undefined === value) {
-                        return this.options[key];
-                    } else {
-                        this.options[key] = value;
-                    }
-                break;
-
                 case 'detachOnClose':
-                    if(undefined === value) {
+                case 'closeOnOutsideClick':
+                case 'container':
+                    if (typeof value === 'undefined') {
                         return this.options[key];
                     } else {
                         this.options[key] = value;
@@ -213,12 +198,27 @@
                 this.content(content);
             }
 
-            selfElement.trigger('open');
-            if(!this.options.detachOnClose || !$.contains(document, selfElement[0])) {
-                selfElement.appendTo(this.$container);
+            this.$element.trigger('open');
+            this.modalWrapper_ = this.options.modal && this.createModalWrapper_() || null;
+            var container_ = this.getContainer_();
+            if (!this.options.detachOnClose || !$.contains(container_, this.$element.get(0))) {
+                this.$element.appendTo(this.modalWrapper_ || container_);
             }
+            var draggableOptions = this.options.draggable && !this.options.modal && {
+                handle: $('.popupHead', this.$element).get(0),
+                containment: this.options.container && container_ || false,
+                scroll: false
+            };
+            if (this.modalWrapper_) {
+                $(this.modalWrapper_).appendTo(document.body);
+            }
+
             window.setTimeout(function() {
                 self.focus();
+                if (draggableOptions) {
+                    selfElement.css('position', 'relative');
+                    selfElement.draggable(draggableOptions);
+                }
                 selfElement.trigger('openend');
             }, 100);
         },
@@ -260,6 +260,10 @@
             }
             if(this.options.destroyOnClose) {
                 this.destroy();
+            }
+            if (this.modalWrapper_) {
+                $(this.modalWrapper_).remove();
+                this.modalWrapper_ = null;
             }
         },
 
@@ -357,27 +361,6 @@
             }
             this.options.subtitle = subtitle;
         },
-
-        /**
-         * Set or get modal
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        modal: function(state) {
-            if(undefined === state) {
-                return this.options.modal;
-            }
-
-            if(state){
-              this.$element.addClass("modal");
-            }else{
-              this.$element.removeClass("modal");
-            }
-
-            this.options.modal = state;
-        },
-
-
         /**
          * Set or get resizable status
          * @param {mixed} state, undefined gets, true or false sets state, an object of options for jQuery UI resizable
@@ -390,11 +373,10 @@
             }
 
             if(state) {
-                $('.popup', this.$element).resizable($.isPlainObject(state) ? state : null);
+                this.$element.resizable($.isPlainObject(state) ? state : null);
             } else {
-                var popup = $('.popup', this.$element);
-                if(popup.data('uiResizable')) {
-                    popup.resizable('destroy');
+                if (this.$element.data('uiResizable')) {
+                    this.$element.resizable('destroy');
                 }
             }
         },
@@ -421,54 +403,16 @@
         },
 
         /**
-         * Set or get closeOnOutsideClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnOutsideClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnOutsideClick;
-            }
-
-            if(state){
-                $('.overlay', this.$element.get(0)).on('click', $.proxy(this.close, this));
-            }else{
-                $('.overlay', this.$element.get(0)).off('click');
-            }
-
-            this.options.closeOnOutsideClick = state;
-        },
-
-        /**
          * Set or get draggable
          * @param  {boolean} state, undefined gets
          * @return {boolean}
          */
         draggable: function(state) {
-            var widget = this;
-            var options = widget.options;
-            var element = widget.$element;
-
-            if(!state) {
-                return options.draggable;
+            if (typeof state !== 'undefined') {
+                return this.options.draggable;
+            } else {
+                this.options.draggable = state;
             }
-
-            element.on('openend', function() {
-                var marginLeft = 100;
-                var marginTop = 80;
-                var popupContainer = $(">.popup", element);
-                var document = $("body");
-                element.draggable({
-                    handle:      $('.popupHead', element),//, //,
-                    containment: [
-                        -marginLeft,
-                        -marginTop,
-                        document.width() - popupContainer.width() - marginLeft,
-                        document.height() - popupContainer.height() - marginTop]
-                });
-            });
-
-            options.draggable = state;
         },
 
         /**
@@ -569,13 +513,11 @@
          * @param  {mixed}  width, null will unset
          */
         width: function(width) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === width) {
                 return this.options.width;
             }
 
-            popup.css('width', (null === width ? '' : width));
+            this.$element.css('width', (null === width ? '' : width));
         },
 
         /**
@@ -583,13 +525,11 @@
          * @param  {mixed}  height, any falsy value will unset height
          */
         height: function(height) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === height) {
                 return this.options.height;
             }
 
-            popup.css('height', (null === height ? '' : height));
+            this.$element.css('height', (null === height ? '' : height));
         },
 
         /**
@@ -597,19 +537,42 @@
          * @param  {string}  cssClass, null unsets, undefined gets
          */
         cssClass: function(cssClass) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === cssClass) {
                 return this.options.cssClass;
             }
 
             if(null === cssClass) {
-                popup.removeClass(this.options.cssClass);
+                this.$element.removeClass(this.options.cssClass);
             } else {
-                popup.addClass(cssClass);
+                this.$element.addClass(cssClass);
             }
             this.options.cssClass = cssClass;
-        }
+        },
+        createModalWrapper_: function() {
+            var self = this;
+            var $modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
+            $modalWrap.on('click', '.overlay', function() {
+                if (self.options.closeOnOutsideClick) {
+                    self.close();
+                }
+                return false;
+            });
+            return $modalWrap.get(0);
+        },
+        getContainer_: function() {
+            if (!this.options.container || typeof (this.options.container) === 'string') {
+                return this.options.container && $(this.options.container).get(0) || document.body;
+            } else {
+                if (typeof (this.options.container.nodeType) !== 'undefined') {
+                    return this.options.container;
+                } else {
+                    // Hope for jQuery object, fail if it isn't, fall back to body if
+                    // it's empty
+                    return this.options.container.get(0) || document.body;
+                }
+            }
+        },
+        __dummy__: null
     };
 
     window.FOM = window.FOM || {};

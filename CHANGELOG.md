@@ -1,3 +1,20 @@
+## dev-release/3.2 @ 53898c220
+* Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
+* Fix false-positive html validation error if input is empty
+* Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
+* Fix broken resizable popup styling for projects using jqueryui css
+* Fix window starting to scroll when dragging popups over screen edges
+* Fix local login not available via menu navigation for SSO users
+* Fix print selection interactions running on clicked non-print features while print is open
+* Fix image export / print line labels not rendering at all or rendering with wrong color if combined with icon markers
+* Improve image export / print reproduction of feature label font sizes and weights
+* Improve image export / print reproduction of line dash patterns
+* Improve image export / print polygon label placement (calculate exterior ring centroid instead of average coordinate)
+* Improve image export / print line label placement (more closely match Openlayers 6 median vertex strategy)
+* Improve image export / print line label placement (more closely match Openlayers 6 strategy)
+* Support `tagName` option in popup widget (previously hardcoded to generate div)
+* Support passing DOM Elements into popup widget `buttons` option
+
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
 * Fix invisible map overlay elements in mobile template

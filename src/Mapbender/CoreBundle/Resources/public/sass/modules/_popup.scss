@@ -1,8 +1,3 @@
-.overlay{
-  background:url($imageBasePath + '/overlay.png');
-  opacity: 0;
-}
-
 .popupHead {
   .popupTitle {
     font-size: 1.35rem;
@@ -71,23 +66,32 @@
     min-width: 300px;
     min-height: 250px;
   }
+  position: absolute;
+  // Set initial position on page
+  left: 80px;
+  top: 100px;
+  .popupContainer.modal & {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+  .popupHead .popupClose {
+    cursor: pointer;
+  }
+  &.ui-draggable {
+    // Overrule ui draggable's relative breaking layout on first movement
+    position: absolute !important;
+    .popupHead {
+      cursor:move;
+    }
+    &.ui-draggable-dragging {
+      opacity: 0.6;
+    }
+  }
   &.fom-popup {
     min-height: 250px;
     width: $popupModalWidth;
     padding-bottom:$space;
-  }
-  position:relative;
-  &.mapbender-popup {
-    // Set initial position on page
-    // FOM popup does this with a margin relative to its (draggable!) invisible container...
-    left: 80px;
-    top: 100px;
-    position: absolute;
-    .popupContainer.modal & {
-      position: relative;
-      top: 0;
-      left: 0;
-    }
   }
   z-index:9999;
   background-color:#f4f4f4;
@@ -98,45 +102,11 @@
       bottom: solid 5px $thirdColor;
   }
 }
-.popupContainer.ui-draggable, .popup.ui-draggable {
-  .popupHead {
-    cursor:move;
-    .popupClose {
-      cursor: pointer;
-    }
-  }
-  &.ui-draggable-dragging {
-    opacity: 0.6;
-  }
-}
 
-.popupContainer{
-  z-index:999;
-  @include absolute(0 0 0 0);
-  // FOM popup uses containers around non-modals
-  // => force zero size to prevent the container from eating click events
-  // This rule never applies to Mapbender popups, because they only use a container if rendering as a modal,
-  // and that brings in different rules (see below)
-  width: 0;
-  height: 0;
-  // FOM popup attaches draggable on the container, not the popup!
-  &.ui-draggable{
-    position:absolute !important; // avoid strange popup growing behaviour
-  }
-  .popup {
-    margin-left:80px;
-    margin-top:100px;
-  }
-  &.modal{
-    @include fixed(0 0 0 0);
-    height:100%;
-    width:100%;
+.popupContainer.modal {
     padding: $space*2.5;
     display: block;
     .popup {
-      // undo relative top / left used to set draggable non-modal initial position
-      top: 0;
-      left: 0;
       margin: 0 auto;
       max-height: 100%;
       &.fom-popup {
@@ -145,29 +115,40 @@
         height: 100%;
       }
     }
-    .overlay{
-      opacity: 0.9;
-      position: fixed;
+    .overlay {
+      opacity: 0.8;
+      background: #222;
+      position: absolute;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
     }
-  }
 }
+
 .ui-resizable-se {
   position: absolute;
   font-size: 16px;
   right: -.135em;
-  bottom: -8px;
+  bottom: -0.32em;
   cursor: se-resize;
 
   &:before{
     @include transform(rotate(45deg));
-    font-family: FontAwesome;
+    font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     content: "\f054";
     display: block;
   }
+}
+
+.popup .ui-resizable-se {
+  // Overrule jqueryui .ui-icon
+  text-indent: 0;
+  background: none;
+  width: auto;
+  height: auto;
+  // Overrule global fixed-pixel line height :\
+  line-height: 1;
 }
 .popupScroll{
   overflow: auto;

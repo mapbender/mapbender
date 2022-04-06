@@ -40,4 +40,5 @@ window.Mapbender.VectorLayerPoolOl4 = (function() {
             group.nativeGroup.getLayers().push(layerBridge.getNativeLayer());
         }
     });
+    return VectorLayerPoolOl4;
 }());

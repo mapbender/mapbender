@@ -25,21 +25,8 @@
  *
  */
 (function($) {
-    var counter = 0;
     var currentZindex = 10000;
     var currentModal_ = null;
-    var container_ = null;
-
-    function initContainer_() {
-        if (!container_) {
-            container_ = document.body;
-            var positionRule = $(container_).css('position');
-            if (!positionRule || positionRule === 'static') {
-                $(container_).css('position', 'relative');
-            }
-        }
-        return container_;
-    }
 
     /**
      * Popup constructor.
@@ -59,8 +46,10 @@
         }
 
         // Create DOM element
-        this.$element = $(this.options.template)
-            .attr('id', 'mbpopup-' + counter++);
+        this.$element = $(document.createElement(this.options.tagName));
+        this.$element.addClass('popup mapbender-popup');
+        this.$element.append(this.options.template);
+
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
         }
@@ -89,9 +78,11 @@
         this.addButtons(this.options.buttons || []);
 
         var staticOptions = [
+            'tagName',
             'template', 'modal',
             'header', 'closeButton',
             'buttons',
+            'container',
             'content',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick', 'closeOnESC',
@@ -153,8 +144,8 @@
          * @type {Object}
          */
         defaults: {
+            tagName: 'div',
             template: [
-                '  <div class="popup mapbender-popup">',
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
@@ -167,10 +158,10 @@
                 '   <div class="footer row no-gutters">',
                 '       <div class="popupButtons"></div>',
                 '       <div class="clear"></div>',
-                '   </div>',
-                '  </div>'
+                '   </div>'
                 ].join("\n"),
 
+            container: null,
             draggable: false,
             // Resizable, you can pass true or an object of resizable options
             resizable: false,
@@ -230,7 +221,7 @@
                 currentModal_ = this;
             }
 
-            var container = initContainer_();
+            var container = this.getContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
                     this.$modalWrap.prepend(this.$element);
@@ -240,10 +231,11 @@
                 }
             }
             if (this.options.draggable) {
-                var containment = (this.options.modal && this.$modalWrap) || $('body');
+                var containment = (this.options.modal && this.$modalWrap) || this.options.container && container || false;
                 this.$element.draggable({
                     handle: $('.popupHead', this.$element),
-                    containment: containment
+                    containment: containment,
+                    scroll: false
                 });
             }
             this.focus();
@@ -303,24 +295,33 @@
         addButtons: function(buttons) {
             var self = this,
                 buttonset = $('.popupButtons', this.$element);
+            var buttons_ = Array.isArray(buttons) && buttons || Object.values(buttons || {});
+            for (var i = 0; i < buttons_.length; ++i) {
 
-            $.each(buttons, function(key, conf) {
-                var button = $('<button/>', {
-                    type: 'button',
-                    text: conf.label
-                });
-
-                if(conf.cssClass) {
-                    button.addClass(conf.cssClass);
-                }
-
-                if(conf.callback) {
-                    button.on('click', function(event) {
-                        return conf.callback.call(self, event);
+                var button;
+                if (typeof buttons_[i].nodeType !== 'undefined') {
+                    button = buttons_[i];
+                } else {
+                    var conf = buttons_[i];
+                    button = $('<button/>', {
+                        type: 'button',
+                        text: conf.label
                     });
+
+                    if(conf.cssClass) {
+                        button.addClass(conf.cssClass);
+                    }
+
+                    if(conf.callback) {
+                        button.on('click', (function(conf) {
+                            return function(event) {
+                                return conf.callback.call(self, event);
+                            }
+                        }(conf)));
+                    }
                 }
                 buttonset.append(button);
-            });
+            }
             buttonset.parent().toggleClass('hidden', !buttonset.children().length);
         },
 
@@ -434,7 +435,24 @@
                 this.$element.addClass(cssClass);
             }
             this.options.cssClass = cssClass;
-        }
+        },
+        getContainer_: function() {
+            if (!this.container_) {
+                if (!this.options.container || typeof (this.options.container) === 'string') {
+                    this.container_ = this.options.container || $(this.options.container).get(0) || document.body;
+                } else {
+                    if (typeof (this.options.container.nodeType) !== 'undefined') {
+                        this.container_ = this.options.container;
+                    } else {
+                        // Hope for jQuery object, fail if it isn't, fall back to body if
+                        // it's empty
+                        this.container_ = this.options.container.get(0) || document.body;
+                    }
+                }
+            }
+            return this.container_;
+        },
+        __dummy__: null
     };
 
     window.Mapbender = window.Mapbender || {};
