@@ -8,6 +8,7 @@
   padding: $space 0 $space/2 0;
 }
 .popup .popupButtons {
+  text-align: right;
   .button, .btn {
     margin-left: 0.5em;
   }
@@ -17,11 +18,6 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-  }
-}
-.mapbender-popup {
-  .popupButtons {
-    text-align: right;
   }
 }
 .mapbender-popup {
