@@ -158,7 +158,6 @@ class ApplicationYAMLMapper
         }
         $application->setSource(Application::SOURCE_YAML);
         $this->onLoadListener->postLoad($application);
-        Application::postLoadStatic($application);
         return $application;
     }
 

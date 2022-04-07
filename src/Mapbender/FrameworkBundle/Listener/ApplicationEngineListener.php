@@ -20,5 +20,9 @@ class ApplicationEngineListener
         if ($this->forceEngine) {
             $application->setMapEngineCode($this->forceEngine);
         }
+        // Rewrite legacy explicit 'ol4' identifier to 'current'
+        if ('ol4' === $application->getMapEngineCode()) {
+            $application->setMapEngineCode(Application::MAP_ENGINE_CURRENT);
+        }
     }
 }
