@@ -100,27 +100,29 @@
                         width: this.options.width ? this.options.width : 450,
                         resizable: true,
                         height: this.options.height ? this.options.height : 500,
-                        buttons: {
-                            'cancel': {
-                                label: Mapbender.trans('mb.actions.cancel'),
-                                cssClass: 'button buttonCancel critical right',
-                                callback: $.proxy(this.close, this)
+                        detachOnClose: false,
+                        buttons: [
+                            {
+                                label: Mapbender.trans("mb.actions.search"),
+                                cssClass: 'button',
+                                callback: $.proxy(this._search, this)
                             },
-                            'reset': {
+                            {
                                 label: Mapbender.trans('mb.actions.reset'),
-                                cssClass: 'button right',
+                                cssClass: 'button',
                                 callback: $.proxy(this._reset, this)
                             },
-                            'ok': {
-                                label: Mapbender.trans("mb.actions.search"),
-                                cssClass: 'button right',
-                                callback: $.proxy(this._search, this)
+                            {
+                                label: Mapbender.trans('mb.actions.close'),
+                                cssClass: 'popupClose button critical'
                             }
-                        }
+                        ]
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
+                } else {
+                    this.popup.$element.removeClass('hidden');
+                    this.popup.focus();
                 }
-                this.element.show();
             }
         },
 
@@ -128,12 +130,8 @@
          * Closes popup dialog.
          */
         close: function(){
-            if (this.popup) {
-                if (this.popup.$element) {
-                    this.element.hide().appendTo($('body'));
-                    this.popup.destroy();
-                }
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.addClass('hidden');
             }
             if (this.callback) {
                 (this.callback)();

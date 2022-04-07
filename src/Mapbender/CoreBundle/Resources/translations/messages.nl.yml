@@ -65,11 +65,6 @@ mb:
         geometry:
           missing: Geselecteerde entiteit bevat geen geometrie.
     searchrouter:
-      popup:
-        btn:
-          ok: Zoek
-          cancel: Annuleren
-          reset: Wissen
       no_results: 'Geen resultaten gevonden.'
       result_counter: 'Resultaten: %count%'
       class:
@@ -82,10 +77,6 @@ mb:
       sharepoi: 'Deel POI'
       text:
         snippet: 'U kunt dit tekstfragment in uw mail gebruiken om een POI te versturen'
-      popup:
-        btn:
-          ok: Ok
-          cancel: Annuleren
       class:
         title: POI
         description: 'Maak een bijzondere plaats (POI) aan om te delen'
@@ -100,9 +91,6 @@ mb:
       form:
         mesage: 'Geen basis-bron set is gedefinieerd.'
     legend:
-      popup:
-        btn:
-          ok: Sluit
       class:
         title: Legenda
         description: 'Toon de legenda van de kaartlagen'
@@ -139,8 +127,6 @@ mb:
     metadata:
       popup:
         title: Metadata
-        btn:
-          ok: Sluiten
     gpsposition:
       error:
         notsupported: Geo-locatie wordt niet ondersteund door deze browser.
@@ -154,9 +140,6 @@ mb:
         position: positie
         button: knop
     layertree:
-      popup:
-        btn:
-          ok: Sluit
       const:
         outofscale: 'Laag buiten geldige schaal'
         outofbounds: 'Laag buiten geldig gebied'

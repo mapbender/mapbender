@@ -160,31 +160,24 @@
                     modal: false,
                     closeOnESC: false,
                     content: self.element,
+                    detachOnClose: false,
                     width: 500,
                     height: 380,
-                    buttons: {
-                        'cancel': {
+                    buttons: [
+                        {
                             label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'button buttonCancel critical right',
-                            callback: function(){
-                                self.deactivate();
-                            }
+                            cssClass: 'button popupClose'
                         }
-                    }
+                    ]
                 });
                 this.popup.$element.on('close', $.proxy(this.deactivate, this));
             } else {
-                    this.popup.open(self.element);
+                this.popup.$element.removeClass('hidden');
             }
-            this.element.removeClass('hidden');
         },
         _close: function(){
             if (this.popup) {
-                this.element.addClass('hidden').appendTo($('body'));
-                if(this.popup.$element) {
-                    this.popup.destroy();
-                }
-                this.popup = null;
+                this.popup.$element.addClass('hidden');
             }
         },
         _toolRequiresLabel: function(toolName) {

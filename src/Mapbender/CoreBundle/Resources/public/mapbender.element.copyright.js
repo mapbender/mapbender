@@ -30,24 +30,25 @@
                         content: response,
                         width:               width,
                         height:              height,
-                        buttons:             {
-                            'ok': {
+                        buttons: [
+                            {
                                 label: 'OK',
-                                cssClass: 'button right popupClose'
+                                cssClass: 'button popupClose'
                             }
-                        }
+                        ]
                     });
                     widget.popup.$element.on('close', function() {
                         widget.close();
                     });
                 });
             } else {
-                this.popup.$element.show();
+                this.popup.$element.removeClass('hidden');
+                this.popup.focus();
             }
         },
         close: function(){
-            if(this.popup){
-                this.popup.$element.hide();
+            if (this.popup) {
+                this.popup.$element.addClass('hidden');
             }
             if (this.callback) {
                 (this.callback)();

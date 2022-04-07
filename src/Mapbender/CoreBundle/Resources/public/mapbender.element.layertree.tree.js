@@ -605,11 +605,8 @@
                         width: 850,
                         height: 600,
                         buttons: [{
-                            label: Mapbender.trans('mb.core.metadata.popup.btn.ok'),
-                            cssClass: 'button buttonCancel critical right',
-                            callback: function() {
-                                this.close();
-                            }
+                            label: Mapbender.trans('mb.actions.close'),
+                            cssClass: 'button popupClose critical'
                         }]
                     });
                     if (initTabContainer) {
@@ -645,15 +642,12 @@
                         width: 350,
                         height: 500,
                         cssClass: 'customLayertree',
-                        buttons: {
-                            'ok': {
-                                label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
-                                cssClass: 'button right',
-                                callback: function() {
-                                    self.close();
-                                }
+                        buttons: [
+                            {
+                                label: Mapbender.trans('mb.actions.close'),
+                                cssClass: 'button popupClose'
                             }
-                        }
+                        ]
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {

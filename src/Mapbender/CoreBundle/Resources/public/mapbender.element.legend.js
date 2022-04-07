@@ -270,7 +270,6 @@
             }
         },
         getPopupOptions: function() {
-            var self = this;
             return {
                 title: this.element.attr('data-title'),
                 draggable: true,
@@ -283,11 +282,8 @@
                 height: 500,
                 buttons: [
                     {
-                        label:    Mapbender.trans('mb.core.legend.popup.btn.ok'),
-                        cssClass: 'button right',
-                        callback: function() {
-                            self.close();
-                        }
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'button popupClose'
                     }
                 ]
             };

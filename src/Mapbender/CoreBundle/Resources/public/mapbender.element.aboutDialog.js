@@ -22,37 +22,32 @@
         },
 
         open: function () {
-            var self = this;
-
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
+                    title: this.element.attr('title'),
                     modal: true,
                     draggable: false,
                     closeOnOutsideClick: true,
-                    content: [ $.ajax({url: self.elementUrl + 'content'})],
+                    content: [ $.ajax({url: this.elementUrl + 'content'})],
                     width: 350,
                     height: 170,
-                    buttons: {
-                        'ok': {
-                            label: 'OK',
-                            cssClass: 'button right',
-                            callback: function () {
-                                self.close();
-                            }
+                    buttons: [
+                        {
+                            label: Mapbender.trans('mb.actions.accept'),
+                            cssClass: 'button popupClose'
                         }
-                    }
+                    ]
                 });
             } else {
+                this.popup.$element.removeClass('hidden')
                 this.popup.open();
             }
         },
 
         close: function () {
             if (this.popup && this.popup.$element) {
-                this.popup.destroy();
+                this.popup.$element.addClass('hidden')
             }
-            this.popup = null;
         }
     });
 

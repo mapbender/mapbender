@@ -65,11 +65,6 @@ mb:
         geometry:
           missing: L'entrée sélectionnée ne contient aucune géométrie.
     searchrouter:
-      popup:
-        btn:
-          ok: Rechercher
-          cancel: Fermer
-          reset: Réinitialiser
       no_results: 'Aucun résultat.'
       result_counter: 'Résultats: %count%'
       class:
@@ -82,10 +77,6 @@ mb:
       sharepoi: 'Partager un POI'
       text:
         snippet: 'Vous pouvez obtenir l''extrait suivant pour envoyer le POI'
-      popup:
-        btn:
-          ok: Ok
-          cancel: Annuler
       class:
         title: POI
         description: 'Permet de créer un POI (point d''intérêt) pour le partager'
@@ -100,9 +91,6 @@ mb:
       form:
         mesage: 'Aucun fond de carte n''est défini.'
     legend:
-      popup:
-        btn:
-          ok: Fermer
       class:
         title: Légende
         description: 'Affiche la légende de la carte'
@@ -139,8 +127,6 @@ mb:
     metadata:
       popup:
         title: Metadonnées
-        btn:
-          ok: Fermer
     gpsposition:
       error:
         notsupported: Le service de géolocalisation n'est pas supporté par votre navigateur.
@@ -154,9 +140,6 @@ mb:
         position: position
         button: button
     layertree:
-      popup:
-        btn:
-          ok: Fermer
       const:
         outofscale: ~
         outofbounds: ~
