@@ -195,10 +195,7 @@
             this.options.height = null;
         }
         if (this.options.resizable) {
-            var resizableOptions = this.options.resizable;
-            if (!$.isPlainObject(resizableOptions)) {
-                resizableOptions = null;
-            }
+            var resizableOptions = (typeof (this.options.resizable) !== 'object') && this.options.resizable || null;
             this.$element.resizable(resizableOptions);
         }
         if (!this.options.closeButton) {
@@ -673,7 +670,8 @@
             }
 
             if (state) {
-                this.$element.resizable($.isPlainObject(state) ? state : null);
+                var resizableOptions = (typeof state !== 'object') && state || null;
+                this.$element.resizable(resizableOptions);
             } else {
                 if (this.$element.data('uiResizable')) {
                     this.$element.resizable('destroy');
