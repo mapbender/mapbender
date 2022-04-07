@@ -406,7 +406,7 @@ mb:
   template:
     toolbar_menu_tooltip: Toggle menu
     region:
-      toolbar: Obere Werkzeugleiste
-      footer: Fußzeile
+      toolbar: Top toolbar
+      footer: Footer
       sidepane: Sidepane
-      content: Kartenbereich
+      content: Map area
