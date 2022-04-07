@@ -30,5 +30,13 @@
         </service>
         <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
         <service id="mapbender.element_shim_factory.container" alias="service_container" />
+        <service id="mapbender.application_engine_listener"
+                 class="Mapbender\FrameworkBundle\Listener\ApplicationEngineListener">
+            <tag name="doctrine.orm.entity_listener"
+                 entity="Mapbender\CoreBundle\Entity\Application"
+                 event="postLoad" method="postLoad"
+                 lazy="true" />
+            <argument>%mapbender.force_engine%</argument>
+        </service>
     </services>
 </container>
