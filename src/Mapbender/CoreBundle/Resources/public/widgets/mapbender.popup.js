@@ -482,14 +482,12 @@
                 '    <div class="clearContainer"></div>',
                 '  </div>'].join("\n"),
             /** @type {Object<String, PopupButtonConfig>} */
-            buttons: {
-                'ok': {
-                    label: 'Ok',
-                    callback: function() {
-                        this.close();
-                    }
+            buttons: [
+                {
+                    label: Mapbender.trans('mb.actions.accept'),
+                    cssClass: 'button popupClose'
                 }
-            },
+            ],
             __dummy__: null
         }),
         staticOptions_: ['template', 'autoOpen', 'draggable'],
