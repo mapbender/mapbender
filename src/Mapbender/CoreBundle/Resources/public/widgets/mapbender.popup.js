@@ -167,6 +167,25 @@
                 return true;
             });
         },
+        renderButton_: function(confOrNode, key, buttons) {
+            if (typeof confOrNode.nodeType !== 'undefined') {
+                return confOrNode;
+            }
+            var $btn;
+            if (buttons && !Array.isArray(buttons)) {
+                console.warn("Generating link-style popup button because buttons option is an object", confOrNode, key);
+                $btn = $(document.createElement('a'))
+                    .attr('href', '#' + this.$element.attr('id') + '/button/' + key)
+                ;
+            } else {
+                $btn = $(document.createElement('button'))
+                    .attr('type', 'button')
+                ;
+            }
+            $btn.text(confOrNode.label);
+            $btn.addClass(confOrNode.cssClass || '');
+            return $btn.get(0);
+        },
         __dummy__: null
     };
 
@@ -343,34 +362,20 @@
             }
         },
         addButtons: function(buttons) {
-            var self = this,
-                buttonset = $('.popupButtons', this.$element);
+            var self = this;
+            var buttonset = $('.popupButtons', this.$element);
             var buttons_ = Array.isArray(buttons) && buttons || Object.values(buttons || {});
             for (var i = 0; i < buttons_.length; ++i) {
-
-                var button;
-                if (typeof buttons_[i].nodeType !== 'undefined') {
-                    button = buttons_[i];
-                } else {
-                    var conf = buttons_[i];
-                    button = $('<button/>', {
-                        type: 'button',
-                        text: conf.label
-                    });
-
-                    if(conf.cssClass) {
-                        button.addClass(conf.cssClass);
-                    }
-
-                    if(conf.callback) {
-                        button.on('click', (function(conf) {
-                            return function(event) {
-                                return conf.callback.call(self, event);
-                            }
-                        }(conf)));
-                    }
+                var confOrNode = buttons_[i];
+                var $btn = $(this.renderButton_(confOrNode));
+                if (confOrNode.callback) {
+                    $btn.on('click', (function(conf) {
+                        return function(event) {
+                            return conf.callback.call(self, event);
+                        }
+                    }(confOrNode)));
                 }
-                buttonset.append(button);
+                buttonset.append($btn);
             }
             buttonset.parent().toggleClass('hidden', !buttonset.children().length);
         },
@@ -598,29 +603,18 @@
         },
         addButtons: function(buttons) {
             var self = this,
-                buttonset = []
+                buttonset = $('.popupButtons', this.$element)
             ;
-
             $.each(buttons, function(key, conf) {
-                var button = $('<a/>', {
-                    href: '#' + self.$element.attr('id') + '/button/' + key,
-                    html: conf.label
-                });
-
-                if(conf.cssClass) {
-                    button.addClass(conf.cssClass);
-                }
-
-                if(conf.callback) {
-                    button.on('click', function(event) {
+                var $btn = $(self.renderButton_(conf, key, buttons));
+                if (conf.callback) {
+                    $btn.on('click', function(event) {
                         event.preventDefault();
                         conf.callback.call(self, event);
                     });
                 }
-                buttonset.push(button);
+                buttonset.append($btn);
             });
-
-            $('.popupButtons', this.$element.get(0)).append(buttonset);
         },
         /**
          * Set or get title
