@@ -24,7 +24,6 @@ class AssetsController extends YamlApplicationAwareController
     protected $assetService;
     protected $containerTimestamp;
     protected $cacheDir;
-    protected $forcedMapEngine;
     protected $isDebug;
 
     public function __construct(TranslatorInterface $translator,
@@ -32,7 +31,6 @@ class AssetsController extends YamlApplicationAwareController
                                 ApplicationAssetService $assetService,
                                 $containerTimestamp,
                                 $cacheDir,
-                                $forcedMapEngine,
                                 $isDebug)
     {
         $this->translator = $translator;
@@ -40,7 +38,6 @@ class AssetsController extends YamlApplicationAwareController
         $this->assetService = $assetService;
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->cacheDir = $cacheDir;
-        $this->forcedMapEngine = $forcedMapEngine;
         $this->isDebug = $isDebug;
     }
 
@@ -61,9 +58,6 @@ class AssetsController extends YamlApplicationAwareController
             $appModificationTs =$this->containerTimestamp;
         } else {
             $source = $this->getApplicationEntity($slug);
-            if ($this->forcedMapEngine) {
-                $source->setMapEngineCode($this->forcedMapEngine);
-            }
             if ($type === 'css' || $type === 'js') {
                 $cacheFile .= ".{$source->getMapEngineCode()}";
             }

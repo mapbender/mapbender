@@ -39,7 +39,6 @@ class ApplicationController extends ApplicationControllerBase
     /** @var UploadsManager */
     protected $uploadsManager;
     protected $fileCacheDirectory;
-    protected $forcedMapEngine;
     protected $isDebug;
 
     public function __construct(TranslatorInterface $translator,
@@ -47,7 +46,6 @@ class ApplicationController extends ApplicationControllerBase
                                 ElementInventoryService $elementInventory,
                                 UploadsManager $uploadsManager,
                                 $fileCacheDirectory,
-                                $forcedMapEngine,
                                 $isDebug)
     {
         $this->translator = $translator;
@@ -55,7 +53,6 @@ class ApplicationController extends ApplicationControllerBase
         $this->elementInventory = $elementInventory;
         $this->uploadsManager = $uploadsManager;
         $this->fileCacheDirectory = $fileCacheDirectory;
-        $this->forcedMapEngine = $forcedMapEngine;
         $this->isDebug = $isDebug;
     }
 
@@ -70,10 +67,6 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
-        if ($this->forcedMapEngine) {
-            $appEntity->setMapEngineCode($this->forcedMapEngine);
-        }
-
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
